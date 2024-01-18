@@ -1,0 +1,283 @@
+﻿@model Models.Competitor
+@using Models;
+@using SmartInventory.Settings;
+
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+<!--Reigon Additional Attribute to show the partial view-->
+@helper AdditionalAttributes()
+{
+    { Html.RenderPartial("~/Views/Shared/_AdditionalAttributesForm.cshtml", Model.objDynamicControls); }
+}
+<!--End Reigon Additional Attribute-->
+@helper Reference()
+{
+    { Html.RenderPartial("~/Views/Library/_Reference.cshtml", (IReference)Model); }
+}
+@helper GeographicDetails()
+{
+    { Html.RenderPartial("~/Views/Library/_GeographicDetails.cshtml", (IGeographicDetails)Model); }
+}
+@{
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], NetworkStatus.P.ToString(), EntityType.Competitor.ToString());
+    var iconPath = System.Configuration.ConfigurationManager.AppSettings["CompetitorImagePath"];
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Competitor.ToString().ToUpper()).FirstOrDefault() : null;
+}
+<style>
+    .competitorIcon {
+        position: absolute;
+        font-size: 13px;
+        right: 0;
+        margin: 6px 18px 0px 0px;
+    }
+
+        .competitorIcon i {
+            background: #00ba8a;
+            color: #fff;
+            padding: 4px;
+            border-radius: 19px;
+            height: 18px;
+            width: 19px;
+            cursor: pointer;
+            float: right;
+            margin: -3px 2px;
+            font-size: 12px;
+        }
+
+    .detailsicon {
+        display: block;
+    }
+
+    #dvCompetitorIcons {
+        position: absolute;
+        background: white;
+        height: auto;
+        border: 1px solid #bdb9b9;
+        margin-left: 190px;
+        z-index: 1000;
+        top: 170px;
+        display: none;
+        width: 180px;
+    }
+
+        #dvCompetitorIcons .headerInfo {
+            width: 100%;
+            height: 27px;
+            background: #31bd72;
+            text-align: center;
+            vertical-align: middle;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+    li:hover {
+        background-color: #31bd72;
+    }
+
+    #ulCompetitorIcons {
+        list-style: none;
+        padding: 2px;
+        max-height: 150px;
+        overflow-y: auto;
+        margin-bottom: 0px;
+    }
+
+        #ulCompetitorIcons li {
+            cursor: pointer;
+            float: left;
+            padding: 5px;
+        }
+</style>
+
+<!DOCTYPE html>
+<div class="libDetail">
+    @using (Ajax.BeginForm("SaveCompetitor", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnFailure = "si.handleError"
+    }, new { id = "frmAddCompetitor", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.geom)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.networkIdType)
+        @Html.HiddenFor(m => m.network_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.parent_network_id)
+        @Html.HiddenFor(m => m.icon_path, new { @id = "hdnIconPath" })
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+        //Add the other_info as hidden field for additional attributes
+        @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="libTabs">
+            <ul class="nav nav-tabs tabs-left" id="ulCompetitor">
+                <li class="active"><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")"href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                <!--Reigon Additional Attribute to show the partial view-->
+                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_222 @(Model.lstUserModule.Contains("ENT-DTL-ADA")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ADA") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
+                <!--End Reigon Additional Attribute-->
+                @if (Model.system_id > 0 && layerDetail != null)
+                {
+                    <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                }
+            </ul>
+        </div>
+        <div id="dvCompetitorIcons">
+            <ul id="ulCompetitorIcons">
+                @foreach (var item in Model.lstIcons)
+                {
+                    <li><img src="@(Url.Content(iconPath+"/"+item))" data-file-name="@item" onclick="setIcon(this);" /></li>
+                }
+            </ul>
+        </div>
+        <div class="libTabContent" @*style="overflow:visible;"*@>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"tab-pane active":"tab-pane active dvdisabled")" id="GISInfo">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_052 </legend>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="txtCompetitorCode">@Resources.Resources.SI_OSP_GBL_GBL_GBL_001: </label>
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly", @id = "txtNetworkId", @readonly = true })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="txtCompetitorName">
+                                @Resources.Resources.SI_OSP_GBL_NET_FRM_059
+                            @if (Model.networkIdType == NetworkIdType.M.ToString())
+                            {
+                                <i class="clsMandatory">*</i>
+                            }:
+                        </label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.name,
+                                  SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(
+                             new
+                             {
+                                 @class = "form-control",
+                                 @maxlength = "50",
+                                 autocomplete = "do-not-show-ac"
+                             }, (Model.networkIdType == "M" ? new { @required = true } : null)))
+                            @*@Html.TextBoxFor(m => m.name, new { @class = "form-control", @maxlength = "50" })*@
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" for="ddSymbol">@Resources.Resources.SI_GBL_GBL_NET_FRM_202<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-8 ">
+                            <div id="dvicon" style="border:1px solid #bdb9b9; border-radius: 2px; height: 25px;">
+                                <div class="competitorIcon">
+                                    <i class="icon-View-details detailsicon" id="iconViewDetails" title=@Resources.Resources.SI_GBL_GBL_NET_FRM_205 onclick="chooseIcon(this);"></i>
+
+                                </div>
+                                @*<label id="lblSymbol"></label>*@
+                                <img id="imgIcon" src="" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" for="txtAddress">@Resources.Resources.SI_OSP_GBL_GBL_GBL_008:</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.address, new { @class = "form-control", @maxlength = "200" })
+                        </div>
+                    </div>
+                </fieldset>
+                <div>
+                    @GeographicDetails()
+                </div>
+            </div>
+            <!--Reigon Additional Attribute to show the partial view-->
+            <div class="tab-pane" id="AdditionalAttributes" style="min-height: 260px;">
+                @AdditionalAttributes()
+            </div>
+            <!--End Reigon Additional Attribute-->
+            <div class="tab-pane" id="Reference" style="min-height: 260px;">
+                @Reference()
+            </div>
+        </div>
+    </div>
+    <div class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"d-flex ModalFooter":"d-flex ModalFooter dvdisabled")" id="dvBtnAction">
+        @if (Model.system_id > 0)
+        {
+            <div class="col-md-7 col-sm-7 ModelFooterInfo">
+                <label class="control-label">@Resources.Resources.SI_OSP_GBL_GBL_GBL_007:</label>
+                <label class="control-label model-label-info" title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
+            </div>
+        }
+        <div class="col-md-5 col-sm-5 ModalFooterControll">
+            @if (Model.system_id > 0)
+            {
+                <button type="submit" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnUpdateCompetitor" disabled="disabled">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnSaveCompetitor" disabled="disabled">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+            <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+}
+</div>
+
+<script>
+    var inputs = [];
+    $(document).ready(function () {
+        callFormValidator("frmAddCompetitor");
+        $('.chosen-select').chosen({ width: '100%' });
+        EnableDisableUpdateButton("frmAddCompetitor", @Model.system_id > 0 ? "btnUpdateCompetitor" : "btnSaveCompetitor");
+
+        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+
+        if ('@Model.icon_path'!='') {
+            $('#imgIcon').attr('src','@Url.Content(iconPath + '/' + Model.icon_path)');
+        }
+        $("#frmAddCompetitor").on("submit", function () {
+            if ( $('#hdnIconPath').val()==''){
+                $('#dvicon').css('border-color', 'red');
+                return false;
+            }
+            //For AdditionalAttributes to set json and saving
+            additionalAttributesUtility.SetJsonValue("#frmOtherInfo", "#hdnOtherInfo");
+            //end region AdditionalAttributes
+        });
+    });
+
+    function chooseIcon(_this) {
+        $('#dvCompetitorIcons').slideToggle();
+    }
+    function setIcon(_this)
+    {
+        //$('#imgIcon').attr('src',''+_iconPath+'');
+        var _iconPath=$(_this).attr('src');
+        var _iconName=$(_this).attr('data-file-name');
+        $('#imgIcon').attr('src',_iconPath);
+        $('#hdnIconPath').val(_iconName);
+        $('#dvicon').css('border-color', '#bdb9b9');
+        $('#dvCompetitorIcons').slideToggle();
+    }
+    $("#ulCompetitor li a").on("click", function () {
+        var url = $(this).attr('href');
+        if (url == '#Reference') {
+            $("#ModalPopUp .modal-md").animate({ 'width': url == '#Reference' ? '750px' : '600px' });
+            $('div#dvBtnAction').show();
+
+        }
+        else {
+            $("#ModalPopUp .modal-md").animate({ 'width': '600px' });
+            $('div#dvBtnAction').show();
+            $(".dropMenu").hide();
+        }
+    });
+</script>
+

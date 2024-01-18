@@ -1,0 +1,59 @@
+﻿@model Models.NetworkTicketFilter
+@using Models;
+
+<!DOCTYPE html>
+<div class="libDetail">
+    <div class="libTabContent">
+        <div class="tab-content" style="overflow: hidden;">
+            <div class="tab-pane active" id="verify">
+                <div class="form-group whiteSpace d-flex a-item">
+                    <input type="radio" id="rdApprove" name="rdApprRej" value="Approve" class="mt-0" checked onchange="si.Networkticket.radioActionChange()"> <label class="ml-05 mr-01">Approve</label>
+                    <input type="radio" id="rdReject" name="rdApprRej" value="Reject" class="mt-0" onchange="si.Networkticket.radioActionChange()"><label class="ml-05">Reject</label>
+                </div>
+
+                <div class="row padRow" id="divApprove">
+                    <div class="form-group">
+                        <label class="control-label col-md-8 col-sm-8" style="padding-top: 15px;padding-bottom: 6px;">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                        <div class="col-md-10 col-sm-10 mrgn_btm">
+                            <input type="text" id="txtRemarks" class="form-control" maxlength="500" placeholder="@Resources.Resources.SI_OSP_BUL_NET_FRM_022" id="txtcomment" max="100" />
+                            <input type="hidden" id="hdnTicketId" value="@Model.ticket_id">
+                            <input type="hidden" id="hdnEntityTypeSystemId" value="@Model.system_id~@Model.entity_type">
+                            <input type="hidden" id="hdnStatus">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="dvRejectComment" class="row form-group" style="display:none">
+                    <div>
+                        <label class="control-label col-md-10 col-sm-10" style="padding-top: 15px;padding-bottom: 6px;">@Resources.Resources.SI_OSP_BUL_NET_FRM_023<i class="clsMandatory">*</i></label>
+                        @foreach (var item in Model.lstRejectComment)
+                        {
+                            <div class="col-md-10 col-sm-10 mrgn_btm">
+                                @Html.RadioButton("radioRejectComment", item.dropdown_value, new { @onclick = "si.Networkticket.showHideOtherCommentBox();" })
+                                @Html.Label(item.dropdown_value)
+                            </div>
+                        }
+                    </div>
+                    <div class="col-md-10 col-sm-10 mrgn_btm">
+                        <input type="text" class="form-control" maxlength="500" placeholder="@Resources.Resources.SI_OSP_BUL_NET_FRM_022" id="txtcommentother" readonly="readonly" onkeyup="si.Networkticket.removecss();" />
+                    </div>
+                </div>
+                <div class="d-flex ModalFooter">
+                    <div class="ml-auto">
+                        <button type="button" id="btnApprove" class="btn btn-primary" onclick="si.Networkticket.EntityAction('Approve');">
+                            Approve
+                        </button>
+                        <button type="button" id="btnReject" class="btn btn-primary" style="display:none" onclick="si.Networkticket.EntityAction('Reject');">
+                            Reject
+                        </button>
+                        <button type="button" class="btn btn-default" id="verifybtnCancle" onclick="si.Networkticket.btnCancle()">
+                            @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

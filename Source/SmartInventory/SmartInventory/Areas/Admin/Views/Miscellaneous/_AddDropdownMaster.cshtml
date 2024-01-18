@@ -1,0 +1,201 @@
+﻿@model Models.ViewEntityDropdownMasterSettings
+@using Utility
+
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+
+<div id="divAddDropdownMasterSettings">
+
+    @using (Ajax.BeginForm("SaveDropdownMaster", "Miscellaneous",
+                                                          new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddDropdownMasterSettings" }, new
+                                                          {
+                                                              id = "frmAddDropdownMasterSetting",
+                                                              enctype = "multipart/form-data",
+                                                              autocomplete = "off",
+                                                              @class = "form-horizontal"
+                                                          }))
+    {
+        @Html.HiddenFor(m => m.id)
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Entity Name<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.HiddenFor(m => m.layer_id)
+                        @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), "-Select-", new { @class = "chosen-select", @onchange = "BindDrptypeForddl();", @id = "ddlLayers" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Dropdown Type<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.HiddenFor(m => m.dropdown_type)
+                        @if (Model.dropdown_type != null)
+                        {
+                            <select id="ddlfieldNameDropDown" class="chosen-select col-sm-12"><option value="@Model.dropdown_type">@Model.dropdown_type</option></select>
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(m => m.dropdown_type, new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text"), "-Select-", new { @class = "chosen-select", @onchange = "FillParentDropdownDetails();", @id = "ddlfieldNameDropDown" })
+                        }
+                    </div>
+                </div>
+                <div class="row form-group" id="ParentTypeDetails">
+                    @Html.HiddenFor(m => m.dropdown_mapping_key, new { @id = "DropdownParentId" })
+                    @if (Model.id > 0)
+                    {
+                        <div class="control-label col-md-4">@Model.dropdown_parent_value<i class="clsMandatory">*</i>:</div>
+                    }
+                    else
+                    {
+                        <div class="control-label col-md-4"><label id="lblParentType"></label><i class="clsMandatory">*</i>:</div>
+                    }
+                    <div class="col-md-8">
+                        @if (Model.dropdown_type != null)
+                        {
+                            @Html.DropDownListFor(m => m.parent_value, new SelectList(Model.objDropdownMasterMapping.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "-Select-", new { @class = "chosen-select", @id = "ddlParentType" })
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(m => m.parent_value, new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text"), "-Select-", new { @class = "chosen-select", @id = "ddlParentType" })
+                        }
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Value<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.HiddenFor(m => m.OldValue)
+                        @Html.TextBoxFor(m => m.Value, new
+                   {
+                       @class = "form-control displayName",
+                       @maxlength = 100,
+                       id = "ddltxtValue",
+                       style = "width:100%;float:left;"
+                   })
+                        <span id="ddlValueValidation" style="color: #721c24;"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Status<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.CheckBoxFor(mbox => mbox.IsVisible)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ModalFooter" id="dvBtnAction">
+            <button type="button" class="btn btn-default ml-auto mr-05" id="btnClearDropdownMaster">Reset</button>
+            <input type="submit" class="btn btn-primary" id="btnSaveDropdownMaster" value="Save" />
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    function BindDrptypeForddl() {
+        var layerId = parseInt($('#ddlLayers').val());
+        $('#layer_id').val(layerId);
+        $('#dropdown_type').val($('#ddlfieldNameDropDown :selected').val());
+        ajaxReq('miscellaneous/getDropMasterDetailsByLayerId', { Layer_Id: layerId, IsFilter: true }, true, function (response) {
+            $('#ddlfieldNameDropDown').html('');
+            var options = '';
+            options += "<option value>-Select-</option>";
+            for (var i = 0; i < response.length; i++) {
+                options += '<option value="' + response[i].dropdown_type + '">' + response[i].dropdown_type + '</option>';
+            }
+            $('#ddlfieldNameDropDown').append(options);
+            $('#ddlfieldNameDropDown').trigger("chosen:updated");
+        }, false, false);
+    }
+
+
+    $("#btnSaveDropdownMaster").on("click", function (e) {
+        if (!validateDropdown('ddlLayers')) { e.preventDefault(); return false; }
+        if (!validateDropdown('ddlfieldNameDropDown')) { e.preventDefault(); return false; }
+        if($("#lblParentType").text()!= ''){ if (!validateDropdown('ddlParentType')) { e.preventDefault(); return false; }
+        }
+        if (!validate('ddltxtValue')) { e.preventDefault(); return false; }
+        if ($('#OldValue').val() == $('#ddltxtValue').val()) {
+            $("#frmViewDropdownMaster").submit();
+            return true;
+        }
+        ajaxReq('miscellaneous/GetDropdownDetails', {
+            layer_id: $('#ddlLayers').val(), fieldname: $('#ddlfieldNameDropDown').val(),
+            Value: $('#ddltxtValue').val()
+        }, false, function (resp) {
+            if (resp.result > 0) {
+                $('#ddlValueValidation').html(resp.message);
+                e.preventDefault();
+                return false;
+            }
+            else {
+                $("#btnGetSearchResult").trigger("click");
+                $('#modal').modal('toggle');
+            }
+        }, true, true);
+        setTimeout(function () { $("#ddlValueValidation").text(''); }, 5000);
+    });
+
+    $(document).ready(function () {
+        $("#ParentTypeDetails").hide();
+        if(@Model.id>0 && @Model.dropdown_mapping_key>0)
+        {
+            $("#ParentTypeDetails").show();
+        }
+        $('.chosen-select').chosen({ placeholder_text_single: '-Select-', width: '100%' });
+
+        //validate all dropdowns for blank selection
+        $('.EUTSetting select').on('change', function () {
+            return validateDropdown(this.id);
+        });
+        // refresh grid data on close of add/edit form
+        $('#closeModalPopup').on('click', function () {
+            //window.location.reload();
+        });
+
+        if ($('#id').val() > 0) {
+            $('#btnSaveDropdownMaster').val("Update");
+            $("#btnClearDropdownMaster").hide();
+            $('#ddlLayers').attr("disabled", "disabled").trigger("chosen:updated");
+            $('#ddlfieldNameDropDown').attr("disabled", "disabled").trigger("chosen:updated");
+            $('#ddlParentType').attr("disabled", "disabled").trigger("chosen:updated");
+        }
+
+        $('#btnClearDropdownMaster').on("click", function () {
+
+            $('#ddlLayers').val(0).trigger("chosen:updated");
+            $('#ddlfieldNameDropDown').empty().trigger("chosen:updated");
+            $('#ddlParentType').val(0).trigger("chosen:updated");
+            $("#ParentTypeDetails").hide();
+            $('#ddltxtValue').val('');
+        });
+    });
+
+    function FillParentDropdownDetails() {
+        $('#dropdown_type').val($('#ddlfieldNameDropDown :selected').val());
+        var layerId = parseInt($('#ddlLayers').val());
+        var MapngDropDownType = $('#ddlfieldNameDropDown :selected').val();
+        ajaxReq('miscellaneous/getPrentDetailsByLayerId', { Layer_Id: layerId, Mapping_DrpType: MapngDropDownType }, true, function (response) {
+            if(response[0].dropdown_mapping_key != 0 && response[0].dropdown_mapping_value !="#" && response[0].dropdown_value !="#"){
+                $("#ParentTypeDetails").show();
+                $("#lblParentType").text(response[0].dropdown_mapping_value);
+                $('#ddlParentType').html('');
+                var options = '';
+                options += "<option value>-Select-</option>";
+                for (var i = 0; i < response.length; i++) {
+                    options +='<option parent-datatype="'+response[i].dropdown_mapping_key+'"+ value="'+response[i].dropdown_value+'">'+response[i].dropdown_value+'</option>';
+                }
+                $('#ddlParentType').append(options);
+                $('#ddlParentType').trigger("chosen:updated");
+            }
+            else {
+                $("#ParentTypeDetails").hide();
+                $('#ddltxtValue').val('');
+            }
+        }, false, false);
+    }
+    $("#ddlParentType").on('change', function () {
+        var ParentMappingId= $('option:selected', this).attr('parent-datatype');
+        $('#DropdownParentId').val(ParentMappingId);
+    });
+
+</script>

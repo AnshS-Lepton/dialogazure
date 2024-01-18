@@ -1,0 +1,80 @@
+﻿@model Models.ConnectionFilter
+
+<!DOCTYPE html>
+    <div class="modal-header d-flex">
+       <h4 class="modal-title"> @Resources.Resources.SI_OSP_GBL_NET_FRM_151</h4>
+        <span type="button" id="btnCloseFilter" onclick="$('#divConnectionFilter').hide();" class="icon-close ml-auto" title="Close"></span>
+ </div>
+@using (Ajax.BeginForm("FilterConnection", "Splicing", new AjaxOptions
+{
+    HttpMethod = "POST",
+    LoadingElementId = "dvProgress",
+    UpdateTargetId = "dvModalBody",
+    OnBegin = "return conBuilder.validateFilter()",
+    OnSuccess = "setTimeout(conBuilder.InitilizeJsPlumb, 300);"
+},
+            new { id = "frmConnectionFilter", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.entityId, new { id = "hdnEntityId" });
+    @Html.HiddenFor(m => m.SourceEquipmentNWId, new { id = "hdnSourceEqpmntId" });
+    @Html.HiddenFor(m => m.DestinationEquipmentNWId, new { id = "hdnDestinationEqpmntId" });
+    <div class="space-pad">
+        <!-- Tab panes -->
+
+        <div class="form-group">
+            <div class="col-md-6">
+                <label class="control-label">Equipment A</label>
+            </div>
+
+            <div class="col-md-6">
+                <label class="control-label">Equipment B</label>
+            </div>
+        </div>
+        @*<div class="form-group">
+                <div class="col-md-6 mrgn_btm">
+                    <select class="chosen-select form-control" id = "ddlLeftPOD" name="@Html.NameFor(x => x.SourcePODId)">
+                        <option value="">--Select--</option>
+                        @foreach (var item in Model.listRack)
+                        {
+                            <option value="@item.dropdown_value" data-entity-type="@item.dropdown_type">@item.dropdown_key</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6 mrgn_btm">
+                    <select class="chosen-select form-control" id="ddlRightPOD" name="@Html.NameFor(x => x.DestinationPODId)">
+                        <option value="">--Select--</option>
+                        @foreach (var item in Model.listRack)
+                        {
+                            <option value="@item.dropdown_value" data-entity-type="@item.dropdown_type">@item.dropdown_key</option>
+                        }
+                    </select>
+                </div>
+            </div>*@
+        <div class="form-group">
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.SourceRackId, new SelectList(Model.listRack.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select Rack--", new { @class = "chosen-select form-control", id = "ddlLeftRack", @data_parent_type = Model.entity_type, @data_parent_id = Model.entityId })
+            </div>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.DestinationRackId, new SelectList(Model.listRack.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select Rack--", new { @class = "chosen-select form-control", id = "ddlRightRack", @data_parent_type = Model.entity_type, @data_parent_id = Model.entityId })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.SourceEquipmentId, Enumerable.Empty<SelectListItem>(), "--Select Equipment--", new { @class = "chosen-select form-control", id = "ddlLeftEquipment" })
+            </div>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.DestinationEquipmentId, Enumerable.Empty<SelectListItem>(), "--Select Equipment--", new { @class = "chosen-select form-control", id = "ddlRightEquipment" })
+            </div>
+        </div>
+    </div>
+    <div class="ModalFooter" id="dvBtnAction">
+        <input type="button" class="btn btn-warning ml-auto mr-01" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" id="btnResteFilter"
+               onclick="conBuilder.resetFilter();" />
+        <input type="submit" class="btn btn-primary" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_007" />
+    </div>
+}
+<script>
+    $('.chosen-select').chosen({ search_contains: true, width: '100%' });
+
+</script>
+

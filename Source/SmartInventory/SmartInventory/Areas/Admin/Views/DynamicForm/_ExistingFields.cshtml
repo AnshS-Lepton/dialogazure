@@ -1,0 +1,51 @@
+﻿@{
+    Layout = null;
+}
+@model Models.AdditionalAttributeModel
+@{
+    var grid = new WebGrid(rowsPerPage: Model.existingFieldFilter.pageSize);
+    grid.Bind(Model.dynamicControls, autoSortAndPage: false, rowCount: Model.existingFieldFilter.totalRecords);
+    var footerText = "showing " + (((Model.existingFieldFilter.page - 1) * Model.existingFieldFilter.pageSize) + 1) + " to " + (Model.existingFieldFilter.page * Model.existingFieldFilter.pageSize) + " of " + Model.existingFieldFilter.totalRecords + " items";
+}
+<!DOCTYPE html>
+<div id="dvExistingControl">
+    @using (Ajax.BeginForm("ExistingFields", "DynamicForm", new AjaxOptions { HttpMethod = "POST" }, new { id = "frmUploadLog", enctype = "multipart/form-data", autocomplete = "off", @class = "table-responsive tble_cls" }))
+    {
+        <div id="Uploadlogs">
+                @grid.GetHtml(htmlAttributes: new { id = "gridExistingFields", border = "1", style = "border-color:#ccc" }, tableStyle: "grid",
+                columns: grid.Columns(
+                            grid.Column("s_no", Resources.Resources.SI_OSP_DU_NET_RPT_001),
+                            grid.Column("field_label", "field_label"),
+                            grid.Column("field_name", "field_name"),
+                            grid.Column("control_type", "control_type"),
+                            grid.Column("control_value_type", "control_value_type"),
+                            grid.Column("is_mandatory", "is_mandatory"),
+                            grid.Column("is_visible", "is_visible"),
+                            grid.Column("min_length", "min_length"),
+                            grid.Column("max_length", "max_length"),
+                            grid.Column("format", "format"),
+                            grid.Column("default_value", "default_value"),
+                            grid.Column("placeholder_text", "placeholder_text"),
+                            grid.Column("field_order", "field_order")
+ ))
+
+            @if (Model.dynamicControls.Count == 0)
+            {
+                <div class="nr-found">
+                    <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+                </div>
+            }
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('#gridUploadSummary tfoot tr td').append('<medium class="inline m-t-sm m-b-sm" style="padding-left: 550px;">' + '@footerText' + '</medium>');
+                $('th a, tfoot a').on("click", function () {
+                    $('#frmUploadLog').attr('action', $(this).attr('href')).submit();
+                    return false;
+                });
+            });
+        </script>
+    }
+</div>
+
+

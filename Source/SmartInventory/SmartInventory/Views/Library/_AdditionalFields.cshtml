@@ -1,0 +1,30 @@
+﻿@model Models.IAdditionalFields
+
+
+<div class="form-group row">
+    <label class="control-label col-md-2 col-sm-2" for="txtbom_sub_category">BOM SubCategory<i class="clsMandatory">*</i>:</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.bom_sub_category, new SelectList(Model.lstBOMSubCategory.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), new { @class = "chosen-select form-control", id = "txtbomsubcategory", onchange = "OnChangeBomSubCategrory()" })
+    </div>
+
+    @*<label class="control-label col-md-2 col-sm-2" for="txtserved_by_ring">Serverd By Ring<i class="clsMandatory">*</i>:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.DropDownListFor(m => m.served_by_ring, new SelectList(Model.lstServedByRing.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", id = "txtservedbyring",onchange = "OnChangeservedbyring()" })
+        </div>*@
+</div>
+
+
+
+<script>
+    function OnChangeBomSubCategrory() {
+        if ($('#txtbomsubcategory').val() == '') {
+            $('#txtbomsubcategory').next().addClass('input-validation-error');
+            return false;
+        }
+        else {
+            $('#txtbomsubcategory').next().removeClass('input-validation-error').addClass('valid');
+            return true;
+        }
+    }
+       
+</script>

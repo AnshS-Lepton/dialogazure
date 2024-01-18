@@ -1,0 +1,93 @@
+﻿@model Models.ManholeTemplateMaster
+@using Models;
+@using SmartInventory.Settings;
+@helper ItemSpecification()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
+}
+@helper SystemSpecification()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_SystemSpecification.cshtml", (itemMaster)Model); }
+}
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Manhole.ToString().ToUpper()).FirstOrDefault() : null;
+}
+<fieldset class="the-fieldset">
+    <legend class="the-legend">@layerDetail.layer_title Details</legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="ddlManholeType">@layerDetail.layer_title Type:</label>
+        <div class="col-sm-45">
+            @Html.DropDownListFor(m => m.manhole_types, new SelectList(Model.lstManholeType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select "+ @layerDetail.layer_title + " Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlManholeType", @is_specification_allowed = Model.is_specification_allowed })
+        </div>
+    </div>
+</fieldset>
+<fieldset class="the-fieldset">
+    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
+    @ItemSpecification()
+</fieldset>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        //var manvalue = $("#ddlManholeType option:selected").val();
+        //if (manvalue == undefined || manvalue == null || manvalue == '')
+        //{
+
+        //    $('#specification').val(0).trigger("chosen:updated");
+        //    $('#ddlVendor').val(0).trigger("chosen:updated");
+        //    $('#txtItemCode').val("");
+        //    $('#txtCategory').val("");
+        //    $('#txtSubCategory1').val("");
+        //    $('#txtSubCategory2').val("");
+        //    $('#txtSubCategory3').val("");
+        //}
+        $('.chosen-select').chosen({ width: '100%' });
+        $('#specification').chosen().change(function (event) {
+            var dID = $(this).val();
+            si.bindVendor(dID);
+        });
+        $('#ddlVendor').chosen().change(function (event) {
+            var specfi = $("#specification option:selected").val(); //
+            var vandorid = $(this).val();
+            var entitytype = $('#entityType').val();
+            si.bindCateSubcat(entitytype, specfi, vandorid);
+        });
+        $('#ddlType').chosen().change(function (event) {
+            var dID = $(this).val();
+            si.bindBrand(dID);
+        });
+        $('#ddlBrand').chosen().change(function (event) {
+            var dID = $(this).val();
+            si.bindModel(dID);
+        });
+
+        //---------shazia
+        $('#ddlManholeType').change(function (event) {
+
+            var Is_specification_allowed = $(this).attr("is-specification-allowed");
+            var selected_manhole_type = $("#ddlManholeType option:selected").val();
+            if (Is_specification_allowed == "True") {
+                $("#specification option").hide();
+                $("#specification option").each(function () {
+                    var thisOptionValue = $(this).attr('data-type');
+                    if (thisOptionValue != undefined) {
+                        if (selected_manhole_type == thisOptionValue) {
+                            $(this).show();
+                        }
+                    }
+                });
+                $('#specification').val(0).trigger("chosen:updated");
+                $("#ddlVendor option").hide();
+                $('#ddlVendor').val(0).trigger("chosen:updated");
+                $('#txtItemCode').val("");
+                $('#txtCategory').val("");
+                $('#txtSubCategory1').val("");
+                $('#txtSubCategory2').val("");
+                $('#txtSubCategory3').val("");
+            }
+        });
+        //---------------
+
+    });
+</script>

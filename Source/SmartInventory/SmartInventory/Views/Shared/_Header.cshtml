@@ -1,0 +1,91 @@
+﻿@model Models.OSPHeader
+
+@using System.Collections.Generic;
+
+<!DOCTYPE html>
+<div id="logo">
+    @if (!string.IsNullOrEmpty(SmartInventory.Settings.ApplicationSettings.ApplicationLogoImageBytesForWeb))
+    {
+        <img src="@SmartInventory.Settings.ApplicationSettings.ApplicationLogoImageBytesForWeb" style="display:block;" />
+    }
+    @*@Model.ApplicationName*@
+</div>
+@{
+    var userModuleList = (List<string>)Session["ApplicableModuleList"];
+    var imgProfile = string.IsNullOrEmpty(Model.objuser.userImgBytes) ? @Url.Content("~/Uploads/profiles/big.png") : Model.objuser.userImgBytes;
+    var userDetails = (Models.User)Session["userDetail"];
+}
+
+<div class="ml-auto d-flex">
+    @if (userModuleList.Contains("NTF"))
+
+    {
+        <span class="notibell animate__animated animate__bounce" onclick="si.openUtilizationNotification();">
+            <i class="fa fa-bell"></i>
+            <span class="bellbadge" id="spnUtilizationCount">@Model.UnreadNotificationCount</span>
+        </span>
+    }
+    
+    @if (userModuleList.Contains("HAF"))
+    {
+        <span class="notibell" title="Help & FAQ's" onclick="si.HelpPage();">
+            <span class="icon-Helpline-file"></span>
+        </span>
+    }
+
+    <div class="account">
+        <div class="userSection f-ai jc-sb">
+            <div class="userPImg">
+                <img id="imgUserSmall" class="userImg" src="@imgProfile" />
+            </div>
+            <div class="userSpecific f-ai">
+
+                <span class="nameUser" title=@Model.objuser.user_name> @(Model.objuser.user_name.Length > 12?string.Concat(Model.objuser.user_name.Substring(0, 12), "..."):Model.objuser.user_name) </span>
+                <span class="spnDwnArrow"></span>
+                <input type="hidden" id="hdnCurrentUserId" value="@Model.objuser.user_id" />
+            </div>
+        </div>
+        <div class="logout">
+            <div class="padding">
+                <div id="dvbigimg" class="profilepic">
+                    <img id="imgUserBig" src="@(imgProfile)">
+                </div>
+                <div class="LoginUser">
+                    <strong>@Utility.MiscHelper.Decrypt(Model.objuser.name)</strong>
+                    <span>@Utility.MiscHelper.Decrypt(Model.objuser.user_email)</span>
+                    @if (userModuleList.Contains("UPLD-PFL"))
+                    {
+                        <a href="#" onclick="si.uploadProfileImage();">@Resources.Resources.SI_OSP_GBL_NET_FRM_211</a>
+                    }
+                    </div>
+            </div>
+            <ul class="prolist">
+                    @if (userModuleList.Contains("MNGW"))
+                    {
+                        <li><a onclick="si.getWorkSpaces();" href="#">@Resources.Resources.SI_OSP_GBL_NET_GBL_024</a></li>
+                    }
+                    @if (string.IsNullOrEmpty(Model.ADFSEndPoint) && userDetails.user_name.ToUpper() != "ADMINISTRATOR")
+                    {
+                        <li><a onclick="si.getChangePassword();" href="#">@Resources.Resources.SI_OSP_GBL_NET_GBL_025</a></li>
+                    }
+
+                    @if (Model.objuser.role_id == 1 || Model.objuser.is_admin_rights_enabled == true)
+                    {
+                        <li>
+                            <a href="admin/Home/index" target="_blank">@Resources.Resources.SI_GBL_GBL_NET_FRM_097</a>
+                        </li>
+                    }
+                    @*<li><a onclick="si.HelpPage();" href="#">@Resources.Resources.SI_GBL_GBL_NET_GBL_002</a></li>*@
+                    <li>
+                        <a href="#" onclick="si.SignOut(); return false;">@Resources.Resources.SI_OSP_GBL_NET_GBL_026</a>
+                    </li>
+
+
+
+                </ul>
+        </div>
+    </div>
+</div>
+
+
+

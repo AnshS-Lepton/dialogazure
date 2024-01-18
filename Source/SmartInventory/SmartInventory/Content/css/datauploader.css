@@ -1,0 +1,326 @@
+﻿.dataUploader .FWdata {
+    width: 700px;
+    height: auto;
+    position: absolute;
+    box-shadow: 2px 2px 10px #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    top: 30px;
+    left: 25%;
+}
+
+    .dataUploader .FWdata .headFW {
+        background-color: #00b381;
+        width: auto;
+        padding: 6px 10px;
+        color: #fff;
+        /*font-family: sans-serif;*/
+        border-radius: 5px 5px 0px 0px;
+    }
+
+.dataUploader.container {
+    width: auto;
+    margin: 10px 0px;
+    /*font-family: Tahoma, Geneva, sans-serif;*/
+}
+
+.dataUploader .tab-content {
+    border: 1px solid #ddd;
+    padding: 10px;
+    padding-top: 5px;
+}
+
+.dataUploader .uploadfiles {
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top:1.5rem;
+}
+
+.dataUploader .badge {
+    background-image: linear-gradient(358deg, #e7e4e4, white);
+    color: #5a5a5a;
+    border: 1px solid #d3d3d3;
+    padding: 0 !important;
+    margin-right: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    width: 24px;
+    border-radius: 50px;
+    box-shadow: 0 3px 4px rgb(0 0 0 / 10%);
+}
+
+.dataUploader .badgeActive {
+    background-image: var(--header-gradient);
+    color: #fff;
+    border:none;
+}
+
+.dataUploader .badgeLine {
+    width: 80px;
+    height: auto;
+    border: 1px solid #ccc;
+    display: inline-block;
+    margin: 3px 6px;
+}
+
+.dataUploader .choosecont {
+    width: auto;
+    margin: 10px 5px;
+    /*background-color: #f0f0f0;*/
+    height: 400px;
+    padding: 10px;
+    font-size: 12px;
+    overflow-y: auto;
+    min-height: 400px;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+    /* max-height:400px;*/
+}
+
+
+
+.dataUploader #Uploadlogs {
+    overflow: auto;
+    height: 410px;
+    font-size: 12px;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+}
+
+
+.dataUploader .form-control {
+    height: 34px;
+}
+
+.dataUploader #btnDownloadTemplate, .dataUploader #btnPrevious1,  .dataUploader #btnPrevious2 {
+    color: #665d5d;
+    background-color: #e3dcd8;
+    border-color: #cdc6c2;
+}
+
+.dataUploader #btnImpDataPrevious1
+{
+    color: #665d5d;
+    background-color: #e3dcd8;
+    border-color: #cdc6c2;
+}
+
+.dataUploader .red {
+    color: red;
+    margin-top: 5px;
+}
+
+.dataUploader .green {
+    color: var(--primary-dark);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dataUploader .blue {
+    color: #01a3c6;
+}
+
+.dataUploader .black {
+    color: #000;
+    
+}
+.succesBig {
+    color: var(--primary-dark);
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.dataUploader .statusContainer {
+    background-color: #f7f7f7;
+    position: relative;
+    width: 85%;
+    height: auto;
+    top: 0px;
+    left: 0px;
+    padding: 30px;
+    border-radius:3px;
+    text-align: center;
+    margin: 15px 10px 20px 60px;
+}
+
+    .dataUploader .statusContainer i {
+        width: 100%;
+        float: left;
+        margin: 15% 0 2% 0;
+    }
+
+.dataUploader #dvSearchContainer {
+    padding-bottom: 15px;
+    padding-top: 10px;
+}
+
+.dataUploader #selentityFilter {
+    width: 100px;
+}
+
+.dataUploader #updKML, .dataUploader #updExcel, .dataUploader #updSHP, .dataUploader #updJson, .dataUploader #updTab {
+    border: 1px solid #cccccc;
+    width: 100%;
+    padding: 3px;
+    border-radius: 3px;
+}
+
+.dataUploader .cancel {
+    margin-top: -22px;
+    margin-left: 285px;
+}
+
+.dataUploader #clearKMLFile, .dataUploader #clearExcelFile, .dataUploader #clearJsonFile {
+    border: 0;
+    color: red;
+    background: none;
+}
+
+.dataUploader .uploadInput {
+    height: 24px;
+    padding: 6px 6px;
+    width: 125px !important;
+    margin-left: 10px;
+}
+
+.dataUploader .uploadLogsCount {
+    position: relative;
+    display: inline-block;
+    margin-left: 300px;
+}
+
+.dataUploader input[type="file"] {
+    display: block;
+    box-shadow: inset 0 0 1px grey;
+    background: white;
+}
+
+.dataUploader .CustomSuccess {
+    color: #449d44;
+    background-color: white;
+    border-radius: 4px 0px 0px 4px;
+    border-color: #949292;
+    outline: none;
+    padding: 2px 8px;
+    border-right-width: 0px;
+    font-size: 12px;
+}
+
+.dataUploader .CustomSuccessDisabled {
+    color: gray;
+    background-color: white;
+    border-radius: 4px 0px 0px 4px;
+    border-color: #949292;
+    outline: none;
+    padding: 2px 8px;
+    border-right-width: 0px;
+    font-size: 12px;
+    cursor: not-allowed !important;
+}
+
+    .dataUploader .CustomSuccessDisabled:hover, .dataUploader .CustomSuccessDisabled:focus, .dataUploader .CustomSuccessDisabled:active {
+        color: gray;
+        background-color: white !important;
+    }
+
+.dataUploader .CustomError {
+    color: red;
+    background-color: white;
+    border-radius: 0px 4px 4px 0px;
+    border-color: #949292;
+    outline: none;
+    padding: 2px 12px;
+    margin-left: -4px;
+    font-size: 12px;
+}
+
+.dataUploader .CustomErrorDisabled {
+    color: gray;
+    background-color: white;
+    border-radius: 0px 4px 4px 0px;
+    border-color: #949292;
+    outline: none;
+    padding: 2px 12px;
+    margin-left: -4px;
+    font-size: 12px;
+    cursor: not-allowed !important;
+}
+
+    .dataUploader .CustomErrorDisabled:hover, .dataUploader .CustomErrorDisabled:focus, .dataUploader .CustomErrorDisabled:active {
+        color: gray;
+        background-color: white !important;
+    }
+
+.dataUploader #dvUploadLogsContainer {
+   /* height: 440px;*/
+    background-image: url('../images/loading_new.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.dataUploader .UploadLogProgress {
+    display: none;
+    width: 95%;
+    height: 88%;
+    position: absolute;
+    margin-top: 0px;
+    z-index: 5;
+    opacity: 0.6;
+    margin-left: 0px;
+    background-color: white;
+    background-image: url(../images/loading_new.gif);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.dataUploader #dvUploadSummary {
+    background-color: white;
+}
+
+.dataUploader .imgcheck {
+    width: 30px;
+    margin-top: 10px;
+}
+
+.dataUploader .form-group.buttons {
+    width: 85%;
+    margin-left: 60px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.dataUploader .downlad-container {
+    text-align: center;
+    cursor: pointer;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-size:14px;
+}
+
+.dataUploader .lblMessage-container {
+    text-align: center;
+}
+
+.dataUploader .steps-container {
+    width: 500px;
+    margin: auto;
+}
+
+.dataUploader #step1, .dataUploader #step2, .dataUploader #step3 {
+    height: 300px;
+}
+
+.dataUploader .uploadinfo-container {
+    text-align: center;
+}
+
+.badge-grid {
+    display: grid;
+    grid-template-columns:20% 40% 20% 40%;
+    gap: 15px;
+}

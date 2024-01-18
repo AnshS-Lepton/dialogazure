@@ -1,0 +1,646 @@
+﻿@model Models.BoundaryPushFilter
+@using Utility
+@using SmartInventory.Settings
+@{
+    WebGrid grid = new WebGrid(canPage: false, canSort: true, ajaxUpdateContainerId: "divpushBoundaryDetails", ajaxUpdateCallback: "onGridHeaderClick('tblgisboundarypushDetails');GridColor();");
+    grid.Bind(Model.pushboundaryDetailList, autoSortAndPage: false, rowCount: Model.viewBoundaryPush.totalRecord);
+
+
+}
+
+
+<style>
+    .padRow {
+        padding: 5px;
+        margin: 0px;
+    }
+
+    .nav-tabs {
+        border-bottom: 1px solid #ddd;
+    }
+
+
+    .SearchIco {
+        position: absolute;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.25);
+        margin: 8px 0px 0px 125px;
+    }
+
+    .tooltip-inner {
+        color: black;
+        background-color: white;
+        word-wrap: break-word;
+        text-align: left;
+        white-space: pre-line;
+    }
+
+    .EntitydetailsProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url('Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .gridHeaderStyle {
+        white-space: nowrap;
+    }
+
+    .modal-open .modal {
+        background-color: rgba(0,0,0,0) !important;
+    }
+
+    #dvModelid {
+        position: absolute;
+        z-index: 9;
+    }
+
+    .disabled {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+
+    .selectBox {
+        border: 1px solid #dfdfdf;
+        padding: 0.4rem 0.6rem;
+        margin-left: 0.5rem;
+        width: 130px;
+    }
+
+    .d-flex {
+        display: flex;
+        align-items: center;
+    }
+
+    .completed-row {
+        background-color: green;
+        color: white; /* Change the background color to your desired color */
+    }
+
+    .completed-row1 {
+        background-color: white;
+        /* Change the background color to your desired color */
+    }
+
+
+    .expBtn {
+        border: none;
+        border-radius: 3px;
+        padding: 7px 10px;
+        background-color: #00b109;
+        color: #ffffff;
+        font-size: 14px;
+        cursor: pointer;
+        margin-left: auto;
+    }
+
+    .ml-auto {
+        margin-left: auto;
+    }
+
+    .mt-01 {
+        margin-top: 1rem;
+    }
+
+    .mb-01 {
+        margin-bottom: 1rem;
+    }
+
+    .headerBox {
+        background-color: var(--primary-dark) !important;
+        font-weight: 600 !important;
+    }
+
+    .headerBoxLeft {
+        flex: 50%;
+        text-align: center;
+        border-right: 1px solid #dfdfdf;
+    }
+
+    .pad-06 {
+        padding: 0.6rem 0;
+    }
+
+    .wrapper {
+        width: 100%;
+        margin: 0 auto;
+        overflow: auto;
+    }
+
+    .THheader {
+        background-color: #004050;
+        color: #ffffff;
+    }
+
+    .rowColum {
+        background-color: #ffffff;
+        color: #6b6b6b;
+    }
+
+    .col {
+        padding: 0.4rem 0.6rem;
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .alignItem {
+        align-items: center;
+    }
+
+    .whiteSpace {
+        white-space: nowrap;
+    }
+
+    .borRigBot {
+        border-right: 1px solid #e2e2e2;
+        border-bottom: 1px solid #e2e2e2;
+    }
+
+    .grid {
+        border-collapse: collapse;
+        white-space: nowrap;
+    }
+
+    .padRow {
+        padding: 5px;
+        margin: 0px;
+    }
+
+    /*.divPads {
+        padding: 3px;
+    }
+
+    .padRow .divPads {
+        display: flex;
+    }
+
+    .modal-body .FilterDiv .padRow .divPads {
+        display: inline-block;
+    }*/
+
+    .nav-tabs {
+        border-bottom: 1px solid #ddd;
+    }
+
+
+    .SearchIco {
+        position: absolute;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.25);
+        margin: 8px 0px 0px 125px;
+    }
+
+    .tooltip-inner {
+        color: black;
+        background-color: white;
+        word-wrap: break-word;
+        text-align: left;
+        white-space: pre-line;
+    }
+
+    .EntitydetailsProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url('Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+
+    .calendar {
+        position: absolute;
+        display: block;
+        left: 650px !important;
+        top: 65px !important;
+    }
+
+    .gridHeaderStyle {
+        white-space: nowrap;
+    }
+
+    .modal-open .modal {
+        background-color: rgba(0,0,0,0) !important;
+    }
+
+    #dvModelid {
+        position: absolute;
+        z-index: 9;
+    }
+
+    .disabled {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+    .transpBorder {
+        border: 1px solid transparent !important;
+        visibility: hidden;
+    }
+
+    .editColumn {
+        text-align: center;
+        font-weight: 600 !important;
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .grid .linkbtn {
+        text-decoration: underline;
+        color: var(--primary-dark);
+        transition: 0.3s;
+        display: inline-block;
+        cursor: pointer;
+        padding: 0;
+    }
+
+        .grid .linkbtn:hover {
+            text-decoration: none;
+        }
+
+    .msg-mb-mt {
+        margin-top: -9px !important;
+        margin-bottom: 5px !important
+    }
+
+    .msgPad {
+        padding-top: 0.55rem !important;
+        padding-bottom: 0.7rem !important;
+    }
+
+    .msg-bradius {
+        border-radius: 4px 0 0 4px !important;
+    }
+
+    .cancelBtn-Msg {
+        background-color: #e9a400;
+        border-radius: 0 4px 4px 0 !important;
+        color: #FFFFFF !important;
+    }
+    .tblWidth{
+        width:1300px !important;
+    }
+        .tblWidth thead th:nth-child(5){
+            width:400px;
+        }
+</style>
+
+<div class="tab-content" id="dViewBoundaryPush">
+    <div id="BoundaryPush" class="tab-pane fade in active show">
+        @using (Ajax.BeginForm("BoundaryPushToGis", "Main", new AjaxOptions
+        {
+            //OnSuccess = "OnSuccess",
+            //OnSuccess = "OnSuccess",
+            HttpMethod = "POST",
+            UpdateTargetId = "dViewBoundaryPush",
+            LoadingElementId = "dvViewBoundaryPush",
+            InsertionMode = InsertionMode.Replace
+        },
+                    new { id = "frmBoundaryPushDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+            @Html.HiddenFor(m => m.system_id, new { id = "psystemid", name = "psystemid" })
+            @Html.HiddenFor(m => m.entity_type, new { id = "pentitytype", name = "pentitytype" })
+            <input type="hidden" id="Count_Chkboxes"/>
+            <div class="space-pad d-flex --gap10 whiteSpace">
+
+                <div class="d-flex boundPushChoosenField --gap10">
+                    <label class="white-space">Search By:</label>
+                    @Html.DropDownListFor(m => m.viewBoundaryPush.searchBy, new SelectList(Model.lstBoundaryBindSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select", @id = "ddlsearchBy" })
+
+                </div>
+                <div class="d-flex --gap10">
+                    <label class="white-space">Search Text:</label>
+                    @Html.TextBoxFor(m => m.viewBoundaryPush.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "boundPushChoosenField form-control", @placeholder = "Search text", @maxlength = 100 })
+
+                </div>
+                <button type="submit" class="btn btn-success" id="btnBoundaryPush"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+
+                <button type="submit" class="btn btn-default" id="btnResetSearchFilter"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+                <div class="@(Model.pushboundaryDetailList.Count > 0 ? "" : "dvdisabled")">
+                    <button type="submit" id="btnRefresh" style="display:none;" name="commandName" value="PageRefresh" class="btn btn-success"> Refresh Page</button>
+                    <input type="hidden" name="ActionName" id="hdnAction" />
+
+                    @if (!Model.bt_lock)
+                    {
+                        <button type="button" class="btn btn-success" id="btnBoundaryPushDetail">Push To GIS</button>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.message))
+                    {
+
+                        <div class="d-flex jc-center">
+                            <div class="messageBox d-flex fw-bold" id="dvMessage">
+                                @Model.message
+
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+                <div class="@(Model.pushboundaryDetailList.Count > 0 ? "" : "dvdisabled")">
+                    <button id="btnBoundarypushdetails" type="button" class="exp--btn" value="Export"><span class="fa fa-download mr-03" style="margin-right: -2px;"></span> Export</button>
+                </div>
+            </div>
+            <div class="d-flex tablePad--tn --gap10 pose-rel">
+                <div>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<b>@grid.TotalRowCount</b></div>
+
+                <div>
+                    Selected: <b id="count-checked-checkboxes">0</b>
+                </div>
+                <div class="d-flex  pos-Absl jc-center">
+                    <div class="messageBox msgPad msg-mb-mt d-flex fw-bold" id="dvBackgroundMessage">
+                        @Model.status
+
+                    </div>
+                    <button type="button" class="btn cancelBtn-Msg msg-mb-mt" style="margin-left: -2px;" id="btnCancel">X</button>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.VersionName))
+                {
+                    <div class="ml-auto">
+                        <b> Version Name: &nbsp;</b>@Model.VersionName
+                    </div>
+                }
+            </div>
+            if (Model.pushboundaryDetailList.Count > 0)
+            {
+                @Html.Partial("_BoundaryPushDashboardList", Model)
+            }
+            else
+            {
+                <div class="nr-found">
+                    <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+                </div>
+            }
+        }
+    </div>
+        </div>
+
+<script>
+    var IsActionEnabledboundarypush = false;
+    var intervalId;
+    clearInterval(intervalId);
+    completmessage = function (system_id, entity_type) {
+        clearInterval(intervalId);
+        if (intervalId) {
+            clearInterval(intervalId);
+        }
+        if (!IsActionEnabledboundarypush) {
+            intervalId = setInterval(function () { RefreshMessageByAjax(system_id, entity_type); }, 10000);
+        }
+
+    }
+    var checkedValue = [];
+    var psystemId = $('#psystemid').val();
+    var pentityType = $('#pentitytype').val();
+
+    $("#btnBoundaryPushDetail").click(function () {
+        debugger;
+        var _MaxPushLimit = @ApplicationSettings.MaxMultiplePushToGis;
+        var SelectCheckBoxes = $('input#Count_Chkboxes').text();
+        if (SelectCheckBoxes > _MaxPushLimit) {
+            alert("Maximum "+ @ApplicationSettings.MaxMultiplePushToGis +" data can be pushed at once!");
+            $("#btnBoundaryPushDetail").prop("disabled", true);
+            return false;
+        }
+      
+        for (var i = 0; i < inputElements.length; i++) {
+            if (inputElements[i].checked) {
+                var val = inputElements[i].value;
+                var arr = val.split(',');
+                checkedValue.push({
+                    'system_id': arr[0],
+                    'entity_type': arr[1],
+                    'gis_design_id': arr[2],
+                    'gis_object_id': arr[3],
+                    'user_name': arr[4],
+                    'request_time': arr[5],
+                    'status': arr[6],
+                    'message': arr[7],
+                    'p_system_id': arr[8],
+                    'p_entity_type': arr[9],
+                });
+
+            }
+        }
+
+
+        ajaxReq('Main/BoundaryGetDataToList', { data: checkedValue, psystemId, pentityType }, true, function (resp) {            
+            if (typeof (resp.results) !== 'undefined') {
+                if (resp.results != null) {
+                    alert(resp.results);                   
+                }
+                else {
+                    alert("Unable to get GIS Response!");
+                }
+            }
+            else {
+                $("#btnBoundaryPushDetail").prop("disabled", true);
+                $('[name="_BtnSinglePush"]').addClass("disabled", "disabled");
+                $('[name="ids"]').addClass("disabled", "disabled");
+                $("#cbSelectAll").addClass("disabled", "disabled"); 
+                $('#dvBackgroundMessage').text(resp.process_message);
+                $("#dvBackgroundMessage").show();
+                $("#btnCancel").hide();
+                completmessage(resp.system_id, resp.entity_type);
+            }
+           
+            //$("#btnBoundaryPushDetail").prop("disabled", false);
+
+        }, true, true);
+    });
+
+
+
+
+    $("#btnCancel").on("click", function () {
+
+        $("#dvBackgroundMessage").hide();
+        $("#btnCancel").hide();
+        //$("#closeModalPopup").trigger("click");
+        clearInterval(intervalId);
+    });
+
+    function RefreshMessageByAjax(system_id, entity_type) {
+
+        var gispush_system_id = system_id;
+        var gisentity_type = entity_type;
+
+        if (IsActionEnabledboundarypush == true) {
+            return;
+        }
+        ajaxReq('Main/RefreshMessagepush', {
+            'systemId': gispush_system_id,
+            'EntityType': gisentity_type
+        }, true, function (resp) {
+            if (resp.status == 'Success') {
+                $('#dvBackgroundMessage').text(resp.process_message);
+                $("#btnCancel").show();
+                IsActionEnabledboundarypush = true;
+                ajaxReq('Main/BoundaryPushToGisList', { 'system_id': system_id, 'entity_type': entity_type }, true, function (resp) {
+                    $("#divpushBoundaryDetails").html(resp);
+                    $('#count-checked-checkboxes').text(0);
+                });
+                $('[name="_BtnSinglePush"]').removeClass("disabled", "");
+                $('[name="ids"]').removeClass("disabled", "");
+                $("#cbSelectAll").removeClass("disabled", ""); 
+
+                //ajaxReq('Main/GISPostVersion', {
+                //    'systemId': gispush_system_id,
+                //    'EntityType': gisentity_type
+                //}, true, function (resp) {
+                //    //cosnole.log(resp);
+                //});
+            }
+            else {
+                $('#dvBackgroundMessage').text(resp.process_message);
+            }
+
+        }, false, false);
+
+    }
+
+
+
+    $("#btnBoundarypushdetails").on("click", function () {
+
+        window.location = appRoot + 'Main/ExportBoundaryGetDataToList';
+    });
+    $(document).ready(function () {
+        var _status = '@Model.status';
+        if (_status != '') {
+            if ('@Model.status' == 'inprogress') {
+                $("#btnBoundaryPushDetail").prop("disabled", true);
+                $('[name="_BtnSinglePush"]').addClass("disabled", "disabled");
+                $('#dvBackgroundMessage').text('@Model.process_message');
+                $('[name="ids"]').addClass("disabled", "disabled");
+                $("#cbSelectAll").addClass("disabled", "disabled"); 
+                $("#dvBackgroundMessage").show();
+                $("#btnCancel").hide();
+                completmessage(@Model.system_id, '@Model.entity_type');
+            }
+            else {
+                $("#dvBackgroundMessage").hide();
+                $("#btnCancel").hide();
+            }
+    }
+        else {
+            $("#dvBackgroundMessage").hide();
+            $("#btnCancel").hide();
+        }
+
+        $("#btnBoundaryPushDetail").prop("disabled", true);
+
+        $('th a, tfoot a').on("click", function () {
+
+            $('#frmBoundaryPushDetails').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        addDefaultSortingIcons("tblgisboundarypushDetails");
+        onGridHeaderClick('tblgisboundarypushDetails');
+        GridColor();
+       // showBulkApproved();
+        var $checkboxes = $('#tblgisboundarypushDetails td input[type="checkbox"]');
+        $('[data-toggle="tooltip"]').tooltip();
+        $checkboxes.change(function () {
+            $("#btnBoundaryPushDetail").prop("disabled", false);
+            var ischecked = this.checked;
+            this.checked = ischecked;
+            var countCheckedCheckboxes = $checkboxes.filter(':checked').length;
+            $('#count-checked-checkboxes').text(countCheckedCheckboxes);
+            $('#Count_Chkboxes').text(countCheckedCheckboxes);
+            if (ischecked == false)
+                $("#cbSelectAll").prop("checked", false);
+            if (countCheckedCheckboxes == 0)
+                $("#btnBoundaryPushDetail").prop("disabled", true);
+            if (countCheckedCheckboxes == @Model.viewBoundaryPush.totalRecord)
+                $("#cbSelectAll").prop("checked", true);
+        });
+    });
+
+    function showBulkApproved() {
+
+        // 1st replace first column header text with checkbox
+        $("#tblgisboundarypushDetails th").each(function () {
+            if ($.trim($(this).text().toString().toLowerCase()) === "action") {
+                /*$(this).text('');*/
+                $(this).removeAttr("class");
+                $("<input/>", { type: "checkbox", id: "cbSelectAll", name:"_cbSelectAll" ,value: "" }).prependTo($(this));
+
+            }
+        });
+
+
+    }
+    var inputElements = document.getElementsByClassName('chkSurvey mr-03');
+    $("#cbSelectAll").on("click", function () {      
+        var ischecked = this.checked;
+        var countCheckedCheckboxes = 0;
+        $('#tblgisboundarypushDetails').find("input:checkbox").each(function () {
+            $("#btnBoundaryPushDetail").prop("disabled", false);
+            this.checked = ischecked;
+            var $checkboxes = $('#tblgisboundarypushDetails td input[type="checkbox"]');
+            countCheckedCheckboxes = $checkboxes.filter(':checked').length;
+            $('#count-checked-checkboxes').text(countCheckedCheckboxes);
+            $('#Count_Chkboxes').text(countCheckedCheckboxes);
+        });
+        if (ischecked == false) {
+            $("#btnBoundaryPushDetail").prop("disabled", true);
+        }
+    });
+
+
+    //function OnSuccess(data) {
+    //    $("#BoundaryPush").hide();
+    //}
+    $('.chosen-select').chosen({ width: '100%', });
+
+    $("#btnResetSearchFilter").on("click", function () {
+        $('#txtSearchText').val('');
+        $('#ddlsearchBy').val('').trigger("chosen:updated");
+    });
+
+    function entityShowOnMap(systemID, eType, gType) {
+        si.ShowEntityOnMap(systemID, eType, gType);
+        $('#ModalPopUp .minmizeModel>i').trigger("click");
+    }
+    function GridColor() {
+
+        $("#tblgisboundarypushDetails tbody tr").each(function (index) {
+            var statusText = $(this).children('td:nth-child(4)').text().trim();
+            if (statusText.toUpperCase() == "SUCCESS") {
+                $(this).children('td').css("background-color", "#ffddcc");
+            }
+            else {
+                $(this).children('td').css("background-color", "#FFFFFF");
+            }
+
+        });
+    }
+    function show_BulkApproved() {
+        $("#tblgisboundarypushDetails th").each(function () {
+            if ($.trim($(this).text().toString().toLowerCase()) === "action") {
+                $(this).removeAttr("class");
+               // $("<input/>", { type: "checkbox", id: "cbSelectAll", value: "" }).prependTo($(this));
+            }
+        });
+    }
+    var inputElements = document.getElementsByClassName('chkSurvey mr-03');
+    $('.chosen-select').chosen({ width: '100%', });
+
+</script>
+

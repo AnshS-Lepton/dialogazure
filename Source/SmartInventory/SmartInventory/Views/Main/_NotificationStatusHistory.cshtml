@@ -1,0 +1,53 @@
+﻿@model Models.ViewAuditMasterModel
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objFilterAttributes.pageSize, canSort: false,
+        ajaxUpdateContainerId: "divNotificationStatusHistory", ajaxUpdateCallback: "onGridHeaderClick('tblNotificationStatusHistory');$('#tblNotificationStatusHistory .webGridHeader th').removeClass('bothorder');");
+    grid.Bind(Model.lstData, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+    if (Model.objFilterAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objFilterAttributes.currentPage - 1;
+    }
+}
+<!DOCTYPE html>
+<div class="libDetail">
+    @if (Model.lstData.Count > 0)
+    {
+        <div id="divNotificationStatusHistory" style="padding:10px;padding-top:0px;">
+            <div class="form-group row" id="dvBtnAction" style="padding:0px 5px;">
+                <div class="div_totalRecord col-sm-4" style="float: left;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@grid.TotalRowCount</span></b></div>
+                <div class="col-sm-8" style="float: right; text-align: right; cursor:pointer;"></div>
+            </div>
+            <div id="dvViewExportData" style="padding: 4px;padding-top: 0px;">
+                <div class="table-responsive tble_cls">
+                    @grid.GetHtml(tableStyle: "webgrid",
+                         headerStyle: "webGridHeader",
+                         alternatingRowStyle: "alt",
+                         htmlAttributes: new { id = "tblNotificationStatusHistory" },
+                         mode: WebGridPagerModes.All)
+                    @Html.Hidden("dir", grid.SortDirection)
+                    @Html.Hidden("col", grid.SortColumn)
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="nr-found">
+            <span>@Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $('#tblNotificationStatusHistory .webGridHeader th').removeClass('bothorder');
+        $('tfoot a').each(function () {
+            var systemId = '@Model.systemId';
+            var entityType = '@Model.eType';
+            var oldLink = $(this).attr('href');
+            oldLink = oldLink + '&systemId=' + systemId;
+            oldLink = oldLink + '&eType=' + entityType;
+            $(this).attr('href', oldLink);
+        });
+    });
+</script>
+

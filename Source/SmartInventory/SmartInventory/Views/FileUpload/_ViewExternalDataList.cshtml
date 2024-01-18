@@ -1,0 +1,36 @@
+﻿@model List<Models.ExternalDataFileList>
+@using Utility
+@foreach (var item in Model)
+{
+    <div class="srch" id="dv_kml_@item.id">
+        <div class="fontIDExtnlData">
+            <div class="plan--name">
+                <div class="plan--name_box">
+                    <i class="icon-cricle fa-fw m-r-xs plan_name-circle" id="HighlightCircle_@item.id"></i>
+                </div>
+                <div class="plan--name_content">
+                    <span class="plan_name-text" id=@item.file_name> @item.display_filename (@item.file_size)</span>
+                    <span class="fontIDExtnlData importantcolor"><b class="externalDataUserLabel">@item.created_by_text</b> @MiscHelper.FormatDateTime(item.created_on.ToString())</span>
+                </div>
+            </div>
+                <div class="ml-auto pose-relate d-flex">
+                    <i class="fa fa-globe fa-fw m-r-xs i-icons-style i-icons-ptpb" id="dvHighlight_@item.id" data-filepath="@item.filepath" data-type="@item.type" data-filename="@item.file_name" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_112" style="cursor: pointer;" onclick="extnldata.ShowExternalData('@item.file_name','@item.filepath','@item.id','@item.type')"></i>
+                    <i class="glyphicon glyphicon-option-horizontal clsexrnlpopup" id="ExternalPopup"></i>
+                    <div class="drop_window">
+                        <ul>
+                            @if (item.login_user == item.created_by)
+                            {
+                                <li onclick="extnldata.deleteExternalDataFile('@item.file_name','@item.id','@item.filepath','@item.type')">@Resources.Resources.SI_GBL_GBL_GBL_GBL_002</li>
+                            }
+                            else
+                            {
+                                <li style="color: #cecdcd;cursor: not-allowed;">@Resources.Resources.SI_GBL_GBL_GBL_GBL_002</li>
+                            }
+                            <li onclick="extnldata.downloadExternalFile('@item.id')">@Resources.Resources.SI_ISP_GBL_GBL_GBL_038</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+}

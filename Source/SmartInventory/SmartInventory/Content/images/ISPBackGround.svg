@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <g id="back_grid" data-name="back grid" transform="translate(-4654 -1299)">
+    <rect id="Rectangle_2559" data-name="Rectangle 2559" width="64" height="64" transform="translate(4654 1299)" fill="#fff"/>
+    <g id="Group_5088" data-name="Group 5088" transform="translate(-12090 11184)" opacity="0.3">
+      <g id="Rectangle_2463" data-name="Rectangle 2463" transform="translate(16759 -9870)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="2" height="2" stroke="none"/>
+        <rect x="0.5" y="0.5" width="1" height="1" fill="none"/>
+      </g>
+      <g id="Rectangle_2463-2" data-name="Rectangle 2463" transform="translate(16791 -9870)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="2" height="2" stroke="none"/>
+        <rect x="0.5" y="0.5" width="1" height="1" fill="none"/>
+      </g>
+      <g id="Rectangle_2463-3" data-name="Rectangle 2463" transform="translate(16759 -9838)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="2" height="2" stroke="none"/>
+        <rect x="0.5" y="0.5" width="1" height="1" fill="none"/>
+      </g>
+      <g id="Rectangle_2463-4" data-name="Rectangle 2463" transform="translate(16791 -9838)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="2" height="2" stroke="none"/>
+        <rect x="0.5" y="0.5" width="1" height="1" fill="none"/>
+      </g>
+    </g>
+  </g>
+</svg>

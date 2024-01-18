@@ -1,0 +1,85 @@
+﻿@model List<Models.TrenchCustomerDetails>
+@using SmartInventory.Settings;
+<style>
+    .webgrid th {
+        color: #fff;
+    }
+</style>
+
+<div class="table-responsive tble_cls">
+    @if (Model.Count > 0)
+    {
+        <table id="tblTrenchCustomerDetails" class="grid" cellpadding="0" cellspacing="0">
+            <thead class="webGridHeader">
+                <tr>
+                    <th>Action</th>
+                    <th>SQNo.</th>
+                    <th>State</th>
+                    <th>Customer Name</th>
+                    <th>Service Type</th>
+                    <th>Route Name</th>
+                    <th>Pair Requirement</th>
+                    <th>Length (km)</th>
+                    <th>Status</th>
+                    <th>PO No</th>
+                    <th>PO Length(km)</th>
+                    <th>PO Release Date</th>
+                    <th>Period</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                    <th>Hoto No</th>
+                    <th>URID</th>
+                    <th>Hoto Status</th>
+                    <th>Hoto Date</th>
+                    <th>Route Name </th>
+                    <th>Hoto Length</th>
+                    <th>Total Core</th>
+                    <th>Live Core</th>
+                    <th>Reserved Core</th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model.Select((value, i) => new { i, value }))
+                {
+                    var value = item.value;
+                    var index = item.i;
+                    var sqid = (item.i + 1);
+                    <tr class="@(index % 2 == 0 ? "alt" : "")">
+                        <td>
+                            <a href="javascript:void(0)" onclick="si.TrenchCustomerDetails.addCustomerDetails(@value.system_id, '@value.trench_id')" title="Edit Customer"> <i class="glyphicon glyphicon-edit"></i></a>
+                            <a href="javascript:void(0)" onclick="si.TrenchCustomerDetails.deleteCustomerDetailsByID(@value.system_id, '@value.trench_id')" title="Delete"> <i class="glyphicon glyphicon-trash"></i></a>
+                            @*<a href="javascript:void(0)" onclick="si.TrenchCustomerDetails.GetAttachment('@value.system_id','@value.trench_id');">
+                                <i class="glyphicon glyphicon-save-file"></i></a>*@
+                        </td>
+                        <td>@sqid</td>
+                        <td>@value.state</td>
+                        <td>@value.customer_name</td>
+                        <td>@value.service_type</td>
+                        <td>@value.section_name</td>
+                        <td>@value.pair_requirement</td>
+                        <td>@value.length_in_kms</td>
+                        <td>@value.status</td>
+                        <td>@value.po_no</td>
+                        <td>@value.po_length_km</td>
+                        <td>@value.po_release_date</td>
+                        <td>@value.period</td>
+                        <td>@value.from_date</td>
+                        <td>@value.to_date</td>
+                        <td>@value.hoto_no</td>
+                        <td>@value.urid</td>
+                        <td>@value.hoto_status</td>
+                        <td>@value.hoto_date</td>
+                        <td>@value.route_name</td>
+                        <td>@value.hoto_length</td>
+                        <td>@value.total_core</td>
+                        <td>@value.live_core</td>
+                        <td>@value.reserved_core</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

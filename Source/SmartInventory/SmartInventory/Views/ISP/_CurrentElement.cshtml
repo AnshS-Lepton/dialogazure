@@ -1,0 +1,112 @@
+﻿@model Models.ISP.StructureElement
+  @{ 
+      string showText = "hidden";
+      var parentDivId = "divParentFirstBox_" + Model.entity_type + "_" + Model.entity_system_id;
+      var parentSecondDivId = "divParentSecondBox_" + Model.entity_type + "_" + Model.entity_system_id;
+  } 
+        @if (Model.parent_mapping_id == 0)
+        {
+            
+            <div class="EntityBox" data-original-title>
+                <div id="div_@(Model.entity_type.ToUpper() + "_" + Model.entity_system_id)" 
+                     class="Element elementDotBox entityInfo icon-@Model.entity_type.ToUpper() element-@Model.entity_type.ToUpper() @Model.entity_category network-status-@Model.network_status"
+                     data-additionalattr="@Model.additional_attributes"
+                     data-entity-type="@Model.entity_type"
+                     data-entity-title="@Model.entity_display_name"
+                     data-entity-geomtype="POINT"
+                     data-is-isp-child-layer="@Model.is_isp_child_layer"
+                     data-system-id="@Model.entity_system_id"
+                     data-network-id="@Model.network_id"
+                     title="@Model.network_id"
+                     data-shaft-id="@Model.shaft_id"
+                     data-floor-id="@Model.floor_id"
+                     data-network-status="@Model.network_status"
+                     data-parent-entity-type="@Models.EntityType.Structure.ToString()"
+                     data-parent-system-id="@Model.structure_id"
+                     data-parent-network-id="">
+
+                    @if (Model.is_isp_tp)
+                    {
+                        <span class="dot top" data-node-type="top"></span>
+                        <span class="dot left" data-node-type="left"></span>
+                        <span class="dot bottom" data-node-type="bottom"></span>
+                        <span class="dot right" data-node-type="right"></span>
+                    }
+                    @if (Model.entity_type.ToUpper() == "UNIT")
+                    {
+                        <span data-original-title>@(Model.entity_category)</span>
+                    }
+                </div>
+
+                @if (Model.entity_type.ToUpper() == "UNIT")
+                {
+                    showText = "visible";
+                }
+                @if (Model.shaft_id > 0 && Model.floor_id > 0)
+                {
+                    <div class="entityboxcount" style="visibility: hidden;"><i class="icon-Collapse_expand"></i> <span>0</span> </div>
+                }
+                <div class="ParentBox entityParentBox" data-original-title="" title="" style="visibility: @showText;">
+                    @if (Model.shaft_id == 0 && Model.floor_id > 0)
+                    {
+                        <div class="leftDiv" data-original-title="" title="">
+                        </div>
+
+                        <div class="rightDiv" data-original-title="" title="">
+                        </div>
+                    }
+                    else
+                    {
+
+                        <i class="icon-Collapse_expand"></i>
+                        <div class="ParentFirstBox" id="@parentDivId"> </div>
+                    }
+                    <div class="UnitDimension" style="margin-top:91px;text-align: center;" data-original-title="" title="">@(!string.IsNullOrEmpty(Model.total_ports) ? (Model.entity_type == Models.EntityType.UNIT.ToString() ? Model.total_ports : "Port-" + Model.total_ports) : "")</div>
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="ParentInnerBox">
+                <div id="div_@(Model.entity_type.ToUpper() + "_" + Model.entity_system_id)"
+                     class="ChildEntity elementDotBox entityInfo icon-@Model.entity_type.ToUpper() element-@Model.entity_type.ToUpper() @Model.entity_category network-status-@Model.network_status"
+                     data-additionalattr="@Model.additional_attributes"
+                     data-entity-type="@Model.entity_type"
+                     data-entity-title="@Model.entity_display_name"
+                     data-entity-geomtype="POINT"
+                     data-network-id="@Model.network_id"
+                     data-is-isp-child-layer="@Model.is_isp_child_layer"
+                     data-system-id="@Model.entity_system_id"
+                     title="@Model.network_id"
+                     data-parent-system-id="@Model.parent_mapping_id"
+                     data-network-status="@Model.network_status"
+                     data-parent-entity-type=""
+                     data-parent-network-id=""
+                     data-floor-id="@Model.floor_id">
+                    @if (Model.is_isp_tp)
+                    {
+                        <span class="dot top" data-node-type="top"></span>
+                        <span class="dot left" data-node-type="left"></span>
+                        <span class="dot bottom" data-node-type="bottom"></span>
+                        <span class="dot right" data-node-type="right"></span>
+                    }
+
+                </div>
+                @*<div class="ParentBox entityParentBox" data-original-title="" title="" style="visibility: @showText;">
+                    @if (Model.shaft_id == 0 && Model.floor_id > 0 )
+                    {
+                        <div class="leftDiv" data-original-title="" title="">
+                        </div>
+
+                        <div class="rightDiv" data-original-title="" title="">
+                        </div>
+                    }
+                    else
+                    {
+                        <i class="icon-Collapse_expand"></i>
+                        <div class="ParentFirstBox" id="@parentDivId"> </div>
+                    }
+                </div>*@
+            </div>
+        }

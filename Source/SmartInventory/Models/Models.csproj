@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2E40E756-53A0-4A32-9614-15F0A7E126DB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Models</RootNamespace>
+    <AssemblyName>Models</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GeoAPI">
+      <HintPath>..\SmartInventory\DLL\GeoAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp">
+      <HintPath>..\SmartInventory\DLL\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.2.2.7\lib\net45\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="NetTopologySuite, Version=1.15.0.0, Culture=neutral, PublicKeyToken=f580a05016ebada1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NetTopologySuite.1.13.0\lib\net40-client\NetTopologySuite.dll</HintPath>
+    </Reference>
+    <Reference Include="NetTopologySuite.IO.GeoTools">
+      <HintPath>..\SmartInventory\DLL\NetTopologySuite.IO.GeoTools.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql, Version=2.2.7.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.2.2.7\lib\net45\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.0.0\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AdditionalAttributes.cs" />
+    <Compile Include="AdditionalAttributes\AdditionalAttributeModel.cs" />
+    <Compile Include="Admin\ChangeConfigurationSetting.cs" />
+    <Compile Include="Admin\ConstructionOhLogicMaster.cs" />
+    <Compile Include="Admin\DynamicTheme.cs" />
+    <Compile Include="Admin\LayerSettings.cs" />
+    <Compile Include="Admin\OrthoImageModel.cs" />
+    <Compile Include="Admin\BusinessLayer.cs" />
+    <Compile Include="Admin\OTPAuthenticationSettings.cs" />
+    <Compile Include="GisApiLog.cs" />
+    <Compile Include="ApiResponse.cs" />
+    <Compile Include="CustDistance.cs" />
+    <Compile Include="Dashboard\HierarchyMaster.cs" />
+    <Compile Include="Dashboard\KPIMaster.cs" />
+    <Compile Include="Dashboard\KPIMasterResult.cs" />
+    <Compile Include="DataImport.cs" />
+    <Compile Include="DeviceSearch.cs" />
+    <Compile Include="GipipeMaster.cs" />
+    <Compile Include="ExportReportLog.cs" />
+    <Compile Include="FATDetail.cs" />
+    <Compile Include="LongRunningQueries.cs" />
+    <Compile Include="PrintSavedTemplate.cs" />
+    <Compile Include="Admin\Landbase_label_Settings.cs" />
+    <Compile Include="Admin\ManageDropdownValues.cs" />
+    <Compile Include="Admin\SearchLandBaseLayerSetting.cs" />
+    <Compile Include="ConduitMaster.cs" />
+    <Compile Include="Redline.cs" />
+    <Compile Include="RouteAssetDeatils.cs" />
+    <Compile Include="SchedulerLog.cs" />
+    <Compile Include="Serviceability.cs" />
+    <Compile Include="SourceIdList.cs" />
+    <Compile Include="Accessories.cs" />
+    <Compile Include="Admin\AdvancedSettings.cs" />
+    <Compile Include="Admin\CableColorSettings.cs" />
+    <Compile Include="Admin\CableColourSettings.cs" />
+    <Compile Include="Admin\ConfigurationSetting.cs" />
+    <Compile Include="Admin\ConnectionLabelSettings.cs" />
+    <Compile Include="Admin\Dashboard.cs" />
+    <Compile Include="Admin\LabelSettings.cs" />
+    <Compile Include="Admin\LandBaseSettings.cs" />
+    <Compile Include="Admin\Misc.cs" />
+    <Compile Include="Admin\EnumCollection.cs" />
+    <Compile Include="Admin\InfoSetting.cs" />
+    <Compile Include="Admin\OpticalLinkBudget.cs" />
+    <Compile Include="Admin\Project.cs" />
+    <Compile Include="Admin\SearchSetting.cs" />
+    <Compile Include="Admin\Vendor.cs" />
+    <Compile Include="Admin\VendorSpecification.cs" />
+    <Compile Include="Admin\APIConsumerMaster.cs" />
+    <Compile Include="Feasibility\FeasibilityHistoryModel.cs" />
+    <Compile Include="FiberCutTracing.cs" />
+    <Compile Include="LandBaseLayer.cs" />
+    <Compile Include="NetworkPlanning.cs" />
+    <Compile Include="PrintExportLog.cs" />
+    <Compile Include="ApiErrorLog.cs" />
+    <Compile Include="APIRequestLog.cs" />
+    <Compile Include="API\ADFSAuth.cs" />
+    <Compile Include="API\APICommonModels.cs" />
+    <Compile Include="API\ApiResponse.cs" />
+    <Compile Include="API\Area.cs" />
+    <Compile Include="API\Building.cs" />
+    <Compile Include="API\HeaderAttributes.cs" />
+    <Compile Include="API\Users.cs" />
+    <Compile Include="Area.cs" />
+    <Compile Include="AssociateCustomerElements.cs" />
+    <Compile Include="AuditMaster.cs" />
+    <Compile Include="BarCode.cs" />
+    <Compile Include="BOM.cs" />
+    <Compile Include="Building.cs" />
+    <Compile Include="Cable.cs" />
+    <Compile Include="ColumnMapping.cs" />
+    <Compile Include="Competitor.cs" />
+    <Compile Include="Customer.cs" />
+    <Compile Include="DateTimeHelper.cs" />
+    <Compile Include="DistributionBox.cs" />
+    <Compile Include="DSA.cs" />
+    <Compile Include="EmailLog.cs" />
+    <Compile Include="EndToEndSchematic.cs" />
+    <Compile Include="EntityDetail.cs" />
+    <Compile Include="EnumCollection.cs" />
+    <Compile Include="ErrorLog.cs" />
+    <Compile Include="Fault.cs" />
+    <Compile Include="Feasibility\FeasibilityHistory.cs" />
+    <Compile Include="Feasibility\FeasibilityInput.cs" />
+    <Compile Include="Feasibility\FeasibilityMaster.cs" />
+    <Compile Include="Feasibility\FeasibilityRouting.cs" />
+    <Compile Include="Feasibility\FeasibilityViewModel.cs" />
+    <Compile Include="FiberLink.cs" />
+    <Compile Include="FileUploader.cs" />
+    <Compile Include="Geom.cs" />
+    <Compile Include="GlobalSetting.cs" />
+    <Compile Include="Help.cs" />
+    <Compile Include="IntegrationSuperSet.cs" />
+    <Compile Include="IspEntityMapping.cs" />
+    <Compile Include="Admin\ISPModelMaster.cs" />
+    <Compile Include="ISP\ISPPortModel.cs" />
+    <Compile Include="ISP\ISPViewModel.cs" />
+    <Compile Include="ItemTemplate.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="JobPack.cs" />
+    <Compile Include="Layer.cs" />
+    <Compile Include="Legend.cs" />
+    <Compile Include="Library.cs" />
+    <Compile Include="MainViewModel.cs" />
+    <Compile Include="ManageResources.cs" />
+    <Compile Include="Misc.cs" />
+    <Compile Include="NetworkStage.cs" />
+    <Compile Include="NetworkTicket.cs" />
+    <Compile Include="ONTPortInfo.cs" />
+    <Compile Include="OSPSplice.cs" />
+    <Compile Include="Plan.cs" />
+    <Compile Include="PortDetail.cs" />
+    <Compile Include="ProjectArea.cs" />
+    <Compile Include="ProvinceBoundary.cs" />
+    <Compile Include="Rack.cs" />
+    <Compile Include="LayerRightsTemplate.cs" />
+    <Compile Include="RegionProvince.cs" />
+    <Compile Include="Roles.cs" />
+    <Compile Include="ROW.cs" />
+    <Compile Include="Search.cs" />
+    <Compile Include="DuctMaster.cs" />
+    <Compile Include="SplitCable.cs" />
+    <Compile Include="SplitCableEntity.cs" />
+    <Compile Include="SplitConduit.cs" />
+    <Compile Include="SplitConduitEntity.cs" />
+    <Compile Include="SplitTrenchEntity.cs" />
+    <Compile Include="SplitTrench.cs" />
+    <Compile Include="SplitDuct.cs" />
+    <Compile Include="SplitDuctEntity.cs" />
+    <Compile Include="SplitTrench.cs" />
+    <Compile Include="SplitTrenchEntity.cs" />
+    <Compile Include="SurveyAssignmentModel.cs" />
+    <Compile Include="TempUpload\TempADB.cs" />
+    <Compile Include="TempUpload\TempAntenna.cs" />
+    <Compile Include="TempUpload\TempBDB.cs" />
+    <Compile Include="TempUpload\TempBtsLayer.cs" />
+    <Compile Include="TempUpload\TempBuilding.cs" />
+    <Compile Include="TempUpload\TempCabinet.cs" />
+    <Compile Include="TempUpload\TempCable.cs" />
+    <Compile Include="TempUpload\TempCDB.cs" />
+    <Compile Include="TempUpload\TempCoupler.cs" />
+    <Compile Include="TempUpload\TempCustomer.cs" />
+    <Compile Include="TempUpload\TempGipipe.cs" />
+    <Compile Include="TempUpload\TempDuct.cs" />
+    <Compile Include="TempUpload\TempFDB.cs" />
+    <Compile Include="TempUpload\TempFMS.cs" />
+    <Compile Include="TempUpload\TempHandhole.cs" />
+    <Compile Include="TempUpload\TempHTB.cs" />
+    <Compile Include="TempUpload\TempLandBase.cs" />
+    <Compile Include="TempUpload\TempLoop.cs" />
+    <Compile Include="TempUpload\TempManhole.cs" />
+    <Compile Include="TempUpload\TempMicroduct.cs" />
+    <Compile Include="TempUpload\TempMPOD.cs" />
+    <Compile Include="TempUpload\TempONT.cs" />
+    <Compile Include="TempUpload\TempOpticalRepeater.cs" />
+    <Compile Include="TempUpload\TempPatchPanel.cs" />
+    <Compile Include="TempUpload\TempPOD.cs" />
+    <Compile Include="TempUpload\TempPoe.cs" />
+    <Compile Include="TempUpload\TempPOI.cs" />
+    <Compile Include="TempUpload\TempPole.cs" />
+    <Compile Include="TempUpload\TempRoom.cs" />
+    <Compile Include="TempUpload\TempSector.cs" />
+    <Compile Include="TempUpload\TempSpliceClosure.cs" />
+    <Compile Include="TempUpload\TempSplitter.cs" />
+    <Compile Include="TempUpload\TempStructure.cs" />
+    <Compile Include="TempUpload\TempTower.cs" />
+    <Compile Include="TempUpload\TempTree.cs" />
+    <Compile Include="TempUpload\TempTrench.cs" />
+    <Compile Include="TempUpload\TempVault.cs" />
+    <Compile Include="TempUpload\TempWallMount.cs" />
+    <Compile Include="TicketMaster.cs" />
+    <Compile Include="TicketStepsMaster.cs" />
+    <Compile Include="TokenDetail.cs" />
+    <Compile Include="TrenchMaster.cs" />
+    <Compile Include="UploadSummary.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ValidateEntityGeom.cs" />
+    <Compile Include="VectorLayers\VectorLayers.cs" />
+    <Compile Include="WebRequestLog.cs" />
+    <Compile Include="WFM\Email.cs" />
+    <Compile Include="WFM\JobOrderStatus.cs" />
+    <Compile Include="WFM\JobOrder.cs" />
+    <Compile Include="WFM\LatLngDistance.cs" />
+    <Compile Include="WFM\Ticket.cs" />
+    <Compile Include="WFM\UserTimeSheetInput.cs" />
+    <Compile Include="WFM\Wfm_Encryption.cs" />
+    <Compile Include="Wireless\Antenna.cs" />
+    <Compile Include="Wireless\MicrowaveLink.cs" />
+    <Compile Include="Wireless\Sectors.cs" />
+    <Compile Include="Wireless\Tower.cs" />
+    <Compile Include="WorkSpaceMaster.cs" />
+    <Compile Include="Mappings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Resources\Resources.csproj">
+      <Project>{3D2473BB-C2B2-4342-94A8-A779AEA337EC}</Project>
+      <Name>Resources</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

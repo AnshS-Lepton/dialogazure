@@ -1,0 +1,148 @@
+﻿@model Models.TicketTypeMaster
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="divAddNewTerminationPoint">
+    @using (Ajax.BeginForm("SaveTicketType", "Miscellaneous",
+                                        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddNewTerminationPoint", OnSuccess = "OnSuccess", },
+                                        new { id = "frmAddTerminationPoint", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id);
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Ticket Type<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.ticket_type, new { @class = "form-control", @placeholder = "Enter Ticket Type", @maxlength = "25", @id = "txt_ticket_type" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Description<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.description, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter Description", @id = "txt_description" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Color Code<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(m => m.color_code, new { @maxlength = "25", Style = "width:100% ;", @name = "color2", @class = "full col-md-10", @id = "txtColorCode" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Module<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.module, new List<SelectListItem>
+                 {
+                   new SelectListItem{ Text="-Select-", Value = "" },
+                    new SelectListItem{ Text="Network Ticket", Value = "Network_Ticket" },
+                 }, new { @id = "ddlmodule", @tabindex = "2", @title = "Search By", @class = "chosen-select form-control" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Abbreviation<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.abbreviation, new { @class = "form-control", @maxlength = "10", @id = "txt_abbreviation" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Icon Content:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.icon_content, new { @class = "form-control", @maxlength = "25", @id = "txt_IconContent" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Icon Class:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.icon_class, new { @class = "form-control", @maxlength = "25", @id = "txt_icon_class" })
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="footerModal d-flex" id="dvBtnAction">
+            <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+            @if (Model.id > 0)
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveTP" value="Update" />
+            }
+            else
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveTP" value="Save" />
+            }
+
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+
+    });
+    function IsValid() {
+         
+        if ($('#txt_ticket_type').val() == "") {
+            $('#txt_ticket_type').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txt_ticket_type').removeClass("errorClass");
+        }
+        if ($('#txt_description').val() == "") {
+            $('#txt_description').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txt_description').removeClass("errorClass");
+        }
+        if ($('#txtColorCode').val() == "") {
+            alert("Please Select Color Code !");
+            return false;
+        }
+        else {
+            $('#txtColorCode').removeClass("errorClass");
+        }
+        if ($('#ddlmodule').val() == "") {
+            $('#ddlmodule').next().addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddlmodule').next().removeClass("errorClass");
+        }
+        if ($('#txt_abbreviation').val() == "") {
+            $('#txt_abbreviation').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txt_abbreviation').removeClass("errorClass");
+        }
+    };
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+
+    function OnSuccess(data) {
+         
+        if (data.status == "OK") {
+            $("#closeModalPopup").trigger("click");
+        }
+
+        alert(data.message, 'Success', 'success');
+        setTimeout(function () {
+            window.location = appRoot + 'Miscellaneous/ViewTicketType';
+        }, 3000);
+
+    }
+    $("#btnCancel").on("click", function () {
+        $("#closeModalPopup").trigger("click");
+    });
+
+</script>

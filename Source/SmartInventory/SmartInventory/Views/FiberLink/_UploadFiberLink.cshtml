@@ -1,0 +1,158 @@
+﻿
+
+
+<form id="form1">
+    <div id="CreateTicket" class="tab-pane fade in active show">
+        <div class="BdrSet">
+            <div class="space-pad">
+                <div class="d-flex space-pad">
+                    <label class="mr-03"><b> @Resources.Resources.SI_OSP_GBL_NET_FRM_075:</b></label>
+                    <input type="file" id="UploadFiberLink1" accept=".xls,.xlsx" />
+                </div>
+                <label id="lblUploadProgress"></label>
+            </div>
+            <div class="ModalFooter d-flex">
+                @Html.ActionLink(@Resources.Resources.SI_OSP_GBL_NET_FRM_095, "DownloadUploadFiberTemplate", "FiberLink", new { FileName = "FiberTemplate" }, new { @class = "btn btn-default ml-auto", @id = "lnkDownloadTemplate" })
+                <button class="btn btn-success ml-10" type="button" onclick="UploadFile1('UploadFiberLink1','@Url.Action("UploadFiberLink", "FiberLink")','@Url.Action("DownloadUploadFiberLogs", "FiberLink")');">
+                    @Resources.Resources.GBL_GBL_GBL_GBL_GBL_008
+                </button>
+            </div>
+            <div class="BdrSet text-right">
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    var iteration = 0; //used for bulk upload progress..
+    var loadingtext = "Uploading";//used for bulk upload progress..
+    var timer = null;//used for bulk upload progress..;
+    var Updatedfields = [];
+
+    function UploadFile1(controlId, postUrl, logUrl) {
+         
+        var PerformAction = "Insert";
+
+        Updatedfields = []; // become list empty
+        $.each($("input[name='checkAll']:checked"), function () {
+            Updatedfields.push($(this).val());
+        });
+
+        var formData = new FormData();
+        var test = controlId;
+        var totalFiles = document.getElementById(controlId).files.length;
+        if (totalFiles > 0) {
+
+            //if(Updatedfields.length==0 && PerformAction =="Update")
+            //{
+            //    alert('Please select update fields!');
+            //    return false;
+            //}
+
+            if (isValidFileExtn(controlId)) {
+                var file = document.getElementById(controlId).files[0];
+                formData.append("FileUpload", file);
+                formData.append("PerformAction", PerformAction);
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            alert(MultilingualKey.SI_OSP_GBL_GBL_GBL_099);
+            return false;
+        }
+        PostFile(formData, postUrl, logUrl);
+    }
+
+    function PostFile(formdata, posturl, logUrl) {
+        $.ajax({
+            type: "POST",
+            url: posturl,
+            data: formdata,
+            async: true,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function () {
+                $(".ui-dialog").css("pointerEvents", "none");
+                $("#lblUploadProgress").css("display", "inline-block");
+                timer = setInterval(showUploadProgress, 500);
+            },
+            success: function (response) {
+                 
+                if (response.msg.toLowerCase() == "success") {
+                    //download logs..
+                    var abc = logUrl;
+                    window.location = logUrl;
+                    $("#UploadFiberLink").val('');
+                     
+                }
+                alert(response.strReturn);
+                $(".ui-dialog").css("pointerEvents", "auto");
+                $("#lblUploadProgress").css("display", "none");
+                clearInterval(timer);
+                $("#UploadFiberLink").val('');
+            },
+            error: function (error) {
+                $(".ui-dialog").css("pointerEvents", "auto");
+                $("#lblUploadProgress").css("display", "none");
+                clearInterval(timer);
+                // alert(error);
+                alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_026);
+                $("#UploadFiberLink").val('');
+                 
+                $(".ui-dialog").css("pointerEvents", "auto");
+            }
+        });
+    }
+
+    function isValidFileExtn(controlid) {
+         
+        var ext = $('#' + controlid).val().split('.').pop().toLowerCase();
+        if ($.inArray(ext, ['xls', 'xlsx']) == -1) {
+            //ShowFormMessage(false, "Please select files having extensions .xls or .xlsx only!", "");
+            alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_027);
+            return false;
+        }
+        return true;
+    }
+
+    function showUploadProgress() {
+        $("#lblUploadProgress").html(loadingtext + Array((++iteration % 5) + 1).join("."));
+    }
+
+
+    $(document).ready(function () {
+        $("#checkedAll").change(function () {
+            if (this.checked) {
+                $(".checkSingle").each(function () {
+                    this.checked = true;
+                })
+            } else {
+                $(".checkSingle").each(function () {
+                    this.checked = false;
+                })
+            }
+        });
+
+        $(".checkSingle").on("click", function () {
+            if ($(this).is(":checked")) {
+                var isAllChecked = 0;
+                $(".checkSingle").each(function () {
+                    if (!this.checked)
+                        isAllChecked = 1;
+                })
+                if (isAllChecked == 0) { $("#checkedAll").prop("checked", true); }
+            } else {
+                $("#checkedAll").prop("checked", false);
+            }
+        });
+
+        $('input[name=Action]').on("click", function () {
+            if ($(this).val() == "Update") { $('#UpdatedFiled').css("display", "initial"); }
+            else { $('#UpdatedFiled').css("display", "none"); $('input:checkbox').attr('checked', false); }
+        });
+    });
+</script>
+

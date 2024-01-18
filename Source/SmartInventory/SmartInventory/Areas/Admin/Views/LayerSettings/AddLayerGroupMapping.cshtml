@@ -1,0 +1,84 @@
+﻿@model Models.Admin.LayerGroupMapping
+
+<!DOCTYPE html>
+<div id="divAddNewTerminationPoint">
+    @using (Ajax.BeginForm("SaveLayerGroupMappingByGroupId", "LayerSettings",
+                                                new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddLayerGroupsMapping", OnSuccess = "OnSuccess", },
+                                                new { id = "frmAddLayerGroupsMapping", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.mapping_id);
+        @Html.HiddenFor(m => m.created_by);
+        @Html.HiddenFor(m => m.created_on);
+        @Html.HiddenFor(m => m.layer_seq);
+        <div class="EUTSetting" style="overflow:inherit;">
+            <div class="scrollDiv">
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Layer Name<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstLayerGrpMapping.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select", @id = "ddlLayers" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Group Name<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.group_id, new SelectList(Model.lstGroupDetails.Select(x => new { Value = x.group_id, Text = x.group_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlGroupName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ModalFooter" id="dvBtnAction">
+            <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+            @if (Model.mapping_id > 0)
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveLyrGrpMpng" value="Update" />
+            }
+            else
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveLyrGrpMpng" value="Save" />
+            }
+
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+        if ('@Model.mapping_id' != 0) {
+            btnSaveLyrGrpMpng.value = "Update";
+            $('#ddlLayers').next().addClass('.EUTSetting chosen-disabled');
+            $('#txtLayrName').attr('readonly', 'True');
+        }
+
+        if ('@Model.mapping_id' != 0) {
+
+        }
+    });
+    function IsValid() {
+        if ($('#ddlGroupName').val() == "") {
+            $('#ddlGroupName').next().addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddlGroupName').next().removeClass("errorClass");
+        }
+
+    };
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+
+function OnSuccess(data) {
+         
+        if (data.status == "OK") {
+            $("#closeModalPopup").trigger("click");
+            setTimeout(function () {
+                window.location = appRoot + 'LayerSettings/ViewLayerGroupsMapping';
+            }, 3000);
+            alert(data.message, 'Success', 'success');
+        }
+        else {
+            alert(data.message, 'Failed', 'Failed');
+        }
+}
+$("#btnCancel").on("click", function () {
+    $("#closeModalPopup").trigger("click");
+});
+</script>

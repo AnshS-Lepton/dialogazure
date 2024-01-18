@@ -1,0 +1,271 @@
+﻿@model Models.ISP.ISPViewModel
+@foreach (var Element in Model.StructureElements.Where(m => m.floor_id == ViewBag.FloorId && m.shaft_id == ViewBag.ShaftId))
+{
+    Model.parentElementInfo = Element;
+    if (Model.parentElementInfo.is_Element_Drawn == false && Model.parentElementInfo.parent_mapping_id == 0)
+    {
+        <div class="EntityBox">
+            @if (Element.is_isp_tp)
+            {
+                <div id="div_@(Element.entity_type.ToUpper()+"_"+Element.entity_system_id)" class="Element elementDotBox entityInfo icon-@Element.entity_type.ToUpper() element-@Element.entity_type.ToUpper() @Element.entity_category network-status-@Element.network_status"
+                     data-additionalattr="@Element.additional_attributes"
+                     data-entity-name="@Element.entity_name"
+                     data-entity-type="@Element.entity_type"
+                     data-entity-title="@Element.entity_display_name"
+                     data-entity-geomtype="POINT"
+                     data-is-isp-child-layer="@Element.is_isp_child_layer"
+                     data-system-id="@Element.entity_system_id"
+                     data-network-id="@Element.network_id"
+                     title="@Element.network_id"
+                     data-shaft-id="@Element.shaft_id"
+                     data-floor-id="@Element.floor_id"
+                     data-network-status="@Element.network_status"
+                     data-parent-entity-type="@Models.EntityType.Structure.ToString()"
+                     data-parent-system-id="@Model.StructureId"
+                     data-parent-network-id="@Model.StructureCode" data-is-splicer="@Element.is_isp_splicer">
+                    <span class="dot top" data-node-type="top"></span>
+                    <span class="dot left" data-node-type="left"></span>
+                    <span class="dot bottom" data-node-type="bottom"></span>
+                    <span class="dot right" data-node-type="right"></span>
+                </div>
+
+                var childElements1 = Model.StructureElements.Where(m => m.parent_mapping_id == Model.parentElementInfo.mapping_id).ToList();
+                if (childElements1.Count > 0)
+                {
+                    <div class="entityboxcount"><i class="icon-Collapse_expand"></i><span> @childElements1.Count </span></div>
+                }
+
+            }
+            else
+            {
+                <div id="div_@(Element.entity_type.ToUpper()+"_"+Element.entity_system_id)" class="Element elementDotBox entityInfo icon-@Element.entity_type.ToUpper() element-@Element.entity_type.ToUpper() @Element.entity_category network-status-@Element.network_status"
+                     data-additionalattr="@Element.additional_attributes"
+                     data-entity-name="@Element.entity_name"
+                     data-entity-type="@Element.entity_type"
+                     data-entity-title="@Element.entity_display_name"
+                     data-entity-geomtype="POINT"
+                     data-is-isp-child-layer="@Element.is_isp_child_layer"
+                     data-system-id="@Element.entity_system_id"
+                     data-network-id="@Element.network_id"
+                     title="@Element.network_id"
+                     data-shaft-id="@Element.shaft_id"
+                     data-floor-id="@Element.floor_id"
+                     data-network-status="@Element.network_status"
+                     data-parent-entity-type="@Models.EntityType.Structure.ToString()"
+                     data-parent-system-id="@Model.StructureId"
+                     data-parent-network-id="@Model.StructureCode" data-is-splicer="@Element.is_isp_splicer">
+                    @if (Element.entity_type.ToUpper() == "UNIT")
+                    {
+                        <span>@(Element.entity_category)</span>
+                    }
+                </div>
+            }
+
+            @{
+                var childElements = Model.StructureElements.Where(m => m.parent_mapping_id == Model.parentElementInfo.mapping_id).ToList();
+                if (childElements.Count > 0 || Element.entity_type == Models.EntityType.UNIT.ToString())
+                {
+                    var parentDivId = "divParentFirstBox_" + Element.entity_type + "_" + Element.entity_system_id;
+                    var parentSecondDivId = "divParentSecondBox_" + Element.entity_type + "_" + Element.entity_system_id;
+                    <div class="ParentBox entityParentBox">
+                        @if (Element.shaft_id == 0 && Element.floor_id > 0)
+                        {
+                            <div class="leftDiv">
+                                @for (int i = 0; i < childElements.Count; i++)
+                                {
+                                    var subChildList = Model.StructureElements.Where(m => m.parent_mapping_id == childElements[i].mapping_id).ToList();
+                                    if (subChildList.Count > 0)
+                                    {
+                                        var subChildParent1 = "divParentFirstBox_" + childElements[i].entity_type + "_" + childElements[i].entity_system_id;
+                                        <div class="EntityBox" data-original-title="" title="">
+                                            <div id="div_@(childElements[i].entity_type.ToUpper() + "_" + childElements[i].entity_system_id)" class="Element elementDotBox entityInfo icon-@childElements[i].entity_type.ToUpper() element-@childElements[i].entity_type.ToUpper() @childElements[i].entity_category network-status-@childElements[i].network_status"
+                                                 data-additionalattr="@childElements[i].additional_attributes"
+                                                 data-entity-name="@childElements[i].entity_name"
+                                                 data-entity-type="@childElements[i].entity_type"
+                                                 data-entity-title="@childElements[i].entity_display_name"
+                                                 data-entity-geomtype="POINT"
+                                                 data-is-isp-child-layer="@childElements[i].is_isp_child_layer"
+                                                 data-system-id="@childElements[i].entity_system_id"
+                                                 data-network-id="@childElements[i].network_id"
+                                                 title="@childElements[i].network_id"
+                                                 data-shaft-id="@childElements[i].shaft_id"
+                                                 data-floor-id="@childElements[i].floor_id"
+                                                 data-network-status="@childElements[i].network_status"
+                                                 data-parent-entity-type="@Element.entity_type"
+                                                 data-parent-system-id="@Element.entity_system_id"
+                                                 data-parent-network-id="@Element.network_id" data-is-splicer="@childElements[i].is_isp_splicer">
+                                                @if (childElements[i].is_isp_tp)
+                                                {
+                                                    <span class="dot top" data-node-type="top"></span>
+                                                    <span class="dot left" data-node-type="left"></span>
+                                                    <span class="dot bottom" data-node-type="bottom"></span>
+                                                    <span class="dot right" data-node-type="right"></span>
+                                                }
+                                            </div>
+                                            <div class="ParentBox entityParentBox" data-original-title="" title="">
+                                                <div class="ParentFirstBox" id="@subChildParent1">
+                                                    @for (int j = 0; j < subChildList.Count; j++)
+                                                    {
+                                                        if (subChildList[j].is_Element_Drawn == false)
+                                                        {
+
+                                                            <div class="ParentInnerBox">
+                                                                <div id="div_@(subChildList[j].entity_type.ToUpper() + "_" + subChildList[j].entity_system_id)" class="ChildEntity elementDotBox entityInfo icon-@subChildList[j].entity_type.ToUpper() element-@subChildList[j].entity_type.ToUpper() @subChildList[j].entity_category network-status-@subChildList[j].network_status"
+                                                                     data-additionalattr="@subChildList[j].additional_attributes"
+                                                                      data-entity-name="@subChildList[j].entity_name"
+                                                                     data-entity-type="@subChildList[j].entity_type"
+                                                                     data-entity-title="@subChildList[j].entity_display_name"
+                                                                     data-entity-geomtype="POINT"
+                                                                     data-network-id="@subChildList[j].network_id"
+                                                                     data-is-isp-child-layer="@subChildList[j].is_isp_child_layer"
+                                                                     data-system-id="@subChildList[j].entity_system_id"
+                                                                     title="@subChildList[j].network_id"
+                                                                     data-parent-system-id="@childElements[i].entity_system_id"
+                                                                     data-parent-entity-type="@childElements[i].entity_type"
+                                                                     data-network-status="@subChildList[j].network_status"
+                                                                     data-parent-network-id="@childElements[i].network_id"
+                                                                     data-floor-id="@Element.floor_id" data-is-splicer="@subChildList[j].is_isp_splicer">
+                                                                    @if (subChildList[j].is_isp_tp)
+                                                                    {
+                                                                        <span class="dot top" data-node-type="top"></span>
+                                                                        <span class="dot left" data-node-type="left"></span>
+                                                                        <span class="dot bottom" data-node-type="bottom"></span>
+                                                                        <span class="dot right" data-node-type="right"></span>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            subChildList[j].is_Element_Drawn = true;
+
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        childElements[i].is_Element_Drawn = true;
+                                    }
+                                }
+
+                            </div>
+                            <div class="rightDiv">
+                                @{
+                                    childElements = childElements.Where(m => m.is_Element_Drawn == false).ToList();
+                                    if (childElements.Count > 0)
+                                    {
+                                        <div class="ParentFirstBox" id="@parentDivId">
+                                            @for (int i = 0; i < childElements.Count; i++)
+                                            {
+                                                if (childElements[i].is_Element_Drawn == false)
+                                                {
+                                                    if ((i % 2 == 0 || childElements[i].is_cpe_entity) && childElements[i].entity_type != Models.EntityType.Customer.ToString())
+                                                    {
+                                                        <div class="ParentInnerBox">
+                                                            <div id="div_@(childElements[i].entity_type.ToUpper() + "_" + childElements[i].entity_system_id)" class="ChildEntity elementDotBox entityInfo icon-@childElements[i].entity_type.ToUpper() element-@childElements[i].entity_type.ToUpper() @childElements[i].entity_category network-status-@childElements[i].network_status"
+                                                                 data-additionalattr="@childElements[i].additional_attributes"
+                                                                data-entity-name="@childElements[i].entity_name"
+                                                                  data-entity-type="@childElements[i].entity_type"
+                                                                 data-entity-title="@childElements[i].entity_display_name"
+                                                                 data-entity-geomtype="POINT"
+                                                                 data-network-id="@childElements[i].network_id"
+                                                                 data-is-isp-child-layer="@childElements[i].is_isp_child_layer"
+                                                                 data-system-id="@childElements[i].entity_system_id"
+                                                                 title="@childElements[i].network_id"
+                                                                 data-parent-system-id="@Element.entity_system_id"
+                                                                 data-parent-entity-type="@Element.entity_type"
+                                                                 data-network-status="@childElements[i].network_status"
+                                                                 data-parent-network-id="@Element.network_id"
+                                                                 data-floor-id="@Element.floor_id" data-is-splicer="@childElements[i].is_isp_splicer">
+                                                                @if (childElements[i].is_isp_tp)
+                                                                {
+                                                                    <span class="dot top" data-node-type="top"></span>
+                                                                    <span class="dot left" data-node-type="left"></span>
+                                                                    <span class="dot bottom" data-node-type="bottom"></span>
+                                                                    <span class="dot right" data-node-type="right"></span>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        childElements[i].is_Element_Drawn = true;
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                        <div class="ParentFirstBox" id="@parentSecondDivId" style="height: 39px;padding-top: 5px;">
+                                            @for (int i = 0; i < childElements.Count; i++)
+                                            {
+                                                if ((i % 2 > 0 && !childElements[i].is_cpe_entity) || childElements[i].entity_type == Models.EntityType.Customer.ToString())
+                                                {
+                                                    if (childElements[i].is_Element_Drawn == false)
+                                                    {
+                                                        <div class="ParentInnerBox" style="padding-top:8px;">
+                                                            <div id="div_@(childElements[i].entity_type.ToUpper() + "_" + childElements[i].entity_system_id)" class="ChildEntity elementDotBox entityInfo icon-@childElements[i].entity_type.ToUpper() element-@childElements[i].entity_type.ToUpper() @childElements[i].entity_category network-status-@childElements[i].network_status"
+                                                                 data-additionalattr="@childElements[i].additional_attributes"
+                                                                  data-entity-name="@childElements[i].entity_name"
+                                                                 data-entity-type="@childElements[i].entity_type"
+                                                                 data-entity-title="@childElements[i].entity_display_name"
+                                                                 data-network-id="@childElements[i].network_id"
+                                                                 data-entity-geomtype="POINT"
+                                                                 data-is-isp-child-layer="@childElements[i].is_isp_child_layer"
+                                                                 data-system-id="@childElements[i].entity_system_id"
+                                                                 title="@childElements[i].network_id"
+                                                                 data-parent-system-id="@Element.entity_system_id"
+                                                                 data-parent-entity-type="@Element.entity_type"
+                                                                 data-network-status="@childElements[i].network_status"
+                                                                 data-parent-network-id="@Element.network_id"
+                                                                 data-floor-id="@Element.floor_id" data-is-splicer="@childElements[i].is_isp_splicer">
+                                                                @if (childElements[i].is_isp_tp)
+                                                                {
+                                                                    <span class="dot top" data-node-type="top"></span>
+                                                                    <span class="dot left" data-node-type="left"></span>
+                                                                    <span class="dot bottom" data-node-type="bottom"></span>
+                                                                    <span class="dot right" data-node-type="right"></span>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        childElements[i].is_Element_Drawn = true;
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    }
+                                }
+                            </div>
+                                    }
+                                    else
+                                    {
+                                        <i class="icon-Collapse_expand"></i>
+                                        <div class="ParentFirstBox" id="@parentDivId">
+                                            @for (int i = 0; i < childElements.Count; i++)
+                                            {
+                                                if (childElements[i].is_Element_Drawn == false)
+                                                {
+                                                    <div class="ParentInnerBox">
+                                                        <div id="div_@(childElements[i].entity_type.ToUpper() + "_" + childElements[i].entity_system_id)" class="ChildEntity entityInfo icon-@childElements[i].entity_type.ToUpper() element-@childElements[i].entity_type.ToUpper() @childElements[i].entity_category network-status-@childElements[i].network_status"
+                                                             data-additionalattr="@childElements[i].additional_attributes"
+                                                              data-entity-name="@childElements[i].entity_name"
+                                                             data-entity-type="@childElements[i].entity_type"
+                                                             data-entity-title="@childElements[i].entity_display_name"
+                                                             data-entity-geomtype="POINT"
+                                                             data-is-isp-child-layer="@childElements[i].is_isp_child_layer"
+                                                             data-system-id="@childElements[i].entity_system_id"
+                                                             title="@childElements[i].network_id"
+                                                             data-parent-system-id="@Element.entity_system_id"
+                                                             data-parent-entity-type="@Element.entity_type"
+                                                             data-network-status="@childElements[i].network_status"
+                                                             data-parent-network-id="@Element.network_id"
+                                                             data-floor-id="@Element.floor_id" data-is-splicer="@childElements[i].is_isp_splicer"></div>
+                                                    </div>
+                                                    childElements[i].is_Element_Drawn = true;
+                                                }
+                                            }
+                                        </div>
+                                    }
+
+                        <div class="UnitDimension" style="margin-top:91px;text-align: center;">@(!string.IsNullOrEmpty(Element.total_ports) ? (Element.entity_type == Models.EntityType.UNIT.ToString() ? Element.total_ports : "Port-" + Element.total_ports) : "")</div>
+                    </div>
+                                    }
+                                    Model.parentElementInfo.is_Element_Drawn = true;
+            }
+
+        </div>
+                                        }
+                                    }

@@ -1,0 +1,193 @@
+﻿<!DOCTYPE html>
+@model Models.Admin.ModelTypePortMaster
+
+
+<div class="width_popout">
+
+    @Html.HiddenFor(m => m.modelTypeMaster.inputport, new { id = "hdn_inputport" })
+    @Html.HiddenFor(m => m.modelTypeMaster.outputport, new { id = "hdn_outputport" })
+
+
+
+
+
+
+    @*@Html.HiddenFor(m => m.no_of_shaft)*@
+
+
+
+
+    @*<input type="button" id="btnAddShaftRow" value="Add" />*@
+    <div class="row">
+
+        <div class="col-md-6">
+            <div class="row" style="margin-bottom:10px;">
+                <div class="col-md-12">
+                    <span class="span_input">Input Port (<span id="spTotalInputPort">@Model.lstPortInfo.Count</span>)</span><span class="shaftRowAdd" id="btnAddInputPortRow" title="Add New Input Port Row "></span>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="tblInputPortLstInfo" class="shaftLstInfo" cellpadding="0" cellspacing="0" style="font-size:smaller; text-align: center;">
+
+                        <thead>
+                            <tr>
+                                <th>Port Name</th>
+                                <th>Port Type</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @for (int i = 0; i < Model.lstPortInfo.Count; i++)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        @Html.TextBoxFor(m => Model.lstPortInfo[i].port_name, new { @maxlength = "20", Style = " width:90%;" })
+                                    </td>
+
+
+
+                                    <td>
+
+                                        @Html.DropDownListFor(m => Model.lstPortInfo[i].port_type, new SelectList(Model.lstPortInfo[i].lstPort_type.Select(x => new { Value = x.Value.ToString(), Text = x.Text }), "Value", "Text"), new { @class = "shaft-tbl-position-ddl", @style = "padding:0;" })
+
+                                    </td>
+
+                                    <td>
+                                        @Html.HiddenFor(m => Model.lstPortInfo[i].port_type, new { @id = "port_type_" + i + "_Info" })
+                                        @Html.HiddenFor(m => m.lstPortInfo[i].id)
+                                        @Html.HiddenFor(m => m.lstPortInfo[i].port_no, new { @id = "port_no" })
+
+
+                                        @*@Html.HiddenFor(m => m.lstPortInfo[i].length)
+                                            @Html.HiddenFor(m => m.lstPortInfo[i].width)*@
+                                        @*@Html.HiddenFor(m => m.lstShaftInfo[i].shaft_position)*@
+                                        @*@Html.HiddenFor(m => m.lstPortInfo[i].port_inputoroutput, new { @id = "hdn_inputoroutput" });*@
+
+
+                                        @*<input type="button" value="Update" onclick="si.actionOnShaftRow(this,'update')" />
+                                            <input type="button" value="Edit" onclick="si.actionOnShaftRow(this, 'edit')" style="display:none;" />
+                                            <input type="button" value="Delete" onclick="si.actionOnShaftRow(this, 'delete')" />*@
+                                        @*<span class="shaftRowUpdate" title="Update" onclick="si.actionOnShaftRow(this, 'update')">
+                                            </span>*@
+                                        <span class="InputOutputPortRowDelete" title="Delete" id="inputPortRowDelete">x</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="col-md-6">
+            <div class="row" style="margin-bottom:10px;">
+                <div class="col-md-12">
+                    <span class="span_input">Output Port (<span id="spTotalOutputPort">@Model.lstOutputPortInfo.Count</span>)</span><span class="shaftRowAdd" id="btnAddOutputPortRow" title="Add New Output Port Row">
+                    </span>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="tblOutputPortLstInfo" class="shaftLstInfo" cellpadding="0" cellspacing="0" style="font-size:smaller;    text-align: center;">
+
+                        <thead>
+                            <tr>
+
+                                <th>Port Name</th>
+                                <th>Port Type</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @for (int i = 0; i < Model.lstOutputPortInfo.Count; i++)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @Html.TextBoxFor(m => Model.lstOutputPortInfo[i].port_name, new { @maxlength = "20", Style = " width:90%;" })
+                                    </td>
+
+                                    <td>
+
+                                        @Html.DropDownListFor(m => Model.lstOutputPortInfo[i].port_type, new SelectList(Model.lstOutputPortInfo[i].lstPort_type.Select(x => new { Value = x.Value.ToString(), Text = x.Text }), "Value", "Text"), new { @class = "shaft-tbl-position-ddl", @style = "padding:0;" })
+
+                                    </td>
+                                    <td>
+                                        @Html.HiddenFor(m => Model.lstOutputPortInfo[i].port_type, new { @id = "port_type_" + i + "_Info" })
+                                        @Html.HiddenFor(m => m.lstOutputPortInfo[i].id)
+                                        @Html.HiddenFor(m => m.lstOutputPortInfo[i].port_no, new { @id = "port_no" })
+                                        @*@Html.HiddenFor(m => m.lstOutputPortInfo[i].port_inputoroutput, new { @id = "port_inputoroutput" });*@
+                                        @*@Html.HiddenFor(m => m.lstPortInfo[i].length)
+                                            @Html.HiddenFor(m => m.lstPortInfo[i].width)*@
+                                        @*@Html.HiddenFor(m => m.lstShaftInfo[i].shaft_position)*@
+                                        @*  @Html.HiddenFor(m => m.lstPortInfo[i].port_inputoroutput);*@
+
+
+
+
+                                        @*<input type="button" value="Update" onclick="si.actionOnShaftRow(this,'update')" />
+                                            <input type="button" value="Edit" onclick="si.actionOnShaftRow(this, 'edit')" style="display:none;" />
+                                            <input type="button" value="Delete" onclick="si.actionOnShaftRow(this, 'delete')" />*@
+                                        @*<span class="shaftRowUpdate" title="Update" onclick="si.actionOnShaftRow(this, 'update')">
+                                            </span>*@
+                                        <span class="InputOutputPortRowDelete" title="Delete" id="outputPortRowDelete">x</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+</div>
+
+
+
+<script>
+    $(function () {
+        if ('@Model.lstPortInfo.Count' == 0) {
+            $('#tblInputPortLstInfo').hide();
+        }
+        else if ('@Model.lstPortInfo.Count' > 0) {
+
+            //setTimeout(function () {
+            $('#tblInputPortLstInfo tbody tr').each(function (i, val) {
+                $("#lstPortInfo_" + i + "__port_type").val($("#port_type_" + i + "_Info").val());
+            });
+            // }, 500);
+        }
+
+        if ('@Model.lstOutputPortInfo.Count' == 0) {
+            $('#tblOutputPortLstInfo').hide();
+        }
+        else if ('@Model.lstOutputPortInfo.Count' > 0) {
+
+            //setTimeout(function () {
+            $('#tblOutputPortLstInfo tbody tr').each(function (i, val) {
+                $("#lstOutputPortInfo_" + i + "__port_type").val($("#port_type_" + i + "_Info").val());
+            });
+            // }, 500);
+        }
+
+
+
+
+    });
+</script>
+

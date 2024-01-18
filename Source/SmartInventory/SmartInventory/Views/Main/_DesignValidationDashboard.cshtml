@@ -1,0 +1,439 @@
+﻿@model Models.SeconarySplitterListFilter
+@using Utility
+@using SmartInventory.Settings;
+
+@{
+    WebGrid grid = new WebGrid(canPage: false, canSort: true, ajaxUpdateContainerId: "SeconarySplitterDetailsRecord", ajaxUpdateCallback: "onGridHeaderClick('tblSecondarySplitterDetails');GridColor();");
+    grid.Bind(Model.lstSeconarySplitterDetails, rowCount: Model.totalRecord, autoSortAndPage: false);
+}
+<style>
+    .alertContainer {
+        left: 407px;
+        top: 152px;
+        width: auto;
+        right: auto;
+        height: 124px;
+        bottom: auto;
+    }
+
+    .alertgrid {
+        font-size: 13px;
+        text-align: left;
+        margin-top: 5px;
+        width: 100%;
+    }
+
+    .refresh {
+        color: rgb(229 54 2 / 83%);
+    }
+
+    .download {
+        color: #105bcb;
+    }
+
+    i.disabled {
+        pointer-events: none;
+        cursor: default;
+    }
+
+    .isDisabled {
+        color: currentColor;
+        cursor: not-allowed;
+        opacity: 0.5;
+        text-decoration: none;
+        pointer-events: none;
+        display: inline-block;
+    }
+
+    .ProcessedRows {
+        background-color: #FFBF00 !important;
+    }
+
+    .ProcessedCSARows {
+        background-color: #c4f3c4 !important;
+    }
+
+    #ModalPopUp .modal-dialog {
+        margin: 20px auto !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 9999;
+        inset: auto !important;
+    }
+
+    .modal-header {
+        cursor: default;
+    }
+
+    /*.bothorder:last-child, .bothorder:nth-child(5) {
+        background: var(--tableHeader) !important;
+    }*/
+</style>
+<!DOCTYPE html>
+<div class="tab-content" id="dvDChildModalBody">
+    @using (Ajax.BeginForm("GetSecondarySplitter", "Main", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvDChildModalBody",
+        LoadingElementId = "dvProgressDashboard",
+    },
+    new { id = "frmSecondarySplitterDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.systemId, new { id = "hdnsystemid" })
+        @Html.HiddenFor(m => m.source_ref_id)
+        @Html.HiddenFor(m => m.action_name, new { id = "hdnactionname" })
+        @Html.HiddenFor(m => m.entityType, new { id = "hdnentitytype" })
+        <div>
+
+            <div class="tablePad-bn d-flex">
+                <div class="redline-drop-box">
+                    @Html.DropDownListFor(m => m.searchByText, new SelectList(Model.column_filter.Select(m => new { Value = m.Value, Text = m.Text }), "Value", "Text"), "Search By", new { @class = "chosen-select form-control", @style = "padding:2px;", @id = "ddldsearchBy", @onChange = "CheckFilter()" })
+                </div>
+                <div class="ml-auto d-flex">
+                    <div class="searchInput d-flex">
+                        @Html.TextBoxFor(m => m.searchText, new { @id = "txtdSearchTxt", @class = "form-control input-mr search--padding", @style = "height:26px;" })
+                        <i class="glyphicon glyphicon-search"></i>
+                    </div>
+                    <div class="ml d-flex">
+
+                        <button type="submit" class="btn btn-success ml-10" id="btnSearchSecondarySplitterData"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                        @if (@Model.action_name == "DesignValidation")
+                        {
+                            <button type="button" class="btn btn-success ml-10" id="btnDesignValidate" onclick="DesignValidate(@Model.systemId)"> Trace Validation</button>
+                            <button type="button" class="btn btn-success ml-10" id="btnGenerateDesignValidate" onclick="SubmitDesign(@Model.systemId)" disabled="disabled"> Design BOM/BOQ</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success ml-10" id="btnConstructionValidate" onclick="ConstructionValidate(@Model.source_ref_id)"> Trace Validation</button>
+
+                        }
+                        <button type="button" class="btn btn-default ml-10" id="btndResetSearchFilter"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+
+                    </div>
+                </div>
+            </div>
+
+
+            @if (Model.lstSeconarySplitterDetails.Count > 0)
+            {
+                <div id="SeconarySplitterDetailsRecord">
+                    <div class="d-flex tablePad-bn --gap10">
+                        <div><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:</b>&nbsp;@grid.TotalRowCount</div>
+
+                        <div class="d-flex">
+                            <div style="background-color: #FFBF00; " class="colorDots"></div>
+                            <div class="Assign assignColor">
+                                Success
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div style="background-color: #d9534f;" class="colorDots"></div>
+                            <div class="Assign assignColor">
+                                Failed
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-pad">
+                        <div class="fa-min-max">
+                            @grid.GetHtml(tableStyle: "stickyTh",
+
+                            htmlAttributes: new { id = "tblSecondarySplitterDetails" },
+
+                            mode: WebGridPagerModes.All,
+                            columns: grid.Columns(
+                            // grid.Column("", ),
+ grid.Column("system_Id", "system Id", format: @<text>@item.system_id</text>, canSort: false),
+grid.Column("common_name", "S2 ID", format: @<text><lable class="clsTSts">@item.common_name</lable></text>, canSort: true),
+//grid.Column("csa_id", "CSA ID", format: (item) => Html.Raw("<p data-toggle='tooltip' class='WrapText clsTSts' colorcode='" + item.color_code + "'>" + item.csa_id + "</p>"), canSort: true),
+grid.Column("csa_id", "CSA ID", format: @<text>@item.csa_id</text>, canSort: true),
+grid.Column("dsa_id", "DSA ID", format: @<text>@item.dsa_id</text>, canSort: true),
+grid.Column("trace_validation_path1_status", "Trace Validation Path 1 Status", format: @<text>@if (item.trace_validation_path1_status == "True")
+                         {<span id="sendtoerp">  Success</span>}
+                 else if(item.trace_validation_path1_status == "False")
+                 { <span id="sendtoerp">  Failed</span>}</text>, canSort: true),
+grid.Column("trace_validation_path2_status", "Trace Validation Path 2 Status", format: @<text>@if (item.trace_validation_path2_status == "True")
+                         {<span id="sendtoerp">Success</span>}
+   else if (item.trace_validation_path2_status == "False")
+{ <span id="sendtoerp">Failed</span>}</text>, canSort: true)
+))
+
+                            @Html.Hidden("dir", grid.SortDirection)
+
+                            @Html.Hidden("col", grid.SortColumn)
+
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="nr-found">
+                    <span> @Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+                </div>
+            }
+        </div>
+
+    }
+</div>
+
+<script>
+    var isdesignsubmitted = '';
+    GridColor();
+    $(document).ready(function () {
+        CheckFilter();
+
+        // Hide s2 system id column 
+        $('#tblSecondarySplitterDetails td:nth-child(' + 1 + ')').hide();
+        $('#tblSecondarySplitterDetails th:nth-child(' + 1 + ')').hide();
+
+        // Check design BOM is submitted or not for this FSA
+        var p_systemid = $("#hdnsystemid").val();
+        var p_action = $("#hdnactionname").val();
+        var p_entitytype = $("#hdnentitytype").val();
+        if (p_action =='DesignValidation') {
+               ajaxReq('Main/IsDesignSubmittedByEntity', { systemId: p_systemid, entityType: p_entitytype }, true, function (resp) {
+                   if (resp.status == 'OK') {
+                       isdesignsubmitted = 'DesignSubmitted';
+                    $("#btnDesignValidate").prop('disabled', true);
+                    $("#btnDesignValidate").prop('title', 'Design BOM already submitted, Please unlock the FSA to validate the design again!');
+                }
+
+            }, false, false);
+        }
+
+        $('.chosen-select').chosen({ width: '100%', });
+        $(".fade").removeClass('modal-backdrop fade in');
+        $('th a, tfoot a').click(function () {
+            $('#frmSecondarySplitterDetails').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        $('[data-toggle="tooltip"]').tooltip();
+        $("#closeModalPopup").on("click", function () {
+            if (si.gMapObj.shapeObj) {
+                $('.CustomMarker').hide();
+                si.infowindow.close();
+            }
+        });
+        $("#btndResetSearchFilter").on("click", function () {
+            $('#txtdSearchTxt').val('');
+            $('#ddldsearchBy').val('').trigger("chosen:updated");
+        });
+        onGridHeaderClick('tblSecondarySplitterDetails');
+
+    });
+
+     // Below function called page load for changes background color basis on status 
+    function GridColor() {
+        $("#tblSecondarySplitterDetails tbody tr").each(function (e) {
+            var path1Status = ($('td:eq(4)', this).text()).trim();
+            var path2Status = ($('td:eq(5)', this).text()).trim();
+            var pAction = $("#hdnactionname").val();
+            if (path1Status == 'Success' && path2Status == 'Failed') {
+                if (pAction == 'DesignValidation') {
+                    $(this).children('td').css({ "background-color": hexToRgbA('#d9534f', 50) });
+                }
+                else {
+                    $(this).children('td').css({ "background-color": hexToRgbA('#FFBF00', 50) });
+                }
+                }
+            else if (path1Status == 'Failed' && path2Status == 'Failed') {
+                $(this).children('td').css({ "background-color": hexToRgbA('#d9534f', 50) });
+            }
+            else if (path1Status == 'Success' && path2Status == 'Success') {
+                $(this).children('td').css({ "background-color": hexToRgbA('#FFBF00', 50) });            
+            }
+            else if (path1Status == 'Failed' && path2Status == 'Success') {
+                if (pAction == 'DesignValidation') {
+                    $(this).children('td').css({ "background-color": hexToRgbA('#d9534f', 50) });
+                }
+                else {
+                    $(this).children('td').css({ "background-color": hexToRgbA('#FFBF00', 50) });
+                }
+                }
+        });
+    }
+    $("#btnSearchSecondarySplitterData").on("click", function () {
+        if ($('#ddldsearchBy').val() == '' && $('#txtdSearchTxt').val() != '') {
+            $('#ddldsearchBy').focus();
+            alert('Please select search by !');
+            return false;
+        }
+        else {
+            if ($('#txtdSearchTxt').val() == '' && $('#ddldsearchBy').val() != '') {
+                $('#txtdSearchTxt').focus();
+                alert('Please enter search by value !');
+                return false;
+            }
+        }
+    });
+
+    $("#btndResetSearchFilter").on("click", function () {
+        CheckFilter();
+        $('#ddldsearchBy').val('').trigger("chosen:updated");
+        $('#txtdSearchTxt').val('');
+    });
+    function CheckFilter() {
+        var searchValue = $('#ddldsearchBy').val();
+        if (isdesignsubmitted =='') {
+            if (searchValue != '') {
+                $("#btnDesignValidate").prop('disabled', true);
+                $("#btnDesignValidate").prop('title', 'Filter is applying, please remove the filter to trace validate!');
+                $("#btnConstructionValidate").prop('disabled', true);
+                $("#btnConstructionValidate").prop('title', 'Filter is applying, please remove the filter to trace validate!');
+
+            }
+            else {
+                $("#btnDesignValidate").prop('disabled', false);
+                $("#btnDesignValidate").prop('title', '');
+                $("#btnConstructionValidate").prop('disabled', false);
+                $("#btnConstructionValidate").prop('title', '');
+
+            }
+        }
+    }
+    this.SubmitDesign = function (systemId) {
+        popup.LoadModalDialog('PARENT', 'BOMBOQ/BOMBOQView', { fsa_system_id: parseInt(systemId), action: 'DesignBOMBOQ' }, "Design BOM/BOQ", 'modal-xxl-new');
+    }
+
+    // Below function for design trace validation and update grid data after response
+    this.DesignValidate = function (systemId) {
+        ajaxReq('Main/ValidateSecondarySplitterData', { pEntityType: 'SubArea', pUserId: $("#hdnCurrentUserId").val(), p_systemId: systemId, p_sourceRefId: '', p_action: 'DesignValidation' }, true, function (resp) {
+            if (resp.length > 0) {
+
+                // changes row background color basis on status.
+                $("#tblSecondarySplitterDetails tbody tr").each(function (e) {
+                    var s2SystemId = $(this).children('td:first').text();
+                    var isStatus = resp.filter(v => v.s2_system_id == s2SystemId && v.status == false);
+                    if (isStatus.length == 0) {
+                        $(this).children('td').css({ "background-color": hexToRgbA('#FFBF00', 50) });
+                    }
+                    else {
+                        $(this).children('td').css({ "background-color": hexToRgbA('#d9534f', 50) });
+                    }
+                });
+
+                // Below code for set response message in alert box.
+                var Msg = '<table border="1" class="alertgrid"><tr><td><b>Design Id<b/></td><td><b>Message<b/></td></tr>';
+                $.each(resp, function (index, item) {
+
+                    var stat = '';
+                    if (item.status == true) {
+                        stat = 'Success';
+                        $("#btnGenerateDesignValidate").prop('disabled', false);
+                    }
+                    else {
+                        stat = 'Failed';
+                    }
+                    if (item.path == '1') {
+                        Msg += '<tr><td>' + item.gis_design_id + ' </td><td> ' + item.message + '';
+
+                    }
+                    if (item.path == '2') {
+                        Msg += '</br> ' + item.message + '</td></tr>';
+                    }
+
+                    // Below code update status after trace response
+                    $("#tblSecondarySplitterDetails tr td").filter(function () {
+                        if ($(this).text() == item.s2_system_id && item.path == '1') {
+                            $(this).next().next().next().next().text(stat);
+                       //     Msg += '<tr><td>' + item.gis_design_id + ' </td><td> ' + item.message + '';
+                        }
+                        if ($(this).text() == item.s2_system_id && item.path == '2') {
+                            $(this).next().next().next().next().next().text(stat);
+                         //   Msg += '</br> ' + item.message + '</td></tr>';
+                        }
+                    });
+                });
+                Msg += '</table>';
+                alert("Following are the status of processed splitters:" + Msg);
+
+                // Below code for download failed status log in excel file
+                var isFailedLog = resp.filter(v => v.status != true && v.error_code =='001');
+                if (isFailedLog.length > 0) {
+                    $("#btnGenerateDesignValidate").prop('disabled', true);
+                    window.location = appRoot + "Main/DownloadSecondarySplitterValidationLogs?pEntityType=" + "SubArea" + '&pUserId=' + $("#hdnCurrentUserId").val() + '&p_systemId=' + systemId + '&p_sourceRefId=' + '' + '&p_action=' + 'DesignValidation' + '&p_requestLogId=' + isFailedLog[0].request_log_id;
+
+                }
+
+            }
+
+        }, false, true);
+
+    }
+
+    // Below function for construction trace validation and update grid data after response
+    this.ConstructionValidate = function (sourceRefId) {
+        ajaxReq('Main/ValidateSecondarySplitterData', { pEntityType: 'Splitter', pUserId: $("#hdnCurrentUserId").val(), p_systemId: 0, p_sourceRefId: sourceRefId, p_action: 'ConstructionValidation' }, true, function (resp) {
+            if (resp.length > 0) {
+
+                // changes row background color basis on status.
+                $("#tblSecondarySplitterDetails tbody tr").each(function (e) {
+                    var s2SystemId = $(this).children('td:first').text();
+                    var isStatus = resp.filter(v => v.s2_system_id == s2SystemId && v.status == false);
+
+                    if (isStatus.length < 2) {
+                        $(this).children('td').css({ "background-color": hexToRgbA('#FFBF00', 50) });
+                    }
+                    else {
+                        $(this).children('td').css({ "background-color": hexToRgbA('#d9534f', 50) });
+                    }
+                });
+
+                // Below code for set response message in alert box.
+                var Msg = '<table border="1" class="alertgrid"><tr><td><b>Design Id<b/></td><td><b>Message<b/></td></tr>';
+                $.each(resp, function (index, item) {
+                    var stat = '';
+                    if (item.status == true) {
+                        stat = 'Success';
+                    }
+                    else {
+                        stat = 'Failed';
+                    }
+                    if (item.path == '1') {
+                        Msg += '<tr><td>' + item.gis_design_id + ' </td><td> ' + item.message + '';
+
+                    }
+                    if (item.path == '2') {
+                        Msg += '</br> ' + item.message + '</td></tr>';
+                    }
+                    $("#tblSecondarySplitterDetails tr td").filter(function () {
+                        if ($(this).text() == item.s2_system_id && item.path == '1') {
+                            $(this).next().next().next().next().text(stat);
+                            //Msg += '<tr><td>' + item.gis_design_id + ' </td><td> ' + item.message + '';
+                        }
+                        if ($(this).text() == item.s2_system_id && item.path == '2') {
+                            $(this).next().next().next().next().next().text(stat);
+                          //  Msg += '</br> ' + item.message + '</td></tr>';
+                        }
+                    });
+                });
+                Msg += '</table>';
+                alert("Following are the status of processed splitters:" + Msg);
+                $('#frmNWEntityDetails').attr('action', $(this).attr('href')).submit();
+
+                 // Below code for download failed status log in excel file
+                var isFailedLog = resp.filter(v => v.status != true && v.error_code == '001');
+                if (isFailedLog.length > 0) {
+                    window.location = appRoot + "Main/DownloadSecondarySplitterValidationLogs?pEntityType=" + "Splitter" + '&pUserId=' + $("#hdnCurrentUserId").val() + '&p_systemId=' + 0 + '&p_sourceRefId=' + sourceRefId + '&p_action=' + 'ConstructionValidation' + '&p_requestLogId=' + isFailedLog[0].request_log_id;
+                }
+
+
+
+            }
+
+        }, false, true);
+
+    }
+    function hexToRgbA(hex, opacity) {
+        hex = hex.replace('#', '');
+        r = parseInt(hex.substring(0, 2), 16);
+        g = parseInt(hex.substring(2, 4), 16);
+        b = parseInt(hex.substring(4, 6), 16);
+
+        result = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
+        return result;
+    }
+</script>
+

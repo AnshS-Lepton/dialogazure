@@ -1,0 +1,144 @@
+﻿@model Models.Admin.PlanningCodeMaster
+
+<!DOCTYPE html>
+<div id="dvPlaningDetail">
+    <div id="dvPageMessage">
+        @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+
+    </div>
+
+    @using (Ajax.BeginForm("SavePlanningCode", "Project", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvPlaningDetail",
+        OnSuccess = "onChangeProjectCode()"
+    },
+    new { id = "frmPlanningDetail", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        <div id="dv_planningcode">
+            <div class="EUTSetting">
+                <div class="form-group">
+                    <div class="row">
+                        <div class=" col-md-2">
+                        </div>
+                        <div class=" col-md-2">
+                            <label class=" control-label">
+                                Network Stage:
+                            </label>
+                        </div>
+                        <div class=" col-md-5">
+                            @Html.TextBoxFor(m => m.network_stage, new { @class = "form-control", @id = "txt_NetworkStagePlanningCode", @readonly = "true" })
+                        </div>
+                        <div class=" col-md-1">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class=" col-md-2">
+                        </div>
+                        <div class=" col-md-2">
+                            <label class=" control-label">
+                                Project Code:
+                            </label>
+                        </div>
+                        <div class=" col-md-5">
+                            @Html.TextBoxFor(m => m.project_code, new { @class = "form-control", @id = "txt_ProjectCode_Parent_ForChild", @readonly = "true" })
+                        </div>
+                        <div class=" col-md-1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class=" col-md-2">
+                        </div>
+                        <div class="col-md-2">
+                            <label class=" control-label">
+                                Planning Name<i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class=" col-md-5">
+                            @Html.TextBoxFor(model => model.planning_name, new { @class = "form-control", @maxlength = "150", @placeholder = "Enter Planning Name", @id = "txtplanning_name" })
+                        </div>
+                        <div class=" col-md-1">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-2">
+                        </div>
+                        <div class=" col-md-2">
+                            <label class=" control-label">
+                                Planning Code<i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class=" col-md-5">
+                            @Html.TextBoxFor(model => model.planning_code, new { @class = "form-control", @maxlength = "150", @placeholder = "Enter Planning Code", @id = "txtplanning_code" })
+                        </div>
+                        <div class="col-md-1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footerModal d-flex" id="dvBtnAction">
+                <a href="javascript:void(0);" class="btn btn-default ml-auto mr-05" data-dismiss="modal" id="btnCancelPlanning">Cancel</a>
+                <input type="submit" class="btn btn-primary" id="btnSavePlanningDetail" onclick="return isValidPlanningDetail();" value="Save" />
+            </div>
+
+            <div>
+                @Html.HiddenFor(m => m.system_id, new { id = "hdn_planningId" })
+                @Html.HiddenFor(m => m.created_by, new { id = "hdn_createdbyId" })
+                @Html.HiddenFor(m => m.project_id, new { id = "hdn_projectId" })
+            </div>
+
+
+        </div>
+
+        <script type="text/javascript">
+
+             if ($('#txt_NetworkStagePlanningCode').val().toLowerCase() == 'p') {
+                 $('#txt_NetworkStagePlanningCode').val('Planned');
+             }
+
+
+             if ($('#txt_NetworkStagePlanningCode').val().toLowerCase() == 'a') {
+                 $('#txt_NetworkStagePlanningCode').val('As Built');
+             }
+
+
+        if ('@Model.system_id' != 0) {
+            btnSavePlanningDetail.value = "Update";
+
+            $('#txtplanning_code').attr('readonly', true);
+
+
+        }
+
+
+             function isValidPlanningDetail() {
+                 if ($('#txtplanning_name').val() == "") {
+                     $('#txtplanning_name').css({ "border": "1px solid red" });
+                     return false;
+
+                 }
+
+                 if ($('#txtplanning_code').val() == "") {
+                     $('#txtplanning_code').css({ "border": "1px solid red" });
+                     return false;
+                 }
+
+
+             }
+
+
+        </script>
+    }
+
+</div>
+

@@ -1,0 +1,133 @@
+﻿@model Models.Admin.UploadVendorSpecificationImageDocVM
+@using SmartInventory.Settings;
+
+@helper SpecificationImage()
+{
+    { Html.RenderPartial("_uploadedImages", (Models.Admin.UploadVendorSpecificationImageDocVM)Model); }
+}
+@helper SpecificationDocument()
+{
+    { Html.RenderPartial("_uploadedDocument", (Models.Admin.UploadVendorSpecificationImageDocVM)Model); }
+}
+@helper SpecificationRefLink()
+{
+    { Html.RenderPartial("_uploadedRefLinks", (Models.Admin.UploadVendorSpecificationImageDocVM)Model); }
+}
+
+<!DOCTYPE html>
+<div class="libDetail">
+    <div class="libTabs">
+        <ul class="nav nav-tabs tabs-left">
+
+            <li class=""><a href="#UploadImage" class="active show" data-toggle="tab">Images</a></li>
+            <li><a href="#UploadDocument" data-toggle="tab">Documents</a></li>
+            <li><a href="#UploadRefLink" data-toggle="tab">Reference Link</a></li>
+        </ul>
+    </div>
+    <input type="hidden" id="hdnMaxFileUploadSizeLimit" value="@ApplicationSettings.MaxFileUploadSizeLimit" />
+
+    <div class=" pad-0">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="UploadImage">
+                <fieldset class="the-fieldset">
+                    <legend class="Imagelegend">Upload Image</legend>
+                    <div class="row">
+                        <div class="col-sm-7 pull-left">
+                            <div class="form-group d-flex">
+                                <label class="control-label mr-2">@Resources.Resources.SI_OSP_UPP_NET_FRM_001:</label>
+                                <input type="file" name="fuImgUpload" id="fuImgUpload">
+                            </div>
+                        </div>
+                        <div class="col-sm-5 pull-right text-right">
+                            <button type="submit" class="btn btn-primary" onclick="return specificationimage.upload(@Model.specification_id)" id="btnSaveFile">Upload</button>
+                            <button type="button" class="btn btn-default" onclick=" ResetImage();" title="Reset">Reset</button>
+
+                        </div>
+                    </div>
+                    <div>
+                        <label class="control-label col-sm-12" style="padding-bottom:0px;"><i class="clsMandatory">*</i>Supported file formats: bmp,gif,png,jpg,jpeg</label>
+                        <label class="col-md-12 col-sm-12" style="padding-top:0px;" for="txtLatitude"><i class="clsMandatory">*</i>Maximum image file size: @(ApplicationSettings.MaxFileUploadSizeLimit/1000) MB</label>
+                    </div>
+                    @*<span class="pull-left"><span style="color:red">*</span>Maximum image file size: @(ApplicationSettings.MaxFileUploadSizeLimit / 1000) MB</span>*@
+                   
+                 
+                </fieldset>
+                <div id="existingImages">
+                    @SpecificationImage()
+                </div>
+
+            </div>
+            <div class="tab-pane" id="UploadDocument">
+                <fieldset class="the-fieldset">
+                    <legend class="doclegend">Upload Document</legend>
+                    <div class="col-sm-12">
+                        <div class="col-sm-7 pull-left">
+
+                            @*<div class="col-sm-9">
+                    <input type="file" name="fuDocumentUpload" id="fuDocumentUpload">
+                </div>*@
+                            <div class="form-group d-flex">
+                                <label class="control-label mr-2">  @Resources.Resources.SI_OSP_GBL_NET_FRM_192:</label>
+                                <input type="file" name="fuDocumentUpload" id="fuDocumentUpload">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-5 pull-right text-right">
+                            <button type="submit" class="btn btn-primary" onclick="return SpecificationDoc.upload(@Model.specification_id);" id="btnSaveDocumentFile">Upload</button>
+                            <button type="button" class="btn btn-default" onclick="ResetDocumentFile();" title="Reset">Reset</button>
+
+                        </div>
+                    </div>
+                    <div>
+                        <label class="control-label col-sm-12" style="padding-bottom:0px;"><i class="clsMandatory">*</i>Supported file formats: dwg,pdf,jpeg,jpg,doc,docx,xls,<br>xlsx,csv,vsd,ppt,pptx,png,htm,html</label>
+                        <label class="col-md-12 col-sm-12" style="padding-top:0px;" for="txtLatitude"><i class="clsMandatory">*</i>Maximum document file size: @(ApplicationSettings.MaxFileUploadSizeLimit/1000) MB</label>
+                    </div>
+                    @*<span class="pull-left"><span style="color:red">*</span>Maximum document file size: @(ApplicationSettings.MaxFileUploadSizeLimit / 1000) MB</span>*@
+
+
+                </fieldset>
+                <div id="existingDocument">
+                    @SpecificationDocument()
+                </div>
+
+            </div>
+            <div class="tab-pane" id="UploadRefLink">
+                <fieldset class="the-fieldset">
+                    <legend class="doclegend">Upload Reference Link</legend>
+
+                    <table style="border:none;" class="BulkTable" border="1">
+                        <tr>
+                            <td style="vertical-align: middle; border: none; font-size: 13px;" for="DocrefLinkText"> Display Name:<i class="clsMandatory">*</i> &nbsp;</td>
+                            <td style="border:none;width:70%;">
+                                <input type="text" id="DocrefLinkText" maxlength="190" style=" width: 100%;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align: middle; border: none; font-size: 13px;" for="DocrefLink">   Reference Link:<i class="clsMandatory">*</i> &nbsp;</td>
+                            <td style="border: none; width: 70%;">
+                                <input type="text" id="DocrefLink" maxlength="498" style=" width: 100%;" placeholder="http or https://www.xyz.com">
+                            </td>
+                        </tr>
+
+                    </table>
+
+
+                    <div class="form-group ModalFooter" id="dvBtnActionRefLink">
+                        <div class="col-sm-10 col-sm-offset-2" style="float: right; text-align: right; padding-right: 25px;">
+                            <button type="submit" class="btn btn-primary" onclick="return uploadRefLink(@Model.specification_id);" id="btnSaveRefLink">Upload</button>
+                            <button type="button" class="btn btn-default" onclick="ResetRefLink();" title="Reset">Reset</button>
+                        </div>
+                    </div>
+                </fieldset>
+                <div id="ExistingReflink">
+                    @SpecificationRefLink()
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
+

@@ -1,0 +1,321 @@
+@model Models.RoleModuleMapping
+@using SmartInventory.Settings;
+
+
+<style>
+    #divWebModule {
+    }
+
+    #divMobileModule {
+    }
+    /*.mobile-unit {
+     padding: 0 0 0 48px;
+    }*/
+
+    #dvUserDetail .chosen-container-single .chosen-single {
+        height: 28px;
+    }
+
+    #ddl_UserRole_chosen {
+        width: 82% !important;
+    }
+
+    .ViewRolebtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        width: 17%;
+    }
+
+    .Nextbtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        float: right;
+    }
+
+    .Previousbtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        margin-right: 20px;
+    }
+
+    .saveBtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+    }
+
+    #dvUserDetail .form-group {
+        margin-bottom: 5px;
+    }
+
+    .clsUserContainer {
+        width: 98%;
+        border: 2px solid #dee2e6;
+        margin: 0 auto;
+        border-top: 0px;
+    }
+
+    #dvUserDetail {
+        margin: auto;
+        padding: 10px;
+        max-width: 700px;
+    }
+
+    .checkStep {
+        display: none;
+        height: 30px;
+        width: 29px;
+    }
+
+    .title {
+        margin: 0 auto;
+    }
+
+    .clsStepsContainer {
+        width: 100%;
+        margin-left: 0px;
+        min-width: 516px;
+        height: auto;
+    }
+
+    .clsUserContainer .content {
+        width: 80%;
+        margin: auto;
+        margin-top: 25px;
+        height: auto;
+    }
+
+    .successImg {
+        margin-top: 150px;
+        min-height: 300px;
+        width: 100%;
+        top: 40%;
+        text-align: center;
+        position: relative;
+    }
+
+    .mainModule li {
+        background: none !important;
+        padding: 0px 0pt 0px 0px !important;
+    }
+
+    .mainModule input[type="checkbox"] {
+        position: absolute !important;
+    }
+
+    #partionTable td {
+        width: 55%;
+        vertical-align: top;
+    }
+
+    .d--flex {
+        display: flex;
+    }
+
+    .Admin-section, .Web-section, .Mobile-section, .service-facility-section, .joborder-section {
+        flex: 0 0 27.533333%;
+    }
+
+    .boxes--minh {
+        height: 237px;
+        overflow-y: auto;
+        margin-right: 10px;
+    }
+    #form-group .form-group{
+        margin-bottom:0.5rem;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div class="dvUserDetail update_panel fullWidth">
+    <div class="title">
+        <h4>
+            Role Module Mapping
+        </h4>
+    </div>
+    @using (Html.BeginForm("SaveRoleModuleMapping", "Roles", FormMethod.Post, new { autocomplete = "off", @id = "frmRoleModuleInfo", @class = "form-horizontal pad_left", onsubmit = "return CheckModule()" }))
+    {
+        <div id="form-group">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        Role :
+                        @Html.DropDownListFor(m => m.role_id, new SelectList(Model.lstRole.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddl_UserRole", @onchange = "onChangeUserRole();", @required = true })
+                        <div style="color:red" class="errorSelected">Please select a role to map with modules.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="update_section clsStepsContainer">
+                <!-- your steps content here -->
+                <div id="modulerights-part" class="content active">
+                    <div id="module-data">
+                        <div class="row">
+                            <div class="col-md-2">
+                                Module List :
+                            </div>
+                            <div class="col-md-4">
+                                <label>
+                                    <input type="checkbox" name="AllLayers" id="CheckAll_Module" class="allModule" onclick="CheckByClass('allModule',this)" /><b class="fw-600">Select All</b>
+                                </label>
+                            </div>
+
+                        </div>
+                        <table id="partionTable" width="100%">
+                            @*@Html.Partial("_ModuleList", Model.lstUserModule)*@
+                        </table>
+                        <table id="ServiceFacilityJobOrder" width="100%">
+                        </table>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label style="color:red; display:none;" id="errModule"><b>* Aleast one module right should be given!</b></label>
+                            </div>
+                        </div>
+                        <div class="d-flex mt-05" id="dvBtnAction">
+                            <button class="btn btn-primary savebtn ml-auto">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ placeholder_text_multiple: 'All', width: '100%' });
+        hideShowModuleList();
+
+    });
+
+    function hideShowModuleList() {
+        if ($("#ddl_UserRole").val() == 0 || $("#ddl_UserRole").val() == "") {
+            $(".update_section").hide();
+            $(".errorSelected").show();
+        } else {
+            $(".update_section").show();
+            $(".errorSelected").hide();
+        }
+    }
+
+    function onChangeUserRole() {
+        hideShowModuleList();
+        if ($("#ddl_UserRole").val() != 0 || $("#ddl_UserRole").val() != "") {
+            //$("#dvProgress").show();
+            //$('#dvProgress').css('display', 'block');
+            ajaxReq('Roles/GetRoleModuleMapping', { role_id: $("#ddl_UserRole").val() }, true, function (resp) {
+                $('#partionTable').html(resp);
+
+                ////for servicefacility and job order list
+                 
+                $('#ServiceFacilityJobOrder').html("");
+                //if ($("#ddl_UserRole").val() === "142")
+                var role_name = $("#ddl_UserRole option:selected").text();
+                if (role_name === "WFM Contractor" || role_name === "Contractor Dispatcher" || role_name === "In House Dispatcher" || role_name === "MSP Dispatcher" || role_name === "COFG Dispatcher") {
+                    ajaxReq('Roles/GetRoleServiceFacilityJobOrder', { role_id: $("#ddl_UserRole").val() }, true, function (resp) {
+                        $('#ServiceFacilityJobOrder').html(resp);
+                        setAllCheckBox();
+                    })
+                }
+
+                $(".mainModule").not(".grpNetwork").treeview({
+                    collapsed: false,
+                    animated: "medium",
+                    persist: "location"
+                });
+                //$("#dvProgress").hide();
+                //$('#dvProgress').css('display', 'none');
+                setAllCheckBox();
+            })
+
+        }
+
+    }
+
+    function CheckByClass(clsNmae, obj) {
+         
+        $("." + clsNmae + "[type='checkbox']").prop("checked", $(obj).prop("checked"));
+
+        setAllCheckBox();
+    }
+    function checkModuleSelected(moduleId) {
+         
+        var isChildActive = $('.chkModuleChild_' + moduleId).is(":checked");
+        if (isChildActive == true)
+            $(".module_" + moduleId).prop('checked', isChildActive);
+
+        if (isChildActive == false)
+            $(".module_" + moduleId).prop('checked', isChildActive);
+
+        setAllCheckBox();
+    }
+
+    function checkModuleSubSelected(moduleId, moduleId1) {
+         
+        var isSubChildActive = $('.chkModuleSubChild_' + moduleId).is(":checked");
+        // var isChildActive = $('.chkModuleChild_' + moduleId1).is(":checked");
+        //if (isSubChildActive == true) chkModuleChild_
+        //$(".chkModuleChild_" + moduleId).prop('checked', isSubChildActive);
+        if (isSubChildActive == true)
+            $(".ch_" + moduleId).prop('checked', isSubChildActive);
+        $(".module_" + moduleId1).prop('checked', isSubChildActive);
+        if (isSubChildActive == false)
+            $(".ch_" + moduleId).prop('checked', isSubChildActive);
+        // $(".module_" + moduleId1).prop('checked', isSubChildActive);
+        var isChildActive = $('.chkModuleChild_' + moduleId1).is(":checked");
+        if (isChildActive == true)
+            // $(".ch_" + moduleId).prop('checked', isSubChildActive);
+            $(".module_" + moduleId1).prop('checked', isChildActive);
+
+        //if (isSubChildActive == false)
+        //    $(".ChildModule_" + moduleId).prop('checked', isSubChildActive);
+        setAllCheckBox();
+    }
+
+    function setAllCheckBox() {
+         
+        $('#CheckAll_Admin').prop("checked", $("#divAdminModule input[type=checkbox]").length == $("#divAdminModule input[type=checkbox]:checked").length);
+        $('#CheckAll_Web').prop("checked", $("#divWebModule input[type=checkbox]").length == $("#divWebModule input[type=checkbox]:checked").length);
+        $('#CheckAll_Mobile').prop("checked", $("#divMobileModule input[type=checkbox]").length == $("#divMobileModule  input[type=checkbox]:checked").length);
+
+        $('#CheckAll_ServiceFacility').prop("checked", $("#divServiceFacility input[type=checkbox]").length == $("#divServiceFacility  input[type=checkbox]:checked").length);
+        $('#CheckAll_JobOrder').prop("checked", $("#divJobOrder input[type=checkbox]").length == $("#divJobOrder  input[type=checkbox]:checked").length);
+        $('#CheckAll_JobCategory').prop("checked", $("#divJobCategory input[type=checkbox]").length == $("#divJobCategory  input[type=checkbox]:checked").length);
+        var $allModuleCheckbox = $("#modulerights-part input[type=checkbox]").not("#CheckAll_Module");
+        var $allModuleCheckedCheckbox = $("#modulerights-part input[type=checkbox]:checked").not("#CheckAll_Module");
+        $('#CheckAll_Module').prop("checked", $allModuleCheckbox.length == $allModuleCheckedCheckbox.length);
+        
+    }
+    function CheckModule() {
+         
+        if ($(".chkModule").is(":checked") == false && $("#modulerights-part").hasClass('active')) {
+            $("#errModule").show();
+            return false;
+        }
+
+        setAllCheckBox();
+        $("#errModule").hide();
+        return true;
+
+    }
+
+
+    function CheckByClass1(clsNmae, cls, obj) {
+         
+        $("." + clsNmae + "[type='checkbox']").prop("checked", $(obj).prop("checked"));
+        $("." + cls + "[type='checkbox']").prop("checked", $(obj).prop("checked"));
+        setAllCheckBox();
+    }
+    //function CheckChildModule() {
+
+    //    if ($(".chkModuleChild_").is(":checked") == false && $("#modulerights-part").hasClass('active')) {
+    //        $("#errModule").show();
+    //        return false;
+    //    }
+    //    setAllCheckBox();
+    //    $("#errModule").hide();
+    //    return true;
+
+    //}
+</script>

@@ -1,0 +1,283 @@
+﻿@using Models;
+@model Models.ViewBulkUserUploadSummary
+@using Utility
+@using System.Configuration;
+@using SmartInventory.Settings;
+@Html.HiddenFor(m => m.pageMsg.status, new { id = "submit_status" })
+
+@{var objUser = (User)Session["userDetail"];}
+
+@{
+    ViewBag.Title = "UploadUsers";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/css/datauploader.css" rel="stylesheet" />
+
+
+<style>
+    .CustomSuccess {
+        color: #449d44;
+        background-color: white;
+        border-radius: 4px 0px 0px 4px;
+        border-color: #949292;
+        outline: none;
+        padding: 2px 8px;
+        border-right-width: 0px;
+        font-size: 12px;
+    }
+
+    .CustomSuccessDisabled {
+        color: gray;
+        background-color: white;
+        border-radius: 4px 0px 0px 4px;
+        border-color: #949292;
+        outline: none;
+        padding: 2px 8px;
+        border-right-width: 0px;
+        font-size: 12px;
+        cursor: not-allowed !important;
+    }
+
+        .CustomSuccessDisabled:hover, .CustomSuccessDisabled:focus, .CustomSuccessDisabled:active {
+            color: gray;
+            background-color: white !important;
+        }
+
+    .CustomError {
+        color: red;
+        background-color: white;
+        border-radius: 0px 4px 4px 0px;
+        border-color: #949292;
+        outline: none;
+        padding: 2px 12px;
+        margin-left: -4px;
+        font-size: 12px;
+    }
+
+    .CustomErrorDisabled {
+        color: gray;
+        background-color: white;
+        border-radius: 0px 4px 4px 0px;
+        border-color: #949292;
+        outline: none;
+        padding: 2px 12px;
+        margin-left: -4px;
+        font-size: 12px;
+        cursor: not-allowed !important;
+    }
+
+        .CustomErrorDisabled:hover, .CustomErrorDisabled:focus, .CustomErrorDisabled:active {
+            color: gray;
+            background-color: white !important;
+        }
+</style>
+
+<!DOCTYPE html>
+<div id="dvPageMessage" style="@(Model.IsSubmit == false ? "display:none;" : "display: block;")">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div class="update_panel fullWidth">
+    <div class="title">
+        <h4>
+            Bulk User Upload & Summary
+        </h4>
+    </div>
+
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvBulkUserSummaryDetail", ajaxUpdateCallback: "onGridHeaderClick('tblUserDetail')");
+        grid.Bind(Model.lstBulkUserUploadSummary, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+        if (Model.objGridAttributes.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+        }
+    }
+<div class="pad_left">
+    @using (Html.BeginForm("BulkUserUpload", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary();
+        <div class="form-inline filter-sec" id="divUpdExcel" style="display: block;">
+            @*<div class="row">
+                    <label class="col-md-1 control-label">Excel file<i class="clsMandatory">*</i>:</label>
+                    <div class="col-md-2 form-inline">
+                        <input type="file" name="postedFile" id="postedFile" accept=".xls,.xlsx">
+                        <input type="button" id="clearExcelFile" class="cancel" value="X" style="display: none;">
+                    </div>
+                    <div class="col-md-9">
+                        <input type="submit" id="upload" value="Upload" class="btn btn-success" />
+                        <a class="btn btn-default" id="btnDownloadTemplate" style="display: inline-block;" href="~/Content/Templates/ExcelTemplates/Bulk_User_Template.xlsx">Download Template</a>
+                    </div>
+                </div>*@
+            <div class="row">
+                <label class="col-md-1 control-label">Excel file<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-3 form-inline">
+                    <input type="file" name="postedFile" id="postedFile" accept=".xls,.xlsx">
+                    <input type="button" id="clearExcelFile" class="cancel" value="X" style="display: none;">
+                </div>
+                <div class="col-md-8">
+                    <input type="button" id="upload1" value="Upload" onclick="UploadFile('postedFile','@Url.Content(ConfigurationManager.AppSettings["SmartInventoryServiceURL"]).ToString()/api/blkuserupload/bulkusrupd');" class="btn btn-primary" />
+                    <a class="btn btn-default ml-05" id="btnDownloadTemplate" href="~/Content/Templates/ExcelTemplates/Bulk_User_Template.xlsx">Download Template</a>
+                </div>
+            </div>
+        </div>
+    }
+    <div id="dvBulkUserSummaryDetail">
+        @if (Model.lstBulkUserUploadSummary.Count > 0)
+        {
+            <div id="divBulkSummaryDetail">
+                <div class="recordCount mb-01"><b>Total Records:@grid.TotalRowCount</b></div>
+                <div class="table-responsive tble_cls">
+                    @grid.GetHtml(tableStyle: "grid",
+                   htmlAttributes: new { id = "tblBulkUserSummaryDetail" },
+                   mode: WebGridPagerModes.All,
+                   columns: grid.Columns(
+
+             grid.Column("s_no", "S.No.", format: @<text>@item.s_no</text>, canSort: false),
+grid.Column("file_name", "File Name", format: @<text>@item.file_name</text>, canSort: false),
+                @*grid.Column("status", "Status", format: @<text>@item.status</text>, canSort: false),*@
+grid.Column("total_record", "Total", format: @<text>@item.total_record</text>, canSort: false),
+grid.Column("success_record", "Success", format: @<text>@item.success_record</text>, canSort: false),
+grid.Column("failed_record", "Failed", format: @<text>@item.failed_record</text>, canSort: false),
+grid.Column("status_message", "Status Message", format: @<text>@item.status_message</text>, canSort: false),
+grid.Column("err_description", "Error Description", format: @<text>@item.err_description</text>, canSort: false),
+grid.Column("created_date", "Upload On", format: @<text>@(item.created_date == null ? item.created_date : MiscHelper.FormatDateTime(item.created_date.ToString()))</text>, canSort: false),
+grid.Column("user_name", "Upload By", format: @<text>@item.user_name</text>, canSort: false),
+grid.Column("Action", header: Resources.Resources.SI_ISP_GBL_NET_FRM_029, format: @<text>
+                    @if (item.success_record > 0)
+                    {
+                        <input type="button" class="btn btn-success CustomSuccess" onclick="fnDownloadBulkUserUploadLogs('@item.id', 'SUCCESS');" title="@Resources.Resources.SI_OSP_DU_NET_FRM_001" value="@Resources.Resources.SI_GBL_GBL_NET_FRM_080" />
+                    }
+                    else
+                    {
+                        <input type="button" class="btn btn-success CustomSuccessDisabled" title="@Resources.Resources.SI_OSP_DU_NET_FRM_001" value="@Resources.Resources.SI_GBL_GBL_NET_FRM_080" />
+                    }
+                    @if (item.failed_record > 0)
+                    {
+                        <input type="button" class="btn btn-danger CustomError" onclick="fnDownloadBulkUserUploadLogs('@item.id', 'FAILED');" title="@Resources.Resources.SI_OSP_DU_NET_FRM_001" value="@Resources.Resources.SI_GBL_GBL_NET_FRM_081" />
+                    }
+                    else
+                    {
+                        <input type="button" class="btn btn-danger CustomErrorDisabled" title="@Resources.Resources.SI_OSP_DU_NET_FRM_001" value="@Resources.Resources.SI_GBL_GBL_NET_FRM_081" />
+                    }
+                </text>         )
+         ))
+
+                    @Html.Hidden("dir", grid.SortDirection)
+                    @Html.Hidden("col", grid.SortColumn)
+
+                    @*@Html.HiddenFor(m => m.objGridAttributes.searchBy)
+        @Html.HiddenFor(m => m.objGridAttributes.searchText)*@
+                </div>
+            </div>
+        }
+        else
+        {
+            <div style="text-align: center; margin-top: 30px;">
+                No Records Found.
+            </div>
+        }
+        @Html.HiddenFor(m => m.loginId_UserId)
+        @Html.HiddenFor(m => m.access_token)
+    </div>
+</div>
+</div>
+
+<script>
+    var applicationUrl = '@string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"))';
+    function fnDownloadBulkUserUploadLogs(id, status) {
+        // 
+        //alert(id);
+        //alert(status);
+        window.location = applicationUrl+ '/User/DownloadBulkUserUploadLogs?id=' + id + '&status=' + status;
+    }
+    /*
+    $("#upload").on("click", function () {
+        // 
+        var fileInput =document.getElementById('postedFile');
+        var filePath = fileInput.value;
+        if (filePath == "") {
+            alert("Please select the file");
+            return false;
+        }
+        // Allowing file type
+        var allowedExtensions =/(\.xlsx)$/i;
+        if (!allowedExtensions.exec(filePath)) {
+            alert("Please select the excel file");
+            fileInput.value = '';
+            return false;
+        }
+        $("#dvProgress").show();
+    });
+    */
+
+
+    function UploadFile(controlId, postUrl) {
+        // 
+        $("#dvProgress").show();
+        var formData = new FormData();
+        var userid=  $('#loginId_UserId').val();
+        //formData.append("usrid", "1");
+        formData.append("usrid", userid);
+        var totalFiles = document.getElementById(controlId).files.length;
+        if (totalFiles > 0) {
+            if (isValidFileExtn(controlId)) {
+                // 
+                var filecontrol = $('#' + controlId);
+                var file = filecontrol.get(0);
+                file = file.files;
+                for (var i = 0; i < file.length; i++) {
+                    //formData.append(file[i].name, file[i]);
+                    formData.append(filecontrol.prop("name"), file[i]);
+                }
+            }
+            else {
+                $("#dvProgress").hide();
+                alert("Please select file having extensions.xls or.xlsx only!");
+                return false;
+            }
+        }
+        else {
+            $("#dvProgress").hide();
+            alert("Please select a file!");
+            return false;
+        }
+        PostFile(formData, postUrl);
+    }
+    function PostFile(formdata, posturl) {
+        // 
+        var access_token = $('#access_token').val();
+        $.ajax({
+            type: "POST",
+            url: posturl,
+            data: formdata,
+            async: true,
+            contentType: false,
+            processData: false,
+            async: true,
+            headers: { Authorization: 'Bearer ' + access_token},
+            //beforeSend: function () {},
+            success: function (response) {
+                // 
+                $("#dvProgress").hide();
+                if (response.error_message.toLowerCase() == "success" && response.status.toLowerCase() == "ok") {
+                    $("#dvProgress").hide();
+                    //refresh the page so that log will reflect in grid view
+                    window.location = window.location;
+                } else {
+                    alert(response.status + " : " + response.error_message);
+                }
+            },
+            error: function (error) {
+                $("#dvProgress").hide();
+                alert(error);
+            }
+        });
+    }
+
+    function isValidFileExtn(controlid) {
+        var ext = $('#' + controlid).val().split('.').pop().toLowerCase();
+        if ($.inArray(ext, ['xls', 'xlsx']) == -1) {
+            return false;
+        }
+        return true;
+    }
+</script>

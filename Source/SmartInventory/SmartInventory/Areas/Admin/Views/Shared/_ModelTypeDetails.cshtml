@@ -1,0 +1,130 @@
+﻿@model Models.Admin.ISPModelTypeMaster
+@using System.Linq
+@using Utility
+
+
+<!DOCTYPE html>
+<div id="dvViewModalTypeDetails" style="width:100%;padding:16px;white-space:nowrap;font-size:14px">
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objOptionsModelType.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewModalTypeDetails", ajaxUpdateCallback: "onGridHeaderClick('tblViewModalTypeDetails')");
+        grid.Bind(Model.lstModelType, autoSortAndPage: false, rowCount: Model.objOptionsModelType.totalRecord);
+        if (Model.objOptionsModelType.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objOptionsModelType.currentPage - 1;
+        }
+    }
+
+    @using (Html.BeginForm("CreateRule", "Equipment", FormMethod.Post, new { autocomplete = "off", @id = "frmViewModalTypeDetails" }))
+    {
+        <section>
+
+            @if (Model.lstModelType.Count > 0)
+            {
+                <div id="divViewModalTypeDetails">
+                    <div class="recordCount d-flex --gap-05 mb-01">
+                        <b>Total Records:@grid.TotalRowCount</b>
+
+
+
+                        @Html.DropDownListFor(m => m.objOptionsModelType.searchBy, new List<SelectListItem>
+                        {
+                           new SelectListItem{ Text="Type Name", Value = "value"},
+                            new SelectListItem{ Text="Type Abbreviation", Value = "type_abbr"}
+
+                        }, new { @id = "ddlSearchTypeBy", @tabindex = "1", @title = "Search By", @class = "chosen-select form-control ml-auto  --input-widthMd" })
+
+
+                        @Html.TextBoxFor(m => m.objOptionsModelType.searchText, new { @id = "txtSearchTypeText", @title = "Search text", @tabindex = "2", @class = "input-sm form-control --input-widthMd", @placeholder = "Search Text", @maxlength = 100 })
+
+                        <input type="button" id="btnSearch" tabindex="3" onclick="SearchTypeDetails()" value="Search" class="btn btn-primary">
+
+
+
+                        <a id="iconEditRule" onclick="EditType()"><i class="fa fa-pencil" title="Edit"></i> </a>
+                        <i class="icon-Delete" onclick="DeleteType()" id="btnDeleteType" title="Delete"></i>
+                    </div>
+
+                    @Html.HiddenFor(m => m.id, new { @id = "hdModalTypeID" })
+                </div>
+
+                <div class="table-responsive tble_cls">
+                    @{
+                        var gridColumns = new List<WebGridColumn>();
+                        gridColumns.Add(grid.Column("", "Action", canSort: false, format:
+    @<text>
+
+        <div>
+            <label class="Custombtn"><input class="chk" name="@item.id" type="checkbox" value="true" /><span class="Custombtncheck"></span></label>
+        </div>
+    </text>));
+
+                 gridColumns.Add(grid.Column("modal_name", "Model Name", format: @<text>@item.modal_name</text>));
+//gridColumns.Add(grid.Column("key", "Type", format: @<text>@item.key</text>));
+gridColumns.Add(grid.Column("value", "Type Name", format: @<text>@item.value</text>));
+gridColumns.Add(grid.Column("type_abbr", "Type Abbreviation", format: @<text>@item.type_abbr</text>));
+gridColumns.Add(grid.Column("color_code", "Color", format: @<text><input type="text" class="@item.modal_name.ToLower()" disabled value="" style="background-color:@item.color_code;color:@item.color_code;width:50px;height:24px;" />
+
+    @*<div class="sp-replacer sp-light sp-disabled"><div class="sp-preview"><div class="sp-preview-inner" style=""></div></div><i class="fa fa-paint-brush"></i></div>*@
+</text>));
+@*gridColumns.Add(grid.Column("stroke_code", "Stroke", format: @<text><input type="text" disabled value="" style="background-color:@item.stroke_code;color:@item.stroke_code;width:50px;height:24px;" /></text>));*@
+gridColumns.Add(grid.Column("is_middleware_model_type", "Is Middleware", format: @<text>@(item.is_middleware_model_type== true ? "Yes" : "No")</text>));
+//gridColumns.Add(grid.Column("created_by", "Created by", format: @<text>@item.created_by</text>));
+//gridColumns.Add(grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>));
+//gridColumns.Add(grid.Column("modified_by", "Modified by", format: @<text>@item.modified_by</text>));
+//gridColumns.Add(grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>));
+
+
+
+                    }
+                    @grid.GetHtml(tableStyle: "grid",
+                                        htmlAttributes: new { id = "tblViewModalTypeDetails" },
+                                        mode: WebGridPagerModes.All,
+                                        columns: grid.Columns(gridColumns.ToArray()))
+                    @Html.Hidden("dir", grid.SortDirection)
+                    @Html.Hidden("col", grid.SortColumn)
+
+
+                </div>
+
+       
+    }
+    else
+    {
+        <div style="text-align: center; margin-top: 30px;">
+            No Records Found.
+        </div>
+    }
+
+            </section>
+        }
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            addDefaultSortingIcons("tblViewModalTypeDetails");
+
+        });
+
+        $(function () {
+            $('#tblViewModalTypeDetails a').on("click", function () {
+
+
+                //$(this).attr('href', function () {
+
+                //    return this.href += encodeURIComponent();
+
+                //});
+
+
+            });
+
+
+
+
+        });
+
+
+
+
+    </script>
+
+    </div>

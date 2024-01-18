@@ -1,0 +1,888 @@
+﻿.Heading {
+    width: 100%;
+    height: 55px;
+    text-decoration: none;
+    padding-top: 11px;
+    background: #c1f5ea;
+    border-bottom: 1px solid gray;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.wrapper {
+    margin: 0 0 0px 0;
+    clear: inherit;
+    display: table;
+    width: 100%;
+    vertical-align: top;
+}
+
+.tube {
+    width: 30px;
+    vertical-align: middle;
+    padding: 3px;
+    border: 1px solid black;
+    border-bottom-width: 0px;
+}
+
+.wrapper .tube:last-child {
+    border-bottom-width: 1px;
+}
+
+.tube, .core {
+    display: table-cell;
+}
+
+.otherEndCores {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.otherEndFiber {
+    width: 15px;
+    height: 4px;
+    margin-top: 9px;
+    background: #A9A9A9;
+    cursor: pointer;
+}
+
+.fiber {
+    width: 56px;
+    height: 3px;
+    margin-top: 10px;
+    /*opacity: 0.6;*/
+    cursor: pointer;
+    font-size: 0px;
+}
+
+    .fiber div {
+        /*display:inline-block;*/
+        float: left;
+    }
+
+.cable {
+    width: 40px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right;
+}
+
+.cableContainer {
+    /*width: 150px;*/
+    width: 345px;
+    display: table-cell;
+}
+
+.tubeText {
+    background: #fff;
+    margin: 0 auto;
+    text-align: center;
+    width: 25px;
+    border-radius: 50%;
+    height: 25px;
+    padding-top: 5px;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 1px;
+    border: 1px solid black;
+}
+
+}
+
+.lastCore {
+    margin-bottom: 2px;
+}
+
+.firstCore {
+    margin-top: 2px;
+}
+
+.MidSection {
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+    height: 100%;
+    display: table-cell;
+    vertical-align: top;
+}
+
+.DeviceView {
+    height: 100%;
+    border: 2px solid green;
+    max-width: 415px;
+    width: auto;
+    min-width: 300px;
+    margin: 0 auto;
+    min-height: 250px;
+    padding-top: 0%;
+}
+
+.rightCore {
+    display: table-cell;
+    float: right;
+}
+
+.contedlegend {
+    background-color: #00ba8a;
+    opacity: 1;
+    cursor: default;
+}
+
+.rsrvdlegend {
+    background-color: #0000FF;
+    margin-left: 10px;
+}
+
+.faultylegend {
+    background-color: red;
+    margin-left: 10px;
+}
+
+.rsrvdcontlegend {
+    background-color: #EDADF4;
+    margin-left: 10px;
+}
+
+.rsrvdfaultlegend {
+    background-color: #750404;
+    margin-left: 10px;
+}
+
+.splicingLegend {
+    opacity: 1;
+    cursor: default;
+    float: left;
+    width: 10px !important;
+    height: 10px !important;
+    margin-top: 5px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.ExportConnections {
+    background: url(../images/ExportReport.svg) no-repeat;
+    float: right;
+    width: 30px;
+    height: 29px;
+}
+
+.UnspliceConnections {
+    background: url(../images/UnlinkAll.svg) no-repeat;
+    float: right;
+    width: 30px;
+    height: 25px;
+    cursor: pointer;
+}
+
+.SpliceConnections {
+    background: url(../images/LinkAll.svg) no-repeat;
+    float: right;
+    width: 30px;
+    height: 29px;
+    cursor: pointer;
+}
+
+.SwapConnections {
+    background: url(../images/split_img.png) no-repeat;
+    float: right;
+    background-position: -143px -426px;
+    width: 30px;
+    height: 29px;
+}
+
+.endPint {
+    width: 10px;
+    height: 10px;
+}
+
+
+
+
+.innerFiber {
+    margin-top: 1px;
+    width: 15px;
+    height: 3px;
+}
+
+/*.fiberNumber {
+    margin-top: -6px;
+    font-size: 12px;
+    width: 20px;
+    margin-left: 2px;
+    margin-right: 2px;
+}*/
+
+.fiberNumber {
+    margin-top: 5px;
+    font-size: 12px;
+    width: 30px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.innerCable {
+    width: 40px;
+    height: 10px;
+    background: red;
+}
+
+.cell {
+    vertical-align: top;
+    display: table-cell;
+    height: 100%;
+}
+
+.leftFiber div {
+    /*float: left;*/
+}
+
+.leftFiber .fiberNumber {
+    /*text-align: right;*/
+    text-align: center;
+    background: #80808038;
+}
+
+.rightFiber div {
+    /*float: right;*/
+}
+
+.rightFiber .fiberNumber {
+    text-align: left;
+}
+
+.triangle1 {
+    background: linear-gradient(to bottom right, #fff 0%, #fff 50%, #a48d01 50%, #a48d01 100%);
+}
+
+.triangle2 {
+    background: linear-gradient(to top right, #fff 0%, #fff 50%, #a48d01 50%, #a48d01 100%);
+}
+
+.triangle1, .triangle2 {
+    /*width: 150px;
+        height: 200px;*/
+}
+
+#tri3 {
+    clip-path: polygon(100% 0, 0 52%, 100% 100% );
+    width: 202px;
+    height: auto;
+    background: rgba(0, 113, 110, 0.2);
+    top: 20vh;
+    left: 50%;
+}
+
+path:hover {
+    stroke-width: 3px;
+    color: green;
+    stroke: green;
+    cursor: pointer;
+}
+
+.customerContainer {
+    width: 125px;
+    border: 1px solid green;
+    height: auto;
+    float: right;
+    text-align: center;
+    margin: 0 auto;
+    padding: 10px;
+    background: #e0f8e0;
+}
+
+.customer {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    border: 1px solid black;
+    float: left;
+    background: url(../images/Customer.png) no-repeat;
+    background-position: center;
+}
+
+.customerParent {
+    width: 70px;
+    margin-left: 10px;
+    height: 45px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 0px;
+}
+
+    .customerParent div {
+        float: left;
+    }
+
+.cpePort {
+    width: 15px;
+    background: red;
+    height: 5px;
+    float: left;
+}
+
+.cpeCore {
+    width: 25px;
+    height: 3px;
+    float: right;
+    background: red;
+    margin-top: 1px;
+}
+
+.spliceAllConnections {
+    background: url(../images/split_img.png) no-repeat;
+    float: right;
+    background-position: -202px -426px;
+    width: 30px;
+    height: 29px;
+    cursor: pointer;
+}
+
+#dvLeftCable {
+    padding-left: 10px;
+}
+
+#dvRightCable {
+    padding-right: 10px;
+}
+
+.rel_pop {
+    height: auto;
+    background-color: #00ba8a;
+    position: absolute;
+    margin-left: 40px;
+    margin-top: -5px;
+    z-index: 99;
+    border-radius: 5px;
+    border: 0px;
+    display: none;
+    padding-bottom: 10px;
+    margin-right: 5px;
+    margin-bottom: 4px;
+    cursor: default;
+}
+
+    .rel_pop .span_box_menu {
+        padding-left: 10px !important;
+        text-align: left;
+        font-size: 14px;
+        color: #fff;
+        width: 100%;
+        background-color: transparent;
+        float: left;
+        padding: 2px 0px 2px 0px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        margin: 0px;
+    }
+
+#btnCloseSplicingInfo {
+    color: #fff;
+}
+
+.rel_pop .span_box_menu:hover {
+    border-radius: 0px;
+    margin: 0px;
+}
+
+.rel_pop {
+    padding-bottom: 0px !important;
+    border-radius: 5px !important;
+    width: 80px;
+}
+
+    .rel_pop .pointer {
+        font-size: 32px !important;
+        color: #00ba8a;
+        position: absolute;
+        left: -13%;
+        top: 0px;
+    }
+
+.cpfLegend {
+    width: 15px;
+    height: 15px;
+    background-color: #fcaf88;
+    border: 1px solid grey;
+    float: left;
+    margin-left: 10px;
+    margin-right: 6px;
+}
+
+.nav-tabs {
+    border: none;
+}
+
+    .nav-tabs > li {
+        border-top: 1px solid #ddd;
+    }
+
+#divDownStream .checkbox-custom2:checked + b .checkbox-custom2-label:before {
+    content: "\f00c";
+    font-family: 'FontAwesome';
+    color: green;
+    font-size: 12px;
+}
+
+#divDownStream .checkbox-custom2 + b .checkbox-custom2-label:before {
+    font-family: 'FontAwesome';
+    background: rgb(239, 168, 168);
+    width: 18px;
+    height: 17px;
+    border: 1px solid #395385;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 1px;
+    margin-right: 0px;
+    text-align: center;
+    margin-left: -10px;
+}
+
+#divUpStream .checkbox-custom2:checked + b .checkbox-custom2-label:before {
+    content: "\f00c";
+    font-family: 'FontAwesome';
+    color: green;
+    font-size: 12px;
+}
+
+#divUpStream .checkbox-custom2 + b .checkbox-custom2-label:before {
+    font-family: 'FontAwesome';
+    background-color: rgb(197, 200, 236);
+    width: 18px;
+    height: 17px;
+    content: '';
+    border: 1px solid #395385;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 1px;
+    margin-right: 0px;
+    text-align: center;
+    margin-left: -10px;
+}
+
+
+.upStream {
+    background-color: rgb(197, 200, 236);
+}
+
+
+.downStream {
+    background-color: rgb(239, 168, 168);
+}
+
+.checkbox-custom2 {
+    opacity: 0;
+    position: absolute;
+}
+
+.conTerningPoint {
+    background: #aef5a9 !important;
+}
+
+.coreRangeContainer {
+    width: 110px;
+    padding-bottom: 10px;
+}
+
+.splicingLegendSection {
+    width: 100%;
+    height: 48px;
+    padding-top: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #80808029 !important;
+    background: none !important;
+}
+
+.coreRangeContainer .rangeLabel {
+    width: 37px;
+    height: 20px;
+    float: left;
+    text-align: center;
+    background: #25c094;
+    font-weight: bolder;
+    font-size: 12px;
+    padding: 2px;
+    color: white;
+}
+
+.coreRangeContainer .rangeInputContainer {
+    float: left;
+    width: 72px;
+    padding-left: 5px;
+}
+
+    .coreRangeContainer .rangeInputContainer input {
+        width: 23px;
+        height: 20px !important;
+        float: left;
+        border: 1px solid green;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .coreRangeContainer .rangeInputContainer .inputSeperator {
+        background: #25c094;
+        font-size: 3px;
+        width: 10px;
+        height: 8px;
+        display: block;
+        float: left;
+        text-align: center;
+        margin: 3px;
+        margin-top: 6px;
+        line-height: 1;
+        color: #25c094;
+    }
+
+.disabledExportCPF {
+    pointer-events: none;
+    cursor: default;
+}
+
+/*update new css for CPF 28/11/19*/
+
+.cpfmaindv {
+    float: right;
+    padding-top: 10px;
+    width: 215px;
+    display: none;
+}
+
+    .cpfmaindv .spn {
+        width: 230px;
+        float: left;
+        margin-left: 20px;
+        font-size: 12px;
+    }
+
+#dvSchematicView path {
+    stroke-width: 3px;
+    color: blue;
+    stroke: blue;
+    cursor: pointer;
+}
+
+.Custom_Radio_Buttons {
+    display: inline;
+    position: relative;
+    padding-left: 60px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+    .Custom_Radio_Buttons input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+        .Custom_Radio_Buttons input:checked ~ .checkmark {
+            background-color: #1eb975;
+        }
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #fff;
+    border-radius: 50%;
+    border: solid 1px #395385;
+}
+
+.Custom_Radio_Buttons input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.Custom_Radio_Buttons .checkmark:after {
+    top: 5px;
+    left: 5px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+
+.libTabContent .libTabs .nav-tabs > li {
+    height: 40px;
+}
+
+.libTabContent .libTabs .nav > li > a:hover {
+    height: 37px;
+}
+
+#dvSchematicView {
+}
+
+.modal-open .modal {
+    background-color: rgba(0,0,0,0.4);
+}
+/*update new css for CPF 28/11/19*/
+
+
+@media (min-width: 1700px) and (max-width:2000px) {
+    .rel_pop {
+        margin-top: -15px;
+    }
+}
+
+.NotValid {
+    border: 1px solid red !important;
+}
+
+.connectionCount {
+    float: left;
+    margin-top: 7px;
+    margin-left: 5px;
+    min-width: 20px;
+    background: #8080802e;
+    text-align: center;
+    /*border-radius: 10px;
+    padding-top: 1px;*/
+}
+
+
+
+.BlockConnection {
+    opacity: 1;
+    cursor: default;
+    float: left;
+    width: 10px !important;
+    height: 10px !important;
+    margin-top: 5px;
+    margin-right: 10px;
+    margin-left: 20px !important;
+    border-radius: 5px;
+}
+
+.webgrid {
+    margin: 4px;
+    border-collapse: collapse;
+    width: 98%;
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+.sourceEqpmtName {
+    float: left;
+    margin-top: 7px;
+    margin-left: 5px;
+    min-width: 185px;
+    max-width: 185px;
+    cursor: pointer;
+}
+
+.destinationEqpmtName {
+    float: right;
+    margin-top: 7px;
+    margin-left: 5px;
+    min-width: 185px;
+    max-width: 185px;
+    text-align: right;
+    cursor: pointer;
+}
+
+
+.dropbox {
+    position: absolute;
+    width: 130px;
+    height: auto;
+    background-color: #fff;
+    /*right: 0px;*/
+    margin: 25px 15px 0px 0px;
+    box-shadow: 0px 1px 3px #b3b3b3;
+    border-radius: 2px;
+    text-align: left;
+    font-size: 14px;
+    z-index: 10000;
+    display: none;
+}
+
+    .dropbox span {
+        padding: 6px 5px;
+        float: left;
+        cursor: pointer;
+        width: 100%;
+    }
+
+        .dropbox span:hover {
+            background-color: #dafbf3;
+        }
+
+#divConnectionFilter {
+    position: absolute;
+    left: 25%;
+    z-index: 999;
+    background: #fff;
+    top: 10%;
+    width: 500px;
+}
+
+.singleConnection {
+    background: #aaaaaa;
+    width: 30px;
+    border-radius: 10px;
+}
+
+.multiConnection {
+    background: #0076f9;
+    width: 30px;
+    border-radius: 10px;
+}
+
+.connectionCount {
+    color: #fff;
+    cursor: pointer;
+}
+
+#divMultipleConnection .webgrid tr:hover {
+    background-color: #0092ff33;
+}
+
+.connectionHeader {
+    height: 30px;
+    text-align: center;
+    padding-top: 8px;
+    margin-bottom: 0px;
+    background: #c1f5ea;
+}
+
+.conBuilderMessage {
+    display: none;
+    position: absolute;
+    width: 100%;
+    color: #155724;
+    font-size: 13px;
+    height: 45px;
+    z-index: 999;
+    text-align: center;
+}
+
+.conProgressBar {
+    padding-top: 0px !important;
+    width: 233px !important;
+    height: 33px !important;
+    top: 25% !important;
+    left: 25% !important;
+}
+
+.dvCountdisabled {
+    cursor: not-allowed !important;
+}
+
+.MultiConnectionIcon {
+    position: absolute;
+    margin-top: 10px;
+    background: #fff;
+    margin-left: -3px;
+    color: gray;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+    .MultiConnectionIcon:hover, .MultiConnectionIcon:focus {
+        color: gray;
+    }
+
+.RightMultiConnectionIcon {
+    position: absolute;
+    margin-top: 10px;
+    background: #fff;
+    margin-left: -5px;
+    color: gray;
+    font-size: 11px;
+    right: 6px;
+    z-index: 9;
+    cursor: pointer;
+}
+
+    .RightMultiConnectionIcon:hover, .RightMultiConnectionIcon:focus {
+        color: gray;
+    }
+
+.InternalConnectionLegend {
+    position: absolute;
+    margin-top: 5px;
+    background: #fff;
+    margin-left: -20px;
+    color: gray;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.tinyLoader {
+    background-image: url(/content/images/loading_new.gif);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.leftMultiConnection {
+    left: 265px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 146, 255, 0.43);
+    min-height: 50px;
+    max-height: 310px;
+    min-width: 400px;
+    max-width: 500px;
+    width: auto;
+    overflow: auto;
+    display: none;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+}
+
+.rightMultiConnection {
+    right: 210px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 146, 255, 0.43);
+    min-height: 50px;
+    max-height: 310px;
+    min-width: 310px;
+    max-width: 410px;
+    width: auto;
+    overflow: auto;
+    display: none;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+}
+
+.leftPrevConnection {
+    left: 5px;
+    width: auto;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 146, 255, 0.43);
+    display: none;
+    overflow: auto;
+    min-width: 250px;
+    min-height: 50px;
+    max-height: 310px;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+}
+
+.rightPrevConnection {
+    right: -5px;
+    width: auto;
+    border-radius: 10px;
+    border: 1px solid #0092ff6e;
+    min-width: 250px;
+    min-height: 50px;
+    max-height: 310px;
+    overflow: auto;
+    display: none;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+}

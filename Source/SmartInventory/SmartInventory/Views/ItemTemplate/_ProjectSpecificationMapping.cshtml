@@ -1,0 +1,190 @@
+﻿@model Models.ProjectSpecificationMaster
+
+<!DOCTYPE html>
+<div class="libDetail">
+    @using (Ajax.BeginForm("SaveProjectSpecificationMapping", "ItemTemplate", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "dvModalBody"
+    //OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.Building.ToString() + "');"
+},
+new { id = "frmProjectSpecificationMapping", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtLatitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_074:</label>
+                        <div class="col-sm-45">
+                            
+                            <select id="ddl_ProjectSpeciCode" name="@Html.NameFor(m=> m.lstBindProjectCode)" class="chosen-select col-sm-12">
+                                <option value="">-Select-</option>
+                                @foreach (var projspeci in Model.lstBindProjectCode)
+                                {
+                                    <option value="@projspeci.system_id" data-ProjectName="@projspeci.project_name" >@projspeci.project_code</option>
+                                }
+                            </select>
+
+                            @*@Html.DropDownListFor(m => m.project_code, new SelectList(Model.lstBindProjectCode.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddl_ProjectSpeciCode", @onchange = "si.onChangeProjectCode();" })*@
+                            
+                        </div>
+                        <label class="control-label col-sm-2" for="txtLongitude">@Resources.Resources.SI_OSP_GBL_NET_FRM_007:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.project_name, new { @class = "form-control", @Readonly=true })
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+            <label class="control-label col-sm-2" for="txtRegionName">@Resources.Resources.SI_OSP_GBL_NET_FRM_008:</label>
+            <div class="col-sm-45">
+                @*@Html.DropDownListFor(m => m.project_code, new SelectList(Model.lstBindPlanningCode.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-",new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddl_PlanningSpeciCode", @onchange = "si.onChangePlanningCode();" })*@
+                <select id="ddl_PlanningSpeciCode" class="chosen-select col-sm-12">
+                    <option value="">-Select-</option>
+                </select>
+                    
+                
+
+                </div>
+            <label class="control-label col-sm-2" for="txtProvinceName">@Resources.Resources.SI_OSP_GBL_NET_GBL_001:</label>
+            <div class="col-sm-45">
+                @Html.TextBoxFor(m => m.planning_name, new { @class = "form-control", @Readonly = true })
+
+                </div>
+                 </div>
+
+
+
+                    @*<div class="form-group">
+                        <label class="control-label col-sm-2" for="txtRegionName">Planning Code:</label>
+                        <div class="col-sm-45">
+                            @Html.DropDownListFor(m => m.project_code, new SelectList(Model.lstBindPlanningCode.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddl_PlanningSpeciCode", @onchange = "si.onChangePlanningCode();" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtProvinceName">Planning Name:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.planning_name, new { @class = "form-control", @Readonly = true })
+                            
+                        </div>
+                    </div>*@
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtRegionName">@Resources.Resources.SI_OSP_GBL_NET_FRM_009:</label>
+                        <div class="col-sm-45">
+                            <select id="ddl_WorkorderSpeciCode" class="chosen-select col-sm-12">
+                                <option value="">-Select-</option>
+                            </select>
+
+
+                            @*@Html.DropDownListFor(m => m.project_code, new SelectList(Model.lstBindWorkorderCode.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddl_WorkorderSpeciCode", @onchange = "si.onChangeWorkorderCode();" })*@
+                        </div>
+                        <label class="control-label col-sm-2" for="txtProvinceName">@Resources.Resources.SI_OSP_GBL_NET_FRM_010:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.workorder_name, new { @class = "form-control", @Readonly = true })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtBuildingName">@Resources.Resources.SI_OSP_GBL_NET_FRM_011:</label>
+                        <div class="col-sm-45">
+
+                            <select id="ddl_PurposeSpeciCode" class="chosen-select col-sm-12">
+                                <option value="">-Select-</option>
+                            </select>
+
+                            @*@Html.DropDownListFor(m => m.project_code, new SelectList(Model.lstBindPurposeCode.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddl_PurposeSpeciCode"})*@
+                        </div>
+                        <label class="control-label col-sm-2" for="txtHousePlotNo">@Resources.Resources.SI_OSP_GBL_NET_GBL_002:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.purpose_name, new { @class = "form-control", @Readonly = true })
+                        </div>
+                    </div>
+
+                    @*<div class="form-group">
+                        <label class="control-label col-sm-2" for="txtArea">Area:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.area, new { @class = "form-control", @maxlength = "50" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtPinCode">PinCode:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.pin_code, new { @class = "form-control", @onkeypress = "return si.allowOnlyNumber(event);", @onpaste = "return false;", @maxlength = "6", @minlength = "6" })
+                            @Html.ValidationMessageFor(model => model.pin_code)
+                        </div>
+                    </div>*@
+           
+         
+                  
+                    @*<div class="form-group">
+                        <label class="control-label col-sm-2" for="txtRFSDate"> RFS Date:</label>
+                        <div class="col-sm-45" style="height:24px;">
+                            @Html.TextBoxFor(m => m.rfsSetDate, new { @class = "form-control clsReadOnly", placeholder = "DD-MMM-YYYY", @readonly = true, @style = "background:#fff;" })
+                            @{var isVisibleRfsDat = !string.IsNullOrEmpty(Model.rfsSetDate) ? "block" : "none";}
+                            <img id="imgRfsDate" class="assign-calen" src="~/Content/images/calendar.png" style="display:@isVisibleRfsDat;" />
+                        </div>
+                        <label class="control-label col-sm-2" for="txtCreatedDate">Created Date:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.createDate, new { @class = "form-control clsReadOnly", @readonly = true })
+                        </div>
+                    </div>*@
+                   
+                </div>
+                <div class="tab-pane" id="StructureInfo" style="min-height:260px;">
+                </div>
+            </div>
+        </div>
+        <div class="form-group ModalFooter" id="dvBtnAction">
+            <div class="col-sm-7 col-sm-offset-2" style="float: right; text-align: right; padding-right: 25px;">
+                @if (Model.system_id == 0)
+                {<input type="submit" formmethod="post" class="btn btn-primary" name="btnaction" id="btnUpdateProjectSpeci" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003" />
+                    @*<input type="submit" formmethod="post" class="btn btn-primary" name="btnaction" id="btnSaveProjectSpeci" value="Save" />*@
+                    <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                }
+                else
+                {
+                    <input type="submit" formmethod="post" class="btn btn-primary" name="btnaction" id="btnUpdateProjectSpeci" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003" />
+                    @*if (Model.building_status == BuildingStatus.Surveyed.ToString())
+                    {
+                        <input type="submit" formmethod="post" class="btn btn-primary" name="btnaction" id="btnapprove" value="Approve" />
+                        <input type="submit" class="btn btn-danger" formmethod="post" name="btnaction" id="btnreject" value="Reject" />
+                    }*@
+                    <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                }
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    }
+
+    <script>
+
+        $('.chosen-select').chosen({ width: '100%' });
+      
+
+       
+        $('#ddl_ProjectSpeciCode').change(function () {
+            
+            si.BindPlanningDetail();
+        })
+
+        $('#ddl_PlanningSpeciCode').change(function () {
+
+           
+            si.BindWorkCodeDetail();
+
+        })
+
+        $('#ddl_WorkorderSpeciCode').change(function () {
+
+            
+            si.BindPurposeCodeDetail();
+
+        })
+
+        $('#ddl_PurposeSpeciCode').change(function () {
+          
+            $('#purpose_name').val($('#ddl_PurposeSpeciCode').find(':selected').data('purposename'));
+           
+        })
+
+    </script>
+
+
+</div>

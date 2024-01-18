@@ -1,0 +1,69 @@
+﻿@using Models;
+
+<link href="~/Areas/Admin/Content/css/764.css" rel="stylesheet" />
+
+<script>
+$(document).ready(function(){
+    $("#admindiv").on("click", function () {
+        $(".adminpopout").slideToggle("2000");
+  });
+});
+</script>
+@{
+    User objuser = new User();
+    objuser = (User)Session["userDetail"];
+    var imgProfile = (objuser != null && string.IsNullOrEmpty(objuser.userImgBytes)) ? "/Uploads/profiles/big.png" : objuser.userImgBytes;
+}
+<!DOCTYPE html>
+<div id="header" class="d-flex">
+    @*<a class="brand_name" href="@Url.Action("Index", "Home")">@SmartInventory.Settings.ApplicationSettings.ApplicationName</a>*@
+    @*<span class="brand_name">@SmartInventory.Settings.ApplicationSettings.ApplicationName</span>*@
+    <div id="logo">
+        @if (!string.IsNullOrEmpty(SmartInventory.Settings.ApplicationSettings.ApplicationLogoImageBytesForWeb))
+        {
+            <img src="@SmartInventory.Settings.ApplicationSettings.ApplicationLogoImageBytesForWeb" style="display:block;" />
+        }
+        @*@Model.ApplicationName*@
+    </div>
+    <ul class="user_btn ml-auto">
+        <li class="nav-item">
+            <a class="nav-link d-flex" @*href="@Url.Action("logout", "Login", new { @area = "" })"*@>
+                @objuser.user_name  <i class="icon-User_icon_circle" id="admindiv"></i>
+            </a>
+        </li>
+    </ul>
+    <button class="navbar-toggler navbar-toggler-right nav_btn_lt" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="adminpopout">
+       
+        <div class="padding">
+
+            <a href="@Url.Action("logout", "Login", new { @area = "" })">Sign Out</a>
+
+            @* <table class="table table-bordernone" border="0" >
+        <tbody>
+           <tr>
+                <td class="profilepic"><img id="imgUserBig" class="img-thumbnail" src="/Uploads/profiles/DP.jpg"></td>
+                <td class="LoginUser">
+                    <strong>Admin</strong>
+                    <br>
+                    <span>admin@gmail.com </span>
+                    <span class="changepic"><a href="#" onclick="si.uploadProfileImage();">Change Picture</a></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @*<td colspan="2"><i class="fa fa-sign-out"></i><a href="@Url.Action("logout", "Login", new { @area = "" })" >Sign Out</a></td>
+
+
+            </td>
+            </tr>
+            </tbody>
+            </table>*@
+        </div>
+
+    </div>
+
+</div>

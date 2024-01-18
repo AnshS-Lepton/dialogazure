@@ -1,0 +1,679 @@
+﻿@model Models.SplicingViewModel
+@using SmartInventory.Settings;
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == Model.connector.entity_type.ToString().ToUpper()).FirstOrDefault() : null;
+
+}
+@*<link href="~/Content/css/splicing/jquery-ui.css" rel="stylesheet" />
+<link href="~/Content/css/splicing/Splicing.css" rel="stylesheet" />*@
+@*<link href="~/Content/bootstrap.min.css" rel="stylesheet" />*@
+@*<link href="~/Content/css/splicing/icostyle.css" rel="stylesheet" />
+<link href="~/Content/js/Splice/splice-style.css" rel="stylesheet" />*@
+@*<link href="~/Content/css/splicing/Alert.css" rel="stylesheet" />*@
+@*<link href="~/Content/bootstrap.css" rel="stylesheet" />*@
+@*<link href="~/Content/css/splicing/main.css" rel="stylesheet" />*@
+<style>
+    .noprint {
+        text-align: right;
+        margin: 10px;
+        display: none;
+    }
+
+    .tooltip {
+        position: fixed !important;
+    }
+
+    .ports--Box {
+        display: flex;
+        padding: 3px;
+        font-size: 13px;
+        background: #e4f8ff;
+        border-bottom: 2px solid green;
+        justify-content: center;
+    }
+
+    .ports--Box-inner {
+        padding: 1.5rem;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="form-group noprint">
+
+    @{Html.RenderPartial("_GlobalVariable");}
+    <a id="print" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i> @Resources.Resources.SI_OSP_HTB_NET_FRM_012</a>
+    @Html.DropDownList("pageSize", new List<SelectListItem>
+    {
+    new SelectListItem{ Text="A4", Value = "A4" },
+    new SelectListItem{ Text="A3", Value = "A3" },
+    new SelectListItem{ Text="A2", Value = "A2" },
+    new SelectListItem{ Text="A1", Value = "A1" },
+    new SelectListItem{ Text="A0", Value = "A0" },
+    }, new { @class = "chosen-select col-sm-4", @style = "width: 81px !important;height: 26px;float: right;margin-left: 11px;" })
+</div>
+<div id="PrintContainer" style="height: 100%;border:none;border:none;height: 100%;width: 100%;overflow-y: auto;overflow-x: hidden;position: relative;">
+    <input type="hidden" id="ddlSourceCable" value="@ViewBag.source_system_id" />
+    <input type="hidden" id="ddlDestinationCable" value="@ViewBag.destination_system_id" />
+    <div class="mainContainer" id="mainContainer" style="/* overflow-x:hidden; */width: 100%;display: table;min-height: 390px;padding-top: 0px;">
+        <input type="hidden" id="hdnUserId" value="@Model.userId" />
+        <div class="Heading">
+            <div class="alert alert-info" id="divConnectionAlert" style="display: none; position: absolute; width: 100%; margin-top: -16px; color: #155724; font-size: 13px; height: auto; max-height: 74px;">
+                <strong>Success! &nbsp;</strong><span id="SlideMessage">@Resources.Resources.SI_OSP_GBL_NET_FRM_412</span>
+                <div id="OverConnectionMessage" style="padding-top: 5px; display:none;"></div>
+            </div>
+
+            <div>
+                <span id="SourceCableName" style="padding: 5px;">@(Model.sourceCable != null ? Model.sourceCable.network_id : "")</span>
+                @if (Model.sourceCable != null && Model.destinationCable != null)
+                {
+                    <b>@Resources.Resources.SI_OSP_GBL_NET_FRM_131</b>
+                }
+                <span id="DestinationCableName" style="padding: 5px;">@(Model.destinationCable != null ? Model.destinationCable.network_id : "")</span>
+            </div>
+            <div style="padding-top:5px;">
+                <span><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_009</b> </span><span id="ConnectingDevice" style="padding: 5px;">@(Model.connector != null ? Model.connector.network_id : "")</span>
+            </div>
+        </div>
+
+        <div class="splicingLegendSection">
+            @foreach (var item in Model.listPortStatus)
+            {
+                <div class="left--lines">
+                    <div class="splicingLegend" style="background:@(item.color_code)"></div><span>@item.status</span>
+                </div>
+            }
+            <div class="left--lines">
+                <span class="spnCableConnType"><i class="icon-CABLE"></i> @Resources.Resources.SI_OSP_GBL_GBL_FRM_218</span>
+            </div>
+            <div class="left--lines">
+                <span class="spnCableConnType"><i class="icon-CABLE green"></i> @Resources.Resources.SI_OSP_GBL_NET_FRM_121</span>
+            </div>
+
+
+            <div class="icon-mr-auto">
+                @if (Model.isEditAllowed)
+                {
+                    <div class="ExportConnections Export" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_156" onclick="splicing.ExportConnections('EXCEL','C2C');" style="display:block;">&nbsp;</div>
+                    <div class="ExportConnectionsPDFIcon" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_157" onclick="splicing.ExportConnections('PDF','C2C');" style="display:block;">&nbsp;</div>
+
+                    <div class="UnspliceConnections" title="@Resources.Resources.SI_OSP_GBL_JQ_FRM_137" onclick="splicing.unSpliceAll();" style="display:block;">
+                        &nbsp;
+                    </div>
+                    if (Model.sourceCable != null && Model.destinationCable != null && Model.connector.entity_type != Models.EntityType.ONT.ToString())
+                    {
+                        <div class="crossConnections icon-cross_connect" title="@Resources.Resources.SI_OSP_SC_NET_FRM_023" onclick="splicing.crossConnect();" style="display:block;">&nbsp;</div>
+                        <div class="spliceAllConnections" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_010" onclick="splicing.spliceAll();" style="display:block;">&nbsp;</div>
+                    }
+                }
+            </div>
+            <input type="hidden" id="hdnConnectedColor" value="#00ba8a" />
+            <input type="hidden" id="hdnVacantColor" value="#A9A9A9" />
+            @Html.HiddenFor(m => m.isEditAllowed, new { id = "hdnIsSplicingEditEnabled" })
+            @*<div class="SwapConnections" title="Swap Cables">&nbsp;</div>*@
+        </div>
+        <div id="divParentSplicingWindow" style="max-height:calc(100% - 137px);position:relative; padding-top:8px;height:100%; margin: 5px;cursor:@(!Model.isEditAllowed?"not-allowed":"")" title="@(!Model.isEditAllowed?"You are not authorised!":"")">
+            <div class="form-group" style="margin-bottom: 27px;margin-left: 18px;">
+                <label class="control-label col-md-2 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_217:</label>
+                @if (Model.is_virtual_entity)
+                {
+                    if (Model.is_virtual)
+                    {
+                        <div class="splicing--Box-check">
+                            @Html.RadioButtonFor(m => m.ConnInfoMaster.is_through_connection, false, new { @id = "is_through_connectionYes", @class = "dvdisabled" })
+                            <label for="is_through_connectionYes" class="mr-01" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_193">@Resources.Resources.SI_OSP_GBL_NET_FRM_121</label>
+
+                            @Html.RadioButtonFor(m => m.ConnInfoMaster.is_through_connection, true, new { @id = "is_through_connectionNo", @checked = true })
+                            <label for="is_through_connectionNo">@Resources.Resources.SI_OSP_GBL_GBL_FRM_218</label>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="splicing--Box-check">
+                            @Html.RadioButtonFor(m => m.ConnInfoMaster.is_through_connection, false, new { @id = "is_through_connectionYes", @checked = true, @onchange = "splicing.ResetSpliceTraySpliceInfo();" })
+                            <label for="is_through_connectionYes" class="mr-01">@Resources.Resources.SI_OSP_GBL_NET_FRM_121</label>
+
+                            @Html.RadioButtonFor(m => m.ConnInfoMaster.is_through_connection, true, new { @id = "is_through_connectionNo", @onchange = "splicing.ResetSpliceTrayThroughInfo();" })
+                            <label for="is_through_connectionNo">@Resources.Resources.SI_OSP_GBL_GBL_FRM_218</label>
+                        </div>
+
+                    }
+                }
+                else
+                {
+                    <div class="splicing--Box-check">
+                        @Html.RadioButtonFor(m => m.ConnInfoMaster.is_through_connection, false, new { @id = "is_through_connectionYes", @checked = true })
+                        <label for="is_through_connectionYes" class="mr-01">@Resources.Resources.SI_OSP_GBL_NET_FRM_121</label>
+
+                        @Html.RadioButtonFor(m => m.ConnInfoMaster.is_through_connection, false, new { @id = "is_through_connectionNo", @class = "dvdisabled" })
+                        <label for="is_through_connectionNo" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_219">@Resources.Resources.SI_OSP_GBL_GBL_FRM_218</label>
+                    </div>
+                }
+            </div>
+            <div class="MainSection" id="divSpliceWindow" style="display: table; height:0px; width:100%;overflow-x:hidden;">
+                <div id="dvLeftCable" class="cell">
+                    @if (Model.sourceCable != null && Model.destinationCable != null && Model.connector.entity_type != Models.EntityType.ONT.ToString())
+                    {
+                        <div class="wrapper coreRangeContainer">
+                            <div style="display:table-cell;vertical-align:top;">
+                                <div class="rangeLabel">@Resources.Resources.SI_OSP_GBL_NET_FRM_130</div>
+                                <div class="rangeInputContainer">
+                                    <input type="text" maxlength="3" onkeypress="return allowOnlyNumber(event);" id="leftStartRange">
+                                    <span class="inputSeperator">-</span>
+                                    <input type="text" maxlength="3" onkeypress="return allowOnlyNumber(event);" id="leftEndRange">
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="cableContainer wrapper">
+                        @if (Model.sourceCable != null)
+                        {
+                            @*<div class="cable">
+                                    <div class="innerCable"></div>
+                                </div>@((item.value.is_connected_to_other?item.value.core_port_status_color:(item.value.core_port_status!=Models.CorePortStatus.Connected.ToString()?item.value.core_port_status_color:"grey")));*@
+                            <div style="display:table-cell;">
+                                @for (int i = 1; i <= Model.sourceCable.no_of_tube; i++)
+                                {
+                                    var tubeColorDetails = Model.splicingConnections.Where(m => m.system_id == Model.sourceCable.system_id && m.entity_type == Models.EntityType.Cable.ToString() && m.tube_number == i).FirstOrDefault();
+
+                                    <div class="wrapper">
+                                        <div class="otherEndCores">
+                                            @foreach (var item in Model.splicingConnections.Where(m => m.system_id == Model.sourceCable.system_id && m.entity_type == Models.EntityType.Cable.ToString() && m.tube_number == i && m.is_cable_a_end == Model.sourceCable.is_cable_a_end).Select((value, j) => new { j, value }))
+                                            {
+                                                var coreId = "Other_" + Model.sourceCable.system_id + "_" + Models.EntityType.Cable.ToString().ToUpper() + "_" + item.value.core_port_number;
+                                                <div id="@coreId"
+                                                     title="@((item.value.port_statusid==1||item.value.port_statusid==2||item.value.port_statusid==3 || item.value.port_statusid==4)?item.value.port_comment: item.value.other_end_text)"
+                                                     class="otherEndFiber" style="background:@(item.value.is_other_end_spliced?"#00ba8a":(item.value.port_statusid>2?item.value.core_port_status_color:"#A9A9A9"));"
+                                                     data-status-id="@item.value.port_statusid"
+                                                     data-is-connected="@(item.value.is_other_end_spliced?1:0)"></div>
+                                                <div class="clearfix"></div>
+                                            }
+                                        </div>
+                                        <div class="tube" style="background:@tubeColorDetails.tube_color_code;"><div class="tubeText">T@(i)</div></div>
+                                        <div class="core">
+                                            @foreach (var item in Model.splicingConnections.Where(m => m.system_id == Model.sourceCable.system_id && m.entity_type == Models.EntityType.Cable.ToString() && m.tube_number == i && m.is_cable_a_end == Model.sourceCable.is_cable_a_end).Select((value, j) => new { j, value }))
+                                            {
+                                                var coreId = "Left_" + Model.sourceCable.system_id + "_" + Models.EntityType.Cable.ToString().ToUpper() + "_" + item.value.core_port_number;
+
+                                                <div class="fiber leftFiber">
+                                                    <div class="innerFiber" style="background:@item.value.core_color_code;"></div>
+                                                    <div class="@(!item.value.is_connected_to_other?"src":"") endPint"
+                                                         title="@((item.value.port_statusid==1||item.value.port_statusid==2||item.value.port_statusid==3 || item.value.port_statusid==4)?item.value.port_comment:(item.value.is_connected_to_other?item.value.other_text:""))"
+                                                         style="background:@item.value.core_port_status_color;" id="@coreId"
+                                                         data-is-cable-a-end="@item.value.is_cable_a_end"
+                                                         data-port-no="@item.value.core_port_number"
+                                                         data-system-id="@Model.sourceCable.system_id"
+                                                         data-network-id="@Model.sourceCable.network_id"
+                                                         data-entity-type="Cable"
+                                                         data-is-connected-to-same="@((!item.value.is_connected_to_other && item.value.destination_system_id!=null && item.value.destination_system_id!=0)?"True":"False")"
+                                                         data-target-id="@(item.value.destination_entity_type!=null?item.value.destination_system_id + "_" +item.value.destination_entity_type.ToString().ToUpper() + "_" + item.value.destination_port_no:"")"
+                                                         data-target-entity-type="@(item.value.destination_entity_type!=null?item.value.destination_entity_type.ToString().ToUpper():"")"
+                                                         data-target-system-id="@item.value.destination_system_id"
+                                                         data-target-port-no="@item.value.destination_port_no"
+                                                         data-is-customer-connected="@item.value.is_customer_connected" data-is-connected="0"
+                                                         data-status-id="@item.value.port_statusid"
+                                                         data-link-id="@item.value.link_system_id"
+                                                         data-through-conn="@item.value.is_through_connection"
+                                                         data-port-comment="@item.value.port_comment"
+                                                         data-port-status="@item.value.core_port_status"></div>
+                                                    <div class="linkNumber leftLink icon-connect" style="color:@(item.value.link_system_id>0?"green":"");display:block;"
+                                                         data-link-id="@item.value.link_system_id"
+                                                         data-network-id="@item.value.network_id"
+                                                         data-entity-type="@item.value.entity_type"
+                                                         data-system-id="@item.value.system_id"
+                                                         data-port-no="@item.value.core_port_number"
+                                                         data-through-conn="@item.value.is_through_connection">
+                                                    </div>
+                                                    <div class="fiberNumber">@(item.value.core_port_number)</div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="MidSection">
+                    @if (Model.connector.entity_type == Models.EntityType.ONT.ToString() || Model.connector.entity_type == Models.EntityType.Splitter.ToString())
+                    {
+                        foreach (var item in Model.splicingConnections.Where(m => m.entity_type == Convert.ToString(Model.connector.entity_type)).GroupBy(p => new { p.entity_type, p.system_id }).Select(g => g.First()).ToList())
+                        {
+                            <div class="wrapper" id="divONT" style="margin:0 auto; width:0%;padding:10px;padding-top:70px;">
+                                <div class="core" style="display: table-cell; vertical-align:middle;">
+                                    @foreach (var portItem in Model.splicingConnections.Where(m => m.is_parent == 1 && m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "I").OrderByDescending(m => m.core_port_number).Select((value, i) => new { i, value }))
+                                    {
+                                        var fmsID = portItem.value.system_id + "_" + Convert.ToString(Model.connector.entity_type) + "_" + portItem.value.core_port_number;
+                                        <div class="fiber rightFiber">
+                                            <div id="@fmsID" class="@(Model.is_middleware_entity?"":(!portItem.value.is_connected_to_other ? "trg" : "")) innerFiber"
+                                                 title="@((portItem.value.port_statusid==1||portItem.value.port_statusid==2||portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
+                                                 style="background:@portItem.value.core_port_status_color;width:20px;" data-port-no="@portItem.value.core_port_number"
+                                                 data-system-id="@portItem.value.system_id"
+                                                 data-network-id="@portItem.value.network_id"
+                                                 data-entity-type="@portItem.value.entity_type"
+                                                 data-is-connected-to-same="@((!portItem.value.is_connected_to_other && portItem.value.destination_system_id != null && portItem.value.destination_system_id != 0) ? "True" : "False")"
+                                                 data-target-id="@(portItem.value.destination_entity_type != null ? (portItem.value.destination_system_id + "_" + Convert.ToString(portItem.value.destination_entity_type).ToUpper() + "_" + portItem.value.destination_port_no) : "")"
+                                                 data-target-entity-type="@(portItem.value.destination_entity_type != null ? portItem.value.destination_entity_type.ToString().ToUpper() : "")"
+                                                 data-target-system-id="@portItem.value.destination_system_id"
+                                                 data-target-port-no="@portItem.value.destination_port_no"
+                                                 data-is-customer-connected="@portItem.value.is_customer_connected"
+                                                 data-is-connected="0" data-is-cable-a-end="false"
+                                                 data-status-id="@portItem.value.port_statusid"
+                                                 data-port-comment="@portItem.value.port_comment"
+                                                 data-port-status="@portItem.value.core_port_status"></div>
+                                            <div class="fiberNumber">@(-1 * portItem.value.core_port_number)</div>
+                                        </div>
+                                    }
+                                </div>
+                                <div style="display:table-cell; border:1px solid green;width: 150px; text-align:center;vertical-align:middle; font-weight:bold; background:#e1f4e1;">@item.network_id </div>
+                                <div class="core" style="display: table-cell; vertical-align:middle;">
+                                    @foreach (var portItem in Model.splicingConnections.Where(m => m.is_parent == 1 && m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "O").Select((value, i) => new { i, value }))
+                                    {
+                                        var fmsID = portItem.value.system_id + "_" + Convert.ToString(Model.connector.entity_type) + "_" + portItem.value.core_port_number;
+                                        <div class="fiber leftFiber" style="margin-top:10px;">
+                                            <div id="@fmsID" class="@(!portItem.value.is_connected_to_other? "src" : "") innerFiber"
+                                                 title="@((portItem.value.port_statusid==1||portItem.value.port_statusid==2|| portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
+                                                 style="background:@portItem.value.core_port_status_color;width:20px;" data-port-no="@portItem.value.core_port_number"
+                                                 data-system-id="@portItem.value.system_id"
+                                                 data-network-id="@portItem.value.network_id"
+                                                 data-entity-type="@portItem.value.entity_type"
+                                                 data-is-connected-to-same="@((!portItem.value.is_connected_to_other && portItem.value.destination_system_id != null && portItem.value.destination_system_id != 0) ? "True" : "False")"
+                                                 data-target-id="@(portItem.value.destination_entity_type != null ? (portItem.value.destination_system_id + "_" + Convert.ToString(portItem.value.destination_entity_type).ToUpper() + "_" + portItem.value.destination_port_no) : "")"
+                                                 data-target-entity-type="@(portItem.value.destination_entity_type.ToString().ToUpper() != null ? portItem.value.destination_entity_type.ToString().ToUpper() : "")"
+                                                 data-target-system-id="@portItem.value.destination_system_id"
+                                                 data-target-port-no="@portItem.value.destination_port_no"
+                                                 data-is-customer-connected="@portItem.value.is_customer_connected"
+                                                 data-is-connected="0" data-is-cable-a-end="false"
+                                                 data-status-id="@portItem.value.port_statusid"
+                                                 data-port-comment="@portItem.value.port_comment"
+                                                 data-port-status="@portItem.value.core_port_status"></div>
+                                            <div class="fiberNumber">@portItem.value.core_port_number</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else if (Model.connector.entity_type == Models.EntityType.HTB.ToString() || Model.connector.entity_type == Models.EntityType.OpticalRepeater.ToString())
+                    {
+                        foreach (var item in Model.splicingConnections.Where(m => m.entity_type == Convert.ToString(Model.connector.entity_type)).GroupBy(p => new { p.entity_type, p.system_id }).Select(g => g.First()).ToList())
+                        {
+                            <div class="wrapper" id="divHTB" style="border: 1px solid green;padding-top: 10px;padding-bottom: 10px; max-width: 125px; margin: 0 auto;">
+                                <div style="margin:0 auto;width: 100%;text-align: center;padding: 3px;font-size: 13px;border:1px solid green;background: #e4f8ff;border-bottom:0px;display:table-caption;font-weight:bold;">
+                                    @(item.network_id.Split('-')[item.network_id.Split('-').Length - 1].ToString())
+                                </div>
+                                <div class="core" style="display:table-cell; vertical-align:middle;">
+                                    <div class="fiber rightFiber" style="margin-top: 0px;height: 15px;text-align: right;padding-right: 28px;font-size:13px;">@Resources.Resources.SI_OSP_GBL_GBL_FRM_011</div>
+                                    @foreach (var portItem in Model.splicingConnections.Where(m => m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "I").OrderByDescending(m => m.core_port_number).Select((value, i) => new { i, value }))
+                                    {
+                                        var entityUiId = portItem.value.system_id + "_" + Convert.ToString(Model.connector.entity_type) + "_" + portItem.value.core_port_number;
+                                        <div class="fiber rightFiber">
+                                            <div id="@entityUiId" class="@(Model.is_middleware_entity?"":(!portItem.value.is_connected_to_other ? "trg" : "")) innerFiber"
+                                                 title="@((portItem.value.port_statusid==1||portItem.value.port_statusid==2|| portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
+                                                 style="background:@portItem.value.core_port_status_color;width:20px;" data-port-no="@portItem.value.core_port_number"
+                                                 data-system-id="@portItem.value.system_id"
+                                                 data-network-id="@portItem.value.network_id"
+                                                 data-entity-type="@portItem.value.entity_type"
+                                                 data-is-connected-to-same="@((!portItem.value.is_connected_to_other && portItem.value.destination_system_id != null && portItem.value.destination_system_id != 0) ? "True" : "False")"
+                                                 data-target-id="@(portItem.value.destination_entity_type != null ? (portItem.value.destination_system_id + "_" + Convert.ToString(portItem.value.destination_entity_type).ToUpper() + "_" + portItem.value.destination_port_no) : "")"
+                                                 data-target-entity-type="@(portItem.value.destination_entity_type != null ? portItem.value.destination_entity_type.ToString().ToUpper() : "")"
+                                                 data-target-system-id="@portItem.value.destination_system_id"
+                                                 data-target-port-no="@portItem.value.destination_port_no"
+                                                 data-is-customer-connected="@portItem.value.is_customer_connected"
+                                                 data-is-connected="0" data-is-cable-a-end="false"
+                                                 data-status-id="@portItem.value.port_statusid"
+                                                 data-port-comment="@portItem.value.port_comment"
+                                                 data-port-status="@portItem.value.core_port_status"></div>
+                                            <div class="fiberNumber">@(-1 * portItem.value.core_port_number)</div>
+                                        </div>
+                                    }
+                                </div>
+                                <div style="display:table-cell; border:1px solid grey; background:grey; width: 10px;"> </div>
+                                <div class="core" style="display: table-cell; vertical-align:middle;">
+                                    <div class="fiber leftFiber" style="margin-top: 0px;height: 15px;text-align: left;padding-left: 17px; font-size:13px;">@Resources.Resources.SI_OSP_GBL_GBL_FRM_012</div>
+                                    @foreach (var portItem in Model.splicingConnections.Where(m => m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "O").Select((value, i) => new { i, value }))
+                                    {
+                                        var entityUiId = portItem.value.system_id + "_" + Convert.ToString(Model.connector.entity_type) + "_" + portItem.value.core_port_number;
+                                        <div class="fiber leftFiber">
+                                            <div id="@entityUiId" class="@(!portItem.value.is_connected_to_other ? "src" : "") innerFiber"
+                                                 title="@((portItem.value.port_statusid==1||portItem.value.port_statusid==2||portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
+                                                 style="background:@portItem.value.core_port_status_color;width:20px;" data-port-no="@portItem.value.core_port_number"
+                                                 data-system-id="@portItem.value.system_id"
+                                                 data-network-id="@portItem.value.network_id"
+                                                 data-entity-type="@portItem.value.entity_type"
+                                                 data-is-connected-to-same="@((!portItem.value.is_connected_to_other && portItem.value.destination_system_id != null && portItem.value.destination_system_id != 0) ? "True" : "False")"
+                                                 data-target-id="@(portItem.value.destination_entity_type != null ? (portItem.value.destination_system_id + "_" + Convert.ToString(portItem.value.destination_entity_type).ToUpper() + "_" + portItem.value.destination_port_no) : "")"
+                                                 data-target-entity-type="@(portItem.value.destination_entity_type != null ? portItem.value.destination_entity_type.ToString().ToUpper() : "")"
+                                                 data-target-system-id="@portItem.value.destination_system_id"
+                                                 data-target-port-no="@portItem.value.destination_port_no"
+                                                 data-is-customer-connected="@portItem.value.is_customer_connected"
+                                                 data-is-connected="0" data-is-cable-a-end="false"
+                                                 data-status-id="@portItem.value.port_statusid"
+                                                 data-port-comment="@portItem.value.port_comment"
+                                                 data-port-status="@portItem.value.core_port_status"></div>
+                                            <div class="fiberNumber">@portItem.value.core_port_number</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        string IsVirtualSC = (Model.is_virtual == true ? "VirtualSCDeviceView wrapper" : "DeviceView wrapper");
+                        <div class=@IsVirtualSC style="background:@(Model.available_ports < 0 ? "#ff00001c" : "")">
+                            @*<div style="margin: 0 auto;width: 100%;display:table-caption;">
+                                    <br/>
+                                </div>*@
+                            @if (!Model.is_virtual)
+                            {
+                                <div class="ports--Box">
+                                    <b>@Resources.Resources.SI_OSP_GBL_NET_FRM_488:</b><span id="spnTotalPorts">@Resources.Resources.SI_OSP_GBL_GBL_GBL_041 - @Model.total_ports</span>,
+
+                                    <span id="spnAvailablePorts">@Resources.Resources.SI_OSP_GBL_NET_FRM_489 - @(Model.available_ports < 0 ? 0 : Model.available_ports)</span>,
+                                    <span id="spnAdditionalPorts">@Resources.Resources.SI_OSP_GBL_NET_FRM_490 - @(Model.available_ports < 0 ? Model.available_ports * -1 : 0)</span>
+
+                                </div>
+                            }
+                            <div class="ports--Box-inner">
+                                @if (layerDetail != null && layerDetail.is_trayinfo_enabled && !Model.is_virtual)
+                                {
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-4" for="txtLatitude">@Resources.Resources.SI_OSP_GBL_NET_FRM_487:</label>
+                                        <div class="col-sm-8 form-group">
+
+                                            <select id="ddl_SpliceTray" name="@Html.NameFor(m => m.splice_tray_system_id)" class="chosen-select col-sm-12">
+                                                <option value="0">no tray</option>
+                                                @foreach (var spliceInfo in Model.lstSpliceTray)
+                                                {
+                                                    var selected = spliceInfo.system_id == Model.splice_tray_system_id ? "selected" : "";
+                                                    <option value="@spliceInfo.system_id" data-splicetrayid="@spliceInfo.system_id" data-total-ports="@spliceInfo.no_of_ports" data-used-ports="@spliceInfo.used_port_count" @selected>@(spliceInfo.network_name + "-(" + spliceInfo.no_of_ports + ")")</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                }
+                                <div style="display:table-cell;max-width:145px; width:auto; padding:10px;">
+
+                                    @foreach (var item in Model.splicingConnections.Where(m => m.entity_type == Models.EntityType.FMS.ToString() || m.entity_type == Models.EntityType.PatchPanel.ToString() || m.entity_type == Models.EntityType.OpticalRepeater.ToString()).GroupBy(p => new { p.entity_type, p.system_id }).Select(g => g.First()).ToList())
+                                    {
+
+
+                                        <br><br><br><div class="wrapper" id="divFMS" style="border: 1px solid green;padding-top: 10px;padding-bottom: 10px; max-width: 125px; margin: 0 auto;">
+                                            <div style="margin:0 auto;width: 100%;text-align: center;padding: 3px;font-size: 13px;border:1px solid green;background: #e4f8ff;border-bottom:0px;display:table-caption;font-weight:bold;">
+                                                @if (item.entity_type == Models.EntityType.PatchPanel.ToString())
+                                                {
+                                                    @(item.display_name)
+                                                }
+                                                else
+                                                {
+                                                    @(item.network_id.Split('-')[item.network_id.Split('-').Length - 1].ToString())
+                                                }
+                                            </div>
+                                            <div class="core" style="display:table-cell; vertical-align:middle;">
+                                                <div class="fiber rightFiber" style="margin-top: 0px;height: 15px;text-align: right;padding-right: 28px;font-size:13px;">@Resources.Resources.SI_OSP_GBL_GBL_FRM_011</div>
+                                                @foreach (var portItem in Model.splicingConnections.Where(m => m.is_parent == 0 && m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "I").OrderByDescending(m => m.core_port_number).Select((value, i) => new { i, value }))
+                                                {
+                                                    var fmsID = portItem.value.system_id + "_" + Convert.ToString(item.entity_type) + "_" + portItem.value.core_port_number;
+                                                    <div class="fiber rightFiber">
+                                                        <div id="@fmsID" class="@(!portItem.value.is_connected_to_other ? "trg" : "") innerFiber"
+                                                             title="@((portItem.value.port_statusid==1||portItem.value.port_statusid==2|| portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
+                                                             style="background:@portItem.value.core_port_status_color;width:20px;" data-port-no="@portItem.value.core_port_number"
+                                                             data-system-id="@portItem.value.system_id"
+                                                             data-network-id="@portItem.value.network_id"
+                                                             data-entity-type="@portItem.value.entity_type"
+                                                             data-is-connected-to-same="@((!portItem.value.is_connected_to_other && portItem.value.destination_system_id != null && portItem.value.destination_system_id != 0) ? "True" : "False")"
+                                                             data-target-id="@(portItem.value.destination_entity_type != null ? (portItem.value.destination_system_id + "_" + Convert.ToString(portItem.value.destination_entity_type).ToUpper() + "_" + portItem.value.destination_port_no) : "")"
+                                                             data-target-entity-type="@(portItem.value.destination_entity_type != null ? portItem.value.destination_entity_type.ToString().ToUpper() : "")"
+                                                             data-target-system-id="@portItem.value.destination_system_id"
+                                                             data-target-port-no="@portItem.value.destination_port_no"
+                                                             data-is-customer-connected="@portItem.value.is_customer_connected"
+                                                             data-is-connected="0" data-is-cable-a-end="false"
+                                                             data-status-id="@portItem.value.port_statusid"
+                                                             data-port-comment="@portItem.value.port_comment"
+                                                             data-port-status="@portItem.value.core_port_status"></div>
+                                                        <div class="fiberNumber">@(-1 * portItem.value.core_port_number)</div>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div style="display:table-cell; border:1px solid grey; background:grey; width: 10px;"> </div>
+                                            <div class="core" style="display: table-cell; vertical-align:middle;">
+                                                <div class="fiber leftFiber" style="margin-top: 0px;height: 15px;text-align: left;padding-left: 17px; font-size:13px;">@Resources.Resources.SI_OSP_GBL_GBL_FRM_012</div>
+                                                @foreach (var portItem in Model.splicingConnections.Where(m => m.is_parent == 0 && m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "O").Select((value, i) => new { i, value }))
+                                                {
+                                                    var fmsID = portItem.value.system_id + "_" + Convert.ToString(item.entity_type) + "_" + portItem.value.core_port_number;
+                                                    <div class="fiber leftFiber">
+                                                        <div id="@fmsID" class="@(!portItem.value.is_connected_to_other ? "src" : "") innerFiber"
+                                                             title="@((portItem.value.port_statusid==1||portItem.value.port_statusid==2|| portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
+                                                             style="background:@portItem.value.core_port_status_color;width:20px;" data-port-no="@portItem.value.core_port_number"
+                                                             data-system-id="@portItem.value.system_id"
+                                                             data-network-id="@portItem.value.network_id"
+                                                             data-entity-type="@portItem.value.entity_type"
+                                                             data-is-connected-to-same="@((!portItem.value.is_connected_to_other && portItem.value.destination_system_id != null && portItem.value.destination_system_id != 0) ? "True" : "False")"
+                                                             data-target-id="@(portItem.value.destination_entity_type != null ? (portItem.value.destination_system_id + "_" + Convert.ToString(portItem.value.destination_entity_type).ToUpper() + "_" + portItem.value.destination_port_no) : "")"
+                                                             data-target-entity-type="@(portItem.value.destination_entity_type!= null ? portItem.value.destination_entity_type.ToString().ToUpper() : "")"
+                                                             data-target-system-id="@portItem.value.destination_system_id"
+                                                             data-target-port-no="@portItem.value.destination_port_no"
+                                                             data-is-customer-connected="@portItem.value.is_customer_connected"
+                                                             data-is-connected="0" data-is-cable-a-end="false"
+                                                             data-status-id="@portItem.value.port_statusid"
+                                                             data-port-comment="@portItem.value.port_comment"
+                                                             data-port-status="@portItem.value.core_port_status"></div>
+                                                        <div class="fiberNumber">@portItem.value.core_port_number</div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+
+
+                                </div>
+                                <div style="display:table-cell;vertical-align:top;">
+                                    <br /><br />
+                                    @foreach (var item in Model.splicingConnections.Where(m => m.entity_type != Models.EntityType.Cable.ToString()).GroupBy(p => new { p.entity_type, p.system_id }).Select(g => g.First()).ToList())
+                                    {
+                                        if (item.entity_type == Models.EntityType.Splitter.ToString())
+                                        {
+                                            <br /><br /><br />
+                                            <div class="wrapper" id="divSplitter" style="margin:0 auto; width:210px;">
+                                                <div class="core" style="display: table-cell; vertical-align:middle;">
+                                                    @foreach (var portItem in Model.splicingConnections.Where(m => m.is_parent == 0 && m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "I").OrderByDescending(m => m.core_port_number).Select((value, i) => new { i, value }))
+                                                    {
+                                                        var splitterId = portItem.value.system_id + "_" + Convert.ToString(portItem.value.entity_type).ToUpper() + "_" + portItem.value.core_port_number;
+                                                        <div class="fiber rightFiber">
+                                                            @*<div class="innerFiber" style="background:red;"></div>*@
+                                                            <div id="@splitterId" class="@(Model.is_middleware_entity?"":(!portItem.value.is_connected_to_other ? "trg" : "")) innerFiber"
+                                                                 title="@((portItem.value.port_statusid==1||portItem.value.port_statusid==2|| portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
+                                                                 style="background:@portItem.value.core_port_status_color;width:20px;" data-port-no="@portItem.value.core_port_number"
+                                                                 data-system-id="@portItem.value.system_id"
+                                                                 data-network-id="@portItem.value.network_id"
+                                                                 data-entity-type="Splitter"
+                                                                 data-is-connected-to-same="@((!portItem.value.is_connected_to_other && portItem.value.destination_system_id != null && portItem.value.destination_system_id != 0) ? "True" : "False")"
+                                                                 data-target-id="@(portItem.value.destination_entity_type != null ? (portItem.value.destination_system_id + "_" + Convert.ToString(portItem.value.destination_entity_type).ToUpper() + "_" + portItem.value.destination_port_no) : "")"
+                                                                 data-target-entity-type="@(portItem.value.destination_entity_type != null ? portItem.value.destination_entity_type.ToString().ToUpper() : "")"
+                                                                 data-target-system-id="@portItem.value.destination_system_id"
+                                                                 data-target-port-no="@portItem.value.destination_port_no"
+                                                                 data-is-customer-connected="@portItem.value.is_customer_connected"
+                                                                 data-is-connected="0" data-is-cable-a-end="false"
+                                                                 data-status-id="@portItem.value.port_statusid"
+                                                                 data-port-comment="@portItem.value.port_comment"
+                                                                 data-port-status="@portItem.value.core_port_status"></div>
+                                                            <div class="fiberNumber">@(portItem.value.core_port_number < 0 ? (-1 * portItem.value.core_port_number) : portItem.value.core_port_number)</div>
+                                                        </div>
+                                                    }
+                                                </div>
+
+                                                <div style="display:table-cell; border:1px solid green;width: 100px; text-align:center;vertical-align:middle; font-weight:bold; background:#e1f4e1;">
+                                                    @(item.network_id.Split('-')[item.network_id.Split('-').Length - 1].ToString())
+                                                </div>
+                                                <div class="core">
+                                                    @foreach (var portItem in Model.splicingConnections.Where(m => m.is_parent == 0 && m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "O").Select((value, i) => new { i, value }))
+                                                    {
+                                                        var splitterId = portItem.value.system_id + "_" + Convert.ToString(portItem.value.entity_type).ToUpper() + "_" + portItem.value.core_port_number;
+                                                        <div class="fiber leftFiber" style="margin-top:10px;">
+                                                            @*<div class="innerFiber" style="background:red;"></div>*@
+                                                            <div id="@splitterId" class="@(!portItem.value.is_connected_to_other ? "src" : "") innerFiber"
+                                                                 title="@((portItem.value.port_statusid==1||portItem.value.port_statusid==2|| portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
+                                                                 style="background:@portItem.value.core_port_status_color;width:20px;" data-port-no="@portItem.value.core_port_number"
+                                                                 data-system-id="@portItem.value.system_id"
+                                                                 data-network-id="@portItem.value.network_id"
+                                                                 data-entity-type="Splitter"
+                                                                 data-is-connected-to-same="@((!portItem.value.is_connected_to_other && portItem.value.destination_system_id != null && portItem.value.destination_system_id != 0) ? "True" : "False")"
+                                                                 data-target-id="@(portItem.value.destination_entity_type != null ? (portItem.value.destination_system_id + "_" + Convert.ToString(portItem.value.destination_entity_type).ToUpper() + "_" + portItem.value.destination_port_no) : "")"
+                                                                 data-target-entity-type="@(portItem.value.destination_entity_type != null ? portItem.value.destination_entity_type.ToString().ToUpper() : "")"
+                                                                 data-target-system-id="@portItem.value.destination_system_id"
+                                                                 data-target-port-no="@portItem.value.destination_port_no"
+                                                                 data-is-customer-connected="@portItem.value.is_customer_connected"
+                                                                 data-is-connected="0" data-is-cable-a-end="false"
+                                                                 data-status-id="@portItem.value.port_statusid"
+                                                                 data-port-comment="@portItem.value.port_comment"
+                                                                 data-port-status="@portItem.value.core_port_status"></div>
+                                                            <div class="fiberNumber">@(portItem.value.core_port_number)</div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div id="dvRightCable" class="cell">
+                    @if (Model.sourceCable != null && Model.destinationCable != null && Model.connector.entity_type != Models.EntityType.ONT.ToString())
+                    {
+                        <div class="wrapper coreRangeContainer">
+                            <div style="display:table-cell;vertical-align:top;">
+                                <div class="rangeLabel">&nbsp;@Resources.Resources.SI_GBL_GBL_NET_FRM_087 &nbsp;</div>
+                                <div class="rangeInputContainer">
+                                    <input type="text" maxlength="3" onkeypress="return allowOnlyNumber(event);" id="rightStartRange">
+                                    <span class="inputSeperator">-</span>
+                                    <input type="text" maxlength="3" onkeypress="return allowOnlyNumber(event);" id="rightEndRange">
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="cableContainer wrapper">
+                        @if (Model.destinationCable != null)
+                        {
+                            <div style="display:table-cell;">
+                                @for (int i = 1; i <= Model.destinationCable.no_of_tube; i++)
+                                {
+                                    var tubeColorDetails = Model.splicingConnections.Where(m => m.system_id == Model.destinationCable.system_id && m.tube_number == i).FirstOrDefault();
+                                    <div class="wrapper">
+                                        <div class="core">
+                                            @foreach (var item in Model.splicingConnections.Where(m => m.system_id == Model.destinationCable.system_id && m.tube_number == i && m.is_cable_a_end == Model.destinationCable.is_cable_a_end).Select((value, j) => new { j, value }))
+                                            {
+                                                var coreId = "Right_" + Model.destinationCable.system_id + "_" + Models.EntityType.Cable.ToString().ToUpper() + "_" + item.value.core_port_number;
+                                                <div class="fiber rightFiber">
+                                                    <div class="innerFiber" style="background:@item.value.core_color_code;"></div>
+                                                    <div id="@coreId"
+                                                         class="@(!item.value.is_connected_to_other?"trg":"") endPint"
+                                                         title="@((item.value.port_statusid==1||item.value.port_statusid==2||item.value.port_statusid==3 || item.value.port_statusid==4)?item.value.port_comment:(item.value.is_connected_to_other?item.value.other_text:""))"
+                                                         style="background:@item.value.core_port_status_color"
+                                                         data-is-cable-a-end="@item.value.is_cable_a_end"
+                                                         data-port-no="@item.value.core_port_number"
+                                                         data-system-id="@Model.destinationCable.system_id"
+                                                         data-network-id="@Model.destinationCable.network_id"
+                                                         data-entity-type="Cable"
+                                                         data-is-connected-to-same="@((!item.value.is_connected_to_other && item.value.destination_system_id!=null && item.value.destination_system_id!=0)?"True":"False")"
+                                                         data-target-id="@(item.value.destination_entity_type!=null?item.value.destination_system_id + "_" + item.value.destination_entity_type.ToString().ToUpper() + "_" + item.value.destination_port_no:"")"
+                                                         data-target-entity-type="@(item.value.destination_entity_type!=null?item.value.destination_entity_type.ToString().ToUpper():"")"
+                                                         data-target-system-id="@item.value.destination_system_id"
+                                                         data-target-port-no="@item.value.destination_port_no"
+                                                         data-is-customer-connected="@item.value.is_customer_connected" data-is-connected="0"
+                                                         data-status-id="@item.value.port_statusid"
+                                                         data-link-id="@item.value.link_system_id"
+                                                         data-through-conn="@item.value.is_through_connection"
+                                                         data-port-comment="@item.value.port_comment"
+                                                         data-port-status="@item.value.core_port_status"></div>
+                                                    <div class="linkNumber rightLink icon-connect" style="color:@(item.value.link_system_id>0?"green":"");display:@(Model.lstUserModule.Contains("VLK")?"block;":"none;")"
+                                                         data-link-id="@item.value.link_system_id"
+                                                         data-network-id="@item.value.network_id"
+                                                         data-entity-type="@item.value.entity_type"
+                                                         data-system-id="@item.value.system_id"
+                                                         data-port-no="@item.value.core_port_number"
+                                                         data-through-conn="@item.value.is_through_connection">
+                                                    </div>
+                                                    <div class="fiberNumber">@(item.value.core_port_number)</div>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="tube" style="background:@tubeColorDetails.tube_color_code;"><div class="tubeText">T@(i)</div></div>
+                                        <div class="otherEndCores">
+                                            @foreach (var item in Model.splicingConnections.Where(m => m.system_id == Model.destinationCable.system_id && m.tube_number == i && m.is_cable_a_end == Model.destinationCable.is_cable_a_end).Select((value, j) => new { j, value }))
+                                            {
+                                                var coreId = "Other_" + Model.destinationCable.system_id + "_" + Models.EntityType.Cable.ToString().ToUpper() + "_" + item.value.core_port_number;
+                                                <div id="@coreId"
+                                                     title="@((item.value.port_statusid==1 || item.value.port_statusid==3 || item.value.port_statusid==4)?item.value.port_comment:item.value.other_end_text)"
+                                                     class="otherEndFiber"
+                                                     style="background:@(item.value.is_other_end_spliced?"#00ba8a":(item.value.port_statusid>2?item.value.core_port_status_color:"#A9A9A9"));"
+                                                     data-status-id="@item.value.port_statusid"
+                                                     data-is-connected="@(item.value.is_other_end_spliced?1:0)"></div>
+                                                <div class="clearfix"></div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            @*<div class="cable">
+                                    <div class="innerCable"></div>
+                                </div>*@
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<<!--script src="~/Content/js/jquery-3.6.0.min.js"></script>-->
+@*<script src="~/Content/js/jquery.js"></script>*@
+<!--<script src="~/Content/js/jquery-ui.min.js"></script>
+
+<script src="~/Content/js/jquery-swapsies.js"></script>-->
+@*<script src="~/Content/js/Splicing.js"></script>*@
+<!--<script src="~/Content/js/Splice/Js-Plumb-1.4.1.min.js"></script>
+<script src="~/Content/js/Splice/canvg.min.js"></script>
+<script src="~/Content/js/Splice/html2canvas.js"></script>
+<script src="~/Content/js/Splice/Utility.js"></script>
+<script src="~/Content/js/Splice/Alert.js"></script>
+<script src="~/Content/js/Splice/ModalPopUp.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>-->
+<script>
+    /*var splicing = new splicing();*/
+   // var popup = new ModalPopUp(); //Modal popup js file..
+      // setTimeout(splicing.InitilizeJsPlumb, 300);
+
+    $(document).ready(function () {
+
+        //splicing.initApp();
+        $('#divSpliceWindow').css('visibility', 'visible');
+        $('#dvRightCable .endPint').tooltip({ title: '', html: true, placement: "left" });
+        $('#dvRightCable .otherEndFiber').tooltip({ title: '', html: true, placement: "left" });
+        $('#dvLeftCable .endPint').tooltip({ title: '', html: true, placement: "right" });
+        $('#dvLeftCable .otherEndFiber').tooltip({ title: '', html: true, placement: "right" });
+        $('.innerFiber').tooltip({ title: '', html: true, placement: "right" });
+        //if ($(splicing.DE.SourceCable).val() != '0') { $('#SourceCableName').text($(splicing.DE.SourceCable + ' :selected').text()); }
+        //if ($(splicing.DE.DestinationCable).val() != '0') { $('#DestinationCableName').text($(splicing.DE.DestinationCable + ' :selected').text()); }
+        //$('#ConnectingDevice').text($(splicing.DE.ConnectingEntity + ' :selected').text());
+        //$('#divParentSplicingWindow').tooltip({ title: '', html: true, placement: "center" });
+
+        //$('#dvProgressSplice').show();
+       // setTimeout(splicing.InitilizeJsPlumb, 300);
+        //splicing.currentConnections = [];
+        //$(splicing.DE.leftStartRange).val(1);
+        //$(splicing.DE.leftEndRange).val($('#dvLeftCable .leftFiber').length);
+        //$(splicing.DE.rightStartRange).val(1);
+        //$(splicing.DE.rightEndRange).val($('#dvRightCable .rightFiber').length);
+
+
+    })
+</script>
+<script id="splicingInfowindow" type="text/html">
+    @Html.Partial("connectionDetails")
+</script>

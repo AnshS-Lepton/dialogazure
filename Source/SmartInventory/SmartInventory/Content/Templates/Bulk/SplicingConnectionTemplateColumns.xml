@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+	
+	<Mapping id="0">
+		<DbColName>source_network_id</DbColName>
+		<TemplateColName>source_network_id</TemplateColName>
+	</Mapping>
+	<Mapping id="1">
+		<DbColName>source_entity_type</DbColName>
+		<TemplateColName>source_entity_type</TemplateColName>
+	</Mapping>
+	<Mapping id="2">
+		<DbColName>source_port_no</DbColName>
+		<TemplateColName>source_port_no</TemplateColName>
+	</Mapping>
+	<Mapping id="3">
+		<DbColName>source_port_type</DbColName>
+		<TemplateColName>source_port_type</TemplateColName>
+	</Mapping>
+	
+	<Mapping id="4">
+		<DbColName>destination_network_id</DbColName>
+		<TemplateColName>destination_network_id</TemplateColName>
+	</Mapping>
+	<Mapping id="5">
+		<DbColName>destination_entity_type</DbColName>
+		<TemplateColName>destination_entity_type</TemplateColName>
+	</Mapping>
+	<Mapping id="6">
+		<DbColName>destination_port_no</DbColName>
+		<TemplateColName>destination_port_no</TemplateColName>
+	</Mapping>
+		<Mapping id="7">
+		<DbColName>destination_port_type</DbColName>
+		<TemplateColName>destination_port_type</TemplateColName>
+	</Mapping>
+</Mappings>

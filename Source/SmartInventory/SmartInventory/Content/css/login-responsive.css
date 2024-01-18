@@ -1,0 +1,217 @@
+﻿@media (max-width:911px) {
+
+   
+      .scnd_img {
+        position: absolute;
+        left: -100px;
+        top: 26%;
+    }
+
+    body {
+        background:#FFFFFF;
+        padding: 0;
+        margin: 0;
+        background-size: 100% 100%;
+        background-attachment: fixed;
+        font: 12px Segoe UI,sans-serif !important;
+        color: #fff;
+    }
+
+   /* .logo {
+        position: relative;
+        top: 90px;
+        text-align: center;
+        right: 0px;
+        font-size: 30px;
+    }*/
+
+   /* .login_area {
+        width: 75%;
+        height: 180px;
+        position: relative;
+        right: 0;
+        border-radius: 15px;
+        border: 1px solid #146400;
+        background-color: rgba(0, 0, 0, 0.5);
+        margin: auto;
+        float: inherit;
+        top: 110px;
+    }*/
+    .login_area {
+        height: calc(100% - 4px);
+        padding:1rem 2rem;
+    }
+
+    .codrops-bottom {
+        position: relative;
+        bottom: 10px;
+        left: 0px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .app-version {
+        width: 100%;
+        float: left;
+        margin-bottom: 5px;
+    }
+
+    .scnd_img {
+        position: absolute;
+        left: 0;
+        top: -4%;
+        text-align: center;
+        display: none;
+    }
+
+        .scnd_img img {
+            width: 75%;
+        }
+
+   /* .username {
+        width: 85%;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: 0px 1px 7px dimgray inset;
+        position: relative;
+        margin: 12px auto;
+        display: block;
+    }
+
+    .password {
+        margin: 30px 0 0 8px;
+        width: 85%;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: 0px 1px 7px dimgray inset;
+        position: relative;
+        margin: 20px auto;
+        display: block;
+    }
+
+    .login_text {
+        position: relative;
+        font-size: 20px;
+        color: #fff;
+        font-weight: bold;
+        left: 40%;
+        top: 5px;
+    }*/
+    .login_area h1{
+        margin:0.5rem 0;
+        font-size:1.2rem;
+    }
+    .fieldsBox input[type="text"], .fieldsBox input[type="password"]{
+        padding:0.3rem 0;
+        font-size:12px;
+    }
+    .fieldsBox{
+        margin-bottom:0.5rem;
+    }
+    .loginBody {
+        height: calc(100% - 61px);
+    }
+    .Header {
+        padding: 1.04rem 0;
+    }
+
+    .go_botton {
+        margin-left: 83%;
+        margin-top: 60px;
+        z-index: 15;
+    }
+    .respLogo{
+        width:80px;
+    }
+    .footer {
+        padding: 0.3rem 0;
+    }
+
+    .browser {
+        left: 0;
+        text-align: center;
+    }
+    .login_area .mt-05{
+        margin-top:0;
+    }
+
+    .helpdesk {
+        float: inherit;
+    }
+
+    .botm {
+        width: 100%;
+        float: left;
+    }
+
+    .hgt {
+        overflow: auto;
+        height: 100%;
+    }
+
+    .error {
+        padding-left: 22px;
+        padding-top: 0px;
+    }
+
+    .spectra {
+padding-top: 0px;
+margin-bottom: 10px;
+font-size: 25px;
+text-align: center;
+font-weight: bold;
+    }
+
+}
+
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (orientation: landscape) {
+
+    body {
+    background: #009e76 url(../images/main_bg.png) top center no-repeat;
+    }
+
+      .formaddon {
+    height: 100%; width: 100%;
+    }
+    .logo {
+    position: relative;
+    top: 20px;
+    text-align: center;
+    right: 0px;
+    font-size: 24px;
+}
+    .login_area {
+width: 55%;
+top: 30px;
+height: auto;
+padding-bottom: 10px;
+    }
+
+    .browser {
+    top: 175px;
+    }
+    .botm {
+    width:30%;
+    }
+    .app-version {
+    width: 20%;
+}
+       .helpdesk {
+    float: left;
+}
+    .codrops-bottom {
+        left: 17%;
+        position:relative;
+    }
+
+    .hgt {
+    overflow-y: auto;
+    overflow-x: hidden;
+     height: calc(100% - 5px);
+}
+
+}

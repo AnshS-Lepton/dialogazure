@@ -1,0 +1,81 @@
+﻿@model Models.ISP.ShiftEntity
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+@using (Ajax.BeginForm("SaveEntityPosition", "ISP", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "dvModalBody",
+    LoadingElementId = "dvProgress",
+    OnBegin = "return isp.isValidShiftEntity()"
+}, new { id = "frmShiftEntity", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.entityId, new { id = "hdnEntityId" })
+    @Html.HiddenFor(m => m.entityType, new { id = "hdnEntityType" })
+    @Html.HiddenFor(m => m.structureId)
+    @Html.HiddenFor(m => m.isShaftElement, new { id = "hdnIsShaftElement" })
+    @Html.HiddenFor(m => m.isFloorElement, new { id = "hdnIsFloorElement" })
+    @Html.HiddenFor(m => m.isISPChildLayer, new { id = "hdnisISPChildLayer" })
+
+    @Html.HiddenFor(m => m.parent_entity_type, new { id = "hdnParentEntityType" })
+    @Html.HiddenFor(m => m.parent_network_id, new { id = "hdnParentNetworkid" })
+    @Html.HiddenFor(m => m.parent_system_id, new { id = "hdnParentSystemId" })
+    @pageMessage()
+
+<!DOCTYPE html>
+    <div class="popBody">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="divShaftFloor">
+
+                <div id="shaft-context" class="form-group" style="display:@(Model.isShaftElement==true?"block":"none")">
+                    <div class="col-md-2"><label class="control-label">@Resources.Resources.SI_ISP_GBL_NET_FRM_015</label></div>
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(m => m.shaftId, Model.ShaftList.Select(m => new SelectListItem { Value = m.systemid.ToString(), Text = m.entityname }).ToList(), "-- Select --", new { @class = "chosen-select form-control", id = "ddlShaftList", @onchange = "isp.structureActions.shaft.onShaftChange('ddlShaftList', 'ddlFloorList');isp.enableDisableParent('ddlShaftList')" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-2"><label class="control-label">@Resources.Resources.SI_ISP_GBL_NET_FRM_016</label></div>
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(m => m.floorId, Model.FloorList.Select(m => new SelectListItem { Value = m.systemid.ToString(), Text = m.entityname }).ToList(), "-- Select --", new { @class = "chosen-select form-control", id = "ddlFloorList", @onchange = "isp.enableDisableParent('ddlFloorList'), isp.getAllParentInFloor()" })
+                    </div>
+                </div>
+                @if (Model.isValidParent)
+                {
+                    <div class="form-group" id="divParentEntity">
+                        <div class="col-md-2"><label class="control-label">@Resources.Resources.SI_ISP_GBL_NET_FRM_071</label></div>
+                        <div class="col-md-10">
+                            <select class="chosen-select form-control" id="ddlUnitList" onchange="isp.enableDisableParent('ddlUnitList')">
+                                <option value="0" data-entity-type="@Models.EntityType.UNIT.ToString()" data-network-id="">-- Select --</option>
+                                @foreach (var item in Model.UnitList)
+                                {
+                                    <option value="@item.entity_system_id" data-entity-type="@Models.EntityType.UNIT.ToString()" data-network-id="@item.network_id">@item.network_id</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+    <div class="ModalFooter" id="dvBtnAction">
+        <a href="javascript:void(0);" class="btn btn-warning ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        <input type="submit" class="btn btn-primary" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ search_contains: true, width: '100%' });
+        let isShaft = '@Model.isShaftElement';
+        if(isShaft=='True')
+        {
+            isp.structureActions.shaft.onShaftChange('ddlShaftList', 'ddlFloorList');
+            @if (Model.floorId != 0)
+            {
+                <text> $('#ddlFloorList').val('@Model.floorId').trigger("chosen:updated"); </text>
+            }
+        }
+    })
+</script>

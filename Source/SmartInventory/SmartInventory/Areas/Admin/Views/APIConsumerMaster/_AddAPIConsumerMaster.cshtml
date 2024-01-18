@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+@model Models.Admin.APIConsumerMasterRequest
+
+
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+
+<div id="dvUserDetail" class="update_panel fullWidth">
+
+    <div class="title">
+        <h4>
+          @(Model.objAPIConsumerMaster.consumer_id > 0 ? "Update Consumer User" : "Add Consumer User")
+        </h4>
+    </div>
+    @using (Html.BeginForm("SaveAPIConsumer", "APIConsumerMaster", FormMethod.Post, new { autocomplete = "off", @id = "frmAPIConsumerMaster", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+        @Html.HiddenFor(model => model.objAPIConsumerMaster.consumer_id, new { id = "hdnConsumerId" })
+        <div class="form-group">
+
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="control-label">
+                        User Name<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(model => model.objAPIConsumerMaster.user_name, new { @class = "form-control", @maxlength = "50", @required = true, @placeholder = "Enter User Name", @onblur = "checkUserExist()", @id = "user_name" })
+                </div>
+           
+                <div class="col-md-2">
+                    <label class="control-label">
+                        Password<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(model => model.objAPIConsumerMaster.password, new { @class = "form-control", @maxlength = "50", @required = true, @placeholder = "Enter password" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="control-label">
+                        Source<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(model => model.objAPIConsumerMaster.source, new { @class = "form-control", @maxlength = "50", @required = true, @placeholder = "Enter Source" })
+                </div>
+           
+                <div class="col-md-2">
+                    <label class="control-label">
+                        IsActive:
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    @Html.CheckBoxFor(model => model.objAPIConsumerMaster.is_active, new { @class = "chkActive" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="control-label">
+                        IsLogRequired:
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    @Html.CheckBoxFor(model => model.objAPIConsumerMaster.is_log_required, new { @class = "chkActive" })
+                   
+                </div>
+                <div class="col-md-6 d-flex jc-flex-end">
+                    <a href="@Url.Action("AddAPIConsumerMaster")" class="btn btn-default mr-05" title="Reset">Reset</a>
+                    <button type="button" class="btn btn-primary" id="btnSaveUser" onclick="validateConsumerUser()">@(Model.objAPIConsumerMaster.consumer_id == 0 ? "Save" : "Update")</button>
+                </div>
+            </div>
+        </div>
+
+
+    }
+</div>
+<script type="text/javascript">
+
+    function checkUserExist() {
+        ajaxReq('APIConsumerMaster/CheckAPIConsumerUserExists', { userName: $("#user_name").val() }, false, function (resp) {
+            if (resp.status == "FAILED") {
+                $("#btnSaveUser").attr("disabled", true);
+                alert(resp.message);
+            }
+            else {
+                $("#btnSaveUser").attr("disabled", false);
+            }
+        });
+    }
+
+    function validateConsumerUser() {
+        var isValid = true;
+        if ($('#objAPIConsumerMaster_user_name').val() == '')
+        { isValid = false; $('#frmAPIConsumerMaster').submit(); }
+        else if ($('#objAPIConsumerMaster_password').val() == '') { isValid = false; $('#frmAPIConsumerMaster').submit(); }
+        else if ($('#objAPIConsumerMaster_source').val() == '') { isValid = false; $('#frmAPIConsumerMaster').submit(); }
+        if (isValid) {
+            $('#frmAPIConsumerMaster').submit();
+        }
+    }
+
+</script>

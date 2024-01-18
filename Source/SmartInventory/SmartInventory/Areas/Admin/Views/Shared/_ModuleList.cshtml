@@ -1,0 +1,483 @@
+@model List<Models.UserModule>
+
+<!DOCTYPE html>
+<style>
+    .hide {
+        display: none !important;
+    }
+
+    .show {
+        display: block !important;
+    }
+</style>
+<div class="d--flex --gap15">
+    <div class="Admin-section">
+        <label>
+            <input type="checkbox" name="AllLayers" id="CheckAll_Admin" class="allModule allAdmin" onclick="CheckByClass('allAdmin',this)" /><b class="fw-600">Admin</b>
+        </label>
+
+        <div>
+            <div class="form-input mb-01 fullWidth" id="SearchRegionProvince1">
+                <input type="text" class="form-control gridInputWidth searchBox" placeholder="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046" id="txtSearchRegionProvince1">
+            </div>
+            <div class="boxes--minh col-md-12 column" id="divAdminModule">
+
+                <div id="RegionProvinceArea1">
+                    <ul class="mainModule region  admin--treeview" style="display:block;">
+
+                        @{ var count = 0;
+                            var count2 = 1;
+                            var parentModule = Model.Where(x => x.parent_module_id == 0).OrderBy(x => x.module_sequence).ToList();
+                            for (var i = 0; i < parentModule.Count; i++)
+                            {
+                                if (parentModule[i].type == "Admin")
+                                {
+                                    <div class="countryName1" data-country1-name="@parentModule[i].module_name"><span style="display:none">@parentModule[i].module_name</span></div>
+                                    <li data-country1-name="@parentModule[i].module_name" class="collapsable">
+                                        <div class="hitarea collapsable-hitarea"></div>
+                                        @*<input id="chk_parent_@parentModule[i].Id" type="checkbox" class="checkbox-custom">*@
+
+                                        @Html.CheckBoxFor(model => parentModule[i].is_selected, new { @class = "allModule allAdmin chkModule module_" + parentModule[i].Id + "", @onclick = "CheckByClass('chkModuleChild_" + parentModule[i].Id + "',this)", @onchange = "CheckModule()", Name = "lstUserModule[" + count + "].is_selected" })
+                                        @Html.HiddenFor(model => parentModule[i].Id, new { Name = "lstUserModule[" + count + "].Id" })
+                                        @Html.HiddenFor(model => parentModule[i].type, new { Name = "lstUserModule[" + count + "].type" })
+                                        @Html.HiddenFor(model => parentModule[i].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+                                       
+
+
+                                        <label for="chk_parent_@parentModule[i].Id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                            <span id="spnRegionName1" title="@parentModule[i].module_name" class="rname1">@parentModule[i].module_name</span>
+                                        </label>
+
+                                        @{count = count + 1;
+                                            var childModule = Model.Where(x => x.parent_module_id == parentModule[i].Id).OrderBy(x => x.module_sequence).ToList();
+                                            for (var j = 0; j < childModule.Count; j++)
+                                            {
+
+
+                                                <ul class="collapsable province1" style="display: block;">
+                                                    <li>
+                                                        <img style="margin-top: -8px;" src="~/Areas/Admin/Content/css/images/t.gif" />
+                                                        @*<input id="chk_child_@childModule[j].Id" class="checkbox-custom" type="checkbox">*@
+                                                        @Html.CheckBoxFor(model => childModule[j].is_selected, new { @class = "allModule allAdmin chkModule chkModuleChild_" + parentModule[i].Id + "", @onchange = "checkModuleSelected(" + parentModule[i].Id + ")", Name = "lstUserModule[" + count + "].is_selected" })
+                                                        @Html.HiddenFor(model => childModule[j].Id, new { Name = "lstUserModule[" + count + "].Id" })
+                                                        @Html.HiddenFor(model => childModule[j].type, new { Name = "lstUserModule[" + count + "].type" })
+                                                        @Html.HiddenFor(model => childModule[j].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+
+                                                        <label for="chk_child_@childModule[j].Id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                                            <span id="spnLayerName1" title="@childModule[j].module_name" class="pname1">@childModule[j].module_name</span>
+                                                        </label>
+
+                                                    </li>
+                                                </ul>
+                                                count = count + 1;
+                                            }
+                                        }
+                                    </li>
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="Web-section">
+        <label>
+            <input type="checkbox" name="AllLayers" id="CheckAll_Web" class="allModule allWeb" onclick="CheckByClass('allWeb',this)" /><b class="fw-600">Web</b>
+        </label>
+        <div class="">
+            <div class="form-input mb-01 fullWidth" id="SearchRegionProvince2">
+                <input type="text" class="form-control gridInputWidth gridInputMW searchBox" placeholder="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046" id="txtSearchRegionProvince2">
+            </div>
+            <div class="boxes--minh col-md-12 column" id="divWebModule">
+                <div id="RegionProvinceArea2">
+                    <ul class="mainModule region admin--treeview" style="display:block;">
+
+                        @{ //var count = 0;
+                            //var parentModule = Model.Where(x => x.parent_module_id == 0).OrderBy(x => x.module_sequence).ToList();
+                            for (var i = 0; i < parentModule.Count; i++)
+                            {
+                                if (parentModule[i].type == "Web")
+                                {
+
+                                    <div class="countryName2" data-country2-name="@parentModule[i].module_name"><span style="display:none">@parentModule[i].module_name</span></div>
+                                    <li data-country2-name="@parentModule[i].module_name" class="collapsable">
+                                        <div class="hitarea collapsable-hitarea"></div>
+                                        @*<input id="chk_parent_@parentModule[i].Id" type="checkbox" class="checkbox-custom">*@
+
+                                        @Html.CheckBoxFor(model => parentModule[i].is_selected, new { @class = "allModule allWeb chkModule module_" + parentModule[i].Id + "", @onclick = "CheckByClass1('chkModuleChild_" + parentModule[i].Id + "','chkparent_" + parentModule[i].Id + "',this)", @onchange = "CheckModule()", Name = "lstUserModule[" + count + "].is_selected" })
+                                        @Html.HiddenFor(model => parentModule[i].Id, new { Name = "lstUserModule[" + count + "].Id" })
+                                        @Html.HiddenFor(model => parentModule[i].type, new { Name = "lstUserModule[" + count + "].type" })
+                                        @Html.HiddenFor(model => parentModule[i].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+                                        @Html.HiddenFor(model => parentModule[i].module_abbr, new { Name = "lstUserModule[" + count + "].module_abbr" })
+
+                                        <label for="chk_parent_@parentModule[i].Id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                            <span id="spnRegionName2" title="@parentModule[i].module_name" class="rname2">@parentModule[i].module_name</span>
+                                        </label>
+
+                                        @{
+                                            count = count + 1;
+                                            var childModule = Model.Where(x => x.parent_module_id == parentModule[i].Id).OrderBy(x => x.module_sequence).ToList();
+                                            for (var j = 0; j < childModule.Count; j++)
+                                            {
+                                                <ul class="collapsable province2" style="display: block;">
+                                                    <div class="countryName22" data-country22-name="@childModule[j].module_name"><span style="display:none">@childModule[j].module_name</span></div>
+                                                    <li data-country22-name="@childModule[j].module_name" class="collapsable">
+                                                        <div class="hitarea collapsable-hitarea"></div>
+                                                        <img style="margin-top: -8px;" src="~/Areas/Admin/Content/css/images/t.gif" />
+                                                        @*<input id="chk_child_@childModule[j].Id" class="checkbox-custom" type="checkbox">*@
+                                                        @Html.CheckBoxFor(model => childModule[j].is_selected, new { @class = "allModule allWeb chkModule ch_" + childModule[j].Id + " chkModuleChild_" + parentModule[i].Id + "", @onclick = "CheckByClass('chkModuleSubChild_" + childModule[j].Id + "',this)", @onchange = "checkModuleSelected(" + parentModule[i].Id + ")", Name = "lstUserModule[" + count + "].is_selected" })
+                                                        @Html.HiddenFor(model => childModule[j].Id, new { Name = "lstUserModule[" + count + "].Id" })
+                                                        @Html.HiddenFor(model => childModule[j].type, new { Name = "lstUserModule[" + count + "].type" })
+                                                        @Html.HiddenFor(model => childModule[j].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+                                                        @Html.HiddenFor(model => parentModule[i].module_abbr, new { Name = "lstUserModule[" + count + "].module_abbr" })
+                                                        <label for="chk_child_@childModule[j].Id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                                            <span id="spnLayerName2" title="@childModule[j].module_name" class="pname2">@childModule[j].module_name</span>
+
+                                                        </label>
+
+                                                        @* Start *@
+                                                        @{
+                                                            //count2 = count2 + 1;
+                                                            var subchildModule = Model.Where(x => x.parent_module_id == childModule[j].Id).OrderBy(x => x.module_sequence).ToList();
+
+
+                                                            if (subchildModule.Count > 0)
+                                                            {
+                                                                count = count + 1;
+                                                                for (var k = 0; k < subchildModule.Count; k++)
+                                                                {
+                                                                    <ul class="collapsable prov" style="display: block; padding-left:15px;">
+                                                                                                                                <li>
+                                                                                                                                    <img style="margin-top: -8px;" src="~/Areas/Admin/Content/css/images/t.gif" />
+                                                                                                                                    @Html.CheckBoxFor(model => subchildModule[k].is_selected, new { @class = "allModule allWeb chkModule chkparent_" + parentModule[i].Id + " chkModuleSubChild_" + childModule[j].Id + "", @onchange = "checkModuleSubSelected(" + childModule[j].Id + "," + parentModule[i].Id + ")", Name = "lstUserModule[" + count + "].is_selected" })
+                                                                                                                                    @Html.HiddenFor(model => subchildModule[k].Id, new { Name = "lstUserModule[" + count + "].Id" })
+                                                                                                                                    @Html.HiddenFor(model => subchildModule[k].type, new { Name = "lstUserModule[" + count + "].type" })
+                                                                                                                                    @Html.HiddenFor(model => subchildModule[k].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+                                                                                                                                    @Html.HiddenFor(model => parentModule[i].module_abbr, new { Name = "lstUserModule[" + count + "].module_abbr" })
+                                                                                                                                    <label for="chk_subchild_@subchildModule[k].Id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                                                                                                                        <span id="LayerName1" title="@subchildModule[k].module_name" class="name2">@subchildModule[k].module_name</span>
+
+                                                                                                                                    </label>
+                                                                                                                                </li>
+                                                                    </ul>
+
+                                                                    count = count + 1;
+
+
+                                                                }
+                                                                count = count - 1;
+                                                            }
+                                                        }
+                                                        @* End *@
+                                                    </li>
+                                                </ul>
+                                                count = count + 1;
+                                            }
+                                        }
+
+                                    </li>
+
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="Mobile-section">
+        <label class="mobile-unit">
+            <input type="checkbox" name="AllLayers" id="CheckAll_Mobile" class="allModule allMobile" onclick="CheckByClass('allMobile',this)" /><b class="fw-600">Mobile</b>
+        </label>
+        <div class="">
+            <div class="form-input mb-01 fullWidth" id="SearchRegionProvince3">
+                <input type="text" class="form-control gridInputWidth searchBox" placeholder="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046" id="txtSearchRegionProvince3">
+            </div>
+            <div class="boxes--minh col-md-12 column" id="divMobileModule">
+                <div id="RegionProvinceArea3">
+                    <ul class="mainModule region admin--treeview" style="display:block;">
+
+                        @{
+                            //var mobileParentModule = Model.lstUserModule.Where(x => x.parent_module_id == 0).ToList();
+                            for (var i = 0; i < parentModule.Count; i++)
+                            {
+                                if (parentModule[i].type == "Mobile")
+                                {
+                                    <div class="countryName3" data-country3-name="@parentModule[i].module_name"><span style="display:none">@parentModule[i].module_name</span></div>
+                                    <li data-country3-name="@parentModule[i].module_name" class="collapsable">
+                                        <div class="hitarea collapsable-hitarea"></div>
+                                        @*<input id="chk_parent_@parentModule[i].Id" type="checkbox" class="checkbox-custom">*@
+
+                                        @Html.CheckBoxFor(model => parentModule[i].is_selected, new { @class = "allModule allMobile chkModule module_" + parentModule[i].Id + "", @onclick = "CheckByClass('chkModuleChild_" + parentModule[i].Id + "',this)", @onchange = "CheckModule()", Name = "lstUserModule[" + count + "].is_selected" })
+                                        @Html.HiddenFor(model => parentModule[i].Id, new { Name = "lstUserModule[" + count + "].Id" })
+                                        @Html.HiddenFor(model => parentModule[i].type, new { Name = "lstUserModule[" + count + "].type" })
+                                        @Html.HiddenFor(model => parentModule[i].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+
+
+                                        <label for="chk_parent_@parentModule[i].Id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                            <span id="spnRegionName3" title="@parentModule[i].module_name" class="rname3">@parentModule[i].module_name</span>
+                                        </label>
+
+                                        @{count = count + 1;
+                                            var childMobileModule = Model.Where(x => x.parent_module_id == parentModule[i].Id).OrderBy(x => x.module_sequence).ToList();
+                                            for (var j = 0; j < childMobileModule.Count; j++)
+                                            {
+
+
+                                                <ul class="collapsable province3" style="display: block;">
+                                                    <li>
+                                                        <img style="margin-top: -8px;" src="~/Areas/Admin/Content/css/images/t.gif" />
+                                                        @*<input id="chk_child_@childModule[j].Id" class="checkbox-custom" type="checkbox">*@
+                                                        @Html.CheckBoxFor(model => childMobileModule[j].is_selected, new { @class = "allModule allMobile chkModule chkModuleChild_" + parentModule[i].Id + "", @onchange = "checkModuleSelected(" + parentModule[i].Id + ")", Name = "lstUserModule[" + count + "].is_selected" })
+                                                        @Html.HiddenFor(model => childMobileModule[j].Id, new { Name = "lstUserModule[" + count + "].Id" })
+                                                        @Html.HiddenFor(model => childMobileModule[j].type, new { Name = "lstUserModule[" + count + "].type" })
+                                                        @Html.HiddenFor(model => childMobileModule[j].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+
+                                                        <label for="chk_child_@childMobileModule[j].Id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                                            <span id="spnLayerName3" title="@childMobileModule[j].module_name" class="pname3">@childMobileModule[j].module_name</span>
+                                                        </label>
+
+                                                    </li>
+                                                </ul>
+                                                count = count + 1;
+                                            }
+                                        }
+                                    </li>
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).on('keyup', '#txtSearchRegionProvince1', function (e) {
+         
+        //.find('#RegionProvinceArea >.treeview > li').addBack().show()
+
+        $("#RegionProvinceArea1 > .region > li").removeClass('show');
+        $("#RegionProvinceArea1 > .region>li > .province1  > li").removeClass('show');
+        $('.countryName1').removeClass('show');
+        var tval = $(this).val();
+        $(".countryName1").addClass('hide');
+        $("#RegionProvinceArea1 > .region  > li").addClass('hide').filter(function () {
+            // 
+            if (tval == " ") {
+                return false;
+            }
+            var text = $(this).children().find('.rname1').attr("title");
+            var status = text.toUpperCase().indexOf(tval.toUpperCase()) > -1 ? true : false;
+            // var text = $(this).children().find('.rname').text();
+            // var status = text.toUpperCase().search(tval.toUpperCase()) != -1 ? true : false;
+           
+            if (status) {
+                $("span:contains(" + $(this).data("country1-name") + ")").parent(".countryName1").removeClass('hide').addClass('show');
+            }
+            return status;
+        }).removeClass('hide').addClass('show');
+
+        $("#RegionProvinceArea1 > .admin--treeview >li > .province1  > li").addClass('hide').filter(function () {
+             
+            if (tval == " ") {
+                return false;
+            }
+            var text = $(this).find('.checkbox-custom-label').children('span.pname1').attr("title");
+            return text.toUpperCase().indexOf(tval.toUpperCase()) > -1 ? true : false;
+            // $(this).find('.checkbox-custom-label').children('span.pname').text();
+            // return text.toUpperCase().search(tval.toUpperCase()) != -1 ? true : false;
+        }).removeClass('hide').addClass('show');
+        $("#RegionProvinceArea1 > .admin--treeview  > li.hide").each(function () {
+            if (tval == " ") {
+                return false;
+            }
+            if ($(this).children('ul').children('li').hasClass('show')) {
+                $(this).removeClass('hide').addClass('show');
+                // $(document).find().data("country-name", $(this).data("country-name")).removeClass('hide').addClass('show');
+            }
+            if ($(this).hasClass('show')) {
+                //console.log($(this).data("country-name"));
+                $("span:contains(" + $(this).data("country1-name") + ")").parent().removeClass('hide').addClass('show');
+            }
+        });
+
+        if ($(".show").length > 0) {
+            $(".noRecordFound").hide();
+        } else {
+            $(".noRecordFound").show();
+        }
+    });
+</script>
+<script>
+    $(document).on('keyup', '#txtSearchRegionProvince2', function (e) {
+         
+        //.find('#RegionProvinceArea >.treeview > li').addBack().show()
+
+        $("#RegionProvinceArea2 > .region > li").removeClass('show');
+        $("#RegionProvinceArea2 > .region>li > .province2  > li").removeClass('show');
+        $("#RegionProvinceArea2 > .region>li > .province2> li >.prov  > li").removeClass('show');
+        //  $("#RegionProvinceArea2 > .region> li >.prov  > li").removeClass('show');
+        $('.countryName2').removeClass('show');
+        $('.countryName22').removeClass('show');
+        $('.countryName22').addClass('hide');
+        var tval = $(this).val();
+        $(".countryName2").addClass('hide')
+        $("#RegionProvinceArea2 > .region  > li").addClass('hide').filter(function () {
+            if (tval == " ") {
+                return false;
+            }
+            var text = $(this).children().find('.rname2').attr("title");
+            var status = text.toUpperCase().indexOf(tval.toUpperCase()) > -1 ? true : false;
+            // var text = $(this).children().find('.rname').text();
+            // var status = text.toUpperCase().search(tval.toUpperCase()) != -1 ? true : false;
+            if (status) {
+                $("span:contains(" + $(this).data("country2-name") + ")").parent(".countryName2").removeClass('hide').addClass('show');
+                //$("span:contains(" + $(this).data("country22-name") + ")").parent(".countryName22").removeClass('hide').addClass('show');
+            }
+            return status;
+        }).removeClass('hide').addClass('show');
+        $("#RegionProvinceArea2 > .admin--treeview >li > .province2  > li").addClass('hide').filter(function () {
+            if (tval == " ") {
+                return false;
+            }
+            var text = $(this).children().find('.pname2').attr("title");
+            var status = text.toUpperCase().indexOf(tval.toUpperCase()) > -1 ? true : false;
+            // var text = $(this).children().find('.rname').text();
+            // var status = text.toUpperCase().search(tval.toUpperCase()) != -1 ? true : false;
+            if (status) {
+                $("span:contains(" + $(this).data("country2-name") + ")").parent(".countryName2").removeClass('hide').addClass('show');
+                $("span:contains(" + $(this).data("country22-name") + ")").children(".countryName22").removeClass('hide').addClass('show');
+            }
+            return status;
+        }).removeClass('hide').addClass('show');
+        $("#RegionProvinceArea2 > .admin--treeview >li > .province2  > li").addClass('hide').filter(function () {
+            if (tval == " ") {
+                return false;
+            }
+            var text = $(this).find('.checkbox-custom-label').children('span.pname2').attr("title");
+            return text.toUpperCase().indexOf(tval.toUpperCase()) > -1 ? true : false;
+            // $(this).find('.checkbox-custom-label').children('span.pname').text();
+            // return text.toUpperCase().search(tval.toUpperCase()) != -1 ? true : false;
+        }).removeClass('hide').addClass('show');
+
+        $("#RegionProvinceArea2 > .admin--treeview >li >.province2  > li >.prov > li").addClass('hide').filter(function () {
+           
+           
+            if (tval == " ") {
+                return false;
+            }
+            var text = $(this).find('.checkbox-custom-label').children('span.name2').attr("title");
+            //  alert(text);
+            return text.toUpperCase().indexOf(tval.toUpperCase()) > -1 ? true : false;
+           
+        }).removeClass('hide').addClass('show');
+
+
+
+       
+
+        $("#RegionProvinceArea2 >.admin--treeview>li>ul>li.hide").each(function () {
+             
+            if (tval == " ") {
+                return false;
+            }
+            if ($(this).children('ul').children('li').hasClass('show')) {
+                // $("span:contains(" + $(this).data("country22-name") + ")").parent().removeClass('hide').addClass('show');
+                $(this).removeClass('hide').addClass('show');
+                // $(document).find().data("country-name", $(this).data("country-name")).removeClass('hide').addClass('show');
+            }
+           
+            if ($(this).hasClass('show')) {
+
+                // alert("hello")
+                //  $(document).find().data("country2-name", $(this).data("country2-name")).removeClass('hide').addClass('show');
+                // $(document).find().data("country22-name", $(this).data("country22-name")).removeClass('hide').addClass('show');
+                //$(".countryName2").removeClass('hide').addClass('show');
+                $("span:contains(" + $(this).data("country2-name") + ")").parent().removeClass('hide').addClass('show');
+                $("span:contains(" + $(this).data("country22-name") + ")").children().removeClass('hide').addClass('show');
+
+                // $("span:contains(" + $(this).data("country22-name") + ")").children().removeClass('hide').addClass('show');
+            }
+        });
+
+
+        $("#RegionProvinceArea2 > .admin--treeview  > li.hide").each(function () {
+            if (tval == " ") {
+                return false;
+            }
+            if ($(this).children('ul').children('li').hasClass('show')) {
+                $(this).removeClass('hide').addClass('show');
+                // $(document).find().data("country-name", $(this).data("country-name")).removeClass('hide').addClass('show');
+            }
+            if ($(this).hasClass('show')) {
+                //alert('hi');
+                //console.log($(this).data("country-name"));
+                $("span:contains(" + $(this).data("country2-name") + ")").parent().removeClass('hide').addClass('show');
+                $("span:contains(" + $(this).data("country22-name") + ")").children().removeClass('hide').addClass('show');
+            }
+        });
+        if ($(".show").length > 0) {
+            $(".noRecordFound").hide();
+        } else {
+            $(".noRecordFound").show();
+        }
+    });
+</script>
+<script>
+    $(document).on('keyup', '#txtSearchRegionProvince3', function (e) {
+         
+        //.find('#RegionProvinceArea >.treeview > li').addBack().show()
+
+        $("#RegionProvinceArea3 > .region > li").removeClass('show');
+        $("#RegionProvinceArea3 > .region>li > .province3  > li").removeClass('show');
+        $('.countryName3').removeClass('show');
+        var tval = $(this).val();
+        $(".countryName3").addClass('hide');
+        $("#RegionProvinceArea3 > .region  > li").addClass('hide').filter(function () {
+             
+            var text = $(this).children().find('.rname3').attr("title");
+            var status = text.toUpperCase().indexOf(tval.toUpperCase()) > -1 ? true : false;
+            if (tval == " ") {
+                return false;
+            }
+            if (status) {
+                $("span:contains(" + $(this).data("country3-name") + ")").parent(".countryName3").removeClass('hide').addClass('show');
+            }
+            return status;
+        }).removeClass('hide').addClass('show');
+
+        $("#RegionProvinceArea3 > .admin--treeview >li > .province3  > li").addClass('hide').filter(function () {
+             
+            if (tval == " ") {
+                return false;
+            }
+            var text = $(this).find('.checkbox-custom-label').children('span.pname3').attr("title");
+            return text.toUpperCase().indexOf(tval.toUpperCase()) > -1 ? true : false;
+           
+        }).removeClass('hide').addClass('show');
+        $("#RegionProvinceArea3 > .admin--treeview  > li.hide").each(function () {
+             
+            if (tval == " ") {
+                return false;
+            }
+            if ($(this).children('ul').children('li').hasClass('show')) {
+                $(this).removeClass('hide').addClass('show');
+                // $(document).find().data("country-name", $(this).data("country-name")).removeClass('hide').addClass('show');
+            }
+            if ($(this).hasClass('show')) {
+                //console.log($(this).data("country-name"));
+                $("span:contains(" + $(this).data("country3-name") + ")").parent().removeClass('hide').addClass('show');
+            }
+        });
+
+        if ($(".show").length > 0) {
+            $(".noRecordFound").hide();
+        } else {
+            $(".noRecordFound").show();
+        }
+    });
+</script>

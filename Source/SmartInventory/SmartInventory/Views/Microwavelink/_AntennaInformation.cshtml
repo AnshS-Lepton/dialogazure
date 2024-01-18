@@ -1,0 +1,150 @@
+﻿
+@model Models.MicrowaveLinkMaster
+<fieldset class="the-fieldset">
+    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_106</legend>
+    <div class="form-group col-md-12">
+        <div class="form-group">
+            <label class="control-label col-md-3"></label>
+            <label class="control-label col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_493</label>
+            <label class="control-label col-md-3">@Resources.Resources.SI_OSP_GBL_GBL_FRM_116</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_OSP_GBL_JQ_FRM_163:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.network_id, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.network_id, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_117 :</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.network_name, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.network_name, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_GBL_195:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.antenna_operator, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.antenna_operator, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_ISP_UNT_NET_FRM_005):</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.mechanical_tilt, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.mechanical_tilt, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_118:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.electrical_tilt, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.electrical_tilt, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_119:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.total_tilt, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.total_tilt, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_GBL_106:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.latitude, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.latitude, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_GBL_012:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.longitude, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.longitude, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">Model Number:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.model_number, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.model_number, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">Manufacturer Name:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.manufacturer_name, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.manufacturer_name, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">Polarization:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.polarization, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.polarization, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_OSP_GBL_JQ_FRM_164:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.minimum_frequency, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.minimum_frequency, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_124:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.maximum_frequency, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.maximum_frequency, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_223 (@SmartInventory.Settings.ApplicationSettings.dBLossUnit)</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.maximum_gain, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.maximum_gain, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_OSP_GBL_NET_FRM_494:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterA.diameter_in_meter, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.antennaMasterB.diameter_in_meter, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+</fieldset>
+ 

@@ -1,0 +1,81 @@
+﻿@model Models.ViewAuditSiteInfo
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objFilterAttributes.pageSize, canSort: false, ajaxUpdateContainerId: "dvViewSiteExportData", ajaxUpdateCallback: "onGridHeaderClick('tblSiteAuditHistory')");
+    grid.Bind(Model.lstData, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+    if (Model.objFilterAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objFilterAttributes.currentPage - 1;
+    }
+} 
+<!DOCTYPE html>
+<div class="libDetail">
+    @using (Ajax.BeginForm("GetSiteHistory", "Audit", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "dvProgress" },
+                 new { id = "frmSiteAuditHistory", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.siteId);
+        @Html.HiddenFor(m => m.lmcType);
+
+        if (Model.lstData.Count > 0)
+        {
+            <div class="form-group row" id="dvBtnAction" style="padding:10px 0px;margin:0px;">
+                <div class="div_totalRecord col-sm-4" style="float: left;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@grid.TotalRowCount</span></b></div>
+                <div class="col-sm-8" style="float: right; text-align: right; cursor:pointer;">
+                    @if (@grid.TotalRowCount > 0)
+                    {
+                        @*<input type="button" id="btnExport" value="Export" class="btn btn-primary" />*@ <span id="btnExport" value="Export"><i class="icon-Export"></i> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</span>
+                    }
+                    else
+                    {
+                        <input type="button" id="btnExport" value="Export" disabled="disabled" class="btn btn-primary" />
+                    }
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+            <div id="objViewAuditHistory" style="padding:10px;padding-top:0px;">
+
+                @if (Model.lstData.Count > 0)
+                {
+                    <div id="dvViewSiteExportData" style="padding: 4px;padding-top: 0px;">
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "webgrid",
+                         headerStyle: "webGridHeader",
+                            alternatingRowStyle: "alt",
+                         htmlAttributes: new { id = "tblSiteAuditHistory" },
+                            mode: WebGridPagerModes.All)
+                        </div>
+                    </div>
+                }
+            </div>
+
+        }
+        else
+        {
+            <div class="nr-found">
+                <span> @Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+            </div>
+        }
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        //$('tfoot a').on("click", function () {
+        //    $('form').attr('action', $(this).attr('href')).submit();
+        //    return false;
+        //});
+        $('th a, tfoot a').on("click", function () {
+            $('#frmSiteAuditHistory').attr('action', $(this).attr('href')).submit();
+            return false;
+        }); 
+        changeColor('tblSiteAuditHistory');
+
+        $("#btnExport").on("click", function () {
+          
+            SiteAuditReport("DownloadSiteAuditHistory");
+        });
+         
+    });
+</script>

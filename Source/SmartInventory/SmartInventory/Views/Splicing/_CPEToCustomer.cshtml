@@ -1,0 +1,276 @@
+﻿@model Models.SplicingViewModel
+<script src="~/Content/js/jquery-swapsies.js"></script>
+@{
+    var lstUserModule = (List<string>)Session["ApplicableModuleList"];
+}
+<style>
+    .noprint {
+        text-align: right;
+        margin: 10px;
+        display: none;
+    }
+
+    .leftPort {
+        height: 4px;
+        margin-top: 5px;
+    }
+
+    .tooltip {
+        position: fixed !important;
+    }
+
+    #spnCPEName {
+        padding: 5px;
+        float: left;
+        margin-left: 110px;
+        text-align: left;
+        line-height: 20px;
+    }
+
+    #spnCustomerName {
+        padding: 5px;
+        float: left;
+        margin-top: 3px;
+        margin-left: 10px;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="form-group noprint">
+    <a id="print" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i> @Resources.Resources.SI_OSP_HTB_NET_FRM_012</a>
+    @Html.DropDownList("pageSize", new List<SelectListItem>
+                {
+                    new SelectListItem{ Text="A4", Value = "A4" },
+                    new SelectListItem{ Text="A3", Value = "A3" },
+                    new SelectListItem{ Text="A2", Value = "A2" },
+                     new SelectListItem{ Text="A1", Value = "A1" },
+                      new SelectListItem{ Text="A0", Value = "A0" },
+                 }, new { @class = "chosen-select col-sm-4", @style = "width: 81px !important;height: 26px;float: right;margin-left: 11px;" })
+</div>
+<div id="PrintContainer" style="height: 100%;border:none;">
+    <div class="mainContainer" id="mainContainer">
+        <div class="Heading">
+            <div class="alert alert-info" style="display:none;position:absolute;width: 99%;margin-top: -16px;height: 49px;">
+                <strong>Success!</strong><span id="SlideMessage">@Resources.Resources.SI_OSP_GBL_NET_FRM_412</span>
+            </div>
+            <div>
+                <div id="spnCPEName" style="padding: 5px;"></div>
+
+                <div id="spnCustomerName" style="padding: 5px;">@Resources.Resources.SI_OSP_GBL_NET_FRM_413</div>
+            </div>
+        </div>
+
+        <div class="splicingLegendSection">
+            @*<div style="float:left;width:calc(100% - 150px)">*@
+            @foreach (var item in Model.listPortStatus)
+            {
+                <div class="left--lines">
+                    <div class="splicingLegend" style="background:@(item.color_code)"></div><span>@item.status</span>
+                </div>
+            }
+
+            <div class="splicingLegend" style="background:#000000"></div><span>@Resources.Resources.SI_ISP_GBL_GBL_GBL_050</span>
+            <input type="hidden" id="hdnConnectedColor" value="#00ba8a" />
+            <input type="hidden" id="hdnVacantColor" value="#A9A9A9" />
+            @Html.HiddenFor(m => m.isEditAllowed, new { id = "hdnIsSplicingEditEnabled" })
+            @*</div>*@
+            <div class="icon-mr-auto">
+                @if (Model.isEditAllowed)
+                {
+                        <div class="ExportConnections Export" title="Export Excel" onclick="splicing.ExportConnections('EXCEL','CPE2C');" style="display:@(lstUserModule.Contains("MSXT") ? "block;" : "none;")">&nbsp;</div>
+                        <div class="ExportConnectionsPDFIcon" title="Export PDF" onclick="splicing.ExportConnections('PDF','CPE2C');" style="display:@(lstUserModule.Contains("MSXT") ? "block;" : "none;")">&nbsp;</div>
+                        <div class="UnspliceConnections" title="@Resources.Resources.SI_OSP_GBL_JQ_FRM_137" onclick="splicing.unSpliceAll();" style="display:@(lstUserModule.Contains("MBS") ? "block;" : "none;")">
+                            &nbsp;
+                        </div>
+                        <div class="spliceAllConnections" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_010" onclick="splicing.CPESpliceAll();" style="display:@(lstUserModule.Contains("MBS") ? "block;" : "none;")">&nbsp;</div>
+                }
+            </div>
+        </div>
+        <div id="divParentSplicingWindow" style="max-height:calc(100% - 137px);overflow-y:auto;position:relative; padding-top:8px;overflow-x:hidden;height:100%;margin: 5px;cursor:@(!Model.isEditAllowed?"not-allowed":"")" title="@(!Model.isEditAllowed?"You are not authorised!":"")">
+            <div class="MainSection" id="divSpliceWindow" style="display: table; height:0px; margin-bottom:10px; width:100%;padding-left: 25px;padding-right: 10px;">
+                <div class="cell">
+                    @foreach (var item in Model.splicingConnections.Where(m => m.entity_type == Models.EntityType.HTB.ToString()).GroupBy(p => new { p.entity_type, p.system_id }).Select(g => g.First()).ToList())
+                    {
+                        <div class="wrapper" id="divHTB" style="border: 1px solid green;padding-top: 10px;padding-bottom: 10px; max-width: 125px;">
+                            <div style="margin:0 auto;width: 100%;text-align: center;padding: 3px;font-size: 13px;border:1px solid green;background: #e4f8ff;border-bottom:0px;display:table-caption;font-weight:bold;">
+                                @{
+                                    var details = SmartInventory.Settings.ApplicationSettings.listLayerDetails.Where(m => m.layer_name.ToUpper() == Models.EntityType.HTB.ToString().ToUpper()).FirstOrDefault();
+                                }
+                                @details.layer_title
+                            </div>
+                            <div class="core" style="display:table-cell; vertical-align:middle;">
+                                <div class="fiber rightFiber" style="margin-top: 0px;height: 15px;text-align: right;padding-right: 28px;font-size:13px;">@Resources.Resources.SI_OSP_GBL_GBL_FRM_011</div>
+                                @foreach (var portItem in Model.splicingConnections.Where(m => m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "I").OrderByDescending(m => m.core_port_number).Select((value, i) => new { i, value }))
+                                {
+                                    var entityUiId = portItem.value.system_id + "_" + Models.EntityType.HTB.ToString() + "_" + portItem.value.core_port_number;
+                                    <div class="fiber rightFiber">
+                                        <div id="@entityUiId" class="innerFiber"
+                                             title="@((portItem.value.port_statusid==1 || portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
+                                             style="background:@portItem.value.core_port_status_color;width:20px;" data-port-no="@portItem.value.core_port_number"
+                                             data-system-id="@portItem.value.system_id"
+                                             data-network-id="@portItem.value.network_id"
+                                             data-entity-type="@portItem.value.entity_type"
+                                             data-is-connected-to-same="@((!portItem.value.is_connected_to_other && portItem.value.destination_system_id != null && portItem.value.destination_system_id != 0) ? "True" : "False")"
+                                             data-target-id="@(portItem.value.destination_entity_type != null ? (portItem.value.destination_system_id + "_" + Convert.ToString(portItem.value.destination_entity_type).ToUpper() + "_" + portItem.value.destination_port_no) : "")"
+                                             data-target-entity-type="@(portItem.value.destination_entity_type != null ? portItem.value.destination_entity_type.ToString().ToUpper() : "")"
+                                             data-target-system-id="@portItem.value.destination_system_id"
+                                             data-target-port-no="@portItem.value.destination_port_no"
+                                             data-is-customer-connected="@portItem.value.is_customer_connected"
+                                             data-is-connected="0" data-is-cable-a-end="false"
+                                             data-status-id="@portItem.value.port_statusid"
+                                               data-port-comment="@portItem.value.port_comment"
+                                             data-port-status="@portItem.value.core_port_status"></div>
+                                        <div class="fiberNumber">@(-1 * portItem.value.core_port_number)</div>
+                                    </div>
+                                }
+                            </div>
+                            <div style="display:table-cell; border:1px solid grey; background:grey; width: 10px;"> </div>
+                            <div class="core" style="display: table-cell; vertical-align:middle;">
+                                <div class="fiber leftFiber" style="margin-top: 0px;height: 15px;text-align: left;padding-left: 17px; font-size:13px;">@Resources.Resources.SI_OSP_GBL_GBL_FRM_012</div>
+                                @foreach (var portItem in Model.splicingConnections.Where(m => m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "O").Select((value, i) => new { i, value }))
+                                {
+                                    var entityUiId = portItem.value.system_id + "_" + Models.EntityType.HTB.ToString() + "_" + portItem.value.core_port_number;
+                                    <div class="fiber leftFiber">
+                                        <div id="@entityUiId" class="@(!portItem.value.is_connected_to_other ? "src" : "") innerFiber"
+                                             title="@((portItem.value.port_statusid==1 || portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
+                                             style="background:@portItem.value.core_port_status_color;width:20px;" data-port-no="@portItem.value.core_port_number"
+                                             data-system-id="@portItem.value.system_id"
+                                             data-network-id="@portItem.value.network_id"
+                                             data-entity-type="@portItem.value.entity_type"
+                                             data-is-connected-to-same="@((!portItem.value.is_connected_to_other && portItem.value.destination_system_id != null && portItem.value.destination_system_id != 0) ? "True" : "False")"
+                                             data-target-id="@(portItem.value.destination_entity_type != null ? (portItem.value.destination_system_id + "_" + Convert.ToString(portItem.value.destination_entity_type).ToUpper() + "_" + portItem.value.destination_port_no) : "")"
+                                             data-target-entity-type="@(portItem.value.destination_entity_type != null ? portItem.value.destination_entity_type.ToString().ToUpper() : "")"
+                                             data-target-system-id="@portItem.value.destination_system_id"
+                                             data-target-port-no="@portItem.value.destination_port_no"
+                                             data-is-customer-connected="@portItem.value.is_customer_connected" data-is-connected="0" data-is-cable-a-end="false"
+                                             data-via-system-id="@portItem.value.via_system_id"
+                                             data-via-entity-type="@portItem.value.via_entity_type"
+                                             data-via-network-id="@portItem.value.via_network_id"
+                                             data-status-id="@portItem.value.port_statusid"
+                                               data-port-comment="@portItem.value.port_comment"
+                                             data-port-status="@portItem.value.core_port_status"></div>
+                                        <div class="fiberNumber">@portItem.value.core_port_number</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                                    }
+                </div>
+                <div id="dvCPEContainer" class="cell">
+                    @foreach (var item in Model.splicingConnections.Where(m => m.entity_type == Models.EntityType.ONT.ToString()).GroupBy(p => new { p.entity_type, p.system_id }).Select(g => g.First()).ToList())
+                    {
+                        <div class="cableContainer wrapper" style="width:260px;padding-left:80px;padding-top:20px;">
+                            <div class="core" style="display: table-cell; vertical-align:middle;">
+                                @foreach (var portItem in Model.splicingConnections.Where(m => m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "I").OrderByDescending(m => m.core_port_number).Select((value, i) => new { i, value }))
+                                {
+                                    var entityId = portItem.value.system_id + "_" + Models.EntityType.ONT.ToString() + "_" + portItem.value.core_port_number;
+                                    <div class="fiber rightFiber">
+                                        <div id="@entityId" class="@(Model.is_middleware_entity?"":(!portItem.value.is_connected_to_other ? "trg" : "")) innerFiber"
+                                             title="@((portItem.value.port_statusid == 3 || portItem.value.port_statusid == 4) ? portItem.value.port_comment : (portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
+                                             style="background:@portItem.value.core_port_status_color;width:20px;" data-port-no="@portItem.value.core_port_number"
+                                             data-system-id="@portItem.value.system_id"
+                                             data-network-id="@portItem.value.network_id"
+                                             data-entity-type="@portItem.value.entity_type"
+                                             data-is-connected-to-same="@((!portItem.value.is_connected_to_other && portItem.value.destination_system_id != null && portItem.value.destination_system_id != 0) ? "True" : "False")"
+                                             data-target-id="@(portItem.value.destination_entity_type != null ? (portItem.value.destination_system_id + "_" + Convert.ToString(portItem.value.destination_entity_type).ToUpper() + "_" + portItem.value.destination_port_no) : "")"
+                                             data-target-entity-type="@(portItem.value.destination_entity_type != null ? portItem.value.destination_entity_type.ToString().ToUpper() : "")"
+                                             data-target-system-id="@portItem.value.destination_system_id"
+                                             data-target-port-no="@portItem.value.destination_port_no"
+                                             data-is-customer-connected="@portItem.value.is_customer_connected"
+                                             data-is-connected="0" data-is-cable-a-end="false"
+                                             data-via-system-id="@portItem.value.via_system_id"
+                                             data-via-entity-type="@portItem.value.via_entity_type"
+                                             data-via-network-id="@portItem.value.via_network_id"
+                                             data-status-id="@portItem.value.port_statusid"
+                                               data-port-comment="@portItem.value.port_comment"
+                                             data-port-status="@portItem.value.core_port_status">
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <div style="border:1px solid green;width: 100px; padding:5px; display:table-cell; text-align:center;vertical-align:middle; font-weight:bold; background:#e1f4e1;">
+                                @{
+                                    var details = SmartInventory.Settings.ApplicationSettings.listLayerDetails.Where(m => m.layer_name.ToUpper() == Models.EntityType.ONT.ToString().ToUpper()).FirstOrDefault();
+                                }
+                                @details.layer_title
+                            </div>
+                            <div class="core" style="display: table-cell; vertical-align:middle;">
+                                @foreach (var portItem in Model.splicingConnections.Where(m => m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "O").Select((value, i) => new { i, value }))
+                                {
+                                    var cpeId = portItem.value.system_id + "_" + Convert.ToString(portItem.value.entity_type).ToUpper() + "_" + portItem.value.core_port_number;
+                                    <div class="fiber leftFiber">
+                                        <div id="@cpeId" class="innerFiber  leftConPoint @(!portItem.value.is_connected_to_other?"src":"")"
+                                             title="@((portItem.value.port_statusid==1 || portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
+                                             style="background:@portItem.value.core_port_status_color;width:20px;" data-port-no="@portItem.value.core_port_number"
+                                             data-system-id="@portItem.value.system_id"
+                                             data-network-id="@portItem.value.network_id"
+                                             data-entity-type="@portItem.value.entity_type"
+                                             data-is-connected-to-same="@((!portItem.value.is_connected_to_other && portItem.value.destination_system_id!=null && portItem.value.destination_system_id != 0) ? "True" : "False")"
+                                             data-target-id="@(portItem.value.destination_entity_type != null ? (portItem.value.destination_system_id + "_" + Convert.ToString(portItem.value.destination_entity_type).ToUpper() + "_" + portItem.value.destination_port_no) : "")"
+                                             data-target-entity-type="@(portItem.value.destination_entity_type!=null?portItem.value.destination_entity_type.ToString().ToUpper():"")"
+                                             data-target-system-id="@portItem.value.destination_system_id"
+                                             data-target-port-no="@portItem.value.destination_port_no"
+                                             data-is-customer-connected="@portItem.value.is_customer_connected"
+                                             data-is-connected="0" data-is-cable-a-end="false"
+                                             data-status-id="@portItem.value.port_statusid"
+                                               data-port-comment="@portItem.value.port_comment"
+                                             data-port-status="@portItem.value.core_port_status"></div>
+                                        <div class="fiberNumber"><span>@portItem.value.core_port_number</span></div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                                    }
+                </div>
+                @*<div id="divCustomerContainer" class="customerContainer">*@
+                <div id="divCustomerContainer" class="customerContainer cell">
+                    @foreach (var item in Model.splicingConnections.Where(m => m.entity_type == Models.EntityType.Customer.ToString()).GroupBy(m => m.system_id).Select(grp => grp.First()).ToList())
+                    {
+                        var customerId = item.system_id + "_" + Convert.ToString(item.entity_type).ToUpper() + "_1";
+                        <div class="customerParent">
+                            <div style="margin-top: 20px;" class="rightFiber">
+                                <div id="@customerId" class="innerFiber rightConPoint @(!item.is_connected_to_other?"trg":"")" style="background:@item.core_port_status_color;"
+                                     title="@(item.is_connected_to_other ? item.other_text : "")"
+                                     data-port-no="@item.core_port_number"
+                                     data-system-id="@item.system_id"
+                                     data-network-id="@item.network_id"
+                                     data-entity-type="@item.entity_type"
+                                     data-is-connected-to-same="@((!item.is_connected_to_other && item.destination_system_id!=null && item.destination_system_id != 0) ? "True" : "False")"
+                                     data-target-id="@(item.destination_entity_type != null ? (item.destination_system_id + "_" + Convert.ToString(item.destination_entity_type).ToUpper() + "_" + item.destination_port_no) : "")"
+                                     data-target-entity-type="@(item.destination_entity_type!=null?item.destination_entity_type.ToString().ToUpper():"")"
+                                     data-target-system-id="@item.destination_system_id"
+                                     data-target-port-no="@item.destination_port_no"
+                                     data-is-customer-connected="@item.is_customer_connected"
+                                     data-is-connected="0" data-is-cable-a-end="false"
+                                     data-status-id="@item.port_statusid"
+                                       data-port-comment="@item.port_comment"
+                                             data-port-status="@item.core_port_status">
+                                </div>
+                            </div>
+                            <div class="customer" style="background-color:@(item.core_port_status_color)"></div>
+                        </div>
+                        <div style="text-align: center;font-weight: bold;word-break:break-all;">@item.network_id</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#divSpliceWindow').css('visibility', 'visible');
+        $('.innerFiber').tooltip({ title: '', html: true, placement: "right" });
+        $('.cpeCore').tooltip({ title: '', html: true, placement: "right" });
+        var entityTypes = [];
+        var networkId = '';
+        $.each($('#ddlCPEEntity :selected'), function (index, item) {
+            networkId = networkId + ' | ' + $(item).text();
+        })
+        $('#spnCPEName').html(networkId.replace('|', ''));
+        $('#divSpliceWindow svg').mouseover(function () { $(this).next('.//').show(); }).mouseout(function () { $(this).next('.clsLabels').hide(); });
+        //$('#divParentSplicingWindow').tooltip({ title: '', html: true, placement: "middle" });
+    })
+</script>
+<script id="splicingInfowindow" type="text/html">
+    @Html.Partial("connectionDetails")
+</script>

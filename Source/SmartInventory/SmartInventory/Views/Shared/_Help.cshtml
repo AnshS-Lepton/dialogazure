@@ -1,0 +1,269 @@
+﻿@model Models.vmHelp
+@using SmartInventory.Settings;
+@using Models;
+<style type="text/css">
+    #divhelp .tab-content > .active {
+        border-top: #ccc solid 1px;
+        padding: 10px;
+    }
+
+    /*#divhelp .nav-tabs > li {
+        border: none;
+    }*/
+
+
+    #divhelp .nav-tabs > li.active > a:hover, #divhelp .nav-tabs > li.active > a {
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+
+    #divhelp .form-control {
+        height: 28px;
+    }
+
+    #divhelp .general_drop:not(:last-child), #divhelp .userManual_drop:not(:last-child) {
+        margin-bottom: 1.5rem;
+    }
+
+    #divhelp .general_drop .dropwindow {
+        padding: 0px;
+    }
+
+
+        #divhelp .general_drop .dropwindow span b{
+            font-style: normal;
+            font-weight:600;
+            font-family:'Segoe UI';
+            font-size:13px !important;
+            display:inline-block;
+            margin-left:0.4rem;
+        }
+
+    #divhelp .general_drop .dropwindow {
+        color: #31bd72;
+        width: 100%;
+        background-image: linear-gradient(0deg, #f1f1f1, #ffffff);
+        padding: 9px 7px;
+        font-size: 14px;
+        border: 1px solid #e7e7e7;
+        margin-bottom: 2px;
+        border-radius: 3px;
+    }
+
+        #divhelp .general_drop .dropwindow .icon-next, .icon-downtonext {
+            color: #747474;
+            cursor: pointer;
+            margin: 0px 5px;
+            font-weight:bold;
+            font-size:10px;
+        }
+
+    #divhelp .general_drop .dispalyTest {
+        padding: 10px;
+        display: block;
+        color: #a3a3a3;
+        background: #FFFFFF;
+        margin-top: -2px;
+        border-top: none;
+        border-radius: 0 0 3px 3px;
+        font-size: 13px;
+        line-height: 20px;
+    }
+
+
+    #divhelp .userManual_drop .dropwindow {
+        padding: 0px;
+    }
+
+
+    #divhelp .userManual_drop .dropwindow {
+        color: #979797;
+        background: #f7f7f7;
+        padding: 7px 9px;
+        border-radius: 3px;
+        font-size: 12px;
+        border: 1px solid #e9e9e9;
+        margin-bottom: 2px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        #divhelp .userManual_drop .dropwindow #pdf{
+            flex:0 0 295px;
+        }
+
+        #divhelp .userManual_drop .dropwindow .icon-next {
+            color: #ccc;
+            cursor: pointer;
+            margin: 0px 5px;
+        }
+
+    #divhelp .userManual_drop .dispalyTest {
+        width: 100%;
+        padding: 10px;
+        display: block;
+        color: black;
+    }
+</style>
+
+<!DOCTYPE html>
+
+<div id="divhelp" class="tab-content helpBox">
+
+    <ul class="nav nav-tabs">
+
+        <li class="@(Model.lstUserModule.Contains("HAF-FAQ")?"active":"roledisabled")" ><a data-toggle="tab" title="@Resources.Resources.SI_GBL_GBL_NET_GBL_004 @(Model.lstUserModule.Contains("HAF-FAQ")?"": Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" href="@(Model.lstUserModule.Contains("HAF-FAQ")?"#FAQs":"")" class="active show" onclick="$('#FAQs').show();$('#UserManuals').hide();"> @Resources.Resources.SI_GBL_GBL_NET_GBL_004</a></li>
+        <li class="@(Model.lstUserModule.Contains("HAF-UMNL")?"":"roledisabled")" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_217 @(Model.lstUserModule.Contains("HAF-UMNL")?"": Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" id="liUserManuals"><a data-toggle="tab" href="@(Model.lstUserModule.Contains("HAF-UMNL")?"#UserManuals":"")" onclick="$('#UserManuals').show();$('#FAQs').hide();">@Resources.Resources.SI_GBL_GBL_NET_FRM_217</a></li>
+
+
+        @if(ApplicationSettings.IS_HPSMEnabled)
+
+        {
+        <li id="liTicketForm"><a data-toggle="tab" href="#TicketForm" onclick="si.HPSMTicket();"><span title="HPSM Ticket">HPSM Ticket</span></a></li>
+        }
+    </ul>
+
+    <div id="FAQs" class="tab-pane fade show active in faqs">
+        <div class="@(Model.lstUserModule.Contains("HAF-FAQ")?"d-fx align-itm":"d-fx align-itm dvdisabled")">
+            <h5>@Resources.Resources.SI_GBL_GBL_NET_GBL_005</h5>
+            <input class="form-control ml-auto faq--inpt" id="txtsearchQuestions" name="Searchtext" type="text" value="" placeholder="@Resources.Resources.SI_GBL_GBL_NET_GBL_003" maxlength="20" onkeyup="searchFAQs();">
+        </div>
+        @if (Model.lstFAQMaster.Count > 0)
+        {
+            foreach (var item in Model.lstFAQMaster.GroupBy(x => x.category))
+            {
+                <div class="@(Model.lstUserModule.Contains("HAF-FAQ")?"general_drop":"general_drop dvdisabled")">
+                    <h5>@item.Key</h5>
+                    @foreach (var attribute in item)
+                    {
+                        <div class="dropwindow question"><span id="Iconspan_@attribute.id" data-attribute-id="@attribute.id" class="icon-next"> <b>@attribute.question</b></span></div>
+                        <div id="dv_@attribute.id" class="dropwindow dispalyTest">@attribute.answer</div>
+                    }
+                </div>
+            }
+        }
+
+    </div>
+
+    <div id="UserManuals" class="tab-pane fade UserManuals">
+        @if (Model.lstFAQMaster.Count > 0)
+        {
+            foreach (var item in Model.lstFAQUserManual.GroupBy(x => x.category))
+            {
+                <div class="userManual_drop">
+                    <h5>@item.Key</h5>
+                    @foreach (var attribute in item)
+                    {
+                        <div class="dropwindow">
+                            @*<a href="@attribute.file_url" target="_blank" id="pdf">@attribute.display_name@attribute.file_extension</a>*@
+                            <label id="pdf">@attribute.display_name@attribute.file_extension</label>  (@attribute.file_size_converted) <a class="icon-Download" title="@Resources.Resources.SI_ISP_GBL_GBL_GBL_038" style="cursor:pointer;" href="@Url.Action("DownloadUserManual", "Main",new {id=@attribute.id})"></a></div>
+
+                    }
+                </div>
+            }
+        }
+    </div>
+
+    <div>
+
+        <div id="dvNoRecords" style="text-align: center; margin-top: 30px;margin-bottom: 10px; display:none">
+            @Resources.Resources.SF_GBL_GBL_NET_FRM_037
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".general_drop .dispalyTest").hide();
+        $(".icon-next").on("click", function () {
+            
+            //var divId = $(this).parent().next('div').attr("id");
+            //var spanId = this.id;
+            //if (!$('#' + divId).is(':visible')) {
+            //    $(".general_drop .dispalyTest").hide();
+            //    $('#' + divId).slideToggle();
+            //    if ($(this).hasClass('icon-next')) {
+            //        if ($('.question').find('.icon-downtonext').length > 0) {
+            //            $(".question").parent().find('.icon-downtonext').removeClass("icon-downtonext");
+            //            $('.question').children('span').addClass('icon-next');
+            //        }
+            //        $(this).removeClass('icon-next')
+            //        $(this).addClass('icon-downtonext')
+            //    }
+
+            //} else {
+            //    $(".general_drop .dispalyTest").hide();
+            //    $(this).addClass('icon-next')
+            //    $(this).removeClass('icon-downtonext')
+            //}
+            //-----------------------
+
+            var divId = $(this).parent().next('div').attr("id");
+            var spanId = this.id;
+            if (!$('#' + divId).is(':visible')) {
+                $('#' + divId).slideToggle();
+                if ($(this).hasClass('icon-next')) {
+                    $(this).removeClass('icon-next')
+                    $(this).addClass('icon-downtonext')
+                }
+
+            } else {
+                //$(".general_drop .dispalyTest").hide();
+                $('#' + divId + ".dispalyTest").hide();
+                $(this).addClass('icon-next')
+                $(this).removeClass('icon-downtonext')
+            }
+
+        });
+    });
+
+    //-- TO MAKE SERACH CASE INSENSITIVE.
+    $.extend($.expr[":"], {
+        "containsIN": function (elem, i, match, array) {
+            return (elem.textContent || elem.innerText || "").toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+        }
+    });
+
+
+    function searchFAQs() {
+         
+        var _searchtext = $('#txtsearchQuestions').val().toLowerCase();
+        var counts = {};
+        if (_searchtext.trim().length > 2) {
+            $(".dispalyTest").hide();
+            $(".general_drop .question").show();
+            $(".general_drop").show();
+            $('#dvNoRecords').hide();
+            $(".general_drop .question:not(:containsIN('" + _searchtext + "'))").hide();
+            $('.question').children('span').removeClass("icon-downtonext").addClass('icon-next');
+            $(".general_drop").each(function (i, item) {
+                if ($(item).children('.question').length != $('div.dropwindow.question:hidden', $(item)).length) {
+                    $(item).show();
+                }
+                else {
+                    $(item).hide();
+                }
+            });
+
+
+            if ($(".general_drop .question").length == $('div.dropwindow.question:hidden').length) {
+                $('#dvNoRecords').show();
+            } else {
+                $('#dvNoRecords').hide();
+            }
+        }
+        else {
+            $(".general_drop").show();
+            $(".general_drop .question").show();
+            $('#dvNoRecords').hide();
+        }
+    }
+    $(popup.DE.CloseChildPopup).click(function () {
+        $('#liTicketForm').removeClass("active show");
+    });;
+    
+</script>

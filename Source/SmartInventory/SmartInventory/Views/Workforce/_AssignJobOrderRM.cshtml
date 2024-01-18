@@ -1,0 +1,478 @@
+﻿@model Models.WFM.ViewJobOrder
+<script src="~/Content/js/ListingPage.js"></script>
+<script src="~/Content/js/Listing.js"></script>
+<link href="~/Content/js/Calendar/calendar.css" rel="stylesheet" />
+<script src="~/Content/js/Calendar/calendar.js"></script>
+<script src="~/Content/js/Calendar/calendar-en.js"></script>
+<script src="~/Content/js/Calendar/calendar-setup.js"></script>
+@{
+
+    WebGrid grid = new WebGrid(rowsPerPage: Model.vwJobOrderFilter.pageSize, canSort: true, ajaxUpdateContainerId: "divGvRouteIssuesDetail",
+        ajaxUpdateCallback: "onGridHeaderClick('tblGvRouteIssuesDetail')");
+
+    grid.Bind(Model.lstIssueDetails, autoSortAndPage: false, rowCount: Model.vwJobOrderFilter.totalRecord);
+    if (Model.vwJobOrderFilter.totalRecord > 0)
+    {
+        grid.PageIndex = Model.vwJobOrderFilter.currentPage - 1;
+    }
+
+
+}
+
+<script>
+    $(function () {
+         
+        $("#allBox").on("click", function () {
+             
+          //  $(".tick.Ticket").attr("checked", $(this).attr("checked") ? true : false);
+            if ($(this).is(":checked")) {
+                $(".tick.Ticket").each(function () {
+                    $(this).prop("checked", true);
+                })
+            }
+            else {
+                $(".tick.Ticket").each(function () {
+                    $(this).prop("checked", false);
+                })
+            }
+        });
+    });
+   // var totalRowCount = grid.TotalRowCount;
+    //var maxExportReportCount = SmartTracking.Settings.ApplicationSettings.MaxExportReportCount;
+    var totalRowCount = @grid.TotalRowCount;
+    var maxExportReportCount = 5000;
+    var RL = new ListingPage();
+    $(document).ready(function () {
+        if (autoRefreshId > 0) {
+            $("#autorefresh").prop("checked", true);
+        }
+        else {
+            $("#autorefresh").prop("checked", false);
+        }
+        RL.initApp();
+        //$('#dvViewRouteContainer select').select2({ width: '100%' });
+        si.setDateTimeCalendar("txtStartDate", "txtEndDate", "imgFromDate", "imgToDate", true);
+        RL.ToggleElement(@Model.vwJobOrderFilter.duration == 0 ? 1 : @Model.vwJobOrderFilter.duration );
+        $($("thead").eq(2)[0]).find("tr th").first().removeClass('bothorder');
+
+    });
+
+    function fnContractorAssignIssue() {
+         
+        // alert("_AssignJob");
+        var selectedValue = [];
+        var j = 0;
+        var inputElements = document.getElementsByClassName('Ticket');
+        for (var i = 0; inputElements[i]; ++i) {
+            if (inputElements[i].checked) {
+                selectedValue[j] = inputElements[i].value;
+                j++;
+
+            }
+        }
+
+        if (selectedValue.length > 0) {
+            si.ContractorApproveRouteIssue(selectedValue, 'UnAssigned');
+
+        }
+        else {
+            alert("Please select atleast one job order.");
+        
+}
+        //else {
+        //    alert("Please specify only one job order.");
+        //}
+    }
+    function fnAutorefresh() {
+
+        if ($("#autorefresh").prop("checked") == true) {
+            if (autoRefreshId == 0) {
+                autoRefreshId = setInterval(function () { $('form#frmAssignJobOrder').submit(); }, 60000);
+            }
+
+        }
+        else {
+            if (autoRefreshId > 0) {
+                clearInterval(autoRefreshId);
+                autoRefreshId = 0;
+            }
+        }
+    }
+</script>
+<style>
+    #ModalPopUp .modal-dialog {
+        left: 0 !important;
+        right: 0 !important;
+        margin: 0 auto !important;
+        width: 1300px !important;
+    }
+</style>
+
+<div id="dvViewRouteContainer">
+    @using (Ajax.BeginForm("GetAssignJobOrderRM", "Workforce",
+        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvViewRouteContainer" },
+        new { autocomplete = "off", @class = "form-horizontal", @id = "frmAssignJobOrder" }))
+    {
+        <div class="modalNbody">
+            <div class="form-group row">
+                @if (Model.vwJobOrderFilter.isLoginRole == 1)
+                {
+                    <label class="control-label col-sm-2">Regional Head</label>
+                    <div class="col-sm-4">
+
+                        @Html.DropDownListFor(m => m.vwJobOrderFilter.regionalHeadId, new SelectList(Model.lstRegionalHead.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name }), "Value", "Text"), "All", new { @id = "ddl_UserResionalHead", @class = "form-control", @onchange = "si.WorkForceManagement.GetGroupListRegionalhead()" })
+                    </div>
+                    <br />
+                    <label class="control-label col-sm-2">Jo Manager:</label>
+                    <div class="col-sm-4">
+
+
+                        @Html.DropDownListFor(m => m.vwJobOrderFilter.jomanagerId, new SelectList(Model.lstJoDetailDetails.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name }), "Value", "Text"), "All", new { @id = "ddl_UserJoList", @class = "form-control", @onchange = "si.WorkForceManagement.GetGroupListByJOManager()" })
+                    </div>
+                }
+                else if (Model.vwJobOrderFilter.isLoginRole == 2)
+                {
+
+                    <label class="control-label col-sm-2">Jo Manager:</label>
+                    <div class="col-sm-4">
+                        @Html.DropDownListFor(m => m.vwJobOrderFilter.jomanagerId, new SelectList(Model.lstJoDetailDetails.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name }), "Value", "Text"), "All", new { @id = "ddl_UserJoList", @class = "form-control", @onchange = "si.WorkForceManagement.GetGroupListByJOManager()" })
+                    </div>
+                }
+
+                <label class="control-label col-sm-2">Group:</label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(m => m.vwJobOrderFilter.groupmanagerId, new SelectList(Model.lstGroupDetails.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name }), "Value", "Text"), "All", new { @id = "ddl_UserGroupList", @class = "form-control", @onchange = "si.WorkForceManagement.GetContractorListByGroup()" })
+                </div>
+
+
+            </div>
+            <div class="form-group row">
+                <label class="control-label col-sm-2">Dispatcher:</label>
+                <div class="col-sm-4">
+
+
+
+                    @Html.DropDownListFor(m => m.vwJobOrderFilter.subordinateUserId, new SelectList(Model.lstUserDetail.Select(x => new { Value = x.user_id, Text = x.user_name }), "Value", "Text"), "All Dispatcher", new { @id = "ddl_UserContractorList", @class = "form-control" })
+
+                </div>
+                <label class="control-label col-sm-2">Duration:</label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(m => m.vwJobOrderFilter.duration, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text="Custom", Value = "1" },
+                            new SelectListItem{ Text="Today", Value = "2" },
+                            new SelectListItem{ Text="Previous Day", Value = "3" },
+                            new SelectListItem{ Text="Last 7 Days", Value = "4" },
+                            new SelectListItem{ Text="Last 30 Days", Value = "5" },
+                        }, new { @id = "ddlduration", @class = "form-control", @onchange = "RL.SetDate()" })
+                </div>
+
+            </div>
+            <div class="form-group row">
+                <label class="control-label col-sm-2">Status:</label>
+                <div class="col-sm-4">
+                    @*@Html.DropDownListFor(m => m.vwJobOrderFilter.status, new List<SelectListItem>
+                {
+
+                    new SelectListItem{ Text="UnAssigned", Value = "UnAssigned"},
+                    new SelectListItem{ Text="Rejected", Value = "Rejected" },
+                }, new { @id = "ddlStatus", @class = "form-control" })*@
+
+
+                    @Html.DropDownListFor(m => m.vwJobOrderFilter.status, new SelectList(Model.lststatus.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "All", new { @id = "ddlIssueType", @class = "form-control" })
+
+                </div>
+                <label class="control-label col-sm-2">Order Type:</label>
+                <div class="col-sm-4">
+                    @*@Html.DropDownListFor(m => m.vwJobOrderFilter.issueType,
+                new List<SelectListItem>
+                 {
+
+                     new SelectListItem{ Text="New Sales", Value = "New Sales"},
+                     new SelectListItem{ Text="COMP-LNDLNE_REL", Value = "COMP-LNDLNE_REL" },
+                 },
+                new { @id = "ddlIssueType", @class = "chosen-select", @style = "padding:0;" })*@
+                    @Html.DropDownListFor(m => m.vwJobOrderFilter.joType, new SelectList(Model.lstJoType.Select(x => new { Value = x.jo_code.ToString(), Text = x.jo_name }), "Value", "Text"), "All", new { @id = "ddlIssueType", @class = "form-control" })
+
+
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="txtStartDate">From:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.vwJobOrderFilter.fromDate, new { @class = "form-control  clsReadOnly", placeholder = "DD-MMM-YYYY", @id = "txtStartDate", @readonly = true })
+                    <img id="imgFromDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                </div>
+                <label class="control-label col-sm-2" for="txtEndDate">To:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.vwJobOrderFilter.toDate, new { @class = "form-control  clsReadOnly", placeholder = "DD-MMM-YYYY", @id = "txtEndDate", @readonly = true })
+                    <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                </div>
+
+            </div>
+
+
+            <div class="form-group row" style="display:none">
+                <label class="control-label col-sm-2">Ticket Source:</label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(m => m.vwJobOrderFilter.ticketSource, new List<SelectListItem>
+                    {
+                        new SelectListItem{ Text="All", Value = "All" },
+                        new SelectListItem{ Text="HPSM", Value = "HPSM" },
+                        new SelectListItem{ Text="Patroller", Value = "Patroller" },
+                    }, new { @id = "ddlduration", @class = "chosen-select", @style = "padding:0;", @onchange = "RL.SetDate()" })
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="control-label col-sm-2">Service Type:</label>
+                <div class="col-sm-4">
+
+                    @Html.DropDownListFor(m => m.vwJobOrderFilter.serviceType, new SelectList(Model.lstServiceType.Select(x => new { Value = x.service_facility_code, Text = x.service_facility_name }), "Value", "Text"), "All", new { @id = "ddlServiceType", @class = "form-control" })
+
+
+                </div>
+
+                <label class="control-label col-sm-2">Jo Category:</label>
+                <div class="col-sm-4">
+
+                    @Html.DropDownListFor(m => m.vwJobOrderFilter.joCategory, new SelectList(Model.lstJoCategory.Select(x => new { Value = x.jo_category_code.ToString(), Text = x.jo_category_name }), "Value", "Text"), "All", new { @id = "ddlJoCategory", @class = "form-control" })
+
+
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="control-label col-sm-2">Search by:</label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(m => m.vwJobOrderFilter.searchby, new List<SelectListItem>
+                    {
+                    new SelectListItem{ Text="All", Value = "0" },
+                        new SelectListItem{ Text="Street", Value = "1" },
+                        new SelectListItem{ Text="Building Name", Value = "2" },
+                        new SelectListItem{ Text="Province", Value = "4" },
+                        new SelectListItem{ Text="JO Number", Value = "5" },
+                        new SelectListItem{ Text="Account Number", Value = "6" },
+                        new SelectListItem{ Text="Reference Number", Value = "7" },
+                        new SelectListItem{ Text="CPE Serial Number", Value = "8" },
+                        new SelectListItem{ Text="Plan Package", Value = "9" },
+                        new SelectListItem{ Text="Subscriber Name", Value = "10" },
+                                     new SelectListItem{ Text="City", Value = "11" },
+                        new SelectListItem{ Text="Barangay Name", Value = "12" },
+
+                    }, new { @id = "ddlserachby", @class = "form-control", @style = "padding:0;" })
+                </div>
+                <label class="control-label col-sm-2" for="">Search Text :</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.vwJobOrderFilter.searchText, new { @class = "form-control", @placeholder = "Search Text" })
+                </div>
+            </div>
+
+            <div class="d-flex ModalFooter">
+                <input type='checkbox' style='margin-left: 19px;' id='autorefresh' onclick='fnAutorefresh()' />
+                <b class="mr-01" style='margin-left: 5px;'>Auto Refresh</b>
+                <button type="submit" id="btnSearchRoute" class="btn btn-primary btn-small ml-auto">Search</button>
+            </div>
+        </div>
+        <div id="divGvRouteIssuesDetail" class="tablBody tablePose">
+            <div class="stickyBox"></div>
+
+            @if (Model.lstIssueDetails != null && Model.lstIssueDetails.Count > 0)
+            {
+                <div class="recordCount d-flex align-items-md-center">
+                    <b class="mr-01">Total Records: @grid.TotalRowCount</b>
+                    <b class="mr-03 ml-auto">Page Size:</b>
+                    <div class="w-10 mr-01">
+                        @Html.DropDownListFor(m => m.vwJobOrderFilter.pageSize, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text="5", Value = "5" },
+                                new SelectListItem{ Text="10", Value = "10" },
+                                new SelectListItem{ Text="15", Value = "15" },
+                                new SelectListItem{ Text="20", Value = "20" },
+                                new SelectListItem{ Text="25", Value = "25" },
+                                 new SelectListItem{ Text="50", Value = "50" },
+ new SelectListItem{ Text="100", Value = "100" },
+                            }, new { @id = "ddlpagesize", @class = "form-control" })
+                    </div>
+                    <input type="button" id="btnAssignIssue" class="btn btn-primary" value="Transfer Job Order" onclick="fnContractorAssignIssue();" />
+                    <input type="button" class="btn btn-warning ml-10" id="btnDownloadRouteIssueReportRM" value="Export Data">
+                </div>
+
+
+                <div class="overTable">
+                    @MvcHtmlString.Create(grid.GetHtml(tableStyle: "stickyThTd",
+                    htmlAttributes: new { id = "tblGvRouteIssuesDetail" },
+                    mode: WebGridPagerModes.All,
+
+                    columns: grid.Columns(
+                    grid.Column("", header: "{CheckBoxHeading}", format:
+                                                                                                                                    @<text>
+                                                                                                                                        @if (item.status == "UnAssigned")
+                                                                                                                                             {
+                                                                                                                                            <input id="@item.issue_id" name="@item.issue_id" class="tick Ticket" type="checkbox" value="@item.issue_id" />
+
+                                                                                                                                             }
+
+                                                                                                                                    </text>
+),
+
+grid.Column("hpsm_ticketid", "JO Source", format: @<text>
+
+                    @if (item.hpsm_ticketid != null)
+                         {
+                        <span id="hpsm_ticketsource">@item.ticket_source</span>
+                         }
+                         else
+                         {
+                        <span id="hpsm_ticketsource">PATROLLER</span>
+                         }
+
+                </text>),
+grid.Column("hpsm_ticketid", "JO ID", format: @<text>
+                    <span id="hpsm_ticketid">
+                        @*@if (item.vsf_ticketid != 0 || item.vsf_ticketid == 0)*@
+                        @if (item.vsf_ticketid != 0 && item.ticket_source_id == 3)
+                             {
+                            <a id="lnkViewHPSMIssuess" href="javascript:void(0);" onclick="si.ViewHPSMTicketTaskDeatail('@item.hpsm_ticketid','nms');" class="dropdown-toggle" style="color:blue" title="Job Order(s)" data-title="Job Order(s)" data-href="Main/ViewNMSTicketDetails">@item.hpsm_ticketid</a>
+                             }
+                             else
+                             {
+                            <a id="lnkViewHPSMIssuess" href="javascript:void(0);" onclick="si.ViewHPSMTicketTaskDeatail('@item.hpsm_ticketid');" class="dropdown-toggle" style="color:blue" title="Job Order(s)" data-title="Job Order(s)" data-href="Main/ViewHPSMTicketDetails">@item.hpsm_ticketid</a>
+                             }
+                    </span>
+                </text>),
+
+                @*grid.Column("circle_name", "Circle", format: @<text><span id="circle_name">   @item.circle_name</span> </text>),
+    grid.Column("cluster_id", "Cluster Id", format: @<text><span id="customerid">   @item.cluster_id</span> </text>),
+    grid.Column("cluster_name", "Cluster", format: @<text><span id="customerid">   @item.cluster_name</span> </text>),*@
+                @*grid.Column("society_name", "Society Name", format: @<text><span id="customerid">   @item.society_name</span> </text>),*@
+                @*grid.Column("customer_add", "Address", format: @<text><span id="customeradd">   @item.customer_add</span> </text>),*@
+                @*grid.Column("customer_id", "Customer Id", format: @<text><span id="customerid">   @item.customer_id</span> </text>),*@
+grid.Column("status", "Status", format: @<text><span id="status">@item.status</span> </text>),
+grid.Column("sub_status", "Sub Status", format: @<text><span id="status">@item.sub_status</span> </text>),
+grid.Column("remarks", "Remarks", format: @<text><span id="remarks">   @item.remarks</span> </text>),
+
+grid.Column("issue_comment", "Comment", format: @<text><span id="cpe_serialno">   @item.comment</span> </text>),
+grid.Column("account_number", "Account Number", format: @<text><span id="account_number">   @item.account_number</span> </text>),
+grid.Column("bookingid", "Booking Id", format: @<text><span id="rc">   @item.bookingid</span> </text>),
+grid.Column("subscriber_name", "Subscriber Name", format: @<text><span id="subscriber_name">   @item.subscriber_name</span> </text>),
+grid.Column("customer_add", "Installation Mode", format: @<text><span id="customer_add">   @item.customer_add</span> </text>),
+grid.Column("addressline1", "Floor Number", format: @<text><span id="addressline1">   @item.addressline1</span> </text>),
+
+grid.Column("addressline2", "Street", format: @<text><span id="addressline2">   @item.addressline2</span> </text>),
+grid.Column("addressline3", "Building Name", format: @<text><span id="addressline3">   @item.addressline3</span> </text>),
+grid.Column("addressline4", "Address Line 4", format: @<text><span id="addressline4">   @item.addressline4</span> </text>),
+grid.Column("addressline5", "Barangay Name", format: @<text><span id="barangay_name">   @item.barangay_name</span> </text>),
+grid.Column("city", "City", format: @<text><span id="city">   @item.city</span> </text>),
+grid.Column("pincode", "Zip Code", format: @<text><span id="pincode">   @item.pincode</span> </text>),
+grid.Column("stateorprovince", "StateOrProvince", format: @<text><span id="stateorprovince">   @item.stateorprovince</span> </text>),
+grid.Column("user_name", "User Name", format: @<text><span id="user_name">   @item.user_name</span> </text>),
+grid.Column("group_user", "Group Name", format: @<text><span id="user_name">   @item.group_user</span> </text>),
+grid.Column("reference_id", "Reference Id", format: @<text><span id="reference_id">   @item.reference_id</span> </text>),
+
+grid.Column("appointment_date", "Appointment Date", format: @<text><span id="appointment_date">   @item.appointment_date</span> </text>),
+grid.Column("slot_time", "Slot Time", format: @<text><span id="slot_time">   @item.slot_time</span> </text>),
+grid.Column("sla", "SLA", format: @<text><span id="sla">   @item.sla</span> </text>),
+                @*grid.Column("route_name", "Route Name", format: @<text><span id="route_name">   @item.route_name</span> </text>),*@
+grid.Column("latitude", "latitude", format: @<text><span id="latitude">@item.latitude</span> </text>),
+grid.Column("longitude", "longitude", format: @<text><span id="longitude">@item.longitude</span> </text>),
+grid.Column("payment_type", "Payment Type", format: @<text><span id="payment_type">   @item.payment_type</span> </text>),
+grid.Column("payment_status", "Payment Status", format: @<text><span id="payment_status">   @item.payment_status</span> </text>),
+grid.Column("total_amount", "Total Amount", format: @<text><span id="total_amount">   @item.total_amount</span> </text>),
+grid.Column("issue_desc", "Order Type", format: @<text><span id="issue_desc">@item.issue_desc</span> </text>),
+grid.Column("manager_remark", "Manager Remark", format: @<text><span id="manager_remark">@item.manager_remark</span> </text>),
+                @*grid.Column("mobile_time", "Created On", format: @<text><span id="mobile_time"> @item.mobile_time</span> </text>),
+    grid.Column("modified_on", "Modified On", format: @<text><span id="modified_on"> @item.modified_on</span> </text>),*@
+grid.Column("created_on", "Creation Date", format: @<text><span id="CreationDate">   @item.created_on</span> </text>),
+
+grid.Column("atomic_id", "Atomic Id", format: @<text><span id="rc">   @item.atomic_id</span> </text>),
+                @*grid.Column("customer_add", "Address", format: @<text><span id="customeradd">   @item.customer_add</span> </text>),
+    grid.Column("customer_id", "Customer Id", format: @<text><span id="customerid">   @item.customer_id</span> </text>),
+    grid.Column("status", "Status", format: @<text><span id="status">@item.status</span> </text>),
+    grid.Column("sub_status", "Sub Status", format: @<text><span id="status">@item.sub_status</span> </text>),
+    grid.Column("issue_desc", "Service Type", format: @<text><span id="status">@item.issue_desc</span> </text>),
+    grid.Column("frt_user_name", "Assigned To", format: @<text><span id="frt_user_name">   @item.FRT_USER_NAME</span> </text>),
+    grid.Column("ASSIGNED_DATE", "Assigned Date", format: @<text><span id="ASSIGNED_DATE">   @item.ASSIGNED_DATE</span> </text>),
+    grid.Column("manager_remark", "Manager Remark", format: @<text><span id="manager_remark">   @item.manager_remark</span> </text>),
+    grid.Column("mobile_checkin_time", "CheckIn Time", format: @<text><span id="mobile_checkin_time">   @item.mobile_checkin_time</span> </text>),
+    grid.Column("checkin_remarks", "CheckIn Remarks", format: @<text><span id="checkin_remarks">   @item.checkin_remarks</span> </text>),
+    grid.Column("mobile_checkout_time", "CheckOut Time", format: @<text><span id="mobile_checkout_time">   @item.mobile_checkout_time</span> </text>),
+    grid.Column("checkout_remarks", "CheckOut Remarks", format: @<text><span id="checkout_remarks">   @item.checkout_remarks</span> </text>),
+
+    grid.Column("hold_rc_code", "Hold RC Code", format: @<text><span id="mobile_checkout_time">   @item.hold_rc_code</span> </text>),
+    grid.Column("hold_rca_code", "Hold RCA Code", format: @<text><span id="mobile_checkout_time">   @item.hold_rca_code</span> </text>),
+    grid.Column("hold_remarks", "Hold Remarks", format: @<text><span id="mobile_checkout_time">   @item.hold_remarks</span> </text>),
+
+    grid.Column("hold_appointment_date", "Appointment Time", format: @<text><span id="mobile_checkout_time">   @item.hold_appointment_date</span> </text>),
+
+
+    grid.Column("rc", "RC", format: @<text><span id="rc">   @item.rc</span> </text>),
+    grid.Column("rca", "RCA", format: @<text><span id="rca">   @item.rca</span> </text>),*@
+
+grid.Column("access_type", "Access Type", format: @<text><span id="rc">   @item.access_type</span> </text>),
+grid.Column("package_name", "Package Name", format: @<text><span id="rca">   @item.package_name</span> </text>),
+grid.Column("nap_port", "Port", format: @<text><span id="rc">   @item.nap_port</span> </text>),
+grid.Column("node", "NAP/ DPU", format: @<text><span id="rca">   @item.node</span> </text>),
+grid.Column("cpe_brand", "CPE Brand", format: @<text><span id="rc">   @item.cpe_brand</span> </text>),
+grid.Column("cpe_model", "CPE Model", format: @<text><span id="cpe_model">   @item.cpe_model</span> </text>),
+                @*gridgrid.Column("cpe_type", "Cpe Type", format: @<text><span id="rc">   @item.cpe_type</span> </text>),
+    grid.Column("cpe_portno", "CPE PortNo", format: @<text><span id="rca">   @item.cpe_portno</span> </text>),
+    grid.Column("cpe_brand", "CPE Brand", format: @<text><span id="rc">   @item.cpe_brand</span> </text>),
+    grid.Column("cpe_model", "CPE Model", format: @<text><span id="cpe_model">   @item.cpe_model</span> </text>),*@
+grid.Column("cpe_serialno", "CPE SerialNo", format: @<text><span id="cpe_serialno">   @item.cpe_serialno</span> </text>),
+grid.Column("facility", "Facility", format: @<text><span id="facility">   @item.facility</span> </text>),
+
+grid.Column("customer_rmn", "Contact Number", format: @<text><span id="customer_rmn">   @item.customer_rmn</span> </text>),
+grid.Column("secondary_contact", "Secondary Contact", format: @<text><span id="facility">   @item.secondary_contact</span> </text>),
+grid.Column("email_id", "Email Id", format: @<text><span id="cpe_serialno">   @item.email_id</span> </text>),
+                @*grid.Column("local_convergence_point", "Local Convergence Point", format: @<text><span id="local_convergence_point">   @item.local_convergence_point</span> </text>),*@
+                @*grid.Column("current_cpesn", "Current CPESN", format: @<text><span id="current_cpesn">   @item.current_cpesn</span> </text>),*@
+grid.Column("listextension_boxsn", "Stb Serial No.", format: @<text><span id="listextension_boxsn">   @item.listextension_boxsn</span> </text>),
+
+
+                @*grid.Column("issue_comment", "Issue Comment", format: @<text><span id="cpe_serialno">   @item.issue_comment</span> </text>),*@
+                @*grid.Column("site_type", "Site Type", format: @<text><span id="site_type">   @item.site_type</span> </text>),*@
+
+
+
+grid.Column("jo_category", "JO Category", format: @<text><span id="jo_category">   @item.jo_category</span> </text>),
+grid.Column("cpe_type", "Device Name", format: @<text><span id="cpe_type">   @item.cpe_type</span> </text>),
+
+                @*grid.Column("cpe_mac_address", "CPE Mac Address", format: @<text><span id="cpe_mac_address">   @item.cpe_mac_address</span> </text>),*@
+grid.Column("cpe_item_code", "CPE Item Code", format: @<text><span id="cpe_item_code">   @item.cpe_item_code</span> </text>),
+grid.Column("cpe_ref_serial", "CPE Ref Serial", format: @<text><span id="cpe_ref_serial">   @item.cpe_ref_serial</span> </text>),
+grid.Column("cpe_uom", "CPE UOM", format: @<text><span id="cpe_uom">   @item.cpe_uom</span> </text>),
+grid.Column("cpe_wh", "CPE WH", format: @<text><span id="cpe_wh">   @item.cpe_wh</span> </text>),
+grid.Column("", "Action", format:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        @<text>
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            @if (item.status == "UnAssigned" && item.vsf_ticketid == 0)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                 {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <a href="javascript:void(0);" onclick="si.ApproveRouteIssue('@item.issue_id','Rejected');" class="dropdown-toggle iconStyle" title="Reject Issue"> <i class="fa fa-times icon-muted fa-fw"></i></a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                 }
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            @if (item.ticket_source_id == 3)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                 {
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                 else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                 {
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </text>         )
+         )
+         ).ToString().Replace("{CheckBoxHeading}", "<input type='checkbox' style='margin-left: 19px;' id='allBox' />"))
+                </div>
+            }
+            else
+            {
+                <div class="nr-found nr-pose">
+                    <span>No record found.</span>
+                </div>
+            }
+            @Html.Hidden("dir", grid.SortDirection)
+            @Html.Hidden("col", grid.SortColumn)
+        </div>
+    }
+</div>

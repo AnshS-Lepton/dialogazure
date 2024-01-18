@@ -1,0 +1,201 @@
+﻿@{
+    Layout = null;
+}
+
+@model Models.User
+@using SmartFeasibility.Settings;
+@{
+    ViewBag.Title = "Index";
+    var isClientNameRequired = (!string.IsNullOrEmpty(ApplicationSettings.ClientName)) ? true : false;
+}
+}
+
+<style>
+    /*.dropdown {
+
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 12px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }*/
+    body {
+        /* background: #009e76 url(../images/main_bg.png) top center no-repeat; */
+        background: #fff !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background-size: 100% 100% !important;
+        background-attachment: fixed !important;
+        font: 12px arial !important;
+        color: #fff !important;
+    }
+
+    .scnd_img {
+        width: 50%;
+        height: 100%;
+        float: left;
+        text-align: center;
+        background: #ceedff;
+        padding: 3% 0 0 0;
+        background: -moz-linear-gradient(top, #ceedff 0%, #009ec3 100%);
+        background: -webkit-linear-gradient(top, #ceedff 0%,#009ec3 100%);
+        background: linear-gradient(to bottom, #ceedff 0%,#009ec3 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ceedff', endColorstr='#009ec3',GradientType=0 );
+    }
+
+    .logo {
+        text-align: center !important;
+        font-size: 36px !important;
+        /*width: 100%;*/
+        padding-top: 55px !important;
+        text-transform: uppercase !important;
+        color: #009ec3 !important;
+        right: 13% !important;
+    }
+
+    .applicationName {
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
+        font-size: 28px !important;
+        text-align: center !important;
+        font-weight: bold !important;
+        text-transform: none !important;
+    }
+
+    .login_area {
+        width: 406px !important;
+        height: auto !important;
+        margin: 0 auto !important;
+        background-color: #fff !important;
+        top: 45% !important;
+        right: 10% !important;
+    }
+
+    .codrops-bottom {
+        color: #353535;
+        font-size: 13px !important;
+        font-weight: normal !important;
+        padding-top: 60px !important;
+        width: 100% !important;
+        height: auto !important;
+        text-align: center !important;
+        bottom: -480px !important;
+        left: 25% !important;
+    }
+    .d-flex{
+        display:flex;
+        align-items:center;
+    }
+    .logosNew {
+        justify-content: center;
+        gap:20px;
+    }
+    .logosNew img{
+        width:84px;
+    }
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+@Styles.Render("~/Logincss")
+@Scripts.Render("~/bundles/LoginScripts")
+@{Html.RenderPartial("_GlobalVariable");}
+<div>
+    <div class="scnd_img"><img src="~/Content/images/SI%20Login%20page-front.png" /></div>
+    @*<div class="logo"><p class="applicationName">(@SmartFeasibility.Settings.ApplicationSettings.ClientName)</p><span class="icon-smart_feasibility"></span>@SmartFeasibility.Settings.ApplicationSettings.ApplicationName </div>
+        <div class="logo_lpt"></div>*@
+    <div class="dvLoginSection">
+        @using (Html.BeginForm("Index", "Login", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { autocomplete = "off", @class = "formaddon" }))
+        {
+            if ((@SmartFeasibility.Settings.ApplicationSettings.isMultilingual) == true)
+            {
+                @*<div style="float: right;margin-top: 20px;margin-right: 5px;">*@
+                <div class="resources">
+                    @Html.DropDownList("dropdown_key", new SelectList(ViewBag.langlist, "dropdown_value", "dropdown_key", ViewBag.cultureInfo), new { @class = "form-control col-sm-12 dropdown", @onchange = "changeLang();", @id = "ddlResource" })
+                </div>
+            }
+
+            <div class="logo" style="padding-top:@(isClientNameRequired?"55px":"112px")">
+                @if (!string.IsNullOrEmpty(ApplicationSettings.ClientLogoImageBytesForWeb))
+                {
+                    <img src="@ApplicationSettings.ClientLogoImageBytesForWeb" />
+                }
+                @if (isClientNameRequired)
+                {
+                    <div class="applicationName">@ApplicationSettings.ClientName</div>
+                }
+                <div style="margin-top: 25px; display:none;"> @ApplicationSettings.ApplicationName</div>
+                <div class="d-flex logosNew">
+                    <img src="~/Content/images/DRA.png" />
+                    <img src="~/Content/images/NHLML.jpeg" />
+                </div>
+            </div>
+
+            <div style="width:100%; height:auto;">
+                <div class="login_area">
+                    @*<span class="login_text">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_001</span>*@
+                    <div>
+                        @*<label class="label-class">@Resources.Resources.SF_GBL_GBL_NET_FRM_001</label>*@
+                        @Html.TextBoxFor(m => m.user_name, null, new { @class = "username", placeholder = Resources.Resources.SF_GBL_GBL_NET_FRM_024, maxlength = "200", id = "txtUsername" })
+
+                    </div>
+                    <div>
+                        @*<label class="label-class">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_002</label>*@
+                        @Html.PasswordFor(m => m.password, new { @class = "password", placeholder = Resources.Resources.GBL_GBL_GBL_GBL_GBL_002, maxlength = "200", id = "txtPassword" })
+                    </div>
+                    <div class="" id="dvBtn">
+                        <button class="btn-default go_botton signin" name="btnGo" id="btnGo" title='@Resources.Resources.SF_GBL_GBL_NET_FRM_025' onmousedown="mousedwnevt();" onmouseup="mouseupevt();" alt="Go" onclick="pageValid(event);">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_001</button>
+                    </div>
+                    <div class="error">
+                        @Html.ValidationMessage("Error")
+                    </div>
+                    <div class="browser">
+                        @Resources.Resources.SF_GBL_GBL_NET_FRM_002
+                        @*<div class="codrops-bottom"><span class="lep-logo"><img src="~/Content/images/logo_lepton.PNG" /></span> <span class="botm"> © @Models.DateTimeHelper.Now.Year.ToString() @Resources.Resources.SF_GBL_GBL_NET_FRM_003</span>  <span class="mail icon-mail-envelope"></span>  <span class="app-version">, @Resources.Resources.SF_GBL_GBL_NET_FRM_004: @System.Configuration.ConfigurationManager.AppSettings["AppVersion"] </span> <span class="helpdesk"><a href="http://www.leptonsoftware.com/help-desk/" target="_blank" style="color: #fff; text-decoration: none;">@Resources.Resources.SF_GBL_GBL_NET_FRM_005</a></span></div>*@
+
+                    </div>
+                </div>
+            </div>
+            <div class="codrops-bottom"><span class="lep-logo"></span> <span class="botm"> © @Models.DateTimeHelper.Now.Year.ToString() @Resources.Resources.SI_GBL_GBL_NET_FRM_005</span>  <span class="mail icon-mail-envelope"></span>,@System.Configuration.ConfigurationManager.AppSettings["Environment"] <span class="app-version">, @Resources.Resources.SI_GBL_GBL_NET_FRM_006: @System.Configuration.ConfigurationManager.AppSettings["AppVersion"]</span> <span class="helpdesk"><a href="http://www.leptonsoftware.com/help-desk/" target="_blank">@Resources.Resources.SI_GBL_GBL_NET_FRM_007</a></span></div>
+        }
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.6.0.min.js"></script>
+<script>
+
+    //$(function () {
+    //    changeLang();
+    //});
+
+    function changeLang() {
+        jQuery.ajax({
+            url: "/Multilingual/Change",  //Your Url return State List for that Country
+            data: { "lang": jQuery('#ddlResource :selected').val() },
+            success: function (data) {
+                window.location.reload();
+            }
+        })
+    }
+
+
+    //$("#ddlResource").change(function () {
+    //    jQuery.ajax({
+    //        url: "/Multilingual/Change",  //Your Url return State List for that Country
+    //        data: { "lang": jQuery('#ddlResource :selected').val() },
+    //        success: function (data) {
+    //            window.location.reload();
+    //        }
+    //    })
+    //});
+
+</script>

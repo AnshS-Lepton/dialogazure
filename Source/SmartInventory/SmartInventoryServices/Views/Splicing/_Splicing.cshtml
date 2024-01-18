@@ -1,0 +1,275 @@
+﻿@model IEnumerable<Models.SplicingEntity>
+@using Models;
+@using SmartInventory.Settings;
+
+@{ var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Cable.ToString().ToUpper()).FirstOrDefault() : null;}
+<link href="~/Content/css/splicing/jquery-ui.css" rel="stylesheet" />
+<link href="~/Content/css/splicing/Splicing.css" rel="stylesheet" />
+@*<link href="~/Content/bootstrap.min.css" rel="stylesheet" />*@
+<link href="~/Content/css/splicing/icostyle.css" rel="stylesheet" />
+<link href="~/Content/js/Splice/splice-style.css" rel="stylesheet" />
+<link href="~/Content/css/splicing/Alert.css" rel="stylesheet" />
+<link href="~/Content/css/splicing/chosen.css" rel="stylesheet" />
+@*<link href="~/Content/bootstrap.css" rel="stylesheet" />*@
+<link href="~/Content/css/splicing/bootstrap.css" rel="stylesheet" />
+
+<style>
+    #dvSplicingElements .disabled-result {
+        background-color: #e2e2e2;
+        color: #2f2e2e;
+        cursor: not-allowed;
+    }
+
+    #divLeftCable .disabled-result, #divRightCable .disabled-result {
+        background-color: #f4bcbc;
+        color: navy !important;
+    }
+
+    .disableLegend {
+        width: 15px;
+        height: 15px;
+        background-color: #fcaf88;
+        border: 1px solid grey;
+        float: left;
+        margin-left: 10px;
+        margin-right: 6px;
+    }
+
+
+    #ddlCustomer_chosen .default, #ddlCPEEntity_chosen .default {
+        color: black;
+    }
+
+    #dvSplicingElements .control-label {
+        font-size: 14px;
+        padding-bottom: 3px;
+    }
+
+    .Virtual-selected {
+        background-color: #FFF0B3;
+    }
+</style>
+@{Html.RenderPartial("_ModalPopUp");}
+<!DOCTYPE html>
+<div class="libTabs">
+
+    @{Html.RenderPartial("_GlobalVariable");}
+    <ul class="nav nav-tabs tabs-left">
+        <li class="active"><a href="#CableToEquipment" data-toggle="tab" onclick="splicing.ClearSplicingRelatedObjs('EQUP')">@layerDetail.layer_title @Resources.Resources.SI_GBL_GBL_GBL_FRM_038</a></li>
+        <li><a href="#CPEToCustomer" data-toggle="tab" onclick=" splicing.ClearSplicingRelatedObjs('CPE');">@Resources.Resources.SI_OSP_GBL_NET_FRM_114</a></li>
+    </ul>
+</div>
+<div class="libTabContent" id="dvSplicingElements">
+    <div class="tab-content">
+        <div class="tab-pane active" id="CableToEquipment" style="padding-top:10px;">
+            <div style="height:215px;">
+                <div class="form-group" style="height: 16px;">
+                    <div class="col-md-12">
+                        <label class="control-label">@Resources.Resources.SI_OSP_GBL_NET_FRM_115.</label>
+                        <label class="switch" style="float: left; margin-top: 2px; margin-right:10px;">
+
+                            <input id="chkSpliceTerminatedCablesOnly" checked="checked" onclick="splicing.onChangeSpliceTerminatedCablesOnly();" type="checkbox">
+                            <span class="slider round"></span>
+
+
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group" style="height: 47px;">
+                    <label class="control-label col-md-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_116<i class="clsMandatory">*</i>:</label>
+                    <div class="col-md-12" style="padding-top: 3px;">
+                        <select name="ddlConnectingEntity" id="ddlConnectingEntity" class="chosen-select form-control " onchange=" splicing.focusCableToEquipment('#ddlConnectingEntity');">
+                            <option value="0" data-geom-type="Point" data-entity-type="">--Select--</option>
+                            @foreach (var item in Model.Where(m => m.geom_Type == Models.GeometryType.Point.ToString() && m.isCableTPPoint == true).ToList())
+                            {
+
+                                var text = (item.layer_abbr + ":" + item.common_name + (item.total_core_ports != null ? "-(" + item.total_core_ports + ")" : "") + (item.network_status != null ? "-(" + item.network_status + ")" : ""));
+                                if (item.is_isp_entity)
+                                { text = text + "-(ISP)"; }
+                                //text += item.entity_system_id + "-" + item.entity_type;
+                                if (item.is_virtual)
+                                {
+
+                                    <option class="Virtual-selected" value="@item.entity_system_id" title="@item.layer_title" data-loading-text="@text" data-network-id="@item.common_name" data-geom-type="@item.geom_Type" data-entity-type="@item.entity_type" data-total-port="@item.total_core_ports" data-is-isp-entity="@item.is_isp_entity" data-is-middleware-entity="@item.is_middleware_entity" data-is-virtual="@item.is_virtual" data-is-virtual-entity="@item.is_virtual_entity">@text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.entity_system_id" data-loading-text="@text" title="@item.layer_title" data-network-id="@item.common_name" data-geom-type="@item.geom_Type" data-entity-type="@item.entity_type" data-total-port="@item.total_core_ports" data-is-isp-entity="@item.is_isp_entity" data-is-middleware-entity="@item.is_middleware_entity" data-is-virtual="@item.is_virtual" data-is-virtual-entity="@item.is_virtual_entity">@text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="height: 47px;" id="divLeftCable">
+                    <label class="control-label col-md-2" for="txtADBCode" id="lblLeftCable" style="padding-right: 0px;"> @Resources.Resources.SI_OSP_CAB_NET_FRM_054 @layerDetail.layer_title</label>:
+                    <div class="col-md-12" style="float: right; padding-top: 3px;">
+                        <select name="ddlSourceCable" id="ddlSourceCable" class="chosen-select form-control" onchange="splicing.focusCableToEquipment('#ddlSourceCable');">
+                            <option value="0" data-geom-type="Line" data-entity-type="" data-cable-direction="Source">--Select--</option>
+                            @foreach (var item in Model.Where(m => m.geom_Type == Models.GeometryType.Line.ToString()).ToList())
+                            {
+                                if (item.is_start_point == true && item.is_end_point == true)
+                                {
+                                    var aEndText = (item.common_name + (item.total_core_ports != null ? "-(" + item.total_core_ports + ")" : "") + (item.network_status != null ? "-(" + item.network_status + ")" : "") + "-(A End)");
+                                    //aEndText += item.a_system_id + "-" + item.a_entity_type + "-" + item.b_system_id + "-" + item.b_entity_type;
+                                    var bEndText = (item.common_name + (item.total_core_ports != null ? "-(" + item.total_core_ports + ")" : "") + (item.network_status != null ? "-(" + item.network_status + ")" : "") + "-(B End)");
+                                    //bEndText += item.a_system_id + "-" + item.a_entity_type + "-" + item.b_system_id + "-" + item.b_entity_type;
+                                    if (item.is_isp_entity) { aEndText = aEndText + "-(ISP)"; bEndText = bEndText + "-(ISP)"; }
+                                    <option value="@item.entity_system_id" data-text="@aEndText" data-a-system-id="@item.a_system_id" data-a-entity-type="@item.a_entity_type" data-b-system-id="@item.b_system_id" data-b-entity-type="@item.b_entity_type" data-geom-type="@item.geom_Type" data-cable-direction="Source" data-entity-type="@item.entity_type" data-is-start-point="True" data-is-end-point="False" data-is-isp-entity="@item.is_isp_entity" data-is-both-ends="True">@aEndText</option>
+                                    <option value="@item.entity_system_id" data-text="@bEndText" data-a-system-id="@item.a_system_id" data-a-entity-type="@item.a_entity_type" data-b-system-id="@item.b_system_id" data-b-entity-type="@item.b_entity_type" data-geom-type="@item.geom_Type" data-cable-direction="Source" data-entity-type="@item.entity_type" data-is-start-point="False" data-is-end-point="True" data-is-isp-entity="@item.is_isp_entity" data-is-both-ends="True">@bEndText</option>
+                                }
+                                else
+                                {
+                                    var text = (item.common_name + (item.total_core_ports != null ? "-(" + item.total_core_ports + ")" : "") + (item.network_status != null ? "-(" + item.network_status + ")" : "") + (item.is_start_point == true ? "-(A End)" : "-(B End)"));
+                                    //text += item.a_system_id + "-" + item.a_entity_type + "-" + item.b_system_id + "-" + item.b_entity_type;
+                                    if (item.is_isp_entity) { text = text + "-(ISP)"; }
+                                    <option value="@item.entity_system_id" data-text="@text" data-a-system-id="@item.a_system_id" data-a-entity-type="@item.a_entity_type" data-b-system-id="@item.b_system_id" data-b-entity-type="@item.b_entity_type" data-geom-type="@item.geom_Type" data-cable-direction="Source" data-entity-type="@item.entity_type" data-is-start-point="@item.is_start_point" data-is-end-point="@item.is_end_point" data-is-isp-entity="@item.is_isp_entity" data-is-both-ends="False">@text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="height: 62px;" id="divRightCable">
+                    <label class="control-label col-md-2" for="txtADBCode" style="padding-right: 0px;" id="lblRightCable">@Resources.Resources.SI_OSP_CAB_NET_FRM_055 @layerDetail.layer_title</label>:
+                    <div class="col-md-12" style="float: right; padding-top: 3px;">
+                        <select name="ddlDestinationCable" id="ddlDestinationCable" class="chosen-select form-control" onchange="splicing.focusCableToEquipment('#ddlDestinationCable');">
+                            <option value="0" data-geom-type="Line" data-entity-type="" data-cable-direction="Destination">--Select--</option>
+                            @foreach (var item in Model.Where(m => m.geom_Type == Models.GeometryType.Line.ToString()).ToList())
+                            {
+                                if (item.is_start_point == true && item.is_end_point == true)
+                                {
+                                    var aEndText = (item.common_name + (item.total_core_ports != null ? "-(" + item.total_core_ports + ")" : "") + (item.network_status != null ? "-(" + item.network_status + ")" : "") + "-(A End)");
+                                    // aEndText += item.a_system_id + "-" + item.a_entity_type + "-" + item.b_system_id + "-" + item.b_entity_type;
+                                    var bEndText = (item.common_name + (item.total_core_ports != null ? "-(" + item.total_core_ports + ")" : "") + (item.network_status != null ? "-(" + item.network_status + ")" : "") + "-(B End)");
+                                    //bEndText += item.a_system_id + "-" + item.a_entity_type + "-" + item.b_system_id + "-" + item.b_entity_type;
+                                    if (item.is_isp_entity) { aEndText = aEndText + "-(ISP)"; bEndText = bEndText + "-(ISP)"; }
+                                    <option value="@item.entity_system_id" data-text="@aEndText" data-a-system-id="@item.a_system_id" data-a-entity-type="@item.a_entity_type" data-b-system-id="@item.b_system_id" data-b-entity-type="@item.b_entity_type" data-geom-type="@item.geom_Type" data-cable-direction="Destination" data-entity-type="@item.entity_type" data-is-start-point="True" data-is-end-point="False" data-is-isp-entity="@item.is_isp_entity" data-is-both-ends="True">@aEndText</option>
+                                    <option value="@item.entity_system_id" data-text="@bEndText" data-a-system-id="@item.a_system_id" data-a-entity-type="@item.a_entity_type" data-b-system-id="@item.b_system_id" data-b-entity-type="@item.b_entity_type" data-geom-type="@item.geom_Type" data-cable-direction="Destination" data-entity-type="@item.entity_type" data-is-start-point="False" data-is-end-point="True" data-is-isp-entity="@item.is_isp_entity" data-is-both-ends="True">@bEndText</option>
+                                }
+                                else
+                                {
+                                    var text = (item.common_name + (item.total_core_ports != null ? "-(" + item.total_core_ports + ")" : "") + (item.network_status != null ? "-(" + item.network_status + ")" : "") + (item.is_start_point == true ? "-(A End)" : "-(B End)"));
+                                    //text += item.a_system_id + "-" + item.a_entity_type + "-" + item.b_system_id + "-" + item.b_entity_type;
+                                    if (item.is_isp_entity) { text = text + "-(ISP)"; }
+                                    <option value="@item.entity_system_id" data-text="@text" data-a-system-id="@item.a_system_id" data-a-entity-type="@item.a_entity_type" data-b-system-id="@item.b_system_id" data-b-entity-type="@item.b_entity_type" data-geom-type="@item.geom_Type" data-cable-direction="Destination" data-entity-type="@item.entity_type" data-is-start-point="@item.is_start_point" data-is-end-point="@item.is_end_point" data-is-isp-entity="@item.is_isp_entity" data-is-both-ends="False">@text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="ModalFooter splicing--checks" id="dvBtnAction">
+                <div id="dvDisableLegend" class="splicing--checks">
+
+                    <div class="splicing--checks">
+                        <div class="disableLegend" style="background-color:#f4bcbc;">
+                        </div>
+                        <b> @Resources.Resources.SI_OSP_GBL_NET_FRM_119</b>
+                    </div>
+                    <div class="splicing--checks">
+                        <div class="disableLegend" style="background-color:#e2e2e2;">
+                        </div>
+                        <b>@Resources.Resources.SI_OSP_GBL_NET_FRM_120</b>
+                    </div>
+                    <div class="splicing--checks">
+                        <div class="disableLegend" style="background-color:#FFEFB3; float:right">
+                            <b style="padding:18px;">@Resources.Resources.SI_ISP_GBL_GBL_GBL_044</b>
+                        </div>
+                    </div>
+
+                    <div class="ml-auto">
+                        <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCableCancel" onclick="splicing.cancelSplice();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                        <button type="submit" class="btn btn-primary" id="btnSplicing" onclick="splicing.splicingWindow();">@Resources.Resources.SI_OSP_GBL_NET_FRM_121</button>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="tab-pane" id="CPEToCustomer" style="padding:10px 0px 0px 0px;">
+            <div class="form-group" style="height: 47px;">
+                <label class="control-label col-md-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_122<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-12" style="float: right; padding-top: 3px;">
+                    <select name="ddlCPEEntity" id="ddlCPEEntity" class="chosen-select form-control" data-placeholder="--Select--" onchange="(isp != null ? isp.focusOnItem('#ddlCPEEntity') : ''); splicing.validateEntity();" multiple>
+                        @*splicing.focusCPEToCustomer('#ddlCPEEntity')*@
+                        @*<option value="0" data-geom-type="Point" data-entity-type="" >--Select--</option>*@
+                        @foreach (var item in Model.Where(m => m.is_cpe_entity == true).ToList())
+                        {
+                            <option value="@item.entity_system_id" title="@item.layer_title" data-geom-type="@item.geom_Type" data-entity-type="@item.entity_type" data-total-port="@item.total_core_ports" data-is-isp-entity="@item.is_isp_entity">@(item.layer_abbr+":"+item.common_name + (item.total_core_ports != null ? "-(" + item.total_core_ports + ")" : "") + (item.network_status != null ? "-(" + item.network_status + ")" : "") + (item.is_isp_entity ? "-(ISP)" : ""))</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="height:119px">
+                <label class="control-label col-md-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_123<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-12" style="float: right; padding-top: 3px;height:89px;">
+                    <select name="ddlCustomer" id="ddlCustomer" class="chosen-select form-control" data-placeholder="--Select--" multiple>
+                        @foreach (var item in Model.Where(m => m.entity_type == Models.EntityType.Customer.ToString()).ToList())
+                        {
+                            <option value="@item.entity_system_id" data-geom-type="@item.geom_Type" data-entity-type="@item.entity_type" data-is-isp-entity="@item.is_isp_entity">@( item.common_name + (item.is_isp_entity ? "-(ISP)" : ""))</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex ModalFooter" id="dvBtnAction">
+                <div id="dvDisableLegend">
+                    <div style="float:left;width:auto; margin-right:10px;">
+                        <div class="disableLegend" style="background-color:#f4bcbc;">
+                        </div>
+                        <b> @Resources.Resources.SI_OSP_GBL_NET_FRM_119</b>
+                    </div>
+                    <div style="float:left;width:auto;">
+                        <div class="disableLegend" style="background-color:#e2e2e2;">
+                        </div>
+                        <b>@Resources.Resources.SI_OSP_GBL_NET_FRM_120</b>
+                    </div>
+
+                </div>
+                <div class="ml-auto">
+                    <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCableCancel" onclick="splicing.cancelSplice();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                    <button type="submit" class="btn btn-primary" id="btnSplicing" onclick="splicing.CPESplicingWindow();">@Resources.Resources.SI_OSP_GBL_NET_FRM_121</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Content/js/jquery-3.6.0.min.js"></script>
+@*<script src="~/Content/js/jquery.js"></script>*@
+<script src="~/Content/js/jquery-ui.min.js"></script>
+
+<script src="~/Content/js/jquery-swapsies.js"></script>
+<script src="~/Content/js/Splicing.js"></script>
+<script src="~/Content/js/Splice/Js-Plumb-1.4.1.min.js"></script>
+<script src="~/Content/js/Splice/canvg.min.js"></script>
+<script src="~/Content/js/Splice/html2canvas.js"></script>
+<script src="~/Content/js/Splice/Utility.js"></script>
+<script src="~/Content/js/Splice/Alert.js"></script>
+<script src="~/Content/js/Splice/chosen.jquery.min.js"></script>
+<script src="~/Content/js/Splice/Main.js"></script>
+<script src="~/Content/js/Splice/ModalPopUp.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script>
+    var si = new Main();
+    var splicing = new splicing();
+    var popup = new ModalPopUp(); //Modal popup js file..
+    $(document).ready(function () {
+        splicing.initApp();
+        $(' .chosen-select').chosen({ width: '100%', max_selected_options: 5, search_contains: true });
+        $("#CPEToCustomer .chosen-select").bind("chosen:maxselected", function () { alert('Maximum 5 customers can be selected!') });
+        $(".chosen-select").chosen().next(".chzn-container").hover(
+            function () {
+                $("#dropdown").trigger("liszt:open");
+            },
+            function () {
+                $(this).trigger("click");
+            }
+        );
+
+        $('#ddlCPEEntity option[data-is-isp-entity="True"]').attr('disabled', true).trigger("chosen:updated");
+        $('#ddlCustomer option[data-is-isp-entity="True"]').attr('disabled', true).trigger("chosen:updated");
+        $('#ddlConnectingEntity option[data-is-isp-entity="True"]').attr('disabled', true).trigger("chosen:updated");
+        $('#ddlSourceCable option[data-is-isp-entity="True"]').css('background-color', '#e2e2e2').attr('disabled', true).trigger("chosen:updated");
+        $('#ddlDestinationCable option[data-is-isp-entity="True"]').css('background-color', '#e2e2e2').attr('disabled', true).trigger("chosen:updated");
+        $('#dvDisableLegend').show();
+
+    });
+</script>

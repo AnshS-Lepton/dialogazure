@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+  <Mapping id="0">
+    <DbColName>network_id</DbColName>
+    <TemplateColName>eloc id</TemplateColName>
+  </Mapping>
+  <Mapping id="0">
+    <DbColName>network_status</DbColName>
+    <TemplateColName>network_status</TemplateColName>
+  </Mapping>
+  <Mapping id="2">
+    <DbColName>poe_name</DbColName>
+    <TemplateColName>poe_name</TemplateColName>
+  </Mapping>
+  <Mapping id="3">
+    <DbColName>poe_chamber_type</DbColName>
+    <TemplateColName>poe_chamber_type</TemplateColName>
+  </Mapping>
+  <Mapping id="4">
+    <DbColName>latitude</DbColName>
+    <TemplateColName>latitude</TemplateColName>
+  </Mapping>
+  <Mapping id="7">
+    <DbColName>longitude</DbColName>
+    <TemplateColName>longitude</TemplateColName>
+  </Mapping>
+  <Mapping id="8">
+    <DbColName>type_of_road</DbColName>
+    <TemplateColName>type_of_road</TemplateColName>
+  </Mapping>
+
+  <Mapping id="10">
+    <DbColName>road_name</DbColName>
+    <TemplateColName>road_name</TemplateColName>
+  </Mapping>
+  <Mapping id="11">
+    <DbColName>land_mark</DbColName>
+    <TemplateColName>land_mark</TemplateColName>
+  </Mapping>
+
+  <Mapping id="12">
+    <DbColName>referance_point_1</DbColName>
+    <TemplateColName>referance_point_1</TemplateColName>
+  </Mapping>
+  <Mapping id="13">
+    <DbColName>latitude_1</DbColName>
+    <TemplateColName>latitude_1</TemplateColName>
+  </Mapping>
+  <Mapping id="14">
+    <DbColName>longitude_1</DbColName>
+    <TemplateColName>longitude_1</TemplateColName>
+  </Mapping>
+  <Mapping id="15">
+    <DbColName>distance_in_mtrs_1</DbColName>
+    <TemplateColName>distance_in_mtrs_1</TemplateColName>
+  </Mapping>
+  <Mapping id="16">
+    <DbColName>referance_point_2</DbColName>
+    <TemplateColName>referance_point_2</TemplateColName>
+  </Mapping>
+  <Mapping id="18">
+    <DbColName>latitude_2</DbColName>
+    <TemplateColName>latitude_2</TemplateColName>
+  </Mapping>
+  <Mapping id="19">
+    <DbColName>longitude_2</DbColName>
+    <TemplateColName>longitude_2</TemplateColName>
+  </Mapping>
+  <Mapping id="20">
+    <DbColName>distance_in_mtrs_2</DbColName>
+    <TemplateColName>
+      distance_in_mtrs_2
+    </TemplateColName>
+  </Mapping>
+  <Mapping id="21">
+    <DbColName>referance_point_3</DbColName>
+    <TemplateColName>
+      referance_point_3
+    </TemplateColName>
+  </Mapping>
+
+  <Mapping id="22">
+    <DbColName>latitude_3</DbColName>
+    <TemplateColName>
+      latitude_3
+    </TemplateColName>
+  </Mapping>
+  <Mapping id="23">
+    <DbColName>longitude_3</DbColName>
+    <TemplateColName>
+      longitude_3
+    </TemplateColName>
+  </Mapping>
+
+  <Mapping id="28">
+    <DbColName>distance_in_mtrs_3</DbColName>
+    <TemplateColName>distance_in_mtrs_3</TemplateColName>
+  </Mapping>
+  <Mapping id="32">
+    <DbColName>remark_1</DbColName>
+    <TemplateColName>remark_1</TemplateColName>
+  </Mapping>
+  <Mapping id="33">
+    <DbColName>remark_2</DbColName>
+    <TemplateColName>remark_2</TemplateColName>
+  </Mapping>
+  <Mapping id="34">
+    <DbColName>remark_3</DbColName>
+    <TemplateColName>remark_3</TemplateColName>
+  </Mapping>
+  <Mapping id="35">
+    <DbColName>parent_network_id</DbColName>
+    <TemplateColName>parent_network_id</TemplateColName>
+  </Mapping>
+  <Mapping id="36">
+    <DbColName>parent_entity_type</DbColName>
+    <TemplateColName>parent_entity_type</TemplateColName>
+  </Mapping>
+</Mappings>

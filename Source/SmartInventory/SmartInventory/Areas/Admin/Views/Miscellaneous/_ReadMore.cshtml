@@ -1,0 +1,243 @@
+﻿@model Models.ViewErrorLogFilter
+@using Utility
+
+
+<!DOCTYPE html>
+<div class="libDetail">
+    <!-- Tab panes -->
+
+    <div class="tab-content">
+        <div class="popTableBox">
+
+            @if (Model.logtype == "WebErrorLog")
+            {
+                <table class="grid main-table" id="tblSummaryAll">
+                    <thead>
+                        <tr>
+                            <th>Field Name</th>
+                            <th class="noWhiteSpace wordBreak">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Created On</td>
+                            <td class="noWhiteSpace">@(Model.objViewMore.created_on == null ? Model.objViewMore.created_on.ToString() : MiscHelper.FormatDateTime(Model.objViewMore.created_on.ToString()))</td>
+                        </tr>
+                        <tr>
+                            <td>User Name</td>
+                            <td>@Model.objViewMore.user_name</td>
+                        </tr>
+                        <tr>
+                            <td>Client IP</td>
+                            <td>@Model.objViewMore.client_ip</td>
+                        </tr>
+                        <tr>
+                            <td>Server IP</td>
+                            <td>@Model.objViewMore.server_ip</td>
+                        </tr>
+                        <tr>
+                            <td>Browser Name</td>
+                            <td>@Model.objViewMore.browser_name</td>
+                        </tr>
+                        <tr>
+                            <td>Browser Version</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objViewMore.browser_version</td>
+                        </tr>
+                        <tr>
+                            <td>Status Code</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objViewMore.status_code</td>
+                        </tr>
+                        <tr>
+                            <td>Controller Name</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objViewMore.controller_name</td>
+                        </tr>
+                        <tr>
+                            <td>Action Name</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objViewMore.action_name</td>
+                        </tr>
+                        <tr>
+                            <td>Error Message</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objViewMore.err_message</td>
+                        </tr>
+                        <tr>
+                            <td>Error Label</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objViewMore.err_label</td>
+                        </tr>
+                        <tr>
+                            <td>Error Type</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objViewMore.err_type</td>
+                        </tr>
+                        <tr>
+                            <td>Error Description</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objViewMore.err_description</td>
+                        </tr>
+                        <tr>
+                            <td>Stack Trace</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objViewMore.stack_trace</td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
+            else if (Model.logtype == "ApiErrorLog")
+            {
+                <table class="grid main-table" id="tblSummaryAll">
+                    <thead>
+                        <tr>
+                            <th>Field Name</th>
+                            <th class="noWhiteSpace wordBreak">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Created On</td>
+                            <td>@(Model.objApiViewMore.err_date == null ? Model.objApiViewMore.err_date.ToString() : MiscHelper.FormatDateTime(Model.objApiViewMore.err_date.ToString()))</td>
+                        </tr>
+                        <tr>
+                            <td>User Name</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objApiViewMore.user_name</td>
+                        </tr>
+
+
+                        <tr>
+                            <td>Controller Name</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objApiViewMore.controller_name</td>
+                        </tr>
+                        <tr>
+                            <td>Action Name</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objApiViewMore.action_name</td>
+                        </tr>
+                        <tr>
+                            <td>Request Data</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objApiViewMore.request_data</td>
+                        </tr>
+                        <tr>
+                            <td class="noWhiteSpace wordBreak">Error Message</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objApiViewMore.err_message</td>
+                        </tr>
+                        <tr>
+                            <td>Error Label</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objApiViewMore.err_label</td>
+                        </tr>
+                        <tr>
+                            <td>Error Type</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objApiViewMore.err_type</td>
+                        </tr>
+                        <tr>
+                            <td>Error Description</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objApiViewMore.err_description</td>
+                        </tr>
+                        <tr>
+                            <td class="aligTop">Stack Trace</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objApiViewMore.stack_trace</td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
+            else if (Model.logtype == "ApiRequestLog")
+            {
+                <table class="grid main-table" id="tblSummaryAll">
+                    <thead>
+                        <tr>
+                            <th class="noWhiteSpace">Field Name</th>
+                            <th class="noWhiteSpace wordBreak">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Created On</td>
+                            <td class="noWhiteSpace">@(Model.objApiRequestViewMore.created_on == null ? Model.objApiRequestViewMore.created_on.ToString() : MiscHelper.FormatDateTime(Model.objApiRequestViewMore.created_on.ToString()))</td>
+                        </tr>
+                        <tr>
+                            <td>User Name</td>
+                            <td>@Model.objApiRequestViewMore.user_name</td>
+                        </tr>
+                        <tr>
+                            <td>Controller Name</td>
+                            <td>@Model.objApiRequestViewMore.controller_name</td>
+                        </tr>
+                        <tr>
+                            <td>Action Name</td>
+                            <td>@Model.objApiRequestViewMore.action_name</td>
+                        </tr>
+                        <tr>
+                            <td>Source</td>
+                            <td>@Model.objApiRequestViewMore.source</td>
+                        </tr>
+                        <tr>
+                            <td>OS Name</td>
+                            <td>@Model.objApiRequestViewMore.os_name</td>
+                        </tr>
+                        <tr>
+                            <td>OS Version</td>
+                            <td>@Model.objApiRequestViewMore.os_version</td>
+                        </tr>
+                        <tr>
+                            <td class="aligTop">Request</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objApiRequestViewMore.request</td>
+                        </tr>
+                        <tr>
+                            <td class="aligTop">Header Attribute</td>
+                            <td class="noWhiteSpace wordBreak">@Model.objApiRequestViewMore.header_attribute</td>
+                        </tr>
+                    </tbody>
+                </table>}
+
+            else if (Model.logtype == "GisApiLog")
+            {
+                <table class="grid main-table" id="tblSummaryAllGis">
+                    <thead>
+                        <tr>
+                            <th class="noWhiteSpace">Field Name</th>
+                            <th class="noWhiteSpace wordBreak">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td>Api Url</td>
+                            <td>@Model.objGisApiViewMore.api_url</td>
+                        </tr>
+                        <tr>
+                            <td>request</td>
+                            <td>@Model.objGisApiViewMore.request</td>
+                        </tr>
+                        <tr>
+                            <td>Request Time</td>
+                            <td>@Model.objGisApiViewMore.request_time</td>
+                        </tr>
+                        <tr>
+                            <td>Response</td>
+                            <td>@Model.objGisApiViewMore.response</td>
+                        </tr>
+                        <tr>
+                            <td>Response Time</td>
+                            <td>@Model.objGisApiViewMore.response_time</td>
+                        </tr>
+                        <tr>
+                            <td>Api Type</td>
+                            <td>@Model.objGisApiViewMore.api_type</td>
+                        </tr>
+                        <tr>
+                            <td>Gis Object Id</td>
+                            <td>@Model.objGisApiViewMore.gis_object_id</td>
+                        </tr>
+                        <tr>
+                            <td>Gdb Version</td>
+                            <td>@Model.objGisApiViewMore.gdb_version</td>
+                        </tr>
+                        <tr>
+                            <td>Gis Design Id</td>
+                            <td>@Model.objGisApiViewMore.gis_design_id</td>
+                        </tr>
+
+                        <tr>
+                            <td>Latency</td>
+                            <td>@Model.objGisApiViewMore.latency</td>
+                        </tr>
+                    </tbody>
+                </table>}
+        </div>
+        
+        
+        </div>
+</div>

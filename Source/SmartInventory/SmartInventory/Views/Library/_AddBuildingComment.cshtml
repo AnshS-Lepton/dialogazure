@@ -1,0 +1,103 @@
+﻿@model Models.BuildingMaster
+<!DOCTYPE html>
+<div class="tab-pane fade in active show">
+    <div class="container-fluid BdrSet" style="max-height: 370px;overflow: auto;">
+        <div class="row padRow">
+            <div class="form-group">
+                @if (Model.buttonType == "Approve")
+                {
+                    <div>
+                        <label class="control-label col-md-8 col-sm-8" style="padding-top: 15px;padding-bottom: 6px;">@Resources.Resources.SI_OSP_BUL_NET_FRM_010</label>
+                        <div class="col-md-10 col-sm-10 mrgn_btm">
+                            <textarea type="text" class="form-control" maxlength="500" placeholder="@Resources.Resources.SI_OSP_BUL_NET_FRM_022" id="txtcomment" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        <label class="control-label col-md-10 col-sm-10" style="padding-top: 15px;padding-bottom: 6px;">@Resources.Resources.SI_OSP_BUL_NET_FRM_023<i class="clsMandatory">*</i></label>
+                        @foreach (var item in Model.lstRejectComment)
+                        {
+                            <div class="col-md-10 col-sm-10 mrgn_btm">
+                                @Html.RadioButton("radioRejectComment", item.dropdown_value, new { @onclick = "showHideOtherCommentBox();" })
+                                @Html.Label(item.dropdown_value)
+                            </div>
+                        }
+                    </div>
+                    <div class="col-md-10 col-sm-10 mrgn_btm">
+                        <input type="text" class="form-control" maxlength="500" placeholder="@Resources.Resources.SI_OSP_BUL_NET_FRM_022" id="txtcommentother" readonly="readonly" onkeyup="removecss();" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="d-flex ModalFooter" id="dvbuildingcommentFooter">
+        <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        <input type="button" class="btn btn-primary" id="btnok" data-action="@(Model.buttonType == "Approve" ? "Approve" : "Reject")" name="btnaction" value="@(Model.buttonType == "Approve" ? Resources.Resources.SI_OSP_GBL_GBL_GBL_017 : Resources.Resources.SI_OSP_GBL_GBL_GBL_018)" onclick="updateBuildingForm()" />
+    </div>
+</div>
+
+<script type="text/javascript">
+    function updateBuildingForm() {
+         
+            $("input[name='btnaction']").val($('#btnok').attr('data-action'));
+        if (($('#btnok').attr('data-action') == "Approve") && '@Model.formType' == "Building") {
+            $('#hdnbldAction').val($('#btnok').val());
+            $('#hdnbtnAction').val($('#btnok').val());
+            $('#hdnbldComment').val($('#txtcomment').val());
+            $("#frmBuildingEntity").submit();
+            $("#closeModalPopup").trigger("click");
+            $("#closeChildPopup").trigger("click");
+        }
+        else if (($('#btnok').attr('data-action') == "Reject") && '@Model.formType' == "Building") {
+            var _comment = getRejectComment();
+            if (_comment.trim() != '') {
+                $('#hdnbldAction').val($('#btnok').val());
+                $('#hdnbtnAction').val($('#btnok').val());
+                $('#hdnbldComment').val(_comment);
+                $("#frmBuildingEntity").submit();
+                $("#closeModalPopup").trigger("click");
+                $("#closeChildPopup").trigger("click");
+            }
+        }
+        else if (($('#btnok').attr('data-action') == "Approve") && '@Model.formType' == "BulkBuilding") {
+             
+            var _comment = $('#txtcomment').val();
+            getcheckedvalue("Approved", _comment);
+        }
+        else if (($('#btnok').attr('data-action') == "Reject") && '@Model.formType' == "BulkBuilding") {
+            var _comment = getRejectComment();
+            if (_comment.trim() != '') {
+                getcheckedvalue("Resurveyed", _comment);
+            }
+        }
+    }
+    function showHideOtherCommentBox() {
+        if ($('input[id="radioRejectComment"]:checked').val() == "Other") {
+            $('#txtcommentother').attr('readonly', false);
+        }
+        else {
+            $('#txtcommentother').attr('readonly', true);
+            $('#txtcommentother').css('border-color', '');
+        }
+    }
+    function removecss() {
+        $('#txtcommentother').css('border-color', '');
+    }
+
+    function getRejectComment() {
+        var _comment = '';
+        var _selectedReason = $('input[id="radioRejectComment"]:checked').val();
+        if (_selectedReason == undefined) {
+            alert(MultilingualKey.SI_OSP_BUL_JQ_FRM_005);
+        }
+        else {
+            _comment = _selectedReason != "Other" ? _selectedReason : $('#txtcommentother').val();
+            if (_comment.trim() == '') {
+                $('#txtcommentother').css('border-color', 'red');
+            }
+        }
+        return _comment;
+    }
+</script>

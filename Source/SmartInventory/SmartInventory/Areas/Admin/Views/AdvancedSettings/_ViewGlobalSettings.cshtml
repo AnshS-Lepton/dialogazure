@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+@model Models.VMGlobalSetting
+<style>
+    #tblGlobalSettings tbody tr {
+        background-color: white !important;
+        white-space: normal !important;
+    }
+    .clsDescription{
+        width:250px; white-space:normal;display:block;
+    }
+    .disabled {
+  pointer-events: none;
+  cursor: default;
+   opacity: 0.4;
+}
+
+</style>
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div id="dvGlobalSettings" class="update_panel fullWidth pose-rel">
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvGlobalSettings", ajaxUpdateCallback: "onGridHeaderClick('GlobalSettingGrid')");
+        grid.Bind(Model.lstGlobalSettings, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+        if (Model.objGridAttributes.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+        }
+
+    }
+    <div class="title">
+        <h4>Global Settings</h4>
+    </div>
+
+    <div class="pad_left">
+        @using (Html.BeginForm("ViewGlobalSettings", "AdvancedSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmViewGlobalSettings" }))
+        {
+
+            <div class="form-inline filter-sec">
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4 pr-2">Search By : </label>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.key.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select form-control" })
+                    </div>
+                </div>
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4">
+                        Search Text:
+                    </label>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+
+                    </div>
+                </div>
+
+                <div class="form-group wtd_set" id="dvBtnAction">
+                    <div class="col-md-8">
+                        <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" type="submit">Search</button>
+                        @if (@grid.TotalRowCount > 0)
+                        {
+                            <input type="button" id="btnExport" value="Export" class="btn btn-primary mr-05" />
+                        }
+                        else
+                        {
+                            <input type="button" id="btnExport" value="Export" disabled="disabled" class="btn btn-primary mr-05" />
+                        }
+                        <a href="@Url.Action("ViewGlobalSettings")" class="btn btn-default" title="Reset">Reset</a>
+                    </div>
+                </div>
+            </div>
+
+
+            if (Model.lstGlobalSettings.Count > 0)
+            {
+                <div id="divEntityDropDownGridBind">
+                    <div class="recordCount mb-01"><b>Total Records:@grid.TotalRowCount</b></div>
+
+                    <div class="table-responsive tble_cls">
+                        @grid.GetHtml(tableStyle: "grid",
+                                 htmlAttributes: new { id = "GlobalSettingGrid" },
+                                 mode: WebGridPagerModes.All,
+                                 columns: grid.Columns(
+                                          grid.Column("is_edit_allowed", "Action", format:@<text>
+                                                @if (item.is_edit_allowed == true)
+                                                     {
+                                                    <a href="javascript:UpdateGlobalSettings('@item.id');" class="auto" title="Edit"> <i class="fa fa-pencil"></i></a>
+                                                     }
+                                                     else
+                                                     {
+                                                    <a href="javascript:UpdateGlobalSettings('@item.id');" class="disabled" title="Edit"> <i class="fa fa-pencil"></i></a>
+
+                                                     }
+                                        </text>
+, canSort: false),
+grid.Column("key", "Key", format: @<text>@item.key</text>, canSort: true),
+grid.Column("value", "Value", format:@<text>
+        @if (item.value.Length > 25)
+             {
+            <span>@string.Concat(item.value.Substring(0, 25), "...")</span> <a href="javascript:readmore('@item.key');" style="color:blue;">Read More</a>
+             }
+             else
+             {
+            <span> @item.value</span>
+             }
+    </text>),
+grid.Column("description", "description", format: @<text><span class="clsDescription">@item.description </span></text>, canSort: true),
+grid.Column("is_web_key ", "is_web_key ", format: @<text> @(item.is_web_key==true ? "Yes" : "No")</text>, canSort: false),
+grid.Column("is_mobile_key ", "is_mobile_key", format: @<text>@(item.is_mobile_key==true ?"Yes":"No")</text>, canSort: false)
+
+))
+
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+
+                    </div>
+                </div>
+
+            }
+            else
+            {
+                <span> No record found!</span>
+            }
+            <div class="clearfix"></div>
+
+        }
+    </div>
+</div>
+<script>
+    function UpdateGlobalSettings(_id) {
+        
+        popup.LoadModalDialog('AdvancedSettings/AddGlobalSetting', { id: _id }, 'Update Global Setting', 'modal-md');
+        // popup.LoadModalDialog('Project/AddProjectDetail', { system_id: 0, network_stage: 'Planned' }, 'Add Project Detail', 'modal-lg');
+    }
+
+    function readmore(_key)
+    {
+        popup.LoadModalDialog('AdvancedSettings/ReadMore', { key: _key }, 'full value text', 'modal-lg');
+    }
+    $("#btnExport").on("click", function () {
+        Report();
+    });
+
+    function Report() {
+        window.location = appRoot + 'AdvancedSettings/DownloadViewglobalSettingsDetail';
+    }
+</script>

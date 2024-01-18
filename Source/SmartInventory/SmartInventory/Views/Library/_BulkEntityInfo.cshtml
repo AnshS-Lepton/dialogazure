@@ -1,0 +1,143 @@
+﻿@model List<Models.EntityLstCount>
+
+<!DOCTYPE html>
+<div class="libDetail">
+
+    <div class="libTabContent">
+        <div class="tab-content">
+            <div class="dvBulkProcessNtkType">
+                @*<span><input type="radio" name="rdBtnBulkNtkType" value="1" checked />Planned </span>
+                    <span><input type="radio" name="rdBtnBulkNtkType" value="2" />As-Built</span>*@
+
+                <select id="ddBulkNetLayerType">
+                    <option value="P">Planned</option>
+                    <option value="A">As-Built</option>
+                    <option value="D">Dorment</option>
+                </select>
+                <span style="float:right">
+                    <button type="button" class="btn btn-primary" id="btnBulkAsBuilt">@Resources.Resources.SI_OSP_GBL_NET_RPT_035</button>
+                    <button type="button" class="btn btn-primary" id="btnBulkDormant">@Resources.Resources.SI_OSP_GBL_NET_RPT_034</button>
+                    <button type="button" class="btn btn-primary" id="btnBulkProcess" onclick="si.SaveBulkProjSpec('All','');">@Resources.Resources.SI_OSP_GBL_NET_FRM_147</button>
+                </span>
+            </div>
+
+            <div class="tab-pane active" id="divBulkEntity" style=" width: 99%; height: 200px; overflow: auto;">
+                <table id="tblBulkEntityLst" class="bulkEntityLst" cellpadding="0" cellspacing="0" style="font-size:smaller;    text-align: center;">
+                    <br />
+                    <thead>
+                    <th>
+                        @Resources.Resources.SI_OSP_GBL_NET_RPT_126
+                    </th>
+                    <th>
+                        @Resources.Resources.SI_OSP_GBL_NET_RPT_127
+                    </th>
+                    <th>
+                        @Resources.Resources.SI_OSP_GBL_NET_FRM_403
+                    </th>
+                    <th>@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+                    </thead>
+                    <tbody>
+                        @{var i = 1; var j = 1; var k = 1;}
+                        @foreach (var EntityLst in Model)
+                        {
+                            if (EntityLst.network_status == "P")
+                            {
+                                <tr class="trBulkPlannedNtk">
+                                    <td>
+                                        @i
+                                        @{i += 1;}
+                                    </td>
+                                    <td>
+                                        @EntityLst.entity_type
+                                    </td>
+                                    <td>
+                                        @EntityLst.entity_count
+                                    </td>
+                                    <td>
+                                        <span class="bulkEntityLstAction" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_001" onclick="si.SaveBulkProjSpec( '@EntityLst.entity_type','')">
+                                        </span>
+                                        <span class="bulkEntityAsblt" title="As-Built">
+                                        </span>
+                                        <span class="bulkEntityDormt" title="Dormant">
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                            else if (EntityLst.network_status == "A")
+                            {
+                                <tr class="trBulkAsBuiltNtk">
+                                    <td>
+                                        @k
+                                        @{k += 1;}
+                                    </td>
+                                    <td>
+                                        @EntityLst.entity_type
+                                    </td>
+                                    <td>
+                                        @EntityLst.entity_count
+                                    </td>
+                                    <td>
+                                        <span class="bulkEntityLstAction" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_001" onclick="si.SaveBulkProjSpec( '@EntityLst.entity_type','')">
+                                        </span>
+                                        <span class="bulkEntityDormt" title="Dormant">
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr class="trBulkDormantNtk">
+                                    <td>
+                                        @j
+                                        @{j += 1;}
+                                    </td>
+                                    <td>
+                                        @EntityLst.entity_type
+                                    </td>
+                                    <td>
+                                        @EntityLst.entity_count
+                                    </td>
+                                    <td>
+                                        <span class="bulkEntityLstAction" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_001" onclick="si.SaveBulkProjSpec( '@EntityLst.entity_type','')">
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <span style="text-align: center;  display: none;" id="dvNoBulkEntityFound"><b>@Resources.Resources.SI_OSP_GBL_NET_FRM_233</b></span>
+            </div>
+        </div>
+    </div>
+    @*<div class="form-group ModalFooter" id="dvBtnAction">
+            <div class="col-sm-10 col-sm-offset-2" style="float: right; text-align: right; padding-right: 25px;">
+
+
+
+                <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancelBulkProcess" onclick="si.clearBulkEntityInfo();" style="display:none">Cancel</a>
+
+            </div>
+        </div>*@
+    <div class="clearfix"></div>
+</div>
+<script>
+    @*$(document).ready(function () {
+
+        if('@Model.Count' != 0) {
+            $("#tblBulkEntityLst").show();
+           // $("#btnBulkProcess").attr("disable", false);
+            $("#dvNoBulkEntityFound").hide();
+
+            if (typeof $("#btnBulkProcess").attr('onclick') == typeof undefined)
+            $("#btnBulkProcess").attr('onclick', 'si.SaveBulkProjSpec("All");');
+        }
+        else {
+            $("#tblBulkEntityLst").hide();
+            //$("#btnBulkProcess").attr("disable", true);
+            $("#dvNoBulkEntityFound").show();
+            if (typeof $("#btnBulkProcess").attr('onclick') != typeof undefined)
+            $("#btnBulkProcess").removeAttr('onclick');
+        }
+    });*@
+</script>

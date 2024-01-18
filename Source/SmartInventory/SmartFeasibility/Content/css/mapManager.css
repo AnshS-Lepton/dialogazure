@@ -1,0 +1,12 @@
+﻿.map-grid { max-width: 1300px; margin: 0 auto; list-style: none; padding: 0; }
+.map-grid li { display: inline-block; width: 80px; margin: 0; padding: 0 10px 10px 10px; text-align: left; position: relative; }
+.map-grid figure { margin: 0; position: relative; }
+/*.close{position:absolute;background: url(../images/split_img.png) no-repeat -454px -86px; height: 20px; width: 20px; right:-6px;z-index: 10;display:none; top:13px; }*/
+.trash{float: left; position: absolute; right: 27px; top: 10px; z-index: 5}
+.map-grid figure img { max-width: 100%; display: block; position: relative; cursor:pointer; }
+.cs-style-6 figure img { z-index: 10; -webkit-transition: -webkit-transform 0.4s; -moz-transition: -moz-transform 0.4s; transition: transform 0.4s; float: left; }
+ .cs-style-6 figure:hover img, .cs-style-6 figure.cs-hover img { -webkit-transform: translateY(20px) scale(1); -moz-transform: translateY(20px) scale(1); -ms-transform: translateY(20px) scale(1); transform: translateY(20px) scale(1); }
+ .cs-style-6 figure:hover .close{display:block;}
+.map_heading { border-bottom: 1px #CCCCCC solid; margin: 10px 14px; padding-bottom: 10px; }
+.promptumenu_contents { padding: 11px 20px 10px 11px; background-color: #FFF; margin-bottom: 4px; text-shodow: 0 1px 1px #CCCCCC; color: #666; position: relative; width: 100%; }
+

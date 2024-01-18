@@ -1,0 +1,181 @@
+﻿
+
+<style type="text/css">
+    ul, .treeView {
+        list-style-type: none;
+    }
+
+    .treeView {
+        margin: 0;
+        padding: 0;
+    }
+
+    .treeView .fa-circle{
+    color: #fe7478;
+    font-size: 14px;
+    margin-left: 5px;
+    }
+
+    .caret {
+        cursor: pointer;
+        -webkit-user-select: none; /* Safari 3.1+ */
+        -moz-user-select: none; /* Firefox 2+ */
+        -ms-user-select: none; /* IE 10+ */
+        user-select: none;
+        width: auto;
+        height: auto;
+        border: none;
+    }
+
+    .fa:before {
+    margin:3px;
+    }
+
+   .nested {
+        display: none;
+        padding-left:22px;
+        line-height:22px;
+    }
+
+    .active {
+        display: block;
+    }
+    .port:hover {
+  color: deepskyblue;
+}
+</style>
+
+<div class="connectionEditorBG" id="connectionContext" style="display:none">
+    <div class="connectionEditor" >
+        <header>@Resources.Resources.SI_ISP_GBL_NET_FRM_036 <i class="fa fa-times" id="closeCE"></i></header>
+        <div class="menustyle">
+            @*<i class="fa fa-square connect"> Connected</i>  <i class="fa fa-square ntconnect"> Not-Connected</i>*@
+            <span>
+                <i id="addConnection" class="fa fa-plus-circle"> @Resources.Resources.SI_ISP_GBL_NET_FRM_037</i> <i id="removeConnection" class="fa fa-minus-circle"> @Resources.Resources.SI_ISP_GBL_NET_FRM_038</i>
+                <i id="resetConnection" class="fa fa-repeat"> @Resources.Resources.SI_ISP_GBL_NET_FRM_039</i>
+                  @*<i class="fa fa-sign-in"> Export</i>*@
+            </span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6" style="border-right: 1px solid #ccc;overflow:auto;">
+                <div class="divselect">
+                    <label>@Resources.Resources.SI_ISP_GBL_NET_FRM_040</label>
+                    <select class="form-control" id="selectRackLeft">
+                        @*<option value="Rack_1">Rack_1</option>*@
+                    </select>
+                </div>
+
+                <div class="divselect">
+                    <label>@Resources.Resources.SI_ISP_GBL_NET_FRM_041</label>
+                    <select class="form-control" id="selectEquipmentLeft">
+                        @*<option value="OLT_1A">OLT_1A</option>*@
+                    </select>
+                </div>
+
+                <div class="menuconnecteditor">
+                    @*<div class="form-group">
+                            <label class="control-label">From</label>
+                            <select class="form-control" id="">
+                                <option value="">--Port--</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">To</label>
+                            <select class="form-control" id="">
+                                <option value="">--Port--</option>
+                            </select>
+                        </div>*@
+
+                    <div class="form-group">
+                        <label class="control-label">@Resources.Resources.SI_ISP_GBL_GBL_GBL_035</label>
+                        <input class="form-control" id="searchPortA" name="" type="text" value="" placeholder="@Resources.Resources.SI_OSP_GBL_NET_FRM_406">
+                    </div>
+
+                    @* TreeView Start *@
+                    <div id="dvTreeLeft" style="width:100%;float:left;">
+
+
+
+                    </div>
+                    <label id="lblmsgPortA" style="font:smaller;width:100%;float:left;"></label>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6" style="overflow:auto;">
+                <div class="divselect">
+                    <label>@Resources.Resources.SI_ISP_GBL_NET_FRM_040</label>
+                    <select class="form-control" id="selectRackRight">
+                        <option value="Rack_1">Rack_1</option>
+                    </select>
+                </div>
+
+                <div class="divselect">
+                    <label>@Resources.Resources.SI_ISP_GBL_NET_FRM_041</label>
+                    <select class="form-control" id="selectEquipmentRight"></select>
+                </div>
+
+                <div class="menuconnecteditor">
+                    @*<div class="form-group">
+                            <label class="control-label">From</label>
+                            <select class="form-control" id="">
+                                <option value="">--Port--</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">To</label>
+                            <select class="form-control" id="">
+                                <option value="">--Port--</option>
+                            </select>
+                        </div>*@
+
+                    <div class="form-group">
+                        <label class="control-label">@Resources.Resources.SI_ISP_GBL_GBL_GBL_035</label>
+                        <input class="form-control" id="searchPortB" name="" type="text" value="" placeholder="@Resources.Resources.SI_OSP_GBL_NET_FRM_406">
+                    </div>
+
+                    <div id="dvTreeRight" style="width:100%;float:left;">
+
+
+
+                    </div>
+                    <label id="lblmsgPortB" style="font:smaller;width:100%;float:left;"></label>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    
+</div>   
+
+<script type="text/javascript">
+ 
+    $(function () {
+        $("#connectionContext").draggable();
+
+        $("#closeCE").click(function () {
+            $("#connectionContext").hide();
+
+            $('#selectRackLeft').val('Select Rack');
+            $('#selectRackRight').val('Select Rack');
+            $('#selectEquipmentLeft').val('Select Equipment');
+            $('#selectEquipmentRight').val('Select Equipment');
+            $('#dvTreeLeft').html('');
+            $('#dvTreeRight').html('');
+        });
+
+    });
+
+    
+    
+
+     
+   
+</script>

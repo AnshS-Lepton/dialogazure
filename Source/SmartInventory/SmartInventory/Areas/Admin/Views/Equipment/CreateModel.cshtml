@@ -1,0 +1,577 @@
+﻿@model Models.Admin.ISPModelInfo
+@using SmartInventory.Settings;
+@{
+    int ModelId = ViewBag.ModelId ?? 0;
+
+}
+@*<script src="~/Content/js/jquery.wheelcolorpicker.js"></script>
+    <link href="~/Content/css/wheelcolorpicker.css" rel="stylesheet" />
+    <script>
+        $(document).ready(function () {
+            $('.ccpicker').wheelColorPicker({ format: 'hsv' });
+
+        });
+
+    </script>*@
+
+<style>
+    .modal-backdrop {
+        z-index: 0;
+    }
+</style>
+<!DOCTYPE html>
+<div class="row margin-all-0 grid-color-box">
+    <div class="col-md-wt equipadd">
+
+        <div class="GridColorBox">
+            <h4> Grid Color</h4>
+            <label class="GridColor"><input type="radio" name="GridCheckColor" checked value="Green"><span class="Gridcheck Green"></span></label>
+            <label class="GridColor"><input type="radio" name="GridCheckColor" value="Createpink"><span class="Gridcheck pink"></span></label>
+            <label class="GridColor"><input type="radio" name="GridCheckColor" value="CreateBlue"><span class="Gridcheck Blue"></span></label>
+            <label class="GridColor"><input type="radio" name="GridCheckColor" value="CreateOrange"><span class="Gridcheck Orange"></span></label>
+            <label class="GridColor"><input type="radio" name="GridCheckColor" value="CreateRed"><span class="Gridcheck Red"></span></label>
+            <label class="GridColor"><input type="radio" name="GridCheckColor" value="CreateGray"><span class="Gridcheck Gray"></span></label>
+        </div>
+
+
+        <div class="dimensions_panel dimensionsContext" style="display: none;">
+            <h4><span class="modelText" id="modelText">Equipment </span> Dimensions (mm)</h4>
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Length</label>
+
+                    @Html.TextBoxFor(m => m.height, new { @class = "form-control dimension-element", @id = "modelHeight", placeholder = "1M", type = "number", min = "1", @maxlength = "6" })
+                </div>
+
+                <div class="col-md-4">
+                    <label>Width</label>
+
+                    @Html.TextBoxFor(m => m.width, new { @class = "form-control dimension-element", @id = "modelWidth", placeholder = "1M", type = "number", min = "1", @maxlength = "6" })
+                </div>
+
+                <div class="col-md-4" hidden>
+                    <label>Depth</label>
+
+                    @Html.TextBoxFor(m => m.depth, new { @class = "form-control dimension-element", @id = "modelDepth", placeholder = "1M", type = "number", min = "1", @maxlength = "6", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="row border_width">
+                <div class="col-md-6">
+                    <label>Border Thickness</label>
+                </div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(m => m.border_width, new { @class = "form-control", @id = "modelBorderWidth", placeholder = "1M", type = "number", min = "1" })
+                </div>
+            </div>
+        </div>
+
+        <div class="dimensions_panel unit_panel" style="display: none;">
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Length in Unit (@ApplicationSettings.RackUnitSize mm)</label>
+
+                    @Html.TextBoxFor(m => m.unit_size, new { @class = "form-control dimension-element col-md-6", @id = "modelUnit", placeholder = "1M", type = "number", min = "1", @maxlength = "6" })
+                </div>
+            </div>
+        </div>
+        <div class="BorderColorContext" style="display: none;">
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Border Color</label>
+
+                    @*@Html.TextBoxFor(m => m.border_color, new { @class = "form-control  col-md-6", @id = "borderColor", placeholder = "Border Color"})*@
+                    <select class="form-control  col-md-6" id="borderColor" name="border_color">
+                        <option value="#6E6E6E" @if (Model.border_color == "#6E6E6E") { <text> selected</text>}>Default</option>
+                        <option value="#E1E1E1" @if (Model.border_color == "#6E6E6E") { <text> selected</text>}>White</option>
+                        <option value="#4997DF" @if (Model.border_color == "#4997DF")
+                        { <text>selected</text>}>Blue</option>
+                        <option value="#ECD934" @if (Model.border_color == "#ECD934")
+                        { <text>selected</text>}>Yellow</option>
+                        <option value="#E2494E" @if (Model.border_color == "#E2494E")
+                        { <text>selected</text>}>Red</option>
+                        <option value="#34995E" @if (Model.border_color == "#34995E")
+                        { <text>selected</text>}>Green</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="LibraryTitle" style="display: none;">
+
+            <h4>Library </h4>
+        </div>
+        <div class="RadioDivCreate" style="display: none;">
+            <div class="LibCalls">
+                @*<div class="RadioFunction">
+                        <div class="radio">
+                            <label class="Custombtn chk">
+                                 Equipments
+                            <input type="radio" name="LibFilterCheck" value="true">
+                            <span class="Custombtncheck bdrRound">
+                                </span>
+
+                            </label>
+                        </div>
+
+
+
+                    </div>*@
+
+
+            </div>
+        </div>
+
+        <div class="SpecifyNo" style="display: none;">
+            <h4>Specify No.</h4>
+            <div class="row">
+                <div class="col-md-4"><img src="~/Areas/Admin/Content/images/col.svg" /><input class="form-control" data-val="true" id="rowCount" name="Length" placeholder="9" type="number" value="" min="1"></div>
+                <div class="col-md-4"><img src="~/Areas/Admin/Content/images/row.svg" /><input class="form-control" data-val="true" id="colCount" name="Width" placeholder="9" type="number" value="" min="1"></div>
+                <div class="col-md-4"><label>No.</label><input class="form-control disabled" data-val="true" id="totalCount" name="totalCount" placeholder="81" type="text" value="" readonly="readonly"></div>
+            </div>
+
+        </div>
+
+        <select class="form-control DivSelect" id="selectLibTypes" name="Div Select" style="display: none;">
+            @*<option>Line</option>*@
+        </select>
+
+
+
+        <div class="svgDiv" style="display: none;">
+            <div class="fa fa-search searchIcon searchModel" data-original-title="" title=""></div>
+            <input type="text" class="form-control searchBox endtoruds searchModel" placeholder="Search Model" id="SearchModel" autocomplete="off" maxlength="30" data-original-title="" title="">
+
+
+
+            <div class="svgscroll">
+                <svg id="library" style="width:100%;overflow:hidden;">
+                </svg>
+                <label style="text-align:center;" id="lblmsg"></label>
+            </div>
+        </div>
+
+
+
+        <div class="not_selected" style="display: none;">
+
+            <h4>Specify Model</h4>Select the model to begin with the workspace.
+
+        </div>
+    </div>
+
+    <div class="col-md-ww">
+
+
+        <div class="table-responsive tble_over_hide header_CreateEquip">
+            <div class="row">
+                <div class="col-md-3"><span>Model Workspace<br /> <b>Scale : 1M(Grid Module) = @ApplicationSettings.WorkspaceScale mm</b> </span></div>
+                <div class="col-md-2">
+                    <label>Model</label>
+                    <i class="lockModel fa fa-lock lock" aria-hidden="true" style="visibility:hidden"></i>
+
+                    @*@Html.DropDownListFor(m => m.model_id, new SelectList(Model.lstModel.Select(x => new { Value = x.id, Text = x.value }), "Value", "Text"), "Select Model", new { @class = "chosen-select form-control", @id = "selectModel" })*@
+                    <select id="selectModel" class="chosen-select form-control">
+                        <option>Select Model</option>
+                        @foreach (var m in Model.lstModel)
+                        {
+                            <option value="@m.id" data-has-type="@m.has_type">@m.value</option>
+                        }
+                    </select>
+                    @Html.HiddenFor(m => m.model_id, new { @id = "hdnModelId" })
+                    @Html.HiddenFor(m => m.is_editable, new { @id = "isEditable" })
+                </div>
+                <div class="col-md-2">
+                    <label>Type</label>
+                    <i class="lockModel fa fa-lock lock" aria-hidden="true" style="visibility:hidden"></i>
+
+                    @Html.DropDownListFor(m => m.model_type_id, new SelectList(Model.lstModelType.Select(x => new { Value = x.id, Text = x.value }), "Value", "Text"), "Select Type", new { @class = "chosen-select form-control", @id = "selectModelType" })
+                    @Html.HiddenFor(m => m.model_type_id, new { @id = "hdnModelTypeId" })
+                </div>
+                <div class="col-md-3 lineHT ">
+                    @*<input type="button" id="btnAddModeltype" value="Create New Type" data-toggle="modal" data-target="#model2" class="btn btn-default">*@
+                    <input type="button" id="createModel" value="Create" class="btn btn-primary">
+                    <input type="button" id="resetWorkspace" value="Reset" class="btn btn-gray" disabled="disabled">
+
+                </div>
+                <div class="col-md-2">
+                    <input type="button" disabled="disabled" class="btn btn-primary float-right" name="btnaction" id="openSaveModel" value="Save Model" data-toggle="modal" data-target="#modelDetailModal">
+                </div>
+            </div>
+
+        </div>
+
+        <div id="workAreaContext" class="table-responsive EquipTableCreate" data-color="Green">
+            <svg id="workspace" style="width:100%;height:100%;">
+                <rect id="resizeBoundry" width="0" height="0" style="fill:transparent;stroke:#787474"></rect>
+                <circle id="resizeTopLeft" r="0" style="fill:#fff;stroke:#000;z-index:10"></circle>
+                <circle id="resizeBottomRight" r="0" style="fill:#fff;stroke:#000;z-index:10"></circle>
+                <svg id="tempModel"></svg>
+                <svg id="verticalRuler"></svg>
+                <svg id="horizontalRuler"></svg>
+                <div id="subMenuContext" class="rightPopup" style="display: none;">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item" id="copySubMenuContext"><i class="fa fa-copy"></i>  Copy</a>
+                        <a href="#" class="list-group-item" id="rotateSubMenuContext"><i class="fa fa-refresh"></i> Rotate 90&#176</a>
+                        <a href="#" class="list-group-item" id="renameSubMenuContext"><i class="fa fa-edit"></i> Rename</a>
+                        <a href="#" class="list-group-item" id="labelFormatSubMenuContext"><i class="fa fa-edit"></i> Label Format</a>
+                        <a href="#" class="list-group-item" id="deleteSubMenuContext"><i class="fa fa-trash"></i> Delete</a>
+                        <a href="#" class="list-group-item" id="cancelSubMenuContext"><i class="fa fa-ban"></i> Cancel</a>
+                    </div>
+                </div>
+                <div id="renameContext" class="renamePopup" style="display: none;">
+                    <div class="">
+                        <input id="txtRenameModel" type="text" style="width:200px;" maxlength="50" />
+                        <button type="button" class="btn btn-primary" id="renameModel">Rename</button>
+
+                        <button type="button" class="btn btn-gray" id="cancelRename">Cancel</button>
+                    </div>
+                </div>
+            </svg>
+
+        </div>
+        <div>
+            <svg>
+                <defs>
+                    <pattern id="chassisGrid" width="50" height="50" patternUnits="userSpaceOnUse">
+                        <path d="M 50 0 L 0 0 0 50 50 50z" fill="#FFF" stroke="#E0E0E0" stroke-width="2" pointer-events="none" />
+                    </pattern>
+                    <pattern id="cardHatch" width="48" height="24" patternUnits="userSpaceOnUse">
+                        <path d="M48 24V0L0 0V24L48 24Z" fill="transparent" />
+                        <path d="M13.2421 24H12.3983L0 11.6017V10.7579L13.2421 24Z" fill="#636363" />
+                        <path d="M21.1619 24H20.3182L0 3.68185V2.83805L21.1619 24Z" fill="#636363" />
+                        <path d="M29.0818 24H28.238L4.238 0H5.08179L29.0818 24Z" fill="#636363" />
+                        <path d="M37.0016 24H36.1578L12.1578 0H13.0016L37.0016 24Z" fill="#636363" />
+                        <path d="M44.9215 24H44.0777L20.0777 0H20.9215L44.9215 24Z" fill="#636363" />
+                        <path d="M48 19.1587V20.0025L27.9975 0H28.8413L48 19.1587Z" fill="#636363" />
+                        <path d="M48 11.2388V12.0826L35.9174 0H36.7612L48 11.2388Z" fill="#636363" />
+                        <path d="M48 3.31898V4.16278L43.8372 0H44.681L48 3.31898Z" fill="#636363" />
+                        <path d="M0 18.6777L5.32225 24H4.47846L0 19.5215V18.6777Z" fill="#636363" />
+                    </pattern>
+                    <pattern id="libChassisGrid" width="5" height="5" patternUnits="userSpaceOnUse">
+                        <path d="M 5 0 L 0 0 0 5 5 5z" fill="#FFF" stroke="#E0E0E0" stroke-width="1" pointer-events="none" />
+                    </pattern>
+                </defs>
+            </svg>
+        </div>
+        <div class="FooterAddDiv">
+            <span>Workspace 1</span>
+
+            <i class="fa fa-plus-circle "></i>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modelDetailModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header d-flex popup_bg">
+                <h4 class="modal-title">Details</h4>
+                <button type="button" class="close ml-auto" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body modelEquipBody">
+                @Html.Partial("_ModelDetailSetup")
+
+            </div>
+            <div class="modal-footer modelEquipFoot">
+                @*<button type="button" class="btn btn-primary rightbtn" data-dismiss="modal">Open Workspace</button>*@
+                <button type="button" class="btn btn-primary" id="saveModel">Save</button>
+
+                <button type="button" class="btn btn-gray" data-dismiss="modal">Cancel</button>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!--Modal 2-->
+
+<div class="modal fade" id="labelFormatPopUp" style="z-index: 99;" role="dialog">
+    <div class="modal-dialog modal-sm">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+
+
+
+            <div class="modal-header modelEquip">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Label Format</h4>
+            </div>
+            <form class="form-inline" action="post">
+                <div class="modal-body modelEquipBody">
+                    @Html.Partial("_LabelDetailSetup", Model.lstLabelColor)
+                </div>
+            </form>
+
+            <div class="modal-footer modelEquipFoot">
+
+                <input type="button" id="btnChangeLabelFormat" class="btn btn-primary" value="Ok" />
+                <button type="button" id="btnCancelPopup" class="btn btn-gray" data-dismiss="modal">Cancel</button>
+
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+<script>
+    //$(document).ready(function () {
+    //    $("#ddlLabelColor").change(function () {
+    //        $(this).attr("style", $('option:selected', $(this)).attr('style'));
+    //    });
+    //});
+</script>
+
+@section equipmentScript
+{
+    <script type="text/javascript">
+        $(function ($, window, document, d3) {
+            let configs = {
+                defaultSizes: [{ height: 400, width: 400, border_width: 0, modelKey: 'equipment', margin: 3, min_height: 50, min_width: 50, is_rotation_enabled: true, model_id: 1, model_color_id: 1, color_code: 'transparent', stroke: 'transparent', font_color: '#000000' },
+                    { height: 200, width: 300, border_width: 20, modelKey: 'chassis', margin: 1, min_height: 50, min_width: 50, is_rotation_enabled: true, model_id: 2, model_color_id: 1, color_code: 'transparent', stroke: 'transparent', font_color: '#000000' },
+                    { height: 50, width: 200, border_width: 0, modelKey: 'slot', margin: 1, min_height: 50, min_width: 50, is_rotation_enabled: true, model_id: 3, model_color_id: 1, color_code: 'transparent', stroke: 'transparent', font_color: '#000000' },
+                    { height: 50, width: 200, border_width: 0, modelKey: 'card', margin: 1, min_height: 50, min_width: 50, is_rotation_enabled: true, model_id: 4, model_color_id: 1, color_code: 'transparent', stroke: 'transparent', font_color: '#000000' },
+                    { height: 50, width: 50, border_width: 0, modelKey: 'port', margin: 0, min_height: 50, min_width: 50, is_rotation_enabled: true, model_id: 5, model_color_id: 1, color_code: 'transparent', stroke: 'transparent', font_color: '#000000' },
+                    { height: 5, width: 200, border_width: 0, modelKey: 'tray', margin: 0, min_height: 50, min_width: 50, is_rotation_enabled: true, model_id: 6, model_color_id: 1, color_code: 'transparent', stroke: 'transparent', font_color: '#000000' },
+                    { height: 50, width: 200, border_width: 0, modelKey: 'label', margin: 0, min_height: 50, min_width: 50, is_rotation_enabled: false, model_id: 7, model_color_id: 30, color_code: '#2B3740', stroke: '#FFFFFF', font_color: '#FFFFFF' }],
+                element_id: '@ModelId',
+                grid_scale: '@ApplicationSettings.WorkspaceScale',
+                gridCellSize: '@ApplicationSettings.WorkspaceCellSize',
+                rackUnitValue: '@ApplicationSettings.RackUnitSize',
+                entityType: 'Equipment',
+                //grid_scale: '10',
+                librarySize: 120,
+                portKey: '5',
+                chessisKey: '2',
+                equipmentKey: '1',
+                trayKey: '6',
+                slotKey: '3',
+                cardKey: '4',
+                labelKey: '7',
+                svgWorkArea: '#workspace',
+                svgLibArea: '#library',
+                model: '.model-entity',
+                btnLibAdd: '.rect-model',
+                modelClass: 'model-entity',
+                libAddButtonClass: 'rect-model',
+                libContext: '.svgDiv',
+                modelElementId: 'modelElement',
+                elementId: 'data-id',
+                modelId: 'data-model-id',
+                libraryId: 'data-lib-id',
+                libraryImgId: 'data-img-id',
+                dataModelId: 'data-model-id',
+                dataModelTypeId: 'data-model-type-id',
+                dataColorCode: 'data-color-code',
+                dataStrokeCode: 'data-stroke-code',
+                workAreaContext: '#workAreaContext',
+                gridColorOptions: "input[name='GridCheckColor']",
+                defaultColor: 'Green',
+                createModel: '#createModel',
+                resetWorkspace: '#resetWorkspace',
+                selectModel: '#selectModel',
+                selectModelType: '#selectModelType',
+                lockModel: '.lockModel',
+                resizeBoundry: 'resizeBoundry',
+                resizeTopLeft: 'resizeTopLeft',
+                resizeBottomRight: 'resizeBottomRight',
+                btnSaveModel: '#saveModel',
+                txtModelMasterName: '#txtModelMasterName',
+                txtModelId: '#txtModelId',
+                txtModelTypeMasterName: '#txtModelTypeMasterName',
+                txtModelTypeId: '#txtModelTypeId',
+                txtModelName: '#txtModelName',
+                selectStatus: '#selectStatus',
+                modelHeight: '#modelHeight',
+                txtModelHeight: '#txtModelHeight',
+                modelWidth: '#modelWidth',
+                txtModelWidth: '#txtModelWidth',
+                modelDepth: '#modelDepth',
+                txtModelDepth: '#txtModelDepth',
+                openSaveModel: '#openSaveModel',
+                dimensionContext: '.dimensionsContext',
+                libFilterContext: '.RadioDivCreate',
+                selectLibTypes: '#selectLibTypes',
+                specifyNoContext: '.SpecifyNo',
+                color_code: '#bcbcbc',
+                stroke: '#000000',
+                portColor: '#bcbcbc',
+                chassisColor: '#E0E0E0',
+                chassisInnerColor: 'url(#chassisGrid)',//'url(#chassisGrid)''#fff',
+                chassisStroke: '#B6B6B6',
+                libChassisGrid: 'url(#libChassisGrid)',
+                cardHatch: 'url(#cardHatch)',
+                libraryTitle: '.LibraryTitle',
+                libFilterBox: '.LibCalls',
+                filterOptionClass: 'RadioFunction',
+                radioClass: 'radio',
+                radioSpanClass: 'Custombtncheck bdrRound',
+                radioName: "LibFilterCheck",
+                radioLabelClass: 'Custombtn chk',
+                libFilterOptions: "input[name='LibFilterCheck']",
+                dvModelType: "#dvModelType",
+
+
+                libFilterOptions: "input[name='LibFilterCheck']",
+                defaultHeight: 150,
+                defaultWidth: 150,
+                resizeHeightLimit: 1,
+                resizeWidthLimit: 1,
+
+                btnSaveModelType: '#btnSaveModelType',
+                searchModelElements: '.searchModel',
+                txtSearchLibraryData: '#SearchModel',
+                selectLibTypes: '#selectLibTypes',
+                txtModelTypeValue: '#txtModelTypeValue',
+                txtModelTypeKey: '#txtModelTypeKey',
+                txtColorCode: '#txtColorCode',
+                txtStrokeCode: '#txtStrokeCode',
+                model2: '#model2',
+                subMenuContext: '#subMenuContext',
+                cancelSubMenuContext: '#cancelSubMenuContext',
+                copySubMenuContext: '#copySubMenuContext',
+                deleteSubMenuContext: '#deleteSubMenuContext',
+                rotateSubMenuContext: '#rotateSubMenuContext',
+                elementRect: 'element-rect',
+                selectedClass: 'pathAnimationGreen',
+                selectedGreenClass: 'pathAnimationGreen',
+                emptyPage: '.not_selected',
+                focusRed: 'FocusRed',
+                modelDetailModal: '#modelDetailModal',
+                specificationTab: '.specificationTab',
+                lblmsg: '#lblmsg',
+                tempModel: 'tempModel',
+                rowCount: '#rowCount',
+                colCount: '#colCount',
+                totalCount: '#totalCount',
+                borderWidthContext: '.border_width',
+                modelBorderWidth: '#modelBorderWidth',
+                dimensionElement: '.dimension-element',
+                verticalRuler: 'verticalRuler',
+                horizontalRuler: 'horizontalRuler',
+                selectSpecification: 'select#specification',
+                selectVender: 'select#ddlVendor',
+                specificationContext: '#SpecificationContext',
+                itemCode: "#txtItemCode",
+                category: "#txtCategory",
+                subCategory_1: "#txtSubCategory1",
+                subCategory_2: "#txtSubCategory2",
+                subCategory_3: "#txtSubCategory3",
+                itemTemplateId: '#itemTemplateId',
+                anchorModelDetails: '#anchorModelDetails',
+                anchorSpecification: '#anchorSpecification',
+                tabModelDetails: '#ModelDetails',
+                tabSpecification: '#SpecificationContext',
+                tempModelGroupId: 'tempGroup',
+                isEditable: '#isEditable',
+                trayColor: '#3E6B70',
+                renameSubMenuContext: '#renameSubMenuContext',
+                renameContext: '#renameContext',
+                txtRenameModel: '#txtRenameModel',
+                renameModel: '#renameModel',
+                cancelRename: '#cancelRename',
+                hdnEntityType: '#txtEntityType',
+                no_of_port: '#no_of_port',
+                modelUnit: '#modelUnit',
+                txtModelUnit: '#txtModelUnit',
+                unitContext: '.unit_panel',
+                modelGroup: 'modelGroup',
+                labelFormatPopUp: '#labelFormatPopUp',
+                labelFormatSubMenuContext: '#labelFormatSubMenuContext',
+                selectLabelFontColor: '#selectLabelFontColor',
+                txtLabelFontSize: '#txtLabelFontSize',
+                selectLabelBGColor: '#selectLabelBGColor',
+                selectLabelStrokeColor: '#selectLabelStrokeColor',
+                selectLabelOrientation: '#selectLabelOrientation',
+                btnChangeLabelFormat: '#btnChangeLabelFormat',
+                defaultFontSize: 14,
+                fileBGImage: '#fileBGImage',
+                imgLBGImage: '#imgLBGImage',
+                deleteLBGImg: '#delLBGImg',
+                labelImageContainer: '#labelImageContainer',
+                multiConnectionContainer: '#multiConnectionContainer',
+                isMultiConnection: '#chkIsMultiConnection',
+                selectLabelColor: '#ddlLabelColor',
+                modelText: '.modelText',
+                hdnModelId: '#hdnModelId',
+                hdnModelTypeId: '#hdnModelTypeId',
+                txtLabelFontWeight: '#txtLabelFontWeight',
+                borderColor: '#borderColor',
+                borderColorContext: '.BorderColorContext',
+                defaultBorderColor: '#6E6E6E',
+                portOpacity: '0.3',
+                isEquipmentEditorView:false,
+            };
+            equipmentBuilder.init(configs);
+            specificationManager.init(configs);
+
+        }($, window, document, d3));
+
+    </script>
+}
+<script>
+    chart = {
+        const root = tree(bilink(d3.hierarchy(data)
+            .sort((a, b) => d3.ascending(a.height, b.height) || d3.ascending(a.data.name, b.data.name))));
+
+    const svg = d3.create("svg")
+        .attr("viewBox", [-width / 2, -width / 2, width, width]);
+
+    const node = svg.append("g")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 10)
+      .selectAll("g")
+      .data(root.leaves())
+      .join("g")
+        .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`)
+      .append("text")
+        .attr("dy", "0.31em")
+        .attr("x", d => d.x < Math.PI ? 6 : -6)
+        .attr("text-anchor", d => d.x < Math.PI ? "start" : "end")
+        .attr("transform", d => d.x >= Math.PI ? "rotate(180)" : null)
+        .text(d => d.data.name)
+        .each(function(d) { d.text = this; })
+        .on("mouseover", overed)
+        .on("mouseout", outed)
+        .call(text => text.append("title").text(d => `${id(d)}
+${d.outgoing.length} outgoing
+${d.incoming.length} incoming`));
+
+    const link = svg.append("g")
+        .attr("stroke", colornone)
+        .attr("fill", "none")
+      .selectAll("path")
+      .data(root.leaves().flatMap(leaf => leaf.outgoing))
+      .join("path")
+        .style("mix-blend-mode", "multiply")
+        .attr("d", ([i, o]) => line(i.path(o)))
+        .each(function(d) { d.path = this; });
+
+    function overed(event, d) {
+        link.style("mix-blend-mode", null);
+        d3.select(this).attr("font-weight", "bold");
+        d3.selectAll(d.incoming.map(d => d.path)).attr("stroke", colorin).raise();
+        d3.selectAll(d.incoming.map(([d]) => d.text)).attr("fill", colorin).attr("font-weight", "bold");
+        d3.selectAll(d.outgoing.map(d => d.path)).attr("stroke", colorout).raise();
+        d3.selectAll(d.outgoing.map(([, d]) => d.text)).attr("fill", colorout).attr("font-weight", "bold");
+    }
+
+    function outed(event, d) {
+        link.style("mix-blend-mode", "multiply");
+        d3.select(this).attr("font-weight", null);
+        d3.selectAll(d.incoming.map(d => d.path)).attr("stroke", null);
+        d3.selectAll(d.incoming.map(([d]) => d.text)).attr("fill", null).attr("font-weight", null);
+        d3.selectAll(d.outgoing.map(d => d.path)).attr("stroke", null);
+        d3.selectAll(d.outgoing.map(([, d]) => d.text)).attr("fill", null).attr("font-weight", null);
+    }
+
+    return svg.node();
+    }
+</script>

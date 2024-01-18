@@ -1,0 +1,891 @@
+﻿@import '../../css/color_stylesheet.css';
+
+.col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col, .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm, .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md, .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg, .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl, .col-xl-auto {
+    padding: 5px;
+}
+
+.row {
+    margin: 0px;
+}
+
+.equipadd {
+    background: var(--secondary-color);
+    float: left;
+    height: calc(100vh - 122px);
+    overflow: auto;
+    padding: 10px;
+    color: var(--white-color);
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+}
+
+    .equipadd h4 {
+        font-size: 14px;
+    }
+
+    .equipadd .RadioDiv {
+        background-color: #fff;
+        float: left;
+        width: 100%;
+        box-shadow: 0px 2px 5px #00000029;
+        /*margin-top: 30%;*/
+        height: calc(70% - 70px);
+        overflow: auto;
+        padding-top: 10px;
+        color: #333333;
+        scrollbar-color: #c9d0d8 #efefef;
+        scrollbar-width: thin;
+    }
+
+        .equipadd .RadioDiv .RadioFunction {
+            width: 100%;
+            padding: 4px 10px;
+            float: left;
+        }
+
+            .equipadd .RadioDiv .RadioFunction label {
+                font-weight: 500;
+                margin-bottom: 0;
+                line-height: 0.9;
+                padding-left: 20px;
+                padding-top: 3px;
+            }
+
+            .equipadd .RadioDiv .RadioFunction input[type="radio"], input[type="checkbox"] {
+                float: left;
+                margin-right: 3px;
+            }
+
+.bdrRound {
+    border-radius: 10px !important;
+}
+
+.header_Equip {
+    margin: 8px 0px;
+    float: left;
+    width: 100%;
+}
+
+    .header_Equip h4 {
+        float: left;
+        margin: 0px;
+    }
+
+    .header_Equip input {
+        float: right;
+    }
+
+.header_CreateEquip {
+    margin: 8px 0px;
+    float: left;
+    width: 100%;
+}
+
+    .header_CreateEquip span {
+        float: left;
+        padding-top: 10px;
+    }
+
+    .header_CreateEquip .float-right {
+        margin-top: 18px;
+    }
+
+.webGridEquip th {
+    color: #fff;
+}
+
+.webGridEquip {
+    margin-top: 10px;
+    background-color: #2c8d96;
+}
+
+.EquipTableView {
+    border: 1px solid #dee2e6;
+    width: 100%;
+    height: auto;
+}
+
+.alt {
+    background: #e0e0e0;
+}
+
+#gridContent .table tbody tr:nth-child(even) {
+    background: #ffffff;
+}
+
+#gridContent .table tbody tr:nth-child(odd) {
+    background: #e0e0e0;
+}
+
+.EquipTableCreate {
+    border: 1px solid #2f9b97;
+    width: 100%;
+    height: calc(100vh - 178px);
+    overflow: auto;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+    background-color: #fff;
+    background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+    background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+    background-image: linear-gradient(#2f9b97 1px, transparent 1px), linear-gradient(90deg, #2f9b97 1px, transparent 1px), linear-gradient(rgba(47,155,151,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(47,155,151,.3) 1px, transparent 1px);
+}
+
+.EquipTable table tbody tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+.EquipTable table tbody tr:nth-child(even) {
+    background-color: #dee2e6;
+}
+
+.EquipTable table tbody tr:hover {
+    background-color: #b7b7b7;
+}
+
+.EquipTable table tbody {
+    font-size: 12px;
+}
+
+.statusImg {
+    width: 12px;
+}
+
+.statusImgAction {
+    width: 12px;
+    position: relative;
+    margin: -6px 0px 0px 25px;
+}
+
+.lineHT {
+    line-height: 5;
+    padding: 5px 5px 0px 0px;
+}
+
+    .lineHT img {
+        width: 12px;
+        float: left;
+        margin-top: 28px;
+    }
+
+    .lineHT .btn {
+        height: 30px;
+        padding: 3px 10px;
+        margin-left: 4px;
+    }
+
+.lineMR {
+    font-size: 18px;
+    line-height: 4;
+    text-align: right;
+    opacity: 0.7;
+}
+
+    .lineMR i {
+        cursor: pointer;
+    }
+
+.FocusRed, .FocusRed.focus {
+    box-shadow: 0 0 0 0.2rem rgba(243, 0, 0, 0.25) !important;
+    border: 1px solid #e60000 !important;
+    color: #e60000 !important;
+}
+
+.tble_over_hide {
+    margin-bottom: 0px;
+    overflow: hidden;
+}
+
+    .tble_over_hide label {
+        margin-bottom: 0px;
+    }
+
+    .tble_over_hide .row span {
+        margin: 0px 10px 0px 0px;
+        float: left;
+    }
+
+        .tble_over_hide .row span b {
+            font-size: 12px;
+            font-weight: normal;
+            color: #989898;
+        }
+
+.Green {
+    background-color: #2f9b97 !important;
+}
+
+.pink {
+    background-color: #ff77fb !important;
+}
+
+.Blue {
+    background-color: #6599eb !important;
+}
+
+.Orange {
+    background-color: #f8ae9c !important;
+}
+
+.Red {
+    background-color: #fe658f !important;
+}
+
+.Gray {
+    background-color: #757575 !important;
+}
+
+.CreateGreen {
+    border: 1px solid #2f9b97;
+    background-image: linear-gradient(#2f9b97 1px, transparent 1px), linear-gradient(90deg, #2f9b97 1px, transparent 1px), linear-gradient(rgba(47,155,151,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(47,155,151,.3) 1px, transparent 1px);
+}
+
+.Createpink {
+    border: 1px solid #ff77fb;
+    background-image: linear-gradient(#ff77fb 1px, transparent 1px), linear-gradient(90deg, #ff77fb 1px, transparent 1px), linear-gradient(rgba(255,199,251,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,199,251,.3) 1px, transparent 1px);
+}
+
+.CreateBlue {
+    border: 1px solid #6599eb;
+    background-image: linear-gradient(#6599eb 1px, transparent 1px), linear-gradient(90deg, #6599eb 1px, transparent 1px), linear-gradient(rgba(101,153,235,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(101,153,235,.3) 1px, transparent 1px);
+}
+
+.CreateOrange {
+    border: 1px solid #f8ae9c;
+    background-image: linear-gradient(#f8ae9c 1px, transparent 1px), linear-gradient(90deg, #f8ae9c 1px, transparent 1px), linear-gradient(rgba(248,174,156,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(248,174,156,.3) 1px, transparent 1px);
+}
+
+.CreateRed {
+    border: 1px solid #fe658f;
+    background-image: linear-gradient(#fe658f 1px, transparent 1px), linear-gradient(90deg, #fe658f 1px, transparent 1px), linear-gradient(rgba(254,101,143,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(254,101,143,.3) 1px, transparent 1px);
+}
+
+.CreateGray {
+    border: 1px solid #757575;
+    background-image: linear-gradient(#757575 1px, transparent 1px), linear-gradient(90deg, #757575 1px, transparent 1px), linear-gradient(rgba(117,117,117,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(117,117,117,.3) 1px, transparent 1px);
+}
+
+.GridColorBox {
+    float: left;
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 15px;
+}
+
+.GridColor {
+    display: inline-block;
+    position: relative;
+    margin-bottom: 16px;
+    margin-right: 25px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+    /* Hide the browser's default checkbox */
+    .GridColor input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+/* Create a custom checkbox */
+.Gridcheck {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    border-radius: 4px;
+    background-color: transparent;
+}
+
+/* On mouse-over, add a grey background color */
+.GridColor:hover input ~ .Gridcheck {
+    background-color: transparent;
+}
+
+/* When the checkbox is checked, add a blue background */
+.GridColor input:checked ~ .Gridcheck {
+    background-color: transparent;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.Gridcheck:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.GridColor input:checked ~ .Gridcheck:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.GridColor .Gridcheck:after {
+    left: 7px;
+    top: 3px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.FooterAddDiv {
+    float: left;
+    height: 30px;
+    width: 100%;
+    background-color: #e9ecef;
+    margin: 5px 0px;
+    border: 1px solid #dddddd;
+    display: none;
+}
+
+    .FooterAddDiv span {
+        background-color: white;
+        padding: 5px 10px;
+        float: left;
+        color: #2c8d96;
+        border-right: 1px solid;
+        font-size: 12px;
+        font-weight: bold;
+        box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.4);
+    }
+
+    .FooterAddDiv i {
+        font-size: 18px;
+        color: #2c8d96;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+.SpanDisabled {
+    color: dimgray !important;
+    box-shadow: none !important;
+    border-right: none !important;
+}
+
+.dimensions_panel, .SpecifyNo, .BorderColorContext {
+    float: left;
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 15px;
+    margin: 10px 0px;
+}
+
+    .dimensions_panel .row {
+        /*margin: 0px !important;*/
+        margin-top: 10px !important;
+    }
+
+        .dimensions_panel .row .col-md-4, .col-md-6 {
+            padding: 0px 2px;
+        }
+
+.RadioDivCreate {
+    /*float: left;
+    width: 100%;*/
+    border-radius: 2px;
+}
+
+/*.LibCalls {
+    background-color: #fff;
+    float: left;
+    border-radius: 5px;
+    width: 100%;
+}*/
+/*
+.RadioDivCreate .RadioFunction {
+    width: 100%;
+    padding: 5px 10px;
+    float: left;
+}
+
+    .RadioDivCreate .RadioFunction label {
+        margin-bottom: 0;
+        line-height: 0.9;
+        padding-left: 20px;
+        padding-top: 3px;
+    }
+
+    .RadioDivCreate .RadioFunction input[type="radio"], input[type="checkbox"] {
+        float: left;
+        margin-right: 3px;
+    }
+*/
+
+.RadioFunction ul {
+    margin-bottom: 0px;
+    padding-left: 20px;
+}
+
+
+.svgDiv {/*
+    float: left;
+    width: 100%;*/
+    background: rgb(249, 249, 249);
+    margin: 10px 0px 10px 0px;
+    border-radius: 4px;
+    /*max-height: 400px;
+    min-height: 100px;
+    border: solid 1px #007bff;*/
+    /*padding: 5px;*/
+    display: none;
+    position: relative;
+}
+
+    .svgDiv input {
+        border-left: none;
+        border-right: none;
+        border-radius: 0px;
+        border-top: none;
+        background: none;
+        margin-bottom: 10px;
+    }
+
+    .svgDiv .form-control:focus {
+        box-shadow: 0px 2px 2px 0px rgba(115, 110, 147, 0.4);
+    }
+
+    .svgDiv .searchIcon {
+        position: absolute;
+        margin-left: 90%;
+        opacity: 1;
+        z-index: 9;
+        left: 0;
+        margin-top: 9px;
+        color: #BCBCBC;
+        cursor: pointer;
+    }
+
+.col-free {
+    max-width: 48%;
+    flex: auto;
+}
+
+.svgDiv .row {
+    margin: 0px;
+    margin-bottom: 10px;
+}
+
+    .svgDiv .row .col-free {
+        padding: 0px 2px;
+        height: 60px;
+        background-color: #ccc;
+        text-align: center;
+    }
+
+        .svgDiv .row .col-free i {
+            font-size: 38px;
+            line-height: 1.5;
+        }
+
+.DivSelect {
+    margin:0 0 10px 0px;
+    background-color: #FFFFFF;
+}
+
+    .DivSelect option {
+        background-color: #FFFFFF;
+    }
+
+.modelEquip {
+    background-color: #2c8d96;
+    color: #fff;
+    height: 40px;
+    padding: 8px;
+    border-bottom: 1px solid #cdcdcd;
+}
+
+    .modelEquip .close {
+        color: #fff;
+        margin-left: 97%;
+    }
+
+    .modelEquip .modal-title {
+        color: #fff;
+        font-size: 16px;
+        line-height: initial;
+    }
+
+.modelEquipBody {
+    padding: 10px 8px;
+}
+
+    .modelEquipBody ul {
+        margin-bottom: 10px;
+    }
+
+        .modelEquipBody ul li {
+            padding: 5px;
+        }
+
+    .modelEquipBody .nav-tabs {
+        border-bottom: 1px solid rgba(44, 141, 150, 0.5);
+    }
+
+    .modelEquipBody .form-group {
+        margin-bottom: 0.5rem !important;
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .modelEquipBody ul li .show {
+        border-bottom: 2px solid #2c8d96;
+        padding-bottom: 5px;
+    }
+
+    .modelEquipBody a:hover {
+        text-decoration: none;
+    }
+
+.modelEquipFoot {
+    padding: 8px;
+    background-color: #f2f2f2;
+    border-top: 1px solid #cdcdcd;
+}
+
+    .modelEquipFoot .rightbtn {
+        left: 8px;
+        position: absolute;
+    }
+
+.svgscroll {
+    overflow: auto;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+    /*float: left;
+    max-height: 350px;*/
+    text-align: center;
+}
+
+.lineHT #btnCreate {
+    background: rgb(233,233,233);
+    background: -moz-linear-gradient(top, rgb(233,233,233) 0%, rgb(202,202,202) 100%);
+    background: -webkit-linear-gradient(top, rgb(233,233,233) 0%,rgb(202,202,202) 100%);
+    background: linear-gradient(to bottom, rgb(233,233,233) 0%,rgb(202,202,202) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e9e9e9', endColorstr='#cacaca',GradientType=0 );
+    color: #000;
+}
+
+.btn-gray {
+    color: #aeaeae;
+    background-color: #fff;
+    border-color: #aeaeae;
+}
+
+    .btn-gray:hover {
+        color: #aeaeae;
+        background-color: #f2f2f2;
+        border-color: #aeaeae;
+        opacity: 0.8;
+    }
+
+.Custombtn {
+    display: inline-block;
+    position: relative;
+    margin-bottom: 14px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.col-md-wt .Custombtn{
+    padding-left:26px;
+}
+.col-md-wt .Custombtncheck{
+    border:1px solid #FFFFFF;
+}
+/* Hide the browser's default checkbox */
+.Custombtn input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Create a custom checkbox */
+.Custombtncheck {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 17px;
+    width: 17px;
+    border-radius: 2px;
+    background-color: transparent;
+    border: solid 1px #aeaeae;
+}
+
+/* On mouse-over, add a grey background color */
+.Custombtn:hover input ~ .Custombtncheck {
+    background-color: transparent;
+    border: solid 1px #007bff;
+}
+
+/* When the checkbox is checked, add a blue background */
+.Custombtn input:checked ~ .Custombtncheck {
+    background-color: #007bff;
+    border-color: #2c8d96;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.Custombtncheck:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.Custombtn input:checked ~ .Custombtncheck:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.Custombtn .Custombtncheck:after {
+    left: 5px;
+    top: 1px;
+    width: 6px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.RadioFunction ul li {
+    list-style: none;
+    line-height: 2;
+}
+/*
+.Custombtn input:checked ~ .Custombtncheck {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.RadioFunction .Custombtn .Custombtncheck:after {
+    height: 7px;
+    border-width: medium;
+    border-radius: 13px;
+    top: 27%;
+    border: solid #fff;
+    width: 7px;
+    background-color: #007bff;
+    left: 24%;
+}
+*/
+.lock {
+    position: absolute;
+    right: 0;
+    margin: 27px 10px 0px 0px;
+    z-index: 99;
+    color: #bcbcbc;
+}
+
+.close {
+    text-shadow: none;
+}
+
+.SpecifyNo .row {
+    margin: 0px !important;
+}
+
+    .SpecifyNo .row .col-md-4 {
+        padding: 0px 2px;
+    }
+
+    .SpecifyNo .row .col-md-4 {
+        display: inherit;
+    }
+
+        .SpecifyNo .row .col-md-4 img {
+            margin-right: 4px;
+        }
+
+        .SpecifyNo .row .col-md-4 label {
+            margin: 5px 2px 0px 0px;
+        }
+
+.bootbox .a_modal-footer {
+    background-color: transparent;
+    border-top: none;
+}
+
+.col-sm-45 {
+    width: 32%;
+    margin-right: 10px;
+}
+
+.tble_cls {
+    max-height: calc(100vh - 310px);
+}
+.list-group{
+    margin-bottom:0;
+}
+
+.rightPopup {
+    width: 120px;
+    height: auto;
+    background-color: #fff;
+    position: absolute;
+    margin: 30px;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+}
+
+    .rightPopup .list-group .list-group-item {
+        padding: 8px;
+    }
+
+        .rightPopup .list-group .list-group-item:hover {
+            color: #757575;
+            background-color: rgb(233,233,233);
+        }
+
+.renamePopup {
+    /*width: 100px;*/
+    height: auto;
+    background-color: #fff;
+    position: absolute;
+    margin: 30px;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+}
+
+    .renamePopup .list-group .list-group-item {
+        padding: 8px;
+    }
+
+        .renamePopup .list-group .list-group-item:hover {
+            color: #757575;
+            background-color: rgb(233,233,233);
+        }
+
+.pathAnimation {
+    stroke-width: 3 !important;
+    stroke-dasharray: 10;
+    animation: dash 20s linear infinite;
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: 1000;
+    }
+}
+
+.pathAnimationGreen {
+    stroke: #04c51d !important;
+    stroke-width: 4 !important;
+    stroke-dasharray: 10;
+    animation: dash 20s linear infinite;
+}
+
+
+
+.not_selected {
+    position: relative;
+    float: left;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+
+.col-md-wt {
+    width: 250px;
+    padding: 15px;
+}
+
+.col-md-ww {
+    width: calc(100% - 250px);
+    padding: 8px 16px;
+}
+
+    .col-md-ww .table-responsive .row .col-md-3 span {
+        font-size: 18px;
+        line-height: 1;
+    }
+/*.FitSvg svg{
+width:100%;
+height:100%;
+}*/
+
+.form-control {
+    padding: 5px;
+    height:28px;
+}
+
+.user_btn {
+    padding-right: 12px;
+}
+
+.form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #4b868c;
+    outline: 0;
+    box-shadow: none;
+}
+
+/*.dashboard .col-md-7,.col-md-5 {
+    padding:5px;
+}*/
+
+@media (max-width: 1366px) {
+    .lineHT {
+        font-size: 12px;
+        line-height: 5.7;
+    }
+
+        .lineHT img {
+            margin-top: 29px;
+        }
+
+    .tble_over_hide .row span {
+        margin: 0px 8px 0px 0px;
+        float: left;
+    }
+}
+
+.labelTopBottom {
+    writing-mode: tb;
+}
+
+.equipment {
+    fill-opacity: 0.3;
+}
+
+.port {
+    fill-opacity: 0.3;
+}
+
+.blink-connected-port {
+    -webkit-animation: blink-model 1s infinite; /* Safari 4+ */
+    -moz-animation: blink-model 1s infinite; /* Fx 5+ */
+    -o-animation: blink-model 1s infinite; /* Opera 12+ */
+    animation: blink-model 1s infinite; /* IE 10+, Fx 29+ */
+}
+
+@-webkit-keyframes blink-model {
+    0%, 49% {
+        fill-opacity: 1;
+    }
+
+    50%, 100% {
+        fill-opacity: 0.3;
+    }
+}
+

@@ -1,0 +1,448 @@
+﻿@model Models.ExportEntitiesReport
+@using Utility;
+@using SmartInventory.Settings;
+@{
+
+
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objReportFilters.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewROWExportData",
+        ajaxUpdateCallback: "onGridHeaderClick('tblExportReport');");
+    grid.Bind(Model.lstReportData, autoSortAndPage: false, rowCount: Model.objReportFilters.totalRecord);
+    if (Model.objReportFilters.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objReportFilters.currentPage - 1;
+    }
+
+}
+<style>
+   
+    .btn {
+        font-weight: bold !important;
+        line-height: 1.42857143 !important;
+    }
+
+    .icon-kmldownload {
+        font-size: 20px;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="libDetail">
+    @using (Ajax.BeginForm("ExportROWReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvProgress" },
+                                                            new { id = "frmROWExportEntities", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        @Html.HiddenFor(m => m.objReportFilters.geom)
+        @Html.HiddenFor(m => m.objReportFilters.geomType)
+        @Html.HiddenFor(m => m.objReportFilters.radius)
+        @Html.HiddenFor(m => m.objReportFilters.layerName, new { id = "hdnLayerName" })
+        <input type="hidden" id="hdnApproveCount" value="0">
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                    @if (Model.objReportFilters.geom != null && Model.objReportFilters.geom != "")
+                    {
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_065 :</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.objReportFilters.SelectedRegionId, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @onchange = "si.onChangeRegion();", @id = "ddlRegions", @disabled = "disabled" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_FRM_066 :</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.objReportFilters.SelectedProvinceId, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlProvinces", @disabled = "disabled" })
+                            </div>
+                        </div>
+                    }
+                    else
+
+                    {
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_065  :</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.objReportFilters.SelectedRegionId, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @onchange = "si.onChangeRegion();", @id = "ddlRegions" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_FRM_066 :</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.objReportFilters.SelectedProvinceId, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlProvinces" })
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_FRM_100 :</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.objReportFilters.SearchbyColumnName, new SelectList(Model.lstLayerColumns.Where(m => m.value != "system_id").Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"), "-Select-", new { @class = "chosen-select col-sm-12", @id = "ddlLayerColumns" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_FRM_101 :</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objReportFilters.SearchbyText, new { @id = "txtSearchText", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @maxlength = 50 })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_FRM_071<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.objReportFilters.DurationBasedColumnName,
+                           new SelectList(Model.lstLayerDurationBasedColumns.Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"),
+                           "-Select-", new { @class = "chosen-select col-sm-12", @id = "ddlLayerDurationBasedColumns" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtDatefrom">@Resources.Resources.SI_OSP_GBL_NET_FRM_072<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.objReportFilters.customDate, new List<SelectListItem>
+                            {
+
+                            new SelectListItem { Text = "-Select-", Value = "0"},
+                            new SelectListItem { Text = "All", Value = "9"},
+                            new SelectListItem { Text = "Custom", Value = "1"},
+                            new SelectListItem { Text = "Today", Value = "2"},
+                            new SelectListItem { Text = "Previous Day", Value = "3"},
+                            new SelectListItem { Text = "Last 7 Days", Value = "4"},
+                            new SelectListItem { Text = "Last 30 Day", Value = "5"},
+                            new SelectListItem { Text = "Last 3 Months", Value = "6"},
+                            new SelectListItem { Text = "Last 6 Months", Value = "7"},
+                            new SelectListItem { Text = "Last 1 Year", Value = "8"},
+
+                            },
+                            new { @class = "chosen-select", @onchange = "onChangeCustomDate();", @id = "customedate" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="txtDatefrom">@Resources.Resources.SI_OSP_GBL_NET_FRM_130<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objReportFilters.fromDate, new { @id = "txtDateFrom", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_096, @tabindex = "4", @class = "input-sm form-control", @readonly = true })
+                            <img id="imgFromDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                        <label class="control-label col-sm-2" for="txtDateTo">@Resources.Resources.SI_OSP_GBL_NET_FRM_131<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objReportFilters.toDate, new { @id = "txtDateTo", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_097, @tabindex = "4", @class = "input-sm form-control", @readonly = true })
+                            <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ModalFooter d-flex pos-rel" id="dvBtnAction">
+            <button type="submit" class="btn btn-success ml-auto" id="btnShowReportData">@Resources.Resources.SI_OSP_GBL_NET_FRM_112</button>
+            @if (Model.objReportFilters.totalRecord > 0)
+            {
+                <button type="button" class="exp--btn ml-10" id="btnExport">
+                    @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div class="FlowDiv">
+                    <div class="arrow-up"></div>
+                    <span class="excel"><a id="btnExportReportIntoExcel" href="#"><i class="fa fa-file-excel-o mr-05" aria-hidden="true"></i> @Resources.Resources.SI_GBL_GBL_GBL_GBL_114</a> </span>
+                    <span class="excel"><a id="btnExportReportIntoKML" href="#"><i class="fa icon-kmldownload mr-05" aria-hidden="true"></i>@Resources.Resources.SI_GBL_GBL_GBL_GBL_115</a> </span>
+                    <span class="excel"><a id="btnExportApprovalReport" href="#"><i class="fa fa-file-excel-o mr-05" aria-hidden="true"></i>@Resources.Resources.SI_GBL_GBL_GBL_GBL_116</a> </span>
+                    <span class="excel" id="spnRecurringReport" style="display:none;"><a id="btnExportRecurringReport" href="#"><i class="fa fa-file-excel-o mr-05" aria-hidden="true"></i>@Resources.Resources.SI_GBL_GBL_GBL_GBL_117</a> </span>
+                </div>
+            }
+            else
+            {
+                @*<button type="button" class="btn btn-primary" id="btnExport" disabled="disabled">
+                        @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010
+
+                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                    </button>*@
+                <input type="button" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-default ml-10" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "") />
+
+            }
+            <input type="button" id="btnEntityExportClear" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009" class="btn btn-default ml-10" />
+
+        </div>
+        if (Model.lstReportData.Count > 0)
+        {
+            <div id="dvViewROWExportData" class="space-pad">
+                <div class="d-flex mb-15">
+                    <div class="div_totalRecord">
+                        <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@Model.objReportFilters.totalRecord</span></b>
+                    </div>
+                    <div class="d-flex ml-auto">
+                        <div class="d-flex mr-15">
+                            <div class="viewG-colors Created mr-05"></div>
+                            <div id="divNewRow">New</div>
+                        </div>
+                        <div class="d-flex mr-15">
+                            <div class="viewG-colors Applied mr-05"></div>
+                            <div id="divApplied">Applied</div>
+                        </div>
+                        <div class="d-flex mr-15">
+                            <div class="viewG-colors Approved mr-05"></div>
+                            <div id="divApproved">Approved</div>
+                        </div>
+                        <div class="d-flex mr-15">
+                            <div class="viewG-colors Associated mr-05"></div>
+                            <div id="divAssociated">NE Associated</div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="viewG-colors Rejected mr-05"></div>
+                            <div id="divRejected">Rejected</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    @grid.GetHtml(tableStyle: "grid",
+                     htmlAttributes: new { id = "tblExportReport" },
+                     mode: WebGridPagerModes.All)
+                </div>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(Model.objReportFilters.fromDate))
+        {
+            <div id="divNoRecordFound" class="nr-found filtersBg">
+                <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+            </div>
+        }
+        else
+        {
+            <div id="divNoRecordFound" class="nr-found filtersBg">
+                <span>@Resources.Resources.SI_OSP_GBL_NET_RPT_071</span>
+            </div>
+        }
+    }
+
+</div>
+<script>
+    $('.chosen-select').chosen({ placeholder_text_multiple: '-Select-', width: '100%' });
+    $(document).ready(function () {
+        $('#hdnLayerName').val('ROW');
+        $('#tblExportReport thead tr th a').each(function () {
+            var html = $(this).html(); $(this).parent().attr('data-column-name', html);
+        })
+        $('#tblExportReport tbody tr td').each(function () {
+            var html = $(this).html(); $(this).attr('data-value', html);
+        })
+
+        $('#tblExportReport tbody tr').each(function (index, value) {
+            var replacetdIndex = 1;
+            var colIndex = $('#tblExportReport thead tr th[data-column-name="Row_Stage"]').index();
+            var colIndex2 = $('#tblExportReport thead tr th[data-column-name="Is_Entity_Associated"]').index();
+            if (colIndex2 > 0 && $('#tblExportReport tbody tr:eq(' + index + ') td:eq(' + colIndex2 + ')').attr('data-value').toUpperCase() == 'YES') {
+                var firsttdHtml = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html();
+                $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html('<div class="Associated"></div>' + '<div style="width:150px;">' + firsttdHtml + '</div>')
+            } else if (colIndex > 0 && $('#tblExportReport tbody tr:eq(' + index + ') td:eq(' + colIndex + ')').attr('data-value') == 'Approved') {
+                var firsttdHtml = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html();
+                $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html('<div class="Approved"></div>' + '<div style="width:150px;">' + firsttdHtml + '</div>')
+            } else if (colIndex > 0 && $('#tblExportReport tbody tr:eq(' + index + ') td:eq(' + colIndex + ')').attr('data-value') == 'Rejected') {
+                var firsttdHtml = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html();
+                $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html('<div class="Rejected"></div>' + '<div style="width:150px;">' + firsttdHtml + '</div>')
+            } else if (colIndex > 0 && $('#tblExportReport tbody tr:eq(' + index + ') td:eq(' + colIndex + ')').attr('data-value') == 'Applied') {
+                var firsttdHtml = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html();
+                $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html('<div class="Applied"></div>' + '<div style="width:150px;">' + firsttdHtml + '</div>')
+            } else {
+                var firsttdHtml = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html();
+                $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html('<div class="Created"></div>' + '<div style="width:150px;">' + firsttdHtml + '</div>')
+            }
+            $('#tblExportReport thead tr th:eq(0)').html('' + MultilingualKey.SI_OSP_GBL_GBL_GBL_059 + '');
+            var systemId = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(0)').attr('data-value');
+            var rowAction = '<a href="#" data-value="' + systemId + '"  class="dropdown-toggle rowShowOnMap" title= "' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
+            rowAction = rowAction + '<i class="fa fa-globe fa-fw m-r-xs"></i></a>';
+            if ($('#tblExportReport  tbody tr:eq(' + index + ') td[data-value="Approved"]').length > 0
+                || $('#tblExportReport  tbody tr:eq(' + index + ') td[data-value="Applied"]').length > 0
+                || $('#tblExportReport  tbody tr:eq(' + index + ') td[data-value="Rejected"]').length > 0) {
+                rowAction = rowAction + '<a href="#" data-value="' + systemId + '" class="dropdown-toggle rowBudgetReport" title="' + MultilingualKey.SI_OSP_ROW_JQ_FRM_010 + '"><i class="fa fa-file-excel-o" aria-hidden="true"></i></a>';
+            }
+            if ($('#tblExportReport  tbody tr:eq(' + index + ') td .Associated').length > 0) {
+                rowAction = rowAction + '<a href="#" data-value="' + systemId + '" class="dropdown-toggle rowBOMBOQReport" title="Export BOM/BOQ Report"><i class="icon-BOM-BOQ-Report" aria-hidden="true" ></i></a>';
+                // rowAction = rowAction + '<a href="#" data-value="' + systemId + '" class="dropdown-toggle rowBOMReport rowBOQReport" title="Export BOQ Report"><i class="fa fa-file-pdf-o" aria-hidden="true" style="color:red;"></i></a>';
+            }
+            $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(0)').html(rowAction);
+        });
+        $('.rowShowOnMap').on("click", function () {
+            var systemId = $(this).attr('data-value');
+            si.ShowEntityOnMap(systemId, 'ROW', 'Polygon'); $(popup.DE.MinimizeModel).trigger("click");
+        });
+        $('.rowBudgetReport').on("click", function () {
+            var systemId = $(this).attr('data-value');
+            si.report.ExportBudgetApprovalReport(systemId);
+        });
+        $('.rowBOMBOQReport').on("click", function () {
+            var systemId = $(this).attr('data-value');
+            si.ShowAssociationBOMBOQ(systemId, 'ROW','CHILD');
+            //window.location = appRoot + 'Report/ExportAssociateEntityBOMBOQReport?systemId=' + systemId + '&entityType=ROW&type=BOM';
+        });
+        //$('.rowBOQReport').on("click", function () {
+        //    var systemId = $(this).attr('data-value');
+        //   // window.location = appRoot + 'Report/ExportAssociateEntityBOMBOQReport?systemId=' + systemId + '&entityType=ROW&type=BOQ';
+        //});
+        si.report.setLegends();
+
+        if ($("#customedate_chosen").children('a').text().trim() != "Custom") {
+
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+         
+        var SelectedRegionIds = '@Model.objReportFilters.SelectedRegionIds';
+        $("#ddlRegions").val(SelectedRegionIds.split(',')).trigger("chosen:updated");
+
+        var selectedProvinces = '@Model.objReportFilters.SelectedProvinceIds';
+        $("#ddlProvinces").val(selectedProvinces.split(',')).trigger("chosen:updated");
+
+        var selectedNetworkStatuses = '@Model.objReportFilters.SelectedNetworkStatues.Replace("'","")';
+        $("#SelectedNetworkStatus").val(selectedNetworkStatuses.split(',')).trigger("chosen:updated");
+
+
+        addDefaultSortingIcons('tblExportReport');
+        si.setDateTimeCalendar_ExportEntities("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+
+        $('#btnEntityExportClear').on("click", function () {
+            si.report.ResetRowReportFilter();
+        });
+
+        $('tfoot a').on("click", function () {
+            $('form').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+
+        //Post form on page header click..
+        $('th a').on("click", function () {
+            $('form').attr('action', $(this).attr('href')).submit();
+
+            return false;
+        });
+
+        $("#btnShowReportData").on("click", function () {
+
+             
+            if ($('#ddlLayerColumns option:selected').text() != '-Select-' && $('#txtSearchText').val() == "") {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_006);
+                return false;
+            }
+            else if ($('#ddlLayerColumns option:selected').text() == '-Select-' && $('#txtSearchText').val() != "") {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_007);
+                return false;
+            }
+            else if ($('#ddlLayerDurationBasedColumns').val() == '') {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_012);
+                return false;
+            }
+            else if ($('#customedate').val() == '0') {
+                alert("Please Select Duration!");
+                return false;
+            }
+            else if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9) {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
+                return false;
+            }
+
+            else if ($("#txtDateTo").val() == "" && $("#customedate").val() != 9) {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
+                return false;
+            }
+
+            else if ($('#ddlLayerDurationBasedColumns').val() != '' && $("#txtDateFrom").val() != "" && $("#txtDateTo").val() != "") {
+                var startDate = new Date($('#txtDateFrom').val());
+                var endDate = new Date($('#txtDateTo').val());
+                var configuredDay = 365;
+                return si.GetDaysDifference(startDate, endDate, configuredDay);
+            }
+            else {
+                return true;
+            }
+        });
+
+    });
+
+    $("#btnExportReportIntoExcel").on("click", function () {
+        si.report.ExportROWReport('Excel', 'All');
+        $('.FlowDiv').slideUp();
+    });
+    $("#btnExportReportIntoKML").on("click", function () {
+        si.report.ExportROWReport('KML', 'All');
+        $('.FlowDiv').slideUp();
+    });
+    $("#btnExportApprovalReport").on("click", function () {
+        si.report.ExportROWReport('Excel', 'Approval');
+        $('.FlowDiv').slideUp();
+    });
+
+    $("#btnExportRecurringReport").on("click", function () {
+        si.report.ExportROWReport('Excel', 'Recurring');
+        $('.FlowDiv').slideUp();
+    });
+
+
+    function onChangeCustomDate() {
+
+        var value = $('#customedate option:selected').val();
+
+        SetFromAndToDate(value);
+    }
+    function SetFromAndToDate(value) {
+
+        var endDate = new Date();
+        var startDate = new Date();
+        var startDateDiff = 0;
+        var endDateDiff = 0;
+
+        if (value == 1) // custom
+        {
+            $('#txtDateFrom').val("");
+            $('#txtDateTo').val("");
+            $("#imgFromDate").show();
+            $('#imgToDate').show();
+            return;
+        }
+        else if (value == 2) { //Today
+            startDateDiff = 0;
+            endDateDiff = 0;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 3) { //previous day
+            startDateDiff = -1;
+            endDateDiff = -1;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 4) {//last 7 days
+            startDateDiff = -6;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 5) {//last 30 days
+            startDateDiff = -29;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 6) {//last 3 Months
+            startDateDiff = -89;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 7) {//last 6 Months
+            startDateDiff = -179;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 8) {//last 6 Months
+            startDateDiff = -364;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+
+        startDate.setDate(startDate.getDate() + startDateDiff);
+        endDate.setDate(endDate.getDate() + endDateDiff);
+
+        var newStartDate = startDate.toDateString();
+        newStartDate = new Date(Date.parse(newStartDate));
+
+        var newEndDate = endDate.toDateString();
+        newEndDate = new Date(Date.parse(newEndDate));
+
+        $('#txtDateFrom').val(fncCurrentDate(newStartDate));
+        $('#txtDateTo').val(fncCurrentDate(newEndDate));
+        if (value == 0 || value == 9) {
+            $('#txtDateFrom').val('');
+            $('#txtDateTo').val('');
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+    }
+
+    $('#btnExport').on('click', function () {
+        $('.FlowDiv').slideToggle();
+
+    });
+
+
+</script>

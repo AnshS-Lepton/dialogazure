@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+@model Models.Admin.ChangeConfigurationSetting
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+</style>
+<div id="divSaveConfigSetting">
+    @using (Ajax.BeginForm("SaveConfigSetting", "ConfigurationSettings", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divSaveConfigSetting", OnSuccess = "OnSuccess", },
+                                                                                                                                        new { id = "frmSaveConfigSetting", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Section<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.section, new { Style = "width:100% ;", @id = "txtsection", @class = "form-control" })
+                        @*@Html.HiddenFor(m => m.section)*@
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Key<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.key_type, new { @class = "form-control", @id = "txtkey_type" })
+                        @*@Html.HiddenFor(m => m.key_type)*@
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Value (Min.)<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.key_value, new { @class = "form-control", @id = "txtkey_value", @maxlength = 50 })
+                        @Html.HiddenFor(m => m.key_value, new { Id = "hddnkey_value" })
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="d-flex footerModal" id="dvBtnAction">
+            <div class="show-in-ConfigCase">
+                Min. value : 20  Max. value : 1440
+            </div>
+            <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+            <input type="button" class="btn btn-primary" onclick="return IsValid();" id="ConfigbtnSave" value="Save" />
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $('#txtkey_type').attr("disabled", "disabled");
+        $('#txtsection').attr("disabled", "disabled");
+        var txtkeyval = $('#hddnkey_value').val();
+
+        if ($.isNumeric(txtkeyval)) {
+            $("#txtkey_value").keypress(function (e) {
+                var charCode = (e.which) ? e.which : event.keyCode
+                if (String.fromCharCode(charCode).match(/[^0-9]/g))
+                    return false;
+            });
+            $('#txtkey_value').on('keydown keyup change', function () {
+                var maxLength = 4;
+                var char = $(this).val();
+                var charLength = $(this).val().length;
+                if (charLength > maxLength) {
+                    $(this).val(char.substring(0, maxLength));
+                }
+            });
+            $('#txtkey_value').attr("min", "20")
+            $('#txtkey_value').attr("max", "1440")
+            $(".show-in-ConfigCase").show();
+            $('#txtkey_value').on('change', function () {
+                validateIntegerMinMaxValue(this);
+            });
+
+        }
+        else {
+            $("#txtkey_value").keypress(function (e) {
+                var charCode = (e.which) ? e.which : event.keyCode
+                if (charCode >= 48 && charCode <= 57) {
+                    e.preventDefault();
+                }
+            });
+            $('#txtkey_value').on('keydown keyup change', function () {
+                var maxLength = 10;
+                var char = $(this).val();
+                var charLength = $(this).val().length;
+                if (charLength > maxLength) {
+                    $(this).val(char.substring(0, maxLength));
+                }
+            });
+        }
+    });
+
+    function IsValid() {
+         
+        var txtkeyval = $('#hddnkey_value').val();
+        if ($.isNumeric(txtkeyval)) {
+            if (parseInt($('#txtkey_value').val()) == 0) {
+                alert("Value can't be 0");
+                $('#txtkey_value').css('border-color', 'red');
+                return false;
+            }
+        }
+        if ($('#txtkey_value').val() == "") {
+            alert("Value can't be empty or blank");
+            $('#txtkey_value').css('border-color', 'red');
+            return false;;
+        }
+        else {
+            $('#txtkey_value').css('border-color', '');
+        }
+        confirm("Are you sure want to reset session timeout value? <br> If click on OK, session will be reset and application forcely log off.", function () {
+            $('#frmSaveConfigSetting').submit();
+        });
+    };
+
+    function OnSuccess(data) {
+         
+        if (data.status == "OK") {
+            $("#closeModalPopup").trigger("click");
+        }
+        window.location = appRoot + 'Login/Index';
+        alert(data.message, 'Success', 'success');
+        setTimeout(function () {
+            window.location = appRoot + 'ConfigurationSettings/Index';
+        }, 3000);
+    }
+    $("#btnCancel").on("click", function () {
+        $("#closeModalPopup").trigger("click");
+    });
+</script>

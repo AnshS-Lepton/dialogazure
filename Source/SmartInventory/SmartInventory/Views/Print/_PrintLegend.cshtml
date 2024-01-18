@@ -1,0 +1,210 @@
+﻿@model Models.Legend
+
+<div style="display:none" id="staticPrintLegned">
+
+    <div style=" width: 100%; float: right; height: auto; font-size: 10px;">
+        <style>
+            #pSizeA3, #pSizeA2, #pSizeA1, #pSizeA0 {
+                width: 100%;
+                height: auto;
+                float: left;
+                background-color: #bddee8;
+            }
+
+                #pSizeA3 #legendTitle{
+                    width: 50px;
+                    float: left;
+                    background-color: #1b9461;
+                    height: 200px;
+                }
+
+                #pSizeA2 #legendTitle {
+                    width: 50px;
+                    float: left;
+                    background-color: #1b9461;
+                    height: 250px;
+                }
+
+                #pSizeA1 #legendTitle {
+                    width: 80px;
+                    float: left;
+                    background-color: #1b9461;
+                    height: 300px;
+                }
+
+                #pSizeA0 #legendTitle {
+                    width: 80px;
+                    float: left;
+                    background-color: #1b9461;
+                    height: 300px;
+                }
+
+                 #pSizeA1 #legendTitle img {
+                        width: 90px;
+                        float: left;
+                    }
+                #pSizeA0 #legendTitle img {
+                    width: 90px;
+                    float: left;
+                }
+
+                #pSizeA3 #legendData, #pSizeA2 #legendData, #pSizeA1 #legendData{
+                    width: calc(100% - 50px);
+                    height: auto;
+                    float: left;
+                    background-color: #bddee8;
+                }
+                #pSizeA0 #legendData {
+                    width: calc(100% - 80px);
+                    height: auto;
+                    float: left;
+                    background-color: #bddee8;
+                }
+
+                #pSizeA3 div div {
+                    width: 170px;
+                    float: left;
+                    height: 22px;
+                }
+                #pSizeA2 div div {
+                    width: 200px;
+                    float: left;
+                    height: 35px;
+                }
+                #pSizeA1 div div {
+                    width: 300px;
+                    float: left;
+                    height: 40px;
+                }
+                #pSizeA0 div div {
+                    width: 350px;
+                    float: left;
+                    height: 50px;
+                }
+
+                    #pSizeA3 div div img, #pSizeA1 div div img{
+                        width: 15px;
+                        float: left;
+                    }
+                    #pSizeA2 div div img {
+                        width: 18px;
+                        float: left;
+                    }
+
+                #pSizeA1 div div img {
+                    width: 30px;
+                    float: left;
+                }
+                #pSizeA0 div div img {
+                    width: 35px;
+                    float: left;
+                }
+
+                    #pSizeA3 div div span {
+                        float: left;
+                        margin-left: 5px;
+                        font-size: 10px;
+                    }
+                    #pSizeA2 div div span {
+                        float: left;
+                        margin-left: 5px;
+                        font-size: 15px;
+                    }
+                    #pSizeA1 div div span {
+                        float: left;
+                        margin-left: 5px;
+                        font-size: 20px;
+                    }
+                    #pSizeA0 div div span {
+                        float: left;
+                        font-size: 25px;
+                    }
+                #pSizeA3 #legendData #legendNetworkStatus {
+                    width: 100%;
+                    background-color: #83bfba;
+                    height: 40px;
+                    float: none;
+                }
+                #pSizeA2 #legendData #legendNetworkStatus {
+                    width: 100%;
+                    background-color: #83bfba;
+                    height: 40px;
+                    float: none;
+                }
+                #pSizeA1 #legendData #legendNetworkStatus {
+                    width: 100%;
+                    background-color: #83bfba;
+                    height: 70px;
+                    float: none;
+                }
+                #pSizeA0 #legendData #legendNetworkStatus {
+                    width: 100%;
+                    background-color: #83bfba;
+                    height: 80px;
+                    float: none;
+                }
+                    #pSizeA3 #legendData #legendNetworkStatus div, #pSizeA2 #legendData #legendNetworkStatus div {
+                        width: 10%;
+                        height: 30px;
+                    }
+                    #pSizeA1 #legendData #legendNetworkStatus div{
+                        width: 10%;
+                        height: 50px;
+                    }
+                 #pSizeA0 #legendData #legendNetworkStatus div {
+                    width: 10%;
+                    height: 60px;
+                }
+        </style>
+        <div id="@string.Concat("pSize",Model.pageSize)">
+
+            <div id="legendTitle"><img src="@string.Concat(Model.baseUrl, "legands.png")" alt="printLayerImg"></div>
+
+            <div id="legendData">
+                <div style="width: 100%; height: 10px; background-color: #83bfba;">&nbsp;</div>
+                <div id="legendNetworkStatus">
+                    <div>&nbsp;<img src="@string.Concat(Model.baseUrl, "Planned.png")" alt="printLayerImg" /><span>&nbsp;&nbsp;Planned</span></div>
+                    @*<div><img src="@string.Concat(Model.baseUrl, "Dorment.png")" alt="printLayerImg" /><span>&nbsp;&nbsp;Dorment</span></div>*@
+                    <div><img src="@string.Concat(Model.baseUrl, "AsBuilt.png")" alt="printLayerImg" /><span>&nbsp;&nbsp;As Built</span></div>
+                </div>
+                <div style="width:100%; height:10px;">&nbsp;</div>
+                @foreach (var item in Model.legendList.OrderBy(x => x.legend_id))
+                {
+                    <div id="subLayer">
+                        &nbsp;
+                        @if (item.group_name == "Boundary")
+                        {
+                            <div id="@item.layer_id" style="outline-width: thin; width: 15px; height: 10px; background-color: @item.color_code_hex; outline-style: solid; outline-color: @item.outline_color_hex;"></div>
+                        }
+                        else if (item.group_name == "Feeder Cable" || item.group_name == "Distribution Cable" || item.group_name == "Access Cable")
+                        {
+                            if (item.sub_Layer.Contains("As-Built"))
+                            {
+                                <span style=" width: 25px; border-bottom:3px solid; color: @item.color_code_hex; margin-left:0"></span>
+                            }
+                            else
+                            {
+                                <span style=" width: 25px; border-bottom:3px dashed; color: @item.color_code_hex; margin-left:0"></span>
+                            }
+                        }
+                        else
+                        {
+                            <img src="@(String.Format("{0}{1}{2}", Model.baseUrl, "Content/images/icons/lib/Legend/", @item.icon_path))" alt="printLayerImg" style="width:@(item.layer_id == 19 ? "35px" : "16px;")">
+                        }
+                        @*<img src="@(String.Format("{0}{1}", Model.baseUrl, @item.icon_path))" alt="printLayerImg">*@
+                        @if (item.group_name == "Feeder Cable" || item.group_name == "Distribution Cable" || item.group_name == "Access Cable")
+                        {
+                            <span>@item.sub_Layer.Substring(0, 8)</span>
+                        }
+                        else
+                        {
+                            <span>@item.sub_Layer</span>
+                        }
+                        @*<span>&nbsp;&nbsp;@item.sub_Layer</span>*@
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>

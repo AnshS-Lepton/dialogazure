@@ -1,0 +1,101 @@
+﻿@model Models.ISP.FDBInfo
+@using Models;
+<style>
+    .libBody {
+        padding: 20px;
+    }
+
+    .imgMinMax {
+        max-height: 300px;
+        border-radius: 5px;
+        box-shadow: 0 7px 10px rgba(0,0,0,0.1);
+        border: 2px solid #FFFFFF;
+    }
+
+    .barCodeInput {
+        height: 28px !important;
+    }
+
+    .jc-flex-end {
+        justify-content: flex-end;
+    }
+    .self-flexStart{
+        align-self:flex-start;
+    }
+    .verifyDiv{
+        flex:1;
+    }
+    .txt-center{
+        text-align:center;
+    }
+</style>
+
+<div class="libBody viewReport">
+    @Html.HiddenFor(m => m.system_id, new { id = "hdnsystemid" })
+
+    <div class="form-group">
+        <div class="example-image-link txt-center" data-lightbox="example-set">
+            <img src="@Model.file_location" class="imgMinMax" />
+        </div>
+    </div>
+    <div class="d-fx jc-flex-end --gap15 mt-02">
+        <div id="BarcodeHint" style="display:none" class="hintBox">
+        </div>
+        <div class="d-fx --gap10 verifyDiv">
+            @Html.TextBoxFor(model => model.barcode, new { @class = "form-control barCodeInput", @onkeydown = "if(['Space'].includes(arguments[0].code)){return false;}",  @placeholder = "Barcode", @id = "txtBarCode" })
+            <input type="button" class="btn btn-primary saveBtn self-flexStart" name="btnaction" id="btnVerify" value="Verify" />
+        </div>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {  
+
+        $('#txtBarCode').keyup(function () {
+            $(this).val($(this).val().toUpperCase());
+        });
+        var hdnMaxBarcodeLength = parseInt($('#hdnMaxBarcodeLength').val());
+        var hdnMinBarcodeLength = parseInt($('#hdnMinBarcodeLength').val());
+        $("#BarcodeHint").append($("#hdnBarcodeHint").val());
+        // below function for verify FAT manual barcode
+        $("#btnVerify").on("click", function () {
+            var barcode = ($("#txtBarCode").val()).trim();
+            var system_id = $("#hdnsystemid").val();
+            var BarcodeRegx = new RegExp($('#hdnBarcodeRegx').val());
+            var Barcodevariant = $("#hdnBarcodevariants").val();
+            var Barcodevariants = Barcodevariant.split(',');
+            if (barcode != "") {
+                if (barcode.length <= hdnMaxBarcodeLength && barcode.length >= hdnMinBarcodeLength) {
+                    if (barcode.match(BarcodeRegx)) {
+                    //if (barcode.match(BarcodeRegx) && Barcodevariants.length === 2 && Barcodevariants[0] === barcode.substring(0, 5) || Barcodevariants[1] === barcode.substring(0, 5)) {
+                    // showConfirm("Are sure do you want to verify the barcode?", function () {
+                            ajaxReq('NetworkTicket/VerifiedBarcode', { system_id: system_id, barcode: barcode }, true, function (resp) {
+                                if (resp.status == "OK") {
+
+                                    alert("Barcode verified successfully.");
+                                    $(popup.DE.CloseChildPopup).trigger("click");
+                                    $('#frmNWEntityDetails').submit();
+                                }
+                                else {
+                                    alert("Error while processing the request");
+                                }
+                            }, false, false);
+                        //});
+                    }
+                    else {
+                        // $("#BarcodeHint").append(HintBarcodeMsg);
+                        alert("Invalid Barcode!");
+                    }
+               }
+               else {
+                   alert("Barcode length should be " + hdnMinBarcodeLength + " digits. ");
+               }
+            }
+            else {
+                $("#txtBarCode").css('border-color', 'red');
+            }
+
+        });
+
+    });
+</script>

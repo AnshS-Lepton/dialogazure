@@ -1,0 +1,54 @@
+﻿@model dynamic
+
+<div style="width: 100%; padding-top: 15px;padding-left:10px;">
+    <div style="width:30%; float:left">
+        <span class="ISpdelete" onclick="isp.DeleteElement(@Model.elementId,'@Model.elementType')"></span>
+     
+    </div>
+    <div style="width:30%; float:left" onclick="isp.updateElement(@Model.elementId,'@Model.elementType')">
+        <span class="ISpdetail"></span>
+
+    </div>
+    @if(Model.elementType =="FDB")
+    {
+      <div style="width:30%; float:left" onclick="isp.splitCaple(@Model.elementId,'@Model.elementType')">
+        <span class="IspsplitCable"></span>
+      </div>
+    }
+  
+    <div style="width:30%; float:left">
+        <span class="Ispedit"></span>
+
+    </div>
+    <div style="width:30%; float:left">
+        <span class="Ispedit"></span>
+
+    </div>
+    <div style="width:30%; float:left">
+        <span class="ISpdetail"></span>
+
+    </div>
+    <div style="width:30%; float:left">
+        <span class="ISpdetail"></span>
+
+    </div>
+    <div style="width:30%; float:left">
+        <span class="ISpdetail"></span>
+
+    </div>
+    <div style="width:30%; float:left">
+        <span class="ISpdetail"></span>
+
+    </div>
+</div>
+
+
+<script>
+    $('#test').click(function () {
+        alert("sdf");
+    });
+</script>
+
+<style>
+ 
+</style>

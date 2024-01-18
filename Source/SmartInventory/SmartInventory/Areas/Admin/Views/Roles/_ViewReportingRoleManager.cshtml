@@ -1,0 +1,54 @@
+﻿@model Models.RoleViewModel
+@using Utility;
+
+<!DOCTYPE html>
+<div id="dvViewRoles1">
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewRoles1", ajaxUpdateCallback: "onGridHeaderClick('gridReportingRoleMaster')");
+        grid.Bind(Model.lstRoleMaster, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+        if (Model.objGridAttributes.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+        }
+    }
+    <div id="dvUserDetail1" class="update_panel fullWidth">
+
+        
+        @using (Html.BeginForm("ViewReportingRoleManagerListByRoleId", "Roles", FormMethod.Post, new { autocomplete = "off", @id = "frmViewUsers1" }))
+        {<div class="pad_left">               
+                @if (Model.lstRoleMaster.Count > 0)
+                {
+                    <div class="recordCount mb-01"><b>Total Records:@grid.TotalRowCount</b></div>
+                    <div class="table-responsive tble_cls">
+                        @grid.GetHtml(tableStyle: "grid",
+                         htmlAttributes: new { id = "gridReportingRoleMaster" },
+                         mode: WebGridPagerModes.All,
+                         columns: grid.Columns(
+
+grid.Column(header: "S.No.", format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex, canSort: true),
+grid.Column("role_name", "Role Name", format: @<text>@item.role_name</text>, canSort: false)
+))
+                    </div>
+
+                }
+                else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Role Found.
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <script>
+        $(document).ready(function () {
+            addDefaultSortingIcons("gridReportingRoleMaster");
+        });       
+    </script>
+</div>
+
+
+
+
+
+

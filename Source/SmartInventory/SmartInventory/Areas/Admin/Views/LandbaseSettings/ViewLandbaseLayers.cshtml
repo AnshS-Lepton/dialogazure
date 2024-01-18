@@ -1,0 +1,127 @@
+﻿@model Models.LandBaseMaster
+@using Utility
+@using SmartInventory.Settings;
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div id="dvViewLBLs">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                View LandBase Layers
+            </h4>
+        </div>
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewLBLs", ajaxUpdateCallback: "onGridHeaderClick('tblLBLDetail')");
+            grid.Bind(Model.lstLayers, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+            if (Model.objGridAttributes.totalRecord > 0)
+            {
+                grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+            }
+        }
+        <div class="--pad-15">
+            @using (Html.BeginForm("ViewLayers", "LandbaseSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmViewLBLs" }))
+            {
+                <div class="form-inline filter-sec">
+                    <div class="form-group wtd_set">
+                        <label class="control-label col-sm-4">
+                            Status :
+                        </label>
+                        <div class="col-md-8">
+
+                            @Html.DropDownListFor(m => m.objGridAttributes.is_active, new List<SelectListItem>
+                     {
+                        new SelectListItem{ Text="Active", Value = "true" },
+                        new SelectListItem{ Text="InActive", Value = "false" }
+                     }, new { @id = "ddlStatus", @tabindex = "2", @title = "Status", @class = "chosen-select form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group wtd_set">
+                        <label class="control-label col-sm-4">
+                            Search Text :
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                        </div>
+                    </div>
+                    <div class="d-flex" id="dvBtnAction">
+                        <button class="btn btn-primary mr-05 ml-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                        @if (@grid.TotalRowCount > 0)
+                        {
+                            <input type="button" id="btnViewLBLExport" value="Export" class="btn btn-primary mr-05" onclick="ViewLBLReport()" />
+                        }
+                        else
+                        {
+                            <input type="button" id="btnViwLBLExport" value="Export" disabled="disabled" class="btn btn-primary mr-05" />
+                        }
+                        <a href="@Url.Action("ViewLayers")" class="btn btn-default" title="Reset">Reset</a>
+                    </div>
+                </div>
+
+                if (Model.lstLayers.Count > 0)
+                {
+                    <div id="divLBLDetail">
+                        <div class="recordCount mb-01"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+                                htmlAttributes: new { id = "tblLBLDetail" },
+                                mode: WebGridPagerModes.All,
+                                columns: grid.Columns(
+                                           grid.Column("", "Action", format:@<text>
+                                                    <a href="@Url.Action("AddLayer", "LandbaseSettings", new { id = @item.id })" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                                    <a href="javascript:void(0);" onclick="DeleteLandBaseLayerMaster(@item.id);" title="Delete"> <i class="fa fa-fw fa-trash" style="font-size: 13px; color: #f50000;"></i></a>
+                                        </text>, canSort: false
+       ),
+               grid.Column(header: "S.No.", format: @<text>@item.S_No</text>, canSort: true),
+grid.Column("layer_name", "Layer Name", format: @<text>@item.layer_name</text>, canSort: true),
+grid.Column("geom_type", "Geom Type", format: @<text>@item.geom_type</text>, canSort: true),
+
+grid.Column("layer_abbr", "Layer Abbreviation", format: @<text>@item.layer_abbr</text>, canSort: true),
+grid.Column("map_abbr", "Map Abbreviation", format: @<text>@item.map_abbr</text>, canSort: true),
+grid.Column("map_border_color", "Map Border Color", format: @<text><span class="CableMapColrCode" style="background-color:@item.map_border_color;"></span>@item.map_border_color</text>, canSort: true),
+grid.Column("map_seq", "Map Sequence", format: @<text>@item.map_seq</text>, canSort: true),
+grid.Column("map_border_thickness", "Map Border Thickness", format: @<text>@item.map_border_thickness</text>, canSort: true),
+grid.Column("map_bg_color", "Map Background Color", format: @<text><span class="CableMapColrCode" style="background-color:@item.map_bg_color;"></span>@item.map_bg_color</text>, canSort: true),
+grid.Column("map_bg_opacity", "Map Background Opacity", format: @<text>@item.map_bg_opacity</text>, canSort: true),
+grid.Column("is_center_line_enable", "Is center Line Enable", format: @<text>@(item.is_center_line_enable == true ? "Yes" : "No" )</text>, canSort: true),
+grid.Column("network_id_type", "Network Type", format: @<text>@item.network_id_type</text>, canSort: true),
+grid.Column("network_code_seperator", "Network Code Seperator", format: @<text>@item.network_code_seperator</text>, canSort: true),
+grid.Column("is_active", "Status", format: @<text>@(item.is_active == true ? "Active" : "InActive")</text>, canSort: true),
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>, canSort: true),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>, canSort: true),
+grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>, canSort: true),
+grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>, canSort: true)
+))
+
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+                            @Html.HiddenFor(m => m.objGridAttributes.searchText)
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Land Base Layer Found.
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        updateNumberstoFormatedNumber();
+        addDefaultSortingIcons("tblLBLDetail");
+    });
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+
+</script>

@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+  <Mapping id="1">
+    <DbColName>antenna_beamwidth</DbColName>
+    <TemplateColName>antenna_beamwidth</TemplateColName>
+  </Mapping>
+  <Mapping id="2">
+    <DbColName>ap_bearing_angle</DbColName>
+    <TemplateColName>ap_bearing_angle</TemplateColName>
+  </Mapping>
+  <Mapping id="3">
+    <DbColName>ap_installed_height</DbColName>
+    <TemplateColName>ap_installed_height</TemplateColName>
+  </Mapping>
+  <Mapping id="4">
+    <DbColName>ap_ip</DbColName>
+    <TemplateColName>ap_ip</TemplateColName>
+  </Mapping>
+  <Mapping id="5">
+    <DbColName>ap_model</DbColName>
+    <TemplateColName>ap_model</TemplateColName>
+  </Mapping>
+  <Mapping id="6">
+    <DbColName>owner</DbColName>
+    <TemplateColName>Layer</TemplateColName>
+  </Mapping>
+  <Mapping id="6">
+    <DbColName>bldg_height</DbColName>
+    <TemplateColName>building_height</TemplateColName>
+  </Mapping>
+  <Mapping id="6">
+    <DbColName>building_type1</DbColName>
+    <TemplateColName>building_type1</TemplateColName>
+  </Mapping>
+  <Mapping id="6">
+    <DbColName>building_type2</DbColName>
+    <TemplateColName>building_type2</TemplateColName>
+  </Mapping>
+  <Mapping id="6">
+    <DbColName>building_owner_type</DbColName>
+    <TemplateColName>building_owner_type</TemplateColName>
+  </Mapping>
+  <Mapping id="7">
+    <DbColName>bstn_id</DbColName>
+    <TemplateColName>bstn_id</TemplateColName>
+  </Mapping>
+  <Mapping id="8">
+    <DbColName>bstn_name</DbColName>
+    <TemplateColName>bstn_name</TemplateColName>
+  </Mapping>
+  <Mapping id="9">
+    <DbColName>city</DbColName>
+    <TemplateColName>city</TemplateColName>
+  </Mapping>
+ 
+  <Mapping id="19">
+    <DbColName>customer_link_id</DbColName>
+    <TemplateColName>customer_link_id</TemplateColName>
+  </Mapping>
+  <Mapping id="20">
+    <DbColName>customer_name</DbColName>
+    <TemplateColName>customer_name</TemplateColName>
+  </Mapping>
+  <Mapping id="21">
+    <DbColName>customer_service_address</DbColName>
+    <TemplateColName>customer_service_address</TemplateColName>
+  </Mapping>
+ 
+  <Mapping id="23">
+    <DbColName>customer_subscribed_speed_in_kbps</DbColName>
+    <TemplateColName>customer_subscribed_speed_in_kbps</TemplateColName>
+  </Mapping>
+ 
+  <Mapping id="31">
+    <DbColName>latitude</DbColName>
+    <TemplateColName>latitude</TemplateColName>
+  </Mapping>
+  
+  <Mapping id="34">
+    <DbColName>longitude</DbColName>
+    <TemplateColName>longitude</TemplateColName>
+  </Mapping>
+  
+ 
+  <Mapping id="37">
+    <DbColName>mast_type</DbColName>
+    <TemplateColName>mast_type</TemplateColName>
+  </Mapping>
+  
+  <Mapping id="39">
+    <DbColName>region</DbColName>
+    <TemplateColName>region</TemplateColName>
+  </Mapping>
+   
+  <Mapping id="45">
+    <DbColName>state</DbColName>
+    <TemplateColName>state</TemplateColName>
+  </Mapping>
+  <Mapping id="46">
+    <DbColName>su_ip</DbColName>
+    <TemplateColName>su_ip</TemplateColName>
+  </Mapping>
+  <Mapping id="47">
+    <DbColName>support_team</DbColName>
+    <TemplateColName>support_team</TemplateColName>
+  </Mapping>
+   
+  <Mapping id="50">
+    <DbColName>tower_height</DbColName>
+    <TemplateColName>tower_height</TemplateColName>
+  </Mapping>
+  
+
+</Mappings>

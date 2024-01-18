@@ -1,0 +1,109 @@
+﻿@model Models.FAQMaster
+
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="divAddNewFaq">
+    @using (Ajax.BeginForm("SaveFaq", "Miscellaneous",
+                                        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddNewFaq", OnSuccess = "OnSuccess", },
+                                        new { id = "frmAddFaq", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id);
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Category<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.category, new List<SelectListItem>
+                 {
+                   new SelectListItem{ Text="-Select-", Value = "" },
+                    new SelectListItem{ Text="Mobile", Value = "Mobile" },
+                    new SelectListItem{ Text="Web", Value = "Web" },
+                 }, new { @id = "ddlcategory", @tabindex = "2", @title = "category", @class = "chosen-select form-control" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Question<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(m => m.question, new { @class = "form-control onchang", @maxlength = "500", @placeholder = "Question", @id = "txquestion" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Answer<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(m => m.answer, new { @class = "form-control", @maxlength = "500", @placeholder = "Answer", @id = "txtanswer" })
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="footerModal d-flex" id="dvBtnAction">
+            <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+
+            @if (Model.id > 0)
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveAccessories" value="Update" />
+            }
+            else
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveAccessories" value="Save" />
+            }
+
+        </div>
+    }
+</div>
+<script>
+    function IsValid() {
+        if ($('#ddlcategory').val() == "") {
+            $('#ddlcategory').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddlcategory').removeClass("errorClass");
+        }
+        if ($('#txquestion').val() == "") {
+            $('#txquestion').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txquestion').removeClass("errorClass");
+        }
+        if ($('#txtanswer').val() == "") {
+            $('#txtanswer').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txtanswer').removeClass("errorClass");
+        }
+
+    };
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+
+    function OnSuccess(data) {
+         
+        if (data.pageMsg.status == "OK") {
+            $("#closeModalPopup").trigger("click");
+            //}
+            //if (data.pageMsg.status == "Update") {
+
+            //$("#closeModalPopup").trigger("click");
+        }
+        alert(data.pageMsg.message, 'Success', 'success');
+        setTimeout(function () {
+            window.location = appRoot + 'Miscellaneous/ViewFaq';
+        }, 3000);
+
+    }
+    $("#btnCancel").on("click", function () {
+        $("#closeModalPopup").trigger("click");
+    });
+</script>

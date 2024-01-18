@@ -1,0 +1,338 @@
+﻿@model Models.rowApplyStage
+@using SmartInventory.Settings;
+@{
+    var totalAmount = "Total Amount=Refundable Deposit Amount + Non Refundable Amount";
+    var RIAmountFormula = "RI Amount=" + (Model.rowType == "PIT" ? "Total Area (m²)* RI Rate / Mtr sq" : "Total Area (m²)* RI Rate / Mtr sq");
+    var refundableAmountFormula = "Refundable Deposit Amount = RI Amount / 2";
+    var nonRefundableFormula = "NON Refundable Amount =(Access Charge / Mtr * ROW Route) + RI Amount";
+}
+<style>
+    .customWidth {
+        width: 200px;
+    }
+
+    .mrgn_btm {
+        width: 180px;
+    }
+
+    #ApplyStage .form-horizontal .control-label {
+        white-space: nowrap;
+        margin-bottom: 0px;
+        text-align: left;
+        width: 190px;
+    }
+
+    #divRemarks .row {
+        margin-left: 10px;
+    }
+</style>
+<!DOCTYPE html>
+@using (Ajax.BeginForm("SaveApplyROW", "Library", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "dvModalBody",
+    LoadingElementId = "dvProgress",
+    // OnBegin = "return validateROW()",
+    Confirm = Resources.Resources.SI_OSP_ROW_JQ_FRM_003,
+    OnSuccess = "si.ROW.appliedSuccess();"
+},
+                                                                                    new { id = "frmApplyROW", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.row_system_id)
+    @Html.HiddenFor(m => m.geomType)
+    @Html.HiddenFor(m => m.rowType)
+
+
+    <fieldset class="the-fieldset">
+        <legend class="the-legend">@Resources.Resources.SI_OSP_ROW_NET_FRM_003</legend>
+        <div class="form-group">
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_007<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.road_name, new { @class = "form-control", @maxlength = "100" })</div>
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_008<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">
+                @Html.DropDownListFor(m => m.mcgm_ward, new SelectList(Model.listRowAuthority.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @id = "ddlROWAuthority" })
+            </div>
+
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_009 <i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.start_point, new { @class = "form-control", id = "txtStartPoint", @maxlength = "50", data_val = "true", data_val_required = Resources.Resources.SI_OSP_ROW_NET_FRM_099 })</div>
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_010 <i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.end_point, new { @class = "form-control", id = "txtEndPoint", @maxlength = "50", data_val = "true", data_val_required = Resources.Resources.SI_OSP_ROW_NET_FRM_100 })</div>
+
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_011<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">
+                @Html.TextBoxFor(m => m.applyDate, new { @class = "form-control clsReadOnly", id = "rowApplydate", placeholder = "DD-MMM-YYYY", @readonly = true, @style = "background:#fff;" })
+                <img id="imgApplyDate" class="assign-calen" src="@Url.Content("~/Content/images/calendar.png")" style="display:@(Model.system_id>0?"none":"block");">
+            </div>
+            <label class="control-label col-md-2 col-sm-2">@(Model.rowType == "PIT" ?Resources.Resources.SI_OSP_ROW_NET_FRM_025 : Resources.Resources.SI_OSP_GBL_GBL_GBL_013)(m<sup>2</sup>)<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.row_area, new { @class = "form-control clsReadOnly", id = "txtROWArea", @onkeypress = "return allowNumberwithOneDot(event,'txtROWArea');", @readonly = true })</div>
+
+            @if (Model.rowType == "PIT")
+            {
+
+                <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_012<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.applied_pit, new { @class = "form-control clsReadOnly", @onkeypress = "return allowNumberwithOneDot(event,'applied_pit');", @readonly = true })</div>
+            }
+
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_013<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.route_length, new { @class = "form-control clsReadOnly", id = "txtROWRouteLength", @readonly = true })</div>
+            <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_014,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.ri_rate, new { @class = "form-control", id = "txtRiRate", @maxlength = "12", @onkeypress = "return allowNumberwithOneDot(event,'txtRiRate');" })</div>
+
+            <label class="control-label col-md-2 col-sm-2">@String.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_015,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.access_charges, new { @class = "form-control", @maxlength = "12", id = "txtAccessCharge", @onkeypress = "return allowNumberwithOneDot(event,'txtAccessCharge');" })</div>
+
+            <label class="control-label col-md-2 col-sm-2" id="lblRIAmount" title="@RIAmountFormula">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_016,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.ri_amount, new { @class = "form-control clsReadOnly", @readonly = true, id = "txtRIAmount" })</div>
+
+            <label class="control-label col-md-2 col-sm-2" id="lblRefundableAmount" title="@refundableAmountFormula">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_017,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.refundable_amount, new { @class = "form-control clsReadOnly", @readonly = true, id = "txtRefundableDepositAmount" })</div>
+
+            <label class="control-label col-md-2 col-sm-2" id="lblNonRefundableAmount" title="@nonRefundableFormula">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_018,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.non_refundable_amount, new { @class = "form-control clsReadOnly", @readonly = true, id = "txtNonRefundableDepositAmount" })</div>
+
+            <label class="control-label col-md-2 col-sm-2" title="@totalAmount" id="lblTotalAmount">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_019,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.total_amount, new { @class = "form-control clsReadOnly", id = "txtTotalAmount", @readonly = true })</div>
+
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_020<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.considered_dlp_factor, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'considered_dlp_factor');" })</div>
+
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_021<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">
+                @Html.DropDownListFor(m => m.starta_type,
+            new List<SelectListItem>
+                {
+                new SelectListItem{ Text="Footpath", Value = "Footpath" },
+                new SelectListItem{ Text="Carriageway", Value = "Carriageway" },
+                }, "--Select--", new { @class = "chosen-select col-sm-12" })
+            </div>
+        </div>
+
+    </fieldset>
+
+    <fieldset class="the-fieldset attach">
+        <legend class="the-legend">@Resources.Resources.SI_OSP_ROW_NET_FRM_022</legend>
+        <div class="form-group UploadAction">
+            <div class="col-md-3 col-sm-3">
+                <select class="form-control chosen-select" id="ddlAttachmentType">
+                    <option value="0">--Select--</option>
+                    @foreach (var item in Model.listAttachmentType)
+                    {
+                        <option value="@item.attachment_type" data-max-limit="@item.attachment_limit" data-category="@item.category" data-attachment-type="@item.attachment_type" data-is-required="@item.is_mandatory">@item.attachment_type</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 col-sm-3" id="divDocumentUpload" style="display:flex; text-decoration:underline;">
+                <input type="file" class="file" multiple name="file[]" id="ApplyDocUpload">
+                <a href="#" onclick="si.ROW.attachment.upload(@Model.row_system_id,'Apply','ROW','ApplyDocUpload','ddlAttachmentType');" value="Upload" id="btnUploadDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008</a>
+                <a href="#" onclick="si.ROW.clear();" value="Clear" id="btnClearDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</a>
+            </div>
+            <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
+        </div>
+        <div class="form-group">
+            <div id="divApplyDocument" class="tab-pane y-scroll">
+                @Html.Partial("_ROWAttachmentsFiles", Model.fileList)
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="the-fieldset">
+        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006</legend>
+        <div class="form-group"><span class="referenceRowAdd" id="btnAddRemarks" title="@Resources.Resources.SI_OSP_ROW_NET_FRM_086"></span></div>
+        <div class="form-group" id="divRemarks">
+            @if (Model.system_id == 0)
+            {
+                <div class="row">
+                    <div class="col-md-2 col-sm-2">
+                        <label class="control-label" style="margin-bottom: 8px;">@Resources.Resources.SI_OSP_ROW_NET_FRM_023:</label>
+                    </div>
+                    <div class="col-md-10 col-sm-10 rowremarks">
+                        <input name="remarksList[0].id" id="remarksList_0__id" type="hidden" value="0">
+                        <input name="remarksList[0].row_system_id" id="remarksLists_0__row_system_id" type="hidden" value="@Model.row_system_id">
+                        <input name="remarksList[0].row_stage" id="remarksList_0__row_stage" type="hidden" value="Apply">
+                        <input type="text" class="form-control" name="remarksList[0].remarks" id="remarksList_0__remarks" maxlength="100" />
+                    </div>
+                </div>
+
+            }
+            else if (Model.system_id > 0 && Model.remarksList.Count > 0)
+            {
+                for (int i = 0; i < Model.remarksList.Count; i++)
+                {
+                    <div class="row">
+                        <div class="col-md-2 col-sm-2">
+                            <label class="control-label" style="margin-bottom: 8px;margin-left: -14px;">
+                                @Resources.Resources.SI_OSP_ROW_NET_FRM_087-@(i + 1):
+                            </label>
+                        </div>
+                        <div class="col-md-10 col-sm-10 rowremarks">
+                            @Html.HiddenFor(m => m.remarksList[i].id)
+                            @Html.HiddenFor(m => m.remarksList[i].row_system_id)
+                            @Html.HiddenFor(m => m.remarksList[i].row_stage)
+                            @Html.TextBoxFor(m => m.remarksList[i].remarks, new { @class = "form-control", @maxlength = "100" })
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="row" style="text-align: center;">@Resources.Resources.SI_OSP_ROW_NET_FRM_024 </div>
+            }
+        </div>
+    </fieldset>
+    <fieldset class="the-fieldset">
+        <legend class="the-legend">@Resources.Resources.SI_OSP_ROW_NET_FRM_026</legend>
+        @if (Model.system_id == 0)
+        {
+            <div class="form-group">
+                <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_027<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4 col-sm-4 mrgn_btm">
+                    @Html.DropDownListFor(m => m.ChargeTemplate, new SelectList(Model.ChargesTemplates.Select(x => new { Value = x.id, Text = x.template_name.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @id = "ddlROWChargeTemplates", @onchange = "si.ROW.getCostTemplateById();" })
+                </div>
+            </div>
+        }
+        <div class="form-group">
+            @if (Model.rowType == "Line")
+                {
+                <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_028,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.supervision, new { @class = "form-control", @maxlength = "6", id = "txtROWSupervision" })</div>
+            }
+            <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_029,ApplicationSettings.Currency) <i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.local_management, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'local_management');" })</div>
+
+            <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_030,ApplicationSettings.Currency) <i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.dit_liaisoning, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'dit_liaisoning');" })</div>
+            <label class="control-label col-md-2 col-sm-2" title="@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_052,ApplicationSettings.Currency)">@Resources.Resources.SI_OSP_ROW_NET_FRM_031<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.row_liaisoning, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'row_liaisoning');" })</div>
+
+            <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_032,ApplicationSettings.Currency) <i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.otm_liasoning, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'otm_liasoning');" })</div>
+            <label class="control-label col-md-2 col-sm-2" title="@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_053,ApplicationSettings.Currency)">@Resources.Resources.SI_OSP_ROW_NET_FRM_033<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.autocad_drawing, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'autocad_drawing');" })</div>
+            @if (Model.rowType == "Line")
+            {
+                <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_034,ApplicationSettings.Currency) <i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.cl_rly_fly_brg_laisioning, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'cl_rly_fly_brg_laisioning');", data_val = "true", data_val_required = Resources.Resources.SI_OSP_ROW_NET_FRM_101 })</div>
+                <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_035,ApplicationSettings.Currency) <i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.cl_ft_brg_laisioning, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'cl_ft_brg_laisioning');", data_val = "true", data_val_required = Resources.Resources.SI_OSP_ROW_NET_FRM_101 })</div>
+                <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_036<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.cl_rly_fly_brg_length, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'cl_rly_fly_brg_length');" })</div>
+                <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_037<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.cl_ft_brg_length, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'cl_ft_brg_length');" })</div>
+            }
+
+            <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_038,ApplicationSettings.Currency) <i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.budget_material_cost, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'budget_material_corst');" })</div>
+            <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_039,ApplicationSettings.Currency) <i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.budget_contractor_cost, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'budget_contractor_corst');" })</div>
+
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_040 <i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.no_of_hh, new { @class = "form-control", @maxlength = "3" })</div>
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_041<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.no_of_pulled_cables, new { @class = "form-control", @maxlength = "3", id = "txtPulledCables" })</div>
+            @if (Model.rowType == "PIT")
+            {
+                <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_054<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.pit_charges, new { @class = "form-control", @maxlength = "5", @onkeypress = "return allowNumberwithOneDot(event,'txtPITCharges');", id = "txtPITCharges", data_val = "true", data_val_required = "The PIT Charges is required." })</div>
+            }
+            <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_042,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.cable_pulling_rate, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'cable_pulling_rate');" })</div>
+            <label class="control-label col-md-2 col-sm-2" title="@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_055,ApplicationSettings.Currency)">@Resources.Resources.SI_OSP_ROW_NET_FRM_043<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.bdotm_otm_trenching_ducting_rate, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'bdotm_otm_trenching_ducting_rate');" })</div>
+            <label class="control-label col-md-2 col-sm-2" title="@Resources.Resources.SI_OSP_ROW_NET_FRM_056">@Resources.Resources.SI_OSP_ROW_NET_FRM_043<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.bdotm_otm_trenching_ducting_length, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'bdotm_otm_trenching_ducting_length');" })</div>
+            <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_044,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.bdotm_otm_ri_rate, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'bdotm_otm_ri_rate');" })</div>
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_045<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.bdotm_otm_ri_length, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'bdotm_otm_ri_length');" })</div>
+            <label class="control-label col-md-2 col-sm-2" title="@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_057,ApplicationSettings.Currency)">@Resources.Resources.SI_OSP_ROW_NET_FRM_046<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.bdotm_otm_liasioning_rate, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'bdotm_otm_liasioning_rate');" })</div>
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_047<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.bdotm_otm_liasioning_length, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'bdotm_otm_liasioning_length');" })</div>
+            <label class="control-label col-md-2 col-sm-2" title="@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_058,ApplicationSettings.Currency)">@Resources.Resources.SI_OSP_ROW_NET_FRM_048<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.bdotl_otl_trenching_ducting_rate, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'bdotl_otl_trenching_ducting_rate');" })</div>
+            <label class="control-label col-md-2 col-sm-2" title="@Resources.Resources.SI_OSP_ROW_NET_FRM_059">@Resources.Resources.SI_OSP_ROW_NET_FRM_048<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.bdotl_otl_trenching_ducting_length, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'bdotl_otl_trenching_ducting_length');" })</div>
+            <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_049,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.bdotl_otl_ri_rate, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'bdotl_otl_ri_rate');" })</div>
+            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_050<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.bdotl_otl_ri_length, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'bdotl_otl_ri_length');" })</div>
+            <label class="control-label col-md-2 col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_051,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">@Html.TextBoxFor(m => m.handhole_rate, new { @class = "form-control", @maxlength = "6", @onkeypress = "return allowNumberwithOneDot(event,'handhole_rate');" })</div>
+        </div>
+    </fieldset>
+    <div class="form-group ModalFooter" id="divROWApplyActions">
+        <div class="col-md-3 col-sm-3 ModalFooterControll">
+            <button type="button" class="btn btn-primary" id="btnApplyRow">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_007</button>
+            <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancelROW">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    //AddATStatusRow
+    var inputs = [];
+    $(document).ready(function () {
+        $('#txtRiRate,#txtAccessCharge').on('input', function () {
+            this.value = this.value.match(/^\d+\.?\d{0,2}/);
+        });
+        $("#btnApplyRow").on("click", function () {
+            var isValid=true;
+            isValid=validateROW();
+            if($('#starta_type').val()!='' && $('#ddlROWChargeTemplates').val()=='')
+            {
+                alert(MultilingualKey.SI_OSP_ROW_JQ_FRM_001);
+                return false;
+            }
+            if($('#txtPulledCables').val()!='' && $('#txtPulledCables').val()!=null)
+            {
+                isValid=si.ROW.isAttachmentTypeValid(true);
+            }
+            if(isValid)
+            {
+                $('#frmApplyROW').submit();
+            }
+        });
+
+        $('#ApplyStage .control-label[title!=""]').tooltip({ title: '', html: true, placement: "bottom" });
+        //$('.mrgn_btm,.control-label').addClass('customWidth');
+        $("#btnAddRemarks").on("click", function () {
+            var RowIndex = $('#divRemarks .rowremarks ').length;
+            AddRemarkRow(RowIndex,@Model.row_system_id,'Apply','divRemarks');
+        });
+        $('.chosen-select').chosen({ width: '100%' });
+        callFormValidator("frmApplyROW");
+        si.setDateTimeCalendar("rowApplydate", "imgApplyDate", false, false);
+        if ('@Model.system_id' > 0)
+        {
+            $('#divROWApplyActions').hide();
+            $('.UploadAction,#btnAddRemarks').hide();
+        }
+        else
+        {
+            $.each($("input[type='text']"), function (i, item) {
+                if($(item).val()==0)
+                {
+                    $(item).val(null);
+                }
+            })
+            $('#txtRiRate').on('keyup', function() {
+                var riAmount=si.ROW.setRIAmount();
+            })
+            $('#txtAccessCharge').on('keyup', function() {
+                var nonRefundableAmount= si.ROW.getNonRefundableAmount($('#txtAccessCharge').val(),'@Model.route_length');
+                $('#txtNonRefundableDepositAmount').val(nonRefundableAmount);
+                var totalAmount= si.ROW.getTotalAmount();
+                if(!isNaN(totalAmount)){ $('#txtTotalAmount').val(totalAmount);}
+
+            })
+        }
+    });
+
+    function validateROW() {
+
+        if ('@Model.rowType' == 'PIT' && ($('#applied_pit').val() == '' || $('#applied_pit').val() == null || $('#applied_pit').val() == 0)) {
+            alert(MultilingualKey.SI_OSP_ROW_JQ_FRM_002 );
+            return false;
+        }
+        return true;
+    }
+</script>

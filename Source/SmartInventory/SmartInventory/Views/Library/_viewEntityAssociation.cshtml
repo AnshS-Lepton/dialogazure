@@ -1,0 +1,94 @@
+﻿@model  Models.AssociateLineEntity
+@using Models;
+
+@helper pageMessage()
+{
+
+    { Html.RenderPartial("_PageMessage", Model.pageMsg); }
+
+}
+<style>
+    .table-responsive {
+        min-height: .01%;
+        overflow: auto;
+        max-height: 342px;
+    }
+</style>
+<!DOCTYPE html>
+<div class="libDetail">
+    @if (Model.listLineEntityInfo.Count() > 0)
+    {
+        <div class="space-pad">
+            <div class="d-flex mb-01">
+                <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:@Model.listLineEntityInfo.Count()</b>
+                <b class="ml-auto">@Resources.Resources.SI_OSP_GBL_GBL_GBL_001:&nbsp;&nbsp;@Model.parent_network_id</b>
+            </div>
+            <div class="table-responsive">
+                <table id="tblviewLineEnLstInfo" class="grid" cellpadding="0" cellspacing="0">
+
+                    <thead>
+                        <tr>
+                            <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_001</th>
+                            <th scope="col">Display Name</th>
+                            <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_FRM_020</th>
+                            <th scope="col">@Resources.Resources.SI_OSP_CAB_NET_RPT_003</th>
+                            <th scope="col">@Resources.Resources.SI_OSP_CAB_NET_RPT_004</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.listLineEntityInfo.Count; i++)
+                        {
+                            var geomType = "Point";
+                            <tr class="@(i%2==0?"alt":"")">
+
+                                <td>
+                                    <span>@Model.listLineEntityInfo[i].entity_network_id</span>
+                                    @Html.HiddenFor(m => m.listLineEntityInfo[i].entity_network_id)
+
+                                </td>
+                                <td>
+                                    <span>@Model.listLineEntityInfo[i].display_name</span>
+                                    @Html.HiddenFor(m => m.listLineEntityInfo[i].display_name)
+
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => m.listLineEntityInfo[i].system_id)
+                                    <span>@(Model.listLineEntityInfo[i].entity_type)</span>
+                                    @Html.HiddenFor(m => m.listLineEntityInfo[i].entity_type)
+                                </td>
+                                <td>@Model.listLineEntityInfo[i].associated_by</td>
+                                <td>@Model.listLineEntityInfo[i].associated_on</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <div class="ml-auto">
+                @if (Model.listLineEntityInfo.Count() > 0)
+                {
+                    <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                    <button type="button" class="btn btn-primary" id="btnExportEntityAssociation">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="nr-found">
+            <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+        </div>
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        attachUnAttachEvt($('#btnExportEntityAssociation'), 'click', function () {
+
+            si.ExportAssociation('@Model.parent_system_id', '@Model.parent_entity_type', '@Model.parent_network_id')
+        });
+
+    });
+</script>

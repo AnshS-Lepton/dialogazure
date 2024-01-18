@@ -1,0 +1,146 @@
+
+.show-modal {
+    font-size: 2rem;
+    font-weight: 600;
+    padding: 1.75rem 3.5rem;
+    margin: 5rem 2rem;
+    border: none;
+    background-color: #fff;
+    color: #444;
+    border-radius: 10rem;
+    cursor: pointer;
+}
+
+.close-modal {
+    position: absolute;
+    top: -0.2rem;
+    right: 1rem;
+    font-size: 2rem;
+    color: #ffffff;
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+
+/*p {
+  font-size: 1.8rem;
+}*/
+
+/* -------------------------- */
+/* CLASSES TO MAKE MODAL WORK */
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+}
+
+.input--box {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+    .input--box input {
+        background: #FFFFFF;
+        padding: 0.5rem 1rem;
+        width: 100%;
+        border-radius: 3px;
+        border:1px solid rgba(0, 0, 0, 0.3)
+    }
+
+.input--box_img {
+    margin-right: 1.5rem;
+}
+
+.btns--box {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn--box_cancel {
+    margin-right: 1rem;
+    color: #8D8D8D;
+    background: #FFFFFF;
+    border: 1px solid #CCCCCC !important;
+}
+
+.btn--box_ok {
+    background: #E90038;
+    color: #FFFFFF;
+}
+
+.btn--box_ok_disable {
+    background: #CF93A1;
+    color: #FFFFFF;
+}
+
+.btns--box button {
+    border: none;
+    padding: 0.4rem 1rem;
+    box-shadow: 0 0.5rem 0.7rem rgba(0,0,0,0.2);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.deleteModal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+    width: 40%;
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    box-shadow: 0 3rem 4rem rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    transition: 0.4s;
+    color: #ffffff
+}
+.modal--Body {
+    padding: 0 2.5rem 2.5rem;
+    color: #333333;
+}
+
+    .deleteModal h1 {
+        font-size: 16px;
+        text-align: left;
+        padding-left: 4rem;
+        background: #FF675A;
+        color:#FFFFFF;
+        padding:0.9rem 0 0.9rem 2.5rem;
+        font-weight:600;
+    }
+
+.modal--Body h2 {
+    font-size: 16px;
+    text-align: left;
+    padding-left: 0.5rem;
+    padding-top: 1rem;
+}
+.modal--Body h3 {
+    font-size: 16px;
+    text-align: left;
+    padding-left: 0.5rem;
+    padding-top: 1rem;
+    padding-left: 4rem;
+}
+.visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+.trns {
+    transform: translate(-50%, -50%);
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(3px);
+    z-index: 5;
+}

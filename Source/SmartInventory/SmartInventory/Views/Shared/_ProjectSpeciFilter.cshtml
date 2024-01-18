@@ -1,0 +1,292 @@
+﻿@model Models.ProjectSpecificView
+@using Models;
+@using SmartInventory.Settings;
+
+
+@helper ProjectSpecifications()
+{
+    { Html.RenderPartial("~/Views/Library/_ProjectSpecification.cshtml", (IProjectSpecification)Model); }
+}
+
+@{
+    var lyrCable = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Cable.ToString().ToUpper()).FirstOrDefault() : null;
+    var lyrPOD = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
+    var lstLayers = ((List<NetworkLayer>)Session["NerworkLayerDetails"]).Where(x => (x.planned_view == true || x.asbuild_view == true || x.dormant_view == true)).ToList();
+}
+<style>
+    .checkbox-custom{
+        width:auto !important;
+    }
+    .boxHeight{
+        height:520px;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="frmPrjSpecificFilter" class="form-horizontal">
+    <div class="libDetail boxHeight">
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">                    
+                    @if (Model.lstUserModule.Contains("PROJ"))
+                    {
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_001</legend>
+                            @ProjectSpecifications()
+                        </fieldset>
+                    }
+
+                    @if (lstLayers.Where(x => x.layerName.ToUpper() == "BUILDING").Count() > 0)
+                    {
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_149 </legend>
+
+                            <div class="form-group row">
+                                @*<label class="control-label col-sm-2" for="ddBldRFS">Building RFS:</label>*@
+                                <div class="col-md-12" id="chkBldRfs">
+                                    @foreach (var item in Model.lstBuildingRFS)
+                                    {
+                                        <input id="chk_nLyr_@item.Text" type="checkbox" data-mapabbr="@item.Text.ToUpper()" class="checkbox-custom">
+                                        <b class="align_check_box"><label for="chk_nLyr_@item.Text" class="checkbox-custom-label"><span>@item.Text</span></label></b>
+                                        @*@Html.CheckBoxFor(model => item.IsChecked, new { @class = "checkbox-custom", id = @item.Value })@item.Text*@
+                                    }
+                                </div>
+                                @*@Html.DropDownListFor(m => m.bld_rfs, new SelectList(Model.lstBuildingRFS.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "Select", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })*@
+                            </div>
+                        </fieldset>}
+                    @if (lstLayers.Where(x => x.layerName.ToUpper() == "CABLE").Count() > 0)
+                    {
+                        // var layer_title = lstLayers.Where(x => x.layerName != "");
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@lyrCable.layer_title @Resources.Resources.SI_GBL_GBL_GBL_FRM_037</legend>
+                            <div class="form-group  row">
+                                <label class="control-label col-sm-2">@lyrCable.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    <select id="ddlFilterCableType" name="@Html.NameFor(m => m.cable_type)" class="chosen-select col-sm-12">
+                                        <option value="0">-Select-</option>
+                                        @foreach (var type in Model.listcableType)
+                                        {
+                                            var selected = type.dropdown_key == Model.cable_type ? "selected" : "";
+                                            <option value="@type.dropdown_key" data-projectname="@type.dropdown_value" @selected>@type.dropdown_value</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_CAB_NET_FRM_019:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    <select id="ddlFilterCableCategory" name="@Html.NameFor(m => m.cable_category)" class="chosen-select col-sm-12">
+                                        <option value="0">-Select-</option>
+                                        @foreach (var type in Model.listcableCategory)
+                                        {
+                                            var selected = type.dropdown_key == Model.cable_category ? "selected" : "";
+                                            <option value="@type.dropdown_key" data-projectname="@type.dropdown_value" @selected>@type.dropdown_value</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </fieldset>}
+                    @if (lstLayers.Where(x => x.layerName.ToUpper() == "FAULT").Count() > 0)
+                    {
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_GBL_GBL_NET_FRM_036</legend>
+                            <div class="form-group  row">
+                                <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_GBL_136:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    <select id="ddlFilterFaultStatus" name="@Html.NameFor(m => m.fault_type)" class="chosen-select col-sm-12">
+                                        <option value="0">-Select-</option>
+                                        @foreach (var type in Model.listFaultType)
+                                        {
+                                            var selected = type.dropdown_key == Model.fault_type ? "selected" : "";
+                                            <option value="@type.dropdown_key" data-projectname="@type.dropdown_value" @selected>@type.dropdown_value</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </fieldset>}
+                    @if (lstLayers.Where(x => x.layerName.ToUpper() == "SPLITTER").Count() > 0)
+                    {
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_483</legend>
+                            <div class="form-group row">
+                                <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_GBL_110:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    <select id="ddlFilterSplitterType" name="@Html.NameFor(m => m.splitter_type)" class="chosen-select col-sm-12">
+                                        <option value="0">-Select-</option>
+                                        @foreach (var type in Model.listsplittertype)
+                                        {
+                                            var selected = type.dropdown_key == Model.splitter_type ? "selected" : "";
+                                            <option value="@type.dropdown_key" data-projectname="@type.dropdown_value" @selected>@type.dropdown_value</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_GBL_GBL_NET_FRM_037</legend>
+                        <div class="form-group row">
+                            <label class="control-label col-md-2 col-sm-2" for="RdOwnershipType">@Resources.Resources.SI_GBL_GBL_GBL_GBL_147:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.DropDownListFor(m => m.ownership_type, new List<SelectListItem>
+                                    {
+                                            new SelectListItem { Text = "Own", Value = "Own"},
+                                            new SelectListItem { Text = "Third Party", Value = "Third Party"},
+                                    }, "-All-", new { @class = "chosen-select", @id = "ddlFilterOwnership", @onchange = "onChangeOwnershipType()" })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2" for="txt3rdprtyvndr">@Resources.Resources.SI_GBL_GBL_GBL_GBL_148</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.DropDownListFor(m => m.third_party_vendor_id, new SelectList(Model.list3rdPartyVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select form-control ", id = "txt3rdPartyVendor", @onchange = "onChangeThirdParyVendor()" })
+                            </div>
+                        </div>
+                    </fieldset>
+                    @if (lstLayers.Where(x => x.layerName.ToUpper() == "SECTOR").Count() > 0)
+                    {
+
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_484</legend>
+                            <div class="form-group row">
+                                <label class="control-label col-sm-2" for="ddlDownlink">@Resources.Resources.SI_OSP_GBL_NET_FRM_485:</label>
+                                <div class="col-sm-4">
+                                    @Html.DropDownListFor(m => m.sector_type, new SelectList(Model.lstSectorType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlSectorType", @onchange = "getval();" })
+                                </div>
+                                <label class="control-label col-sm-2" for="ddlFrequency">@Resources.Resources.SI_OSP_CAB_NET_RPT_016:</label>
+                                <div class="col-sm-4">
+                                    @Html.DropDownListFor(m => m.frequency, new SelectList(Model.lstFrequencyType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlFrequency" })
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+                    @if (ApplicationSettings.listLayerDetails.Where(x => x.is_pod_association_allowed == true).Count() > 0)
+                    {
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@lyrPOD.layer_title @Resources.Resources.SI_OSP_POP_NET_FRM_001</legend>
+                            <div class="form-group row">
+                                <label class="control-label noWhiteSpa col-md-2 col-sm-2" for="RdPriPODAssc">@Resources.Resources.SI_OSP_ONT_NET_FRM_009 @lyrPOD.layer_title:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    @Html.DropDownListFor(m => m.primary_pop_system_id, new SelectList(Model.lstPODAssociation.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlPrimaryPOD" })
+                                </div>
+                                <label class="control-label noWhiteSpa col-md-2 col-sm-2" for="RdSecPODAssc">@Resources.Resources.SI_OSP_ONT_NET_FRM_010 @lyrPOD.layer_title:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    @Html.DropDownListFor(m => m.secondary_pop_system_id, new SelectList(Model.lstPODAssociation.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "ddlSecondaryPOD" })
+                                </div>
+                            </div>
+                        </fieldset>
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ModalFooter" id="dvBtnAction">
+        <div class="d-flex">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancelFilterProjSpec">
+                @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006
+            </a>
+            <button type="submit" class="btn btn-primary ml-10" id="btnFilterProjSpec" onclick="si.ProjectSpeciFilter()">@Resources.Resources.SI_OSP_GBL_NET_FRM_151</button>
+         </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //$(document).ready(function () {
+    //    $(".chosen-container").each(function () {
+    //        debugger;
+    //        let parentDiv = $('.libDetail').height();
+    //        let curElement = $(this);
+    //       // console.log('cur h'+ curElement.position());
+    //        let innBoxHeight = $('.chosen-results').height();
+    //        //console.log('inner b h' + innBoxHeight.position());
+    //        console.log('parent d h' + parentDiv);
+    //        if (curElement + innBoxHeight < parentDiv) {
+    //            $(this).addClass('abc');
+    //        } else {
+    //            $(this).addClass('xyz')
+    //        }
+
+    //    })
+    //})
+</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        getval();
+        $('.chosen-select').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
+        $("#txt3rdPartyVendor").attr('data-placeholder', "-All-").trigger("chosen:updated");
+        $("#ddlSectorType").attr('data-placeholder', "-All-").trigger("chosen:updated");
+        $("#ddlFrequency").attr('data-placeholder', "-All-").trigger("chosen:updated");
+        $("#ddlPrimaryPOD").attr('data-placeholder', "-All-").trigger("chosen:updated");
+        $("#ddlSecondaryPOD").attr('data-placeholder', "-All-").trigger("chosen:updated");
+        $("#ddlFilterOwnership").attr('data-placeholder', "-All-").trigger("chosen:updated");
+        if (si.thirdpartyvendor != undefined && si.thirdpartyvendor != '') {
+            $("#txt3rdPartyVendor").val(si.thirdpartyvendor).trigger("chosen:updated");
+        }
+        if (si.ownership != undefined) {
+            $("#ddlFilterOwnership").val(si.ownership).trigger("chosen:updated");
+        }
+        if (si.primary_pod_system_id != undefined) {
+            $("#ddlPrimaryPOD").val(si.primary_pod_system_id).trigger("chosen:updated");
+        }
+        if (si.secondary_pod_system_id != undefined) {
+            $("#ddlSecondaryPOD").val(si.secondary_pod_system_id).trigger("chosen:updated");
+        }
+    });
+    function getThirdPartyType() {
+        var selectedownership = $("input[name='rdbOwnershipType']:checked").val();
+        $('#txt3rdPartyVendor').val('');
+        if (selectedownership == 'Third Party') {
+            $('#txt3rdPartyVendor').prop('disabled', false).trigger("chosen:updated");
+        }
+        else {
+            $('#txt3rdPartyVendor').next().removeClass('input-validation-error');
+            $('#txt3rdPartyVendor').prop('disabled', true).trigger("chosen:updated");
+        }
+        $("#hdnOwnershipType").val(selectedownership);
+
+    }
+    function onChangeThirdParyVendor() {
+        var selectedVal = $('#txt3rdPartyVendor').val();
+        if (selectedVal != '' && selectedVal != null) {
+            $('#txt3rdPartyVendor').next().removeClass('input-validation-error');
+        }
+        else {
+            //   $('#txt3rdPartyVendor').next().addClass('input-validation-error');
+        }
+    }
+    function onChangeOwnershipType() {
+        if ($("#ddlFilterOwnership").val() == 'Own') {
+            $('#txt3rdPartyVendor').val('');
+            $('#txt3rdPartyVendor').prop('disabled', true).trigger("chosen:updated");
+        }
+        else {
+            $('#txt3rdPartyVendor').prop('disabled', false).trigger("chosen:updated");
+        }
+    }
+    function getval() {
+
+         
+
+         
+
+        var ids = "";
+        var ddlsectortype = $('#ddlSectorType').val()
+
+        if (ddlsectortype != '' && ddlsectortype != null && ddlsectortype != undefined) {
+            ids = $('#ddlSectorType').val().join(',');
+        }
+        $.ajax({
+            type: "GET",
+            url: "@Url.Content("~/Sector/GetDropDownListJson")",
+            data: { layerName: "Sector", ID: ids },
+            success: function (data) {
+                var s = '';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].dropdown_value + '">' + data[i].dropdown_key + '</option>';
+                }
+                $("#ddlFrequency").html(s).trigger("chosen:updated");
+            }
+        });
+    }
+
+</script>

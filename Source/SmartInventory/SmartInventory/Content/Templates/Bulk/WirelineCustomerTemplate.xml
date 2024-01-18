@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+  <Mapping id="0">
+    <DbColName>network_id</DbColName>
+    <TemplateColName>eLOC id</TemplateColName>
+  </Mapping>
+  <Mapping id="1">
+    <DbColName>customer_code</DbColName>
+    <TemplateColName>Customer Code</TemplateColName>
+  </Mapping>
+  <Mapping id="2">
+    <DbColName>site_id</DbColName>
+    <TemplateColName>site_id</TemplateColName>
+  </Mapping>
+  <Mapping id="3">
+    <DbColName>site_name</DbColName>
+    <TemplateColName>site_name</TemplateColName>
+  </Mapping>
+  <Mapping id="4">
+    <DbColName>site_address</DbColName>
+    <TemplateColName>site_address</TemplateColName>
+  </Mapping>
+  <Mapping id="5">
+    <DbColName>lms_id</DbColName>
+    <TemplateColName>lms_id</TemplateColName>
+  </Mapping>
+  <Mapping id="5">
+    <DbColName>customer_link_id</DbColName>
+    <TemplateColName>customer_link_id</TemplateColName>
+  </Mapping>
+  <Mapping id="6">
+    <DbColName>customer_po_id1</DbColName>
+    <TemplateColName>customer_po_id1</TemplateColName>
+  </Mapping>
+  <Mapping id="7">
+    <DbColName>customer_po_id2</DbColName>
+    <TemplateColName>customer_po_id2</TemplateColName>
+  </Mapping>
+  <Mapping id="8">
+    <DbColName>po_date</DbColName>
+    <TemplateColName>po_date</TemplateColName>
+  </Mapping>
+  <Mapping id="9">
+    <DbColName>owner</DbColName>
+    <TemplateColName>Layer</TemplateColName>
+  </Mapping>
+  <Mapping id="10">
+    <DbColName>building_height</DbColName>
+    <TemplateColName>building_height</TemplateColName>
+  </Mapping>
+  <Mapping id="11">
+    <DbColName>building_type1</DbColName>
+    <TemplateColName>building_type1</TemplateColName>
+  </Mapping>
+  <Mapping id="12">
+    <DbColName>building_type2</DbColName>
+    <TemplateColName>building_type2</TemplateColName>
+  </Mapping>
+  <Mapping id="13">
+    <DbColName>building_owner_type</DbColName>
+    <TemplateColName>Building_Owner_Type</TemplateColName>
+  </Mapping>
+  <Mapping id="14">
+    <DbColName>connected_sw_ip</DbColName>
+    <TemplateColName>connected_sw_ip</TemplateColName>
+  </Mapping>
+  <Mapping id="15">
+    <DbColName>connected_sw_port</DbColName>
+    <TemplateColName>connected_sw_port</TemplateColName>
+  </Mapping>
+  <Mapping id="16">
+    <DbColName>customer_subscribed_bw_in_kbps</DbColName>
+    <TemplateColName>customer_subscribed_bw_in_kbps</TemplateColName>
+  </Mapping>
+  <Mapping id="17">
+    <DbColName>customer_connected_through</DbColName>
+    <TemplateColName>OH/UG</TemplateColName>
+  </Mapping>
+  <Mapping id="18">
+    <DbColName>cable_length</DbColName>
+    <TemplateColName>fiber length</TemplateColName>
+  </Mapping>
+  <Mapping id="19">
+    <DbColName>fiber_length</DbColName>
+    <TemplateColName>fiber_length</TemplateColName>
+  </Mapping>
+  <Mapping id="20">
+    <DbColName>path_type</DbColName>
+    <TemplateColName>Primary/Secondary</TemplateColName>
+  </Mapping>
+  <Mapping id="21">
+    <DbColName>primary_bstn_name</DbColName>
+    <TemplateColName>
+      Primary
+    </TemplateColName>
+  </Mapping>
+  <Mapping id="22">
+    <DbColName>secondary_bstn_name</DbColName>
+    <TemplateColName>
+      Secondary
+    </TemplateColName>
+  </Mapping>
+
+  <Mapping id="23">
+    <DbColName>commissioning_date</DbColName>
+    <TemplateColName>
+      Commissioning Date
+    </TemplateColName>
+  </Mapping>
+  <Mapping id="24">
+    <DbColName>vendor_name</DbColName>
+    <TemplateColName>
+      vendor Name
+    </TemplateColName>
+  </Mapping>
+  <Mapping id="25">
+    <DbColName>kml_length</DbColName>
+    <TemplateColName>
+      kml length
+    </TemplateColName>
+  </Mapping>
+  <Mapping id="26">
+    <DbColName>latitude</DbColName>
+    <TemplateColName>latitude</TemplateColName>
+  </Mapping>
+  <Mapping id="27">
+    <DbColName>longitude</DbColName>
+    <TemplateColName>longitude</TemplateColName>
+  </Mapping>
+  <Mapping id="28">
+    <DbColName>remarks</DbColName>
+    <TemplateColName>remarks</TemplateColName>
+  </Mapping> 
+  <Mapping id="29">
+    <DbColName>customer_name</DbColName>
+    <TemplateColName>customer_name</TemplateColName>
+  </Mapping>
+  <Mapping id="30">
+    <DbColName>collector_ring_name</DbColName>
+    <TemplateColName>collector_ring_name</TemplateColName>
+  </Mapping>
+  <Mapping id="31">
+    <DbColName>physical_status</DbColName>
+    <TemplateColName>physical_status</TemplateColName>
+  </Mapping>
+  <Mapping id="32">
+    <DbColName>fusion_status</DbColName>
+    <TemplateColName>fusion_status</TemplateColName>
+  </Mapping>
+  <Mapping id="33">
+    <DbColName>commercial_status</DbColName>
+    <TemplateColName>commercial_status</TemplateColName>
+  </Mapping>
+  <Mapping id="34">
+    <DbColName>terminate_pe_ip</DbColName>
+    <TemplateColName>terminate_pe_ip</TemplateColName>
+  </Mapping>
+  <Mapping id="35">
+    <DbColName>pe_interface</DbColName>
+    <TemplateColName>pe_interface</TemplateColName>
+  </Mapping>
+  <Mapping id="36">
+    <DbColName>bstn_sw_port</DbColName>
+    <TemplateColName>bstn_sw_port</TemplateColName>
+  </Mapping>
+  <Mapping id="37">
+    <DbColName>bstn_sw_ip</DbColName>
+    <TemplateColName>bstn_sw_ip</TemplateColName>
+  </Mapping>
+  <Mapping id="38">
+    <DbColName>customer_connecting_port_from_bstn_sw</DbColName>
+    <TemplateColName>customer_connecting_port_from_bstn_sw</TemplateColName>
+  </Mapping>
+  <Mapping id="39">
+    <DbColName>fms_port_no</DbColName>
+    <TemplateColName>fms_port_no</TemplateColName>
+  </Mapping>
+
+  <Mapping id="40">
+    <DbColName>primary_site_switch_ip</DbColName>
+    <TemplateColName>primary_site_switch_ip</TemplateColName>
+  </Mapping>
+  <Mapping id="41">
+    <DbColName>primary_switch_port_no</DbColName>
+    <TemplateColName>primary_switch_port_no</TemplateColName>
+  </Mapping>
+  <Mapping id="42">
+    <DbColName>secondary_site_id</DbColName>
+    <TemplateColName>secondary_site_id</TemplateColName>
+  </Mapping>
+  <Mapping id="43">
+    <DbColName>secondary_site_name</DbColName>
+    <TemplateColName>secondary_site_name</TemplateColName>
+  </Mapping>
+  <Mapping id="44">
+    <DbColName>secondary_site_address</DbColName>
+    <TemplateColName>secondary_site_address</TemplateColName>
+  </Mapping>
+  <Mapping id="45">
+    <DbColName>secondary_site_switch_ip</DbColName>
+    <TemplateColName>secondary_site_switch_ip</TemplateColName>
+  </Mapping>
+  <Mapping id="46">
+    <DbColName>secondary_site_switch_port_no</DbColName>
+    <TemplateColName>secondary_site_switch_port_no</TemplateColName>
+  </Mapping>
+  <Mapping id="47">
+    <DbColName>customer_service_address</DbColName>
+    <TemplateColName>customer_service_address</TemplateColName>
+  </Mapping>
+  <Mapping id="48">
+    <DbColName>otdr_length</DbColName>
+    <TemplateColName>OTDR length</TemplateColName>
+  </Mapping>
+  <Mapping id="49">
+    <DbColName>po_length</DbColName>
+    <TemplateColName>PO length</TemplateColName>
+  </Mapping>
+</Mappings>

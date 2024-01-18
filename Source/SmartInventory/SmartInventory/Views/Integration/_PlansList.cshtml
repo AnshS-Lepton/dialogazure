@@ -1,0 +1,142 @@
+﻿@model IEnumerable<Models.DisplayPlan>
+@Styles.Render("~/bundles/NetworkPlanning/css")
+
+<!DOCTYPE html>
+<div id="rowdata" class="space-pad">
+    @foreach (var item in Model)
+    {
+        <div class="srch">
+            <div class="fontIDExtnlData">
+                <div class="plan--name">
+                    <div class="plan--name_box">
+                        <i class="fa fa-map fa-fw m-r-xs plan_name-circle" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_037"></i>
+                    </div>
+                    <h4 class="plan_name-text">
+                        @item.plan_name
+                    </h4>
+                </div>
+                <div data-plan_id="@item.plan_id" data-plan_name="@item.plan_name" data data-is_processed="@item.is_processed" class="ml-auto pose-relate d-flex">
+                    @{
+                        if (item.is_processed)
+                        {
+                            <span class="glyphicon glyphicon-eye-open spnViewPlan cur-poiner" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_407" ></span>
+                            
+                            <span class="glyphicon glyphicon-transfer ml-05 mr-05 cur-n-allowed" title="@Resources.Resources.SI_ISP_GBL_GBL_FRM_018"></span>
+                            
+                            <span class="glyphicon glyphicon-trash spnDeletePlan cur-poiner" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_408"></span>
+                        }
+                        else
+                        {
+                            <span class="glyphicon glyphicon-eye-open spnViewPlan cur-n-allowed" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_409" ></span>
+                            <span>&nbsp;</span>
+                            <span class="glyphicon glyphicon-transfer ml-05 mr-05 spnProcessPlan cur-poiner" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_410"></span>
+                            <span>&nbsp;</span>
+                            <span class="glyphicon glyphicon-trash spnDeletePlan cur-n-allowed" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_409"></span>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        var viewPlan = function (planID) {
+            ajaxReq('Integration/GetPlanRegionProvince', { planID: planID }, true, function (resp) {
+                if (resp) {
+                    var layers = resp.all_layers.split(',');
+                    var lat = resp.pod_lat;
+                    var lng = resp.pod_lng;
+                    var province_id = resp.province_id;
+                    var region_id = resp.region_id;
+
+                    // label
+                    $(si.DE.chkShowLabelOnMap).prop("checked", false);
+
+                    si.resetTreeLayer();
+                    si.map.setZoom(17);
+                    // center the map as position of POD
+                    si.map.setCenter(new google.maps.LatLng(resp.pod_lat, resp.pod_lng));
+
+                    if (layers.length > 0) {
+                        for (var i = 0; i < layers.length; i++) {
+                            $('#chk_nLyr_' + layers[i]).prop('checked', true);
+
+                            $('#chk_netP_' + layers[i]).prop('checked', true);
+                            $('#chk_netA_' + layers[i]).prop('checked', false);
+                            $('#chk_netD_' + layers[i]).prop('checked', false);
+                        }
+                    }
+
+                    $('#chk_rLyr_' + region_id).prop('checked', true);
+                    $('#chk_pLyr_' + province_id).prop('checked', true);
+
+                    si.LoadLayersOnMap();
+                }
+            }, false, true, false);
+        }
+
+        var processPlan = function (planID) {
+            ajaxReq('Integration/ProcessIntegrationSuperset', { planID: planID }, true, function (resp) {
+                if (resp.length) {
+                    if (resp[0].status.toLowerCase() == "true") {
+                        alert(resp[0].message);
+                        reloadPlans();
+                        viewPlan(planID);
+                    }
+                    else {
+                        alert("Error: " + resp[0].message);
+                    }
+                }
+            }, false, true, false);
+        }
+
+        var deletePlan = function (planID, planName) {
+            var deleteFunc = function () {
+                ajaxReq('Integration/DeleteProcessedIntegrationSuperset', { planID: planID }, true, function (resp) {
+                    if (resp.length) {
+                        if (resp[0].status.toLowerCase() == "true") {
+                            alert(resp[0].message);
+                            reloadPlans();  // reaload plans in the list
+                            $('#checkAll').prop('checked', true);   // check the select all checkbox
+                            $('#checkAll').trigger('change');       // trigger change of checkbox
+                            si.LoadLayersOnMap();
+                        }
+                        else {
+                            alert("Error: " + resp[0].message);
+                        }
+                    }
+                }, false, true, true);
+            };
+            showConfirm($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_GBL_113, planName), deleteFunc);
+        }
+
+        $('.spnViewPlan').on("click", function () {
+            $div = $(this).parent();
+
+            if ($div.data('is_processed').toLowerCase() == 'true') {
+                viewPlan($div.data('plan_id'));
+            }
+        });
+
+        $('.spnProcessPlan').on("click", function () {
+            $div = $(this).parent();
+
+            if ($div.data('is_processed').toLowerCase() == 'false') {
+                processPlan($div.data('plan_id'));
+            }
+        });
+
+        $('.spnDeletePlan').on("click", function () {
+             
+            $div = $(this).parent();
+
+            if ($div.data('is_processed').toLowerCase() == 'true') {
+                deletePlan($div.data('plan_id'), $div.data('plan_name'));
+            }
+        });
+    });
+</script>
+

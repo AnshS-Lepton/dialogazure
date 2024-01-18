@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+@model Models.Admin.VwAPIConsumerMaster
+@using Utility
+<link href="~/Areas/Admin/Content/css/spectrum.css" rel="stylesheet" />
+<script src="~/Areas/Admin/Content/js/spectrum.js"></script>
+
+
+<div id="dvViewConnectionLabelSttngs" class="update_panel fullWidth">
+    <div class="title">
+        <h4>API Consumer Master</h4>
+    </div>
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objAPIConsumerMasterFilter.pageSize, canSort: true, ajaxUpdateContainerId: "divAPIConsumerMaster", ajaxUpdateCallback: "onGridHeaderClick('tblAPIConsumerMaster')");
+        grid.Bind(Model.lstAPIConsumerMaster, autoSortAndPage: false, rowCount: Model.objAPIConsumerMasterFilter.totalRecord);
+        if (Model.objAPIConsumerMasterFilter.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objAPIConsumerMasterFilter.currentPage - 1;
+        }
+    }
+    <div class="--pad-15">
+        @using (Html.BeginForm("GetAPIConsumer", "APIConsumerMaster", FormMethod.Post, new { autocomplete = "off", @id = "frmAPIConsumerMaster" }))
+        {
+
+            if (Model.lstAPIConsumerMaster.Count > 0)
+            {
+                <div id="divConnectionLabelSetting">
+                    <div class="recordCount mb-01"><b>Total Records:@Model.lstAPIConsumerMaster.Count</b></div>
+
+                    <div class="table-responsive tble_cls">
+                        @grid.GetHtml(tableStyle: "grid",
+                                            htmlAttributes: new { id = "tblAPIConsumerMaster" },
+                                            mode: WebGridPagerModes.All,
+                                            columns: grid.Columns(
+                                                    grid.Column("", "Action", format:@<text>
+                                                            <a href="@Url.Action("AddAPIConsumer", "APIConsumerMaster", new { Id = @item.consumer_id })" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                                    </text>
+),
+grid.Column("user_name", "UserName", format: @<text>@item.user_name</text>),
+grid.Column("source", "Source", format: @<text>@item.source</text>),
+grid.Column("is_log_required_text", "Is Log Required", format: @<text>@item.is_log_required_text</text>),
+grid.Column("is_active_text", "Is Active", format:@<text>@item.is_active_text</text>),
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>),
+grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>),
+grid.Column("modified_on", "Modified On", format: @<text>@(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString()))</text>
+)))
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div style="text-align: center; margin-top: 30px;">
+                    No Records Found.
+                </div>
+            }
+        }
+    </div>
+    <script>
+        $(document).ready(function () {
+            addDefaultSortingIcons("tblAPIConsumerMaster");
+            $('th a, tfoot a').on("click", function () {
+                $('#frmAPIConsumerMaster').attr('action', $(this).attr('href')).submit();
+                return false;
+            });
+        });
+
+    </script>
+</div>

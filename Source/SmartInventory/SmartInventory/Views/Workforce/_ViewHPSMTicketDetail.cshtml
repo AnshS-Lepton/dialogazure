@@ -1,0 +1,103 @@
+﻿@model Models.WFM.ViewHPSMTicketDetails
+@{
+    WebGrid grid = new WebGrid();
+    if (Model.viewTicketFilter.totalRecord > 0)
+    {
+        grid = new WebGrid(rowsPerPage: Model.viewTicketFilter.totalRecord, canSort: false, ajaxUpdateContainerId: "divGvHPSMTicketDetail", ajaxUpdateCallback: "ChkAddClass()");
+        grid.Bind(Model.ticket_Details, autoSortAndPage: false, rowCount: Model.viewTicketFilter.totalRecord);
+        grid.PageIndex = 0;// Model.viewTicketFilter.currentPage - 1;
+    }
+}
+
+<div id="dvViewTicketContainer">
+    @using (Ajax.BeginForm("ViewHPSMTicketTaskDetails", "Workforce", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvParentModalBody" }, new { autocomplete = "off", @class = "form-horizontal", @id = "frmViewHPSMTicketIssue" }))
+    {
+        <div id="divGvHPSMTicketDetail" >
+            @if (Model.ticket_Details.Count > 0)
+            {
+            <div class="tablBody tpad-top">
+                <div class="recordCount">
+                    <div class="d-flex">
+                        <h5>HOBS ticket id:<span class="ticketNumber"> @Model.viewTicketFilter.ticketId</span> </h5>
+                    </div>
+                    <b>Total Records: @grid.TotalRowCount</b>
+                </div>
+                <div class="overTable">
+                    @grid.GetHtml(tableStyle: "grid",
+                                htmlAttributes: new { id = "divGvHPSMTicketDetail" },
+                              mode: WebGridPagerModes.All,
+                columns: grid.Columns(
+
+                @*grid.Column("HPSMSTATUS", "Status", format: @<text><span id="HPSMSTATUS">@item.HPSMSTATUS</span> </text>),*@
+grid.Column("STATUS", "Status", format: @<text><span id="HPSMSTATUS">@item.STATUS</span> </text>),
+grid.Column("STATUS", " Sub Status", format: @<text><span id="HPSMSubSTATUS">@item.sub_status</span> </text>),
+                @*grid.Column("OPENDATE", "Open Date", format: @<text><span id="OPENDATE">@item.created_on</span> </text>),*@
+                @*grid.Column("REGION", "Region", format: @<text><span id="REGION">@item.REGION</span> </text>),*@
+                @*grid.Column("ISRESOLVE", "Is Resolve", format: @<text><span id="ISRESOLVE">@item.ISRESOLVE</span> </text>),*@
+                @*grid.Column("DISTRICT", "District", format: @<text><span id="DISTRICT">@item.DISTRICT</span> </text>),*@
+                @*grid.Column("DUEDATE", "Due date", format: @<text><span id="DUEDATE">@item.DUEDATE</span> </text>),*@
+                @*grid.Column("DURATION", "Duration", format: @<text><span id="DURATION">@item.DURATION</span> </text>),*@
+grid.Column("Action Date", "Action Date", format: @<text><span id="ACTIONDATE">@item.modified_on</span> </text>),
+                @*grid.Column("TICKETTYPE", "Ticket Type", format: @<text><span id="TICKETTYPE">@item.TICKETTYPE</span> </text>),*@
+grid.Column("COMMENT_", "Comment", format: @<text><span id="COMMENT_">@item.remarks</span> </text>),
+grid.Column("user_name", "User Name", format: @<text><span id="user_name">@item.user_name</span> </text>),
+grid.Column("LATITUDE", "Latitude", format: @<text><span id="LATITUDE">@item.LATITUDE</span> </text>),
+grid.Column("LONGITUDE", "Longitude", format: @<text><span id="LONGITUDE">@item.LONGITUDE</span> </text>)
+                @*grid.Column("TASKTYPE", "Task Type", format: @<text><span id="TASKTYPE">@item.TASKTYPE</span> </text>),
+    grid.Column("TASKCATEGORY", "Task Category", format: @<text><span id="TASKCATEGORY">@item.TASKCATEGORY</span> </text>),
+    grid.Column("TASKSUBCATEGORY", "Task Sub-category", format: @<text><span id="TASKSUBCATEGORY">@item.TASKSUBCATEGORY</span> </text>),*@
+
+                @*grid.Column("customer_id", "Customer Id", format: @<text><span id="CUSTOMERID">@item.customer_id</span> </text>),
+    grid.Column("customer_rmn", "Mobile", format: @<text><span id="CUSTOMERRMN">@item.customer_rmn</span> </text>),*@
+
+                @*grid.Column("addressline1", "Address Line 1", format: @<text><span id="ADDRESSLINE1">@item.addressline1</span> </text>),
+    grid.Column("addressline2", "Address Line 2", format: @<text><span id="ADDRESSLINE2">@item.addressline2</span> </text>),
+    grid.Column("addressline3", "Address Line 3", format: @<text><span id="ADDRESSLINE3">@item.addressline3</span> </text>),*@
+                @*grid.Column("customer_preferred_time", "Preffered Time", format: @<text><span id="CUSTOMERPREFERREDTIME">@item.customer_preferred_time</span> </text>)*@
+
+                @*grid.Column("issue_comment", "Customer Remark", format: @<text><span id="ISSUECOMMENT">@item.issue_comment</span> </text>),*@
+
+                @*grid.Column("customer_plan_speed", "Plan Speed", format: @<text><span id="CUSTOMERPLANSPEED">@item.customer_plan_speed</span> </text>),*@
+                @*grid.Column("customer_plan_name", "Plan Name", format: @<text><span id="CUSTOMERPLANNAME">@item.customer_plan_name</span> </text>),*@
+                @*grid.Column("service_status", "Service Status", format: @<text><span id="SERVICESTATUS">@item.service_status</span> </text>),*@
+
+                @*grid.Column("task_id", "Task ID", format: @<text><span id="TASKID">@item.task_source_id</span> </text>),*@
+                @*grid.Column("work_item_id", "Work Item Id", format: @<text><span id="WORKITEMID">@item.work_item_id</span> </text>),*@
+                @*grid.Column("out_come_id", "Outcome Id", format: @<text><span id="OUTCOMEID">@item.out_come_id</span> </text>),*@
+
+/* Replace RC and RCA
+grid.Column("resolution_close_id", "RC", format: @<text><span id="RESOLUTIONCLOSEID">@item.resolution_close_id</span> </text>),
+grid.Column("root_cause_id", "RCA", format: @<text><span id="ROOTCAUSEID">@item.root_cause_id</span> </text>),
+*/
+                @*grid.Column("root_cause_id", "RC", format: @<text><span id="ROOTCAUSEID">@item.root_cause_id</span> </text>),
+    grid.Column("resolution_close_id", "RCA", format: @<text><span id="RESOLUTIONCLOSEID">@item.resolution_close_id</span> </text>)*@
+
+
+                @*grid.Column("customer_serial_number1", "SRNO-1(OLD)", format: @<text><span id="DEVICESERIALNUMBER1-OLD">@item.customer_serial_number1</span> </text>),
+    grid.Column("customer_serial_number2", "SRNO-2(OLD)", format: @<text><span id="DEVICESERIALNUMBER2-OLD">@item.customer_serial_number2</span> </text>),*@
+
+                @*grid.Column("customer_brand", "BRAND(OLD)", format: @<text><span id="DEVICEBRAND-OLD">@item.customer_brand</span> </text>),
+    grid.Column("customer_model", "MODEL(OLD)", format: @<text><span id="DEVICEMODEL-OLD">@item.customer_model</span> </text>),
+
+    grid.Column("device_serial_number1", "SRNO-1(NEW)", format: @<text><span id="DEVICESERIALNUMBER1-NEW">@item.device_serial_number1</span> </text>),
+    grid.Column("device_serial_number2", "SRNO-2(NEW)", format: @<text><span id="DEVICESERIALNUMBER2-NEW">@item.device_serial_number2</span> </text>),*@
+
+                @*grid.Column("device_brand", "BRAND(NEW)", format: @<text><span id="DEVICEBRAND-NEW">@item.device_brand</span> </text>),
+    grid.Column("device_model", "MODEL(NEW)", format: @<text><span id="DEVICEMODEL-NEW">@item.device_model</span> </text>)*@
+
+)
+)
+                </div>
+                </div>
+            }
+            else
+            {
+                <div class="nr-found">
+                    <span>No record found.</span>
+                </div>
+            }
+            @Html.Hidden("dir", grid.SortDirection)
+            @Html.Hidden("col", grid.SortColumn)
+        </div>
+    }
+</div>

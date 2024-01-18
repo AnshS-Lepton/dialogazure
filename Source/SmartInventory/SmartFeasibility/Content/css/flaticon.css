@@ -1,0 +1,55 @@
+@font-face { font-family: "Flaticon"; src: url("fonts/flaticon.eot"); src: url("fonts/flaticon.eot#iefix") format("embedded-opentype"), url("fonts/flaticon.woff") format("woff"), url("fonts/flaticon.ttf") format("truetype"), url("fonts/flaticon.svg") format("svg"); font-weight: normal; font-style: normal; }
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before,
+[class^="flaticon-"]:after, [class*=" flaticon-"]:after { font-family: Flaticon; font-size: 20px; font-style: normal;  }
+.flaticon-3d52:before { content: "\e000"; }
+.flaticon-arrow208:before { content: "\e001"; }
+.flaticon-arrow395:before { content: "\e002"; }
+.flaticon-arrow483:before { content: "\e003"; }
+.flaticon-arrow487:before { content: "\e004"; }
+.flaticon-arrowhead7:before { content: "\e005"; }
+.flaticon-building78:before { content: "\e006"; }
+.flaticon-character-separatedvalues:before { content: "\e007"; }
+.flaticon-chevron13:before { content: "\e008"; }
+.flaticon-chevron9:before { content: "\e009"; }
+.flaticon-collapse3:before { content: "\e00a"; }
+.flaticon-cross37:before { content: "\e00b"; }
+.flaticon-csv:before { content: "\e00c"; }
+.flaticon-csv2:before { content: "\e00d"; }
+.flaticon-cup29:before { content: "\e00e"; }
+.flaticon-dish6:before { content: "\e00f"; }
+.flaticon-draw:before { content: "\e010"; }
+.flaticon-excel2:before { content: "\e011"; }
+.flaticon-expand22:before { content: "\e012"; }
+.flaticon-gps13:before { content: "\e013"; }
+.flaticon-history1:before { content: "\e014"; }
+.flaticon-history6:before { content: "\e015"; }
+.flaticon-home168:before { content: "\e016"; }
+.flaticon-home78:before { content: "\e017"; }
+.flaticon-house4:before { content: "\e018"; }
+.flaticon-keyboard53:before { content: "\e019"; }
+.flaticon-layers2:before { content: "\e01a"; }
+.flaticon-layers3:before { content: "\e01b"; }
+.flaticon-layers4:before { content: "\e01c"; }
+.flaticon-layers5:before { content: "\e01d"; }
+.flaticon-left216:before { content: "\e01e"; }
+.flaticon-list23:before { content: "\e01f"; }
+.flaticon-lowercase1:before { content: "\e020"; }
+.flaticon-magnifier12:before { content: "\e021"; }
+.flaticon-magnifier13:before { content: "\e022"; }
+.flaticon-move13:before { content: "\e023"; }
+.flaticon-navigate6:before { content: "\e024"; }
+.flaticon-office17:before { content: "\e025"; }
+.flaticon-pdf17:before { content: "\e026"; }
+.flaticon-pdf19:before { content: "\e027"; }
+.flaticon-pins53:before { content: "\e028"; }
+.flaticon-placeholder8:before { content: "\e029"; }
+.flaticon-pointer17:before { content: "\e02a"; }
+.flaticon-pricelabel:before { content: "\e02b"; }
+.flaticon-satellite12:before { content: "\e02c"; }
+.flaticon-satellite29:before { content: "\e02d"; }
+.flaticon-screwdriver3:before { content: "\e02e"; }
+.flaticon-search111:before { content: "\e02f"; }
+.flaticon-undo19:before { content: "\e030"; }
+.flaticon-xlsx1:before { content: "\e031"; }
+.flaticon-zoom77:before { content: "\e032"; }
+.icon-images2:before {content: "\ea61";}

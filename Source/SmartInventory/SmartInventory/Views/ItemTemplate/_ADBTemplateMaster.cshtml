@@ -1,0 +1,54 @@
+﻿@model Models.ADBTemplateMaster
+@using Models;
+@helper ItemSpecification()
+{
+{ Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
+}
+@helper SystemSpecification()
+{
+{ Html.RenderPartial("~/Views/ItemTemplate/_SystemSpecification.cshtml", (itemMaster)Model); }
+}
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
+    @ItemSpecification()
+
+    <div class="form-group row">
+        <div class="form-group" id="divddlEntityType">
+            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_020<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.DropDownListFor(m => m.entity_category, Model.lstEntityType.Select(m => new SelectListItem { Value = m.dropdown_key, Text = m.dropdown_value }).ToList(), "-Select-", new { @class = "chosen-select form-control clsReadOnly", @readonly = "True" })
+            </div>
+        </div>
+    </div>
+
+</fieldset>
+
+@*<fieldset class="the-fieldset">
+        <legend class="the-legend">Model Mapping & System Specification</legend>
+        @SystemSpecification()
+
+    </fieldset>*@
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '100%' });
+        $('#specification').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindVendor(dID);
+        });
+        $('#ddlVendor').chosen().change(function (event) {
+            var specfi = $("#specification option:selected").val(); //
+            var vandorid = $(this).val();
+            var entitytype = $('#entityType').val();
+            bindCateSubcat(entitytype, specfi, vandorid);
+        });
+        $('#ddlType').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindBrand(dID);
+        });
+        $('#ddlBrand').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindModel(dID);
+        });
+    });
+</script>

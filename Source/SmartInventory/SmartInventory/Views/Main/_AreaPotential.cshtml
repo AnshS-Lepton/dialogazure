@@ -1,0 +1,294 @@
+﻿@model Models.AreaPotentialReport
+<style>
+    .bomGridEntity {
+        background-color: #E8E8E8;
+        font-weight: bold;
+    }
+
+    .bomGridSubEntity {
+        background-color: #ffffff;
+    }
+    #frmBOMReport .chosen-container-multi .chosen-choices {
+        font-size: 11px;
+    }
+
+    #frmBOMReport .chosen-disabled .chosen-choices {
+        background: #ccc;
+    }
+
+    #frmBOMReport th, #tblExportReport td {
+        padding-top: 3px !important;
+        padding-bottom: 3px !important;
+    }
+</style>
+
+<div class="libDetail">
+    <div class="libTabContent" style="overflow:visible;">
+
+        <div class="tab-content">
+            @using (Ajax.BeginForm("ShowAreaPotential", "Report", new AjaxOptions
+            {
+                HttpMethod = "POST",
+                UpdateTargetId = "dvModalBody"
+            },
+            new { id = "frmBOMReport", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+            {
+                @Html.HiddenFor(m => m.geom);
+                @Html.HiddenFor(m => m.geomType);
+                @Html.HiddenFor(m => m.buff_Radius);
+                                                   if (Model.geom != null && Model.geom != "")
+                                                   {
+                                                    <div class="form-group">
+                                                        <label class="control-label col-sm-2">Region :</label>
+                                                        <div class="col-sm-4">
+                                                            @Html.DropDownListFor(m => m.regionId, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select form-control", @onchange = "si.onChangeRegion();", @id = "ddlRegions", @disabled = "disabled" })
+                                                        </div>
+                                                        <label class="control-label col-sm-2" for="txtSearchtext">Province :</label>
+                                                        <div class="col-sm-4">
+                                                            @Html.DropDownListFor(m => m.provinceId, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select form-control", @id = "ddlProvinces", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                   }
+                                                   else
+                                                   {
+                                                    <div class="form-group">
+                                                        <label class="control-label col-sm-2">Region :</label>
+                                                        <div class="col-sm-4">
+                                                            @Html.DropDownListFor(m => m.regionId, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select form-control", @onchange = "si.onChangeRegion();", @id = "ddlRegions" })
+                                                        </div>
+                                                        <label class="control-label col-sm-2" for="txtSearchtext">Province :</label>
+                                                        <div class="col-sm-4">
+                                                            @Html.DropDownListFor(m => m.provinceId, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select form-control", @id = "ddlProvinces" })
+                                                        </div>
+                                                    </div>
+                                                   }
+                                                   
+                                                <div class="form-group ModalFooter" id="dvBtnAction">
+                                                    @if (Model.geom != null && Model.geom != "")
+                                                    {
+                                                    
+                                                        <label class="control-label col-sm-2">Network Status :</label>
+
+                                                        <div class="col-sm-2">
+                                                            @Html.DropDownListFor(m => m.network_status, new List<SelectListItem>
+                     { new SelectListItem { Text = "--Select--", Value = "S"},
+                         new SelectListItem { Text = "Planned", Value = "P",Selected=true},
+                       new SelectListItem { Text = "As-Built", Value = "A"},
+                       new SelectListItem { Text = "Dorment", Value = "D"},
+                       }, new { @class = "chosen-select", onchange = "dropDownlistChange();", @id = "ddlNetworkStatus" })
+                                                        </div>
+                                                   
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="control-label col-sm-2">Network Status :</label>
+
+                                                        <div class="col-sm-2">
+                                                            @Html.DropDownListFor(m => m.network_status, new List<SelectListItem>
+                     { new SelectListItem { Text = "--Select--", Value = "S"},
+                         new SelectListItem { Text = "Planned", Value = "P"},
+                       new SelectListItem { Text = "As-Built", Value = "A"},
+                       new SelectListItem { Text = "Dorment", Value = "D"},
+                       }, new { @class = "chosen-select", @id = "ddlNetworkStatus" })
+                                                        </div>
+                                                     }
+                                                    <div class="col-sm-7" style="float: right; text-align: right;">
+                                                        @if (Model.geom == null || Model.geom == "")
+                                                        {
+                                                            <button type="submit" class="btn btn-primary" id="btnShowReportData">Show</button>
+                                                        }
+                                                        @if (Model.lstBOM.Count > 0)
+                                                        {
+                                                            <input type="button" class="btn btn-primary" id="btnBom" value="Generate BOM" />
+                                                            <input type="button" class="btn btn-primary" id="btnBoq" value="Generate BOQ" />
+                                                            <input type="button" class="btn btn-primary" id="btnExportToExcel" value="Export to Excel" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="submit" class="btn btn-primary" disabled id="btnBom" value="Generate BOM" />
+                                                            <input type="button" class="btn btn-primary" disabled id="btnBoq" value="Generate BOQ" />
+                                                            <input type="button" class="btn btn-primary" disabled id="btnExportToExcel" value="Export to Excel" />
+                                                        }
+                                                    </div>
+                                                </div>
+            }
+        </div>
+
+        <div id="Grid" style="border: none;">
+            <div class="tab-pane active" id="divBom" style="max-height: 320px; overflow: auto;">
+                @if (Model.lstBOM.Count > 0)
+                {
+                    <table id="tblBomLst" class="webgrid" cellpadding="0" cellspacing="0" style="text-align: center;">
+                        <thead>
+                            <tr class="webgridHeader">
+                                <th>
+                                    Entity Type
+                                </th>
+                                <th>
+                                    Total Count
+                                </th>
+                                <th>
+                                    Total Cost(Rs.)
+                                </th>
+                                <th>
+                                    Calculated Length(m)
+                                </th>
+                                <th>
+                                    GIS Length(m)
+                                </th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var EntityLst in Model.lstBOM)
+                            {
+                                <tr class="@(EntityLst.is_header == "1" ? "bomGridEntity" : "bomGridSubEntity")">
+                                    <td style="text-align:left;" >
+                                        @if (EntityLst.is_header == "1")
+                                        {
+                                            <span style="margin-left: 15%;">@EntityLst.entity_type</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="margin-left: 15%;">@EntityLst.entity_sub_type</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @EntityLst.count
+                                    </td>
+                                    <td>
+                                        @EntityLst.total_cost
+                                    </td>
+                                    <td>
+                                        @(EntityLst.calculated_totla_length == 0 ? "" : Convert.ToString(EntityLst.calculated_totla_length))
+                                    </td>
+                                    <td>
+                                        @(EntityLst.gis_length == 0 ? "" : Convert.ToString(EntityLst.gis_length))
+                                    </td>
+                                    <td>
+                                        @if ((EntityLst.is_header == "1") && EntityLst.count>0)
+                                        {
+                                            <span class="exportBomToExcel" id="btnExcelExport" title="Export To Excel" onclick="ExportEntityDetailInExcel('@EntityLst.entity_type')">
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <span style=" text-align: center; height: 100px; display: block; font-size:14px;padding-top: 50px;" id="dvNoBulkEntityFound">No entity found!</span>
+                }
+            </div>
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.chosen-select').chosen({placeholder_text_multiple: '----Select----', width: '100%' });
+
+        var selectedProvinces = '@Model.SelectedProvinceIds';
+        $("#ddlProvinces").val(selectedProvinces.split(',')).trigger("chosen:updated");
+
+        var selectedRegions = '@Model.SelectedRegionIds.Replace("'","")';
+        $("#ddlRegions").val(selectedRegions.split(',')).trigger("chosen:updated");
+
+
+        $("#btnBom").click(function () {
+            
+            var geom = $("#geom").val();
+            var geomType = $("#geomType").val();
+            var buff_Radius = $("#buff_Radius").val();
+            var network_status = $("#ddlNetworkStatus").val();
+            var selectedRegion = '';
+            var selectedProvince = '';
+            if ($("#ddlRegions").val() != null)
+            {
+                 selectedRegion = $("#ddlRegions").val().join(',');
+                 selectedProvince = $("#ddlProvinces").val().join(',');
+            }
+            
+            var type = "BOM"
+            window.location = appRoot + 'Report/ExportBOMBOQReport?geom=' + geom + '&geomType=' + geomType + '&buff_Radius=' + buff_Radius + '&network_status=' + network_status + '&type=' + type + '&regionId=' + selectedRegion + '&provinceId=' + selectedProvince;
+        });
+        $("#btnBoq").click(function () {
+            var geom = $("#geom").val();
+            var geomType = $("#geomType").val();
+            var buff_Radius = $("#buff_Radius").val();
+            var network_status = $("#ddlNetworkStatus").val();
+            var selectedRegion = '';
+            var selectedProvince = '';
+            if ($("#ddlRegions").val() != null) {
+                selectedRegion = $("#ddlRegions").val().join(',');
+                selectedProvince = $("#ddlProvinces").val().join(',');
+            }
+            var type = "BOQ"
+            window.location = appRoot + 'Report/ExportBOMBOQReport?geom=' + geom + '&geomType=' + geomType + '&buff_Radius=' + buff_Radius + '&network_status=' + network_status + '&type=' + type + '&regionId=' + selectedRegion + '&provinceId=' + selectedProvince;
+        });
+        $("#btnExportToExcel").click(function () {
+            
+            var geom = $("#geom").val();
+            var geomType = $("#geomType").val();
+            var buff_Radius = $("#buff_Radius").val();
+            var network_status = $("#ddlNetworkStatus").val();
+            var selectedRegion = '';
+            var selectedProvince = '';
+            if ($("#ddlRegions").val() != null) {
+                selectedRegion = $("#ddlRegions").val().join(',');
+                selectedProvince = $("#ddlProvinces").val().join(',');
+            }
+            window.location = appRoot + 'Report/ExportBOMWithDetailInExcel?geom=' + geom + '&geomType=' + geomType + '&buff_Radius=' + buff_Radius + '&network_status=' + network_status + '&regionId=' + selectedRegion + '&provinceId=' + selectedProvince;
+        });
+
+
+        $("#btnShowReportData").click(function () {
+            
+
+            if ($("#ddlRegions").val()==null) {
+                alert("Please select region!");
+                return false;
+            }
+
+            else if ($("#ddlProvinces").val() == null) {
+                alert("Please select province!");
+                return false;
+            } else if ($("#ddlNetworkStatus").val() =='S') {
+                alert("Please select network status!");
+                return false;
+            }
+            else {
+                return true;
+            }
+        });
+
+    });
+    function dropDownlistChange() {
+        //if ($('#ddlNetworkStatus').val() != 'S')
+        //{
+            $("#frmBOMReport").submit();
+        //} else {
+        //    $('#spnTotalRecords').text('0');
+        //    $('#Grid').hide();
+        //}
+        
+    }
+    function ExportEntityDetailInExcel(type) {
+        
+        var geomType = $("#geomType").val();
+        var geom = $("#geom").val();
+        var network_status = $("#ddlNetworkStatus").val();
+        var geomType = $("#geomType").val();
+        var buff_Radius = $("#buff_Radius").val();
+        var selectedRegion = '';
+        var selectedProvince = '';
+        if ($("#ddlRegions").val() != null) {
+            selectedRegion = $("#ddlRegions").val().join(',');
+            selectedProvince = $("#ddlProvinces").val().join(',');
+        }
+        window.location = appRoot + 'Report/ExportEntityDetailInExcel?geom=' + geom + '&network_status=' + network_status + '&entity_type=' + type + '&buff_Radius=' + buff_Radius + '&type=' + geomType + '&regionId=' + selectedRegion + '&provinceId=' + selectedProvince;
+    }
+</script>

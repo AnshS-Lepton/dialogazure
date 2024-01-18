@@ -1,0 +1,148 @@
+﻿
+<style>
+    
+</style>
+
+@*Modal pop up*@
+<!DOCTYPE html>
+<div class="modal fade" id="ModalPopUp_bulk" role="dialog" data-backdrop="false" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header cHeader">
+                <h4 class='modal-title'></h4>
+
+                <div class="m-c-icons">
+                    <button class="close minmizeModel"> <i class='fa fa-minus'></i> </button>
+                    <span type="button" id="closeModalPopup" data-dismiss="modal" class="icon-close"></span>
+                </div>
+                    @*<div class="ModalSeprator"></div>*@
+                </div>
+
+                <div id="dvModalBody" class="modal-body">
+                </div>
+            </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalPopUp_hist" role="dialog" data-backdrop="false" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header cHeader">
+                <h4 class='modal-title'></h4>
+                <div class="m-c-icons">
+                    <button class="close minmizeModel"> <i class='fa fa-minus'></i> </button>
+                    <span type="button" id="closeModalPopup" data-dismiss="modal" class="icon-close"></span>
+                </div>
+                    @*<div class="ModalSeprator"></div>*@
+                </div>
+
+                <div id="dvModalBody" class="modal-body">
+                </div>
+            </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalPopUp_toggleBaseMap" role="dialog" data-backdrop="false" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header cHeader">
+                <h4 class='modal-title'></h4>
+
+                <div class="m-c-icons">
+                    <button class="close minmizeModel"> <i class='fa fa-minus'></i> </button>
+                    <span type="button" id="closeModalPopup" data-dismiss="modal" class="icon-close"></span>
+                </div>
+                    @*<div class="ModalSeprator"></div>*@
+                </div>
+
+                <div id="dvModalBody" class="modal-body">
+                </div>
+            </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalPopUp_bomStngs" role="dialog" data-backdrop="false" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header cHeader">
+                <h4 class='modal-title'></h4>
+
+                <div class="m-c-icons">
+                    <button class="close minmizeModel"> <i class='fa fa-minus'></i> </button>
+                    <span type="button" id="closeModalPopup" data-dismiss="modal" class="icon-close"></span>
+                </div>
+                    @*<div class="ModalSeprator"></div>*@
+                </div>
+
+                <div id="dvModalBody" class="modal-body">
+                </div>
+            </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalPopUp_Save" role="dialog" data-backdrop="false" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header cHeader">
+                <h4 class='modal-title'></h4>
+
+                <div class="m-c-icons">
+                    <span class="close minmizeModel"> <i class='fa fa-minus'></i> </span>
+                    <span type="button" id="closeModalPopup" data-dismiss="modal" class="icon-close savefeasibility"></span>
+                </div>
+                    @*<div class="ModalSeprator"></div>*@
+                </div>
+
+                <div id="dvModalBody" class="modal-body">
+                </div>
+            </div>
+    </div>
+</div>
+
+@*FTTH MODAL POP UP*@
+@{
+    var IsFTTH = ((List<string>)Session["ApplicableModuleListForFeasibility"]).Contains("FTTH");
+}
+@if (IsFTTH)
+{
+<div class="modal fade" id="ModalPopUp_SaveFtth" role="dialog" data-backdrop="false" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header cHeader">
+                <h4 class='modal-title'></h4>
+
+                <div class="m-c-icons">
+                    <button class="close minmizeModel"> <i class='fa fa-minus'></i> </button>
+                    <span type="button" id="closeModalPopup" data-dismiss="modal" class="icon-close savefeasibility"></span>
+                </div>
+                    @*<div class="ModalSeprator"></div>*@
+                </div>
+
+                <div id="dvModalBody" class="modal-body">
+                </div>
+            </div>
+    </div>
+</div>
+}
+@*FTTH MOADL POP UP END*@
+
+<div id="parentMinMaxContainer" style="display:none;" class="MinMaxContainer"></div>
+@*Modal pop up: END  *@
+
+<div class="modal fade modal2" id="ChildPopUp" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header cHeader">
+                <h4 class='modal-title'></h4>
+                <div class="m-c-icons">
+                    <button class="close minmizeModel"> <i class='fa fa-minus' style="display:none"></i> </button>
+                    <span type="button" id="closeModalPopup" data-dismiss="modal" class="icon-close" data-original-title="" title="Close"></span>
+                    </div>
+                </div>
+                <div id="dvChildModalBody" class="modal-body">
+                </div>
+            </div>
+    </div>
+</div>
+<div id="childMinMaxContainer" style="display:none;" class="MinMaxContainer"></div>

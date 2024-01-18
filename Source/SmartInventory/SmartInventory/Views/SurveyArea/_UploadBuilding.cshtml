@@ -1,0 +1,190 @@
+﻿<style>
+    #form1 span {
+        width: 33%;
+        margin-top: 12px;
+    }
+
+        #form1 span input {
+            margin-right: 4px;
+            margin-top: 0;
+        }
+
+    .mt-1rem .mr-05 {
+        margin-right: 0.5rem !important;
+    }
+</style>
+<!DOCTYPE html>
+<form id="form1">
+    <div class="space-pad">
+        <div class="d-flex mb-15">
+            <b> @Resources.Resources.SI_OSP_GBL_NET_FRM_075:</b>
+            <input type="file" id="UploadBuilding" accept=".xls,.xlsx,.shx,.shp,.prj,.dbf" multiple class="ml-05" />
+        </div>
+        <div class="d-flex mt-1rem">
+            <input type="radio" name="Action" title="Use Data Uploader module to upload the new buildings." class="mr-05" value="Insert" checked> @Resources.Resources.SI_OSP_GBL_GBL_GBL_044 &nbsp;&nbsp;
+            <input type="radio" name="Action" value="Update" class="mr-05 ml-10"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_003
+        </div>
+        <div id="UpdatedFiled" class="d-none mt-1rem">
+            <fieldset class="the-fieldset mt-1rem">
+                <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_076</legend>
+                <input type="checkbox" name="checkedAll" id="checkedAll" /><b> @Resources.Resources.SI_OSP_GBL_GBL_GBL_045</b>
+                <div class="multiCheck-boxes">
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="BUILDING_NAME" />@Resources.Resources.SI_OSP_GBL_NET_FRM_077</span>
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="ADDRESS" />@Resources.Resources.SI_OSP_GBL_NET_FRM_078</span>
+
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="PIN_CODE" />@Resources.Resources.SI_OSP_GBL_NET_FRM_079</span>
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="BUILDING_NO" />@Resources.Resources.SI_OSP_GBL_NET_FRM_080.</span>
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="AREA" />@Resources.Resources.SI_OSP_GBL_NET_FRM_081</span>
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="POD_NAME" />@Resources.Resources.SI_OSP_GBL_NET_FRM_082</span>
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="POD_CODE" />@Resources.Resources.SI_OSP_GBL_NET_FRM_083</span>
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="CATEGORY" />@Resources.Resources.SI_OSP_GBL_NET_FRM_084</span>
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="TENANCY" />@Resources.Resources.SI_OSP_GBL_NET_FRM_085</span>
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="MEDIA" />@Resources.Resources.SI_OSP_GBL_NET_FRM_086</span>
+                    <span class="d-flex"> <input type="checkbox" name="checkAll" class="checkSingle" value="RFS_STATUS" />@Resources.Resources.SI_OSP_GBL_NET_FRM_087</span>
+                    <span class="d-flex"> <input type="checkbox" name="checkAll" class="checkSingle" value="RFS_DATE" />@Resources.Resources.SI_OSP_GBL_NET_FRM_088</></span>
+                    @*<span><input type="checkbox" name="checkAll" class="checkSingle" value="NO_OF_FLOOR" />NO_OF_FLOOR</span>*@
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="TOTAL_TOWER" />@Resources.Resources.SI_OSP_GBL_NET_FRM_089</span>
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="BUSINESS_PASS" />@Resources.Resources.SI_OSP_GBL_NET_FRM_090</span>
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="HOME_PASS" />@Resources.Resources.SI_OSP_GBL_NET_FRM_091</span>
+
+                    <span class="d-flex"><input type="checkbox" name="checkAll" class="checkSingle" value="REMARKS" />@Resources.Resources.SI_OSP_GBL_NET_FRM_092</span>
+
+                </div>
+            </fieldset>
+            <div style="margin-top: 10px; font-size: 13px;"><strong>@Resources.Resources.SI_OSP_GBL_NET_FRM_093:</strong> @Resources.Resources.SI_OSP_GBL_NET_FRM_094. </div>
+        </div>
+        &nbsp;&nbsp;<label id="lblUploadProgress" style="font-weight: bold; margin-top: 15px; font-size: 13px; width: 200px;"></label>
+    </div>
+    <div class="ModalFooter d-flex" id="dvBtnAction">
+        @Html.ActionLink(@Resources.Resources.SI_OSP_GBL_NET_FRM_095, "DownloadBuildingUploadTemplate", "Main", new { FileName = "BuildingTemplate" }, new { @class = "btn btn-success ml-auto", @id = "lnkDownloadTemplate" })
+        &nbsp;&nbsp; <button class="btn btn-default ml-10" type="button" onclick="UploadFile('UploadBuilding','@Url.Action("UploadBuildingData", "Library")','@Url.Action("DownloadUploadBuildingLogs", "Library")');">
+            @Resources.Resources.GBL_GBL_GBL_GBL_GBL_008
+        </button>
+    </div>
+</form>
+
+<script>
+    var iteration = 0; //used for bulk upload progress..
+    var loadingtext = "Uploading";//used for bulk upload progress..
+    var timer = null;//used for bulk upload progress..;
+    var Updatedfields = [];
+    function UploadFile(controlId, postUrl, logUrl) {
+        var PerformAction = $('input[name=Action]:checked', '#form1').val();
+
+        Updatedfields = []; // become list empty
+        $.each($("input[name='checkAll']:checked"), function () {
+            Updatedfields.push($(this).val());
+        });
+
+        var formData = new FormData();
+        var totalFiles = document.getElementById(controlId).files.length;
+        if (totalFiles > 0) {
+
+            if (Updatedfields.length == 0 && PerformAction == "Update") {
+                alert('Please select update fields!');
+                return false;
+            }
+
+            if (isValidFileExtn(controlId)) {
+                // var file = document.getElementById(controlId).files[0];
+                 
+                var file = $('#UploadBuilding').get(0);
+                file = file.files;
+                for (var i = 0; i < file.length; i++) {
+                    formData.append(file[i].name, file[i]);
+                }
+                //formData.append("FileUpload", file);
+                formData.append("PerformAction", PerformAction);
+                formData.append("Updatedfields", Updatedfields);
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            alert(MultilingualKey.SI_OSP_GBL_GBL_GBL_099);
+            return false;
+        }
+        PostFile(formData, postUrl, logUrl);
+    }
+
+    function PostFile(formdata, posturl, logUrl) {
+        $.ajax({
+            type: "POST",
+            url: posturl,
+            data: formdata,
+            async: true,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function () {
+                $(".ui-dialog").css("pointerEvents", "none");
+                $("#lblUploadProgress").css("display", "inline-block");
+                timer = setInterval(showUploadProgress, 500);
+            },
+            success: function (response) {
+                if (response.msg.toLowerCase() == "success") {
+                    //download logs..
+                    window.location = logUrl;
+                }
+                alert(response.strReturn);
+                $(".ui-dialog").css("pointerEvents", "auto");
+                $("#lblUploadProgress").css("display", "none");
+                clearInterval(timer);
+            },
+            error: function (error) {
+                $(".ui-dialog").css("pointerEvents", "auto");
+                $("#lblUploadProgress").css("display", "none");
+                clearInterval(timer);
+                alert(error);
+                $(".ui-dialog").css("pointerEvents", "auto");
+            }
+        });
+    }
+
+    function isValidFileExtn(controlid) {
+        var ext = $('#' + controlid).val().split('.').pop().toLowerCase();
+        if ($.inArray(ext, ['xls', 'xlsx', 'shx', 'shp', 'prj', 'dbf']) == -1) {
+            ShowFormMessage(false, MultilingualKey.SI_OSP_DU_JQ_FRM_006, "");
+            return false;
+        }
+        return true;
+    }
+
+    function showUploadProgress() {
+        $("#lblUploadProgress").html(loadingtext + Array((++iteration % 5) + 1).join("."));
+    }
+
+
+    $(document).ready(function () {
+        $("#checkedAll").change(function () {
+            if (this.checked) {
+                $(".checkSingle").each(function () {
+                    this.checked = true;
+                })
+            } else {
+                $(".checkSingle").each(function () {
+                    this.checked = false;
+                })
+            }
+        });
+
+        $(".checkSingle").on("click", function () {
+            if ($(this).is(":checked")) {
+                var isAllChecked = 0;
+                $(".checkSingle").each(function () {
+                    if (!this.checked)
+                        isAllChecked = 1;
+                })
+                if (isAllChecked == 0) { $("#checkedAll").prop("checked", true); }
+            } else {
+                $("#checkedAll").prop("checked", false);
+            }
+        });
+
+        $('input[name=Action]').on("click", function () {
+            if ($(this).val() == "Update") { $('#UpdatedFiled').css("display", "initial"); }
+            else { $('#UpdatedFiled').css("display", "none"); $('input:checkbox').attr('checked', false); }
+        });
+    });
+</script>

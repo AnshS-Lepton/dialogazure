@@ -1,0 +1,76 @@
+﻿@model Models.TicketManagerFilter
+@using Models;
+@using Utility;
+
+<!DOCTYPE html>
+<div class="FilterDiv">
+    @using (Ajax.BeginForm("ShowTicketManager", "TicketManager", new AjaxOptions
+    {
+        OnSuccess = "TicketFilter",
+        HttpMethod = "POST",
+    },
+                        new { id = "frmTicketFilter", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        @Html.HiddenFor(x => x.lstAssignedTo, new { id = "hdnAssignTo" })
+        <div class="row padRow" id="chkType">
+            <div class="col-md-3 divPads"><b>@Resources.Resources.SI_OSP_GBL_NET_FRM_133</b></div>
+            <div class="col-md-9 divPads">
+
+                @for (int i = 0; i < Model.objTicketMaster.lstTicketTypeMaster.Count; i++)
+                {
+                    
+                    <div class="col-md-6 divPads"><label class="CustomTicketManager">@Html.CheckBoxFor(m => Model.objTicketMaster.lstTicketTypeMaster[i].ticket_type) @Model.objTicketMaster.lstTicketTypeMaster[i].ticket_type<span class="CustomTicketManagercheck"></span></label></div>
+                    @Html.HiddenFor(m => Model.objTicketMaster.lstTicketTypeMaster[i].ticket_type)
+                }
+
+            </div>
+        </div>
+
+        <div class="row padRow">
+            <div class="col-md-3 divPads"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_014</b></div>
+            <div class="col-md-9 divPads">
+                @for (int i = 0; i < Model.objticketstatus.Count; i++)
+                {
+
+                    <div class="col-md-6 divPads"><label class="CustomTicketManager">@Html.CheckBoxFor(m => Model.objticketstatus[i].isStatusChecked) @Model.objticketstatus[i].ticket_status<span class="CustomTicketManagercheck"></span></label></div>
+                    @Html.HiddenFor(m => Model.objticketstatus[i].ticket_status)
+                }
+            </div>
+        </div>
+
+        <div class="row padRow">
+            <div class="col-md-3 divPads"><b>@Resources.Resources.SI_OSP_GBL_NET_FRM_369</b></div>
+            <div class="col-md-9 divPads">
+                @Html.DropDownListFor(m => m.objTicketMaster.assigned_to, new SelectList(Model.lstUserName.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @onchange = "si.onChangeRegion();", @id = "ddlRegions" })     
+                @Html.HiddenFor(x => x.lstAssignedTo)
+            </div>
+        </div>
+
+        <div class="row padRow">
+            @*<div class="col-md-6 divPads text-left"><b>Clear</b></div>
+                <div class="col-md-6 divPads text-right"><b>Apply</b></div>*@
+            <div class="col-md-6 divPads text-left">
+                <b>
+                    <button type="submit" class="btn btn-primary" id="btnclearFilter" style="margin:0px 4px;"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button></b></div>
+                    <div class="col-md-6 divPads text-right">
+                        <b><button type="submit" class="btn btn-default" id="btnFilter" style="margin:0px 0px;"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_007</button></b>
+                    </div>
+
+            </div>
+            }
+
+        </div>
+<script>
+
+    $(document).ready(function () {
+         
+    });
+     
+    function TicketFilter() {
+         
+        $(popup.DE.CloseChildPopup).trigger("click");
+        
+
+    } 
+</script>

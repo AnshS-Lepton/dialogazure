@@ -1,0 +1,230 @@
+﻿@model Models.Admin.ISPModelInfo
+@using System.Linq
+@using Utility
+<style>
+    ul.list-group {
+        display: none;
+    }
+
+        ul.list-group.show {
+            display: block !important;
+        }
+</style>
+<script>
+    $(document).ready(function (e) {
+        $(".rdb").change(function (event) {
+            //$(this).next().slideToggle();
+            $('ul.list-group').slideToggle();
+            $('#editModal').hide();
+        }); 
+        //Checked First Radiobutton and Called the Function
+        $("input:radio[name=optradio]:first").attr('checked', true).trigger('click');
+
+    });
+</script>
+<style>
+    .modal-backdrop {
+        z-index: 0;
+        /*position:relative;*/
+    }
+</style>
+
+<!DOCTYPE html>
+<!-- Modal POP-UP Edit -->
+<div class="modal fade" data-backdrop="static" data-keyboard="false" id="editModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header d-flex popup_bg">
+                <h4 class="modal-title">Details</h4>
+                <button type="button" class="close ml-auto" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body modelEquipBody">
+
+                @Html.Partial("_ModelDetailSetup")
+
+            </div>
+            <div class="modal-footer modelEquipFoot">
+                @*<button type="button" class="btn btn-primary rightbtn" data-dismiss="modal">Open Workspace</button>*@
+                <a href="" id="btnOpenWorkspace" class="btn btn-primary rightbtn">Open Workspace</a>
+                <button type="button" id="btnCancelPopup" class="btn btn-gray" data-dismiss="modal">Cancel</button>
+                <input type="button" onclick="UpdateModelDetails()" class="btn btn-primary" value="Update" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Model POP-UP Rules-->
+<div class="modal fade" data-backdrop="static" data-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true" id="rulesModel"  role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header d-flex popup_bg">
+                <h4 class="modal-title">Type & Rules</h4>
+                <button id="btncloseRule" onclick="clearCheckbox()" type="button" class="close ml-auto" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body modelEquipBody">
+
+                @{Html.RenderAction("CreateRule", "Equipment");}
+
+            </div>
+            <!--<div class="modal-footer modelEquipFoot">-->
+
+                @*<input type="button" id="btnUpdateRule" onclick="" class="btn btn-default" value="Update" />*@
+
+            <!--</div>-->
+        </div>
+    </div>
+</div>
+
+<div class="row margin-all-0 grid-color-box">
+    <div class="col-md-wt equipadd">
+        <div>
+            <h4>&nbsp;Model Category </h4>
+        </div>
+        <div class="RadioDiv" id="modelCategory">
+
+            @if (Model.lstEquipments != null && Model.lstEquipments.Count > 0)
+            {
+                var parentItem = (from c in Model.lstEquipments select new { c.model, c.model_id }).Distinct();
+
+                foreach (var item in parentItem)
+                {
+
+                    <div class="RadioFunction" style="cursor:default;">
+                        <div class="radio" style="cursor:default;">
+
+                            <label class="Custombtn chk"><input class="rdb" data-toggle="collapse" href="#@item.model" aria-expanded="false" aria-controls="collapseExample" style="cursor:pointer;" onclick="GetModelDetails(@item.model_id,'@item.model')" type="radio" name="optradio"><span class="Custombtncheck bdrRound"></span><b>@item.model</b></label>
+
+                        </div>
+                        <ul class="collapse" id="@item.model" data-parent="#modelCategory">
+                            @foreach (var childItem in Model.lstEquipments.Where(x => x.model == item.model).ToList())
+                            {
+                                if (childItem.ModelTypeName != "Other")
+                                {
+                                    <li>@childItem.ModelTypeName <span class="badge">(@childItem.Modelcount)</span></li>
+                                }
+                            }
+                        </ul>
+                    </div>
+
+                }
+            }
+            else
+            { <div style="text-align: center; margin-top: 30px;">
+                    No Records Found.
+                </div>
+            }
+
+        </div>
+    </div>
+
+    <div class="col-md-ww">
+        <div class="header_Equip">
+            <h4 id="Heading"></h4><h4>&nbsp;Details</h4>
+
+            @*<input type="button" class="btn btn-primary" name="btnaction" id="CreateNewModel" value="Create New Model" />*@
+            <span style="float:right;">
+
+                <input type="button" id="btnCreateRules" onclick="CreateRules()" value="Type & Rules" class="btn btn-primary" />
+                <a href="@Url.Action("CreateModel", "Equipment")" value="" class="btn btn-primary">Create New Model</a>
+                &nbsp;&nbsp;
+
+            </span>
+
+
+        </div>
+
+        <div class="table-responsive tble_over_hide">
+            <div class="row">
+                <div id="dvStatusCount" class="col-md-5 d-flex no-wrap">
+                    @{
+                        Html.RenderAction("GetModelStatusCount", "Equipment");
+                    }
+                </div>
+                @*<span><img src="~/Areas/Admin/Content/images/active.svg" width="15px" /> Active(32)</span> <span><img src="~/Areas/Admin/Content/images/inactive.svg" width="15px" /> Inactive(16)</span> <span><img src="~/Areas/Admin/Content/images/pending.svg" width="15px" /> Pending(4)</span>*@
+
+                <div class="col-md-2">
+                    @*<label>Search By</label>*@
+
+                    @*<select class="chosen-select form-control valid" id="" name="" tabindex="2" title="SearchBy"><option selected="selected" value="true">Select</option></select>*@
+
+                    @Html.DropDownListFor(m => m.objOptionsEquipmentDetails.searchBy, new List<SelectListItem>
+                 {
+                    new SelectListItem{ Text="Name", Value = "Name"},
+                    new SelectListItem{ Text="Type", Value = "Type"}
+                 }, new { @id = "ddlSearchBy", @tabindex = "1", @title = "Search By", @class = "chosen-select form-control" })
+
+                </div>
+                <div class="col-md-2">
+                    @*<label>Search Text</label>*@
+                    @*<input class="form-control" data-val="true" id="txtSearchText" maxlength="50" placeholder="Enter Search Text" type="text" value="">*@
+                    @Html.TextBoxFor(m => m.objOptionsEquipmentDetails.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "2", @class = "input-sm form-control", @placeholder = "Search Text", @maxlength = 100 })
+                </div>
+                <div class="col-md-3 d-flex --gap-05">
+                    <input type="button" id="btnSearch" tabindex="3" onclick="SearchModelDetails()" value="Search" class="btn btn-primary">
+                   
+                @*</div>
+                     <div class="col-md-1 lineHT" >*@
+
+                         @*<a style="text-align:left" onclick="resetSearch()" tabindex="4" id="" value="" class="btn btn-gray FocusRed">Reset</a>*@
+                   
+                    <a style="text-align:left" onclick="resetSearch()" tabindex="4" id="" value="" class="btn btn-gray FocusRed">Reset</a>
+
+                    <a id="iconEdit" onclick="EditModelDetails()"><i class="fa fa-pencil" title="edit" tabindex="5"></i> </a>
+                    <i class="icon-Delete" onclick="DeleteModelDetails()" tabindex="6" id="btnDelete" title="Delete"></i>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div id="dvModelDetailsByModelId">
+            <div style="text-align: center; margin-top: 30px;">
+                No Records Found.
+            </div>
+        </div>
+
+        @*@{
+                Html.RenderAction("GetModelDetails", "Equipment");
+            }*@
+
+    </div>
+</div>
+
+@section equipmentScript
+{
+    <script type="text/javascript">
+        $(function ($, window, document, d3) {
+            let configs = {
+                entityType: 'Equipment',
+                selectSpecification: 'select#specification',
+                selectVender: 'select#ddlVendor',
+                specificationContext: '#SpecificationContext',
+                itemCode: "#txtItemCode",
+                category: "#txtCategory",
+                subCategory_1: "#txtSubCategory1",
+                subCategory_2: "#txtSubCategory2",
+                subCategory_3: "#txtSubCategory3",
+                itemTemplateId: '#itemTemplateId',
+                modelListContext: '#dvModelDetailsByModelId',
+                dvTypeDetails: '#dvTypeDetails',
+                modelChk: '.Custombtn > input.chk',
+                btnEdit: '#iconEdit',
+                iconEditRule: '#iconEditRule',
+                hdnEntityType: '#txtEntityType',
+                no_of_port: '#no_of_port',
+                modelTypeColorSel: '#ddlModelTypeColor'
+            };
+            modelView.init(configs);
+            specificationManager.init(configs);
+
+        }($, window, document, d3));
+
+    </script>
+}
+

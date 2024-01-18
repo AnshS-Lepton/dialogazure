@@ -1,0 +1,331 @@
+﻿@using Models;
+@model Models.OSPHeader
+@{
+    var objUser = Model.objuser;//(User)Session["userDetail"];
+    var moduleSubModuleList = Model.objuser.lstUserModule;
+    var moduleList = moduleSubModuleList.Where(x => x.parent_module_id == 0).OrderBy(x => x.module_sequence).ToList();
+    var submoduleList = moduleSubModuleList.Where(x => x.parent_module_id != 0).OrderBy(x => x.module_sequence).ToList();
+}
+
+<!DOCTYPE html>
+<div class="sidenav">
+    <nav class="navbar navbar-expand-lg navbar-dark" id="mainNav">
+        <div id="navbarResponsive">
+            <div class="nav-item admin_pnl">
+                @*<div class="row">
+                        <div class="col-3"><i class="fa fa-fw fa-user-circle" style="font-size:40px; color:#fff; margin-top:5px;"></i></div>
+                        <div class="col-9" style="color:#fff;">
+                            <span class="nav-link-text"><h4>@objUser.name</h4></span>
+                            <span class="nav-link-text">@objUser.user_email</span>
+                        </div>
+                    </div>*@
+            </div>
+            @*@if (objUser.is_admin_rights_enabled == false)
+            {*@
+                <div id="dvNav" class="collapse navbar-collapse">
+                    <ul class="navbar-nav navbar-sidenav">
+                        @*<li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Index", "Home")" id="homelink">
+                                <i class="icon-Dashboard"></i>
+                                <span class="nav-link-text">Dashboard</span>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;"></ul>
+                        </li>*@
+
+                        @*<li class="nav-item" title="Users">
+                            <a class="nav-link" href="#">
+                                <i class="icon-Users"></i>
+                                <span class="nav-link-text">Users</span>
+                                <i class="icon-Open_Menu pull-right addon"></i>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;">
+                                <li><a href="@Url.Action("AddUser", "User", new { id = "" })">Add User</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("ViewUsers", "User")">View Users</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("ViewUsersLoginHistory", "User")">View Users Login History</a><span class="right-arrow"></span></li>
+                            </ul>
+                        </li>*@
+                        @*<li class="nav-item" title="Roles">
+                            <a class="nav-link" href="#">
+                                <i class="icon-Users"></i>
+                                <span class="nav-link-text">Rights Management</span>
+                                <i class="icon-Open_Menu pull-right addon"></i>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;">
+                                <li><a href="@Url.Action("AddRole", "Roles", new { id = "" })">Add Role</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("ViewRoles", "Roles", new { id = "" })">View Roles</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("AddTemplate", "Template")">Add Entity Template</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("ViewTemplates", "Template")">View Entity Templates</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("UpdateRoleModule", "Roles")">Role Module Mapping</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("UserReportMapping", "User")">User Report Mapping</a><span class="right-arrow"></span></li>
+                            </ul>
+                        </li>*@
+                        @*<li class="nav-item" title="Roles">
+                                <a class="nav-link" href="#">
+                                    <i class="fa fa-fw fa-user "></i>
+                                    <span class="nav-link-text">Roles</span>
+                                    <i class="icon-Open_Menu pull-right addon"></i>
+                                </a>
+                                <ul class="sidenav-second-level" style="display:none;">
+                                    <li><a href="@Url.Action("AddRole", "Roles", new { id = "" })">Add Role</a></li>
+                                    <li><a href="@Url.Action("ViewRoles", "Roles")">View Roles</a> </li>
+                                </ul>
+                            </li>*@
+
+                        @*<li class="nav-item" title="OSP Settings">
+                            <a class="nav-link" href="#">
+                                <i class="icon-settings"></i>
+                                <span class="nav-link-text">OSP Settings</span>
+                                <i class="icon-Open_Menu pull-right addon"></i>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;">
+                                <li><a href="@Url.Action("InfoSettings", "OSPSettings")">Info Settings</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("SearchSettings", "OSPSettings")">Search Settings</a><span class="right-arrow"></span></li>
+                                
+                                <li><a href="@Url.Action("labelSettings", "OSPSettings")">Label Settings</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("TubeCoreColorSettings", "OSPSettings")">Tube/Core Color Settings</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("ViewCableMapColorSettings", "OSPSettings")">Cable Map Color Settings</a><span class="right-arrow"></span></li>
+                            </ul>
+                        </li>*@
+                        @*<li class="nav-item" title="Projects">
+                            <a class="nav-link" href="#">
+                                <i class="icon-Projects"></i>
+                                <span class="nav-link-text">Project</span>
+                                <i class="icon-Open_Menu pull-right addon"></i>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;">
+                                <li><a href="@Url.Action("AddProject", "Project")">Add Project</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("ViewProject", "Project")">View Projects</a><span class="right-arrow"></span></li>
+                            </ul>
+                        </li>*@
+                        @*<li class="nav-item" title="Vendor">
+                            <a class="nav-link" href="#">
+                                <i class="icon-Vendor"></i>
+                                <span class="nav-link-text">Vendor</span>
+                                <i class="icon-Open_Menu pull-right addon"></i>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;">
+                                <li><a href="@Url.Action("CreateVendor", "Vendor")">Add Vendor</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("ViewVendor", "Vendor")">View Vendors</a><span class="right-arrow"></span></li>
+
+                            </ul>
+                        </li>*@
+
+                        @*<li class="nav-item" title="Specification">
+                            <a class="nav-link" href="#">
+                                <i class="icon-Vendor_Specification"></i>
+                                <span class="nav-link-text">Vendor Specification</span>
+                                <i class="icon-Open_Menu pull-right addon"></i>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;">
+                                <li><a href="@Url.Action("AddVendorSpecification", "VendorSepcification", new { id = 0 })"> Add Vendor Specification</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("ViewVendorSpecification", "VendorSepcification")">View Vendor Specification</a><span class="right-arrow"></span></li>
+                            </ul>
+
+                        </li>*@
+
+                        @*<li class="nav-item" title="Configuration">
+                                <a class="nav-link" href="#">
+                                    <i class="fa fa-fw fa-cogs"></i>
+                                    <span class="nav-link-text">Configuration Setting</span>
+                                    <i class="icon-Open_Menu pull-right addon"></i>
+                                </a>
+                                <ul class="sidenav-second-level" style="display:none;">
+                                    <li><a href="@Url.Action("AddConfigurationSetting", "ConfigurationSettings")">Type/Brand/Model</a></li>
+                                </ul>
+
+                            </li>*@
+
+                        @*<li class="nav-item" title="Manage Region Province">
+                                <a class="nav-link" href="#">
+                                    <i class="icon-Manage_Region"></i>
+                                    <span class="nav-link-text">Manage Region Provinces</span>
+                                    <i class="icon-Open_Menu pull-right addon"></i>
+                                </a>
+                                <ul class="sidenav-second-level" style="display:none;">
+                                    <li><a href="@Url.Action("ViewRegion", "RegionProvince")">View Region</a><span class="right-arrow"></span></li>
+                                    <li><a href="@Url.Action("ViewRegionProvinces", "RegionProvince")">View Province</a><span class="right-arrow"></span></li>
+                                    <li><a href="@Url.Action("ImportRegionProvince", "RegionProvince")">Import Region Province Boundary</a><span class="right-arrow"></span></li>
+                                </ul>
+                            </li>*@
+                        @*<li class="nav-item" title="Miscellaneous">
+                                <a class="nav-link" href="#">
+                                    <i class="fa fa-fw fa-table"></i>
+                                    <span class="nav-link-text">Miscellaneous</span>
+                                    <i class="icon-Open_Menu pull-right addon"></i>
+                                </a>
+                                <ul class="sidenav-second-level" style="display:none;">
+                                    <li><a href="@Url.Action("EmailSettings", "Miscellaneous")">Email Settings</a></li>
+                                </ul>
+                            </li>*@
+
+                        @*<li class="nav-item" title="Link Budget Settings">
+                            <a class="nav-link" href="#">
+                                <i class="icon-settings"></i>
+                                <span class="nav-link-text">Link Budget Settings</span>
+                                <i class="icon-Open_Menu pull-right addon"></i>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;">
+                                <li><a href="@Url.Action("AddLinkBudget", "OpticalLinkBudget")">Add Link Budget </a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("ViewLinkBudget", "OpticalLinkBudget")">View Link Budgets</a><span class="right-arrow"></span></li>
+                            </ul>
+                        </li>*@
+
+                        @*<li class="nav-item" title="Equipment Builder">
+                            <a class="nav-link" href="#">
+                                <i class="icon-Equipment_Builder"></i>
+                                <span class="nav-link-text">Equipment Builder</span>
+                                <i class="icon-Open_Menu pull-right addon"></i>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;">
+                                <li><a href="@Url.Action("ViewModels", "Equipment")">View Models </a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("CreateModel", "Equipment")">Create Model</a><span class="right-arrow"></span></li>
+                            </ul>
+                        </li>*@
+                        @*<li class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="icon-settings"></i>
+            <span class="nav-link-text" title="LandBase Layer Settings">LandBase Layer Settings</span>
+            <i class="icon-Open_Menu pull-right addon"></i>
+        </a>
+        <ul class="sidenav-second-level" style="display:none;">
+            @if (objUser.user_name.ToLower() == "administrator")
+            {
+                <li><a href="@Url.Action("AddLayer", "LandbaseSettings", new { id = "" })" title="Add Landbase Layer">Add Landbase Layer</a><span class="right-arrow"></span></li>
+                <li><a href="@Url.Action("ViewLayers", "LandbaseSettings")" title="View Landbase Layers">View Landbase Layers</a><span class="right-arrow"></span></li>
+            }
+            <li><a href="@Url.Action("ManageDropdownValues", "LandbaseSettings")" title="Landbase Dropdown Master">Landbase Dropdown Master</a><span class="right-arrow"></span></li>
+            <li><a href="@Url.Action("LandBaseLayerSearchSetting", "LandbaseSettings")" title="Search Settings">Search Settings</a><span class="right-arrow"></span></li>
+            <li><a href="@Url.Action("LandBaseLabelSettings", "LandbaseSettings")" title="Label Settings">Label Settings</a><span class="right-arrow"></span></li>
+        <ul>
+    </li>/*@
+                        @*<li class="nav-item" title="Miscellaneous Features">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-flask"></i>
+                                <span class="nav-link-text">Miscellaneous Features</span>
+                                <i class="icon-Open_Menu pull-right addon"></i>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;">
+                                <li><a href="@Url.Action("ChangeNetworkCode", "Miscellaneous")">Change Network Code</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("ViewUtilizationSetting", "Miscellaneous")">Entity Utilization Settings</a><span class="right-arrow"></span></li>
+                                <li><a href="@Url.Action("DropDownMaster", "Miscellaneous")">Dropdown Master</a><span class="right-arrow"></span></li>
+                            </ul>
+                        </li>*@
+                        @if (objUser.user_name.ToLower() == "administrator")
+                        {
+                            @*<li class="nav-item" title="Advanced Settings">
+                                <a class="nav-link" href="#">
+                                    <i class="fa fa-fw fa-table"></i>
+                                    <span class="nav-link-text">Advanced Settings</span>
+                                    <i class="icon-Open_Menu pull-right addon"></i>
+                                </a>
+                                <ul class="sidenav-second-level" style="display:none;">
+                                    <li><a href="@Url.Action("FormInputSettings", "AdvancedSettings")">Input Form Settings</a></li>
+                                    <li><a href="@Url.Action("ReportColumnSettings", "AdvancedSettings")">Report Column Settings</a></li>
+                                    <li><a href="@Url.Action("HistoryColumnSettings", "AdvancedSettings")">History Column Settings</a></li>
+                                    <li><a href="@Url.Action("ViewGlobalSettings", "AdvancedSettings")">Global Settings</a></li>
+                                    <li><a href="@Url.Action("Index", "Resources")">Resource Management</a></li>
+                                    <li><a href="@Url.Action("ModuleSettings", "AdvancedSettings")">Module Settings</a></li>
+                                    <li><a href="@Url.Action("LayerActionSettings", "AdvancedSettings")">Layer Action Settings</a></li>
+                                    <li><a href="@Url.Action("ViewConnectionLabelSettings", "AdvancedSettings")">Connection Label Settings</a></li>
+                                    
+                                </ul>
+                            </li>*@
+
+                            @*<li class="nav-item" title="Advanced Settings">
+                                <a class="nav-link" href="#">
+                                    <i class="fa fa-fw fa-table"></i>
+                                    <span class="nav-link-text">API Consumer Master</span>
+                                    <i class="icon-Open_Menu pull-right addon"></i>
+                                </a>
+                                <ul class="sidenav-second-level" style="display:none;">
+                                    <li><a href="@Url.Action("AddAPIConsumer", "APIConsumerMaster")">Add User</a></li>
+                                    <li><a href="@Url.Action("GetAPIConsumer", "APIConsumerMaster")">View User</a></li>
+                                </ul>
+                            </li>*@
+
+                        }
+                        @*<li class="nav-item" title="Advanced Settings">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-fw fa-table"></i>
+                                <span class="nav-link-text">Accessories</span>
+                                <i class="icon-Open_Menu pull-right addon"></i>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;">
+                                <li><a href="@Url.Action("ViewAccessories", "Accessories")">View Accessories</a></li>
+                                <li><a href="@Url.Action("ViewAccessoriesMapping", "Accessories")">View Accessories Mapping</a></li>
+                            </ul>
+                        </li>*@
+
+                        @*<li class="nav-item" title="Application Logs">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-fw fa-table"></i>
+                                <span class="nav-link-text">Application Logs</span>
+                                <i class="icon-Open_Menu pull-right addon"></i>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;">
+                                <li><a href="@Url.Action("ViewErrorLog", "Miscellaneous")">Web Error Logs</a></li>
+                                <li><a href="@Url.Action("ViewErrorApiLog", "Miscellaneous")">API Error Logs</a></li>
+                                <li><a href="@Url.Action("ViewApiRequestLog", "Miscellaneous")">API Request Logs</a></li>
+                            </ul>
+                        </li>*@
+                        @*<li class="nav-item" title="Help & FAQ's">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-fw fa-table"></i>
+                                <span class="nav-link-text">Help & FAQ's</span>
+                                <i class="icon-Open_Menu pull-right addon"></i>
+                            </a>
+                            <ul class="sidenav-second-level" style="display:none;">
+                                <li><a href="@Url.Action("ViewFaq", "Miscellaneous")">FAQ</a></li>
+                                <li><a href="@Url.Action("ViewFaqUserManual", "Miscellaneous")">User Manual</a></li>
+                            </ul>
+                        </li>*@
+                    </ul>
+                </div>
+                @*}
+                else
+                {*@
+                <div id="dvNav" class="collapse navbar-collapse">
+                    <ul class="navbar-nav navbar-sidenav">
+
+                        @for (int i = 0; i < moduleList.Count; i++)
+                        {
+                            var sbmdl = submoduleList.Where(x => x.parent_module_id == moduleList[i].Id).ToList();
+                            <li class="nav-item" title=@moduleList[i].module_name>
+                                <a class="nav-link" href="@(!string.IsNullOrEmpty(moduleList[i].form_url)?@Url.Action(moduleList[i].form_url.Split('/')[1], moduleList[i].form_url.Split('/')[0]):"#")">
+                                    <i class='@Convert.ToString(moduleList[i].icon_class)'></i>
+                                    <span class="nav-link-text">@moduleList[i].module_name</span>
+                                    <i class="@(sbmdl.Count>0?"icon-Open_Menu pull-right addon":"")"></i>
+                                </a>
+                                <ul class="sidenav-second-level" style="display:none;">
+                                    @{
+
+                                        for (int j = 0; j < sbmdl.Count; j++)
+                                        {
+                                            if (@sbmdl[j].module_abbr == "LYR-STY-VW-MST" && SmartInventory.Settings.ApplicationSettings.IsWMSLayerLoadingEnabled == true) { }                                            
+                                            else { <li><a href="@Url.Action(sbmdl[j].form_url.Split('/')[1], sbmdl[j].form_url.Split('/')[0])">@sbmdl[j].module_name</a><span class="right-arrow"></span></li>}
+                                        }
+                                    }
+                                </ul>
+                            </li>
+                                        }
+                    </ul>
+                </div>
+                                        @*}*@
+        </div>
+    </nav>
+</div><!-- End sidenav -->
+<!-- sidenav-toggler -->
+<ul class="navbar-nav sidenav-toggler" style="display:none;">
+    <li class="nav-item">
+        <a class="nav-link text-center fa fa-arrow-left" id="sidenavToggler">
+            <i class=""></i>
+        </a>
+    </li>
+</ul>
+@*<script type="text/javascript">
+    $(function () {
+        // 
+        //setTimeout(function () { $('#homelink').focus(); }, 500);
+        //$('#homelink').focus();
+    });
+    </script>*@

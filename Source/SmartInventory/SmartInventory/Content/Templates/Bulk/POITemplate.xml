@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+  <Mapping id="1">
+    <DbColName>bldg_height</DbColName>
+    <TemplateColName>bldg_height</TemplateColName>
+  </Mapping>
+  <Mapping id="2">
+    <DbColName>bldg_type</DbColName>
+    <TemplateColName>bldg_type</TemplateColName>
+  </Mapping>
+ 
+  <Mapping id="5">
+    <DbColName>data_source</DbColName>
+    <TemplateColName>data_source</TemplateColName>
+  </Mapping>
+ 
+  <Mapping id="11">
+    <DbColName>latitude</DbColName>
+    <TemplateColName>latitude</TemplateColName>
+  </Mapping>
+  <Mapping id="12">
+    <DbColName>longitude</DbColName>
+    <TemplateColName>longitude</TemplateColName>
+  </Mapping>
+  
+  <Mapping id="14">
+    <DbColName>poi_id</DbColName>
+    <TemplateColName>poi_id</TemplateColName>
+  </Mapping>
+  <Mapping id="15">
+    <DbColName>province_name</DbColName>
+    <TemplateColName>province_name</TemplateColName>
+  </Mapping>
+  <Mapping id="16">
+    <DbColName>region_name</DbColName>
+    <TemplateColName>region_name</TemplateColName>
+  </Mapping>
+  <Mapping id="3">
+    <DbColName>city_name</DbColName>
+    <TemplateColName>city_name</TemplateColName>
+  </Mapping>
+ 
+  <Mapping id="18">
+    <DbColName>site_address</DbColName>
+    <TemplateColName>site_address</TemplateColName>
+  </Mapping>
+  <Mapping id="19">
+    <DbColName>site_branch_building_name</DbColName>
+    <TemplateColName>site_branch_building_name</TemplateColName>
+  </Mapping>
+  
+  <Mapping id="21">
+    <DbColName>total_height</DbColName>
+    <TemplateColName>total_height</TemplateColName>
+  </Mapping>
+  <Mapping id="22">
+    <DbColName>tower_height</DbColName>
+    <TemplateColName>tower_height</TemplateColName>
+  </Mapping>
+  <!--<Mapping id="22">
+    <DbColName>accessibility</DbColName>
+    <TemplateColName>accessibility</TemplateColName>
+  </Mapping>
+  <Mapping id="22">
+    <DbColName>construction</DbColName>
+    <TemplateColName>construction</TemplateColName>
+  </Mapping>
+  <Mapping id="22">
+    <DbColName>network_status</DbColName>
+    <TemplateColName>network_status</TemplateColName>
+  </Mapping>
+  <Mapping id="22">
+    <DbColName>activation</DbColName>
+    <TemplateColName>activation</TemplateColName>
+  </Mapping>-->
+
+</Mappings>

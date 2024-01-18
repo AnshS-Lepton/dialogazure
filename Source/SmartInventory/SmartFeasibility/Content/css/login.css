@@ -1,0 +1,229 @@
+﻿body {
+    background: #ceedff; /* Old browsers */
+    background: -moz-linear-gradient(top, #ceedff 1%, #009ec3 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #ceedff 1%,#009ec3 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #ceedff 1%,#009ec3 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ceedff', endColorstr='#009ec3',GradientType=0 ); /* IE6-9 */
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    background-size: 100% 100%;
+    background-attachment: fixed;
+    font: 12px arial;
+    color: #fff;
+}
+
+.logo {
+    position: absolute;
+    right: 26%;
+    top: 6%;
+    text-align: left;
+    font-size: 18px;
+    color: #0fa4c7;
+    width:320px;
+}
+
+.login_area {
+    width: 406px;
+    height: 200px;
+    float: right;
+    position: absolute;
+    right: 6%;
+    top: 30%;
+}
+
+.go_botton {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+    background-color: #08a1c5;
+    font-weight: bold;
+    color: #fff;
+    font-size: 14px;
+    border: 1px solid;
+    border-radius: 4px;
+}
+
+
+/*.username {
+       width: 100%;
+    background: #fff;
+    border: 1px solid #999;
+    font: 12px Arial;
+    font-weight: bold;
+    outline: none;
+    border-radius: 4px;
+    padding: 12px;
+}
+
+.password {
+    margin: 0px 0 0 0px;
+    width:100%;
+    background: #fff;
+    border: 1px solid #999;
+    font: 12px Arial;
+    font-weight: bold;
+    outline: none;
+    border-radius: 4px;
+    padding: 12px;
+}*/
+.username {
+    margin:1px 0 0 40px;
+    width: 320px;
+    height: 40px;
+    background: #fff;
+    border: none;
+    font: 12px Arial;
+    color: #009e76;
+    font-weight: bold;
+    outline: none;
+    border-radius: 4px;
+    padding: 10px;
+    border: 1px solid #D9D9D9;
+}
+
+.password {
+    margin: 20px 0 0 40px;
+    width: 320px;
+    height: 40px;
+    background: #fff;
+    border: none;
+    font: 12px Arial;
+    color: #009e76;
+    font-weight: bold;
+    outline: none;
+    border-radius: 4px;
+    padding: 10px;
+    border: 1px solid #D9D9D9;
+}
+
+.dashboard a {
+    font: 16px arial;
+    color: #028463;
+    position: absolute;
+    text-decoration: none;
+    right: 17%;
+    top: 85%;
+    font-weight: bold;
+}
+
+    .dashboard a:hover {
+        color: #fff;
+    }
+
+.powered {
+    float: left;
+    bottom: 30px;
+    left: 74px;
+    position: fixed;
+}
+
+.browser {
+    float: left;
+    position: relative;
+    top: 20px;
+    color: #353535;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+    .browser span {
+    }
+
+.codrops-bottom {
+    position: relative;
+    bottom: -125px;
+    left: 10%;
+    color: #353535;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.helpdesk {
+    color: #fff;
+    /*float: right;*/
+    background-color: #436c83;
+    padding: 2px 5px;
+    margin-left: 8px;
+    border: solid 1px;
+    margin-top: -3px;
+    cursor: pointer;
+}
+
+.login_text {
+    position: relative;
+    font-size: 24px;
+    color: #353535;
+    font-weight: bold;
+    /* left: 43%; */
+    top: -10px;
+}
+
+.error {
+    color: red;
+    padding-left: 70px;
+    padding-top: 9px;
+}
+
+.scnd_img {
+    position: absolute;
+    left: 0px;
+    top: 0%;
+}
+
+.applicationName {
+    padding-top: 0px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    text-align: left;
+    font-weight: bold;
+    color: #353535;
+}
+
+.fromright {
+    float: right;
+    width: 40%;
+    background-color: #fff;
+    height: 100%;
+}
+
+.label-class {
+    color: #353535;
+    font-size: 14px;
+    margin-bottom: 10px;
+    float: left;
+    font-weight: bold;
+}
+
+.lep-logo {
+    position: absolute;
+    top: -30px;
+    width: 100%;
+    text-align: center;
+}
+
+:focus {
+    outline: none;
+}
+
+.signin {
+    Width: 320px;
+    Height: 40px;
+    border-radius: 4px;
+    background: #009ec3;
+    color: #fff;
+    border: none;
+    font-size: 22px;
+    margin: 20px 0 0 40px;
+    cursor: pointer;
+}
+
+.resources {
+    margin-top: 40px;
+    width: 100%;
+    text-align: right;
+    height: 20px;
+    float: right;
+    margin-right: 5px !important;
+}

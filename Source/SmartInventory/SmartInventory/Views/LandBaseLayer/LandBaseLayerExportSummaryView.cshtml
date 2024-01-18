@@ -1,0 +1,224 @@
+﻿@model Models.ExportLandBaseLayerSummaryView
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objReportFilters.pageSize, canSort: true, ajaxUpdateContainerId: "dvExportViewReport", ajaxUpdateCallback: "onGridHeaderClickExportReport('tblExportViewReport')");
+    grid.Bind(Model.lstReportData, autoSortAndPage: false, rowCount: Model.objReportFilters.totalRecord);
+    if (Model.objReportFilters.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objReportFilters.currentPage - 1;
+    }
+      
+    var isFilterApplied = Model.lstAdvanceFilters.Where(x => x.searchBy != null).Count() > 0 ? true : false;
+}
+<style>
+    th:first-child {
+        position: relative;
+    }
+</style>
+<!DOCTYPE html>
+<div class="libDetail viewReport">
+    @using (Ajax.BeginForm("ExportLBEntitySummaryView", "Report",
+            new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "dvViewReportProgress" },
+            new { id = "frmExportViewReport", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.objReportFilters.layerName)
+        <div class="libTabContent" style="overflow:visible;">
+            <div id="dvViewReportProgress" class="ViewReportProgress">
+                <div class="progressHeader"></div>
+                <div class="progressBody"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 recordHeading">
+                    @Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span> @Model.objReportFilters.totalRecord</span>
+                </div>
+                <div class="col-md-9" style="text-align: right;">
+                    <button type="button" class="btnAdvanceFilter @(isFilterApplied?"filterApplied":"")">
+                        <i class="glyphicon glyphicon-filter"></i>
+                        @Resources.Resources.SI_OSP_GBL_NET_GBL_052
+                    </button>
+                    <button type="button" class="btn btn-default @(Model.lstReportData.Count==0?"btnNotAllowed":"")" id="btnExportReport" style="margin-top: -4px;">
+                        @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010
+                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="exportOptions">
+                        <span onclick="ExportViewReport('EXCEL')">@Resources.Resources.SI_GBL_GBL_NET_FRM_042</span>
+                        <span onclick="ExportViewReport('CSV')">CSV</span>
+                        <span onclick="ExportViewReport('KML')">@Resources.Resources.SI_OSP_GBL_NET_GBL_007</span>
+                        <span onclick="ExportViewReport('SHAPE')">@Resources.Resources.SI_GBL_GBL_GBL_GBL_111</span> 
+                    </div>
+
+                    <div class="rowbox reportFilters">
+                        <span class="filterHeader">
+                            @Resources.Resources.SI_OSP_GBL_NET_FRM_363 : <span id="spantotalfilter">@Model.lstAdvanceFilters.Count</span>
+                            <button type="button" class="btn btn-default" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_364" onclick="addDynamicFilter()"><i class="glyphicon glyphicon-plus"></i></button>
+                        </span>
+                        <div id="dvAdvanceFilterContainer" class="reportAdvanceFilters">
+                            @for (int i = 0; i < Model.lstAdvanceFilters.Count; i++)
+                            {
+                                <div id="dvAdvanceFilter_@i">
+                                    @Html.DropDownListFor(m => Model.lstAdvanceFilters[i].searchBy, new SelectList(Model.lstLayerColumns.Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"), "--select--", new { @class = "chosen-select", @style = "width:33%" })
+                                    @Html.DropDownListFor(m => Model.lstAdvanceFilters[i].searchType, new List<SelectListItem> { new SelectListItem { Text = "Like", Value = "Like" }, new SelectListItem { Text = "=", Value = "=" } }, new { @class = "chosen-select", @style = "width:25%" })
+                                    @Html.TextBoxFor(m => Model.lstAdvanceFilters[i].searchText, new { @maxlength = "50", @Style = " width:35%;" })
+                                    <button type='button' class='btnminus' title="@Resources.Resources.SI_OSP_GBL_NET_FRM_365" onclick="removeFilterByRow(this);"><i class='icon-Close'></i></button>
+                                </div>
+                            }
+
+                        </div>
+                        <footer class="modal-footer">
+                            <button type="submit" class="btn btn-primary" id="btnApplyAdvanceFilters">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_007</button>
+                            <button type="button" class="btn btn-default" onclick="clearAdvanceFilters()">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        if (Model.lstReportData.Count > 0)
+        {
+            <div id="dvExportViewReport" style="padding: 10px;">
+                <div class="table-responsive tble_cls">
+                    @grid.GetHtml(tableStyle: "webgrid",
+            headerStyle: "webGridHeader",
+            alternatingRowStyle: "alt",
+            htmlAttributes: new { id = "tblExportViewReport" },
+            mode: WebGridPagerModes.All,
+            columns: Model.webColumns)
+                    @Html.Hidden("dir", grid.SortDirection)
+                    @Html.Hidden("col", grid.SortColumn)
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="nr-found">
+                <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+            </div>
+        }
+    }
+</div>
+<script>
+    $(document).ready(function () {
+
+        //$("#hdnLayerName").val('@ViewBag.SelectedEntityName')
+        $(".btnAdvanceFilter").on("click", function () {
+            $(".reportFilters").slideToggle();
+        });
+        $('#btnExportReport').on("click", function () {
+            $(".exportOptions").slideToggle();
+            $('#btnExportReport>i').toggleClass('fa-chevron-down').toggleClass('fa-chevron-up');
+        });
+        $("#btnApplyAdvanceFilters").on("click", function () {
+            $(".reportFilters").slideToggle();
+        });
+        $('.chosen-select').chosen();
+        addDefaultSortingIcons('tblExportViewReport');
+        $('th a, tfoot a').on("click", function () {
+            $('#frmExportViewReport').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        onGridHeaderClickExportReport('tblExportViewReport');
+    });
+    function onGridHeaderClickExportReport(gridControlId) {
+         
+        $('#' + gridControlId + ' tr th').addClass('bothorder');
+        var dir = $('#dir').val(); //direction value
+        var col = $('#col').val(); // header value
+       var clickedheader = $('#col').val();
+        //var clickedheader = $('th a[href*=' + col + ']');
+        var countTh = document.getElementsByTagName('th').length; //total column header
+        if (clickedheader != null && clickedheader != "" && clickedheader != undefined) {
+
+            for (var i = 1; i <= countTh; i++) {
+                var txtTh = $('#' + gridControlId + '  tr th:nth-child(' + i + ')').text(); // header text
+
+                if (txtTh.trim().toLowerCase() == clickedheader.trim().toLowerCase() && dir == 'Ascending') {
+
+                    $('#' + gridControlId + '  tr th:nth-child(' + i + ')').removeClass('bothorder');
+                    $('#' + gridControlId + '  tr th:nth-child(' + i + ')').addClass('ascendingorder');
+                    return;
+                }
+                else if (txtTh.trim().toLowerCase() == clickedheader.trim().toLowerCase() && dir == 'Descending') {
+
+                    $('#' + gridControlId + '  tr th:nth-child(' + i + ')').removeClass('bothorder');
+                    $('#' + gridControlId + '  tr th:nth-child(' + i + ')').addClass('descendingorder');
+                    return;
+                }
+            }
+        }
+    }
+    function resetFilterIds() {
+        $("#dvAdvanceFilterContainer>div").each(function (index) {
+
+            $(this).attr("id", "dvAdvanceFilter_" + index)
+                       .find("*")
+                       .each(function () {
+                           var id = this.id || "";
+                           var name = $(this).attr('name') || "";
+                           if (id != '') {
+                               this.id = replacebyIndex(id, 18, index);
+                           }
+                           if (name != '') {
+                               name = replacebyIndex(name, 18, index);
+                               $(this).attr('name', name);
+                           }
+                       });
+
+        });
+    }
+    function replacebyIndex(str, index, replacement) {
+        return str.substr(0, index) + replacement + str.substr(index + 1);
+    }
+    function removeFilterByRow(obj) {
+        var lstFilters = $("#dvAdvanceFilterContainer>div");
+        if (lstFilters.length > 1) {
+            $(obj).parent().remove();
+            $("#spantotalfilter").html($("#dvAdvanceFilterContainer>div").length);
+            resetFilterIds();
+
+        }
+        else {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_135);
+        }
+    }
+    function addDynamicFilter() {
+        var lstFilters = $("#dvAdvanceFilterContainer>div");
+        if (lstFilters.length == 5) {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_136);
+            return;
+        }
+        var lastRowIndex = lstFilters.length - 1;
+        $(lstFilters[lastRowIndex]).clone().
+            appendTo("#dvAdvanceFilterContainer").
+            attr("id", "dvAdvanceFilter_" + (lastRowIndex + 1))
+            .find("*")
+            .each(function () {
+                if ($(this).hasClass('chosen-container-single')) {
+                    $(this).remove();
+                }
+                else {
+                    var id = this.id || "";
+                    this.id = id.replace(("lstAdvanceFilters_" + lastRowIndex), ("lstAdvanceFilters_" + (lastRowIndex + 1)));
+                    var name = $(this).attr('name') || "";
+                    name = name.replace(("lstAdvanceFilters[" + lastRowIndex + "]"), ("lstAdvanceFilters[" + (lastRowIndex + 1) + "]"));
+                    $(this).attr('name', name);
+                    if ($(this).is("[type=text]")) {
+                        $(this).val('');
+                    }
+                }
+            });
+        $('#dvAdvanceFilterContainer .chosen-select').chosen({ width: '20%' });
+        //update filter count..
+        $("#spantotalfilter").html($("#dvAdvanceFilterContainer>div").length);
+    }
+    function ExportViewReport(purpose) {
+        si.ExportSummaryView(purpose);
+        $(".exportOptions").slideToggle();
+        $('#btnExportReport>i').addClass('fa-chevron-down').removeClass('fa-chevron-up');
+    }
+    function clearAdvanceFilters() {
+        $("#dvAdvanceFilterContainer").children().not(':first-child').remove();
+        $("#dvAdvanceFilterContainer > div > select[id*='searchBy']").val("").trigger("chosen:updated");
+        $("#dvAdvanceFilterContainer > div > select[id*='searchType']").val("Like").trigger("chosen:updated");
+        $("#dvAdvanceFilterContainer > div > input[id*='searchText']").val("");
+    }
+</script>

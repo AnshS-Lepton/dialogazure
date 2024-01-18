@@ -1,0 +1,140 @@
+﻿@model Models.RoleViewModel
+
+<style>
+    #tblNetworkLayers {
+        border: 1px #ccc solid;
+        background: white;
+    }
+
+    input[type="checkbox"][readonly] {
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+    .align-sefl-top{
+        align-self:flex-start;
+    }
+    tbody > tr:nth-child(1) td {
+        top: 35px;
+        position: sticky;
+        z-index: 1;
+        background: var(--tableOddBg);
+    }
+   
+    .grid tr th:last-child{
+        border-right:1px solid #ccc;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+
+<div id="dvUserDetail" class="update_panel fullWidth">
+
+    <div class="title">
+        <h4>@(Model.objRoleMaster.role_id > 0 ? "Update Role" : "Add Role") </h4>
+    </div>
+ @using (Html.BeginForm("SaveRole", "Roles", FormMethod.Post, new { autocomplete = "off", @id = "frmSaveRole", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+ {
+        @Html.HiddenFor(model => model.objRoleMaster.role_id, new { id = "hdnRoleId" })
+<div>
+    @if (Model.objRoleMaster.role_id == 0)
+    {
+        <div class="row">
+            <div class="col-md-2">
+                <label class="control-label">
+                    Entity Template<i class="clsMandatory">*</i>:
+                </label>
+            </div>
+
+            <div class="col-md-4">
+                @Html.DropDownListFor(model => model.template_id, Model.templateList, "-Select-", new { @class = "chosen-select form-control", @required = true, id = "ddlTemplate" })
+                <i id="progressbar" style="display:none;">
+                    <img style="border:4px solid rgb(250 255 255);height:25px;" alt="Loading..." src="~/content/images/loading_new.gif" /><br />
+                </i>
+            </div>
+        </div>
+    }
+<div class="row">
+    <div class="col-md-2">
+        <label class="control-label">
+            Reporting Role Name <i class="clsMandatory">*</i>:
+        </label>
+    </div>
+    <div class="col-md-4">
+        @Html.DropDownListFor(m => m.objRoleMaster.reporting_role_id, new SelectList(Model.lstRoles.Select(x => new { Value = x.Value.ToString(), Text = x.Text.ToString() }), "Value", "Text"), new { @class = "chosen-select form-control", multiple = "multiple", @id = "ddlroles", @required = true, @onchange = "onChangeRRMId();" })
+        @Html.HiddenFor(m => m.multi_reporting_role_ids)
+    </div>
+    <div class="col-md-2">
+        <label class="control-label">
+            Role Name<i class="clsMandatory">*</i>:
+        </label>
+    </div>
+    <div class="col-md-4">
+        @Html.TextBoxFor(model => model.objRoleMaster.role_name, new { @class = "form-control", @maxlength = "50", @placeholder = "Enter Role Name", @id = "rolename", @onblur = "checkRoleExist()" })
+    </div>
+
+</div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <label class="control-label">
+                    Role Description<i class="clsMandatory">*</i>:
+                </label>
+            </div>
+            <div class="col-md-4">
+                @Html.TextAreaFor(model => model.objRoleMaster.remarks, new { @class = "form-control", @maxlength = "200", @id = "roledescription", @placeholder = "Enter Role Description", @rows = 2, @autofill = "off", @style = "resize: none;" })
+            </div>
+            <div class="col-md-2">
+                <label class="control-label d-flex">
+                    Is Active?
+                </label>
+            </div>
+            <div class="col-md-4 d-flex">
+                @Html.CheckBoxFor(model => model.objRoleMaster.is_active, new { @class = "chkActive align-sefl-top" })
+
+                <a href="@Url.Action("AddRole")" class="btn btn-default ml-auto mr-05 align-sefl-top" title="Reset">Reset</a>
+                <button type="button" class="btn btn-primary align-sefl-top" id="btnSaveRole" onclick="validateRole()">@(Model.objRoleMaster.role_id == 0 ? "Save" : "Update")</button>
+            </div>
+        </div>
+        
+
+  
+    <div id="permission" class="form-group">
+        @{Html.RenderPartial("_ViewRoleTemplatePermission", Model.objRoleMaster);}
+    </div>
+    <div id="permission1">
+        @{Html.RenderPartial("_ViewTickectTypeTemplatePermission", Model);}
+    </div>
+
+</div>
+}
+</div>
+<script type="text/javascript">
+    function checkRoleExist() {
+        ajaxReq('Roles/CheckRoleExist', { role_name: $("#role_name").val().trim(), role_id: $("#role_Id").val() }, false, function (resp) {
+            if (resp.status == "FAILED") {
+                $("#btnSaveRole").attr("disabled", true);
+                alert(resp.message);
+            }
+            else {
+                $("#btnSaveRole").attr("disabled", false);
+            }
+        }, true, true);
+    }
+
+    $('#ddlTemplate').change(function () {
+        $("#progressbar").show();
+        $("#permission").load(appRoot + '/Roles/ViewLayerRightsTemplate/' + $(this).val(), function () {
+            $("#progressbar").hide();
+        });
+
+    });
+    $('.chosen-select').chosen({ width: '100%' });
+</script>
+
+
+
+
+

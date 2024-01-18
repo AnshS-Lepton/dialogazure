@@ -1,0 +1,143 @@
+﻿@model Models.BomBoqExportReport
+@*@using (Ajax.BeginForm("PrintBOMBOQ", "BOMBOQ", new { id = "frmBOMBOQExpAttr", autocomplete = "off", @class = "form-horizontal" }))
+    {*@
+<form id="frmBOMBOQExpAttr" autocomplete="off" class="form-horizontal">
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(m => m.objAdAttribute.userid)
+    @{ var isAttrEq = ((List<string>)Session["ApplicableModuleList"]).Contains("EQPD");}
+    @{ var isAttrFtr = ((List<string>)Session["ApplicableModuleList"]).Contains("FTRD");}
+    <fieldset class="the-fieldset">
+        <legend class="the-legend title_popout">@Resources.Resources.SI_OSP_GBL_GBL_GBL_268</legend>
+        <div class="row form-group">
+
+            <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_269<i class="clsMandatory">*</i>:</div>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.objAdAttribute.title,
+               new { @id = "AttributeTitle", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_269, @tabindex = "1", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_269, @maxlength = "180" })
+            </div>
+        </div>
+    </fieldset>
+    @if (isAttrEq)
+    {
+        <fieldset class="the-fieldset">
+            <legend class="the-legend title_popout">
+                <label>
+                    @Html.CheckBoxFor(m => m.objAdAttribute.isEquipmentEnable, new { @checked = "true", @onclick = "EnableDisable_All(this,'bmbqEqpmnt',false)" })
+                    @*, @onclick = "EnableDisable_All(this,'bmbqEqpmnt',false)"*@
+                   @Resources.Resources.SI_OSP_GBL_GBL_GBL_272
+                </label>
+            </legend>
+            <div class="bmbqEqpmnt">
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_ISP_GBL_NET_FRM_063:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.objAdAttribute.equipmenttype,
+                       new { @id = "EquipmentType", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_269, @tabindex = "2", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_ISP_GBL_NET_FRM_063, @maxlength = "180" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_118:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.objAdAttribute.equipmentname,
+                       new { @id = "EquipmentName", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_269, @tabindex = "3", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_118, @maxlength = "180" })
+                    </div>
+                </div>
+                <div class="row form-group">  
+                    <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_GBL_139:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.objAdAttribute.popname,
+                       new { @id = "POPName", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_269, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_GBL_139, @maxlength = "180" })
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    }
+    @if (isAttrFtr)
+    {
+        <fieldset class="the-fieldset">
+            <legend class="the-legend title_popout">
+                <label>
+                    @Html.CheckBoxFor(m => m.objAdAttribute.isAdditionalAttrEnable, new { @checked = "true", @onclick = "EnableDisable_All(this,'bmbqAdattr',false)" })
+                    @Resources.Resources.SI_OSP_GBL_GBL_GBL_273
+                    @*, @onclick = "EnableDisable_All(this,'bmbqAdattr',false)"*@
+                </label>
+            </legend>
+            <div class="bmbqAdattr" id="adAttrbomboq">
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_270<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.objAdAttribute.estimatedby,
+                       new { @id = "Estimatedby", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_269, @tabindex = "5", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_270, @maxlength = "180" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_OSP_PM_NET_FRM_012<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.objAdAttribute.checkedby,
+                       new { @id = "Checkedby", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_269, @tabindex = "6", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_PM_NET_FRM_012, @maxlength = "180" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_271<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.objAdAttribute.re_checkedby,
+                       new { @id = "Re_checkedby", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_269, @tabindex = "7", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_271, @maxlength = "180" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_OSP_PM_NET_FRM_013<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.objAdAttribute.approvedby,
+                       new { @id = "Approvedby", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_269, @tabindex = "8", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_PM_NET_FRM_013, @maxlength = "180" })
+                        @*@Html.ValidationMessageFor(model => model.objAdAttribute.approvedby)*@
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    }
+    <div class="form-group rptFooter col-sm-12 text-right" style="">
+        <button type="button" id="ExpBomBoqRPT" onclick="si.BOMBOQReport.ExportRptBOMBOQ();" class="btn btn-primary">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</button>
+    </div>
+</form>
+@*}*@
+
+<script type="text/javascript">
+    function EnableDisable_All(th, ParentIDorClass, IsParentID) {
+        var prt = IsParentID == true ? "#" + ParentIDorClass : "." + ParentIDorClass;
+        $('' + prt + ' :input,select,textarea').prop('readonly', !$(th).is(":checked"));
+    }
+    function RptBomBoqExp() {
+
+        var exptype = $("#CrntRptType").val();
+        alert(exptype);
+
+        si.BOMBOQReport.ExportRptBOMBOQ(exptype);
+    }
+
+    function ExpBomBoqRPT() {
+         
+        var exptype = $("#CrntRptType").val();
+
+    }
+
+    function ExpBomBoqRPT_() {
+        var exptype = $("#CrntRptType").val();
+        $.ajax({
+            url: '/BOMBOQ/PrintBOMBOQ',
+            type: 'post',
+            dataType: 'json',
+            data: { objBomBoq: $('form#frmBOMBOQExpAttr').serialize(), ExpRptType: exptype },
+            asyc: true,
+            success: function (data) {
+                if (data.success != "" && data.success != null && data.success != undefined) {
+
+                }
+                else {
+                    alert(data.message);
+                }
+
+            }
+        });
+    }
+</script>

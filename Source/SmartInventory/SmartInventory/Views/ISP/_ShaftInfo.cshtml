@@ -1,0 +1,177 @@
+﻿@model Models.ISP.ShaftInfo
+@using Models;
+@helper pageMessage()
+{
+    {
+        Html.RenderPartial("_PageMessage", Model.objPM);
+    }
+
+} @pageMessage()
+
+
+@{ var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.SHAFT.ToString()); }
+
+<style>
+    .disabled-result {
+        background-color: #f4bcbc !important;
+        color: navy !important;
+    }
+</style>
+
+<!DOCTYPE html>
+@using (Ajax.BeginForm("UpdateShaftInfo", "ISP", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "dvModalBody",
+    LoadingElementId = "dvProgress",
+    OnSuccess = "isp.structureActions.shaft.saveRange"
+}, new { id = "frmShaftInfo" }))
+{
+    @Html.HiddenFor(m => m.system_id, new { id = "hdnShaftId" })
+    @Html.HiddenFor(m => m.structure_id)
+    @Html.HiddenFor(m => m.created_by)
+    @Html.HiddenFor(m => m.modified_by)
+    @Html.HiddenFor(m => m.is_partial_shaft)
+    <fieldset class="the-fieldset">
+        <legend class="the-legend"></legend>
+        <div class="row form-group">
+
+            <div class="col-md-3"><label class="control-label">@Resources.Resources.SI_ISP_GBL_GBL_GBL_009<i class="clsMandatory">*</i></label></div>
+            <div class="col-md-9">
+                @Html.TextBoxFor(m => m.shaft_name, new { @class = "form-control", @maxlength = "30", @autocomplete = "off", @id = "shaftName" })
+                @Html.ValidationMessageFor(m => m.shaft_name)
+            </div>
+        </div>
+
+        <div class="row form-group">
+            <div class="col-md-3"><label class="control-label" for="chckType">@Resources.Resources.SI_ISP_UNT_NET_FRM_003</label></div>
+            <div class="col-md-4">
+                @Html.CheckBoxFor(m => m.is_virtual, new { @id = "checkVirtualShaft" })
+                <b><label for="checkVirtualShaft" class="checkbox-custom-label"><span>@Resources.Resources.SI_ISP_GBL_GBL_GBL_044</span></label></b>
+            </div>
+            <div class="col-md-4">
+                @Html.CheckBoxFor(m => m.with_riser)
+                <b><label for="checkWithRiser" class="checkbox-custom-label"><span>@Resources.Resources.SI_ISP_GBL_NET_FRM_067</span></label></b>
+
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-md-3"><label class="control-label" for="ddlFloorRangeType">@Resources.Resources.SI_ISP_GBL_NET_FRM_068</label></div>
+            <div class="col-md-9">
+                <select class="chosen-select form-control" id="ddlFloorRangeType">
+                    <option value="0">--Select--</option>
+                    <option value="All" @(!Model.is_partial_shaft ? "Selected" : "")> All</option>
+                    <option value="Custom" @(Model.is_partial_shaft ? "Selected" : "")>Custom</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row form-group" id="FloorFromTo" style="display:@(Model.ShaftRangelist.Count>0?"block":"none")">
+            <div class="col-md-3"></div>
+            <div class="col-md-9">
+                <label>@Resources.Resources.SI_ISP_GBL_GBL_GBL_055</label>
+                <table class="shaftLstInfo" border="1" cellpadding="0" cellspacing="0" style="width:100%;">
+                    <thead class="text-left">
+                        <tr>
+                            <th>@Resources.Resources.SI_ISP_GBL_GBL_FRM_004</th>
+                            <th>@Resources.Resources.SI_ISP_GBL_GBL_FRM_005</th>
+                            <th style="width: 15.5%;border-right: 2px solid gray;"></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+                <div class="autohight">
+                    <table id="tblShaftLstInfo" border="1" class="shaftLstInfo" cellpadding="0" cellspacing="0" style="width:100%;">
+                        <tbody>
+                            @if (Model.ShaftRangelist.Count == 0)
+                            {
+                                <tr id="startEndRange" data-row-num="0">
+
+                                    <td>
+                                        <select class="chosen-select form-control" id="ShaftRangelist_0__shaft_start_range" name="ShaftRangelist[0].shaft_start_range" style="padding:0;" onchange="isp.structureActions.shaft.validateRangeSelector(this);">
+                                            <option value="0" class="control-label">--Select--</option>
+                                            @foreach (var item in Model.FloorList)
+                                            {
+                                                <option value="@item.system_id" data-system-id="@item.system_id" data-structure-id="@item.structure_id">@item.floor_name</option>
+                                            }
+                                        </select>
+                                    </td>
+
+                                    <td>
+                                        <select class="chosen-select form-control" id="ShaftRangelist_0__shaft_end_range" name="ShaftRangelist[0].shaft_end_range" style="padding:0;" onchange="isp.structureActions.shaft.validateRangeSelector(this);">
+                                            <option value="0" class="control-label">--Select--</option>
+                                            @foreach (var item in Model.FloorList)
+                                            {
+                                                <option value="@item.system_id" data-system-id="@item.system_id" data-structure-id="@item.structure_id">@item.floor_name</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td><i class="icon-close"></i></td>
+                                    <td><input id="ShaftRangelist_0__system_id" name="ShaftRangelist[0].system_id" type="hidden" value="0"></td>
+                                </tr>
+                            }
+                            @if (Model.ShaftRangelist.Count > 0)
+                            {
+                                for (int i = 0; i < Model.ShaftRangelist.Count; i++)
+                                {
+                                    <tr id="addtToFromRange" data-row-num="@i">
+                                        <td>
+                                            <select class="chosen-select form-control" id="@("ShaftRangelist_" + i + "__shaft_start_range")" name="@("ShaftRangelist[" + i + "].shaft_start_range")" onchange="isp.structureActions.shaft.validateRangeSelector(this);">
+                                                <option value="0">--Select--</option>
+                                                @foreach (var item in Model.FloorList)
+                                                {
+                                                    <option value="@item.system_id" @(Model.ShaftRangelist[i].shaft_start_range == item.system_id ? "Selected" : "")>@item.floor_name</option>
+                                                }
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="chosen-select form-control" id="@("ShaftRangelist_" + i + "__shaft_end_range")" name="@("ShaftRangelist[" + i + "].shaft_end_range")" onchange="isp.structureActions.shaft.validateRangeSelector(this);">
+                                                <option value="0">--Select--</option>
+                                                @foreach (var item in Model.FloorList)
+                                                {
+                                                    <option value="@item.system_id" @(Model.ShaftRangelist[i].shaft_end_range == item.system_id ? "Selected" : "")>@item.floor_name</option>
+                                                }
+                                            </select>
+                                        </td>
+                                        <td><i class="icon-close"></i></td>
+                                        <td>
+                                            @Html.HiddenFor(m => m.ShaftRangelist[i].system_id)
+                                            @Html.HiddenFor(m => m.ShaftRangelist[i].shaft_id)
+                                            @Html.HiddenFor(m => m.ShaftRangelist[i].structure_id)
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-push-3">
+                <a id="addMore" class="btn btn-primary mt-1rem">
+                    + @Resources.Resources.SI_ISP_GBL_NET_FRM_070
+                </a>
+            </div>
+        </div>
+
+    </fieldset>
+    <div class="ModalFooter">
+        <a href="javascript:void(0);" class="btn btn-warning ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        <input type="button" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003" id="btnupdate" onclick="isp.structureActions.shaft.submit()" />
+    </div>
+}
+
+<script type="text/javascript" language=javascript>
+    // $('.chosen-select').chosen({ width: '100%' });
+    $(document).ready(function () {
+        $('#ddlFloorRangeType').change(function () {
+            if ($('#ddlFloorRangeType').val() == 'Custom') {
+                $('#FloorFromTo').show();
+                $('#is_partial_shaft').val(true);
+            } else {
+                $('#is_partial_shaft').val(false);
+                $('#FloorFromTo').hide();
+            }
+        });
+        isp.structureActions.floor.refresh();
+    })
+</script>

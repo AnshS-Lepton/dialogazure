@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+	<Mapping id="0">
+		<DbColName>Region_Name</DbColName>
+		<TemplateColName>Region</TemplateColName>
+	</Mapping>
+	<Mapping id="1">
+		<DbColName>Region_Abbreviation</DbColName>
+		<TemplateColName>Reg_Abbr</TemplateColName>
+	</Mapping>
+	<Mapping id="2">
+	<DbColName>Country_Name</DbColName>
+	<TemplateColName>Country</TemplateColName>
+</Mapping>
+</Mappings>

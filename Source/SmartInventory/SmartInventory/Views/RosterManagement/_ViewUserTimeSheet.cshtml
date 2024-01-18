@@ -1,0 +1,244 @@
+﻿@model Models.UserTimeSheetVM
+<link href="~/Content/css/UserTimeSheet.css" rel="stylesheet" />
+<link href="~/Content/js/Calendar/calendar.css" rel="stylesheet" />
+<script src="~/Content/js/Calendar/calendar.js"></script>
+<script src="~/Content/js/Calendar/calendar-en.js"></script>
+<script src="~/Content/js/Calendar/calendar-setup.js"></script>
+<script src="~/Content/js/ListingPage.js"></script>
+<script src="~/Content/js/Listing.js"></script>
+
+
+
+<script src="~/Content/js/UserTimeSheet.js"></script>
+<script src="~/Content/js/Main.js"></script>
+<script>
+    var sp = new Main();
+    var AR = new UserTimeSheet();
+
+
+
+    $(function () {
+
+
+        // 
+        //Enable validator on the form..
+        $.validator.unobtrusive.parse("#frmUserTimeSheet");
+        // //select2 js for drop-down list
+        //$("#dvAssignRouteContainer .chosen-select").select2();
+        //$("#dvUserTimeSheetContainer .chosen-select").select2("destroy").select2({});
+        //initialize assign route js file
+        //  ar.initapp();
+        // ar.fnconpostchange();
+        //$('#dvUserTimeSheetContainer select').select2({ width: '100%' });
+        sp.setDateTimeCalendar_SurveyNew("userTimeSheetInput_start_date", "userTimeSheetInput_end_date", "imgStartDate", "imgEndDate", true);
+        //$(".sptimepicker").find('.select2-container').hide();
+        //$(".sptimepicker").children('select').removeclass('select2-offscreen');
+        $(document).ready(function () {
+
+            var workingDays = $("#working_days").val();
+
+
+            if (workingDays != 0) {
+                workingDays = workingDays.split(',');
+                $.each(workingDays, function (index, value) {
+                    var selChkDay = value - 2;
+                    $('input[name=chkWeekays]:eq(' + selChkDay + ')').attr("checked", true);
+                });
+            }
+
+
+
+
+
+            $('.working_days').on("click", function () {
+                var text = "";
+                $('.working_days:checked').each(function () {
+                    text += $(this).val() + ',';
+                });
+
+                text = text.substring(0, text.length - 1);
+                $('#working_days').val(text);
+
+            });
+
+
+
+
+
+
+        });
+    });
+
+
+
+</script>
+
+
+@if (ViewBag.Edit != null)
+{
+    <script>
+         var val = '@ViewBag.Edit';
+    alert(val);
+    </script>
+
+}
+
+
+
+@if (ViewBag.Result != null)
+{
+    <script>
+         var val = '@ViewBag.Result';
+    alert(val);
+    </script>
+
+}
+
+
+@if (ViewBag.DateTimeValidation != null)
+{
+    <script>
+         var val = '@ViewBag.DateTimeValidation';
+    alert(val);
+    </script>
+
+}
+
+
+<div id="dvUserTimeSheetContainer">
+    @using (Ajax.BeginForm("SaveUserTimeSheet", "Main", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvChildModalBody",
+        OnFailure = "AR.handleError",
+        OnSuccess = "AR.handleSuccess"
+    }, new
+    {
+        id = "frmUserTimeSheet",
+        enctype = "multipart/form-data",
+        autocomplete = "off",
+        @class = "form-horizontal"
+    }
+    ))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+    <div class="modalNbody">
+        <div class="form-group row">
+            @Html.HiddenFor(m => m.userTimeSheetInput.user_timesheet_id)
+            @Html.HiddenFor(m => m.userTimeSheetInput.user_id)
+            @Html.HiddenFor(m => m.userTimeSheetInput.manager_id)
+            @Html.HiddenFor(m => m.userTimeSheetInput.confirmmsg)
+            @Html.HiddenFor(m => m.userTimeSheetInput.workingmode)
+            <div class="col-md-4">
+                @*@Html.DropDownListFor(m => m.userTimeSheetInput.user_id, new SelectList(Model.lstUserDetail.Select(x => new { Value = x.user_id.ToString(), Text = x.name }), "Value", "Text"), "Select User", new { @class = "form-control", @style = "visibility: visible !important;", @onchange = "AR.fncSetUserId(this);" })*@
+                @Html.DropDownListFor(m => m.userTimeSheetInput.user_id, new SelectList(Model.lstUserDetail.Select(x => new { Value = x.user_id.ToString(), Text = x.name }), "Value", "Text"), "Select User", new { @class = "form-control", @style = "visibility: visible !important;", @onchange = "AR.fncSetUserId(this);" })
+                @Html.ValidationMessageFor(model => model.userTimeSheetInput.user_id)
+            </div>
+
+        </div>
+
+        @if (Model.objRoleMaster.role_name == "In House Supervisor" || Model.objRoleMaster.role_name == "MSP Supervisor")
+        {
+        }
+        else
+        {
+            <div class="assign--data">
+                <label>service type:</label><lable id="lblservice" class="fw-bold"></lable>
+
+                <label> transection type:</label> <lable id="lbltransection" class="fw-bold"></lable>
+
+                <label> jo category:</label> <lable id="lbljocategory" class="fw-bold"></lable>
+
+                <label> user type:</label> <lable id="lblusertype" class="fw-bold"></lable>
+            </div>
+
+        }
+
+        @*<div class="form-group">
+            <div class="col-sm-12">
+                @Html.DropDownListFor(m => m.routeAssignedInput.route_ref, new SelectList(Model.lstRoutes.Select(x => new { Value = x.route_id.ToString() + "|||" + x.route_ref_id.ToString(), Text = x.route_name }), "Value", "Text"), "Select Manager", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @onchange = "AR.fncSetRouteRefId(this);" })
+                @Html.ValidationMessageFor(model => model.routeAssignedInput.route_ref)
+            </div>
+        </div>*@
+        <div id="fsRouteFreq">
+            <fieldset class="fset" id="fsWorkingDays">
+                <legend class="the-legend">Working Days</legend>
+                @Html.HiddenFor(m => m.userTimeSheetInput.working_days, new { @id = "working_days" })
+                <div class="form-group row">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox d-flex-check">
+                            <label><input type="checkbox" class="working_days" name="chkWeekays" id="chkIsActive2" value="2"> Mon</label>
+                            <label><input type="checkbox" class="working_days" name="chkWeekays" id="chkIsActive3" value="3"> Tue</label>
+                            <label><input type="checkbox" class="working_days" name="chkWeekays" id="chkIsActive4" value="4"> Wed</label>
+                            <label><input type="checkbox" class="working_days" name="chkWeekays" id="chkIsActive5" value="5"> Thu</label>
+                            <label><input type="checkbox" class="working_days" name="chkWeekays" id="chkIsActive6" value="6"> Fri</label>
+                            <label><input type="checkbox" class="working_days" name="chkWeekays" id="chkIsActive7" value="7"> Sat</label>
+                            <label><input type="checkbox" class="working_days" name="chkWeekays" id="chkIsActive1" value="1"> Sun</label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <fieldset class="fset">
+            <legend class="the-legend">Date Duration</legend>
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="txtStartDate">Start:</label>
+                <div class="col-sm-4">
+
+                    @Html.TextBoxFor(m => m.userTimeSheetInput.start_date, new { @onchange = "", placeholder = "DD-MMM-YYYY", @class = "form-control" })
+
+                    @Html.ValidationMessageFor(model => model.userTimeSheetInput.start_date)
+                    <img id="imgStartDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                </div>
+                <label class="control-label col-sm-2" for="txtStartTime">End:</label>
+                <div class="col-sm-4">
+
+                    @Html.TextBoxFor(m => m.userTimeSheetInput.end_date, new { @onchange = "AR.fncChangeEndDate(event);", placeholder = "DD-MMM-YYYY", @class = "form-control" })
+
+
+                    @Html.ValidationMessageFor(model => model.userTimeSheetInput.end_date)
+                    <img id="imgEndDate" class="assign-calen" src="~/Content/images/calendar.png" />
+
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="fset">
+            <legend class="the-legend">Timing</legend>
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="txtEndDate">Start:</label>
+                <div class="col-sm-4" id="dvStartTime">
+
+                    @Html.TextBoxFor(m => m.userTimeSheetInput.start_time, new { @type = "time", @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.userTimeSheetInput.start_time)
+                    @*@Html.Partial("_TimePicker")
+                    @Html.HiddenFor(m => m.userTimeSheetInput.start_time)*@
+                </div>
+                <label class="control-label col-sm-2" for="txtEndTime">End:</label>
+                <div class="col-sm-4" id="dvEndTime">
+                    @Html.TextBoxFor(m => m.userTimeSheetInput.end_time, new { @type = "time", @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.userTimeSheetInput.end_time)
+
+
+                    @*@Html.Partial("_TimePicker")
+                    @Html.HiddenFor(m => m.userTimeSheetInput.end_time)*@
+
+                </div>
+            </div>
+        </fieldset>
+        <div id="dvIsActive">
+            <div class="checkbox">
+                <label> @Html.CheckBoxFor(m => m.userTimeSheetInput.is_active, new { @checked = "checked" }) Keep Live</label>
+            </div>
+        </div>
+    </div>
+        <div class="form-group">
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto" id="btnCancelUserTimeSheet" onclick="si.cancelpop()">Cancel</a>
+            <button type="submit" class="btn btn-primary ml-10" id="btnSaveUsertTimeSheet" onclick="AR.bindEvents">Submit</button>
+        </div>
+    }
+</div>

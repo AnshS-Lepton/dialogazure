@@ -1,0 +1,18 @@
+﻿@model Models.ICustomCoordinate
+@using SmartInventory.Settings;
+@{ 
+    var IsCustomProjectionAllowed = SmartInventory.Settings.ApplicationSettings.IsCustomProjectionAllowed;
+}
+
+@if (IsCustomProjectionAllowed)
+{
+    <label class="control-label col-md-2 col-sm-2">X (@ApplicationSettings.customProjection):</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.TextBoxFor(m => m.st_x, new { @class = "form-control", @id = "txtst_x", @readonly = true })
+    </div>
+    <label class="control-label col-md-2 col-sm-2">Y (@ApplicationSettings.customProjection):</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.TextBoxFor(m => m.st_y, new { @class = "form-control", @id = "txtst_y", @readonly = true })
+    </div>
+}
+

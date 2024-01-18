@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+@model Models.Admin.ConstructionOhLogicMaster   
+
+<style type="text/css">
+    .fastnerValue{
+        position:absolute;
+        left:0;
+        bottom:-16px;
+    }
+    .pos-rel{
+        position:relative;
+    }
+</style>
+
+<div class="update_panel">
+    <div class="title">
+        <h4>Construction BOM - Default Overhead Logics</h4>
+    </div>
+    <div class="pad-EB pageOver">
+        <div class="cateBox">
+
+            <div class="expressForm">
+                @for (int i = 0; i < Model.constructionohlogicmasterlist.Count; i++)
+                {
+
+                    <label class="pos-rel" title="@Model.constructionohlogicmasterlist[i].description">
+                        @*@Html.DisplayFor(model => Model.constructionohlogicmasterlist[i].entity_sub_class)*@
+                        @Html.DisplayFor(model => Model.constructionohlogicmasterlist[i].label)
+                        @*@if (Model.constructionohlogicmasterlist[i].item_code != null)
+                        {
+                            <span class="fastnerValue">(@Model.constructionohlogicmasterlist[i].item_code)</span>
+                        }*@
+
+                    </label>
+
+                    <div class="expressForm__input d-flex">
+                        @Html.TextBoxFor(m => Model.constructionohlogicmasterlist[i].oh_display_formula, new { @readonly = "true", @id = "id_" + Model.constructionohlogicmasterlist[i].id + "", title = Model.constructionohlogicmasterlist[i].oh_display_formula })
+
+                        <a href="javascript:OpenCBOMVariable('@Model.constructionohlogicmasterlist[i].column_name',@Model.constructionohlogicmasterlist[i].subarea_system_id,@Model.constructionohlogicmasterlist[i].execution_sequence, '@Model.constructionohlogicmasterlist[i].label');" title="Expression Builder">
+                            <img src="~/Areas/Admin/Content/css/images/searchIcon.svg" class="expressForm__icon" />
+                        </a>
+
+                    </div>
+                }
+            </div>
+
+            </div>
+        
+            <!-- Popup Box -->
+
+            @*<div class="pad_left">
+                <fieldset class="expField">
+                    <legend class="expLegend">Variables</legend>
+                    <div class="expChips d-flex">
+                        <div class="chips">GIS Length</div>
+                        <div class="chips">Pole Count</div>
+                        <div class="chips">Loop Clamp</div>
+                        <div class="chips">GF Length</div>
+                        <div class="chips">Termination Set</div>
+                        <div class="chips">Suspension Set</div>
+                    </div>
+                </fieldset>
+                <fieldset class="expField">
+                    <legend class="expLegend">Operators</legend>
+                    <div class="expChips d-flex">
+                        <div class="operators">+</div>
+                        <div class="operators">-</div>
+                        <div class="operators">*</div>
+                        <div class="operators">/</div>
+                        <div class="operators">mode</div>
+                    </div>
+                </fieldset>
+                <fieldset class="expField fieldPad">
+                    <input type="text" placeholder="clamp" class="fieldInput" />
+                </fieldset>
+            </div>*@
+        </div>
+</div>
+
+
+
+

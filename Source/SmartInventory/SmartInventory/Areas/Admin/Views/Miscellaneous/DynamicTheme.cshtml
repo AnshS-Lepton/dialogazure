@@ -1,0 +1,68 @@
+﻿@model Models.Admin.DynamicTheme
+<link href="~/Content/css/DynamicForms/dynamicforms.css" rel="stylesheet" />
+<link href="~/Content/css/DynamicForms/dynamicscontrols.css" rel="stylesheet" />
+<link href="~/Content/css/DynamicForms/DeletePopupStyle.css" rel="stylesheet" />
+<link href="~/Content/css/DynamicForms/noty-3.1.4.css" rel="stylesheet" />
+<script src="~/Content/js/DynamicForms/noty.min-3.1.4.js"></script>
+
+
+<style>
+    #noty_layout__topRight {
+        top: 64px;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="dvdynamictheme" class="themeWrapper" data-new-gr-c-s-check-loaded="14.1014.0" data-gr-ext-installed="">
+    <div id="lightningjs-usabilla_live" style="display: none;"><div></div></div>
+    <div id="container" class="themeOuter">
+       <div class="title fullWidth">
+            <h4>Choose Theme</h4>
+        </div>
+        <div class="themeSection">
+            <div class="themeThumb">
+                @*<label>
+                    <div id="dvgreentheme" class="themeThumb--box">
+                        <input type="radio" id="radioGreen" name="nature" value="nature1">
+                        <img src="~/Areas/Admin/Content/images/green.jpg" id="greenthm" class="img-responsive">
+                        <span class="themeThumb--title">
+                            Green Theme
+                        </span>
+                    </div>
+                </label>*@
+                @foreach (var item in Model.themelist)
+                {
+                    <div id="@("dv"+@item.theme_name+"theme")" class="themeThumb--box">
+                        <label>
+                            <input type="radio" name="nature" value="@(item.theme_id)">
+                            <img src="@item.thumbnail" class="img-responsive">
+                            <span class="themeThumb--title">
+                            @(@item.theme_name+" Theme")
+                            </span>
+                        </label>
+                    </div>
+                }   
+            </div>
+        </div>
+        <div class="footerModal d-flex mt-1rem">
+            <button class="a_btn btn-danger ml-auto mr-01">Cancel</button>
+            <button type="button" class="a_btn btn-primary" id="btnSubmit54">Apply</button>
+        </div>
+    </div>
+</div>
+<script src="Scripts/jquery.validate.min.js"></script>
+<script src="Scripts/jquery-3.6.0.min.js"></script>
+<script>
+    function changeTheme()
+    {
+         
+        let _themeId = $("input[type='radio'][name='nature']:checked").val();
+        ajaxReq('DynamicTheme/SaveTheme', { themeId: _themeId, isActive: true }, false, function () {
+
+        });
+    }
+    $("#btnSubmit54").on("click", function ()
+    {
+        changeTheme();
+    });
+</script>

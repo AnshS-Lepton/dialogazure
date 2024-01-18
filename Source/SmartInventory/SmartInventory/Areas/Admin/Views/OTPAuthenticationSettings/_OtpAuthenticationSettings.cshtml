@@ -1,0 +1,186 @@
+﻿@model Models.Admin.OTPAuthenticationSettings
+@*@if (Model != null)
+{
+    <div class="col-lg-12" id="dvPageMessage">
+        @{
+            Html.RenderPartial("_PageMessage", Model.pageMsg);
+        }
+    </div>
+}*@
+
+<!DOCTYPE html>
+<div id="otpAuthenticationview" class="content" style="width:100%">
+    <div id="otpAuthenticationForm">
+        @using (Html.BeginForm("updateOtpConfigurationSetting", "OTPAuthenticationSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmOTPAuthenticationSettings", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+        {
+            @Html.HiddenFor(m => m.application_name);
+            @*@Html.HiddenFor(m => m.is_otp_enabled);*@
+            
+        <div class="update_panel clsStepsContainer" style="margin-bottom: 0px; width: 100%">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="control-label">
+                        OTP Enable :
+                    </label>
+                </div>
+                <div class="col-md-1">
+                    @Html.CheckBoxFor(m => m.is_otp_enabled, new { Style = "width:100% ;", @id = "chkis_otp_enabled" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="control-label">
+                        Temporary Lock Screen Timeout :<br />
+                        (In Seconds)
+                    </label>
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(m => m.temp_lock_duration, new { @class = "form-control", @id = "temp_lock_timeout", @type = "number", @maxlength = "3", @max = "999", @placeholder = 0, @oninput = "maxLengthCheck(this)" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="control-label">
+                        Permanant Lock Screen After :<br />
+                        (Unsuccessful Attempts)
+                    </label>
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(m => m.permanent_lock_attempt, new { @class = "form-control", @id = "perm_lock_screen", @type = "number", @maxlength = "3", @max = "999", @placeholder = 0, @oninput = "maxLengthCheck(this)" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="control-label">
+                        Permanant Lock Screen Timeout :<br />
+                        (In Seconds)
+                    </label>
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(m => m.permanent_lock_duration, new { @class = "form-control", @id = "perm_lock_timeout", @type = "number", @maxlength = "4", @max = "9999", @placeholder = 0, @oninput = "maxLengthCheck(this)" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="control-label">
+                        Number Of OTP Generation :<br />
+                    </label>
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(m => m.otp_resend_limit, new { @class = "form-control", @id = "no_of_otp", @type = "number", @maxlength = "3", @max = "999", @placeholder = 0, @oninput = "maxLengthCheck(this)" })
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="control-label">
+                        Number of Validation Cycle :<br />
+                    </label>
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(m => m.temp_lock_attempt, new { @class = "form-control", @id = "no_of_validation", @type = "number", @maxlength = "3", @max = "999", @placeholder = 0, @oninput = "maxLengthCheck(this)" })
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="control-label">
+                        Display Alert Message Screen :<br />
+                        (In Seconds)
+                    </label>
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(m => m.alert_message_timeout, new { @class = "form-control", @id = "no_of_validation", @type = "number", @maxlength = "3", @max = "999", @placeholder = 0, @oninput = "maxLengthCheck(this)" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="control-label">
+                        No of OTP Digit :<br />
+                        (Min Range)
+                    </label>
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(m => m.otp_min_value, new { @class = "form-control", @id = "no_of_validation", @type = "number", @maxlength = "6", @max = "100000", @placeholder = 0, @oninput = "maxLengthCheck(this)" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="control-label">
+                        No of OTP Digit :<br />
+                        (Max Range)
+                    </label>
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(m => m.otp_max_value, new { @class = "form-control", @id = "no_of_validation", @type = "number", @maxlength = "6", @max = "999999", @placeholder = 0, @oninput = "maxLengthCheck(this)" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="control-label">
+                        OTP Validity Time :<br />
+                        (In Seconds)
+                    </label>
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(m => m.otp_expiry_time, new { @class = "form-control", @id = "no_of_validation", @type = "number", @maxlength = "5", @max = "99999", @placeholder = 0, @oninput = "maxLengthCheck(this)" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="control-label">
+                        Resend OTP Timer :<br />
+                    </label>
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(m => m.resend_otp_timer, new { @class = "form-control", @id = "no_of_validation", @type = "number", @maxlength = "3", @max = "999", @placeholder = 0, @oninput = "maxLengthCheck(this)" })
+                </div>
+            </div>
+            @*<div class="row">
+                <div class="col-md-11 text-right">
+                    <button type="button" class="btn btn-default" id="btnCancel" onclick="ResetFormValues();">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btnUpdateOtp" style="float:right;">Update</button>
+                </div>
+            </div>*@
+            <div class="form-group" id="dvBtnAction">
+                <div class="row">
+                    <div class="col-md-4"> </div>
+                    <div class="col-md-8 text-right">
+                        <button type="button" class="btn btn-default" id="btnCancel" onclick="ResetFormValues();">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="btnUpdateOtp" style='margin-right:16px'>Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        }
+    </div>
+        <script>
+            function ResetFormValues() {
+                $("#application").val('');
+                $("#temp_lock_attempt").val('');
+                $("#temp_lock_timeout").val('');
+                $("#perm_lock_timeout").val('');
+                $("#perm_lock_screen").val('');
+                $("#no_of_otp").val('');
+                $("#no_of_validation").val('');
+            }
+            function maxLengthCheck(object) {
+                if (object.value.length > object.maxLength)
+                    object.value = object.value.slice(0, object.maxLength)
+            }
+            function Validate() {
+                 
+                var selected_app = $('#application option:selected').text();
+                ajaxReq('OTPAuthenticationSettings/getOtpConfigurationSetting', { applicationType: selected_app }, false, function (resp) {
+                    console.log(resp);
+                    $('#otpAuthenticationForm').html(resp);
+                });
+            }
+                                    //function UpdateFormValues() {
+                                    //     
+                                    //    ajaxReq('OTPAuthenticationSettings/saveData', { application: selected_app }, false, function () {
+
+                                    //}
+        </script>
+    </div>

@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+@model Models.Admin.ModelTypePortMaster
+
+
+@helper pageShaftInfo()
+{
+    { Html.RenderPartial("_AddPortDetails", Model); }
+}
+
+
+<div id="dvModelTypeDetail">
+
+    <div class="col-lg-12" id="dvPageMessage">
+        @{Html.RenderPartial("_PageMessage", Model.modelTypeMaster.pageMsg);}
+
+    </div>
+
+    @using (Ajax.BeginForm("SaveModelTypeDetail", "OSPSettings", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModelTypeDetail",
+        OnSuccess = "onChangebindModeltype()"
+    },
+    new { id = "frmModelTypeDetail", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        <div id="dv_ModelType" data-title="Add Model Type Detail">
+            @Html.HiddenFor(m => m.modelTypeMaster.id, new { id = "hdn_Id" })
+            @Html.HiddenFor(m => m.modelTypeMaster.created_by, new { id = "hdn_createdby" })
+            @Html.HiddenFor(m => m.modelTypeMaster.brand_id, new { id = "hdn_brand_Id" })
+
+            <div class="form-group" style="width: 100%; height: 33px;">
+                <div class="row">
+                    <div class=" col-md-2">
+                        <label class=" control-label">
+                            Brand Type:
+                        </label>
+                    </div>
+                    <div class=" col-md-4">
+
+                        @Html.TextBoxFor(m => m.modelTypeMaster.brand_type, new { @class = "form-control", @id = "txt_BrandType", @readonly = "true" })
+
+                    </div>
+
+                    <div class=" col-md-2">
+                        <label class=" control-label">
+                            Model Name:
+                        </label>
+                    </div>
+                    <div class=" col-md-4">
+                        @Html.TextBoxFor(model => model.modelTypeMaster.model, new { @class = "form-control", @maxlength = "50", @placeholder = "Enter Model Type Name", @id = "txt_modelname" })
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            @*<div class="form-group">
+                <div class="row">
+                    <div class="col-md-4 form-group" style="display:none">
+
+                        
+                        @Html.TextBoxFor(m => m.created_by, new { @class = "form-control", placeholder = "Created By" })
+
+                    </div>
+                </div>
+
+            </div>*@
+
+
+
+            <fieldset class="the-fieldset">
+                <legend class="the-legend title_popout">Equipment Detail</legend>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="control-label">Power Supply(w)</label>
+                            </div>
+                            <div class="col-md-3">
+                                
+                                @Html.TextBoxFor(m => m.modelTypeMaster.power_supply, new { @class = "form-control", @maxlength = "5", @placeholder = "Enter Power Supply(w)", @id = "txt_PowserSupply" })
+
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label">Device Width(cm):</label>
+                            </div>
+                            <div class="col-md-3">
+
+                                @Html.TextBoxFor(m => m.modelTypeMaster.device_width, new { @class = "form-control", @maxlength = "5", @placeholder = "Enter Device Width(cm)", @id = "txt_DeviceWidth" })
+
+                            </div>
+                        </div>
+                        </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="control-label">Device Length(cm)</label>
+                        </div>
+                        <div class="col-md-3">
+
+                            @Html.TextBoxFor(m => m.modelTypeMaster.device_length, new { @class = "form-control", @maxlength = "5", @placeholder = "Enter Device Length(cm)", @id = "txt_DeviceLength" })
+
+                        </div>
+                        <div class="col-md-3">
+                            <label class="control-label">Device Heigth(cm):</label>
+                        </div>
+                        <div class="col-md-3">
+
+                            @Html.TextBoxFor(m => m.modelTypeMaster.device_height, new { @class = "form-control", @maxlength = "5", @placeholder = "Enter Device Heigth(cm)", @id = "txt_DeviceHeigth" })
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </fieldset>  
+
+            <fieldset class="the-fieldset">
+                <legend class="the-legend title_popout">Port Detail</legend>
+
+                @*<div class="form-group" id="ShaftInfo">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="control-label">Input Port</label>
+                        </div>
+                        <div class="col-md-3">
+
+                            @Html.TextBoxFor(m => m.inputport, new { @class = "form-control", @maxlength = "5", @placeholder = "Enter Input Port", @id = "txt_Inputport" })
+
+                        </div>
+                        <div class="col-md-3">
+                            <label class="control-label">Output Port</label>
+                        </div>
+                        <div class="col-md-3">
+
+                            @Html.TextBoxFor(m => m.outputport, new { @class = "form-control", @maxlength = "5", @placeholder = "Enter Output Port", @id = "txt_Outputport" })
+
+                        </div>
+                    </div>
+                </div>*@
+
+
+                <div class="form-group" id="InputoutputInfo">
+                  
+                    @pageShaftInfo()
+
+                </div>
+
+
+                @*<div class="tab-pane" id="ShaftInfo" style="min-height:260px;">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" for="txtNoOfShaft">Total No of Shafts<i class="clsMandatory"></i>:</label>
+                        <div class="col-md-2" style="padding-top: 7px;">
+
+                            <span id="spTotalShaft"></span>
+                        </div>
+                    </div>
+                    @pageShaftInfo()
+
+                </div>*@
+
+
+
+
+            </fieldset>
+
+
+
+                <div class="form-group" id="dvBtnAction" style="width: 100%; height: 33px;">
+                    <div class="row">
+                     
+                        <div class=" col-md-12  text-right">
+
+                            <input type="submit" class="btn btn-primary" name="btnSaveModelTypeDetail" onclick="return isValidModelDetails()" id="btnSaveModelTypeDetail" value="Save" />
+                            <a href="javascript:void(0);" class=" btn btn-default" data-dismiss="modal" id="btnCancelModelType">Cancel</a>
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+</div>
+        
+      
+        
+    }
+
+
+    <script>
+
+        if ('@Model.modelTypeMaster.id' != 0) {
+
+            btnSaveModelTypeDetail.value = "Update";
+
+        }
+
+        function isValidModelDetails() {
+            if ($('#txt_modelname').val() == "") {
+                $('#txt_modelname').css({ "border": "1px solid red" });
+                return false;
+
+            }
+
+        }
+
+
+    </script>
+
+</div>
+

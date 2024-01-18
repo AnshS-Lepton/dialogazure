@@ -1,0 +1,31 @@
+﻿@model IList<Models.BuildingComments>
+@using Utility;
+@{
+    WebGrid webGrid = new WebGrid(source: Model, canSort: false, canPage: false);
+}
+<!DOCTYPE html>
+<div class="space-pad">
+
+    @if (Model.Count != 0)
+    { 
+        @webGrid.GetHtml(
+            htmlAttributes: new { @id = "WebGrid" },
+            tableStyle: "grid",
+                        
+        columns: webGrid.Columns(
+
+                             webGrid.Column("building_status",Resources.Resources.SI_OSP_BUL_NET_HIS_011),
+                             webGrid.Column("created_by_user", Resources.Resources.SI_OSP_GBL_GBL_GBL_058),
+                             webGrid.Column("created_on", Resources.Resources.SI_OSP_GBL_GBL_GBL_057, format: @<text> @(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString())) </text>),
+                                  
+                            // webGrid.Column("comment", "Comment"),
+                              webGrid.Column("comment", Resources.Resources.SI_OSP_GBL_NET_FRM_312, format:@<text><span style="white-space: normal; word-break:break-all">@item.Comment</span></text>)
+                             ))
+}
+else
+{
+        <div class="nr-found">
+            <span>@Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+        </div>
+    }
+</div> 

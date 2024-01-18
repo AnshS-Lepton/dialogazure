@@ -1,0 +1,137 @@
+﻿@model Models.PatchCordMaster
+@using Models;
+@using SmartInventory.Settings;
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.PatchCord.ToString().ToUpper()).FirstOrDefault() : null;
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.PatchCord.ToString());
+}
+@helper AdditionalFields()
+{
+    { Html.RenderPartial("~/Views/Library/_AdditionalFields.cshtml", (IAdditionalFields)Model); }
+}
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SavePatchCord", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        //UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.PatchCord.ToString() + "');",
+        OnSuccess = "patchingSuccess"
+    },
+                    new { id = "frmAddPatchCord", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.a_entity_type)
+        @Html.HiddenFor(m => m.a_system_id)
+        @Html.HiddenFor(m => m.b_entity_type)
+        @Html.HiddenFor(m => m.b_system_id)
+        @Html.HiddenFor(m => m.networkIdType)
+        @Html.HiddenFor(m => m.network_id)
+        @Html.HiddenFor(m => m.pSystemId)
+        @Html.HiddenFor(m => m.pNetworkId)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.parent_network_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.isEquipmentPatching)
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+        <!-- Message Pop-up -->
+        @Html.Partial("_PageMessage", Model.objPM);
+        <div class="libTabs">
+            <ul class="nav nav-tabs tabs-left">
+
+                <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                @*<li><a href="#ItemSpecf" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_005</a></li>*@
+                @*@if (Model.system_id > 0 && layerDetail != null && layerDetail.is_barcode_enabled)
+                    {
+                        <li><a href="#BarCodeInfo" onclick="si.GetBarCode('@Model.system_id','@EntityType.PatchCord.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_057</a></li>
+                    }*@
+            </ul>
+        </div>
+
+        <div class="TabContent--max-over">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_388</legend>
+                        <div class="form-group row">
+                            <label class="control-label col-md-2  col-sm-2" for="txtPatchCordCode">
+                                @Resources.Resources.SI_OSP_GBL_GBL_GBL_001
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }
+                                :
+                            </label>
+                            <div class="col-md-4 col-sm-4">
+                                <div id="txtMaskedNetworkId"></div>
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2" for="txtRegionName">
+                                @Resources.Resources.SI_OSP_GBL_NET_FRM_059
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }:
+                            </label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm ">
+                                @Html.TextBoxFor(m => m.patch_cord_name,
+                                 SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(
+                                   new
+                                   {
+                                       @id = "txtOpticalRepeaterName",
+                                       @class = "form-control",
+                                       @maxlength = "100",
+                                       autocomplete = "do-not-show-ac",
+                                   }, (Model.networkIdType == "M" ? new { @required = true } : null)))
+                                @*@Html.TextBoxFor(m => m.patch_cord_name, new { @class = "form-control", @maxlength = "100" })*@
+                            </div>
+                        </div>
+                    </fieldset>
+                    @Html.Partial("~/Views/ItemTemplate/_PatchCordTemplateMaster.cshtml", Model)
+                </div>
+                @*<div class="tab-pane" id="ItemSpecf">
+                        @Html.Partial("~/Views/ItemTemplate/_PatchCordTemplateMaster.cshtml", Model)
+                    </div>*@
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            @if (Model.system_id > 0)
+            {
+                <div class="ModelFooterInfo">
+                    <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_014:</label>
+                    <label class="model-label-info">@(Model.network_status != null ? Utility.MiscHelper.GetNetworkStatus(Model.network_status.ToUpper()) : string.Empty)</label>
+                    <label for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_007:</label>
+                    <label class="model-label-info" title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
+                </div>
+            }
+            <div class="ml-auto">
+                <button type="submit" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnSavePatchCord" disabled="disabled">@(Model.system_id > 0 ? Resources.Resources.GBL_GBL_GBL_GBL_GBL_003 : Resources.Resources.GBL_GBL_GBL_GBL_GBL_004)</button>
+                <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnPatchCordCancel" onclick="si.clearTPRelatedObjects();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    }
+</div>
+<script type="text/javascript">
+    var inputs = [];
+    $(document).ready(function () {
+        callFormValidator("frmAddPatchCord");
+        $('.chosen-select').chosen({ width: '100%' });
+        EnableDisableUpdateButton("frmAddPatchCord", '@Model.system_id' > 0 ? "btnSavePatchCord" : "btnSavePatchCord");
+        //APPLY INPUT MASK ON NETWORK ID..
+        getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
+        $("#frmAddPatchCord").on("submit", function () {
+            $("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
+            si.upperCaseNetWorkId();
+            if (!entityReferencevalidation())
+                return false;
+        });
+        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+        $('#btnPatchCordCancel ,#closeChildPopup').on('click', function () {
+            if (conBuilder != null && '@Model.system_id' == 0) { conBuilder.resetPatchConnection(); }
+        });
+    });
+</script>

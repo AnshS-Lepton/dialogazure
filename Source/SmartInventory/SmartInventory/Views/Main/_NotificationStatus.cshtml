@@ -1,0 +1,130 @@
+﻿@model Models.EntityNotificationStatus
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+<!DOCTYPE html>
+<div class="libDetail">
+    <div class="libTabs">
+        <ul class="nav nav-tabs tabs-left">
+            <li class="active"><a href="#NotificationStatus" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_340</a></li>
+            <li><a href="#NotificationHistory" onclick="si.notificationStatusHistory(@Model.systemId,'@Model.entityType')" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_373</a></li>
+        </ul>
+    </div>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="NotificationStatus">
+            @using (Ajax.BeginForm("SaveNotificationStatus", "Main", new AjaxOptions
+            {
+                HttpMethod = "POST",
+                UpdateTargetId = "dvModalBody",
+                LoadingElementId = "dvProgress"
+            },
+new { id = "frmNotofication", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+            {
+                @pageMessage()
+                @Html.HiddenFor(m => m.systemId)
+                @Html.HiddenFor(m => m.entityType)
+                @Html.HiddenFor(m => m.status, new { id = "hdnNotificationStatus" })
+                @Html.HiddenFor(m => m.remarks, new { id = "hdnNotificationRemarks" })
+                <div class="space-padBig">
+                    <div class="d-flex">
+                        <label class="switch">
+                            <input id="chkNotificationStatus" name="status" @(Model.status ? "checked" : "") type="checkbox" onclick="fnChangeNotificationStatus();">
+                            <span class="slider round"></span>
+                        </label>
+                        <label class="ml-10" id="lblNotificationStatus">@(Model.status?Resources.Resources.SI_GBL_GBL_NET_FRM_107 : Resources.Resources.SI_GBL_GBL_NET_FRM_108)</label>
+                    </div>
+                    <br />
+                    <fieldset class="the-fieldset mb-0 mt-1rem">
+                        <legend class="the-legend">@Resources.Resources.SI_GBL_GBL_NET_FRM_109<i class="clsMandatory">*</i></legend>
+                        @foreach (var item in Model.lstComment)
+                        {
+                            <div class="mrgn_btm notificationReasons" data-ddl-type="@item.dropdown_type">
+                                @Html.RadioButton("radioNotifyComment", item.dropdown_value, new { @onclick = "showHideOtherCommentBox();" })
+                                @Html.Label(item.dropdown_value)
+                            </div>
+                        }
+                        @*<text id="txtOtherRemarks" class="form-control" maxlength="500"  readonly="readonly" onkeyup="removecss();"></text>*@
+                        @Html.TextBoxFor(m => m.remarks, new { @class = "form-control", maxlength = "500", id = "txtOtherRemarks", @readonly = true, onkeyup = "removecss();" })
+                        @*@Html.TextAreaFor(m => m.remarks, new { @class = "form-control", maxlength = "500", placeholder = "Remarks", id = "txtOtherRemarks", @readonly = true, @style = "resize:none;", onkeyup = "removecss();" })*@
+                    </fieldset>
+                </div>
+                <div class="d-flex ModalFooter">
+                    <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                    <input type="button" class="btn btn-primary" id="btnNotificationStatus" name="btnaction" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003" onclick="submitForm();" />
+                </div>
+            }
+        </div>
+        <div class="tab-pane info-load-hight" id="NotificationHistory"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () { resetReasons(); });
+    function fnChangeNotificationStatus() {
+        $('#btnNotificationStatus').attr("disabled", false);
+        $('#hdnNotificationStatus').val($('#chkNotificationStatus').is(':checked'));
+        if ($('#chkNotificationStatus').is(':checked')) {
+            $('#lblNotificationStatus').text(MultilingualKey.SI_GBL_GBL_JQ_FRM_049);
+        } else { $('#lblNotificationStatus').text(MultilingualKey.SI_GBL_GBL_JQ_FRM_050); }
+        resetReasons();
+    }
+    function resetReasons() {
+        $('.notificationReasons').hide();
+        if ($('#chkNotificationStatus').is(':checked'))
+        { $('.notificationReasons[data-ddl-type="BlockNotification"]').show(); }
+        else
+        { $('.notificationReasons[data-ddl-type="UnBlockNotification"]').show(); }
+        $('input[id="radioNotifyComment"]').prop('checked', false);
+    }
+    function showHideOtherCommentBox() {
+        if ($('input[id="radioNotifyComment"]:checked').val() == "Other") {
+            $('#txtOtherRemarks').attr('readonly', false);
+        }
+        else {
+            $('#txtOtherRemarks').attr('readonly', true);
+            $('#txtOtherRemarks').css('border-color', '');
+        }
+    }
+    function removecss() {
+        $('#txtOtherRemarks').css('border-color', '');
+    }
+    function submitForm() {
+        var oldStatus = '@Model.status';
+        var isValid = true;
+        if ($('#chkNotificationStatus').is(':checked') && $('#chkNotificationStatus').is(':checked').toString() == oldStatus.toLocaleLowerCase()) {
+            alert(MultilingualKey.SI_GBL_GBL_JQ_FRM_051);
+            isValid = false;
+            return false;
+        }
+        else if (!$('#chkNotificationStatus').is(':checked') && $('#chkNotificationStatus').is(':checked').toString() == oldStatus.toLocaleLowerCase()) {
+            alert(MultilingualKey.SI_GBL_GBL_JQ_FRM_052);
+            isValid = false;
+            return false;
+        }
+        var _comment = getNotifyComment();
+        if (_comment != '' && isValid) {
+
+            $('#hdnNotificationRemarks').val(_comment);
+            if (!$('#chkNotificationStatus').is(':checked'))
+            { confirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_124, function () { $('#frmNotofication').submit(); }) }
+            else { $('#frmNotofication').submit(); }
+        }
+    }
+    function getNotifyComment() {
+        var _comment = '';
+        var _selectedReason = $('input[id="radioNotifyComment"]:checked').val();
+        if (_selectedReason == undefined) {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_125);
+        }
+        else {
+            _comment = _selectedReason != "Other" ? _selectedReason : $('#txtOtherRemarks').val();
+            if (_comment.trim() == '') {
+                $('#txtOtherRemarks').css('border-color', 'red');
+            }
+        }
+        return _comment;
+    }
+</script>
+

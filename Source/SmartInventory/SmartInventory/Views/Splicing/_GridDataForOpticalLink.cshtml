@@ -1,0 +1,76 @@
+﻿@model Models.ViewLinkBudgetDataDetails
+@using Utility;
+@{
+
+    WebGrid grid = new WebGrid(source: Model.ViewLinkBudgetDetails, canSort: false, canPage: false);
+}
+
+<!DOCTYPE html>
+<div style="width:99%">
+
+
+    @if (Model.ViewLinkBudgetDetails.Count() != 0)
+    {
+
+        <div id="dvViewOpticalLinkBudgetDetails">
+            <div class="recordCount"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@grid.TotalRowCount</b></div>
+            <div class="table-responsive tble_cls" style="height:45%">
+
+                @grid.GetHtml(tableStyle: "webgrid",
+                         headerStyle: "webGridHeader",
+                            alternatingRowStyle: "alt",
+                            htmlAttributes: new { id = "tblOpticalLinkBudgetDetails" },
+
+                            mode: WebGridPagerModes.All,
+                            columns: grid.Columns(
+
+                            grid.Column("source_network_id", Resources.Resources.SI_OSP_ONT_NET_RPT_018, format: @<text>@item.source_network_id </text>),
+                            grid.Column("source_entity_type", Resources.Resources.SI_OSP_GBL_NET_RPT_120, format: @<text>@item.source_entity_type </text>),
+                            grid.Column("source_port_no", Resources.Resources.SI_OSP_ONT_NET_RPT_019, format: (item) =>
+                                                             {
+                                                                 if (item.source_port_no.ToString().Substring(0, 1) == "-")
+                                                                 {
+
+                                                                     return Html.Raw(string.Format("<text>{0}</text>", item.source_port_no.ToString().Replace("-", "") + " IN"));
+                                                                 }
+                                                                 else
+                                                                 {
+                                                                     return Html.Raw(string.Format("<text>{0}</text>", item.source_port_no.ToString() + " OUT"));
+                                                                 }
+                                                             }),
+                           grid.Column("destination_entity_type", Resources.Resources.SI_OSP_GBL_NET_RPT_121, format: @<text>@item.destination_entity_type</text>),
+                           grid.Column("destination_port_no", Resources.Resources.SI_OSP_ONT_NET_RPT_022, format: (item) =>
+                                                                         {
+                                                                             if (item.destination_port_no.ToString().Substring(0, 1) == "-")
+                                                                             {
+
+                                                                                 return Html.Raw(string.Format("<text>{0}</text>", item.destination_port_no.ToString().Replace("-", "") + " IN"));
+                                                                             }
+                                                                             else
+                                                                             {
+                                                                                 return Html.Raw(string.Format("<text>{0}</text>", item.destination_port_no.ToString() + " OUT"));
+                                                                             }
+                                                                         }),
+                            grid.Column("receving_power",Resources.Resources.SI_OSP_GBL_NET_RPT_122, format: @<text>@item.receving_power</text>),
+                            grid.Column("loss_type", Resources.Resources.SI_OSP_GBL_NET_FRM_366, format: @<text>@item.loss_type</text>),
+                            grid.Column("loss_value",Resources.Resources.SI_OSP_GBL_NET_RPT_123, format: @<text>@item.loss_value</text>),
+                            grid.Column("transmitpower", Resources.Resources.SI_OSP_GBL_NET_RPT_124, format: @<text>@item.transmitpower</text>)
+
+))
+
+            </div>
+
+
+
+
+
+        </div>
+    }
+    else
+    {
+        <div style="text-align:center; margin-top:50px;"><b>@Resources.Resources.SI_OSP_GBL_NET_RPT_125</b></div>
+    }
+
+
+
+</div>

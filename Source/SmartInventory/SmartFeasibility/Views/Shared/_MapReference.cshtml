@@ -1,0 +1,33 @@
+﻿@using SmartFeasibility.Settings
+@{  
+    bool isMapReferenceCreated = false;
+}
+
+@if (!string.IsNullOrWhiteSpace(ApplicationSettings.MapAuthType))
+{
+    string channel = !string.IsNullOrEmpty(ApplicationSettings.MapChannel) ? ApplicationSettings.MapChannel : "";
+    
+    if (ApplicationSettings.MapAuthType.ToUpper() == "KEY")
+    {
+        if (!string.IsNullOrWhiteSpace(ApplicationSettings.MapKey))
+        {
+            <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=@ApplicationSettings.MapKey&channel=@channel&region=IN&libraries=geometry,places,visualization"></script>
+            isMapReferenceCreated = true;
+        }
+    }
+    else if (ApplicationSettings.MapAuthType.ToUpper() == "CLIENT")
+    {
+
+        if (!string.IsNullOrWhiteSpace(ApplicationSettings.MapClient))
+        {
+            <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?client=@ApplicationSettings.MapClient&channel=@channel&region=IN&libraries=geometry,places,visualization"></script>
+            isMapReferenceCreated = true;
+        }
+    }
+}
+@*is map url not created by key or cleint then use default map url*@
+@if(!isMapReferenceCreated)
+{
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?region=IN&libraries=geometry,places,visualization"></script>
+}
+

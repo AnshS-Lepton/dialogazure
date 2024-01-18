@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+  <Mapping id="1">
+    <DbColName>address</DbColName>
+    <TemplateColName>address</TemplateColName>
+  </Mapping>
+  <Mapping id="2">
+    <DbColName>antenna_beamwidth</DbColName>
+    <TemplateColName>antenna_beamwidth</TemplateColName>
+  </Mapping>
+  <Mapping id="3">
+    <DbColName>antenna_tilt</DbColName>
+    <TemplateColName>antenna_tilt</TemplateColName>
+  </Mapping>
+  <Mapping id="4">
+    <DbColName>ap_mode</DbColName>
+    <TemplateColName>ap_mode</TemplateColName>
+  </Mapping>
+  <Mapping id="5">
+    <DbColName>azimuth</DbColName>
+    <TemplateColName>azimuth</TemplateColName>
+  </Mapping>
+  <Mapping id="6">
+    <DbColName>bh_status</DbColName>
+    <TemplateColName>bh_status</TemplateColName>
+  </Mapping>
+  <Mapping id="7">
+    <DbColName>building_height</DbColName>
+    <TemplateColName>building_height</TemplateColName>
+  </Mapping>
+  <Mapping id="8">
+    <DbColName>category</DbColName>
+    <TemplateColName>category</TemplateColName>
+  </Mapping>
+  <Mapping id="9">
+    <DbColName>channal_bandwidth</DbColName>
+    <TemplateColName>channal_bandwidth</TemplateColName>
+  </Mapping>
+  <Mapping id="10">
+    <DbColName>city</DbColName>
+    <TemplateColName>city</TemplateColName>
+  </Mapping>
+  <Mapping id="11">
+    <DbColName>connectivity_to_noc</DbColName>
+    <TemplateColName>connectivity_to_noc</TemplateColName>
+  </Mapping>
+  
+  <Mapping id="14">
+    <DbColName>equipment_type</DbColName>
+    <TemplateColName>equipment_type</TemplateColName>
+  </Mapping>
+  
+  <Mapping id="16">
+    <DbColName>frequency</DbColName>
+    <TemplateColName>frequency</TemplateColName>
+  </Mapping>
+  
+  <Mapping id="18">
+    <DbColName>latitude</DbColName>
+    <TemplateColName>latitude</TemplateColName>
+  </Mapping>
+  <Mapping id="19">
+    <DbColName>longitude</DbColName>
+    <TemplateColName>longitude</TemplateColName>
+  </Mapping>
+ 
+  <Mapping id="21">
+    <DbColName>model</DbColName>
+    <TemplateColName>model</TemplateColName>
+  </Mapping>
+  <Mapping id="22">
+    <DbColName>polarisation</DbColName>
+    <TemplateColName>polarisation</TemplateColName>
+  </Mapping>
+  <Mapping id="23">
+    <DbColName>radius</DbColName>
+    <TemplateColName>radius</TemplateColName>
+  </Mapping>
+  
+  <Mapping id="25">
+    <DbColName>router_ip</DbColName>
+    <TemplateColName>router_ip</TemplateColName>
+  </Mapping>
+  <Mapping id="26">
+    <DbColName>sector_capacity</DbColName>
+    <TemplateColName>sector_capacity</TemplateColName>
+  </Mapping>
+  <Mapping id="27">
+    <DbColName>sector_ip</DbColName>
+    <TemplateColName>sector_ip</TemplateColName>
+  </Mapping>
+  <Mapping id="28">
+    <DbColName>sector_no</DbColName>
+    <TemplateColName>sector_no</TemplateColName>
+  </Mapping>
+  <Mapping id="29">
+    <DbColName>sector_utilization</DbColName>
+    <TemplateColName>sector_utilization</TemplateColName>
+  </Mapping>
+  <Mapping id="30">
+    <DbColName>serial_number</DbColName>
+    <TemplateColName>serial_number</TemplateColName>
+  </Mapping>
+  <Mapping id="31">
+    <DbColName>site_id</DbColName>
+    <TemplateColName>site_id</TemplateColName>
+  </Mapping>
+  <Mapping id="32">
+    <DbColName>site_name</DbColName>
+    <TemplateColName>site_name</TemplateColName>
+  </Mapping>
+  
+  <Mapping id="34">
+    <DbColName>su_count</DbColName>
+    <TemplateColName>su_count</TemplateColName>
+  </Mapping>
+  <Mapping id="35">
+    <DbColName>switch_ip</DbColName>
+    <TemplateColName>switch_ip</TemplateColName>
+  </Mapping>
+  
+  <Mapping id="37">
+    <DbColName>tower_height</DbColName>
+    <TemplateColName>tower_height</TemplateColName>
+  </Mapping>
+  <Mapping id="38">
+    <DbColName>wsg_group</DbColName>
+    <TemplateColName>wsg_group</TemplateColName>
+  </Mapping>
+  
+
+</Mappings>

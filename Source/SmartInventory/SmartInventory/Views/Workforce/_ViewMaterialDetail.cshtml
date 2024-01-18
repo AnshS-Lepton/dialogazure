@@ -1,0 +1,63 @@
+﻿@model Models.WFM.ViewMaterialDetail
+@{
+
+    WebGrid grid = new WebGrid();
+
+    if (Model != null)
+    {
+        if (Model.ViewMaterialDetails.Count > 0)
+        {
+            grid = new WebGrid(rowsPerPage: Model.ViewMaterialDetails.Count, canSort: true, ajaxUpdateContainerId: "ViewMaterialDetail",
+            ajaxUpdateCallback: "onGridHeaderClick('tblGvRouteIssuesDetail')");
+
+            grid.Bind(Model.ViewMaterialDetails);
+
+        }
+
+    } }
+
+<div id="ViewMaterialDetail">
+    @using (Ajax.BeginForm("ViewMaterialDetail", "Workforce", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvParentModalBody" }, new { autocomplete = "off", @class = "form-horizontal", @jobid = "frmViewMaterialDetail" }))
+    {
+        <div id="divGvHPSMTicketDetail">
+            @if (Model.ViewMaterialDetails.Count > 0)
+            {
+                <div class="tablBody tpad-top">
+
+                    <div class="table-responsive">
+                        @grid.GetHtml(tableStyle: "grid",
+                      htmlAttributes: new { id = "ViewMaterialDetail" },
+                    mode: WebGridPagerModes.All,
+      columns: grid.Columns(
+
+
+        @*grid.Column("material_id", "material_id", format: @<text><span id="material_id">@item.material_id</span> </text>),*@
+
+grid.Column("jobid", "JobId", format: @<text><span id="jobid">@item.jobid</span> </text>),
+grid.Column("quantity", "Quantity", format: @<text><span id="quantity">@item.quantity</span> </text>),
+grid.Column("material_code", "Material Code", format: @<text><span id="material_code">@item.material_code</span> </text>),
+grid.Column("material_name", "Material Name", format: @<text><span id="material_name">@item.material_name</span> </text>),
+
+grid.Column("serial_no", "Serial No", format: @<text><span id="serial_no">@item.serial_no</span> </text>),
+grid.Column("wh_code", "WH Code", format: @<text><span id="wh_code">@item.wh_code</span> </text>),
+grid.Column("item_code", "Item Code", format: @<text><span id="item_code">@item.item_code</span> </text>),
+grid.Column("uom", "UOM", format: @<text><span id="uom">@item.uom</span> </text>)
+)
+)
+
+
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="nr-found">
+                    <span>No record found.</span>
+                </div>
+            }
+            @Html.Hidden("dir", grid.SortDirection)
+            @Html.Hidden("col", grid.SortColumn)
+
+        </div>
+    }
+</div>

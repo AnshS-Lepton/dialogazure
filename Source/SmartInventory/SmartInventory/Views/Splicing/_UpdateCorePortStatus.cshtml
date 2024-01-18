@@ -1,0 +1,104 @@
+﻿@model Models.UpdateCorePortStatus
+@using Models;
+@{
+    var statusFor = Model.entity_type.ToUpper() == "CABLE" ? Resources.Resources.SI_OSP_CAB_NET_FRM_070 : Resources.Resources.SI_OSP_GBL_NET_FRM_029;
+}
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SavePortStatus", "Splicing",
+                new AjaxOptions
+                {
+                    HttpMethod = "POST",
+                    UpdateTargetId = "dvChildModalBody",
+                    LoadingElementId = "dvProgress",
+                    OnSuccess = "updatePortStatus(data)"
+            //OnSuccess= "splicing.resetEndPoint("+Model.entity_system_id+",'"+Model.entity_type+"',"+Model.core_port_number+")"
+        }, new { id = "frmUpdateCorePortStatus", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.entity_system_id)
+        @Html.HiddenFor(m => m.entity_type)
+        @Html.HiddenFor(m => m.core_port_number)
+        @Html.HiddenFor(m => m.type)
+        @Html.HiddenFor(m => m.portStatus, new { id = "hdnPortStatus" })
+        @Html.HiddenFor(m => m.portColor, new { id = "hdnPortColor" })
+        @Html.HiddenFor(m => m.isGridCalling)
+        <div style="padding: 15px;">
+            <div class="form-group">
+                <div class="col-md-3" style="white-space: nowrap;">@statusFor<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-9"> 
+
+                    <select name="ddlCoreStatus" id="ddlCoreStatus" class="chosen-select form-control  col-sm-12" onchange="splicing.statusColor();" data-placeholder="-Select-">
+                        <option value="">-Select-</option>
+                        @foreach (var item in Model.listPortStatus.ToList())
+                        {
+                            <option value="@item.system_id" @(Model.status.ToUpper() == @item.status.ToUpper() ? "selected" : "") data-status-color="@item.color_code">@item.status</option>
+                        }
+                    </select>
+                    @*@Html.DropDownListFor(m => m.portStatus, new SelectList(Model.listPortStatus.Select(x => new { Value = x.system_id.ToString(), Text = x.status.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @id = "ddlCoreStatus" })*@
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_312:</div>
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.comment, new { @id = "txtComment", @maxlength = "100", @title = Resources.Resources.SI_GBL_GBL_NET_FRM_065, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_GBL_GBL_NET_FRM_065 })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <p style="background-color:#bfedba;color:#0044cc;padding:4px;white-space: initial;font-size: 12px;">
+                        @*<b style="color:#0044cc;">Note:</b>
+                            Connected ports status will not update.*@
+                        @Html.Raw(Resources.Resources.SI_GBL_GBL_NET_FRM_066)
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-group ModalFooter">
+                <div class="col-md-12 text-right">
+                    <button type="submit" class="btn btn-primary" onclick="return validate();" id="btnUpdateData">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btnFiberCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    $('.chosen-select').chosen({ width: '100%' });
+    $(document).ready(function () {
+
+         
+        if ('@Model.pageMsg.message' != "") {
+            $('#closeChildPopup').trigger("click");
+            alert('@Model.pageMsg.message');
+            $("#FiberDetail").html('');
+            if ('@Model.entity_type.ToUpper()' == "CABLE") {
+                if ('@Model.type' == "ISP")
+                    isp.GetCableFiberDetail('@Model.entity_system_id');
+                else if ('@Model.type' != "SPLICING")
+                    si.GetCableFiberDetail('@Model.entity_system_id');
+            }
+            else {
+                if ('@Model.type' == "ISP")
+                    isp.GetPortInfo('@Model.entity_system_id', 0, '@Model.entity_type', 'ISP');
+                else if ('@Model.type' != "SPLICING")
+                    si.GetPortInfo('@Model.entity_system_id', 0, '@Model.entity_type');
+            }
+        }
+    })
+    function validate() {
+         
+        var coreStatus = $("#ddlCoreStatus").val();
+        $("#hdnPortStatus").val(coreStatus)
+        var comment = $("#txtComment").val();
+        if (coreStatus == "") {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_005 + '@statusFor!');
+            return false;
+        }
+        else if (coreStatus != "1" && comment == "") {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_110);
+            return false;
+        }
+        else
+            return true;
+    }
+</script>

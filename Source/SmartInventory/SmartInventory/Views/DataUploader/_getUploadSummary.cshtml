@@ -1,0 +1,140 @@
+﻿@{
+    Layout = null;
+}
+@model Models.DataUploaderModel
+@{
+    var grid = new WebGrid(rowsPerPage: Model.objUploadLogFilter.pageSize, ajaxUpdateContainerId: "gridUploadSummary", canSort: false);
+    grid.Bind(Model.lstUploadSummary, autoSortAndPage: false, rowCount: Model.objUploadLogFilter.totalRecords);
+    var footerText = "showing " + (((Model.objUploadLogFilter.page - 1) * Model.objUploadLogFilter.pageSize) + 1) + " to " + (Model.objUploadLogFilter.page * Model.objUploadLogFilter.pageSize) + " of " + Model.objUploadLogFilter.totalRecords + " items";
+}
+
+<!DOCTYPE html>
+<div id="dvUploadSummary">
+    @using (Ajax.BeginForm("getUploadSummary", "DataUploader", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvUploadSummary", LoadingElementId = "dvUploadLogProgress" }, new { id = "frmUploadLog", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        <section>
+            <div id="dvUploadLogProgress" class="UploadLogProgress"></div>
+            <div id="dvSearchContainer">
+                <div class="d-flex">
+                    <div class="sel-n-w">
+                        @Html.DropDownListFor(m => m.objUploadLogFilter.entityName, new SelectList(Model.lstLayerDetails.Select(x => new { Value = x.layer_name, Text = x.layer_title }), "Value", "Text"), "--All--", new { @class = "chosen-select form-control", @id = "selentityFilter" })
+                    </div>
+                    <div class="d-flex ml-auto">
+                        <span class="pos-rel">
+                            @Html.TextBoxFor(m => m.objUploadLogFilter.fromDate, new { @id = "txtDateFrom", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_096, @tabindex = "4", @class = "form-control uploadInput inp-n-h", @readonly = true, @placeholder = Resources.Resources.SI_OSP_ROW_NET_RPT_005 })
+                            <img id="imgFromDate" class="calender" src="@Url.Content("~/Content/images/calendar.png")" />
+                        </span>
+                        <span class="pos-rel">
+                            @Html.TextBoxFor(m => m.objUploadLogFilter.toDate, new { @id = "txtDateTo", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_097, @tabindex = "4", @class = "form-control uploadInput inp-n-h", @readonly = true, @placeholder = Resources.Resources.SI_OSP_ROW_NET_GBL_051 })
+                            <img id="imgToDate" class="calender" src="@Url.Content("~/Content/images/calendar.png")" />
+                        </span>
+                        <button type="submit" id="btnApply" class="btn btn-success ml-10">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_007</button>
+                        <button type="button" id="btnReset" class="btn btn-default ml-10">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+                    </div>
+                </div>
+            </div>
+            @if (Model.lstUploadSummary.Count> 0)
+            {
+                <div id="Uploadlogs">
+                    @grid.GetHtml(htmlAttributes: new { id = "gridUploadSummary" }, tableStyle: "grid",
+                 columns: grid.Columns(
+                               grid.Column("s_no", Resources.Resources.SI_OSP_DU_NET_RPT_001),
+                               grid.Column("file_name", Resources.Resources.SI_OSP_GBL_GBL_GBL_029),
+                               grid.Column("entity_type", Resources.Resources.SI_OSP_GBL_NET_GBL_008),
+                               grid.Column("status", Resources.Resources.SI_OSP_GBL_GBL_GBL_014),
+    @*grid.Column("status_message", Resources.Resources.SI_OSP_DU_NET_FRM_005, format: @<text>@Html.Raw(HttpUtility.HtmlDecode(item.status_message))</text>),*@
+grid.Column("total_record", Resources.Resources.SI_OSP_GBL_GBL_GBL_041),
+grid.Column("failed_record", Resources.Resources.SI_OSP_DU_NET_FRM_004),
+grid.Column("success_record", Resources.Resources.SI_OSP_GBL_GBL_GBL_103),
+grid.Column("uploaded_by", Resources.Resources.SI_OSP_GBL_GBL_GBL_031),
+grid.Column("start_on", Resources.Resources.SI_OSP_DU_NET_FRM_003, format: @<text> @(item.start_on == null ? item.start_on : Utility.MiscHelper.FormatDateTime(item.start_on.ToString())) </text>),
+grid.Column("end_on", Resources.Resources.SI_OSP_DU_NET_FRM_002, format:@<text> @(item.end_on == null || Utility.MiscHelper.FormatDateTime(item.end_on.ToString()) == "01-Jan-01 12:00 AM" ? "" : Utility.MiscHelper.FormatDateTime(item.end_on.ToString())) </text>),
+grid.Column("Action", header: Resources.Resources.SI_ISP_GBL_NET_FRM_029, format: @<text>
+    @if (item.success_record > 0)
+    {
+        <input type="button" class="btn btn-success CustomSuccess" onclick="dataUploader.fnDownloadUploadLogs('@item.id', 'SUCCESS');" title="@Resources.Resources.SI_OSP_DU_NET_FRM_070" value="@Resources.Resources.SI_GBL_GBL_NET_FRM_080" />
+    }
+    else
+    {
+        <input type="button" class="btn btn-success CustomSuccessDisabled" title="@Resources.Resources.SI_OSP_DU_NET_FRM_070" value="@Resources.Resources.SI_GBL_GBL_NET_FRM_080" />
+    }
+    @if (item.failed_record > 0)
+    {
+        <input type="button" class="btn btn-danger CustomError" onclick="dataUploader.fnDownloadUploadLogs('@item.id', 'FAILED');" title="@Resources.Resources.SI_OSP_DU_NET_FRM_001" value="@Resources.Resources.SI_GBL_GBL_NET_FRM_081" />
+    }
+    else
+    {
+        <input type="button" class="btn btn-danger CustomErrorDisabled" title="@Resources.Resources.SI_OSP_DU_NET_FRM_001" value="@Resources.Resources.SI_GBL_GBL_NET_FRM_081" />
+    }
+</text>),
+
+
+
+
+grid.Column(Resources.Resources.SI_OSP_GBL_GBL_GBL_059, format: @<text>
+    <a id="showSummaryMap_@item.id" onclick="dataUploader.fnShowEntityonMap('@item.id');" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_104"
+       class="fa fa-globe fa-fw m-r-xs i-icons-style i-icons-ptpb">
+
+    </a>
+</text>)
+
+
+))
+                </div>
+            }
+        </section>
+    }
+
+    @if (Model.lstUploadSummary.Count == 0)
+    {
+        <div class="nr-found">
+            <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+        </div>
+    }
+</div>
+<script src="~/Content/js/Utility.js"></script>
+<script>
+                $(document).ready(function () {
+
+                $('.chosen-select').chosen({ width: '100%' });
+                si.setDateTimeCalendar_ExportEntities("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+                $('#gridUploadSummary tfoot tr td').append('<medium class="inline m-t-sm m-b-sm" style="padding-left: 550px;">' + '@footerText' + '</medium>');
+                $("#btnReset").on("click", function () {
+                    $("#txtDateFrom").val('');
+                    $("#txtDateTo").val('');
+                    $("#selentityFilter").val('').trigger('chosen:updated');
+                    $("#frmUploadLog").submit();
+                });
+                $('th a, tfoot a').on("click", function () {
+                    $('#frmUploadLog').attr('action', $(this).attr('href')).submit();
+                    return false;
+                });
+                    UpdateFormattedNumbers();
+                });
+                function UpdateFormattedNumbers() {
+                    // Get the table element
+                    const table = document.getElementById('gridUploadSummary');
+
+                    // Loop through the rows
+                    if (table && table.rows) {
+                        for (let rowIndex = 0; rowIndex < table.rows.length; rowIndex++) {
+                            const row = table.rows[rowIndex];
+
+
+                            // Loop through the cells in the row
+                            for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
+                                const cell = row.cells[cellIndex];
+
+                                // Extract data from the cell
+                                const cellData = cell.textContent.trim();
+
+                                // Do something with the cell data
+                                if ($.isNumeric(cellData))
+                                    row.cells[cellIndex].textContent = getFormattedNumber(cellData);
+                            }
+                        }
+                    }
+                }
+</script>
+
+

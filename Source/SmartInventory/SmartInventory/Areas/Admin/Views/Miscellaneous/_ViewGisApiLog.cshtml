@@ -1,0 +1,164 @@
+﻿@model Models.ViewErrorLogFilter
+@using Utility
+<link href="~/Areas/Admin/Content/css/spectrum.css" rel="stylesheet" />
+<script src="~/Areas/Admin/Content/js/spectrum.js"></script>
+
+
+
+<style>
+    .assign-calen {
+        position: absolute;
+        float: right;
+        top: 3px;
+        /* margin-right: 5px; */
+        cursor: pointer;
+        /* margin-right: 0px; */
+        right: 19px;
+    }
+
+    div.calendar {
+        width: 275px;
+    }
+
+    .nav {
+        display: table-cell !important;
+    }
+
+  
+</style>
+
+<!DOCTYPE html>
+<div id="dvViewGisApilog">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+               Gis Api Log
+            </h4>
+
+        </div>
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewGisApilog", ajaxUpdateCallback: "onGridHeaderClick('tblGisApilog')");
+            grid.Bind(Model.listGisApiLog, autoSortAndPage: false, rowCount: Model.totalRecord);
+            if (Model.totalRecord > 0)
+            {
+                grid.PageIndex = Model.currentPage - 1;
+            }
+        }
+
+        @using (Html.BeginForm("ViewGisApiLog", "Miscellaneous", FormMethod.Post, new { autocomplete = "off", @id = "frmGisApilog" }))
+        {
+            <div class="pad_left-bn">
+                <div class="form-inline filter-sec resourceGap">
+                    <div class="form-group" style="display:none;">
+                        @Html.DropDownListFor(m => m.customDate, new List<SelectListItem>{
+                                new SelectListItem { Text = "Select", Value = "0"},
+                                new SelectListItem { Text = "Custom", Value = "1"},
+                                new SelectListItem { Text = "Today", Value = "2"},
+                                new SelectListItem { Text = "Previous Day", Value = "3"},
+                                new SelectListItem { Text = "Last 7 Days", Value = "4"},
+                                new SelectListItem { Text = "Last 30 Day", Value = "5"},
+                                new SelectListItem { Text = "Last 3 Months", Value = "6"},
+                                new SelectListItem { Text = "Last 6 Months", Value = "7"},
+                              new SelectListItem { Text = "Last 1 Year", Value = "8"},
+                            }, new { @class = "chosen-select form-control", @onchange = "onChangeCustomDate();", @id = "customedate" })
+
+                    </div>
+
+                    <div class="form-group pose-rel" style="display:none;">
+                        @Html.TextBoxFor(m => m.fromDate, "{0:dd-MMM-yyyy}", new { @id = "txtDateFrom", @title = "Date From", @class = "input-sm form-control", @placeholder = "Date From", @readonly = true, @style = "height:26px;" })
+                        <img id="imgFromDate" class="assign-calen" style="margin-right:-10px;margin-top:5px;" src="~/Content/images/calendar.png" />
+
+                    </div>
+                    <div class="form-group pose-rel" style="display:none;">
+                        @Html.TextBoxFor(m => m.toDate, "{0:dd-MMM-yyyy}", new { @id = "txtDateTo", @title = "Date To", @placeholder = "Date To", @class = "input-sm form-control", @readonly = true, @style = "height:26px;" })
+                        <img id="imgToDate" class="assign-calen" style="margin-right:-10px;margin-top:5px;" src="~/Content/images/calendar.png" />
+
+                    </div>
+
+                    <div class="form-group wtd_set">
+                        @Html.DropDownListFor(m => m.searchBy, new List<SelectListItem>
+                 {
+                   new SelectListItem{ Text="Search By", Value = "" },
+                   new SelectListItem{ Text="Api Type", Value = "api_type" },
+                    new SelectListItem{ Text="Gdb version", Value = "gdb_version" },
+                    new SelectListItem{ Text="Request", Value = "request" },
+                 }, new { @id = "ddlSearchBy", @tabindex = "2", @title = "Search By", @class = "chosen-select form-control" })
+
+                    </div>
+
+
+                    <div class="form-group wtd_set">
+                        @Html.TextBoxFor(m => m.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                    </div>
+
+                    <div class="form-group wtd_set">
+
+                        <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+
+
+                        @if (@grid.TotalRowCount > 0)
+                        {
+                            <input type="button" id="btnViewUserExport" value="Export" class="btn btn-primary mr-05" onclick="ViewGisApiLogReport()" /> }
+                        else
+                        {
+                            <input type="button" id="btnExport" value="Export" disabled="disabled" class="btn btn-primary mr-05" />
+                        }
+
+
+                        <a href="@Url.Action("ViewGisApiLog")" class="btn btn-default" title="Reset">Reset</a>
+
+                    </div>
+                </div>
+            </div>
+
+            if (Model.listGisApiLog.Count > 0)
+                {
+
+                <div id="divGisApiLog" class="pad_left-tn">
+                    <div class="recordCount mb-01"><b>Total Records:@grid.TotalRowCount</b></div>
+                    <div class="table-responsive tble_cls">
+                        @grid.GetHtml(tableStyle: "grid",
+                            htmlAttributes: new { id = "tblGisApilog" },
+                            mode: WebGridPagerModes.All,
+                            columns: grid.Columns(
+                                 grid.Column("", "Action", format:@<text><a href="javascript:void(0);" onclick=ReadMoreGisApiLog(@item.id) style="color:blue;">Read More</a></text>, canSort: false),
+                                  grid.Column("api_url", "Api Url", format: 
+                                        @<text>@item.api_url</text>, canSort: true),
+                                 grid.Column("api_type", "Api Type", format:  @<text>@item.api_type</text>, canSort: true),
+                                grid.Column("gis_object_id", "Gis Object Id", format:  @<text>@item.gis_object_id</text>, canSort: true),
+                                grid.Column("gdb_version", "Gdb Version", format:  @<text>@item.gdb_version</text>, canSort: true),
+                                grid.Column("gis_design_id", "Gis Design Id", format:  @<text>@item.gis_design_id</text>, canSort: true),
+                                grid.Column("latency", "Latency", format:  @<text><span>@item.latency</span> </text>),
+                                grid.Column("request", "Request", format:  @<text> @(item.request == null ? item.request : item.request.PadRight(30).Substring(0, 30))</text>, canSort: true),
+                                grid.Column("request_time", "Request Time", format: @<text>@item.request_time</text>, canSort: true),
+                                grid.Column("response", "Response", format: @<text>@(item.response == null ? item.response : item.response.PadRight(30).Substring(0, 30))</text>, canSort: true)                               
+                                        ))
+                                        @Html.Hidden("dir", grid.SortDirection)
+                                        @Html.Hidden("col", grid.SortColumn)
+                    </div>
+                    </div>
+                    }
+                    else
+                    {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Gis Api Logs Found.
+                    </div>
+                    }
+                    }
+                </div>
+            </div>
+
+
+            <script>
+                $(document).ready(function () {
+                    addDefaultSortingIcons("tblGisApilog");
+                    setDateTimeCalendar("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+                    if ($("#customedate option:selected").text() != "Custom") {
+                        $('#imgFromDate').hide();
+                        $('#imgToDate').hide();
+                    }
+                });
+                function ViewGisApiLogReport() {
+                    window.location = appRoot + 'Miscellaneous/DownloadGisApiLog';
+                }
+            </script>

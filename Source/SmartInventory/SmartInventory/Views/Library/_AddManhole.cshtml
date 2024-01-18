@@ -1,0 +1,410 @@
+﻿@model Models.ManholeMaster
+@using Models;
+@using SmartInventory.Settings;
+
+@helper ManholeTemplateMaster()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_ManholeTemplateMaster.cshtml", (ManholeTemplateMaster)Model); }
+}
+
+@helper ProjectSpecifications()
+{
+    { Html.RenderPartial("~/Views/Library/_ProjectSpecification.cshtml", (IProjectSpecification)Model); }
+}
+
+@helper OwnershipInfo()
+{
+    { Html.RenderPartial("~/Views/Library/_OwnershipInfo.cshtml", (IOwnershipInfo)Model); }
+}
+@helper AcquireFrom()
+{
+    { Html.RenderPartial("~/Views/Library/_AcquireFrom.cshtml", (IAcquireFrom)Model); }
+}
+@helper CustomCoordinate()
+{
+    { Html.RenderPartial("~/Views/Library/_CustomCoordinate.cshtml", (ICustomCoordinate)Model); }
+}
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+<!--Reigon Additional Attribute to show the partial view-->
+@helper AdditionalAttributes()
+{
+    { Html.RenderPartial("~/Views/Shared/_AdditionalAttributesForm.cshtml", Model.objDynamicControls); }
+}
+<!--End Reigon Additional Attribute-->
+@helper Reference()
+{
+    { Html.RenderPartial("~/Views/Library/_Reference.cshtml", (IReference)Model); }
+}
+@helper GeographicDetails()
+{
+    { Html.RenderPartial("~/Views/Library/_GeographicDetails.cshtml", (IGeographicDetails)Model); }
+}
+@helper AdditionalFields()
+{
+    { Html.RenderPartial("~/Views/Library/_AdditionalFields.cshtml", (IAdditionalFields)Model); }
+}
+@{
+    var constructionType = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.construction_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+}
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Manhole.ToString().ToUpper()).FirstOrDefault() : null;
+    var layer_Detail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Manhole.ToString());
+
+}
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SaveManhole", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnBegin = "return si.validateNetworkIdNLoopLength(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.Manhole.ToString() + "');"
+        //OnBegin = "return ValidateNetworkId "
+    },
+                                                        new { id = "frmAddManhole", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.geom)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.networkIdType)
+        @Html.HiddenFor(m => m.network_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+        //Add the other_info as hidden field for additional attributes
+        @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="libTabs">
+            <div class="scrollmenu">
+                <div><span class="spanSide go-left" id="spnRightMenu" style="display:none;"><i class="fa fa-angle-left" aria-hidden="true"></i></span></div>
+                <div class="scrollerhide overflow-hidden">
+                    <ul class="nav nav-tabs tabs-left">
+                        <li class="active"><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")"href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                        <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")"
+                          href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_005</a></li>
+
+                        @if (Model.system_id > 0 && layerDetail.is_loop_allowed)
+                        {
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_032 @(Model.lstUserModule.Contains("ENT-DTL-LDTLI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-LDTL") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"#LoopMangment":"")" id="lnk_LoopMangment" onclick="si.GetLoopMangmentDetail('@Model.latitude', '@Model.longitude', '@Model.system_id','@EntityType.Manhole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_032</a></li>
+                        }
+                        @if (layerDetail != null && layerDetail.is_reference_allowed)
+                        {
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_006 @(Model.lstUserModule.Contains("ENT-DTL-GRF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GRF") ? "" : "block;")"
+                           href="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"#dvRefrence":"")" onclick="si.getEntityReference('@Model.system_id','@EntityType.Manhole.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a></li>
+                        }
+                        @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_barcode_enabled)
+                        {
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_057 @(Model.lstUserModule.Contains("ENT-DTL-BRC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-BRC") ? "" : "block;")"
+                            href="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"#BarCodeInfo":"")" onclick="si.GetBarCode('@Model.system_id','@EntityType.Manhole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_057</a></li>
+                        }
+                        @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_at_enabled)
+                        {
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ACT")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_033 @(Model.lstUserModule.Contains("ENT-DTL-ACT")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ACT") ? "" : "block;")"
+
+                            href="@(Model.lstUserModule.Contains("ENT-DTL-ACT")?"#dvAT":"")" onclick="si.GetATAcceptance('@Model.system_id','@EntityType.Manhole.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_033</a></li>
+                        }
+                        @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_maintainence_charges_enabled)
+                        {
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-MC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_034 @(Model.lstUserModule.Contains("ENT-DTL-MC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-MC") ? "" : "block;")"
+                          href="@(Model.lstUserModule.Contains("ENT-DTL-MC")?"#dvMaintainenceCharges":"")" onclick="si.GetMaintainenceCharges('@Model.system_id','@EntityType.Manhole.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_034</a></li>
+                        }
+                        @if (layerDetail != null && layerDetail.is_pod_association_allowed)
+                        {
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_159 @(Model.lstUserModule.Contains("ENT-DTL-COAS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-COAS") ? "" : "block;")"
+                            href="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"#PODAssoctn":"")" id="Pod_Association" onclick="si.GetPODAssociationDetail('@Model.geom', '@Model.system_id','@EntityType.Manhole.ToString()', '@Model.primary_pod_system_id', '@Model.secondary_pod_system_id');" data-toggle="tab">@layer_Detail.layer_title <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_159</label></a></li>
+                        }
+                        <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_152 @(Model.lstUserModule.Contains("ENT-DTL-ENS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENS") ? "" : "block;")"
+                           href="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"#NwEntityHistory":"")" id="Nw_EntityHistory" onclick="si.GetNetworkEntityHistory('@Model.system_id','@EntityType.Manhole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_152</a></li>
+                        <!--Reigon Additional Attribute to show the partial view-->
+                        <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_222 @(Model.lstUserModule.Contains("ENT-DTL-ADA")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ADA") ? "" : "block;")"
+                           href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
+                        <!--End Reigon Additional Attribute-->
+                        @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_reference_allowed == true)
+                        {
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")"
+                             href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                        }
+                    </ul>
+                </div>
+                <div id="divRightMenu" style="display:none;">
+                    <span class="spanSide go-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                    <span class="spanSide" id="dropdown" style="border-left: 1px solid #b9b7b7;     margin-left: -4px;"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                    <div class="arrowDropUp"></div>
+                    <div class="dropMenu">
+                        <div class="alltabs">@Resources.Resources.SI_OSP_GBL_NET_FRM_062</div>
+                        <ul>
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_005</a></li>
+                            @if (Model.system_id > 0 && layerDetail.is_loop_allowed)
+                            {
+                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_032 @(Model.lstUserModule.Contains("ENT-DTL-LDTLI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-LDTL") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"#LoopDetails":"")" id="lnk_LoopMangment" onclick="si.GetLoopMangmentDetail('@Model.latitude', '@Model.longitude', '@Model.system_id','@EntityType.Manhole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_032</a></li>
+
+                                if (layerDetail != null && layerDetail.is_reference_allowed)
+                                {
+                                    <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_006 @(Model.lstUserModule.Contains("ENT-DTL-GRF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GRF") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"#dvRefrence":"")" onclick="si.getEntityReference('@Model.system_id','@EntityType.Manhole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a></li>
+                                }
+                                if (Model.system_id > 0 && layerDetail != null && layerDetail.is_barcode_enabled)
+                                {
+                                    <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_057 @(Model.lstUserModule.Contains("ENT-DTL-BRC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-BRC") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"#BarCodeInfo":"")" onclick="si.GetBarCode('@Model.system_id','@EntityType.Manhole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_057</a></li>
+                                }
+                                if (Model.system_id > 0 && layerDetail != null && layerDetail.is_at_enabled)
+                                {
+                                    <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ACT")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_033 @(Model.lstUserModule.Contains("ENT-DTL-ACT")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ACT") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ACT")?"#dvAT":"")" onclick="si.GetATAcceptance('@Model.system_id','@EntityType.Manhole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_033</a></li>
+                                }
+                                if (Model.system_id > 0 && layerDetail != null && layerDetail.is_maintainence_charges_enabled)
+                                {
+                                    <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-MC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_034 @(Model.lstUserModule.Contains("ENT-DTL-MC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-MC") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-MC")?"#dvMaintainenceCharges":"")" onclick="si.GetMaintainenceCharges('@Model.system_id','@EntityType.Manhole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_034</a></li>
+                                }
+                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_152 @(Model.lstUserModule.Contains("ENT-DTL-ENS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENS") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"#NwEntityHistory":"")" id="Nw_EntityHistory" onclick="si.GetNetworkEntityHistory('@Model.system_id','@EntityType.Manhole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_152</a></li>
+
+                            }
+                            <!--Reigon Additional Attribute to show the partial view-->
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_222 @(Model.lstUserModule.Contains("ENT-DTL-ADA")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ADA") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
+                            <!--End Reigon Additional Attribute-->
+                            @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_reference_allowed == true)
+                            {
+                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="TabContent--max-over">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"tab-pane active":"tab-pane active dvdisabled")" id="GISInfo">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_052 </legend>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtManholeName"> @Resources.Resources.SI_OSP_SC_NET_FRM_005:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.CheckBoxFor(m => m.is_virtual)
+
+                            </div>
+                            <label class="col-md-2 col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_012:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.CheckBoxFor(m => m.is_buried)
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtManholeCode">
+                                @Resources.Resources.SI_OSP_GBL_GBL_GBL_001
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }
+                                :
+                            </label>
+                            <div class="col-md-4 col-sm-4">
+                                <div id="txtMaskedNetworkId"></div>
+                            </div>
+                            <label class="col-md-2 col-sm-2" for="txtManholeName">
+                                @Resources.Resources.SI_OSP_GBL_NET_FRM_059
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }:
+                            </label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.manhole_name,
+                                   SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(
+                              new
+                              {
+                                  autocomplete = "do-not-show-ac",
+                                  @class = "form-control",
+                                  @id = "txtManholeName",
+                                  @maxlength = "50"
+                              }, (Model.networkIdType == "M" ? new { @required = true } : null)))
+                                @*@Html.TextBoxFor(m => m.manhole_name, new { @class = "form-control", @id = "txtManholeName", @maxlength = "50" })*@
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtLatitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_011<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @id = "txtLatitude", @readonly = true })
+                            </div>
+                            <label class="col-md-2 col-sm-2" for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_012<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @id = "txtLongitude", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            @CustomCoordinate()
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtProvinceName">@Resources.Resources.SI_OSP_GBL_GBL_GBL_005:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.parent_entity_type, new { @class = "form-control clsReadOnly", @readonly = true })
+                            </div>
+                            <label class="col-md-2 col-sm-2" for="txtParentCode">@Resources.Resources.SI_OSP_GBL_GBL_GBL_004:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control", @id = "txtParentCode", @readonly = true })
+                            </div>
+                        </div>
+
+
+                        @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4 col-sm-4 mrgn_btm">
+                @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
+            </div>*@
+                        <div id="dvOwnerShip" class="form-group row">
+                            @AcquireFrom()
+                        </div>
+                        <div id="dvOwnerShip">
+                            @OwnershipInfo()
+                        </div>
+                        <div>
+                            @AdditionalFields()
+                        </div>
+                        <div class="form-group row">
+                            @if (constructionType != null)
+                            {
+                                <label class="col-md-2 col-sm-2 white-space" for="txtProvinceName">@Resources.Resources.SI_OSP_MH_NET_FRM_006:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    @Html.DropDownListFor(m => m.construction_type, new SelectList(Model.listConstructionType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+                                </div>
+                            }
+                        </div>
+                        @*-------------------------------------------------Added By Manoj------------------------------------------------------------------*@
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtarea">Area:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.area, new { @class = "form-control " })
+                            </div>
+                            <label class="col-md-2 col-sm-2" for="txtAuthority">Authority:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.authority, new { @class = "form-control", @id = "txtParentCode" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtRouteName">Route Name:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.route_name, new { @class = "form-control " })
+                            </div>
+                        </div>
+                        @*----------------------------------------------------------------------------------------------------------------------------------------------*@
+
+
+
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtAddress">@Resources.Resources.SI_OSP_GBL_GBL_GBL_008:</label>
+                            <div class="col-md-10 col-sm-10">
+                                @Html.TextBoxFor(m => m.address, new { @class = "form-control", @id = "txtAddress", @maxlength = "100", autocomplete = "do-not-show-ac" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                            <div class="col-md-10 col-sm-10">
+                                @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @id = "txtRemarks", @maxlength = "1000" })
+                            </div>
+                        </div>
+                    </fieldset>
+                    @if (Model.lstUserModule.Contains("PROJ"))
+                    {
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_001</legend>
+                            @ProjectSpecifications()
+                        </fieldset>
+                    }
+                    <div>@GeographicDetails()</div>
+                </div>
+                <div class="tab-pane" id="ItemSpecf">
+                    @ManholeTemplateMaster()
+                </div>
+
+                <div class="tab-pane" id="LoopMangment"></div>
+                <div class="tab-pane" id="PODAssoctn"></div>
+                <div id="dvRefrence" class="tab-pane"></div>
+                <div class="tab-pane" id="BarCodeInfo"></div>
+                <div class="tab-pane" id="dvAT"></div>
+                <div class="tab-pane" id="dvMaintainenceCharges"></div>
+                <div id="NwEntityHistory" class="tab-pane"></div>
+                <!--Reigon Additional Attribute to show the partial view-->
+                <div class="tab-pane" id="AdditionalAttributes">
+                    @AdditionalAttributes()
+                </div>
+                <!--End Reigon Additional Attribute-->
+                <div class="tab-pane" id="Reference">
+                    @Reference()
+                </div>
+            </div>
+        </div>
+
+        <div class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"d-flex ModalFooter":"d-flex ModalFooter dvdisabled")" id="dvBtnAction">
+            @*<div class="col-sm-8 clsIsVirtual" style="text-align:right">
+                    @Html.CheckBoxFor(m => m.is_virtual) <span>Is Virtual</span>
+                </div>*@
+            @if (Model.system_id > 0)
+            {
+                <div class="ModelFooterInfo">
+                    <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_014:</label>
+                    <label class="model-label-info">@(Model.network_status != null ? Utility.MiscHelper.GetNetworkStatus(Model.network_status.ToUpper()) : string.Empty)</label>
+                    <label for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_007:</label>
+                    <label class="model-label-info" title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
+                </div>
+            }
+            <div class="ml-auto">
+                <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCancelAssignRoute">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+
+                @if (Model.system_id > 0)
+                {
+                    <button type="button" onclick="formPost()" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnUpdateItemTemplate" disabled="disabled">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                }
+                else
+                {
+                    <button type="button" onclick="formPost()" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnSaveItemTemplate" disabled="disabled">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                }
+
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    var inputs = [];
+    $(document).ready(function () {
+        callFormValidator("frmAddManhole");
+        $('.chosen-select').chosen({ width: '100%' });
+        EnableDisableUpdateButton("frmAddManhole", @Model.system_id > 0 ? "btnUpdateItemTemplate" : "btnSaveItemTemplate");
+        //APPLY INPUT MASK ON NETWORK ID..
+        getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
+        $("#frmAddManhole").on("submit", function () {
+            $("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
+            //For AdditionalAttributes to set json and saving
+            additionalAttributesUtility.SetJsonValue("#frmOtherInfo", "#hdnOtherInfo");
+            //end region AdditionalAttributes
+            if (!entityReferencevalidation())
+                return false;
+
+            if(!entityMaintainence())
+                return false;
+        });
+        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+    });
+    function formPost() {
+         
+        if ($('#txtbomsubcategory').val() == '') {
+            $('#txtbomsubcategory').next().addClass('input-validation-error');
+            return false;
+        }
+        else {
+            $("#frmAddManhole").submit();
+        }
+    }
+</script>
+<style>
+        #LoopMangment,#PODAssoctn {
+        background-image: url('@Url.Content("~/content/images/loading_new.gif")');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>

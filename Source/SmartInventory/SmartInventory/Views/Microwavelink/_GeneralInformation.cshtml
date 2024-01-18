@@ -1,0 +1,1271 @@
+﻿@model Models.MicrowaveLinkViewModel
+<fieldset class="the-fieldset">
+    <legend class="the-legend">General Information</legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">Tower A</label>
+        <label class="control-label col-sm-5" for="txtParentType">Tower B</label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Tower ID :</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control", @readonly = true })
+        </div>*@
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Tower Name :</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Country :</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Tower Region:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_region, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_region, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Department:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_department, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_department, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">City:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_city, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_city, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Location:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_location, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_location, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Owner:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_owner, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_owner, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Building Owner:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_build_owner, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_build_owner, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Site Address:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_address, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_address, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Zip Code:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_zip, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_zip, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Phone Number:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_phone, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_phone, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Fax:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_fax, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_fax, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Mail:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_mail, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_mail, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Registration No:</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>*@
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Typology:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.typology, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.typology, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Type:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.type, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.type, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Status:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.status, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.status, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Capex:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.capex, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.capex, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Opex:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.opex, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.opex, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Free Space Loss(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.free_loss, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.free_loss, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Absorption Loss(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.absorption_loss, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.absorption_loss, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Diffraction(Obstacle) Loss(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.obstacle_loss, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.obstacle_loss, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Total Loss(dB):</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control", @readonly = true })
+        </div>*@
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">K Value(K1):<i class="clsMandatory">*</i>:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.k_value, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.k_value, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Wrost Obstacle Distance(K1) Km:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.obstacle_dist, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.obstacle_dist, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">AMSL Height(K1) m:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.amsl_height, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.amsl_height, new { @class = "form-control" })
+        </div>
+    </div>
+
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Distance To Los(K1) m:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.dist_to_los, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.dist_to_los, new { @class = "form-control" })
+        </div>
+    </div>
+
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Los Clearance(K1) %:<i class="clsMandatory">*</i>:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.los_clearance, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.los_clearance, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Distance To First Fresnel Area(K1) m:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.dist_to_fresnel, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.dist_to_fresnel, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">User 1:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user1, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user1, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">User 2:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user2, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user2, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">User 3:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user3, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user3, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">User 4:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user4, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user4, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">User 5:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user5, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user5, new { @class = "form-control" })
+        </div>
+    </div>
+</fieldset>
+
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend">Unit</legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">Tower A</label>
+        <label class="control-label col-sm-5" for="txtParentType">Tower B</label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Tower Latitude:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterA.latitude, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterB.latitude, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Tower Longitude:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterA.longitude, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterB.longitude, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Elevation(AMSL) m:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterA.elevation, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterB.elevation, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Building Height(m):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterA.tower_height, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterB.tower_height, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Tower Height(m):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterA.tower_height, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterB.tower_height, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Frequency(MHz):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.frequency, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.frequency, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Polarization:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.polarization, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.polarization, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Clearance(%):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.clearance, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.clearance, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Microwave Radio Loss(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.radio_loss, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.radio_loss, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Coupling Device Loss(dB):</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>*@
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Antenna System Loss(dB):</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>*@
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Radio:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterA.network_id, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterB.network_id, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Antenna:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwavelinkAntennaA.antenna_type, new { @class = "form-control", @id = "txtantennaMasterA", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwavelinkAntennaB.antenna_type, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Antenna Height on Tower(m):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwavelinkAntennaA.height, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwavelinkAntennaB.height, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Azimuth(deg):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwavelinkAntennaA.azimuth, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwavelinkAntennaB.azimuth, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Tilt(deg):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwavelinkAntennaA.tilt, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwavelinkAntennaB.tilt, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Antenna Gain(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwavelinkAntennaA.gain, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwavelinkAntennaB.gain, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Antenna Diameter(m):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwavelinkAntennaA.diameter, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwavelinkAntennaB.diameter, new { @class = "form-control" })
+        </div>
+    </div>
+
+
+</fieldset>
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend">Diversity</legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">A->B</label>
+        <label class="control-label col-sm-5" for="txtParentType">B->A</label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Diversity Antenna :</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control", @readonly = true })
+        </div>*@
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Tower Name Diversity Height on Tower(m):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Diversity Azimuth(deg):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Diversity Tilt(deg):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_region, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_region, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Diversity Antenna Gain(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_department, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_department, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Diversity Antenna Diameter(m):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_city, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_city, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Diversity Antenna System Loss(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_location, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_location, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Diversity Coupling Device Loss(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_owner, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_owner, new { @class = "form-control" })
+        </div>
+    </div>
+
+</fieldset>
+<fieldset class="the-fieldset">
+    <legend class="the-legend">Slot</legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">A->B</label>
+        <label class="control-label col-sm-5" for="txtParentType">B->A</label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">User Power(dBm):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user_power, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user_power, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Use Per Configuration Power:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.config_power, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.config_power, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Power Type:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.config_power_type, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.config_power_type, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Use ATPC:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.use_atpc, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.use_atpc, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">User ATPC(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user_power_atpc, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.user_power_atpc, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Use Per Configuration ATPC(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.config_power_type, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.config_power_type, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">User Modulation:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.modulation_name, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.modulation_name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Use Adaptive Modulation:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.use_adaptive_modulation, new { @class = "form-control" })
+
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.use_adaptive_modulation, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Use Modulation Scheme:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.use_modulation_scheme, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.use_modulation_scheme, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Modulation Scheme</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.modulation_scheme, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.modulation_scheme, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Robust Modulation:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.robust_modulation, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.robust_modulation, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Best Modulation:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.best_modulation, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.best_modulation, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Reference Modulation:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.reference_modulation, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.reference_modulation, new { @class = "form-control" })
+        </div>
+    </div>
+</fieldset>
+<fieldset class="the-fieldset">
+    <legend class="the-legend">BER 1E-3</legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">A->B</label>
+        <label class="control-label col-sm-5" for="txtParentType">B->A</label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">TX Power(dBm):</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>*@
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">EIRP(dBm):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">RX Level(dBm):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">RX Level(Diversity) dBm:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_region, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_region, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Threshold(dBm):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_department, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_department, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Fade Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_city, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_city, new { @class = "form-control" })
+        </div>
+    </div>
+
+
+</fieldset>
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend"></legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">Rain</label>
+        <label class="control-label col-sm-5" for="txtParentType"></label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Interference TD(dB):</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>*@
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Other Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Flat Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+    </div>
+</fieldset>
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend"></legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">Multipath</label>
+        <label class="control-label col-sm-5" for="txtParentType"></label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Interference TD(dB):</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>*@
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Other Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Flat Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+    </div>
+</fieldset>
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend"></legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">Refraction</label>
+        <label class="control-label col-sm-5" for="txtParentType"></label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Interference TD(dB):</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>*@
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Other Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Flat Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+    </div>
+
+
+
+</fieldset>
+
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend"></legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">Totle Performance</label>
+        <label class="control-label col-sm-5" for="txtParentType"></label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Total Performance(Year)AV%:</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>*@
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Total Performance(Worst Month)AV%:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+    </div>
+
+
+
+</fieldset>
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend">BER 1E-6</legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">A->B</label>
+        <label class="control-label col-sm-5" for="txtParentType">B->A</label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">TX Power(dBm):</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control", @readonly = true })
+        </div>*@
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">EIRP(dBm):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">RX Level(dBm):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">RX Level(Diversity) dBm:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_region, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_region, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Threshold(dBm):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_department, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_department, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Fade Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_city, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_city, new { @class = "form-control" })
+        </div>
+    </div>
+
+
+</fieldset>
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend"></legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">Rain</label>
+        <label class="control-label col-sm-5" for="txtParentType"></label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Interference TD(dB):</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>*@
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Other Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Flat Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+    </div>
+</fieldset>
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend"></legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">Multipath</label>
+        <label class="control-label col-sm-5" for="txtParentType"></label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Interference TD(dB):</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>*@
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Other Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Flat Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+    </div>
+</fieldset>
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend"></legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">Refraction</label>
+        <label class="control-label col-sm-5" for="txtParentType"></label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Interference TD(dB):</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>*@
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Other Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Flat Margin(dB):</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_country, new { @class = "form-control" })
+        </div>
+    </div>
+</fieldset>
+<fieldset class="the-fieldset">
+    <legend class="the-legend"></legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType"></label>
+        <label class="control-label col-sm-5" for="txtParentType">Totle Performance</label>
+        <label class="control-label col-sm-5" for="txtParentType"></label>
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Total Performance(Year)AV%:</label>
+        @*<div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_id, new { @class = "form-control" })
+        </div>*@
+    </div>
+    <div class="form-group">
+
+        <label class="control-label col-sm-2" for="txtParentType">Total Performance(Worst Month)AV%:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.network_name, new { @class = "form-control" })
+        </div>
+    </div>
+</fieldset>
+
+

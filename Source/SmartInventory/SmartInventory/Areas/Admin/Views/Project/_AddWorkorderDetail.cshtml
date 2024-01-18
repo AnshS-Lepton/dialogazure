@@ -1,0 +1,136 @@
+﻿
+@model Models.Admin.WorkorderCodeMaster
+
+<!DOCTYPE html>
+<div id="dvProjectDetail">
+    <div id="dvPageMessage">
+        @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+
+    </div>
+
+    @using (Ajax.BeginForm("SaveWorkorderCode", "Project", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvProjectDetail",
+        OnSuccess = "onChangePlanningCode()"
+    },
+    new { id = "frmProjectDetail", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        <div id="dv_workordercode" data-title="Add Workorder Detail">
+            <div class="EUTSetting">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-3">
+                            <label class=" control-label">
+                                Network Stage:
+                            </label>
+                        </div>
+                        <div class=" col-md-5">
+                            @Html.TextBoxFor(m => m.network_stage, new { @class = "form-control", @id = "txt_NetworkStageWorkorderCode", @readonly = "true" })
+
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-3">
+                            <label class=" control-label">
+                                Planning Code:
+                            </label>
+                        </div>
+                        <div class="col-md-5">
+                            @Html.TextBoxFor(m => m.planning_code, new { @class = "form-control", @id = "txt_PlanningCode_Parent_ForChild", @readonly = "true" })
+
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-3">
+                            <label class=" control-label">
+                                Workorder Name<i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class="col-md-5">
+                            @Html.TextBoxFor(model => model.workorder_name, new { @class = "form-control", @maxlength = "150", @placeholder = "Enter Workorder Name", @id = "txtworkorder_name" })
+
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-3">
+                            <label class="control-label">
+                                Workorder Code<i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class="col-md-5">
+                            @Html.TextBoxFor(model => model.workorder_code, new { @class = "form-control", @maxlength = "150", @placeholder = "Enter Workorder Code", @id = "txtworkorder_code" })
+                            @*@Html.ValidationMessageFor(model => model.project_name)*@
+
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footerModal d-flex" id="dvBtnAction">
+                <a href="javascript:void(0);" class="btn btn-default ml-auto mr-05" data-dismiss="modal" id="btnCancelWorkorder">Cancel</a>
+                <input type="submit" class="btn btn-primary" id="btnSaveWorkorderDetail" onclick="return isValidWorkorderDetails()" value="Save" />
+            </div>
+        </div>
+
+        <div>
+            @Html.HiddenFor(m => m.planning_id, new { id = "hdn_planningId" })
+            @Html.HiddenFor(m => m.system_id, new { id = "hdn_workorderId" })
+            @Html.HiddenFor(m => m.created_by, new { id = "hdn_createdbyId" })
+        </div>
+
+
+
+        <script type="text/javascript">
+
+     if ($('#txt_NetworkStageWorkorderCode').val().toLowerCase() == 'p') {
+         $('#txt_NetworkStageWorkorderCode').val('Planned');
+     }
+
+
+     if ($('#txt_NetworkStageWorkorderCode').val().toLowerCase() == 'a') {
+         $('#txt_NetworkStageWorkorderCode').val('As Built');
+     }
+
+    if ('@Model.system_id' != 0) {
+        btnSaveWorkorderDetail.value = "Update";
+        $('#txtworkorder_code').attr('readonly', true);
+
+    }
+
+
+     function isValidWorkorderDetails() {
+         if ($('#txtworkorder_name').val() == "") {
+             $('#txtworkorder_name').css({ "border": "1px solid red" });
+             return false;
+
+         }
+
+         if ($('#txtworkorder_code').val() == "") {
+             $('#txtworkorder_code').css({ "border": "1px solid red" });
+             return false;
+         }
+
+
+     }
+
+        </script>
+
+    }
+
+</div>
+

@@ -1,0 +1,82 @@
+﻿@model Models.SplitterItemMaster
+@using Models;
+<script>
+    //Set color of template icon as green in NE library
+    if ('@Model.id' > 0) {
+        $(".clsTemplateIcon[data-lyrname='Splitter']").css('background-color', '#9999FF');
+    }
+</script>
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+@helper SplitterTemplateMaster()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_SplitterTemplateMaster.cshtml", (SplitterTemplateMaster)Model); }
+}
+<!DOCTYPE html>
+<div>
+
+    @using (Ajax.BeginForm("SaveSplitterTemplate", "ItemTemplate", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnFailure = "si.handleError",
+
+    },
+    new { id = "frmItemTemplate", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id)
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="TabContent--max-over">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="ItemSpecfication">
+
+                    @*<fieldset class="the-fieldset">
+                            <legend class="the-legend">Splitter Detail</legend>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="txtSplitterRatio">Splitter Ratio<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-45">
+
+                                   @Html.DropDownListFor(m => m.splitter_ratio, new SelectList(Model.lstSplRatio.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Splitter Ratio", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlSplitterRatio" })
+                                </div>
+                                <label class="control-label col-sm-2" for="ddlType">Splitter Type<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.DropDownListFor(m => m.splitter_type, new SelectList(Model.lstType.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlSplitterType", @onchange = "si.ddlChangeRemoveCss(this.id, 'Type');" })
+                                </div>
+                            </div>
+
+                        </fieldset>*@
+                    @SplitterTemplateMaster()
+                </div>
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            @if (Model.id > 0)
+            {
+                <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+        </div>
+
+    }
+</div>
+<script>
+    $(document).ready(function () {
+
+            callFormValidator("frmItemTemplate");
+
+            $('#id').val('@Model.id');
+
+
+
+    });
+
+</script>

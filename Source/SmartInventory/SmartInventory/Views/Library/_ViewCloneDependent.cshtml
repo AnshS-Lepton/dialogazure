@@ -1,0 +1,169 @@
+﻿@model Models.ViewCloneDependent
+@using SmartInventory.Settings;
+@{
+    Layout = null;
+}
+<style>
+    .Associated {
+        background-color: #ffb399;
+    }
+
+    .child {
+        background-color: #ebf4f5;
+    }
+
+    .cloneDependent th {
+        font-weight: bold;
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #666666;
+        background-color: #dedede;
+        font: 1000px
+    }
+
+    .cloneDependent th, .cloneDependent td {
+        padding: 5px;
+        border: 1px solid #ccc;
+    }
+
+        .cloneDependent th label {
+            font-weight: bold;
+            background-color: #dedede;
+        }
+
+    .ModelFooterInfo {
+        float: left;
+        font-style: normal;
+        /* color: #7E7E7E; */
+        font-size: 14px;
+        /* padding: 0px 5px; */
+    }
+</style>
+
+<!DOCTYPE html>
+@using (Ajax.BeginForm("SaveBulkCloneEntity", "Library", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "dvModalBody",
+    LoadingElementId = "dvProgress",
+    OnSuccess = "si.OnSuccessClone",
+    Confirm = Resources.Resources.SI_OSP_GBL_JQ_FRM_165
+},
+new { id = "frmSaveClone", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    <div class="form-group">
+        @Html.HiddenFor(m => m.refId)
+        @Html.HiddenFor(m => m.entityName)
+        @Html.HiddenFor(m => m.geomType)
+        @Html.HiddenFor(m => m.geom)
+        @Html.HiddenFor(m => m.networkid)
+        <div class="form-group" style="padding-top:5px; padding-left: 0px; margin-left: -8px; padding-right: 0px;margin-bottom:5px;">
+            <div class="col-md-6">
+                @{
+                    string Assoctitle = (Model.is_accessories == true ? "" : Resources.Resources.SI_OSP_GBL_GBL_FRM_184);
+                    string Assocdvdisabled = (Model.is_accessories == true ? "" : "dvdisabled");
+                }
+                <div><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_001 :</b> @Model.networkid </div>
+                <div id="divAccessories" title="@Assoctitle"> @Html.CheckBoxFor(m => m.is_accessories, new { @class = Assocdvdisabled })<b style="margin-left:5px;">@Resources.Resources.SI_OSP_GBL_GBL_FRM_177</b></div>
+            </div>
+            <div class="col-md-6" style="padding-right: 8px;">
+                <div style="float: right;">
+                    <div style="width: 14px; height: 14px; background-color: #ffb399; border: 1px solid grey; margin-top: 2px; float: left; margin-left: 10px; margin-right: 10px; "></div> <b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_182</b>
+                </div>
+                <div style="float: right;">
+                    <div style="width: 14px; height: 14px; background-color: #65b4db; border: 1px solid grey; margin-top: 2px; float: left; margin-right: 10px; "></div> <b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_183</b>
+                </div>
+                <div style="float: right; padding-top: 5px;"><b>@Resources.Resources.SI_OSP_GBL_NET_FRM_500 : @Model.associatedEntityCount</b></div>
+                <div style="float: right; margin-right: 10px; padding-top: 5px;"><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_178 : @Model.childEntityCount</b></div>
+            </div>
+        </div>
+        <div>
+            <table id="tbcloneDependent" class="grid" cellpadding="0" cellspacing="0">
+
+                <thead>
+                    <tr>
+                        <th>
+                            <input id="selectAll" type="checkbox"><label for='selectAll'> @Resources.Resources.SI_OSP_GBL_GBL_GBL_037</label>
+                        </th>
+                        <th>@Resources.Resources.SI_GBL_GBL_NET_FRM_098</th>
+                        <th>@Resources.Resources.SI_OSP_GBL_GBL_GBL_001</th>
+                        <th>@Resources.Resources.SI_OSP_GBL_GBL_GBL_160</th>
+                        <th>@Resources.Resources.SI_OSP_GBL_GBL_FRM_179</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tbodycloneDependent">
+
+                    @for (int i = 0; i < Model.lstCloneDependent.Count; i++)
+                    {
+                        string title = (Model.lstCloneDependent[i].is_accessories_placed == true ? "" : Resources.Resources.SI_OSP_GBL_GBL_FRM_184);
+                        string dvdisabled = (Model.lstCloneDependent[i].is_accessories_placed == true ? "" : "dvdisabled");
+                        <tr class="@(Model.lstCloneDependent[i].is_child_entity == true ? "child" : "" ) @(Model.lstCloneDependent[i].is_associated_entity == true ? "Associated" : "" ) ">
+                            <td>
+                                @Html.CheckBoxFor(m => Model.lstCloneDependent[i].is_include_in_clone, new { @class = "CheckAll-clone" })
+                            </td>
+                            <td>
+                                @Model.lstCloneDependent[i].layer_title
+
+                            </td>
+                            <td>
+                                @Model.lstCloneDependent[i].network_id
+
+                            </td>
+                            <td>
+                                @Model.lstCloneDependent[i].display_name
+                            </td>
+                            <td title="@title">
+                                @Html.CheckBoxFor(m => Model.lstCloneDependent[i].is_accessories_placed, new { @class = dvdisabled })
+                            </td>
+                            @Html.HiddenFor(m => Model.lstCloneDependent[i].network_id)
+                            @Html.HiddenFor(m => Model.lstCloneDependent[i].display_name)
+                            @Html.HiddenFor(m => Model.lstCloneDependent[i].system_id)
+                            @Html.HiddenFor(m => Model.lstCloneDependent[i].entity_type)
+                            @Html.HiddenFor(m => Model.lstCloneDependent[i].is_child_entity)
+                            @Html.HiddenFor(m => Model.lstCloneDependent[i].is_associated_entity)
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+    <div class="d-flex ModalFooter" id="dvBtnAction">
+        @if (Model.lstCloneDependent.Count == 0)
+
+        {
+            <div>
+                <label class="control-label">
+                    <b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_180</b>
+                </label>
+            </div>
+        }
+        <div class="ml-auto">
+            <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCancelAssignRoute" onclick="CloneDependentCancle()">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            <input type="submit" class="btn btn-primary" id="btnSaveClone" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+        </div>
+    </div>
+
+}
+<script>
+    $(document).ready(function () {
+        $("#selectAll").prop('checked', true);
+        $(".CheckAll-clone").prop('checked', true)
+
+    })
+    function CloneDependentCancle() {
+        $("#closeModalPopup").trigger("click");
+    }
+    $("#selectAll").on("click", function () {
+        $(".CheckAll-clone").prop("checked", $(this).prop("checked"));
+    });
+
+    $(".CheckAll-clone").on("click", function () {
+        if (!$(this).prop("checked")) {
+            $("#selectAll").prop("checked", false);
+        }
+    });
+
+</script>

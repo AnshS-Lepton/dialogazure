@@ -1,0 +1,100 @@
+﻿@using Models;
+@using SmartInventory.Settings;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Room View</title>
+    <link id="favicon" rel="shortcut icon" href="@ApplicationSettings.ClientFavicon" type="image/x-icon" />
+    @Styles.Render("~/ISPCSSNEW")
+    <script type="text/javascript">var appRoot = '@Url.Content("~")'; var baseUrl = '@Request.Url.GetLeftPart(UriPartial.Authority)';</script>
+    <script src="~/Content/js/LandBase.js"></script>
+    @Scripts.Render("~/ISPSCRIPTS")
+    @{
+        User objuser = new User();
+        objuser = (User)Session["userDetail"];
+    }
+</head>
+<body>
+    @{Html.RenderPartial("_GlobalVariable");}
+    <div id="header">
+        @{Html.RenderPartial("_ModalPopUp");}
+    </div>
+    <div id="content" class="w3">
+        <div class="ISPHeader">
+            <div class="SILogo">@SmartInventory.Settings.ApplicationSettings.ApplicationName</div>
+            <div class="userLogoParent ml-auto d-flex">
+                <div class="userName">@objuser.user_name</div>
+                @if (string.IsNullOrEmpty(objuser.userImgBytes))
+                {
+                    <div class="userImg d-flex">
+                        <div class="userIMgbdr"></div>
+                        <div class="userNameLetter">@objuser.user_name.Substring(0, 1)</div>
+                    </div>
+                }
+                else
+                {
+                    <img src="@objuser.userImgBytes" class="userImg" style="opacity:1" />
+                }
+            </div>
+        </div>
+        @*<div class="ispProgress"></div>*@
+        <div id="divAlretContainer">
+
+        </div>
+        @*<div class="allert alert-warning">
+                <div class="alert-iconbox icon-warning" style="background: #fff;color: #E35446;"></div>
+                <div class="alert-message"><span>Saved Successfully !</span></div>
+                <div class="alert-close icon-close"></div>
+            </div>*@
+
+        <div class="ISPMainContainer">
+            @RenderBody()
+        </div>
+    </div>
+    <div id="dvProgress" style="display: none;">
+        <div id="blur" class="progresblur">
+            &nbsp;
+        </div>
+        <div id="progressbar" style="width: 247px; height: 152px; top: 40%; left: 40%;">
+            <img alt="Loading..." src="../content/images/loading.gif" /><br />
+
+        </div>
+    </div>
+    <div class="info_block" id="SplicingDiv" style="overflow:visible;z-index:999;height:325px;">
+        <div class="info_header_bg" id="splicingHeader">
+            <label id="Information">Splicing</label>
+            <span onclick="isp.cancelSplice()"></span>
+        </div>
+        <div class="splicingMain">
+
+        </div>
+    </div>
+    @{Html.RenderPartial("_GlobalSettings");}
+    <script>
+        var splicing = new splicing();
+        var popup = new ModalPopUp();
+        var isp = new ISPMain();
+        var si = null;
+        var FiberCutTracing = null;
+        var objCustomD3 = new customD3();
+        var SiteCustomer = new SiteCustomer();
+        var LandBase = null;
+        var st = new spliceTray();
+        $(document).ready(function () {
+            var si = null;
+            $(document).ready(function () {
+                isMDUCall = true;
+                isp.initApp();
+                splicing.initApp();
+                st.initApp();
+                $('.chosen-select').chosen({ search_contains: true, width: '100%' });
+                popup.InitPopUp();
+                objCustomD3.InitD3();
+                $('.ISPlegend').draggable({ scroll: false, handle: ".info_ISPlegend_bg", containment: "window" });
+            });
+        });
+    </script>
+    @RenderSection("roomViewScript", required: false)
+</body>
+</html>

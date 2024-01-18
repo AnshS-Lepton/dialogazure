@@ -1,0 +1,86 @@
+﻿@model Models.NetworkTicketFilter
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "NwhistoryRecord", ajaxUpdateCallback: "onGridHeaderClick('tblNWEHistory');changeColor('tblNWEHistory');");
+    grid.Bind(Model.lstNWEntityHistory, autoSortAndPage: false, rowCount: Model.totalRecord);
+    if (Model.totalRecord > 0)
+    {
+        grid.PageIndex = Model.currentPage - 1;
+    }
+}
+<!DOCTYPE html>
+<div  class="viewReport" id="dvChildModalBody">
+    @using (Ajax.BeginForm("NW_Entity_History", "NetworkTicket", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "dvProgress" },
+                 new { id = "frmNewworkTEHistory", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.system_id);
+        @Html.HiddenFor(m => m.entity_type);
+
+        if (Model.lstNWEntityHistory.Count > 0)
+        {
+            <div class="form-group row" id="dvBtnAction" style="padding:10px 0px;margin:0px;">
+                <div class="div_totalRecord col-sm-4" style="float: left;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@grid.TotalRowCount</span></b></div>
+                <div class="col-sm-8" style="float: right; text-align: right; cursor:pointer;">
+                    @if (@grid.TotalRowCount > 0)
+                    {
+                     <span id="btnExport" value="Export"><i class="icon-Export"></i> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</span>
+                    }
+                    else
+                    {
+                        <input type="button" id="btnExport" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" disabled="disabled" class="btn btn-primary" />
+                    }
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+            <div id="NwhistoryRecord" style="padding:10px;padding-top:0px;">
+
+                @if (Model.lstNWEntityHistory.Count > 0)
+                {
+                    <div  style="padding: 4px;padding-top: 0px;">
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+                         headerStyle: "webGridHeader",
+                            alternatingRowStyle: "alt",
+                         htmlAttributes: new { id = "tblNWEHistory" },
+                            mode: WebGridPagerModes.All,
+                           columns: grid.Columns(
+                             grid.Column("description", Resources.Resources.SI_OSP_GBL_NET_GBL_160, format: @<text>@item.description</text>),
+                             grid.Column("status_updated_on", Resources.Resources.SI_OSP_BUL_NET_GBL_007, format: @<text>@item.status_updated_on</text>),
+                             grid.Column("status_updated_by", Resources.Resources.SI_OSP_BUL_NET_GBL_006, format: @<text>@item.status_updated_by</text>),
+                             grid.Column("status_remarks", Resources.Resources.SI_OSP_GBL_GBL_GBL_006, format: @<text>@item.status_remarks</text>)))
+                            @*//columns:Model.webColumns)*@
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+                        </div>
+                    </div>
+                }
+            </div>
+
+        }
+        else
+        {
+            <div class="nr-found">
+                <span>@Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+            </div>
+        }
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+         
+        changeColor('tblNWEHistory');
+        addDefaultSortingIcons('tblNWEHistory');
+       
+      
+      
+      
+      
+        $("#btnExport").on("click", function () {
+            // SurveyAssignmentExport();
+            window.location = appRoot + 'NetworkTicket/ExportNWEntity_History';
+        });
+        
+    });
+</script>

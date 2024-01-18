@@ -1,0 +1,66 @@
+﻿@model Models.assignJob
+
+<!DOCTYPE html>
+@using (Ajax.BeginForm("saveAssignJobPack", "JobPack", new AjaxOptions
+{
+    HttpMethod = "POST",
+    OnSuccess = "successAssigned(data);",
+    OnBegin = "return validateAssignJob();"
+},
+            new { id = "frmAssignJob", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.systemId);
+    <div class="tab-pane" id="ItemJobs">
+        <div class="libDetail">
+            <div class="libTabContent" style="height:200px;">
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="DashboardInfo">
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="txtDateTo">Job Type:</label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.jobType, new { @class = "input-sm form-control", disabled = "disabled" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="txtDateTo">Job Description:</label>
+                            <div class="col-sm-10">
+                                @Html.TextAreaFor(m => m.jobDescription, new { @class = "input-sm form-control", disabled = "disabled" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="txtDateTo">Assigned To:</label>
+                            <div class="col-sm-10">
+                                @Html.DropDownListFor(m => m.assignedTo, new SelectList(Model.lstJobContractUser.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text", 0), "--select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;", id = "ddlContractUser" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group ModalFooter" id="dvBtnAction">
+                <div class="col-sm-10 col-sm-offset-2" style="float: right; text-align: right; padding-right: 25px;">
+                    <button type="submit" class="btn btn-primary" id="btnSaveAssign">Assign</button>
+                    <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnAssignJobCancel" onclick="si.clearTPRelatedObjects();">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '100%' });
+    });
+    function successAssigned(response) {
+        $('#btnSearchJobs').trigger("click");
+        $('#btnAssignJobCancel').trigger("click");
+        alert(response.Data.message);
+    }
+    function validateAssignJob()
+    {
+        if ($('#ddlContractUser').val() == 0)
+        {
+            alert('Please select user!');
+            return false;
+        }
+    }
+</script>

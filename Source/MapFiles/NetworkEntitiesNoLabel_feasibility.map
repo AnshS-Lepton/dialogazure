@@ -1,0 +1,2131 @@
+# Map file created from QGIS project file C:/Program Files (x86)/Quantum GIS Wroclaw/qqq.qgs
+# Edit this file to customize for your map interface
+# (Created with PyQgis MapServer Export plugin)
+MAP
+	SYMBOLSET "symbols\\symbols.sym"
+	CONFIG "PROJ_LIB" "conf"
+	NAME "QGIS-MAP"
+	FONTSET "fonts/fonts.list"
+	# Map image size  
+	SIZE 100 100
+	UNITS meters
+  
+	#EXTENT 72.504366 18.900959 73.403214 19.320367
+	PROJECTION
+		'proj=longlat'
+		'datum=WGS84'
+		'no_defs'
+	END
+
+	# Background color for the map canvas -- change as desired
+	IMAGECOLOR 255 255 255
+	IMAGEQUALITY 95
+	IMAGETYPE png
+
+	OUTPUTFORMAT
+		NAME png
+		DRIVER 'GD/PNG'
+		MIMETYPE 'image/png'
+		IMAGEMODE RGBA
+		EXTENSION 'png'
+	END
+  
+	# Legend
+	LEGEND
+		IMAGECOLOR 255 255 255
+		STATUS ON
+		KEYSIZE 25 15
+		LABEL
+		  TYPE BITMAP	  
+		  SIZE MEDIUM
+		  COLOR 0 0 89
+		END		
+	END
+  
+	SYMBOL
+		NAME "circlef"
+		TYPE ellipse
+		FILLED true
+		POINTS 
+			1 1
+		END
+	END	
+	SYMBOL
+		NAME "arrow-end"
+		TYPE vector
+		FILLED false
+		POINTS
+			0  10
+			10  5
+			0 0
+		END
+		#ANCHORPOINT 1 0.5
+	END 
+
+
+	# Web interface definition. Only the template parameter
+	# is required to display a map. See MapServer documentation
+	WEB
+		# Set IMAGEPATH to the path where MapServer should
+		# write its output.
+		IMAGEPATH '/tmp/'
+
+		# Set IMAGEURL to the url that points to IMAGEPATH
+		# as defined in your web server configuration
+		IMAGEURL '/tmp/'
+	# WMS server settings
+	METADATA
+		'ows_title'           'QGIS-MAP'
+		'tile_map_edge_buffer' '15'
+		#'ows_onlineresource'  ''
+		'ows_srs'             'EPSG:4326 EPSG:900913' 
+		'ows_enable_request'   '*'
+		
+	END
+
+	#Scale range at which web interface will operate
+	# Template and header/footer settings
+	# Only the template parameter is required to display a map. See MapServer documentation
+	TEMPLATE 'fooOnlyForWMSGetFeatureInfo'
+	END
+
+	#SYMBOL
+	 	#NAME "rail"
+	 	# TYPE PIXMAP		
+	  	#IMAGE "icons/railway.png"		
+	#END	
+#=================REGION=====================================	
+	LAYER		
+		NAME 'REG' 
+		TYPE POLYGON
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		INCLUDE "datashare.inc"
+		#PROCESSING "NATIVE_FILTER=%regionFilter%"
+		DATA 'sp_geometry FROM "vw_region_boundary_map" USING UNIQUE region_id USING srid=4326'
+		#FILTER  (%regionFilter% )
+		#VALIDATION		
+			#'regionFilter'   '.*'				
+		#END
+		METADATA
+			'ows_title' 'Region'
+		END
+		STATUS OFF	
+		TRANSPARENCY 50
+		PROJECTION
+			'proj=longlat'  
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASS
+			NAME 'Region' 
+			STYLE
+				WIDTH 3
+				OUTLINECOLOR 255 0 0
+				COLOR -1 -1 -1
+			END
+		END
+	END
+# ========== PROVINCE================================= 
+	LAYER 
+		NAME 'PRO'
+		TYPE POLYGON
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		INCLUDE "datashare.inc"
+		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
+		DATA 'sp_geometry FROM "vw_province_boundary_map" USING UNIQUE province_id USING srid=4326'
+		#FILTER  (%provinceFilter% )
+		#VALIDATION		
+			#'provinceFilter'   '.*'				
+		#END   
+		METADATA
+			'ows_title' 'Province'
+		END
+		STATUS OFF	
+		TRANSPARENCY 50
+		PROJECTION
+			'proj=longlat'  
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASS
+			NAME 'Province' 
+			STYLE
+				WIDTH 2
+				OUTLINECOLOR 0 0 255
+				COLOR -1 -1 -1
+			END
+		END
+	END
+	#=================================================WALL MOUNT================
+	LAYER
+		NAME 'WMT'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_wallmount_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'			
+			#'layerFilter'   '.*'
+			#'prjectspecificationFilter'   '.*'
+		#END 
+		METADATA
+			'ows_title' 'WallMount'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'WallMount'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/WallMount.png" 
+				SIZE 35
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'WallMount'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/WallMount.png" 
+				SIZE 25			
+			END
+            			
+		END
+		CLASS
+			NAME 'WallMount'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/WallMount.png" 
+				SIZE 35
+				OFFSET 0 -5				
+			END
+            			
+		END		
+	END	
+	
+		#==================================== ONT ======================================
+	LAYER
+		NAME 'ONT'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
+		DATA 'sp_geometry FROM vw_att_details_ont_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'			
+			#'prjectspecificationFilter'   '.*'
+			#'layerFilter'   '.*'				
+		#END 
+		METADATA
+			'ows_title' 'ONT'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'ONT'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/ONT.png" 
+				SIZE 20
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'ONT'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/ONT.png" 
+				SIZE 15			
+			END
+            			
+		END
+		CLASS
+			NAME 'ONT'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/ONT.png" 
+				SIZE 20
+				OFFSET 0 -5				
+			END
+            			
+		END	
+	END	
+
+		#==================================== CUSTOMER ======================================
+	LAYER
+		NAME 'CUS'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_customer_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% ) 
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'	 
+                      	
+		#END 
+		METADATA
+			'ows_title' 'Customer'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		
+		CLASS
+			NAME 'Customer'             		
+			STYLE
+				SYMBOL "icons/AsBuild/Customer.png" 
+				SIZE 18			
+			END
+            			
+		END
+				
+	END	
+	
+# ================================SPLICE CLOSURE==========================================
+LAYER
+		NAME 'SC'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_spliceclosure_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'				
+            #'layerFilter'   '.*'	
+			#'prjectspecificationFilter'   '.*'	
+		#END 
+		METADATA
+			'ows_title' 'SPLICECLOSURE'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'Splice Closure'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/spliceclosure.png" 
+				SIZE 30	
+				OFFSET 0 -5
+			END
+            			
+		END
+		CLASS
+			NAME 'Splice Closure'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/spliceclosure.png" 
+				SIZE 18			
+			END
+            			
+		END
+		CLASS
+			NAME 'Splice Closure'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/spliceclosure.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END	
+	END	
+# ================================FMS==========================================
+LAYER
+		NAME 'FMS'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_fms_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'				
+            #'layerFilter'   '.*'	
+			#'prjectspecificationFilter'   '.*'	
+		#END 
+		METADATA
+			'ows_title' 'FMS'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'FMS'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/fms.png" 
+				SIZE 22
+				offset 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'FMS'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/fms.png" 
+				SIZE 17			
+			END
+            			
+		END
+		CLASS
+			NAME 'FMS'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/fms.png" 
+				SIZE 22
+				offset 0 -5								
+			END
+            			
+		END	
+	END	
+
+	# ========================================================================== 
+	LAYER
+		NAME 'TRH'
+		TYPE LINE
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		#EXTENT 72.504366 18.900959 73.403214 19.320367
+		INCLUDE "datashare.inc"
+		DATA 'sp_geometry FROM "vw_att_details_trench_map" USING UNIQUE system_id USING srid=4326' 
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))	
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'	
+			#'layerFilter'   '.*'	
+			#'prjectspecificationFilter'   '.*'            			
+		#END 	
+		METADATA
+			'ows_title' 'Trench'
+		END
+		STATUS OFF
+		GROUP 'Network1'
+		TRANSPARENCY 100
+		PROJECTION
+			'proj=longlat'
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASSITEM 'count_ducts' 
+		CLASS 
+			NAME "count_ducts"
+			TEXT "[count_ducts]"
+			EXPRESSION "count_ducts"
+			STYLE
+				WIDTH 5
+				COLOR 255 0 0
+				LINECAP ROUND
+				PATTERN 10 10 END
+			END
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255
+				#COLOR  255 0 0
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 255 0 0  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR   0 0 255 # underline
+					OFFSET 	0 -1 	# with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		CLASS 
+			NAME "Out_Of_Range"   
+			TEXT "[count_ducts]"
+			STYLE
+				WIDTH 5
+				COLOR 255 0 0
+				LINECAP ROUND
+				PATTERN 10 10 END
+			END
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255
+				#COLOR  255 0 0
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 255 0 0  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR  0 0 255  # underline
+					OFFSET 0 -1 	# with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+	END
+	# ========================================================================== 
+	LAYER
+		NAME 'DCT'
+		TYPE LINE
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		#EXTENT 72.504366 18.900959 73.403214 19.320367
+		INCLUDE "datashare.inc"
+		DATA 'sp_geometry FROM "vw_att_details_duct_map" USING UNIQUE system_id USING srid=4326' 
+		#FILTER (%provinceFilter% AND (%layerFilter% ) )
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'	
+            #'layerFilter'   '.*'			
+		#END 	
+		METADATA
+			'ows_title' 'Duct'
+		END
+		STATUS OFF
+		GROUP 'Network1'
+		TRANSPARENCY 100
+		PROJECTION
+			'proj=longlat'
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASSITEM 'utilization'
+		CLASS
+			NAME "utilization = vacant" 
+			EXPRESSION "vacant" 
+			STYLE
+				WIDTH 1
+				COLOR 255 0 0
+				SYMBOL "RCodeBorder"
+				GAP 0	
+				SIZE 7
+			END
+		END
+		CLASS
+			NAME "utilization = used" 
+			EXPRESSION "used" 
+			STYLE
+				WIDTH 1
+				COLOR 52 101 170
+				SYMBOL "RCodeBorder"
+				GAP 0	
+				SIZE 7
+			END
+		END
+	END
+	# ================================== CABLE ======================================== 
+	LAYER
+		NAME 'CBL'
+		TYPE LINE
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		#EXTENT 72.504366 18.900959 73.403214 19.320367
+		INCLUDE "datashare.inc"		
+		DATA 'sp_geometry FROM vw_att_details_cable_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%cableFilter% ))		
+		##FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		#VALIDATION		
+			#'provinceFilter'   '.*'		
+            #'layerFilter'   '.*'			
+			#'prjectspecificationFilter'   '.*'	
+			#'cableFilter'   '.*'				
+		#END 
+		METADATA
+			'ows_title' 'CABLE'
+		END
+		STATUS OFF
+		GROUP 'Network1'
+		TRANSPARENCY 100
+		PROJECTION
+			'proj=longlat'
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASSITEM 'cable_cores' 
+
+#==========================================OH=====================================
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Overhead' AND '[network_status]'  eq 'P')					
+		     STYLE
+				WIDTH 2
+				COLOR 255 0 0				                		
+				LINECAP round #[round|miter|bevel]				
+				PATTERN 10 5  END
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 255 0 0  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          0 0 255     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Overhead' AND '[network_status]'  eq 'D')						
+		     STYLE
+				WIDTH 2
+				COLOR 255 0 0				                		
+				LINECAP round #[round|miter|bevel]				
+				PATTERN 10 5 0 5  END
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 255 0 0  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          0 0 255     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Overhead' AND '[network_status]'  eq 'A')						
+		     STYLE
+				WIDTH 2
+				COLOR 255 0 0				                						
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 255 0 0  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          0 0 255     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		#==========================================UG=====================================
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Underground' AND '[network_status]'  eq 'P')					
+		     STYLE
+				WIDTH 2
+				COLOR 0 0 255				                		
+				LINECAP round #[round|miter|bevel]				
+				PATTERN 10 5  END
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 0 0 255  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          0 0 255     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Underground' AND '[network_status]'  eq 'D')						
+		     STYLE
+				WIDTH 2
+				COLOR 0 0 255				                		
+				LINECAP round #[round|miter|bevel]				
+				PATTERN 10 5 0 5  END
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 0 0 255  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          0 0 255     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Underground' AND '[network_status]'  eq 'A')						
+		     STYLE
+				WIDTH 2
+				COLOR 0 0 255				                						
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 0 0 255  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          0 0 255     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		#==========================================Wall Clamping=====================================
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Wall Clamped' AND '[network_status]'  eq 'P')					
+		     STYLE
+				WIDTH 2
+				COLOR 253 16 253				                		
+				LINECAP round #[round|miter|bevel]				
+				PATTERN 10 5  END
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 253 16 253  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          253 16 253     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Wall Clamped' AND '[network_status]'  eq 'D')						
+		     STYLE
+				WIDTH 2
+				COLOR 253 16 253				                		
+				LINECAP round #[round|miter|bevel]				
+				PATTERN 10 5 0 5  END
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255			
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 253 16 253  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          253 16 253     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Wall Clamped' AND '[network_status]'  eq 'A')						
+		     STYLE
+				WIDTH 2
+				COLOR 253 16 253				                						
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255			
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 253 16 253  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          253 16 253    # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		
+	END
+	LAYER
+		NAME 'CoreRef'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		#EXTENT 47.485699 5.997356 118.089757 37.843469
+		INCLUDE "datashare.inc"
+		DATA 'sp_geometry FROM "core_ref"  USING srid=4326'
+		#FILTER (%regionProvinceFilter% )
+		#VALIDATION	
+			#'regionProvinceFilter'   '.*' 
+		#END
+		METADATA
+			'ows_title' 'CoreRef'
+		END
+		STATUS OFF
+		TRANSPARENCY 100
+		LABELITEM 'core_balance'
+		PROJECTION
+			'proj=longlat'
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASS
+		NAME 'CoreRef' 
+			STYLE
+				SYMBOL "icons/coreref.png" 
+				SIZE 4
+				OUTLINECOLOR 255 0 0
+				COLOR 214 205 104
+			END
+			LABEL 
+				COLOR  255 0 0  		
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE
+			END
+		END
+	END
+	#=============================================MANHOLE====================
+	LAYER
+		NAME 'MH'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_manhole_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'
+			#'layerFilter'   '.*'	
+			#'prjectspecificationFilter'   '.*'            		
+		#END 
+		METADATA
+			'ows_title' 'MANHOLE'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION (('[network_status]'  eq 'A') && ('[is_virtual]'  = 't'))  			
+			STYLE
+				SYMBOL "icons/AsBuild/v_manhole.png" 
+				SIZE 20			
+			END
+            			
+		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION (('[network_status]'  eq 'D') && ('[is_virtual]'  = 't')) 		
+			STYLE
+				SYMBOL "icons/Dorment/v_manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'MANHOLE'
+             EXPRESSION (('[network_status]'  eq 'P') && ('[is_virtual]'  = 't'))  			
+			STYLE
+				SYMBOL "icons/Planned/v_manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/manhole.png" 
+				SIZE 20			
+			END
+            			
+		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+	END	
+	#=============================================COUPLER====================
+	LAYER
+		NAME 'CUP'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_coupler_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'
+			#'layerFilter'   '.*'	
+			#'prjectspecificationFilter'   '.*'            		
+		#END 
+		METADATA
+			'ows_title' 'COUPLER'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		
+		CLASS
+			NAME 'COUPLER'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/coupler.png" 
+				SIZE 25			
+			END
+            			
+		END
+		CLASS
+			NAME 'COUPLER'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/coupler.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'COUPLER'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/coupler.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END     			
+		END
+	END	
+	#=================================================TREE================
+	LAYER
+		NAME 'TRE'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_tree_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'
+			#'layerFilter'   '.*'
+			#'prjectspecificationFilter'   '.*'				
+		#END 
+		METADATA
+			'ows_title' 'TREE'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'Tree'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/tree.png" 
+				SIZE 35
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'Tree'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/tree.png" 
+				SIZE 25			
+			END
+            			
+		END
+		CLASS
+			NAME 'Tree'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/tree.png" 
+				SIZE 35
+				OFFSET 0 -5				
+			END
+            			
+		END 	
+	END	
+
+		#=================================================POLE ====
+	LAYER
+		NAME 'POL'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_pole_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))		
+		#VALIDATION		
+			#'provinceFilter'   '.*'	
+			#'layerFilter'   '.*'
+			#'prjectspecificationFilter'   '.*'
+				
+		#END 
+		METADATA
+			'ows_title' 'POLE'
+		END
+		STATUS OFF
+		GROUP 'Network'	
+		
+		
+		CLASS
+			NAME 'Pole'
+            EXPRESSION ('[pole_type]' eq 'Electrical' AND '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/electric_pole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'Pole'
+            EXPRESSION ('[pole_type]' eq 'Electrical' AND '[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/electric_pole.png" 
+				SIZE 20			
+			END
+            			
+		END
+		CLASS
+			NAME 'Pole'
+            EXPRESSION ('[pole_type]' eq 'Electrical' AND '[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/electric_pole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END       
+
+		
+		
+		CLASS
+			NAME 'Pole'
+            EXPRESSION ('[pole_type]' eq 'Light' AND '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/LightPole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'Pole'
+            EXPRESSION ('[pole_type]' eq 'Light' AND '[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/LightPole.png" 
+				SIZE 20			
+			END
+            			
+		END
+		CLASS
+			NAME 'Pole'
+            EXPRESSION ('[pole_type]' eq 'Light' AND '[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/LightPole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+		
+		CLASS
+			NAME 'Pole'
+            EXPRESSION ('[pole_type]' eq 'Other' AND '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/TelephoneandOtherOwnerPole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'Pole'
+            EXPRESSION ('[pole_type]' eq 'Other' AND '[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/TelephoneandOtherOwnerPole.png" 
+				SIZE 20			
+			END
+            			
+		END
+		CLASS
+			NAME 'Pole'
+            EXPRESSION ('[pole_type]' eq 'Other' AND '[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/TelephoneandOtherOwnerPole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+				
+	END	
+		# ==============================MPOD============================================ 
+	LAYER
+		NAME 'MOD'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_mpod_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'
+			#'layerFilter'   '.*'	
+			#'prjectspecificationFilter'   '.*'			
+		#END 
+		METADATA
+			'ows_title' 'MPOD'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'MPOD'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/MPOD.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'MPOD'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/MPOD.png" 
+				SIZE 25			
+			END
+            			
+		END
+		CLASS
+			NAME 'MPOD'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/MPOD.png" 
+				SIZE 30			
+				OFFSET 0 -5
+			END
+            			
+		END			
+	END	
+		#=================================================POD ====
+	LAYER
+		NAME 'POD'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_pod_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'		
+			#'layerFilter'   '.*'	
+			#'prjectspecificationFilter'   '.*'            		
+		#END 
+		METADATA
+			'ows_title' 'POD'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'POD'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/POD.png" 
+				SIZE 30
+				OFFSET 0 -5
+			END
+            			
+		END
+		CLASS
+			NAME 'POD'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/POD.png" 
+				SIZE 25			
+			END
+            			
+		END
+		CLASS
+			NAME 'POD'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/POD.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END		
+	END	
+		#===============================SPLITTER====================
+	LAYER
+		NAME 'SPL'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_splitter_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'	
+			#'layerFilter'   '.*'	
+			#'prjectspecificationFilter'   '.*'				
+		#END 
+		METADATA
+			'ows_title' 'SPLITTER'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS			
+			NAME 'Primary Splitter'
+            EXPRESSION ('[splitter_type]'  eq 'Primary' AND '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/Psplitter.png" 
+				SIZE 18			
+			END
+            LABEL
+				COLOR  255 0 0 
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE
+			END				
+		END
+		
+		CLASS			
+			NAME 'Primary Splitter'
+            EXPRESSION ('[splitter_type]'  eq 'Primary' AND '[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/Psplitter.png" 
+				SIZE 18			
+			END
+            LABEL
+				COLOR  255 0 0 
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE
+			END				
+		END
+		
+		
+		CLASS			
+			NAME 'Primary Splitter'
+            EXPRESSION ('[splitter_type]'  eq 'Primary' AND '[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/Psplitter.png" 
+				SIZE 18			
+			END
+            LABEL
+				COLOR  255 0 0 
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE
+			END				
+		END
+		
+		
+		
+        CLASS
+			NAME 'Secondary Splitter' 
+			EXPRESSION ('[splitter_type]'  eq 'Secondary' AND '[network_status]'  eq 'P')  
+			STYLE
+				SYMBOL "icons/Planned/Splitter.png" 
+				SIZE 16        
+			END
+			LABEL
+				COLOR  255 0 0 
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE
+			END	
+		END	
+
+
+		CLASS
+			NAME 'Secondary Splitter' 
+			EXPRESSION ('[splitter_type]'  eq 'Secondary' AND '[network_status]'  eq 'A')  
+			STYLE
+				SYMBOL "icons/AsBuild/Splitter.png" 
+				SIZE 16        
+			END
+			LABEL
+				COLOR  255 0 0 
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE
+			END	
+		END	
+
+
+		CLASS
+			NAME 'Secondary Splitter' 
+			EXPRESSION ('[splitter_type]'  eq 'Secondary' AND '[network_status]'  eq 'D')  
+			STYLE
+				SYMBOL "icons/Dorment/Splitter.png" 
+				SIZE 16        
+			END
+			LABEL
+				COLOR  255 0 0 
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE
+			END	
+		END	
+		
+	END	
+		# ================ CDB ========================================================== 	
+	LAYER
+		NAME 'CDB'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_cdb_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'
+			#'layerFilter'   '.*'	
+			#'prjectspecificationFilter'   '.*'
+			
+		#END 
+		METADATA
+			'ows_title' 'CDB'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'Primary CDB'
+            EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/PCDB.png" 
+				SIZE 30
+				OFFSET 0 -5
+			END
+            			
+		END
+		CLASS
+			NAME 'Primary CDB'
+            EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/PCDB.png" 
+				SIZE 25			
+			END
+            			
+		END
+		CLASS
+			NAME 'Primary CDB'
+            EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/PCDB.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END       
+
+		CLASS
+			NAME 'Secondary CDB'
+            EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/CDB.png" 
+				SIZE 30	
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'Secondary CDB'
+            EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/CDB.png" 
+				SIZE 25			
+			END
+            			
+		END
+		CLASS
+			NAME 'Secondary CDB'
+            EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/CDB.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END		
+	END	
+		# ================ BDB ========================================================== 	
+	LAYER
+		NAME 'BDB'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_bdb_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'
+			#'layerFilter'   '.*'			
+			#'prjectspecificationFilter'   '.*'	
+			
+		#END 
+		METADATA
+			'ows_title' 'BDB'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'Primary BDB'
+            EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/PBDB.png" 
+				SIZE 30			
+			END
+            			
+		END
+		CLASS
+			NAME 'Primary BDB'
+            EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/PBDB.png" 
+				SIZE 20			
+			END
+            			
+		END
+		CLASS
+			NAME 'Primary BDB'
+            EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/PBDB.png" 
+				SIZE 30			
+			END
+            			
+		END       
+
+		CLASS
+			NAME 'Secondary BDB'
+            EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/BDB.png" 
+				SIZE 30			
+			END
+            			
+		END
+		CLASS
+			NAME 'Secondary BDB'
+            EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/BDB.png" 
+				SIZE 20			
+			END
+            			
+		END
+		CLASS
+			NAME 'Secondary BDB'
+            EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/BDB.png" 
+				SIZE 30			
+			END
+            			
+		END
+		
+			
+	END	
+	# ================ ADB ========================================================== 	
+	LAYER
+		NAME 'ADB'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_adb_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'	
+			#'layerFilter'   '.*'			
+			#'prjectspecificationFilter'   '.*'	
+		#END 
+		
+		METADATA
+			'ows_title' 'ADB'
+		END
+		STATUS OFF
+		GROUP 'Network'				
+		CLASS
+			NAME 'Primary ADB'
+            EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/PADB.png" 
+				SIZE 30
+				OFFSET 0 -5
+			END
+            			
+		END
+		CLASS
+			NAME 'Primary ADB'
+            EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/PADB.png" 
+				SIZE 25			
+			END
+            			
+		END
+		CLASS
+			NAME 'Primary ADB'
+            EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/PADB.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END       
+
+		CLASS
+			NAME 'Secondary ADB'
+            EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/ADB.png" 
+				SIZE 30	
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'Secondary ADB'
+            EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/ADB.png" 
+				SIZE 25			
+			END
+            			
+		END
+		CLASS
+			NAME 'Secondary ADB'
+            EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/ADB.png" 
+				SIZE 30	
+				OFFSET 0 -5				
+			END
+            			
+		END		
+	
+	END	
+	# ================ BUILDING STRUCTURE========================================================== 	
+	LAYER
+		NAME 'STR'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_structure_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'
+            #'layerFilter'   '.*'	
+			#'prjectspecificationFilter'   '.*'	
+		#END 
+		METADATA
+			'ows_title' 'Structure'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'Structure'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/Structure.png" 
+				SIZE 30			
+			END
+            			
+		END
+		CLASS
+			NAME 'Structure'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/Structure.png" 
+				SIZE 20			
+			END
+            			
+		END
+		CLASS
+			NAME 'Structure'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/Structure.png" 
+				SIZE 30			
+			END
+            			
+		END			
+	END	
+
+ # ================BUILDING (NEW,SURVEYED,RESURVEYED)========================================================== 	
+	LAYER
+		NAME 'BLD'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_building_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%bldRFSFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'	
+            #'layerFilter'   '.*'	
+			#'bldRFSFilter'   '.*'	
+		#END  
+		METADATA
+			'ows_title' 'Building'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		#CLASS
+		#	NAME 'Building' 	
+		#	EXPRESSION ('[building_status]' eq 'New')			
+		#	STYLE
+		#		SYMBOL "icons/building.png" 
+		#		SIZE 18			
+		#	END	  
+		#END
+		CLASS
+			NAME 'Surveyed Building' 	
+			EXPRESSION ('[building_status]' = 'Surveyed')			
+			STYLE
+				SYMBOL "icons/building_yellow.png" 
+				SIZE 18			
+			END	  
+		END
+		CLASS
+			NAME 'Resurveyed Building' 	
+			EXPRESSION ('[building_status]' = 'Resurveyed')			
+			STYLE
+				SYMBOL "icons/building_red.png" 
+				SIZE 18			
+			END	  
+		END
+	END	
+	
+	
+# ============== BUILDING (APPROVED POLYGON)============================================================ 	
+	LAYER
+		NAME 'BLDP'
+		TYPE POLYGON
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo		
+		INCLUDE "datashare.inc"
+		DATA 'sp_geometry FROM vw_att_details_building_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%bldRFSFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'	
+            #'layerFilter'   '.*'	
+			#'bldRFSFilter'   '.*'	
+		#END  
+		METADATA
+			'ows_title' 'Building'
+		END
+		STATUS OFF
+		GROUP 'Network'
+		TRANSPARENCY 30	
+		CLASS
+			NAME 'Approved Building' 			
+			#EXPRESSION ('[building_status]' = 'Approved')
+			STYLE
+				 WIDTH 1 
+			 OUTLINECOLOR 00 255 00
+			 COLOR 255 0 0	
+			END			
+		END		
+	END
+	
+# ===================BUILDING (APPROVED CENTROID POINT)======================================================= 
+	LAYER
+		NAME 'BLDC'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo		
+		INCLUDE "datashare.inc"
+		DATA 'sp_centroid FROM vw_att_details_building_MAP USING UNIQUE system_id USING srid=4326'	
+	    #FILTER (%provinceFilter% AND (%layerFilter% ) AND (%bldRFSFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'	
+            #'layerFilter'   '.*'	
+			#'bldRFSFilter'   '.*'	
+		#END  
+		METADATA
+			'ows_title' 'Building'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		
+		CLASS
+			#NAME 'Non RFS Building'
+			NAME 'N-RFS Residential High Rise'
+			#EXPRESSION ((('[rfs_status]' eq 'Non-RFS') OR ('[rfs_status]' eq 'N-RFS')) && (('[category]' eq 'Residential') && ( [home_pass] >= 10)))
+			STYLE
+				SYMBOL [image_icon]
+				#SIZE 18        
+			END
+		END
+		
+			        			       
+	END
+
+		# ===================SUB AREA======================================= 	
+	LAYER 
+		NAME 'SBA'
+		TYPE POLYGON
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		INCLUDE "datashare.inc"
+		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
+		DATA 'sp_geometry FROM "vw_att_details_subarea_map" USING UNIQUE system_id USING srid=4326'
+		#FILTER  (%provinceFilter%)	
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'				           			
+		#END 
+		METADATA
+			'ows_title' 'SubArea'
+		END
+		STATUS OFF
+		GROUP 'Network'
+		TRANSPARENCY 30
+		PROJECTION
+			'proj=longlat'  
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASS
+			NAME 'SubArea' 
+			STYLE
+				WIDTH 1
+				OUTLINECOLOR 0 0 0
+				COLOR [color_code] 
+			END
+		END
+	END
+
+	# ==================SURVEY AREA============================== 	
+	LAYER 
+		NAME 'SVA'
+		TYPE POLYGON
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		INCLUDE "datashare.inc"
+		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
+		DATA 'sp_geometry FROM "vw_att_details_surveyarea_map" USING UNIQUE system_id USING srid=4326'
+		#FILTER  (%provinceFilter% )
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'	
+						
+		#END 
+		METADATA
+			'ows_title' 'SurveyArea'
+		END
+		STATUS OFF
+		GROUP 'Network'
+		TRANSPARENCY 30		
+		CLASS
+			NAME 'SurveyArea' 
+			STYLE
+				WIDTH 1
+				OUTLINECOLOR 0 0 0
+				COLOR 141 198 63
+			END
+		END
+	END
+	# ===================AREA======================================= 	
+	LAYER 
+		NAME 'ARA'
+		TYPE POLYGON
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		INCLUDE "datashare.inc"
+		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
+		DATA 'sp_geometry FROM "vw_att_details_area_map" USING UNIQUE system_id USING srid=4326'
+		#FILTER  (%provinceFilter% ) 
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'	
+		#END 
+		METADATA
+			'ows_title' 'Area'
+		END
+		STATUS OFF
+		GROUP 'Network'
+		TRANSPARENCY 30
+		PROJECTION
+			'proj=longlat'  
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASS
+			NAME 'Area' 
+			STYLE
+				WIDTH 1
+				OUTLINECOLOR 0 0 0
+				COLOR 26 149 190
+			END
+		END
+	END
+	
+	# ===================PROJECT AREA======================================= 	
+	LAYER 
+		NAME 'PRA'
+		TYPE POLYGON
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		INCLUDE "datashare.inc"
+		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
+		DATA 'sp_geometry FROM "vw_att_details_projectarea_map" USING UNIQUE system_id USING srid=4326'
+		#FILTER  (%provinceFilter% ) 
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'	
+		#END 
+		METADATA
+			'ows_title' 'Project Area'
+		END
+		STATUS OFF
+		GROUP 'Network'
+		TRANSPARENCY 30
+		PROJECTION
+			'proj=longlat'  
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASS
+			NAME 'ProjectArea' 
+			STYLE
+				WIDTH 1
+				OUTLINECOLOR 0 0 0
+				COLOR 255 178 102
+			END
+		END
+	END
+	
+	#===================================Loop Mangment==================================
+	LAYER
+		NAME 'LOP'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_loop_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))	
+		#VALIDATION		
+			#'provinceFilter'   '.*'
+            #'layerFilter'   '.*'	
+			#'prjectspecificationFilter'   '.*'	
+		#END 
+		METADATA
+			'ows_title' 'Loop'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'Loop' 							
+			STYLE
+				SYMBOL "icons/loop.png" 
+				SIZE 20			
+			END	  
+		END		
+	END	
+		# ================ FDB ========================================================== 	
+	LAYER
+		NAME 'FDB'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_fdb_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'
+			#'layerFilter'   '.*'			
+			#'prjectspecificationFilter'   '.*'	
+			
+		#END 
+		METADATA
+			'ows_title' 'FDB'
+		END
+		STATUS OFF
+		GROUP 'Network'
+		CLASS
+			NAME 'FDB'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/FDB.png" 
+				SIZE 20
+				OFFSET 0 -5			
+			END
+            			
+		END
+		CLASS
+			NAME 'FDB'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/FDB.png" 
+				SIZE 15		
+			END
+            			
+		END
+		CLASS
+			NAME 'FDB'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/FDB.png" 
+				SIZE 20
+				OFFSET 0 -5			
+			END
+            			
+		END	
+		
+		
+        			
+	END
+
+#==================================== HTB ======================================
+	LAYER
+		NAME 'HTB'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
+		DATA 'sp_geometry FROM vw_att_details_htb_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+		
+		#VALIDATION		
+			#'provinceFilter'   '.*'			
+			#'prjectspecificationFilter'   '.*'
+			#'layerFilter'   '.*'				
+		#END 
+		METADATA
+			'ows_title' 'HTB'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'HTB'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/HTB.png" 
+				SIZE 22
+				OFFSET 0 -5				
+			END
+            			
+		END
+		CLASS
+			NAME 'HTB'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/HTB.png" 
+				SIZE 17			
+			END
+            			
+		END
+		CLASS
+			NAME 'HTB'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/HTB.png" 
+				SIZE 22
+				OFFSET 0 -5				
+			END
+            			
+		END	
+	END		
+	
+END

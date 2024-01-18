@@ -1,0 +1,324 @@
+﻿
+@model Models.CableFiberDetail
+@using Models;
+@using SmartInventory.Settings;
+@{
+
+    WebGrid grid = new WebGrid(source: Model.ViewCableFiberDetail, canSort: false, canPage: false);
+    var userModuleList = (List<string>)Session["ApplicableModuleList"];
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.cable_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.cable_network_status, EntityType.Cable.ToString());
+
+}
+
+<style>
+    .ui-menu-item {
+        /*// padding-left:15px;*/
+        margin: 0;
+        padding: 6px 0px 6px 20px;
+        list-style: none;
+        background-repeat: no-repeat;
+        background-position: left center;
+        background-size: 17px;
+        border-bottom: 1px solid #dedbdb;
+        margin-left: 5px;
+        margin-right: 5px;
+        max-width: 165px !important;
+        overflow: hidden;
+        height: auto;
+    }
+    .WrapText {
+        width: 140px;
+        overflow: hidden;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .ui-state-focus {
+        border-width: 0px 0px 0px 0px !important;
+        border-bottom: 1px solid #dedbdb !important;
+        background-color: #bab3b3 !important;
+    }
+     .TickCrossicon {
+        /*position: absolute;*/
+        position: relative;
+        font-size: 13px;
+        right: 0;
+        /*margin: 6px 18px 0px 0px;*/
+       margin: -19px 0px 0px 66px;
+    }
+
+        .TickCrossicon i {
+    background: #00ba8a;
+    color: #fff;
+    padding: 4px;
+    border-radius: 19px;
+    height: 18px;
+    width: 19px;
+    cursor: pointer;
+    float: right;
+    margin: -3px 2px;
+    font-size: 12px;
+}
+        .crossIcon{
+            display:none;
+        }
+        .tickIcon{
+            display:none;
+        }
+        .tickCrossImg {
+    width: 17px;
+    cursor: pointer;
+    margin-top: 0px;
+}
+        .TextBoxToLabel{
+            border: 0px none;
+            pointer-events: none;
+        }
+     #dvAssociateLink {
+        position: absolute;
+        background: white;
+        height: auto;
+        border: 1px solid;
+
+    border-radius: 5px;
+        margin-left: 201px;
+        z-index: 1000;
+        top: 141px;
+        /*display: none;*/
+    }
+     .colEnableDisable{
+    display: @(userModuleList.Contains("FLK") ? "block" : "none")
+}
+   /* .gridHeaderStyle{
+    white-space: nowrap;
+    }
+*/
+
+
+</style>
+<!DOCTYPE html>
+<div id="dvAssociateLink"></div>
+<div>
+    <table cellpadding="0" cellspacing="0" style="margin: 0px 0px 13px 0px; display:none; font-size:13px">
+        <tr>
+            <td height="20" width="23%">
+                <span class="control-label">@Resources.Resources.SI_OSP_CAB_NET_FRM_039: </span>
+            </td>
+            <td width="50">
+                @Html.LabelFor(m => m.PhysicalUtil, Model.PhysicalUtil, new { @id = "lbl_physicalutil" })
+            </td>
+
+            <td width="350">
+
+                <label>
+                    <input type="radio" class="rButton" id="rbPhsyicalUtil" name="rbPhsyicalUtil" value="U" title="@Resources.Resources.SI_OSP_CAB_NET_FRM_040" checked="checked" />   @Resources.Resources.SI_OSP_CAB_NET_FRM_040
+
+                </label>
+
+
+                <label>
+                    <input type="radio" class="rButton" id="rbPhsyicalUtil" name="rbPhsyicalUtil" value="UR" title="@Resources.Resources.SI_OSP_CAB_NET_FRM_041" />   @Resources.Resources.SI_OSP_CAB_NET_FRM_041
+                </label>
+
+                <label>
+                    <input type="radio" class="rButton" id="rbPhsyicalUtil" name="rbPhsyicalUtil" value="C" title="@Resources.Resources.SI_OSP_CAB_NET_FRM_042" />   @Resources.Resources.SI_OSP_CAB_NET_FRM_042
+                </label>
+
+            </td>
+            <td></td>
+        </tr>
+    </table>
+
+    
+</div>
+
+
+
+<div class="overHidden">
+    @if (Model.ViewCableFiberDetail.Count() != 0)
+    {
+        @*<div style="float:left; width:48%;padding-right:5px;"></div>*@
+
+        <div class="d-flex mb-15">
+            <div class="Assign">
+                @foreach (var item in Model.ViewPortStatusCount)
+                {
+                    <label>@item.PortStatus (@item.StatusCount)</label>
+                }
+            </div>
+            <div class="ml-auto">
+                <input type="hidden" id="hdnCoreNumbers" />
+                @if (Model.type.ToString().ToUpper() != "SPLIT")
+                {
+                    <button type="button" class="btn btn-primary" id="btnUpdtCorStats" onclick="UpdateCorePortStatus()">@Resources.Resources.SI_GBL_GBL_GBL_GBL_130</button>
+                }
+                <img id="imgExport" src="~/Content/images/excel.gif" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_061" alt="Export" class="ml-10 fr-img"
+                     onclick="ExportCableFiberDetails();" />
+            </div>
+        </div>
+        <div class="table-responsive cableOverflow">
+            @grid.GetHtml(
+                htmlAttributes: new { @id = "WebGrid", @class = "stickyTh" },
+                columns: grid.Columns(
+               grid.Column(Model.type.ToString().ToUpper() != "SPLIT" ? "" : null, format:@<text>@if (Model.type.ToString().ToUpper() != "SPLIT")
+                                 {
+                            <input type="checkbox" name="chkRow" class="grdCoreChk" value="@item.fiber_number" />
+                                 }</text>),
+@*grid.Column(null, "All", format: @<text><input type="checkbox" name="chkRow" class="grdCoreChk" onclick="ManageHeaderCheckBox()" value="@item.system_id" /></text>),*@
+grid.Column("fiber_number", Resources.Resources.SI_OSP_CAB_NET_FRM_032, format: @<text>@item.fiber_number</text>),
+grid.Column("tube_number", Resources.Resources.SI_OSP_CAB_NET_FRM_027, format: @<text>@item.tube_number</text>),
+grid.Column("tube_color", Resources.Resources.SI_OSP_CAB_NET_FRM_033, format: @<text>@item.tube_color</text>),
+grid.Column("tube_color_code", Resources.Resources.SI_OSP_CAB_NET_FRM_034, format: @<text><div style="width:20px; height:20px;border: 1px solid #ddd; background-color:@item.tube_color_code"></div> </text>),
+grid.Column("core_number", Resources.Resources.SI_OSP_CAB_NET_FRM_031, format: @<text>@item.core_number</text>),
+
+grid.Column("core_color", Resources.Resources.SI_OSP_CAB_NET_FRM_035, format: @<text>@item.core_color</text>),
+grid.Column("core_color_code", Resources.Resources.SI_OSP_CAB_NET_FRM_036, format: @<text><div style="width:20px; height:20px;border: 1px solid #ddd; background-color:@item.core_color_code"></div> </text>),
+grid.Column("core_status", Resources.Resources.SI_OSP_CAB_NET_FRM_070, format: @<text><span id="@("PortStatus_"+item.fiber_number)">@item.core_status</span></text>),
+grid.Column("", Resources.Resources.SI_OSP_GBL_NET_FRM_312, format: @<text> <p id="@("PortComments_"+item.fiber_number)" data-toggle="tooltip" title="@item.comment" class="WrapText">@item.comment</p> </text>),
+
+grid.Column("link_id", Resources.Resources.SI_OSP_GBL_NET_FRM_421, format: @<text>
+        <div id="dvLink">
+            <label class="control-label @(editPermission==true?"":"dvdisabled")" id="lblGrdLinkId_@item.fiber_number"  onclick="GetLinkId('@item.cable_id','@item.fiber_number');">@(item.link_system_id == 0 ? "Enter Link Id" : item.link_id)</label>
+        </div></text>),
+grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format:@<text>
+        @if (item.a_end_status == "Connected" || item.b_end_status == "Connected")
+                 {
+            <a href="#" onclick="splicing.redirectToCustomerDetails(null,'@Model.cable_network_id','Cable',@Model.cable_id,'@item.core_number',false);" id="btnConnectedCustomerDetails"><i class="icon-CUSTOMER" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_015" style="margin-left: 15px;color:red;"></i></a>
+                 }
+</text>)))
+        </div>
+    }
+    else
+    {
+        <div class="nr-found">
+            <span>@Resources.Resources.SI_GBL_GBL_GBL_GBL_131</span>
+        </div>
+    }
+
+</div>
+
+
+<script>
+    $(function () {
+       /* $($('#WebGrid tr:first th')).addClass('gridHeaderStyle');*/
+        $('#WebGrid tbody tr:first').find('td.colEnableDisable').each(function (i, td) {
+             
+            var indexOfHiddenColumn = $(td).index();
+            $('#WebGrid thead th').eq(indexOfHiddenColumn);
+            //height:41px;padding:13px;
+           /* $('#WebGrid thead th').eq(indexOfHiddenColumn).attr('style', 'height:41px;padding:13px;');*/
+        });
+    }());
+    $('input[name=rbPhsyicalUtil]').change(function () {
+        si.GetPhysicalUtilValue();
+    })
+    function ExportCableFiberDetails() {
+        window.location = appRoot + 'Library/DownloadCableFiberReport?cableID=' + '@Model.cable_id';
+    };
+
+
+    function UpdateCorePortStatus()
+    {
+         
+        var coreNumbers = $("#hdnCoreNumbers").val();
+        var coreStatus = $('#PortStatus_' + coreNumbers).html();
+        var coreComment = $('#PortComments_' + coreNumbers).html();
+        ManageHeaderCheckBox();
+
+        if(coreNumbers != "")
+        {
+            splicing.redirectToUpdateFiber(@Model.cable_id, coreNumbers, 'CABLE', '@Model.type', true,0, coreComment, coreStatus)
+        }
+        else
+        {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_102);//Kindly select at lease one core!
+        }
+    }
+    $(function () {
+         
+        $('[data-toggle="tooltip"]').tooltip();
+        if('@Model.type'.toUpperCase() == "" || '@Model.type' == '' || '@Model.type' == 'ISP')
+        {
+            //Create the CheckBox element.
+            var chkHeader = $("<input type = checkbox id = 'chkHeader' style='float:left;' />");
+
+            //Append it to the First cell of Header Row.
+            $("#WebGrid th:first-child").append(chkHeader);
+
+            //Assign Click event handler to the Header Row CheckBox.
+            chkHeader.on("click", function () {
+                 
+                if ($(this).is(":checked")) {
+                    //If the Header Row CheckBox is checked, check all Row CheckBoxes.
+                    $("#WebGrid td input[type=checkBox]").prop("checked",true);
+                } else {
+                    //If the Header Row CheckBox is NOT checked, uncheck all Row CheckBoxes.
+                    $("#WebGrid td input[type=checkBox]").removeAttr("checked");
+                }
+                ManageHeaderCheckBox();
+            });
+
+            //Assign Click event handler to each Row CheckBox.
+            $("#WebGrid input[name=chkRow]").on("click", function () {
+                UpdateHeaderRowCheckBox(chkHeader);
+            });
+
+            //Retain selection of Row CheckBoxes.
+            var selected = "@TempData["Message"]".split(',');
+            for (var i in selected) {
+                $("#WebGrid input[value='" + selected[i] + "']").attr("checked", "checked");
+            }
+            //Retain selection of Header Row CheckBox.
+            UpdateHeaderRowCheckBox(chkHeader);
+        }
+        else
+        {
+            $("#WebGrid th:first-child").css('display','none');
+            $("#WebGrid th:last-child").css('display','none');
+            $("#WebGrid tr").each(function () {
+                 
+                $(this).find("td:first").css('display','none');
+                $(this).find("td:last").css('display','none');
+            })
+        }
+    });
+
+    function UpdateHeaderRowCheckBox(chkHeader) {
+         
+        if ($("#WebGrid td input[type=checkBox]:checked").length == $("#WebGrid td input[type=checkBox]").length) {
+            //If all the Row CheckBoxes are checked, check the Header Row CheckBox.
+            chkHeader.attr("checked", "checked");
+        } else {
+            //Even if one of the Row CheckBoxes is NOT checked, uncheck the Header Row CheckBox.
+            chkHeader.removeAttr("checked");
+        }
+        ManageHeaderCheckBox();
+    }
+    function ManageHeaderCheckBox() {
+        //for sum of footer
+         
+        var corenumbers = "";
+        $("#FiberDetail #WebGrid input[type=checkbox]:not('#chkHeader')").each(function () {
+            var row = $(this).closest('tr');
+            var checkstatus = $(this).is(":checked")
+            if (row.find(".grdCoreChk")[0] != undefined) {
+                if (!isNaN(row.find(".grdCoreChk")[0].value) && row.find(".grdCoreChk")[0].value.length != 0 && checkstatus == true) {
+                    corenumbers = corenumbers == "" ? row.find(".grdCoreChk")[0].value : corenumbers + "," + row.find(".grdCoreChk")[0].value;
+                }
+            }
+        })
+        $("#hdnCoreNumbers").val(corenumbers);
+        //alert($("#hdnCoreNumbers").val());
+    }
+    function GetLinkId(_cableId,_fiberNumber)
+    {
+         
+        ajaxReq('FiberLink/GetAssociateLink', { cable_id: _cableId, fiber_no: _fiberNumber}, true, function (resp) {
+            $('#dvAssociateLink').show();
+           // popup.disablebuttonWhenEditDisabled(editPermission);
+              $('#dvAssociateLink').html(resp)
+
+        }, false, true);
+    }
+</script>

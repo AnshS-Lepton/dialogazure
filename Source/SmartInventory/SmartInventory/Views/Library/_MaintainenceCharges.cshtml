@@ -1,0 +1,36 @@
+﻿@model Models.EntityMaintainenceChargesList
+
+<!DOCTYPE html>
+<div class="libDetail">
+    <fieldset class="the-fieldset">
+        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_051</legend>
+
+        <div class="form-group" style="text-align:right;display:@(Model.listEntityMaintainenceChargesRecords.Count > 0?"block;":"none;")" id="dvAddMaintenanceCharge2">
+            <span value="Export" style="margin-right: 10px;cursor: pointer;" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_056" onclick="si.EntityMaintainenceCharges.addCharges(0,'@Model.entityId','@Model.entityType')"><i class="glyphicon glyphicon-plus"></i> @Resources.Resources.SI_OSP_GBL_NET_FRM_056</span>
+            <span value="Export" style="cursor: pointer;margin-right: 20px;" onclick="si.EntityMaintainenceCharges.statusExport(@Model.entityId,'@Model.entityType')" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_173"><i class="icon-Export"></i> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</span>
+        </div>
+
+        <div class="form-group" style="text-align:center;display:@(Model.listEntityMaintainenceChargesRecords.Count == 0?"block;":"none;")" id="dvAddMaintenanceCharge1">
+            <button type="button" class="btn btn-primary addChargeBtn glyphicon glyphicon-plus" onclick="si.EntityMaintainenceCharges.addCharges(0,'@Model.entityId','@Model.entityType')"></button>
+        </div>
+
+        <div style="max-height: 400px;padding-top: 10px;padding:5px;" id="dvMaintenanceChargeList">
+            @Html.Partial("_MaintenanceChargesList", Model.listEntityMaintainenceChargesRecords)
+        </div>
+    </fieldset>
+    <fieldset class="the-fieldset  attach">
+        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_047</legend>
+        <div class="col-md-12 col-sm-12 UploadAction">
+            <div class="col-md-6 col-sm-6" id="divDocumentUpload" style="display:flex; text-decoration:underline;">
+                <input type="file" class="file" name="DocUpload" id="DocUpload">
+                <a href="#" onclick="si.EntityMaintainenceCharges.attachment.upload(@Model.entityId,'@Model.entityType');" value="Upload" id="btnUploadDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008</a>
+                <a href="#" onclick="si.EntityMaintainenceCharges.clear();" value="Clear" id="btnClearDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</a>
+            </div>
+            <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
+        </div>
+
+        <div id="divDocument" class="tab-pane y-scroll">
+            @Html.Partial("_MaintainenceChargesFiles", Model.listEntityMaintainenceChargesAttachments)
+        </div>
+    </fieldset>
+</div>

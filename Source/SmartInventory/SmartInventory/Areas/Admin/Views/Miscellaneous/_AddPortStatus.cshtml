@@ -1,0 +1,170 @@
+﻿@model Models.portStatusMaster
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="divAddNewPortStatus">
+    @using (Ajax.BeginForm("SavePortStatus", "Miscellaneous",
+                                        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddNewPortStatus", OnSuccess = "OnSuccess", },
+                                        new { id = "frmAddPortStatus", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.system_id, new { @id = "hdnSystem_id" });
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Status<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.status, new { @class = "form-control", @maxlength = "30", @placeholder = "Enter Status", @id = "txt_status" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Color Code<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.color_code, new { @maxlength = "25", Style = "width:100% ;", @name = "color2", @class = "full col-md-10", @id = "txtColorCode" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Is manual:</div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.is_manual_status, new { Style = "width:100% ;", @id = "chkis_is_manual" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Is splicing allowed :</div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.is_splicing_enabled, new { Style = "width:100% ;", @id = "chkis_splicing_enabled" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Is active:</div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.is_active, new { Style = "width:100% ;", @id = "chkis_is_active" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footerModal d-flex" id="dvBtnAction">
+            <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+            @if (Model.system_id > 2)
+            {
+
+                <input type="submit" class="btn btn-primary ml-05" onclick="return IsValid();" id="btnSaveTP" value="Update" />
+            }
+            else if (Model.system_id == 0)
+            {
+                <input type="submit" class="btn btn-primary  ml-05" onclick="return IsValid();" id="btnSaveTP" value="Save" />
+            }
+            else
+            {
+                <label class="text-left"><b>Note:</b> Modification is not allowed for default status.</label>
+            }
+
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+       // var colercodeStatus = false;
+        $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+        if ('@Model.system_id' == 1 || '@Model.system_id' == 2) {
+            $("#txt_status").attr("disabled", "disabled");
+            $("#chkis_is_active").attr("disabled", "disabled");
+            $("#chkis_is_manual").attr("disabled", "disabled");
+            $("#chkis_splicing_enabled").attr("disabled", "disabled");
+            $('#txtColorCode').next().addClass('.EUTSetting chosen-disabled');
+
+        }
+    });
+    $('#txt_status1').keypress(function (event) {
+         
+        if (text.length <= 10 || text.length >= 7 ) {
+            if ((text.indexof('.') != -1) &&
+                (text.substring(text.indexof('.')).length > 2) &&
+                (event.which != 0 && event.which != 8) &&
+                ($(this)[0].selectionstart >= text.length - 2)) {
+                event.preventdefault();
+
+            }
+        }
+        else { event.preventDefault(); }
+
+        var text = $(this).val();
+        if ((text.length <= 7 || event.which == 46) || (text.substring(text.indexOf('.')).length <= 2)) {
+            if ((text.indexOf('.') != -1) &&
+                (text.substring(text.indexOf('.')).length > 2) &&
+                (event.which != 0 && event.which != 8) &&
+                ($(this)[0].selectionStart >= text.length - 2)) {
+                event.preventDefault();
+
+            }
+        }
+        else { event.preventDefault();}
+
+    });
+    function IsValid() {
+         
+        if ($('#txt_status').val() == "") {
+            $('#txt_status').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txt_status').removeClass("errorClass");
+        }
+        if ($('#txtColorCode').val() == "") {
+            alert("Please Select Color Code !");
+            return false;
+        }
+        else {
+            $('#txtColorCode').removeClass("errorClass");
+        }
+       // var button= $("#btnSaveTP").val();
+        var ColorCode = $("#txtColorCode").val();
+        var result = ValidateColorCode(ColorCode,@Model.system_id)
+         
+        if (result == false) {
+            alert("Color Code already used !", 'warning')
+            return false;
+        }
+    };
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+
+function OnSuccess(data) {
+         
+        if (data.status == "OK") {
+            $("#closeModalPopup").trigger("click");
+        }
+
+        alert(data.message, 'Success', 'success');
+        setTimeout(function () {
+            window.location = appRoot + 'Miscellaneous/ViewPortStatus';
+        }, 3000);
+
+    }
+    function ValidateColorCode(ColorCode,system_id) {
+        var result;
+        ajaxReq('Miscellaneous/CheckColorCode', { ColorCode: ColorCode, system_id: system_id }, false, function (resp) {
+             
+            if (resp == true) {
+                result=  true;
+                }
+                else
+                result= false;
+        }, true, true);
+        return result;
+    }
+
+$("#btnCancel").on("click", function () {
+    $("#closeModalPopup").trigger("click");
+});
+</script>

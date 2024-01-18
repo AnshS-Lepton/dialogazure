@@ -1,0 +1,111 @@
+﻿@using SmartInventory.Settings;
+@model Models.Admin.ViewLinkBudgetDetails
+@using Utility
+
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div id="dvViewLinkBudget" class="update_panel fullWidth">
+    <div class="title">
+        <h4>View Link Budget</h4>
+    </div>
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewLinkBudget", ajaxUpdateCallback: "onGridHeaderClick('tblLinkBudgetDetail')");
+        grid.Bind(Model.lstLinkBudgetDetail, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+        if (Model.objGridAttributes.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+        }
+    }
+    <div class="pad_left">
+        @using (Html.BeginForm("ViewLinkBudget", "OpticalLinkBudget", FormMethod.Post, new { autocomplete = "off", @id = "frmViewLinkBudgetDetail" }))
+        {
+            <div class="form-inline filter-sec">
+                <div class="form-group wtd_set" style="width: 20%; display:none">
+                    <label class="control-label col-sm-4">
+                        Status :
+                    </label>
+                    <div class="col-md-8">
+
+                        @Html.DropDownListFor(m => m.objGridAttributes.is_active, new List<SelectListItem>
+                 {
+                    new SelectListItem{ Text="Active", Value = "true" },
+                    new SelectListItem{ Text="InActive", Value = "false" }
+                 }, new { @id = "ddlStatus", @tabindex = "2", @title = "Status", @class = "chosen-select form-control" })
+                    </div>
+                </div>
+                <div class="form-group wtd_set" style="width: 23%;">
+                    <label class="control-label col-sm-4">Search By : </label>
+                    <div class=" col-md-8">
+                        @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select form-control" })
+                    </div>
+
+                </div>
+                <div class="form-group wtd_set" style="width: 24%;">
+                    <label class="control-label col-sm-4">
+                        Search Text:
+                    </label>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                    </div>
+                </div>
+
+                <div class="form-group wtd_set" id="dvBtnAction">
+                    <div class="col-md-8">
+                        <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                        <a href="@Url.Action("ViewLinkBudget")" class="btn btn-default" title="Reset">Reset</a>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="Image">
+                <div id="dvImages">
+                </div>
+            </div>
+            if (Model.lstLinkBudgetDetail.Count > 0)
+            {
+                <div id="divLinkBudgetDetail">
+                    <div class="recordCount mb-01"><b>Total Records:@grid.TotalRowCount</b></div>
+                    <div class="table-responsive tble_cls">
+                        @grid.GetHtml(tableStyle: "grid",
+                             htmlAttributes: new { id = "tblLinkBudgetDetail" },
+                                mode: WebGridPagerModes.All,
+                                columns: grid.Columns(
+                                     grid.Column("", "Action", format:@<text>
+                                            <a href="@Url.Action("AddLinkBudget", "OpticalLinkBudget", new { wavelength_id = @item.wavelength_id })" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                            <a href="javascript:void(0);" onclick="DeleteLinkBudgetDetail(@item.wavelength_id);" title="Delete"> <i class="fa fa-fw fa-trash" style=" font-size: 13px; color: #f50000;"></i></a>
+                                    </text>
+),
+              grid.Column("wavelength_value", "WaveLength (nm)", format: @<text>@item.wavelength_value</text>),
+grid.Column("splice_loss", "Splice Loss (" + @SmartInventory.Settings.ApplicationSettings.dBLossUnit + ")", format: @<text>@item.splice_loss</text>),
+grid.Column("cable_loss", "Cable Loss(" + @SmartInventory.Settings.ApplicationSettings.dBLossUnit + "/KM)", format: @<text>@item.cable_loss</text>),
+grid.Column("patch_cord_loss", "Patch Cord Loss (" + @SmartInventory.Settings.ApplicationSettings.dBLossUnit + "/Mtr)", format: @<text>@item.patch_cord_loss</text>),
+grid.Column("connector_loss", "Connector Loss (" + @SmartInventory.Settings.ApplicationSettings.dBLossUnit + ")", format: @<text>@item.connector_loss</text>),
+grid.Column("", "Splitter loss", format: @<text><center><a onclick="ViewSplitterLosses(@item.wavelength_id);" href="javascript:void(0);" style="color:blue; text-decoration:underline;">View</a></center></text>),
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>),
+grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>),
+grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>)
+))
+
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div style=" text-align: center; margin-top: 30px;">
+                    No Data Found.
+                </div>
+            }
+        }
+    </div>
+    <script>
+        $(document).ready(function () {
+            addDefaultSortingIcons("tblLinkBudgetDetail");
+            UpdateFormattedNumber('tblLinkBudgetDetail', true, null);
+        });
+    </script>
+
+</div>
+

@@ -1,0 +1,104 @@
+﻿@model Models.ViewAuditAccessoriesInfo
+@using Utility
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objFilterAttributes.pageSize, canSort: false, ajaxUpdateContainerId: "dvViewAccessoriesExportData", ajaxUpdateCallback: "onGridHeaderClick('tblAccessoriesAuditHistory')");
+    grid.Bind(Model.lstData, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+    if (Model.objFilterAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objFilterAttributes.currentPage - 1;
+    }
+}
+<!DOCTYPE html>
+<div class="libDetail space-pad">
+    @using (Ajax.BeginForm("GetAccessoriesHistory", "Audit", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "dvProgress" },
+                                 new { id = "frmAccessoriesAuditHistory", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.accessories_id);
+       
+
+        if (Model.lstData.Count > 0)
+        {
+            <div class="form-group row" id="dvBtnAction" style="padding:10px 0px;margin:0px;">
+                @*<div class="div_totalRecord col-sm-4" style="float: left;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@grid.TotalRowCount</span></b></div>*@
+                <div class="col-sm-8" style="float: right; text-align: right; cursor:pointer;">
+                    @if (@grid.TotalRowCount > 0)
+                    {
+                         <span id="btnAccessoriesAuditExport" value="Export" class="exp--btn"><i class="icon-Export"></i> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</span>
+                    }
+                    else
+                    {
+                        <input type="button" id="btnAccessoriesAuditExport" value="Export" disabled="disabled" class="btn btn-primary" />
+                    }
+                </div>
+            </div>
+           
+            <div id="objViewAuditHistory">
+
+                @if (Model.lstData.Count > 0)
+                {
+                    <div id="dvViewAccessoriesExportData">
+                        <div class="table-responsive">
+                            @grid.GetHtml(tableStyle: "grid",
+                         headerStyle: "webGridHeader",
+                            alternatingRowStyle: "alt",
+                         htmlAttributes: new { id = "tblAccessoriesAuditHistory" },
+                            mode: WebGridPagerModes.All,
+                            columns: grid.Columns(
+
+                                            grid.Column("entity_type", "Entity Type", format: @<text>@item.entity_type</text>),
+                                            grid.Column("quantity", "Quantity", format: @<text>@item.quantity</text>),
+                                            grid.Column("remarks", "Remark", format: @<text>@item.remarks</text>),
+                                            grid.Column("specification", "Specification", format: @<text>@item.specification</text>),
+                                            grid.Column("vendor_name", "Vendor Name", format: @<text>@item.vendor_name</text>),
+                                            grid.Column("item_code", "Item Code", format: @<text>@item.item_code</text>),
+
+                                            grid.Column("subcategory_1", "Sub Category 1", format: @<text>@item.subcategory1</text>),
+                                            grid.Column("subcategory_2", "Sub Category 2", format: @<text>@item.subcategory2</text>),
+                                            grid.Column("subcategory_3", "Sub Category 3", format: @<text>@item.subcategory3</text>),
+                                            grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>),
+                                            grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>),
+
+                                            grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>),
+
+                                            grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>)
+                                            //grid.Column("action", "Action", format: @<text> @(item.action)</text>)
+
+                                            ))
+                        </div>
+                    </div>
+                }
+            </div>
+
+        }
+        else
+        {
+            <div class="nr-found">
+                <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+            </div>
+        }
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        //$('tfoot a').on("click", function () {
+        //    $('form').attr('action', $(this).attr('href')).submit();
+        //    return false;
+        //});
+        $('th a, tfoot a').on("click", function () {
+             
+            $('#frmAccessoriesAuditHistory').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        changeColor('tblAccessoriesAuditHistory');
+
+        $("#btnAccessoriesAuditExport").on("click", function () {
+             
+            AccessoriesAuditReport("DownloadAccessoriesAuditHistory");
+        });
+
+    });
+</script>
+

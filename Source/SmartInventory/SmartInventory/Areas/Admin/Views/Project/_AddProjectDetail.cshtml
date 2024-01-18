@@ -1,0 +1,131 @@
+﻿
+@model Models.Admin.ProjectCodeMaster
+
+@{Model.network_stage = "Planned";}
+
+<!DOCTYPE html>
+<div id="dvProjectDetail">
+
+    <div id="dvPageMessage">
+        @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+
+    </div>
+
+    @using (Ajax.BeginForm("SaveProjectCode", "Project", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvProjectDetail",
+        OnSuccess = "onChangeNetworkStage()"
+
+    },
+    new { id = "frmProjectDetail", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        <div id="dv_project" data-title="Add Proejct Detail">
+            @Html.HiddenFor(m => m.system_id, new { id = "hdnsystem_Id" })
+            @Html.HiddenFor(m => m.created_by, new { id = "hdn_createdbyId" })
+            <div class="EUTSetting">
+                <div class="form-group" style="display:none;">
+                    <div class="row">
+                        <div class=" col-md-2">
+                        </div>
+                        <div class=" col-md-2">
+                            <label class=" control-label">
+                                Network Stage:
+                            </label>
+                        </div>
+                        <div class=" col-md-5">
+                            @Html.TextBoxFor(m => m.network_stage, new { @class = "form-control", @id = "txt_Netowrkstage_projectcode", @readonly = "true" })
+
+                        </div>
+                        <div class=" col-md-1">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class=" col-md-2">
+                        </div>
+                        <div class=" col-md-2">
+                            <label class=" control-label">
+                                Project Name<i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class=" col-md-5">
+                            @Html.TextBoxFor(model => model.project_name, new { @class = "form-control", @maxlength = "150", @placeholder = "Enter Project Name", @id = "txtproject_name" })
+
+                        </div>
+                        <div class=" col-md-1">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class=" col-md-2">
+                        </div>
+                        <div class=" col-md-2">
+                            <label class=" control-label">
+                                Project Code<i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class=" col-md-5">
+                            @Html.TextBoxFor(model => model.project_code, new { @class = "form-control", @maxlength = "150", @placeholder = "Enter Project Code", @id = "txtproject_code" })
+
+                        </div>
+                        <div class=" col-md-1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footerModal d-flex" id="dvBtnAction">
+                <a href="javascript:void(0);" class=" btn btn-default ml-auto mr-05" data-dismiss="modal" id="btnCancelProject">Cancel</a>
+                <input type="submit" class="btn btn-primary" name="btnSaveProjectDetail" onclick="return isValidProjectDetails()" id="btnSaveProjectDetail" value="Save" />
+            </div>
+        </div>
+    }
+
+
+    <script>
+
+
+        if ($('#txt_Netowrkstage_projectcode').val().toLowerCase() == 'p') {
+            $('#txt_Netowrkstage_projectcode').val('Planned');
+        }
+
+
+        if ($('#txt_Netowrkstage_projectcode').val().toLowerCase() == 'a') {
+            $('#txt_Netowrkstage_projectcode').val('As Built');
+        }
+
+
+        if ('@Model.system_id' != 0)
+        {
+            btnSaveProjectDetail.value = "Update";
+
+            $('#txtproject_code').attr('readonly', true);
+
+        }
+
+        function isValidProjectDetails()
+        {
+            if ($('#txtproject_name').val() == "")
+              {
+                $('#txtproject_name').css({ "border": "1px solid red" });
+                return false;
+
+              }
+
+                if ($('#txtproject_code').val() == "")
+                {
+                    $('#txtproject_code').css({ "border": "1px solid red" });
+                    return false;
+                }
+
+
+        }
+
+
+    </script>
+
+</div>
+

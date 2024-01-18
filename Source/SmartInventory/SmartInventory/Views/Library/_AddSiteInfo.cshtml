@@ -1,0 +1,389 @@
+﻿@model Models.StructureMaster
+
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.SiteInformation.objPM); }
+
+}
+<style>
+    #dvSiteInfo .col-md-6 {
+        padding-left: 0px;
+    }
+
+    #dvSiteInfo .mrgn_btm {
+        height: 25px;
+    }
+
+    .ui-menu-item {
+        /*// padding-left:15px;*/
+        margin: 0;
+        padding: 6px 0px 6px 20px;
+        list-style: none;
+        background-repeat: no-repeat;
+        background-position: left center;
+        background-size: 17px;
+        border-bottom: 1px solid #dedbdb;
+        margin-left: 5px;
+        margin-right: 5px;
+        max-width: 165px !important;
+        overflow: hidden;
+        height: auto;
+    }
+
+    .ui-state-focus {
+        border-width: 0px 0px 0px 0px !important;
+        border-bottom: 1px solid #dedbdb !important;
+        background-color: #bab3b3 !important;
+    }
+    /*.tool_bar .auditEntity {
+        background-position: -444px -122px;
+    }
+         .tool_bar .Delete {
+            background-position: -119px -122px;
+        }*/
+</style>
+
+
+@Html.HiddenFor(m => m.SiteInformation.system_id)
+@Html.HiddenFor(m => m.SiteInformation.parent_entity_type)
+@Html.HiddenFor(m => m.SiteInformation.parent_system_id)
+@Html.HiddenFor(m => m.SiteInformation.parent_network_id)
+@Html.HiddenFor(m => m.system_id)
+<!DOCTYPE html>
+<div class="tab-pane fade in active show">
+    <div class="container-fluid BdrSet">
+        <div class="row padRow">
+            <fieldset class="the-fieldset">
+                @if (Model.SiteInformation.system_id > 0)
+                {
+                    <div class="col-sm-4 icon-delete cptr" id="deleteSite" style="margin-left: 600px;width: auto;margin-top: -34px;margin-bottom: 8px;" onclick="si.SiteInfo.deleteSite(@Model.SiteInformation.system_id,@Model.SiteInformation.parent_system_id);"> @Resources.Resources.SI_GBL_GBL_GBL_GBL_002</div>
+                    <div class="col-sm-4 icon-History cptr" id="historySite" style="margin-left: 526px; width: auto; margin-top: -34px;margin-bottom: 8px;" onclick="si.SiteInfo.showSiteHistory(@Model.SiteInformation.system_id,'@Model.SiteInformation.lmc_type');"> @Resources.Resources.SI_OSP_GBL_NET_FRM_339</div>
+
+                }
+                <legend class="the-legend">@Resources.Resources.SI_OSP_STR_NET_FRM_020</legend>
+                <div class="form-group row">
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_041<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7  @(Model.SiteInformation.system_id > 0 ? "dvdisabled" : "")">
+                            @Html.DropDownListFor(m => m.SiteInformation.lmc_type, new SelectList(Model.SiteInformation.lstLMCType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), new { @class = "chosen-select form-control", @id = "ddlLMCType" })
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_021<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.DropDownListFor(m => m.SiteInformation.site_type, new SelectList(Model.SiteInformation.lstSITEType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlSiteType", @onchange = "si.ddlChangeRemoveCss(this.id, 'site_type');" })
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_022<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.TextBoxFor(m => m.SiteInformation.etpil_id, new { @class = "form-control", @maxlength = "20", @id = "txtUID" })
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_023<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.TextBoxFor(m => m.SiteInformation.site_name, new { @class = "form-control", @maxlength = "20", @id = "txtSiteName" })
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_024<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.DropDownListFor(m => m.SiteInformation.circle, new SelectList(Model.SiteInformation.lstSiteCircle.Select(x => new { Value = x.circle_name, Text = x.circle_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlSiteCircle", @onchange = "si.ddlChangeRemoveCss(this.id, 'circle');" })
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_025<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.TextBoxFor(m => m.SiteInformation.city, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtCity" })
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_011<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.TextBoxFor(m => m.SiteInformation.latitude, new { @class = "form-control  clsReadOnly", @readonly = true, @id = "txtlat" })
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_012<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.TextBoxFor(m => m.SiteInformation.longitude, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtlong" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-5 col-sm-5" for="txtSiteVendor">@Resources.Resources.SI_OSP_STR_NET_FRM_026<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7 ui-widget">
+                            @Html.TextBoxFor(m => m.SiteInformation.site_vendor, new { @class = "form-control  ui-autocomplete-input", @maxlength = "30", @id = "txtSiteVendor", @onkeyup = "si.GetAutoSiteVendor();" })
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-5 col-sm-5">Acq. Vendor<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.TextBoxFor(m => m.SiteInformation.acq_vendor, new { @class = "form-control", @maxlength = "30", @id = "txtAcqVendor" })
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_028<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.DropDownListFor(m => m.SiteInformation.structure_type, new SelectList(Model.SiteInformation.lstStructureType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlStructureType", @onchange = "si.ddlChangeRemoveCss(this.id, 'structure_type');" })
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_029<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+
+                            @Html.DropDownListFor(m => m.SiteInformation.structure_size, new SelectList(Model.SiteInformation.lstStructureSize.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlStructureSize", @onchange = "si.ddlChangeRemoveCss(this.id, 'structure_size');" })
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_030<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.TextBoxFor(m => m.SiteInformation.structure_height, new { @class = "form-control", @maxlength = "5", @onkeypress = "return allowNumberwithOneDot(event,'txtStructureHeight');", @id = "txtStructureHeight" })
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_031<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.TextBoxFor(m => m.SiteInformation.building_height, new { @class = "form-control", @maxlength = "5", @onkeypress = "return allowNumberwithOneDot(event,'txtBuildingHeight');", @id = "txtBuildingHeight" })
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_032<i class="clsMandatory">*</i>:</label>
+                        <label class="col-md-3 col-sm-3">
+                            @Html.RadioButtonFor(m => m.SiteInformation.is_ladder_required, true, new { @id = "radioIsLadderRequiredTrue" }) Yes
+                        </label>
+                        <label class="col-md-3 col-sm-3">
+                            @Html.RadioButtonFor(m => m.SiteInformation.is_ladder_required, false, new { @id = "radioIsLadderRequiredFalse" }) No
+                        </label>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="false" data-SmallCell="false" data-FTTH="true">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_033<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7 mrgn_btm">
+                            @Html.TextBoxFor(m => m.SiteInformation.site_area, new { @class = "form-control", @maxlength = "20", @id = "txtSiteArea" })
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="false" data-FTTH="true">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_034<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.TextBoxFor(m => m.SiteInformation.home_pass, new { @class = "form-control", @maxlength = "4", @onkeypress = "return si.allowOnlyNumber(event);", @id = "txtHomePass" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="false" data-FTTH="true">
+                        <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_STR_NET_FRM_035<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-7 col-sm-7">
+                            @Html.TextBoxFor(m => m.SiteInformation.acquisition_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @id = "txtAcqDate" })
+
+                        </div><img id="img_acq_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;margin-right: 15px;" />
+                    </div>
+                </div>
+            </fieldset>
+            @if (Model.SiteInformation.system_id > 0)
+            {
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_STR_NET_FRM_036</legend>
+                    <div class="col-md-12 col-sm-12 UploadAction" style="margin-left: -6px;">
+                        <div class="col-md-6 col-sm-6" id="divDocumentUpload" style="display:flex; text-decoration:underline;">
+                            <input type="file" class="file" name="SiteDocUpload" id="SiteDocUpload">
+                            <a href="#" onclick="si.SiteInfo.attachment.upload(@Model.SiteInformation.system_id,'@Model.SiteInformation.parent_entity_type','@Model.SiteInformation.parent_system_id');" value="Upload" id="btnUploadDocument">@Resources.Resources.SI_OSP_STR_NET_FRM_037</a>
+                            <a href="#" onclick="si.SiteInfo.clear();" value="Clear" id="btnClearDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</a>
+                        </div>
+                        <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
+                    </div>
+
+                    <div id="divSiteInfoAttachment" class="tab-pane y-scroll">
+                        @Html.Partial("_ViewSiteInfoAttachment", Model.SiteInformation.lstSiteInfoAttachment)
+                    </div>
+                </fieldset>
+
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_STR_NET_FRM_038</legend>
+
+                    <div class="form-group">
+
+                        <div class="col-sm-4 icon-Download cptr" onclick="si.SiteInfo.ExportCustomer(@Model.SiteInformation.system_id,'@Model.SiteInformation.lmc_type');" id="exportCustomer" title="@Resources.Resources.SI_OSP_STR_NET_FRM_039" style="float:right; text-align:right;width: auto; display:@(Model.SiteInformation.lstData.Count > 0 ? "block;" : "none")">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</div>
+                        <div value="AddCustomer" style="width: auto; float: right;text-align:@(Model.SiteInformation.lstData.Count == 0 ? "Center;" : "right;"); display:@(((Model.SiteInformation.lstData.Count > 0) && (Model.SiteInformation.site_type == "Shared")) || ((Model.SiteInformation.lstData.Count == 0)) ? "block;" : "none;");margin-right: 10px;cursor: pointer;" title="@Resources.Resources.SI_OSP_STR_NET_FRM_040" onclick="si.SiteCustomerInfo.addcustomer(0,'@Model.SiteInformation.system_id','@Model.SiteInformation.parent_entity_type','@Model.SiteInformation.lmc_type','@Model.SiteInformation.parent_system_id')" id="addSiteCustomer"><i class="glyphicon glyphicon-plus"></i>@Resources.Resources.SI_OSP_GBL_NET_FRM_056</div>
+
+                    </div>
+
+
+                    <div style="max-height: 400px;padding-top: 10px;padding:5px;" id="dvSiteCustomerlist">
+                        @Html.Partial("_listSiteCustomer", Model.SiteInformation)
+                    </div>
+                </fieldset>
+            }
+        </div>
+    </div>
+    <div class="d-flex ModalFooter" id="dvSiteInfoFooter">
+        <div class="ml-auto">
+            @if (Model.SiteInformation.system_id == 0)
+            {
+                <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancelSiteInfo">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                <button type="button" class="btn btn-primary ml-01" name="actionTab" id="btnSiteInfo" value="SiteInfoTab" onclick="updateSiteInfo();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+
+            }
+
+            else if (Model.SiteInformation.system_id != 0)
+            {
+                <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancelSiteInfo">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                <button type="button" class="btn btn-primary ml-01" name="actionTab" id="btnSiteInfo" value="SiteInfoTab" onclick="updateSiteInfo();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+
+            }
+
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '100%' });
+        callFormValidator("frmStructureEntity");
+        si.SiteInfo.setDateTimeCalendar('txtAcqDate', 'img_acq_date', '', true);
+
+        if ('@Model.SiteInformation.lmc_type' == '') {
+
+            $('#ddlLMCType').val('FTTH').trigger('chosen:updated');
+        }
+        showHideSiteAttribute($('#ddlLMCType').val().replace(/\s+/g, ''));
+
+
+
+    });
+
+    $('#ddlLMCType').on('change', function () {
+         
+        var ddlValue = $(this).val().replace(/\s+/g, '');
+        $('div[data-' + ddlValue + '="true"]  .form-control').removeClass('input-validation-error').addClass('valid');
+        $('div[data-' + ddlValue + '="true"] .chosen-container').removeClass('input-validation-error').addClass('valid');
+
+        clearformvalue();
+
+        showHideSiteAttribute(ddlValue);
+
+    });
+
+    $('#ddlSiteType').on('change', function () {
+         
+        var ddlValue = $(this).val().replace(/\s+/g, '');
+        showHideAddCustomerIcon();
+
+        //if (ddlValue == "Exclusive" && $('#dvSiteCustomerGrid' + ' tbody tr').length == 0) {
+        //    $('#addSiteCustomer').show();
+        //    $('#addSiteCustomer').css('text-align', 'center');
+        //}
+        //else if (ddlValue == "Shared") {
+        //    $('#addSiteCustomer').show();
+        //    $('#addSiteCustomer').css('text-align', 'right');
+        //}
+        //else {
+        //    $('#addSiteCustomer').hide();
+        //}
+    });
+
+    $('#txtStructureHeight,#txtBuildingHeight').on('input', function () {
+        this.value = this.value.match(/^\d+\.?\d{0,2}/);
+    });
+
+    function showHideSiteAttribute(_lmcType)
+    {
+        if (_lmcType != null && _lmcType != undefined) {
+
+            $('div[data-' + _lmcType + '="true"]').show();
+            $('div[data-' + _lmcType + '="false"]').hide();
+
+            // Form validation based on LMC TYPE
+            $('div[data-' + _lmcType + '="false"] .form-control').attr('data-val', false);
+            $('div[data-' + _lmcType + '="true"] .form-control').attr('data-val', true);
+        }
+
+    }
+
+
+
+    function updateSiteInfo() {
+         
+        var ddlValue = $('#ddlLMCType').val().replace(/\s+/g, '');
+        if (ddlValue =='') {
+            $('#ddlLMCType').next().addClass('input-validation-error');
+            return false;
+        }
+
+        $('#dvSiteInfo div[data-' + ddlValue + '="true"]  .form-control[data-val="true"]').removeClass('input-validation-error').addClass('valid');
+        $.each($('#dvSiteInfo div[data-' + ddlValue + '="true"] .form-control[data-val="true"]'), function (index, item) {
+            if ($(this).val().trim() == '' || $(this).val().trim() == null) {
+                if ($(this).hasClass("chosen-select")) {
+                    $(this).next().addClass('input-validation-error');
+                } else {
+                    $(this).addClass('input-validation-error');
+                }
+
+            }
+        });
+
+        $('#hdnStructureTab').val('SiteInfoTab');
+        if ($('div[data-' + ddlValue + '="true"] .form-control[data-val="true"]').filter(function () {
+            return $(this).val().trim() == '' || $(this).val().trim() == null;
+        }).length==0)
+        {
+            $('#frmStructureEntity').submit();
+        }
+
+
+    }
+
+    //function ddlRemoveValidation(selectorId) {
+    //     
+    //    var selectedValue = $("#" + selectorId + "_chosen");
+    //    if (selectedValue.children('a').text().trim() != "--Select--") {
+    //        emID.removeClass('input-validation-error').addClass('valid');
+    //    }
+    //    else {
+    //        emID.addClass('input-validation-error');
+    //    }
+    //}
+
+    function clearformvalue() {
+        $("#ddlSiteType").val('').trigger('chosen:updated');
+        $("#ddlSiteCircle").val('').trigger('chosen:updated')
+        $("#txtUID").val('').trigger('chosen:updated')
+        $("#txtSiteName").val('').trigger('chosen:updated')
+        $("#txtAcqVendor").val('').trigger('chosen:updated')
+        $("#ddlStructureType").val('').trigger('chosen:updated')
+        $("#ddlStructureSize").val('').trigger('chosen:updated')
+        $("#txtAcqDate").val('').trigger('chosen:updated')
+        $("#txtBuildingHeight").val('').trigger('chosen:updated')
+        $("#txtStructureHeight").val('').trigger('chosen:updated')
+        $("#txtSiteArea").val('').trigger('chosen:updated')
+        $("#txtHomePass").val('0').trigger('chosen:updated')
+    }
+</script>

@@ -1,0 +1,149 @@
+﻿@model Models.LogicalViewVM
+@helper LogicalDiagram()
+{
+{ Html.RenderPartial("~/Views/Splicing/_EntityLogicalViewDiagram.cshtml", Model); }
+
+}
+<script src="~/Content/js/jspdf.min.js"></script>
+<script src="~/Content/js/canvg.min.js"></script>
+<script src="~/Content/js/html2canvas.js"></script>
+<script src="~/Content/js/Splice/Js-Plumb-1.4.1.min.js"></script>
+<link href="~/Content/css/logicalView.css" rel="stylesheet" />
+
+<!DOCTYPE html>
+<div class="mainContainer">
+    <div class="libDetail">
+        <div class="libTabs">
+            <ul class="nav nav-tabs tabs-left">
+                <li class="@(Model.lstUserModule.Contains("ENT-LGV-GV")?"":"roledisabled") active" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_001 @(Model.lstUserModule.Contains("ENT-LGV-GV")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-LGV-GV") ? "" : "block;")"><a id="ligrd" href="@(Model.lstUserModule.Contains("ENT-LGV-GV")?"#divGridView":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_RPT_001</a></li>
+                <li class="@(Model.lstUserModule.Contains("ENT-LGV-LG")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_002 @(Model.lstUserModule.Contains("ENT-LGV-LG")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-LGV-LG") ? "" : "block;")"><a id="liLgcl" href="@(Model.lstUserModule.Contains("ENT-LGV-LG")?"#divLogicalView":"")" onclick="ShowLogicalDiagram();" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_RPT_002</a></li>
+            </ul>
+        </div>
+        @if (Model.lstport.Count > 0)
+        {
+            <div class="libTabContent logicalTabContent">
+                <div class="tab-content">
+                    <div class="@(Model.lstUserModule.Contains("ENT-LGV-GV")?"portsGridView tab-pane active":"tab-pane active dvDisabled")" id="divGridView" style="max-height: 400px; overflow-y: auto; padding: 10px;">
+                        <table id="tblEntityLogicalView" class="grid" cellpadding="0" cellspacing="0" style="text-align: center;">
+                            <thead style="background: #00ba8a">
+                                <tr>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_ONT_NET_RPT_001
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_GBL_NET_FRM_029
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_ONT_NET_RPT_002
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_ONT_NET_RPT_003
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_ONT_NET_RPT_004
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_ONT_NET_FRM_006
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            @foreach (var childItem in Model.lstport.GroupBy(m => m.source_display_name).Select((value, i) => new { i, value }).ToList())
+                            {
+                                <div style="float:right;display:@(childItem.i == 0 ? "block;" : "none;")"><img id="imgExport" src="~/Content/images/excel.gif" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_061" alt="Export" onclick="ExportLogicalViewData();"></div>
+                                <tbody>
+
+                                    <tr>
+                                        <td colspan="7">
+                                            <div class="logicalGridHeader">
+                                                <div style="float:left;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_001:</b> @Model.lstport.Where(m => m.source_display_name == childItem.value.Key).FirstOrDefault().source_display_name</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    @foreach (var item in Model.lstport.Where(m => m.source_display_name == childItem.value.Key).ToList())
+                                    {
+                                        <tr>
+                                            <td>
+                                                @item.source_port_io_text
+                                            </td>
+                                            <td >
+                                                @item.connected_port_status
+                                            </td>
+                                            <td >
+                                                @item.connected_entitytype_text
+                                            </td>
+                                            <td>
+                                                @item.connected_label
+                                            </td>
+                                            <td>
+                                                @item.connected_port_text
+                                            </td>
+                                            <td>
+                                                @item.connected_on
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                                @*<div class="table-responsive tble_cls">
+                                    @{
+
+                                        WebGrid grid = new WebGrid(canSort: false, rowsPerPage: Model.lstport.Count);
+                                        grid.Bind(Model.lstport.Where(m => m.source_network_id == childItem.value.Key).ToList(), autoSortAndPage: false, rowCount: Model.lstport.Count);
+
+
+                                        @grid.GetHtml(tableStyle: "webgrid", headerStyle: "webGridHeader", alternatingRowStyle: "alt", htmlAttributes: new { id = "tblPortsView" }, mode: WebGridPagerModes.All,
+                                                                                                                columns: grid.Columns(
+
+                                                          grid.Column("source_port_io_text", Resources.Resources.SI_OSP_ONT_NET_RPT_001, format: @<text>@(item.source_port_io_text)</text>),
+                                    grid.Column("connected_port_status", Resources.Resources.SI_OSP_GBL_NET_FRM_029, format: @<text>@(item.connected_port_status)</text>),
+                                    grid.Column("connected_entitytype_text", Resources.Resources.SI_OSP_ONT_NET_RPT_002, format: @<text>@item.connected_entitytype_text</text>),
+                                    grid.Column("connected_label", Resources.Resources.SI_OSP_ONT_NET_RPT_003, format: @<text>@(item.connected_label)</text>),
+                                    grid.Column("connected_port_text", Resources.Resources.SI_OSP_ONT_NET_RPT_004, format: @<text>@item.connected_port_text</text>),
+                                    grid.Column("connected_on", Resources.Resources.SI_OSP_ONT_NET_FRM_006, format: @<text>@item.connected_on</text>)
+                                    ))
+                                    }
+
+                                </div>*@
+                            }
+                        </table>
+                    </div>
+                    <div class="tab-pane" id="divLogicalView">
+                        @LogicalDiagram()
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="nr-found">
+                <span>No Data Found.</span>
+            </div>
+        }
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        GridColor();
+    });
+    function ExportLogicalViewData() {
+        window.location = appRoot + 'Splicing/ExportLogicalViewReport?systemId=' + '@Model.system_id' + '&entityType=' + '@Model.entity_type';
+    }
+    function GridColor() {
+        $("#tblPortsView tbody tr").each(function (e) {
+            var portstatus = $($(this).children('td')[1]).text();
+            if (portstatus == "Connected") {
+                $(this).css('background-color', '#c3f1b8');
+            }
+            else if (portstatus == "Vacant") {
+                $(this).css('background-color', 'white');
+            }
+        });
+    }
+    function ShowLogicalDiagram() {
+        setTimeout(function () {
+            jsPlumb.repaintEverything();
+        }, 100);
+    }
+</script>

@@ -1,0 +1,127 @@
+﻿@model Models.RoleViewModel
+@using Utility;
+@using SmartInventory.Settings;
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div id="dvViewRoles">
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewRoles", ajaxUpdateCallback: "onGridHeaderClick('gridRoleMaster')");
+        grid.Bind(Model.lstRoleMaster, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+        if (Model.objGridAttributes.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+        }
+        //Model.objGridAttributes.searchText = ViewBag.searchText;
+        //ViewData["searchText"] = Model.objGridAttributes.searchText;
+    }
+
+
+    <div id="dvUserDetail" class="update_panel fullWidth">
+
+        <div id="" class="title">
+            <h4>
+                View Roles
+            </h4>
+        </div>
+        @using (Html.BeginForm("ViewRoles", "Roles", FormMethod.Post, new { autocomplete = "off", @id = "frmViewUsers" }))
+        {<div class="pad_left">
+                <div class="form-inline filter-sec">
+                    <div class="form-group wtd_set" style="width: 24%;">
+                        <label class="control-label col-sm-4">Search By : </label>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select form-control" })
+                        </div>
+
+                    </div>
+                    <div class="form-group wtd_set" style="width: 24%;">
+                        <label class="control-label col-sm-4">
+                            Search Text:
+                        </label>
+                        <div class="col-md-8">
+                            @*@Html.TextBox("searchText", (object)ViewBag.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })*@
+                            @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+
+                        </div>
+                    </div>
+
+                    <div class="form-group wtd_set" id="dvBtnAction">
+                        <div class="col-md-8">
+                            <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" type="submit">Search</button>
+                            <a href="@Url.Action("ViewRoles")" class="btn btn-default" title="Reset">Reset</a>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.lstRoleMaster.Count > 0)
+                {
+                    <div class="recordCount mb-01"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+                    <div class="table-responsive tble_cls">
+                        @grid.GetHtml(tableStyle: "grid",
+                         htmlAttributes: new { id = "gridRoleMaster" },
+                         mode: WebGridPagerModes.All,
+                         columns: grid.Columns(
+                               grid.Column("", "Action", format:@<text>
+                                        <a href="AddRole/@item.role_id" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                        <a href="javascript:void(0);" onclick="fnDeleteRecord(@item.role_id);" title="Delete"> <i class="fa fa-fw fa-trash" style="font-size: 13px; color: #f50000;"></i></a>
+                                        <a href="javascript:void(0);" onclick="fnReportingRoleManagerListByRoleId(@item.role_id);" title="View Reporting Role Name"> <i class="fa fa-eye" style="font-size: 13px;"></i></a>
+                            </text>
+, canSort: false),
+grid.Column(header: "S.No.", format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex),
+grid.Column("role_name", "Role Name", format: @<text>@item.role_name</text>, canSort: true),
+grid.Column("remarks", "Role Description", format: @<text>@item.remarks</text>, canSort: true),
+@*grid.Column("reporting_role_name", "Reporting Role Name", format: @<text>@item.reporting_role_name</text>, canSort: true),*@
+grid.Column("is_active", "Status", format: @<text>@(item.is_active == true ? "Active" : "InActive")</text>, canSort: true),
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>, canSort: true),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>, canSort: true),
+grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>, canSort: true),
+grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>, canSort: true)
+))
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+                    </div>
+
+                }
+                else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Role Found.
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <script>
+        $(document).ready(function () {
+            updateNumberstoFormatedNumber();
+            addDefaultSortingIcons("gridRoleMaster");
+        });
+        function fnDeleteRecord(id) {
+            confirm("Are you sure,do you want to delete this role?", function () {
+                ajaxReq('Roles/deleteRole', { id: id }, false, function (resp) {
+                    if (resp.status) {
+                        alert(resp.message);
+                        setTimeout(function () { location.reload(); }, 400);
+                    }
+                    else
+                        alert(resp.message);
+                }, true, true);
+            });
+        }
+
+        function updateNumberstoFormatedNumber() {
+            $('span[data]').each(function (index) {
+                // Get the value of the data-target attribute for each element
+                var targetValue = $(this).data('data');
+
+                // Do whatever you want with the element or its data
+                $(this).text(getFormattedNumber($(this).text().trim()));
+            });
+        }
+    </script>
+</div>
+
+
+
+
+
+

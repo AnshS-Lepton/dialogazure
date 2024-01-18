@@ -1,0 +1,92 @@
+﻿@model  List<Models.LandBaseDetail>
+@using Models;
+@using SmartInventory.Settings;
+
+<!DOCTYPE html>
+<div id="dvInfoElement">
+    @if (Model != null && Model.Count > 0)
+    {
+    <div class="infBox--style">
+        <b>@Resources.Resources.SI_OSP_GBL_NET_FRM_249</b>
+
+
+        <div class="mt-1rem mb-15">
+            <label class="Custom_Radio_Buttons"><input type="radio" name="Layer" onclick="si.filterLandbaseInfoElements('All')" checked id="rdbAllLayer"> <span class="checkmark"> <span style="width: 230px; float: left; margin-left: 20px; font-size: 12px;">@Resources.Resources.SI_OSP_GBL_GBL_GBL_037</span></span></label>
+            <label class="Custom_Radio_Buttons"><input type="radio" name="Layer" onclick="si.filterLandbaseInfoElements('DisplayLayer')" id="rdbDisplayedLayer"> <span class="checkmark"> <span style="width: 230px; float: left; margin-left: 20px; font-size: 12px;">@Resources.Resources.SI_OSP_GBL_NET_FRM_250</span></span></label>
+        </div>
+        <div class="d-flex">
+            <input class="form-control" type="text" placeholder="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046" onkeyup="si.srchelement()" id="txtInfoSrch" />
+        </div>
+
+    </div>
+    <div class="InfoElements wp-table" id="divDefault">
+        <div class="scrollTable">
+            <table id="infoTable" border="0" cellspacing="0" cellpadding="5" class="ElementsList grid cur-poiner">
+                <tbody>
+                    @foreach (var objEntity in Model)
+                        {
+                    <tr class="cptr" id="@objEntity.layer_name" onmouseout="si.removeInfoHoverItem()"
+                        onmouseover="si._focusMe('@objEntity.geom_type',si.getLatLongArr('@objEntity.geom'),'@objEntity.layer_name',si.getLatLongArr('@objEntity.centroid_geom'))"
+                        onclick="si.showLandbaseElementInfo('@objEntity.att_id', '@objEntity.layer_name', '@objEntity.geom_type','@objEntity.network_id','@objEntity.status','@objEntity.is_center_line_enable.ToString()','@objEntity.landbase_layer_id')">
+                        <td><span title="@objEntity.layer_name">@Utility.MiscHelper.TextWithLimit(objEntity.layer_name, 20)</span></td>
+                        
+                        <td>@objEntity.network_id</td>
+                        <td><span title="@objEntity.name">@Utility.MiscHelper.TextWithLimit(objEntity.name, 20)</span></td>
+
+                    </tr>
+                        }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    }
+    else
+    {
+    <div class="nr-found infoLeft">
+        <span>@Resources.Resources.SI_OSP_GBL_GBL_GBL_051</span>
+    </div>
+    }
+</div>
+
+<div class="infoLeft">
+    <div class="tool_bar toolBar--loader infBox--style" id="infoTB" att_systemid="0" att_entitytype="0" att_featurename="Landbase">
+        @Html.Partial("_LandbaseInformationToolbar")
+    </div>
+
+    <div class="carousel_border" style="display:none;">
+    </div>
+   
+        <div class="libDetail">
+            <div class="libInfoTabs">
+                <ul class="nav nav-tabs tabs-left">
+                    <li class="active"><a href="#Details" data-toggle="tab">@Resources.Resources.SF_GBL_GBL_NET_FRM_051</a></li>
+                    <li onclick="si.getElementImages()"><a href="#Image" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_285</a></li>
+                    <li onclick="si.getAttachmentFiles()"><a href="#Attachment" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_286</a></li>
+                </ul>
+            </div>
+            <div class="wp-table">
+                <!-- Tab panes -->
+                <div class="scrollTable">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="Details">
+
+                            <div id="entityInfo" class="tabcontent">
+                                <table id="tblEntityInfo" border="0" cellspacing="0" cellpadding="5" class="grid wsp-normal"></table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="Image">
+                            <div id="dvImages">
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="Attachment">
+                            <div id="dvDocument" class="showloader">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+
+

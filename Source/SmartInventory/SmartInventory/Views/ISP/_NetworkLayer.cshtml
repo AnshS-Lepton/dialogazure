@@ -1,0 +1,81 @@
+﻿@model List<Models.ISPNetworkLayerElement>
+@using SmartInventory.Settings
+<!DOCTYPE html>
+<div class="leftPanel clsNetworkLayer">
+    <div class="leftPanelHeader">@Resources.Resources.SI_ISP_GBL_NET_FRM_021</div>
+    <div class="panel-body" style="height: auto;">
+        <div class="tab-content">
+            <div class="form-group">
+                <div class="icon-SEARCH searchIcon"></div>
+                <div><input type="text" class="form-control searchBox" placeholder="@Resources.Resources.SI_ISP_GBL_NET_FRM_020" id="txtSearchNetworkEntity" /></div>
+            </div>
+            @if (Model.Any())
+            {
+                <input type="hidden" id="hdn_ClientLogoImageBytesForWeb" value="@ApplicationSettings.ClientLogoImageBytesForWeb" />
+                <div class="form-group d-flex clsNetworkLyrActions">
+                    <div class="" id="divShowAll">
+                        <input id="chkSelectAll" type="checkbox" class="checkbox-custom layerShowAll" checked="checked">
+                        <b><label for="chkSelectAll" class="checkbox-custom-label"><span>@Resources.Resources.SI_ISP_GBL_NET_FRM_022</span></label></b>
+                    </div>
+                    <div class="ml-auto">
+                        <a href="#" class="control-label ispExport icon-print_map" title="@Resources.Resources.SI_ISP_GBL_JQ_FRM_001" onclick="ExportDivToPDF('divforstructureprint', 'Structure View', document.getElementById('dvstructurenetworkid').innerText, false);"></a>
+                    </div>
+                    @*<div class="col-md-1 padd_over">
+                        <a href="#" class="control-label ispExport icon-BOM-BOQ-Report" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_023"
+                           id="NetworkLyrExportBOM" data-structure-id="@(Model[0].structure_id > 0 ? Model[0].structure_id : 0)"></a>
+                        </div>*@
+                    <div class="ml-01">
+                        <a href="#" class="control-label ispShort icon-sort-2" title="@Resources.Resources.SI_ISP_GBL_JQ_FRM_002"></a>
+                    </div>
+                </div>
+                <div class="form-group networkCheight">
+                    <ul class="mainlyr layerWborder">
+                        @foreach (var item in Model)
+                        {
+                            <li id="liNetworkLyrEntity" data-entity-title="@item.entity_title.ToUpper()" data-entity-type="@item.entity_name">
+                                <div>
+                                    <div class="col-md-9">
+                                        <input id="chk_nLyr_@item.entity_title" type="checkbox" data-entity-title="@item.entity_title.ToUpper()" data-entity-type="@item.entity_name" data-parent-entity-type="" class="checkbox-custom filterEntity" checked="checked">
+                                        <b><label for="chk_nLyr_@item.entity_title" class="checkbox-custom-label"><i class="icon-@item.entity_name.ToUpper()"></i><span>@item.entity_title</span></label></b>
+                                    </div>
+                                    <div class="col-md-3 col-pull-right">
+                                        <span class="networkLayer-entity-count">@item.entity_count</span>
+                                    </div>
+                                    @*<div class="col-md-2 expendCollapse icon-expand" title="Expand/Collapse Records"></div>*@
+                                </div>
+                                @if (item.listChildElement.Count > 0)
+                                {
+                                    <ul class="childLyr" id="ulEntityDetail" style="display: block;">
+                                        @foreach (var childLayer in item.listChildElement)
+                                        {
+                                            <li>
+                                                <div>
+                                                    <div class="col-md-8 col-sm-push-1">
+                                                        <input id="chk_nLyr_@item.entity_title@childLayer.entity_title" type="checkbox" data-entity-title="@childLayer.entity_title.ToUpper()" data-entity-type="@childLayer.entity_name" data-parent-entity-type="@item.entity_name" class="checkbox-custom filterEntity" checked="checked">
+                                                        <b><label for="chk_nLyr_@item.entity_title@childLayer.entity_title" class="checkbox-custom-label icon-@childLayer.entity_name"><i class="icon-@childLayer.entity_name.ToUpper()"></i><span>@childLayer.entity_title</span></label></b>
+                                                    </div>
+                                                    <div class="col-md-3 col-sm-push-1 col-pull-right">
+                                                        <span class="networkLayer-entity-count">@childLayer.entity_count</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                                <div class="clearfix"></div>
+                            </li>
+                        }
+                    </ul>
+                    <div id="divLyrNoRecordFound" class="nr-found">
+                        <span>@Resources.Resources.SI_ISP_GBL_GBL_GBL_001</span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.clsNetworkLayer [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+    });
+</script>

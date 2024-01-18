@@ -1,0 +1,515 @@
+﻿
+.LandBaseIconBaricomoon {
+    background: transparent !important;
+    border-radius: 5px;
+    padding: 3px;
+    color: var(--text-color-light);
+    font-size: 16px;
+    float: right;
+    cursor: pointer;
+}
+
+.LandBaseIconBaricomoonfooter {
+    background: transparent !important;
+    border-radius: 5px;
+    padding: 0px;
+    color: #000;
+    font-size: 18px;
+    float: left;
+    height: 26px;
+    width: 26px;
+    cursor: pointer;
+    padding: 2px;
+}
+
+    .LandBaseIconBaricomoonfooter:hover {
+        border: 1px #027f3e solid;
+        width: 26px;
+        height: auto;
+        padding: 2px;
+        color: #027f3e;
+    }
+
+.activeToolBar {
+    background: var(--secondary-color) !important;
+    color:var(--white-color) !important;
+}
+
+.activeToolBar:hover {
+     background: var(--secondary-color) !important;
+    color: var(--white-color) !important;
+}
+
+/*.iconBar {
+    float: right;*/
+    /* position: absolute; */
+    /*right: 15px;
+    width: calc(100% - 300px);
+}*/
+.icon-plus-Icon{
+    font-size:16px;
+}
+.iconBar div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 26px;
+    width: 26px;
+    cursor: pointer;
+    background: url(../images/split_img.png) no-repeat;
+}
+
+.iconBar div:hover {
+    border: 1px solid var(--secondary-color);
+    width: 26px;
+    height: 26px;
+    padding: 2px;
+    color: var(--secondary-color);
+}
+
+.LandBaseToolbar .techSep {
+    background-position: -43px -2px;
+    width: 10px;
+    cursor: default;
+}
+
+    .LandBaseToolbar .techSep:hover {
+        width: 10px;
+        height: 25px;
+        border: none;
+    }
+
+
+
+.LandBaseToolbar div {
+    float: left;
+    height: 26px;
+    width: 26px;
+    cursor: pointer;
+    background: url(../images/split_img.png) no-repeat;
+    margin-right: 0px;
+}
+
+
+    .LandBaseToolbar div:hover {
+        border: 1px solid var(--primary-dark);
+        width: 26px;
+        height: 26px;
+        padding: 2px;
+        color: var(--primary-dark);
+    }
+
+.LandBaseToolbar {
+  display: none;
+    height: 33px !important;
+    right: 0px !important;  /*for all three geom*/
+    /*right: 7px !important;*/
+    /*width: 135px;for all three geom*/
+    /*width:90px;*/
+    z-index: 14;
+    top: 37px;
+    padding: 3px 5px;
+    position: absolute;
+    /* width: 200px; */
+    color: #5e646d;
+    text-shadow: none;
+    border: none;
+    box-shadow: 0px 1px 4px #a9a9a9;
+    border-radius: 0 0 4px 4px;
+    background: #f1f2f4;
+    background: -moz-linear-gradient(top, #f1f2f4 0%, #d9dcdf 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f1f2f4), color-stop(100%,#d9dcdf));
+    background: -webkit-linear-gradient(top, #f1f2f4 0%,#d9dcdf 100%);
+    background: -o-linear-gradient(top, #f1f2f4 0%,#d9dcdf 100%);
+    background: -ms-linear-gradient(top, #f1f2f4 0%,#d9dcdf 100%);
+    background: linear-gradient(top, #f1f2f4 0%,#d9dcdf 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f1f2f4', endColorstr='#d9dcdf',GradientType=0 );
+
+}
+
+
+.spacer {
+    width: 1px;
+    height: 18px;
+    border-right: 1px solid #69a2c3;
+    border-radius: 12px;
+    float: right;
+    margin: 3px 5px 0px 5px;
+}
+#dvLandBaseLine {
+    position: absolute;
+    background: white;
+    z-index: 1000;
+    top: 141px;
+    left: 707px;
+    width: 346px;
+    display: none;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 7px 12px rgb(0 0 0 / 20%);
+    border: 1px solid var(--primary-border-color);
+}
+#closeLandBaseLineTemplate {
+    float: right;
+    font-size: 15px;
+    cursor: pointer;
+}
+/*.libDetail .libTabContent {
+    width: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: 0px;
+    padding: 10px; 
+    
+}*/
+.libDetail .Tab { 
+    padding: 10px; 
+    height: 96px;
+}
+/*.info_header_bg {
+    border-bottom: 1px #1b9461 solid;
+    color: #333;
+    border-radius: 4px 4px 0px 0px;
+    padding: 5px 1px 5px 10px;
+    background: #00ba8a;
+    font-weight: bold;
+    cursor: move;
+}
+
+    .info_header_bg label {
+        font-size: 15px;
+        color: #fff;
+    }*/
+    .LineTemplate_modal-header {
+    padding: 4px;
+    border-bottom: 1px solid var(--primary-border-color);
+    background: var(--secondary-color);
+    cursor: move;
+    border-radius: 5px 5px 0px 0px;
+}
+
+    /*.checkbox-LBcustom2 + b .disabledCheckbox:before {
+        background: #ccc !important;
+        color: #ccc !important;
+        cursor: no-drop;
+    }
+
+    .checkbox-LBcustom2 + b .viewDisabledCheckbox:before {
+        /*background: #1eb975 !important;
+        color: #1eb975 !important;
+        opacity: 0.4;
+        cursor: not-allowed;
+    }*/
+
+    /*UPLOADER CSS*/
+    .LBdataUploader .FWdata {
+    width: 700px;
+    height: auto;
+    position: absolute;
+    box-shadow: 2px 2px 10px #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    top: 30px;
+    left: 25%;
+}
+
+    .LBdataUploader .FWdata .headFW {
+        background-color: #00b381;
+        width: auto;
+        padding: 6px 10px;
+        color: #fff;
+       /* font-family: sans-serif;*/
+        border-radius: 5px 5px 0px 0px;
+    }
+
+.LBdataUploader.container {
+    width: auto;
+    margin: 10px 0px;
+    /*font-family: Tahoma, Geneva, sans-serif;*/
+}
+
+.LBdataUploader .tab-content {
+    border: 1px solid #ddd;
+    padding: 10px;
+    padding-top: 5px;
+}
+
+.LBdataUploader .uploadfiles {
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    padding-top: 15px;
+    padding-bottom: 6px;
+}
+
+.LBdataUploader .badge {
+    background-color: #fff;
+    color: #ccc;
+    border: 1px solid #ccc;
+    padding: 3px 5px;
+}
+
+.LBdataUploader .badgeActive {
+    background-color: #08a44e;
+    color: #fff;
+    border: 1px solid #00b381;
+}
+
+.LBdataUploader .badgeLine {
+    width: 80px;
+    height: auto;
+    border: 1px solid #ccc;
+    display: inline-block;
+    margin: 3px 6px;
+}
+
+.LBdataUploader .choosecont {
+    width: auto;
+    margin: 10px 5px;
+    /*background-color: #f0f0f0;*/
+    height: 400px;
+    padding: 20px 10px;
+    font-size: 12px;
+    overflow-y: auto;
+    min-height: 400px;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+    /* max-height:400px;*/
+}
+
+
+
+/*.LBdataUploader #Uploadlogs {
+    overflow: auto;
+    height: 390px;
+    font-size: 12px;
+}
+
+
+    .LBdataUploader #Uploadlogs table {
+        font-size: 12px;
+        width: 1150px;
+        white-space: nowrap;
+    }
+
+        .LBdataUploader #Uploadlogs table thead tr {
+            background-color: #01a84b;
+            color: #fff;
+        }
+
+            .LBdataUploader #Uploadlogs table thead tr th, .dataUploader #Uploadlogs table tbody tr td {
+                padding: 4px 8px;
+            }*/
+
+.LBdataUploader .form-control {
+    height: 34px;
+}
+
+.LBdataUploader #btnDownloadLandBaseTemplate, .LBdataUploader #btnPrevious1, .LBdataUploader #btnPrevious2 {
+    color: #665d5d;
+    background-color: #e3dcd8;
+    border-color: #cdc6c2;
+}
+
+
+.LBdataUploader .red {
+    color: red;
+    margin-top: 5px;
+}
+
+.LBdataUploader .green {
+    color: green;
+}
+
+.LBdataUploader .blue {
+    color: #01a3c6;
+}
+
+.LBdataUploader .black {
+    color: #000;
+}
+
+.LBdataUploader .statusContainer {
+    background-color: #fff;
+    position: relative;
+    width: 75%;
+    height: 180px;
+    top: 0px;
+    left: 0px;
+    color: #00c6e6;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px #ccc;
+    margin: 15px 10px 10px 60px;
+}
+
+    .LBdataUploader .statusContainer i {
+        width: 100%;
+        float: left;
+        margin: 15% 0 2% 0;
+    }
+
+.LBdataUploader #dvSearchContainer {
+    padding-bottom: 15px;
+    padding-top: 10px;
+}
+
+.LBdataUploader #selentityFilter {
+    width: 100px;
+}
+
+.LBdataUploader #updKML, .LBdataUploader #updExcel,.LBdataUploader #updSHP {
+    border: 1px solid gray;
+    width: 303px;
+    margin: 2px;
+    padding-right: 18px;
+}
+
+.LBdataUploader .cancel {
+    margin-top: -22px;
+    margin-left: 285px;
+}
+
+.LBdataUploader #clearKMLFile, .LBdataUploader #clearExcelFile {
+    border: 0;
+    color: red;
+    background: none;
+}
+
+.LBdataUploader .uploadInput {
+    height: 24px;
+    padding: 6px 6px;
+    width: 125px !important;
+    margin-left: 10px;
+}
+
+.LBdataUploader .uploadLogsCount {
+    position: relative;
+    display: inline-block;
+    margin-left: 300px;
+}
+
+.LBdataUploader input[type="file"] {
+    display: block;
+    box-shadow: inset 0 0 1px grey;
+    background: white;
+}
+
+.LBdataUploader .CustomSuccess {
+    color: #449d44;
+    background-color: white;
+    border-radius: 4px 0px 0px 4px;
+    border-color: #949292;
+    outline: none;
+    padding: 2px 8px;
+    border-right-width: 0px;
+    font-size: 12px;
+}
+
+.LBdataUploader .CustomSuccessDisabled {
+    color: gray;
+    background-color: white;
+    border-radius: 4px 0px 0px 4px;
+    border-color: #949292;
+    outline: none;
+    padding: 2px 8px;
+    border-right-width: 0px;
+    font-size: 12px;
+    cursor: not-allowed !important;
+}
+
+    .LBdataUploader .CustomSuccessDisabled:hover, .LBdataUploader .CustomSuccessDisabled:focus, .LBdataUploader .CustomSuccessDisabled:active {
+        color: gray;
+        background-color: white !important;
+    }
+
+.LBdataUploader .CustomError {
+    color: red;
+    background-color: white;
+    border-radius: 0px 4px 4px 0px;
+    border-color: #949292;
+    outline: none;
+    padding: 2px 12px;
+    margin-left: -4px;
+    font-size: 12px;
+}
+
+.LBdataUploader .CustomErrorDisabled {
+    color: gray;
+    background-color: white;
+    border-radius: 0px 4px 4px 0px;
+    border-color: #949292;
+    outline: none;
+    padding: 2px 12px;
+    margin-left: -4px;
+    font-size: 12px;
+    cursor: not-allowed !important;
+}
+
+    .LBdataUploader .CustomErrorDisabled:hover, .LBdataUploader .CustomErrorDisabled:focus, .LBdataUploader .CustomErrorDisabled:active {
+        color: gray;
+        background-color: white !important;
+    }
+
+.LBdataUploader #dvUploadLogsContainer {
+    height: 440px;
+    background-image: url('../images/loading_new.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.LBdataUploader .UploadLogProgress {
+    display: none;
+    width: 95%;
+    height: 88%;
+    position: absolute;
+    margin-top: 0px;
+    z-index: 5;
+    opacity: 0.6;
+    margin-left: 0px;
+    background-color: white;
+    background-image: url(../images/loading_new.gif);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.LBdataUploader #dvUploadSummary {
+    background-color: white;
+}
+
+.LBdataUploader .imgcheck {
+    width: 30px;
+    margin-top: 10px;
+}
+
+.LBdataUploader .form-group.buttons {
+    width: 75%;
+    margin-left: 60px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.LBdataUploader .downlad-container {
+    text-align: center;
+    cursor: pointer;
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+.LBdataUploader .lblMessage-container {
+    text-align: center;
+}
+
+.LBdataUploader .steps-container {
+    width: 500px;
+    margin: auto;
+}
+
+.LBdataUploader #step1, .LBdataUploader #step2, .LBdataUploader #step3 {
+    height: 300px;
+}
+
+.LBdataUploader .uploadinfo-container {
+    text-align: center;
+}

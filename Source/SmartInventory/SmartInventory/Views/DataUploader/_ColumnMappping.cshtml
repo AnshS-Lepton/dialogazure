@@ -1,0 +1,106 @@
+﻿@model Models.ColumnMappingTemplate
+
+<!DOCTYPE html>
+<div class="form-group">
+    <div class="col-md-6">Template Column</div>
+    <div class="col-md-6">
+        @Html.DropDownListFor(m => m.id, new SelectList(Model.listTemplates.Select(x => new { Value = x.id, Text = x.template_name }), "Value", "Text"), "-Select-", new { id = "ddlColumTemplates", @class = "chosen-select form-control", @onchange = "dataUploader.getMappingTemplate();" })
+    </div>
+</div>
+@using (Ajax.BeginForm("SaveMappingTemplate", "DataUploader", new AjaxOptions
+{
+    HttpMethod = "POST",
+    LoadingElementId = "dvProgress",
+    OnSuccess = "dataUploader.successMapping"
+},
+                                                            new { id = "frmMappColumns", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.template_name, new { id = "hdnTemplateName" })
+    @Html.HiddenFor(m => m.layer_id)
+    @Html.HiddenFor(m => m.isFinalMapping, new { id = "hdnIsFinalMapping" })
+    @Html.HiddenFor(m => m.uploadId, new { id = "hdnUploadId" })
+    <div class="form-group">
+        <label class="control-label col-md-6 col-sm-6"><b>Data Fields</b></label>
+        <label class="control-label col-md-6 col-sm-6"><b>Imported File Columns</b></label>
+    </div>
+
+    for (int i = 0; i < Model.listMappedColumns.Count; i++)
+    {
+        if (Model.listMappedColumns[i].template_column_name.ToLower() != "sp_geometry")
+        {
+
+            <div class="form-group">
+                <label class="control-label col-md-6 col-sm-6 hiddenTempColumns">
+                    @Model.listMappedColumns[i].template_column_name
+                    @Html.HiddenFor(m => Model.listMappedColumns[i].template_column_name)
+                    @Html.HiddenFor(m => Model.listMappedColumns[i].template_db_column_name)
+                    @Html.HiddenFor(m => Model.listMappedColumns[i].is_mandatory)
+                    @Html.HiddenFor(m => Model.listMappedColumns[i].is_template_column_required)
+                    @if (Model.listMappedColumns[i].is_template_column_required)
+                    {<i class="clsMandatory">*</i>}
+                </label>
+                <div class="col-md-6">
+                    <select class="chosen-select form-control" name="@Html.NameFor(m => Model.listMappedColumns[i].imported_column_name)"
+                            is-Required="@(Model.listMappedColumns[i].is_template_column_required ? 1 : 0)"
+                            template-column-name="@Model.listMappedColumns[i].template_column_name"
+                            template-db-column-name="@Model.listMappedColumns[i].template_db_column_name">
+                        <option value="">-Select-</option>
+                        @foreach (var item in Model.listImportedColumns.Where(m => m != "sp_geometry"))
+                        {
+                            if (!string.IsNullOrEmpty(item))
+                            {
+                                @*if (item.ToLower() == Model.listMappedColumns[i].template_column_name.ToLower() || item.ToLower() == Model.listMappedColumns[i].imported_column_name.ToLower())
+                                    {
+                                        <option value="@item" selected="selected">@item</option>
+                                    }*@
+                                if (item.ToLower() == Model.listMappedColumns[i].template_column_name.ToLower() && item.ToLower() == Model.listMappedColumns[i].imported_column_name.ToLower())
+                                {
+                                    <option value="@item" selected="selected">@item</option>
+                                }
+                                else if (item.ToLower() == Model.listMappedColumns[i].imported_column_name.ToLower())
+                                {
+                                    <option value="@item" selected="selected">@item</option>
+                                }
+                                else
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+        }
+    }
+    <div class="form-group">
+        <div class="col-md-6 col-sm-6"></div>
+        <div class="col-md-6 col-sm-6">
+            <button type="button" class="btn btn-primary" id="btnSaveTemplate" onclick="dataUploader.setTemplateTame();">Save as template</button>
+        </div>
+    </div>
+    @*<div id="images">
+            <img src="@Url.Content("~/Content/images/loader.gif")" class="imgcheck" />
+        </div>*@
+    <div class="form-group buttons">
+        <button type="button" class="btn btn-default pull-left" id="btnPrevious2">@Resources.Resources.SI_OSP_DU_NET_FRM_023</button>
+        <button type="button" class="btn btn-success pull-right" id="btnNextStep2">Next</button>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(' .chosen-select').chosen({ width: '100%', max_selected_options: 5, search_contains: true });
+        $('#btnNextStep2').on("click", function () {
+             
+            if (dataUploader.isValidated == false)
+                dataUploader.ChangeColumnMapping();
+            else {
+                dataUploader.showHideControls(dataUploader.Actions.VALIDATING);
+                dataUploader.showHideControls(dataUploader.Actions.VALIDATED);
+            }
+        });
+        $(dataUploader.DE.btnPrevious2).on("click", function () {
+            dataUploader.showHideControls(dataUploader.Actions.PREVIOUS_2);
+        });
+    });
+</script>

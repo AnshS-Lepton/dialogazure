@@ -1,0 +1,321 @@
+﻿@model Models.AccessoriesInfoModel
+@using Models;
+@using SmartInventory.Settings;
+@{ 
+
+    var status = Model.objPM != null ? Model.objPM.status : "";
+    
+}
+@helper ItemSpecification()
+{
+{ Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model.accessories_template); }
+}
+
+@*@helper ProjectSpecifications()
+    {
+    { Html.RenderPartial("~/Views/Library/_ProjectSpecification.cshtml", (IProjectSpecification)Model); }
+    }*@
+@*@helper pageMessage()
+    {
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+
+    }*@
+@{
+    //var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.ADB.ToString().ToUpper()).FirstOrDefault() : null;
+    var editPermission =Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, Model.parent_entity_type);
+}
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SaveAccessories", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        LoadingElementId = "dvProgress",
+        UpdateTargetId = "dvChildModalBody",
+        OnBegin = "",
+        OnSuccess = "fnSuccess()"
+    },
+                                new { id = "frmAddAccessories", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.parent_network_id)
+        @Html.HiddenFor(m => m.geom)
+        @Html.HiddenFor(m => m.accessories_template.specification, new { @id = "hdn_specification" })
+        @Html.HiddenFor(m => m.accessories_template.item_code, new { @id = "hdn_item_code" })
+        @Html.HiddenFor(m => m.accessories_template.vendor_id, new { @id = "hdn_vendor_id" })
+        @Html.HiddenFor(m => m.accessories_template.subcategory1, new { @id = "hdn_subcategory1" })
+        @Html.HiddenFor(m => m.accessories_template.subcategory2, new { @id = "hdn_subcategory2" })
+        @Html.HiddenFor(m => m.accessories_template.subcategory3, new { @id = "hdn_subcategory3" })
+        @Html.HiddenFor(m => m.accessories_template.category, new { @id = "hdn_category" })
+        @Html.HiddenFor(m => m.audit_item_master_id, new { @id = "hdn_audit_item_master_id" })
+
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+       <!-- Message Pop-up -->
+        @*@pageMessage()*@
+        @*<div class="libTabs">
+            <ul class="nav nav-tabs tabs-left">
+
+                <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 </a></li>
+
+            </ul>
+        </div>*@
+        <div class="TabContent--max-over">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">Accessories Details</legend>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2"  for="selectAccessoriesType">
+                                Type<i class="clsMandatory">*</i>  :
+                            </label>
+
+                            <div class="col-sm-4">
+                                @*@Html.DropDownListFor(m => m.accessories_id, new SelectList(Model.listTypes.Select(x => new { Value = x.id, Text = x.display_name }), "Value", "Text"), "--Select--", new { @id="selectAccessoriesType",@class = "chosen-select form-control",@onchange= "onChangeSelectAccessoriesType()" })*@
+                            
+                                <select name="@Html.NameFor(x=> x.accessories_id )"
+                                        id="selectAccessoriesType"
+                                        class="chosen-select form-control"
+                                        onchange="onChangeSelectAccessoriesType();">
+                                    <option value="0">Select Accessories</option>
+                                    @foreach (var type in Model.listTypes)
+                                    {
+                                    <option value="@type.id"
+                                            @if (type.id == Model.accessories_id) { <text> selected </text> }
+                                            data-min-quantity="@type.min_quantity"
+                                            data-max-quantity="@type.max_quantity">
+                                        @type.display_name
+                                    </option>
+                                    }
+
+                                </select>
+                            </div>
+                            <label class="control-label col-sm-2" for="txtQuantity">Quantity<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.quantity, new {@id="txtQuantity", @class = "form-control", @onkeypress = "return isNumber(event)", @maxlength = "3", @onchange = "validateQuantity()" })
+                            <div id="rangeQuantity" style="display:none;" > Range (<span id="rangeMin">0</span>-<span id="rangeMax">999</span>) </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group row">
+
+                            <label class="control-label col-sm-2" for="">
+                                Remark :
+                            </label>
+
+                            <div class="col-sm-10">
+                                @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @id="txtRemark",@maxlength="200" })
+                            </div>
+
+                        </div>
+
+                    </fieldset>
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">Accessories Specification</legend>
+                        @ItemSpecification()
+                    </fieldset>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            @if (Model.system_id > 0)
+            {
+                <div class="ModelFooterInfo">
+                    <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_014:</label>
+                    <label class="model-label-info">@(Model.network_status != null ? Utility.MiscHelper.GetNetworkStatus(Model.network_status.ToUpper()) : string.Empty)</label>
+                    <label for="">@Resources.Resources.SI_OSP_GBL_GBL_GBL_007:</label>
+                    <label class="model-label-info" title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
+                </div>
+            }
+        <div class="ml-auto">
+
+            <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCancelAssignRoute">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+
+            @if (Model.system_id > 0)
+            {
+                <button type="submit" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+
+        </div>
+        </div>
+        <div class="clearfix"></div>
+    }
+</div>
+<script>
+    var inputs = [];
+    $(document).ready(function () {
+        callFormValidator("frmAddAccessories");
+        $('.chosen-select').chosen({ width: '100%' });
+        //EnableDisableUpdateButton("frmAddAccessories", '@Model.system_id' > 0 ? "btnUpdateItemTemplate" : "btnSaveItemTemplate");
+
+        //APPLY INPUT MASK ON NETWORK ID..
+
+        $("#frmAddAccessories").on("submit", function () {
+            //$("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
+            //si.upperCaseNetWorkId();
+            if (!entityReferencevalidation())
+                return false;
+        });
+        //$('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+        $('#specification').off('change');
+        $('#ddlVendor').off('change');
+        $('#specification').on('change', onChangeSelectSpecification);
+        $('#ddlVendor').on('change', onChangeVendor);
+        setMinMaxQuantity();
+    });
+    function fnSuccess() {
+
+        if ('@status' == "OK") {
+            $('#closeChildPopup').trigger("click");
+            $('#frmViewAccesseries').submit();
+            alert('@Model.objPM.message');
+        }
+        if('@status' == "FAILED"){
+            $('#closeChildPopup').trigger("click");
+            $('#frmViewAccesseries').submit();
+            alert('@Model.objPM.message');
+        }
+
+    }
+    function onChangeSelectAccessoriesType() {
+
+        let id = $('#selectAccessoriesType').val();
+
+        setMinMaxQuantity();
+        fillSelector($('#specification'), [], { value: 'key', text: 'value' }, '', 'Select Specification');
+        fillSelector($('#ddlVendor'), [], { value: 'key', text: 'value' }, '', 'Select Vendor');
+
+        ajaxReq('ItemTemplate/GetAccessoriesSpecification', { accessoriesId: id }, true, function (res) {
+            $('#txtQuantity').val('0');
+            $('#txtRemark').val('');
+            setModelSpecification({
+                category: '',
+                code: "",
+                subCategory_1: "",
+                subCategory_2: "",
+                subCategory_3: ""
+            });
+            if (res.status == 'OK')
+            { fillSelector($('#specification'), res.result, { value: 'key', text: 'value' }, '', 'Select Specification'); }
+        }, false, false, true);
+    }
+    function fillSelector($selector, filldata, attr, val, defaultOption) {
+        $selector.empty();
+        if (defaultOption) {
+            $selector.append($("<option></option>").val('').html(defaultOption));
+        }
+        $.each(filldata, function (data, value) { $selector.append($("<option></option>").val(value[attr.value]).html(value[attr.text])); });
+        $selector.trigger('chosen:updated');
+        $selector.val(val);
+    }
+
+
+    function onChangeSelectSpecification() {
+        let specification = $('#specification').val();
+        $('#hdn_specification').val(specification);
+        ajaxReq('ItemTemplate/GetVendorList', { specification: specification }, true, function (res) {
+            setModelSpecification({
+                category: '',
+                code: "",
+                subCategory_1: "",
+                subCategory_2: "",
+                subCategory_3: ""
+            })
+            if (res.status == 'OK')
+            { fillSelector($('#ddlVendor'), res.result, { value: 'key', text: 'value' }, '', 'Select Vendor'); }
+        }, false, false, true);
+    }
+    function onChangeVendor() {
+        let specification = $("#specification option:selected").text();
+        let vendorId = $("#ddlVendor option:selected").val();
+        $('#hdn_vendor_id').val(vendorId);
+
+        let param = {
+            entitytype: '',
+            specification: specification,
+            vendorId: vendorId
+        };
+        setModelSpecification({
+            category: '',
+            code: "",
+            subCategory_1: "",
+            subCategory_2: "",
+            subCategory_3: ""
+        });
+        ajaxReq('ItemTemplate/GetCatSubcatData', param, true, function (res) {
+
+            if (res.result && res.result.length) {
+                setModelSpecification(res.result[0]);
+            }
+        }, false, false, true);
+    }
+    function setModelSpecification(d) {
+        $('#txtItemCode').val(d.code);
+        $('#txtCategory').val(d.category);
+
+        $('#txtSubCategory1').val(d.subCategory_1);
+        $('#txtSubCategory2').val(d.subCategory_2);
+        $('#txtSubCategory3').val(d.subCategory_3);
+
+        $('#hdn_item_code').val(d.code);
+        $('#hdn_category').val(d.category);
+
+        $('#hdn_subcategory1').val(d.subCategory_1);
+        $('#hdn_subcategory2').val(d.subCategory_2);
+        $('#hdn_subcategory3').val(d.subCategory_3);
+        $('#hdn_audit_item_master_id').val(d.audit_item_master_id);
+    }
+    $("input.numbers-only").on("paste", function () {
+        var thisvalue = this;
+
+        setTimeout(function () {
+            var OnlyNumber = new RegExp(/^[0-9]{1,10}$/);
+             
+            if (!OnlyNumber.test(thisvalue.value)) {
+                thisvalue.value = "";
+            }
+        }, 0);
+    });
+    function validateQuantity() {
+        let accessoriesData = $('#selectAccessoriesType option:selected').data();
+        let $quantity = $('#txtQuantity');
+        let quantity =$quantity.val();
+        if (quantity < accessoriesData.minQuantity)
+        {
+            $quantity.val(accessoriesData.minQuantity);
+        }
+        if (quantity > accessoriesData.maxQuantity) {
+            $quantity.val(accessoriesData.maxQuantity);
+        }
+    }
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+    function setMinMaxQuantity() {
+        $('#rangeQuantity').hide();
+        let accessoriesData = $('#selectAccessoriesType option:selected').data();
+        if (accessoriesData.minQuantity && accessoriesData.maxQuantity)
+            $('#rangeQuantity').show();
+        $('#txtQuantity').attr('min', accessoriesData.minQuantity).attr('max', accessoriesData.maxQuantity);
+        $('#rangeMin').text(accessoriesData.minQuantity);
+        $('#rangeMax').text(accessoriesData.maxQuantity);
+    }
+</script>

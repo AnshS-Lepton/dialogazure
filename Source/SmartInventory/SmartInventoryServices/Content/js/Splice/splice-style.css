@@ -1,0 +1,63 @@
+
+body{font:12px 'Segoe UI';}
+#sidebar {margin-left:auto;margin-right:auto;width:800px;font-size:13px;}
+.menu,#render, #explanation {background-color:#fff;}
+.menu {height: 15px;float:right;padding-top:1em;padding-bottom:0.4em;background-color: transparent;margin-right:30px;}
+#render {padding-top:2px;margin-left:auto;margin-right:auto;z-index:5000;margin-top:0px;text-align: center;background-color:white;}
+#render ul {padding-left:1em;}
+#render ul li {list-style-type:none;}
+#render h5 {display:inline;}
+.otherLibraries {display:inline;}
+a, a:visited {text-decoration:none;color:#01a3c6;font-family:helvetica;padding:0.3em;border-radius:0.2em;}
+a:hover {color:#1b911b;}
+.selected {color:rgb(189,11,11) !important;}
+.window, .label {background-color:white;text-align:center;z-index:24;cursor:pointer;box-shadow: 2px 2px 19px #aaa;-o-box-shadow: 2px 2px 19px #aaa;-webkit-box-shadow: 2px 2px 19px #aaa;-moz-box-shadow: 2px 2px 19px #aaa;}
+path, ._jsPlumb_endpoint { cursor:pointer; }
+._jsPlumb_connector { z-index:18; }
+._jsPlumb_endpoint { z-index:19; }
+._jsPlumb_overlay { z-index:20; }
+._jsPlumb_connector._jsPlumb_hover {z-index:21 !important;}
+._jsPlumb_endpoint._jsPlumb_hover {z-index:22 !important;}
+._jsPlumb_overlay._jsPlumb_hover {z-index:23 !important;}
+.foo {border:2px solid red;}
+
+.colorBox{float:left;border:1px solid #000;cursor:pointer;border-radius:5px;width:15px;height:15px;}
+#window1 { top:6em;left:15%; }
+#window2 { top:6em; right:25%; }
+#window3 { top:30em; left:15%; }
+#window4 { top:30em; right:25%}
+.window {border:1px dotted gray;width:9.7em;height:8em;position:absolute;color:gray;font-family:serif;font-style:italic;padding-top:0.9em;font-size:0.9em;}
+.demo { position:relative; }
+.drag-locked { border:1px solid red; }
+.dragActive { border:2px dotted orange; }
+.dropHover { border:1px dotted red; }
+
+.cmdLink { font-size:0.80em;}
+#clear { padding:0.3em; }
+#clear:hover { background-color:yellow; }
+#list {font-family: "Segoe UI";text-align:center;display:none;font-size:12px;float:left;width:250px;background-color:white;padding:5px;border:1px solid #456;opacity:0.8;}
+#list table { width:100%; text-align:left;}
+#explanation { text-align:center; }
+
+.mainContainer{color:#000000;font:12px 'Segoe UI';}
+#rack{background-image: -ms-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);background-image: -moz-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);background-image: -o-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFFFF), color-stop(1, #DBDBDB));background-image: -webkit-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);background-image: linear-gradient(to bottom, #FFFFFF 0%, #DBDBDB 100%);/*border:2px dashed rgb(159,159,159);*/border:1px solid #E9E9E9;width:400px;height:auto !important ;float:left;padding:5px 5px 5px;margin-left:30px;position:relative;background-color: #FFFFFF;-moz-background-clip: padding;-webkit-background-clip: padding;background-clip: padding-box;box-shadow: 0 3px 4px rgba(0, 0, 0, 0.4);opacity: 1;/*min-height: 100px;*/}
+#rack .rack_unit{width:100%; float:left;height:20px;}
+#rack .rack_unit .divider{width:333px; float:left;height:20px;}
+#rack span{ float:left;width:30px;border:1px solid #000000;border-radius:1px;text-align:center;height:20px;cursor:pointer;}
+#list { border-radius:10px;display: block;right:50px;position: absolute;top: 100px; text-align:center;box-shadow: 0 8px 6px -6px black;cursor: move;z-index: 9999;display: none;}
+#list:hover {box-shadow:0 0 10px #3399FF;}
+.wire { width:70px;height:4px;background-color:gray;margin-top:8px;}
+.microduct{float:left;height: 400px;width:300px;margin-left:30px;}
+#point{width:50px;height:2px;background-color: #777;float:left;margin-top: 230px;}
+#point1{width:50px;height:2px;background-color: #777;float:left;margin-top: 230px;position:absolute;right:50px;}
+/* Lines can be styled with normal css: */
+div.line{-webkit-transform-origin: 0 50%;-moz-transform-origin: 0 50%;transform-origin: 0 50%;height:3.5px; /* Line width of 3 */background: #948C79; /* Black fill */opacity: 0.5;/*box-shadow: 0 0 8px #B99B7E; For some nice animation on the rotates: */-webkit-transition: -webkit-transform 1s;-moz-transition:-moz-transform 1s;transition:transform 1s;}
+div.line:hover{background: #C30;/*box-shadow: 0 0 8px #C30;*/opacity: 1;}
+div.line.active{background: #666;/*box-shadow: 0 0 8px #666;*/opacity: 1;}
+.vrt-label-l{color:#ffffff;font-size: 13px;-webkit-transform: rotate(90deg);-moz-transform: rotate(90deg);-o-transform: rotate(90deg);writing-mode: tb-rl;position: absolute;right:-40px;z-index: 9999;}
+.vrt-label-r{color:#ffffff;font-size: 13px;-webkit-transform: rotate(-90deg);-moz-transform: rotate(-90deg);-o-transform: rotate(-90deg);writing-mode: tb-rl;position: absolute;left:0px;z-index: 9999;}
+.label { font-size:13px; padding:8px; padding:8px;}
+.component { border:1px solid #346789; border-radius:2em; opacity:0.8; filter:alpha(opacity=80);background-color:white; color:black; padding:0.5em; font-size:0.8em;}
+.component:hover {border:1px solid #123456; box-shadow: 2px 2px 19px #444;-o-box-shadow: 2px 2px 19px #444;-webkit-box-shadow: 2px 2px 19px #444;-moz-box-shadow: 2px 2px 19px #fff;opacity:0.9;filter:alpha(opacity=90);}
+.cust { border:1px solid #346789; border-radius:2em; opacity:0.8; filter:alpha(opacity=80);background-color:white; color:black; padding:0.5em; font-size:0.8em;}
+                       

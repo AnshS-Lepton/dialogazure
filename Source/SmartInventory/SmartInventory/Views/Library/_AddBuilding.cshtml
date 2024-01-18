@@ -1,0 +1,631 @@
+﻿@model Models.BuildingMaster
+@using Models;
+@using SmartInventory.Settings;
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.pageMsg); }
+}
+@{
+    var objUser = (User)Session["userDetail"];
+}
+
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Building.ToString().ToUpper()).FirstOrDefault() : null;
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Building.ToString());
+
+}
+@helper Reference()
+{
+    { Html.RenderPartial("~/Views/Library/_Reference.cshtml", (IReference)Model); }
+}
+@helper GeographicDetails()
+{
+    { Html.RenderPartial("~/Views/Library/_GeographicDetails.cshtml", (IGeographicDetails)Model); }
+}
+@helper AdditionalAttributes()
+{
+    { Html.RenderPartial("~/Views/Shared/_AdditionalAttributesForm.cshtml", Model.objDynamicControls); }
+}
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SaveBuilding", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        LoadingElementId = "dvProgress",
+        UpdateTargetId = Model.childModel == "" ? "dvModalBody" : "dvChildModalBody",
+        OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.Building.ToString() + "');"
+    },
+            new { id = "frmBuildingEntity", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @*@Html.AntiForgeryToken()*@
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.surveyarea_id)
+        @Html.HiddenFor(m => m.created_by)
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.created_on)
+        @Html.HiddenFor(m => m.geom)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.networkIdType)
+        @Html.HiddenFor(m => m.network_id)
+        @Html.HiddenFor(m => m.childModel)
+        @Html.HiddenFor(m => m.entityType)
+        //@Html.HiddenFor(m=>m.userid)
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+        @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
+        @Html.HiddenFor(m => m.user_comments, new { @id = "hdnbldComment" })
+        @Html.HiddenFor(m => m.bldAction, new { @id = "hdnbldAction" })
+        <input type="hidden" value="Building" id="hdnEntityType" />
+        <input name="btnAction" type="hidden" id="hdnbtnAction" />
+        @Html.HiddenFor(m => m.vsat_system_id)
+        @Html.HiddenFor(m => m.locality)
+        @Html.HiddenFor(m => m.sub_locality)
+        @pageMessage()
+        <div class="libTabs">
+            <div class="scrollmenu">
+                @if (Model.system_id > 0 && Model.building_status != null)
+                {
+                    <div><span class="spanSide go-left" id="spnRightMenu"><i class="fa fa-angle-left" aria-hidden="true"></i></span></div>
+                }
+                <div class="scrollerhide overflow-hidden">
+                    <ul class="nav nav-tabs tabs-left">
+                        <li class="active"><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                        @if (Model.building_status != null && Model.building_status.ToLower() == "approved")
+                        {
+                            <li><a href="#StructureInfo" onclick="si.GetStructureList('@Model.system_id',false);" data-toggle="tab">@Resources.Resources.SI_OSP_BUL_NET_FRM_029</a></li>
+                            <li><a href="#RFSStatusInfo" onclick="si.GetRFS_StatusList('@Model.system_id',false);" data-toggle="tab">@Resources.Resources.SI_OSP_BUL_NET_FRM_024</a></li>
+                            if (Model.system_id > 0 && layerDetail != null && layerDetail.is_vsat_enabled)
+                            {
+                                <li><a href="#VSATDetails" id="VSAT_Details" onclick="si.GetVSATDetails('@Model.vsat_system_id');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_510</a></li>
+                            }
+                        }
+
+                        @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_at_enabled)
+                        {
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ACT")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_BUL_NET_FRM_032 @(Model.lstUserModule.Contains("ENT-DTL-ACT")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ACT") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ACT")?"#dvAT":"")" onclick="si.GetATAcceptance('@Model.system_id','@EntityType.Building.ToString()' ,'@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_BUL_NET_FRM_032</a></li>
+                        }
+                        @if (Model.system_id > 0 && layerDetail != null)
+                        {
+                            <li><a href="#dvBuildingStatusSummary" onclick="si.GetBuildingComments('@Model.system_id');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_373</a></li>
+                        }
+                        <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_152 @(Model.lstUserModule.Contains("ENT-DTL-ENS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENS") ? "" : "block;")"
+                            href="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"#NwEntityHistory":"")" id="Nw_EntityHistory" onclick="si.GetNetworkEntityHistory('@Model.system_id','@EntityType.Building.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_152</a></li>
+                        <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_222 @(Model.lstUserModule.Contains("ENT-DTL-ADA")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ADA") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
+                        @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_reference_allowed == true)
+                        {
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                        }
+
+                    </ul>
+                </div>
+                <div id="divRightMenu">
+                    @if (Model.system_id > 0 && Model.building_status != null)
+                    {
+                        <span class="spanSide go-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                        <span class="spanSide" id="dropdown" style="border-left: 1px solid #b9b7b7;margin-left: -4px;"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                        <div class="arrowDropUp"></div>
+                        <div class="dropMenu">
+                            <div class="alltabs">@Resources.Resources.SI_OSP_CAB_NET_FRM_014</div>
+                            <ul>
+                                <li class="active"><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                                @if (Model.building_status != null && Model.building_status.ToLower() == "approved")
+                                {
+                                    <li><a href="#StructureInfo" onclick="si.GetStructureList('@Model.system_id',false);" data-toggle="tab">@Resources.Resources.SI_OSP_BUL_NET_FRM_029</a></li>
+                                    <li><a href="#RFSStatusInfo" onclick="si.GetRFS_StatusList('@Model.system_id',false);" data-toggle="tab">@Resources.Resources.SI_OSP_BUL_NET_FRM_024</a></li>
+                                    if (Model.system_id > 0 && layerDetail != null && layerDetail.is_vsat_enabled)
+                                    {
+                                        <li><a href="#VSATDetails" id="VSAT_Details" onclick="si.GetVSATDetails('@Model.vsat_system_id');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_510</a></li>
+                                    }
+                                }
+
+                                @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_at_enabled)
+                                {
+                                    <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ACT")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_BUL_NET_FRM_032 @(Model.lstUserModule.Contains("ENT-DTL-ACT")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ACT") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ACT")?"#dvAT":"")" onclick="si.GetATAcceptance('@Model.system_id','@EntityType.Building.ToString()' ,'@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_BUL_NET_FRM_032</a></li>
+                                }
+                                @if (Model.system_id > 0 && layerDetail != null)
+                                {
+                                    <li><a href="#dvBuildingStatusSummary" onclick="si.GetBuildingComments('@Model.system_id');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_373</a></li>
+                                }
+                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_152 @(Model.lstUserModule.Contains("ENT-DTL-ENS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENS") ? "" : "block;")"
+                                        href="#NwEntityHistory" id="Nw_EntityHistory" onclick="si.GetNetworkEntityHistory('@Model.system_id','@EntityType.Building.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_152</a></li>
+                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_222 @(Model.lstUserModule.Contains("ENT-DTL-ADA")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ADA") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
+                                @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_reference_allowed == true)
+                                {
+                                    <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                                }
+                                <!--Reigon Additional Attribute to show the partial view-->
+                                
+                                <!--End Reigon Additional Attribute-->
+                            </ul>
+                        </div>
+                    }
+                </div>
+                <div style="width: 118px;margin-right:12px;">
+                    @if (Model.building_status != null)
+                    {
+                        <label class="building-status-lbl" style="margin-right: 1px;">@Resources.Resources.SI_OSP_GBL_GBL_GBL_014 : @Model.building_status</label>
+                    }
+                </div>
+            </div>
+        </div>
+        <!-- Message Pop-up -->
+
+        <div class="TabContent--max-over">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"tab-pane active":"tab-pane active dvdisabled")" id="GISInfo">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_052 </legend>
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtBuildingCode">
+                                @Resources.Resources.SI_OSP_BUL_NET_FRM_003
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }
+                                :
+                            </label>
+                            <div class="col-sm-4">
+                                <div id="txtMaskedNetworkId"></div>
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSurveyAreaCode">@Resources.Resources.SI_OSP_BUL_NET_FRM_004:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.surveyarea_code, new { @class = "form-control clsReadOnly", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtLatitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_011:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.latitude, new { @class = "form-control clsReadOnly", @readonly = true })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_012:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.longitude, new { @class = "form-control clsReadOnly", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="form-group  row">
+                            <label class="control-label col-sm-2" for="txtRegionName">@Resources.Resources.SI_OSP_GBL_GBL_GBL_004:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtProvinceName">@Resources.Resources.SI_OSP_GBL_GBL_GBL_005:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.parent_entity_type, new { @class = "form-control clsReadOnly", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtBuildingName">
+                                @Resources.Resources.SI_OSP_GBL_NET_FRM_059
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }:
+                            </label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.building_name,
+                               SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(
+                                   new
+                                   {
+                                       autocomplete = "do-not-show-ac",
+                                       @class = "form-control",
+                                       @style = "width: 96.6 %; ",
+                                       @maxlength = "100"
+                                   }, (Model.networkIdType == "M" ? new { @required = true } : null)))
+                                @*@Html.TextBoxFor(m => m.building_name, new { @class = "form-control", @maxlength = "100" })*@
+                            </div>
+                            <label class="control-label col-sm-2" for="txtHousePlotNo">@Resources.Resources.SI_OSP_BUL_NET_FRM_012.:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.building_no, new { @class = "form-control", @maxlength = "100" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtBuildingAddress">@Resources.Resources.SI_OSP_GBL_GBL_GBL_008:</label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.address, new { @class = "form-control", @maxlength = "200", autocomplete = "do-not-show-ac" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtArea">@Resources.Resources.SI_OSP_GBL_JQ_FRM_159:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.area, new { @class = "form-control", @maxlength = "50" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtPinCode">@Resources.Resources.SI_OSP_GBL_GBL_GBL_009:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.pin_code, new { @class = "form-control numbers-only", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "6", @minlength = "6", autocomplete = "new-password" })
+                                @Html.ValidationMessageFor(model => model.pin_code)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="ddlBuildingTenancy">@Resources.Resources.SI_OSP_BUL_NET_FRM_016<span class="clsMandatory">*</span>:</label>
+                            <div class="col-md-4">
+
+                                @if (Model.building_status == "Approved")
+                                {
+                                    @Html.DropDownListFor(m => m.tenancy, new SelectList(Model.lstTenancy.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @style = "padding:0;", @readonly = true, @onchange = "si.ddlChangeRemoveCss(this.id, 'Tenancy');" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(m => m.tenancy, new SelectList(Model.lstTenancy.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @style = "padding:0;", @onchange = "si.ddlChangeRemoveCss(this.id, 'Tenancy');" })
+                                }
+
+
+                            </div>
+                            <label class="control-label col-sm-2" for="ddBuildingCategory">@Resources.Resources.SI_OSP_BUL_NET_FRM_017<span class="clsMandatory">*</span>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.category, new SelectList(Model.lstCategory.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @style = "padding:0;", @onchange = "si.ddlChangeRemoveCss(this.id, 'Category');" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="ddBuildingSubCategory">@Resources.Resources.SI_OSP_GBL_GBL_GBL_022 :</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.subcategory, new SelectList(Model.lstSubCategory.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Sub Category", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @onchange = "si.ddlChangeRemoveCss(this.id, 'subcategory');" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtNoOfTowers">@Resources.Resources.SI_OSP_BUL_NET_FRM_021<span class="clsMandatory">*</span>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.total_tower, new { @class = "form-control numbers-only", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "2" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtBusinessPass">@Resources.Resources.SI_OSP_BUL_NET_FRM_018<span class="clsMandatory">*</span>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.business_pass, new { @class = "form-control numbers-only", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "4" })
+                            </div>
+                            <label class="control-lel col-sm-2" for="txtHomePass">@Resources.Resources.SI_OSP_BUL_NET_FRM_019<span class="clsMandatory">*</span>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.home_pass, new { @class = "form-control numbers-only", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "4", @id = "txthp", })
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtPODName">@Resources.Resources.SI_OSP_GBL_GBL_GBL_015:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control", @maxlength = "50" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtPODCode">@Resources.Resources.SI_OSP_GBL_GBL_GBL_016:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.pod_code, new { @class = "form-control", @maxlength = "50" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            @*<label class="control-label col-sm-2" for="ddlMedia"> Media:</label>
+                                <div class="col-sm-45">
+                                    @Html.DropDownListFor(m => m.media, new SelectList(Model.lstMedia.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Media", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                </div>*@
+                            <label class="control-label col-sm-2" for="ddlRFSStatus">@Resources.Resources.SI_OSP_BUL_NET_FRM_024:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.rfs_status, new SelectList(Model.lstRFSStatus.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select RFS Status", new { @OldRFSStatus = Model.rfs_status, @class = "chosen-select col-sm-12", @style = "padding:0;", @onchange = "si.fncToggleRfsDate(this.id);" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtRFSDate"> @Resources.Resources.SI_OSP_BUL_NET_FRM_025:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.rfsSetDate, new { @class = "form-control clsReadOnly", placeholder = "DD-MMM-YYYY", @readonly = true, @style = "background:#fff;" })
+                                @{var isVisibleRfsDat = !string.IsNullOrEmpty(Model.rfs_status) ? "block" : "none";}
+                                <img id="imgRfsDate" class="assign-calen" src="~/Content/images/calendar.png" style="display:@isVisibleRfsDat;" />
+                            </div>
+
+                        </div>
+                        <div class="form-group" style="display:none">
+                            @*<label class="control-label col-sm-2" for="txtRFSDate"> RFS Date:</label>
+                                <div class="col-sm-45" style="height:24px;">
+                                    @Html.TextBoxFor(m => m.rfsSetDate, new { @class = "form-control clsReadOnly", placeholder = "DD-MMM-YYYY", @readonly = true, @style = "background:#fff;" })
+                                    @{var isVisibleRfsDat = !string.IsNullOrEmpty(Model.rfsSetDate) ? "block" : "none";}
+                                    <img id="imgRfsDate" class="assign-calen" src="~/Content/images/calendar.png" style="display:@isVisibleRfsDat;" />
+                                </div>*@
+                            @*<label class="control-label col-sm-2" for="txtCreatedDate">Created Date:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.createDate, new { @class = "form-control clsReadOnly", @readonly = true })
+                                </div>*@
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRFSDate"> @Resources.Resources.SI_OSP_BUL_NET_FRM_026:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.rwa, new { @class = "form-control", @maxlength = "50" })
+                            </div>
+                            @*<label class="control-label col-sm-2" for="txtCreatedDate">Building Type:</label>
+                                <div class="col-sm-45">
+                                    @Html.DropDownListFor(m => m.building_type, new SelectList(Model.lstBuildingType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Building Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                </div>*@
+                            <label class="control-label col-sm-2" for="txtBuildingAddress">@Resources.Resources.SI_OSP_BUL_NET_FRM_027:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.rwa_contact_no, new { @class = "form-control numbers-only", @maxlength = "10", autocomplete = "do-not-show-ac", @onkeypress = "return si.allowOnlyNumber(event);" })
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="ddlMedia"> @Resources.Resources.SI_OSP_BUL_NET_FRM_020:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.media, new SelectList(Model.lstMedia.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Media", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtBuildingHeight">@Resources.Resources.SI_OSP_GBL_GBL_FRM_080:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.building_height, new { @class = "form-control numbers-only", @maxlength = "10", @onkeypress = "return si.allowOnlyNumber(event);" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtBuildingAddress">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.remarks, new { @class = "form-control", @maxlength = "1000" })
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div>@GeographicDetails()</div>
+                </div>
+                <div class="tab-pane" id="StructureInfo">
+                </div>
+                <div class="tab-pane" id="RFSStatusInfo">
+                </div>
+                <div class="tab-pane" id="dvAT">
+                </div>
+                <div class="tab-pane" id="dvBuildingStatusSummary">
+                </div>
+                <div id="NwEntityHistory" class="tab-pane"></div>
+                <div class="tab-pane" id="AdditionalAttributes">
+                    @AdditionalAttributes()
+                </div>
+                <div id="VSATDetails" class="tab-pane">
+                </div>
+                <div class="tab-pane" id="Reference">
+                    @Reference()
+                </div>
+            </div>
+        </div>
+
+        <div class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"d-flex ModalFooter":"d-flex ModalFooter dvdisabled")" id="dvBtnAction">
+            @if (Model.system_id > 0)
+            {
+                <div class="ModelFooterInfo">
+                    <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_014:</label>
+                    <label class="model-label-info">@(Model.network_status != null ? Utility.MiscHelper.GetNetworkStatus(Model.network_status.ToUpper()) : string.Empty)</label>
+                    <label for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_007:</label>
+                    <label class="model-label-info" title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
+                </div>
+            }
+            <div class="ml-auto">
+                @if (Model.system_id == 0)
+                {
+                    <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                    <input type="submit" formmethod="post" class="btn btn-primary  @(editPermission==true?"":"dvdisabled")" id="btnSaveBuilding" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" disabled="disabled" />
+
+                }
+                else
+                {
+                    <input type="submit" formmethod="post" class="btn btn-primary  @(editPermission==true?"":"dvdisabled")" id="btnUpdatebuilding" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003" disabled="disabled" />
+                    if (Model.building_status == BuildingStatus.Surveyed.ToString())
+                    {
+
+                        //if (Model.role_id == 2 && (Model.manager_id == @objUser.user_id || Model.created_by == @objUser.user_id))
+                        if (Model.lstUserModule.Contains("ARP"))
+                        {
+                            <input type="button" formmethod="post" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" name="btnaction" id="btnapprovebuilding" value="@Resources.Resources.SI_OSP_GBL_GBL_GBL_017" />
+                            <input type="button" class="btn btn-danger @(editPermission==true?"":"dvdisabled")" formmethod="post" name="btnaction" id="btnreject" value="@Resources.Resources.SI_OSP_GBL_GBL_GBL_018" />
+                        }
+                        else
+                        {
+                            <input type="button" formmethod="post" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" name="btnaction" id="btnapprovebuilding" value="@Resources.Resources.SI_OSP_GBL_GBL_GBL_017" disabled="disabled" />
+                            <input type="button" class="btn btn-danger @(editPermission==true?"":"dvdisabled")" formmethod="post" name="btnaction" id="btnreject" value="@Resources.Resources.SI_OSP_GBL_GBL_GBL_018" disabled="disabled" />
+                        }
+                    }
+                    if (Model.building_status == BuildingStatus.Resurveyed.ToString())
+                    {
+                    }
+                    <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+    var inputs = [];
+    $(document).ready(function () {
+        notAllowZero('#total_tower');
+       // callFormValidator("frmBuildingEntity");
+        si.setDateTimeCalendar_rfs("rfsSetDate", "imgRfsDate",false);
+        //si.setDateTimeCalendar("rfsSetDate", "imgRfsDate", true, false);
+
+        $('.chosen-select').chosen({ width: '100%',});
+        @*if ('@Model.system_id' == 0) {
+            if ($('#business_pass').val() == 0)
+                $('#business_pass').val('');
+            if ($('#home_pass').val() == 0)
+                $('#home_pass').val('');
+        }*@
+
+
+            EnableDisableUpdateButton("frmBuildingEntity", @Model.system_id == 0 ? "btnSaveBuilding" : "btnUpdatebuilding");
+            @*if ('@editPermission' == 'False') {
+                document.getElementById("btnUpdatebuilding").disabled = true;
+            }
+            else {
+                document.getElementById("btnUpdatebuilding").disabled = false;
+            }*@
+        //APPLY INPUT MASK ON NETWORK ID..
+        getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
+        $("#frmBuildingEntity").on("submit", function () {
+            $("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
+            //For AdditionalAttributes to set json and saving
+            additionalAttributesUtility.SetJsonValue("#frmOtherInfo", "#hdnOtherInfo");
+            //end region AdditionalAttributes
+        });
+        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+    });
+    //function fncCheckValidate() {
+    $("#btnSaveBuilding, #btnUpdatebuilding").on("click", function () {
+         
+        if (!(si.isFormValid())) { return false; }
+
+
+        //if ($('#building_name').val() == '') {
+        //    $("#building_name").addClass('input-validation-error');
+        //    return false;
+        //}
+
+        if ($('#tenancy').val() == '') {
+            $("#tenancy_chosen").addClass('input-validation-error');
+            return false;
+        }
+        if ($('#category').val() == '') {
+            $("#category_chosen").addClass('input-validation-error');
+            return false;
+        }
+
+        var old_RFS_Status = $("#rfs_status").attr("OldRFSStatus");
+        var new_RFS_Status = $("#rfs_status").val();
+        if(new_RFS_Status=='' && '@Model.system_id'==0)
+        {
+            //alert('Please select the RFS Status!');
+            //$("#rfs_status_chosen").addClass('input-validation-error');
+            //return false;
+            new_RFS_Status='Non-RFS';
+        }else if(new_RFS_Status=='' && '@Model.system_id'>0)
+        {
+            alert( MultilingualKey.SI_OSP_GBL_JQ_GBL_100);
+            $("#rfs_status_chosen").addClass('input-validation-error');
+            return false;
+        }
+        if (old_RFS_Status != new_RFS_Status && old_RFS_Status != '') {
+            var postData = { old_rfs_status: old_RFS_Status, new_rfs_status: new_RFS_Status, entityType:'Building'};
+            var isValidRFSType = true;
+            ajaxReq('Library/isValidRFSStatus', postData, false, function (resp) {
+                if (resp.status != "OK") {
+                    alert(resp.error_message);
+                    isValidRFSType = false;
+                }
+            }, true, true);
+
+            if (!isValidRFSType) { return false; }
+        }
+
+        if ($("#rfs_status_chosen").children('a').text().trim() != "Select RFS Status") {
+
+            var new_RFS_Status = $("#rfs_status").val();
+            var string = '@ApplicationSettings.validationNotForRFS_Status';
+            strx = string.split(',');
+
+            if ($("#rfsSetDate").val() == '' && !strx.includes(new_RFS_Status)) {
+                $("#rfsSetDate").addClass('input-validation-error');
+                alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_101);
+                return false;
+            }
+        }
+        //else {
+        //    if ($("#rfsSetDate").val() != '') {
+
+        //        alert('Please select RFS Status!');
+        //        return false;
+        //    }
+        //}
+
+
+            $('#btnSurveyBuilding').trigger("click");
+            if ($("#chk_is_signed_one").val()) {
+        }
+         
+        if ($("#chk_is_signed_one").is(":checked")) {
+            if ($("#txtcompany_name_one").val() == "") {
+                $('#txtcompany_name_one').css('border-color', 'red');;
+                return false;
+            }
+            else {
+                $('#txtcompany_name_one').css('border-color', '');
+            }
+            if ($("#txtagreemented_name_one").val() == "") {
+                $('#txtagreemented_name_one').css('border-color', 'red');;
+                return false;
+            }
+            else {
+                $('#txtagreemented_name_one').css('border-color', '');
+            }
+            if ($("#txtagreemented_position_one").val() == "") {
+                $('#txtagreemented_position_one').css('border-color', 'red');;
+                return false;
+            }
+            else {
+                $('#txtagreemented_position_one').css('border-color', '');
+            }
+
+        }
+
+        if ($("#chk_is_signed_two").is(":checked")) {
+            if ($("#txtcompany_name_two").val() == "") {
+                $('#txtcompany_name_two').css('border-color', 'red');;
+                return false;
+            }
+            else {
+                $('#txtcompany_name_two').css('border-color', '');
+            }
+            if ($("#txtagreemented_name_two").val() == "") {
+                $('#txtagreemented_name_two').css('border-color', 'red');;
+                return false;
+            }
+            else {
+                $('#txtagreemented_name_two').css('border-color', '');
+            }
+            if ($("#txtagreemented_position_two").val() == "") {
+                $('#txtagreemented_position_two').css('border-color', 'red');;
+                return false;
+            }
+            else {
+                $('#txtagreemented_position_two').css('border-color', '');
+            }
+
+        }
+
+    });
+
+    function isValidRFSType(postData)
+    {
+        var status = true;
+
+
+        return true;
+    }
+
+
+    $("input.numbers-only").on("paste", function () {
+        var thisvalue = this;
+
+        setTimeout(function () {
+            var OnlyNumber = new RegExp(/^[0-9]{1,10}$/);
+             
+            if (!OnlyNumber.test(thisvalue.value)) {
+                thisvalue.value = "";
+            }
+        }, 0);
+    });
+
+
+    $("input.numbers-only").on("paste", function () {
+        var thisvalue = this;
+
+        setTimeout(function () {
+            var OnlyNumber = new RegExp(/^[0-9]{1,10}$/);
+             
+            if (!OnlyNumber.test(thisvalue.value)) {
+                thisvalue.value = "";
+            }
+        }, 0);
+    });
+    $("#btnapprovebuilding").on("click", function () {
+         
+        si.openApproveCommentbox();
+    });
+    $("#btnreject").on("click", function () {
+        si.openRejectCommentbox();
+    });
+    $('#divRightMenu .dropMenu ul li a').click(
+           function () {
+               si.autoScroll(this);
+           }
+           );
+
+</script>
+
+<style>
+    #RFSStatusInfo, #StructureInfo, #dvBuildingStatusSummary, #VSATDetails {
+        background-image: url('@Url.Content("~/content/images/loading_new.gif")');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>

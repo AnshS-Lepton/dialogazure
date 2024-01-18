@@ -1,0 +1,197 @@
+﻿@model List<Models.landBaseLayres>
+@using SmartInventory.Settings;
+<link href="~/Content/css/LandBase.css" rel="stylesheet" />
+<script src="~/Content/js/LandBase.js"></script>
+@{
+    var userModuleList = (List<string>)Session["ApplicableModuleList"];
+    var lBaseMaxWidthLimit = ApplicationSettings.lBaseMaxWidthLimit;
+}
+<input type="hidden" value="0" id="hdnbuffer_value" />
+@if (userModuleList.Contains("ALBL"))
+{
+    <div>
+        <div id="dvLandBaseLine">
+            @*<div class="modal-content">*@
+            <div id="dvlineHeader" class="modal-header d-fx aln-item popup_bg ui-draggable-handle">
+                <h4 class="modal-title">@Resources.Resources.SI_OSP_GBL_NET_FRM_451</h4>
+                <span id="closeLandBaseLineTemplate" data-dismiss="modal" class="icon-close ml-auto"></span>
+            </div>
+
+            <div class="space-pad">
+                <div class="form-group row">
+                    <label class="control-label col-sm-4"> @Resources.Resources.SI_OSP_GBL_NET_FRM_452 :</label>
+                    <div class="col-md-8 col-sm-8">
+                        <label class="radio-inline">
+                            <input type="radio" name="chkLineBuffer" id="chkWithLineBuffer" value="With" checked="checked"> @Resources.Resources.SI_OSP_GBL_NET_FRM_453
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="chkLineBuffer" id="chkWithOutLineBuffer" value="Without"> @Resources.Resources.SI_OSP_GBL_NET_FRM_454
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group row" id="divLandBaseLinewidth">
+                    <label class="control-label col-sm-4"> @Resources.Resources.SI_OSP_ROW_NET_FRM_090<i class="clsMandatory">*</i>:</label>
+                    <div class="col-md-8 col-sm-8">
+                        <select class="chosen-select col-sm-12" data-val="true" id="ddlLandBaseLinewidth" name="width" onchange="ddlChangeRemoveCss(this.id, 'width'); LandBase.showHideCustomWidth();" style="padding: 0px; display: none;">
+
+                            <option value="0">Customize</option>
+                            <option selected="selected" value="0.5">0.5 Mtr</option>
+                            <option value="1">1 Mtr</option>
+                            <option value="2">2 Mtr</option>
+                            <option value="3">3 Mtr</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row" id="custLandBaseLinediv" style="display:none">
+                    <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_ROW_NET_FRM_089:</label>
+                    <div class="col-md-8 col-sm-8">
+                        <input class="form-control" data-val="true" id="landBaseLineCustomized" maxlength="5" name="customized" onkeypress="return si.allowNumberwithOneDot(event, 'landBaseLineCustomized');" onkeyup="LandBase.ValidateWidth(this)" type="text" placeholder="Maximum @lBaseMaxWidthLimit Mtr">
+                    </div>
+                </div>
+            </div>
+            <div class="ModalFooter d-flex" id="dvBtnAction">
+                <button type="submit" class="btn btn-primary ml-auto" id="btnSaveLandBaseLineTemplate" onclick="LandBase.AddLandBaseLayer.addEntity($('#dvlandbaseLineDraw'), 'Line');">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_007</button>
+                @*<a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancelLandBaseLineTemplae">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>*@
+            </div>
+        </div>
+    </div>
+}
+
+<h2> LANDBASE LAYERS<i class="fa fa-minus lyracrdn" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_050"></i></h2>
+<div id="dvNetworkActions" class="advanveFilter d-fx j-flex-end">
+    @if (userModuleList.Contains("ILBL"))
+    {
+        <div class="LandBaseIconBaricomoon infoSwitchLandBase" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_158">
+            <span class="icon-information"></span>
+        </div>
+        <div class="spacer"></div>
+    }
+    @if (userModuleList.Contains("ALBL"))
+    {
+        <div class="LandBaseIconBaricomoon" onclick="LandBase.ToolBar.addLandbaseLayer('AddLandBaseLayer', this);" id="dvAddLandBaseLayer" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_157">
+            <span class="icon-Add_shaft-floor"></span>
+        </div>
+
+
+        <div class="spacer"></div>
+        <div class="LandBaseToolbar childtoolbar" id="addLandbaseLayerToolBar" style="display:none;">
+            @if (Model.Where(x => x.geom_type == "Point").Count() > 0)
+            {
+                <div class="LandBaseIconBaricomoon iconWidth" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_164"><a class="textDark" data-src="@string.Concat("Content/images/icons/lib/big/","ONT.png")" href="#" onclick="LandBase.AddLandBaseLayer.addEntity(this, 'Point');"><span class="icon-point"></span></a></div>
+                <div class="techSep"></div>
+
+
+            }
+            @if (Model.Where(x => x.geom_type == "Line").Count() > 0)
+            {
+
+                <div class="LandBaseIconBaricomoon iconWidth" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_437" id="dvlandbaseLineDraw"><a class="textDark" href="#" onclick="LandBase.LineTemplate(this, 'Line');"><span class="icon-polyline"></span></a></div>
+                <div class="techSep"></div>
+
+
+            }
+            @if (Model.Where(x => x.geom_type == "Polygon").Count() > 0)
+            {
+                <div class="LandBaseIconBaricomoon iconWidth" id="dvLandBasePolygon" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040"><a class="textDark" href="#" onclick="LandBase.AddLandBaseLayer.addEntity(this, 'Polygon');"><span class="icon-polygon"></span></a></div>
+            }
+
+            @*<div class="LandBaseIconBaricomoon" title="Draw Point" style="width: 33px;"><a style="color: black;" data-src="@string.Concat("Content/images/icons/lib/big/","ONT.png")" href="#" onclick="LandBase.AddLandBaseLayer.addEntity(this, 'Point');"><span class="icon-point"></span></a></div>
+                <div class="techSep"></div>
+                <div class="LandBaseIconBaricomoon" title="Draw Line" id="dvlandbaseLineDraw" style="width: 33px;"><a style="color: black;" href="#" onclick="LandBase.LineTemplate(this, 'Line');"><span class="icon-polyline"></span></a></div>
+                <div class="techSep"></div>
+                <div class="LandBaseIconBaricomoon" id="dvLandBasePolygon" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" style="width: 33px;"><a style="color: black;" href="#" onclick="LandBase.AddLandBaseLayer.addEntity(this, 'Polygon');"><span class="icon-polygon"></span></a></div>*@
+        </div>
+    }
+
+    @if (userModuleList.Contains("UPLBL"))
+    {
+
+        @*<div class="LandBaseIconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_033" onclick="LandBase.toggleUpload()" style="margin-right: 10px;">
+                <span class="icon-upload"></span>
+            </div>*@
+    }
+
+
+
+    @if (userModuleList.Contains("RLBL"))
+    {
+        <div class="techSep"></div>
+        @*<div class="LandBaseIconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_043" onclick="LandBase.LandbaseLayerReport.EntityExportReport(null, null, null, this);" style="margin-right: 10px; float:left;">
+                <span class="icon-ExportReport"></span>
+            </div>*@
+        <div class="LandBaseIconBaricomoon" onclick="LandBase.LandbaseLayerReport.showMenu(this);" id="dvLandBaseReport" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_043">
+            <span class="icon-ExportReport"></span>
+        </div>
+        <div class="LandBaseToolbar childtoolbar" id="LandBaseReportToolBar" style="display:none">
+            <div class="iconBaricomoon iconWidth" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_043"><a href="#" class="textDark" onclick="LandBase.LandbaseLayerReport.EntityExportReport(null, null, null, this);"><span class="icon-exportreport"></span></a></div>
+            <div class="techSep"></div>
+            <div class="iconBaricomoon iconWidth" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040"><a href="#" class="textDark" onclick="LandBase.LandbaseLayerReport.initiateDrawingsExportReport(this, 'Polygon')"><span class="icon-Draw_Polygon"></span></a></div>
+            <div class="techSep"></div>
+            <div class="iconBaricomoon iconWidth" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041"><a href="#" class="textDark" onclick="LandBase.LandbaseLayerReport.initiateDrawingsExportReport(this, 'Rectangle')"><span class="icon-DrawRectangle"></span></a></div>
+        </div>
+    }
+
+
+
+</div>
+
+<ul class="mainlyr grpNetwork landbaselyr pr10" id="ulSelect" style="display:block;">
+    <li>
+        <input type="checkbox" class="checkbox-custom" id="checkAllLandBaseLayers">
+        <div class="d-fx mb01">
+            <b>
+                <label for="checkAllLandBaseLayers" class="checkbox-custom-label fw-bold" /><span>&nbsp;@Resources.Resources.SI_OSP_GBL_GBL_GBL_045</span>
+            </b>
+            <span class="ml-auto nMargin">
+                <input type="checkbox" id="chkLBlabelAll" class="checkbox-custom1" name="networkALL" onclick="LandBase.handlePrClick(this);" data-all="L"><b><label for="chkLBlabelAll" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_054" class="checkbox-custom1-label"><span class="spn_contnt">L</span></label></b>
+            </span>
+        </div>
+
+        <ul class="mainLBlyr landbase" style="display:block;">
+
+            @foreach (var objLayer in Model)
+            {
+                <li data-mapabbr="@objLayer.map_abbr" data-entity-geom-type="@objLayer.geom_type">
+                    <img src="Content/css/images/t.gif" alt="">
+
+                    <input id="chk_LBnLyr_@objLayer.id" class="checkbox-custom-LB mainLBlyr" type="checkbox" data-mapabbr="@objLayer.map_abbr" data-layerid="@objLayer.id"
+                           data-layername="@objLayer.layer_name" data-center-line-enable="@objLayer.is_center_line_enable" data-maplayerseq="@objLayer.map_seq" style="width: 0px;" data-entity-geom-type="@objLayer.geom_type" />
+
+                    <b>
+                        <label for="chk_LBnLyr_@objLayer.id" class="checkbox-custom-LB-label">
+                            @if (objLayer.geom_type.ToUpper() == "LINE")
+                            {
+                                <div style="height: 5px; width: 13px;margin-bottom: 2px; display: inline-block;background-color:@string.Concat(objLayer.map_bg_color,objLayer.map_bg_opacity);border: 1px solid @objLayer.map_border_color;"></div>
+                            }
+                            else if (objLayer.geom_type.ToUpper() == "POLYGON")
+                            { <div style="height: 12px; width: 13px; display: inline-block;background-color:@string.Concat(objLayer.map_bg_color,objLayer.map_bg_opacity);border: 1px solid @objLayer.map_border_color;"></div>
+                            }
+                            else if (objLayer.geom_type.ToUpper() == "POINT")
+                            {
+                                if (!string.IsNullOrEmpty(@objLayer.icon_path))
+                                {
+                                    <div style="font-size:15px; display: inline-block;color:@objLayer.map_bg_color;"></div>
+                                    <img src=@objLayer.icon_path alt="">
+                                    }
+                                    else
+                                    {
+                                    <div class="icon-LBPoint" style="font-size:15px; display: inline-block;color:@objLayer.map_bg_color;"></div>
+                                }
+                            }
+
+                            <span>@objLayer.layer_name</span>
+                        </label>
+                    </b>&nbsp;
+                    <input id="chk_nLBL_@objLayer.id" type="checkbox" class="chkLBnetwork-L checkbox-custom2" data-mapabbr="@objLayer.map_abbr" data-layerid="Chd_@objLayer.id" data-targetLand="chk_LBnLyr_@objLayer.id" data-networktype="L" onclick="LandBase.handleChClick(this);">
+                    <b><label for="chk_nLBL_@objLayer.id" class="checkbox-custom2-label" style="float: right"></label></b>
+
+
+                </li>
+            }
+        </ul>
+
+    </li>
+</ul>
+
+<script>
+</script>

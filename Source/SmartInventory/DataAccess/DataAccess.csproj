@@ -1,0 +1,334 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{90B844A2-B75F-484B-A688-8977BF04A7EA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DataAccess</RootNamespace>
+    <AssemblyName>DataAccess</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.6\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp">
+      <HintPath>..\SmartInventory\DLL\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security">
+      <HintPath>..\packages\Npgsql.2.2.7\lib\net45\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\SmartInventory\DLL\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql">
+      <HintPath>..\packages\Npgsql.2.2.7\lib\net45\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql.EntityFramework">
+      <HintPath>..\packages\Npgsql.EntityFramework.2.2.7\lib\net45\Npgsql.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.OracleClient" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System-Web-Helpers.dll.1.0.0\lib\Net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebGrease">
+      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Admin\DAAdvancedSettings.cs" />
+    <Compile Include="Admin\DACableColorSettings.cs" />
+    <Compile Include="Admin\DACBomLogic.cs" />
+    <Compile Include="Admin\DAChangeConfigurationSetting.cs" />
+    <Compile Include="Admin\DAConnectionLabelSettings.cs" />
+    <Compile Include="Admin\DADashboard.cs" />
+    <Compile Include="Admin\DADownloadBckup.cs" />
+    <Compile Include="Admin\DADynamicForm.cs" />
+    <Compile Include="Admin\DAFileType.cs" />
+    <Compile Include="Admin\DADynamicTheme.cs" />
+    <Compile Include="Admin\DAInfoSetting.cs" />
+    <Compile Include="Admin\DAISPModelInfo.cs" />
+    <Compile Include="Admin\DALandBaseLabelSetting.cs" />
+    <Compile Include="Admin\DALabelSetting.cs" />
+    <Compile Include="Admin\DALandBaseDropdownValues.cs" />
+    <Compile Include="Admin\DALandBaseSettings.cs" />
+    <Compile Include="Admin\DALayerConfiguration.cs" />
+    <Compile Include="Admin\DALayerMaster.cs" />
+    <Compile Include="Admin\DALayerGroup.cs" />
+    <Compile Include="Admin\DAOpticalLinkBudget.cs" />
+    <Compile Include="Admin\DAOrthoImageLayer.cs" />
+    <Compile Include="Admin\DAProject.cs" />
+    <Compile Include="Admin\DASearchLandBaseLayerSetting.cs" />
+    <Compile Include="Admin\DASearchSetting.cs" />
+    <Compile Include="Admin\DATubeColorSettings.cs" />
+    <Compile Include="Admin\DAVendor.cs" />
+    <Compile Include="Admin\DAVendorSpecification.cs" />
+    <Compile Include="API\DAUser.cs" />
+    <Compile Include="API\DAArea.cs" />
+    <Compile Include="Context\MainContext.cs" />
+    <Compile Include="Contracts\IGenericRepository.cs" />
+    <Compile Include="DAAccessories.cs" />
+    <Compile Include="DAADB.cs" />
+    <Compile Include="DAAdditionalAttributes.cs" />
+    <Compile Include="DAAPIConsumerMaster.cs" />
+    <Compile Include="DAAPIRequestLog.cs" />
+    <Compile Include="DAArea.cs" />
+    <Compile Include="DAATAcceptance.cs" />
+    <Compile Include="DAAttachment.cs" />
+    <Compile Include="DABuilding.cs" />
+    <Compile Include="DABusinessLayer.cs" />
+    <Compile Include="DACabinet.cs" />
+    <Compile Include="DACable.cs" />
+    <Compile Include="Admin\DAConfigurationSetting.cs" />
+    <Compile Include="DAColumnsMapping.cs" />
+    <Compile Include="DACompetitor.cs" />
+    <Compile Include="DAConduit.cs" />
+    <Compile Include="DACoupler.cs" />
+    <Compile Include="DACustomer.cs" />
+    <Compile Include="DABom.cs" />
+    <Compile Include="DACustomerDistance.cs" />
+    <Compile Include="DADashboard.cs" />
+    <Compile Include="DADataProcessing.cs" />
+    <Compile Include="DADeviceSearch.cs" />
+    <Compile Include="DADsa.cs" />
+    <Compile Include="DAGipipe.cs" />
+    <Compile Include="DADuct.cs" />
+    <Compile Include="DADynamicAttributes.cs" />
+    <Compile Include="DAExportReportLog.cs" />
+    <Compile Include="DAFATConnection.cs" />
+    <Compile Include="DAFiberCutTracing.cs" />
+    <Compile Include="DAGetRouteAssetDetails.cs" />
+    <Compile Include="DAHandhole.cs" />
+    <Compile Include="DAKPIMaster.cs" />
+    <Compile Include="DALandBaseLayer.cs" />
+    <Compile Include="DALoop.cs" />
+    <Compile Include="DAOtpAuthentication.cs" />
+    <Compile Include="DAPatchPanel.cs" />
+    <Compile Include="DAPrintLog.cs" />
+    <Compile Include="DAFault.cs" />
+    <Compile Include="DAFaultStatusHistory.cs" />
+    <Compile Include="DAFiberLink.cs" />
+    <Compile Include="DAHelp.cs" />
+    <Compile Include="DALmcInfo.cs" />
+    <Compile Include="DAMaintainenceCharges.cs" />
+    <Compile Include="DAErrorLog.cs" />
+    <Compile Include="DAFileUploader.cs" />
+    <Compile Include="DAFMS.cs" />
+    <Compile Include="DAGeom.cs" />
+    <Compile Include="DAGlobalSetting.cs" />
+    <Compile Include="DAIntegrationSuperSet.cs" />
+    <Compile Include="DAIspEntityMapping.cs" />
+    <Compile Include="DAItemTemplate.cs" />
+    <Compile Include="DAJobPack.cs" />
+    <Compile Include="DALayer.cs" />
+    <Compile Include="DALoopMangment.cs" />
+    <Compile Include="DAMPOD.cs" />
+    <Compile Include="DANetworkTicket.cs" />
+    <Compile Include="DAOSPSplicing.cs" />
+    <Compile Include="DAPatchCord.cs" />
+    <Compile Include="DAPortInfo.cs" />
+    <Compile Include="DAPrintSavedTemplate.cs" />
+    <Compile Include="DAProjectArea.cs" />
+    <Compile Include="DAProvinceBoundary.cs" />
+    <Compile Include="DARack.cs" />
+    <Compile Include="DAWebRequestLog.cs" />
+    <Compile Include="DAXMLBuilderDashboard.cs" />
+    <Compile Include="DARedline.cs" />
+    <Compile Include="DARegionProvince.cs" />
+    <Compile Include="DAResources.cs" />
+    <Compile Include="DARoles.cs" />
+    <Compile Include="DAROW.cs" />
+    <Compile Include="DASC.cs" />
+    <Compile Include="DAManhole.cs" />
+    <Compile Include="DAMisc.cs" />
+    <Compile Include="DAPOD.cs" />
+    <Compile Include="DAPole.cs" />
+    <Compile Include="DASearch.cs" />
+    <Compile Include="DAONT.cs" />
+    <Compile Include="DAServiceability.cs" />
+    <Compile Include="DASiteCustomer.cs" />
+    <Compile Include="DASiteInfo.cs" />
+    <Compile Include="DASpliceTray.cs" />
+    <Compile Include="DASplitter.cs" />
+    <Compile Include="DASridList.cs" />
+    <Compile Include="DAStructure.cs" />
+    <Compile Include="DASurveyAssignment.cs" />
+    <Compile Include="DATemplate.cs" />
+    <Compile Include="DATicketMaster.cs" />
+    <Compile Include="DATrenchCustomerDetails.cs" />
+    <Compile Include="DAUtility.cs" />
+    <Compile Include="DAVault.cs" />
+    <Compile Include="DAWallMount.cs" />
+    <Compile Include="DATree.cs" />
+    <Compile Include="DATrench.cs" />
+    <Compile Include="DAUser.cs" />
+    <Compile Include="DAWorkSpace.cs" />
+    <Compile Include="DBContext\MainContext.cs" />
+    <Compile Include="DBHelpers\ProcHelper.cs" />
+    <Compile Include="DLProcess.cs" />
+    <Compile Include="DLReference.cs" />
+    <Compile Include="Feasibility\DAFeasibility.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="ISP\DAISP.cs" />
+    <Compile Include="ISP\DAISPPort.cs" />
+    <Compile Include="LongRunningQueriesData.cs" />
+    <Compile Include="PostgreSQL.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DBHelpers\GenericRepository.cs" />
+    <Compile Include="DBHelpers\Repository.cs" />
+    <Compile Include="TempUpload\DACustomerWireless.cs" />
+    <Compile Include="TempUpload\DACustomerWireline.cs" />
+    <Compile Include="TempUpload\DATempADB.cs" />
+    <Compile Include="TempUpload\DATempAntenna.cs" />
+    <Compile Include="TempUpload\DATempBDB.cs" />
+    <Compile Include="TempUpload\DATempBTSLayer.cs" />
+    <Compile Include="TempUpload\DATempBuilding.cs" />
+    <Compile Include="TempUpload\DATempCabinet.cs" />
+    <Compile Include="TempUpload\DATempCable.cs" />
+    <Compile Include="TempUpload\DATempCDB.cs" />
+    <Compile Include="TempUpload\DATempCoupler.cs" />
+    <Compile Include="TempUpload\DATempGipipe.cs" />
+    <Compile Include="TempUpload\DATempDuct.cs" />
+    <Compile Include="TempUpload\DATempFDB.cs" />
+    <Compile Include="TempUpload\DATempFMS.cs" />
+    <Compile Include="TempUpload\DATempHandhole.cs" />
+    <Compile Include="TempUpload\DATempHTB.cs" />
+    <Compile Include="TempUpload\DATempLandBase.cs" />
+    <Compile Include="TempUpload\DATempLoop.cs" />
+    <Compile Include="TempUpload\DATempManhole.cs" />
+    <Compile Include="TempUpload\DATempMicroduct.cs" />
+    <Compile Include="TempUpload\DATempMPOD.cs" />
+    <Compile Include="TempUpload\DATempONT.cs" />
+    <Compile Include="TempUpload\DATempOpticalRepeater.cs" />
+    <Compile Include="TempUpload\DATempPatchPanel.cs" />
+    <Compile Include="TempUpload\DATempPoe.cs" />
+    <Compile Include="TempUpload\DATempPOI.cs" />
+    <Compile Include="TempUpload\DATempPole.cs" />
+    <Compile Include="TempUpload\DATempRoom.cs" />
+    <Compile Include="TempUpload\DATempSector.cs" />
+    <Compile Include="TempUpload\DATempSpliceClosure.cs" />
+    <Compile Include="TempUpload\DATempSplitter.cs" />
+    <Compile Include="TempUpload\DATempStructure.cs" />
+    <Compile Include="TempUpload\DATempTower.cs" />
+    <Compile Include="TempUpload\DATempTree.cs" />
+    <Compile Include="TempUpload\DATempTrench.cs" />
+    <Compile Include="TempUpload\DATempVault.cs" />
+    <Compile Include="TempUpload\DATempWallMount.cs" />
+    <Compile Include="TempUpload\DATempPOD.cs" />
+    <Compile Include="TempUpload\DAUploadSummary.cs" />
+    <Compile Include="VectorLayers\DAVectorLayers.cs" />
+    <Compile Include="WFM\DAJobOrder.cs" />
+    <Compile Include="WFM\DAUserTimeSheet.cs" />
+    <Compile Include="WFM\DbHelper.cs" />
+    <Compile Include="WFM\DLWFMTicket.cs" />
+    <Compile Include="Wireless\DAAntenna.cs" />
+    <Compile Include="Wireless\DAInstallationInfo.cs" />
+    <Compile Include="DAMicroduct.cs" />
+    <Compile Include="Wireless\DAMicrowave.cs" />
+    <Compile Include="Wireless\DASector.cs" />
+    <Compile Include="Wireless\DATower.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ApplicationConfig\ApplicationConfig.csproj">
+      <Project>{c88e7577-72d6-47ab-ba49-a0e3c00a4419}</Project>
+      <Name>ApplicationConfig</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{2e40e756-53a0-4a32-9614-15f0a7e126db}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Resources\Resources.csproj">
+      <Project>{3D2473BB-C2B2-4342-94A8-A779AEA337EC}</Project>
+      <Name>Resources</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utility\Utility.csproj">
+      <Project>{0a7d542f-4e3a-44f0-a8ad-b1281599a2ae}</Project>
+      <Name>Utility</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

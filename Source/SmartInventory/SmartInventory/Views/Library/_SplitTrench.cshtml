@@ -1,0 +1,225 @@
+﻿@model Models.SplitTrench
+@using SmartInventory.Settings;
+@using Models;
+@helper pageMessage()
+{
+    Html.RenderPartial("_PageMessage", Model.objPM);
+}
+
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("saveSplitTrench", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        OnBegin = "return isFormValid();",
+        LoadingElementId = "dvProgress",
+        Confirm = "Splitting of this Trench would result two new trench with same configuration. Are you sure to continue ?...!!!"
+    },
+                new { id = "frmShowSplitTrench", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal", isConfirm = "1" }))
+    {
+        @Html.HiddenFor(m => m.split_entity_networkId)
+        @Html.HiddenFor(m => m.split_entity_type)
+        @Html.HiddenFor(m => m.split_entity_system_id)
+        @Html.HiddenFor(m => m.split_trench_system_id)
+        @Html.HiddenFor(m => m.split_entity_network_status)
+        @pageMessage()
+        <div class="TabContent--max-over">
+            @if (Model.trenchs.Count > 0)
+            {
+                <fieldset class="the-fieldset">
+                    @{                   }
+                    @*@Resources.Resources.SI_OSP_TRE_NET_FRM_008,(@Resources.Resources.SI_OSP_ONT_NET_FRM_005 @ApplicationSettings.SplitDuctBuffer @Resources.Resources.SI_OSP_GBL_GBL_GBL_034)*@
+                    <legend class="the-legend">Trench Detail(With in @ApplicationSettings.SplitTrenchBuffer Mtr)</legend>
+
+                    <div>
+                        <table id="infoTable" border="0" cellspacing="0" cellpadding="5" class="ElementsList grid">
+                            <tbody>
+                                @if (Model.trenchs != null && Model.trenchs.Count > 0)
+                                {
+                                    foreach (var item in Model.trenchs)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input type="radio" class="Trench_address" name="Trench" value="@item.common_name" s_id="@item.system_id" data-network-status="@item.network_status" />
+                                            </td>
+                                            <td>@item.common_name</td>
+                                            <td>
+                                                <a href="#" onclick="si.ShowEntityOnMap('@item.system_id','@item.entity_type','@item.geom_type');$(popup.DE.MinimizeModel).trigger('click');" class="dropdown-toggle" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036">
+                                                    <i class="fa fa-globe fa-fw m-r-xs"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">Split Trench Detail</legend>
+                    <div class="form-group" style="text-align: center;">
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">Trench 1</legend>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="txtductCode">
+                                    Network ID <i class="clsMandatory">*</i>:
+                                </label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.trench_one_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
+                                    @Html.ValidationMessageFor(model => model.trench_one_network_id)
+                                </div>
+                                <label class="control-label col-sm-2" for="txttrenchName">Trench Name<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.trench_one_name, new { @class = "form-control clsReadOnly" })
+                                    @Html.ValidationMessageFor(model => model.trench_one_name)
+                                </div>
+                            </div>
+                            @if (ApplicationSettings.isterminationpointenable)
+                            {
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="txtStartPoint">@Resources.Resources.SI_OSP_GBL_NET_FRM_035<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.trench_one_a_location, new { @class = "form-control clsReadOnly", @readonly = true })
+                                        @Html.ValidationMessageFor(model => model.trench_one_a_location)
+                                    </div>
+
+                                    <label class="control-label col-sm-2" for="txtEndPoint">@Resources.Resources.SI_OSP_GBL_NET_FRM_036<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.trench_one_b_location, new { @class = "form-control clsReadOnly", @readonly = true })
+                                        @Html.ValidationMessageFor(model => model.trench_one_b_location)
+                                    </div>
+
+                                </div>
+                            }
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="txtSubAreaName">Trench Measured<br/>Length (Mtr)<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.trench_one_measured_length, new { @class = "form-control clsReadOnly", @readonly = true })
+                                    @Html.ValidationMessageFor(model => model.trench_one_measured_length)
+                                </div>
+                                <label class="control-label col-sm-2" for="txtRemarks">Trench Measured<br/>Length (Mtr)<i class="clsMandatory" id="icntrenchonecalclength">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.trench_one_calculated_length,
+                                                         SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                                         {
+                                                             @class = "form-control",
+                                                             @onkeypress = "return allowNumberwithOneDot(event,'trench_one_calculated_length');",
+                                                             @maxlength = "10"
+                                                         }, null))
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">Trench 2</legend>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="txtductCode">
+                                    Network ID <i class="clsMandatory">*</i>:
+                                </label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.trench_two_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
+                                    @Html.ValidationMessageFor(model => model.trench_two_network_id)
+                                </div>
+                                <label class="control-label col-sm-2" for="txtductTwoName">Trench Name<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.trench_two_name, new { @class = "form-control clsReadOnly" })
+                                    @Html.ValidationMessageFor(model => model.trench_two_name)
+                                </div>
+                            </div>
+                            @if (ApplicationSettings.isterminationpointenable)
+                            {
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="txtStartPoint">Start Point<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.trench_two_a_location, new { @class = "form-control clsReadOnly", @readonly = true })
+                                        @Html.ValidationMessageFor(model => model.trench_two_a_location)
+                                    </div>
+
+                                    <label class="control-label col-sm-2" for="txtEndPointe">End Point<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.trench_two_b_location, new { @class = "form-control clsReadOnly", @readonly = true })
+                                        @Html.ValidationMessageFor(model => model.trench_two_b_location)
+                                    </div>
+                                </div>
+                            }
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="txtSubAreaName">Trench Measured <br> Length (Mtr)<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.trench_two_measured_length, new { @class = "form-control clsReadOnly", @readonly = true })
+                                    @Html.ValidationMessageFor(model => model.trench_two_measured_length)
+                                </div>
+                                <label class="control-label col-sm-2" for="txtRemarks">Trench Calculated <br> Length (Mtr)<i class="clsMandatory" id="icnducttwocalclength">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.trench_two_calculated_length,
+                                                         SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                                         {
+                                                             @class = "form-control",
+                                                             @onkeypress = "return allowNumberwithOneDot(event,'trench_two_calculated_length');",
+                                                             @maxlength = "10"
+                                                         }, null))
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </fieldset>
+                        }
+                        else
+                        {
+
+
+                <div style="text-align:center; margin:50px;"><b>@String.Format("No near Trench found ( With in 2 Mtr )!", ApplicationSettings.SplitTrenchBuffer)</b></div>
+
+                        }
+
+
+        </div>
+                        if (Model.trenchs.Count > 0)
+                        {
+<div class="d-flex ModalFooter" id="dvBtnAction">
+    <input class="btn btn-small btn-primary ml-auto mr-01" type="Button" id="btntrenchProcess" value="Process Trench" onclick="si.getNewTrenchDetails()">
+    <input  class="btn btn-small btn-danger" type="submit"  name="btnaction" id="btnSplittrench" value="Split Trench" />
+
+</div>
+                        }
+        <div class="clearfix"></div>
+                        }
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        callFormValidator("frmShowSplitTrench");
+    });
+    function isFormValid() {
+        if ($('#trench_one_network_id').val() == "" && $('#trench_one_network_id').val() == "") {
+            alert('Please click on process trench !');
+            return false;
+        }
+        else {
+            if ((parseFloat($('#trench_one_calculated_length').val()) != 0)) {
+                var cabelOneStatus = ValidateDuctLenght('#trench_one_measured_length', '#trench_one_calculated_length', 'trench 1');
+                if (cabelOneStatus == false) {
+                    return false;
+                }
+            }
+            if ((parseFloat($('#trench_two_calculated_length').val()) != 0)) {
+                var trenchtwoStatus = ValidateDuctLenght('#trench_two_measured_length', '#trench_two_calculated_length', 'trench 2');
+                if (trenchtwoStatus == false) {
+                    return false;
+                }
+            }
+        }
+    }
+    $('.Trench_address').click(function () {
+         
+        $('#trench_one_network_id').val('');
+        $('#trench_one_name').val('');
+        $('#trench_one_measured_length').val('');
+        $('#trench_one_calculated_length').val('');       
+        $('#trench_two_network_id').val('');
+        $('#trench_two_name').val('');
+        $('#trench_two_measured_length').val('');
+        $('#trench_two_calculated_length').val('');
+    });
+</script>
+

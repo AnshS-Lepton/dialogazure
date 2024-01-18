@@ -1,0 +1,107 @@
+﻿@model Models.Admin.CableMapColorSettings
+
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+
+<!DOCTYPE html>
+<div id="divAddNewCableColorSettings">
+    <div id="dvPageMessage">
+        @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+    </div>
+    @using (Ajax.BeginForm("SaveCableMapColorSettings", "OSPSettings",
+                                        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddNewCableColorSettings" },
+                                        new { id = "frmAddCableColorSetting", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id)
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Cable Type<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.cable_type, new SelectList(Model.lstCableType.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select", @id = "ddlCableType" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Cable Category<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.lstCableCategorys, new SelectList(Model.lstCableCategory.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select", @id = "ddlCableCategory" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Fiber Count<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.lstfiberCounts, new SelectList(Model.lstFiberCount.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select", @id = "ddlFiberCount" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Color Code<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.color_code, new { @maxlength = "25", Style = "width:100% ;", @name = "color2", @class = "full col-md-10", @id = "txtColorCode" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footerModal d-flex" id="dvBtnAction">
+            <button type="button" class="btn btn-default ml-auto mr-05" id="btnClearCableMapColorSetting">Reset</button>
+            <input type="button" class="btn btn-primary" id="btnSaveCableMapColorSetting" value="Save" />
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ddlCableCategory").val('@Model.cable_category');
+        $("#ddlFiberCount").val('@Model.fiber_count');
+        $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+        $("#ddlCableCategory").attr('data-placeholder', "--All--").trigger("chosen:updated");
+        $("#ddlFiberCount").attr('data-placeholder', "--All--").trigger("chosen:updated");
+    });
+    if ('@Model.id' != 0) {
+        btnSaveCableMapColorSetting.value = "Update";
+        $('#ddlCableType').next().addClass('.EUTSetting chosen-disabled');
+        $('#ddlCableCategory').next().addClass('.EUTSetting chosen-disabled');
+        $('#ddlFiberCount').next().addClass('.EUTSetting chosen-disabled');
+    }
+    $('#btnClearCableMapColorSetting').on("click", function () {
+        if ('@Model.id' == 0) {
+            $('#ddlCableType').val(0).trigger("chosen:updated");
+            $('#ddlCableCategory').val(0).trigger("chosen:updated");
+            $('#ddlFiberCount').val(0).trigger("chosen:updated");
+            $('.sp-preview-inner').css('background-color', '#ffffff');
+        }
+        else {
+            $('.sp-preview-inner').css('background-color', '#ffffff');
+        }
+    });
+    $("#btnSaveCableMapColorSetting").on("click", function (e) {
+        if (!validateDropdown('ddlCableType')) { e.preventDefault(); return false; }
+        if ($("#ddlCableCategory").val() == null && $("#ddlFiberCount").val() == null) {
+            confirm("Are you sure you want to select all cable category and fiber count?", function () {
+                $("#frmAddCableColorSetting").submit();
+                refreshGridData();
+            });
+        }
+        else if ($("#ddlCableCategory").val() == null ) {
+            confirm("Are you sure you want to select all cable category?", function () {
+                $("#frmAddCableColorSetting").submit();
+                refreshGridData();
+            });
+        }
+        else if ( $("#ddlFiberCount").val() == null) {
+            confirm("Are you sure you want to select all fiber count?", function () {
+                $("#frmAddCableColorSetting").submit();
+                refreshGridData();
+            });
+        }
+        else {
+            $("#frmAddCableColorSetting").submit();
+            refreshGridData();
+        }
+    });
+    $('.EUTSetting select').on('change', function () {
+        return validateDropdown(this.id);
+    });
+
+    function refreshGridData()
+    {
+        window.location.reload();
+    }
+</script>

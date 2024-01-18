@@ -1,0 +1,71 @@
+﻿@model Models.itemMaster
+@if (Model.unit_input_type != null && Model.unit_input_type.ToLower() == "port")
+{
+    Model.no_of_input_port = 0;
+    Model.no_of_output_port = 0;
+    <div class="form-group row" id="divTotalPortSubCategory">
+        <label class="control-label col-sm-2" id="lbltotalport">@Resources.Resources.SI_OSP_GBL_NET_FRM_018:<i class="clsMandatory">*</i></label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(model => model.no_of_port, new { @class = "form-control clsReadOnly", @maxLength = "4", @readonly = "True", id= "no_of_port", @onkeypress = "return allowOnlyNumber(event);" })
+        </div>
+    </div>
+}
+else if (Model.unit_input_type != null && Model.unit_input_type.ToLower() == "iop")
+{
+    <div class="form-group row" id="divIOPPortSubCategory">
+        <label class="control-label col-sm-2" id="lblInputPort">@Resources.Resources.SI_OSP_GBL_NET_FRM_019:<i class="clsMandatory">*</i></label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(model => model.no_of_input_port, new { @class = "form-control clsReadOnly", @maxLength = "4", @readonly = "True", @onkeypress = "return allowOnlyNumber(event);" })
+        </div>
+        <label class="control-label col-sm-2" id="lblInputPort">@Resources.Resources.SI_OSP_GBL_NET_FRM_021:<i class="clsMandatory">*</i></label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(model => model.no_of_output_port, new { @class = "form-control clsReadOnly", @maxLength = "4", @readonly = "True", @onkeypress = "return allowOnlyNumber(event);" })
+        </div>
+    </div> }
+else if (Model.unit_input_type != null && Model.unit_input_type.ToLower() == "iopddl")
+{
+    var LabelTxt = "Sub Category 3";
+    if (Model.entityType == Models.EntityType.BDB.ToString() || Model.entityType == Models.EntityType.ADB.ToString() || Model.entityType == Models.EntityType.CDB.ToString() || Model.entityType == Models.EntityType.ONT.ToString())
+    {
+        LabelTxt = Resources.Resources.SI_OSP_CAB_NET_FRM_049;
+        Model.unitValue = Model.no_of_input_port + ":" + Model.no_of_output_port;
+    }
+    else if (Model.entityType == Models.EntityType.Cable.ToString()) { LabelTxt = Resources.Resources.SI_OSP_CAB_NET_FRM_048;
+    }
+    else if (Model.entityType == Models.EntityType.Splitter.ToString()) { LabelTxt = Resources.Resources.SI_OSP_CAB_NET_FRM_049; }
+
+    <div class="form-group row" id="divIOPddl">
+        <label class="control-label col-sm-2" id="lbl_IOP">@LabelTxt</label>
+        <div class="col-sm-4">
+            <div class="col-sm-4" style="position: absolute;height: 28px; z-index: 1000; width: 92%;"></div>
+            @Html.DropDownListFor(m => m.unitValue, new SelectList(Model.lstIOPDetails.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control clsReadOnly", @readonly = "True", @id = "ddlIOP" })
+        </div>
+
+        <div class="col-sm-1">
+            @Html.DisplayFor(m => m.unit, new { @id = "lbl_unit" })
+        </div>
+    </div>
+}
+else if (Model.unit_input_type != null && Model.unit_input_type.ToLower() == "other")
+{
+    <div class="form-group row" id="div_other">
+        <label class="control-label col-sm-2" id="lblother"></label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(model => model.other, new { @class = "form-control clsReadOnly", @readonly = "True", @maxLength = "30" })
+        </div>
+        <div class="col-md-1">
+            @Html.LabelFor(m => m.unit, new { @id = "lbl_unit" })
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        if ('@Model.no_of_port' == 0) {
+            $('#no_of_port').val('');
+        }
+        $('#ddlIOP option:not(:selected)').attr('disabled', true).trigger("chosen:updated");
+        $('#ddlIOP_chosen .chosen-search-input').attr('disabled', true);
+        $('#ddlIOP_chosen').addClass('chosen-disabled');
+    })
+</script>

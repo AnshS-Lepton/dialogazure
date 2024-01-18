@@ -1,0 +1,123 @@
+﻿
+@using Models;
+@using SmartInventory.Settings;
+@{
+    User objUser = new User();
+    objUser = (User)Session["userDetail"];
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link id="favicon" rel="shortcut icon" href="@ApplicationSettings.ClientFavicon" type="image/x-icon" />
+    <title>JFP Dashboard</title>
+    <link rel="stylesheet" href="~/Content/dashboard/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/dashboard/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/dashboard/css/chosen.css" asp-append-version="true" />
+    <link href="~/css/mvc-grid/mvc-grid.css" rel="stylesheet">
+    <link href="~/Content/dashboard/css/admin.css" rel="stylesheet">
+    <link href="~/Content/dashboard/css/color_stylesheet.css" rel="stylesheet">
+    <link href="~/Content/dashboard/css/icon_fonts.css" rel="stylesheet">
+
+    <script src="~/Content/dashboard/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/Content/dashboard/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/dashboard/js/chosen.jquery.js" asp-append-version="true"></script>
+    <script src="~/Content/dashboard/js/googleCharts.js" asp-append-version="true"></script>
+    <script src="~/Content/dashboard/js/site.js" asp-append-version="true"></script>
+    <script src="~/Content/dashboard/js/admin.js" asp-append-version="true"></script>
+    <script src="~/Content/dashboard/js/ModalPopUpAdmin.js" asp-append-version="true"></script>
+    <script src="~/Content/dashboard/js/chartBinding.js" asp-append-version="true"></script>
+</head>
+<body>
+    <div id="header" class="d-flex">
+        <span class="brand_name">Dashboard</span>
+        <ul class="user_btn ml-auto">
+            <li class="nav-item">
+                <a class="nav-link d-flex" id="admindiv">
+                    @objUser.user_name  <i class="icon-User_icon_circle"></i>
+                </a>
+            </li>
+        </ul>
+
+        <div class="adminpopout hideLog">
+            <div class="padding">
+                <a href="/Login/logout">Sign Out</a>
+            </div>
+        </div>
+        <div class="loader dNone" id="divloader">
+            <div class="loaderBar"></div>
+        </div>
+    </div>
+    <div class="d-fx">
+        <div class="sidenav" id="collapseDiv" style="display:none">
+            <nav class="navbar navbar-expand-lg navbar-dark" id="mainNav">
+                <div id="navbarResponsive">
+
+                    <div id="dvNav" class="collapse navbar-collapse">
+                        <ul class="navbar-nav navbar-sidenav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index", "Dashboard")" id="homelink">
+                                    <i class="icon-Dashboard"></i>
+                                    <span class="nav-link-text">JFP Dashboard</span>
+                                </a>
+                            </li>
+
+                            <!--<li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index", "KPI")" id="homelink" onclick="window.location='KPI/Index'">
+                                    <i class="icon-view_report f17"></i>
+                                    <span class="nav-link-text">View KPI Reports</span>
+                                    <i class="icon-Open_Menu pull-right addon"></i>
+                                </a>
+                            </li>
+
+
+                            <li class="nav-item" title="Report">
+                                <a class="nav-link" href="#">
+                                    <i class="icon-Users"></i>
+                                    <span class="nav-link-text">KPI Management</span>
+                                    <i class="icon-Open_Menu pull-right addon"></i>
+                                </a>
+                                <ul class="sidenav-second-level" style="display:none;">
+                                    <li><a href="@Url.Action("_AddKPI", "KPI", new { id = "" })">Add KPI</a><span class="right-arrow"></span></li>
+                                    <li><a href="@Url.Action("_ViewKPI", "KPI")">View KPI</a><span class="right-arrow"></span></li>-->
+                            @*@<li><a href="@Url.Action("ListTemplate", "KPI")">View Template</a><span class="right-arrow"></span></li>  hr*@
+                            <!--</ul>
+                            </li>
+                            <li class="nav-item" title="Users">
+                                <a class="nav-link" href="#">
+                                    <i class="icon-report f17"></i>
+                                    <span class="nav-link-text">Reports</span>
+                                    <i class="icon-Open_Menu pull-right addon"></i>
+                                </a>
+                                <ul class="sidenav-second-level maxTab" id="grdKPItemplate" style="display:none;">
+                                </ul>
+                            </li>-->
+                        </ul>
+                    </div>
+
+                </div>
+            </nav>
+            <a href="javascript:void(0);" class="collapseArrow"><img src="~/images/collapsArrow.svg" /></a>
+        </div>
+
+        <div class="content-wrapper">
+            @RenderBody()
+        </div>
+
+        <script src="~/js/mvc-grid/mvc-grid.js"></script>
+        <script>
+            document.querySelectorAll(".mvc-grid").forEach(element => new MvcGrid(element));
+        </script>
+
+    </div>
+    @RenderSection("Scripts", required: false)
+
+
+
+
+</body>
+
+</html>

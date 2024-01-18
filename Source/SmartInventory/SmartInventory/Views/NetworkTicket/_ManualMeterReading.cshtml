@@ -1,0 +1,119 @@
+﻿
+
+@model Models.SplitterMaster
+@using Models;
+<style>
+    .libBody {
+        padding: 20px;
+    }
+
+    .imgMinMax {
+        max-height: 300px;
+        border-radius: 5px;
+        box-shadow: 0 7px 10px rgba(0,0,0,0.1);
+        border: 2px solid #FFFFFF;
+    }
+
+    .barCodeInput {
+        height: 28px !important;
+    }
+
+    .jc-flex-end {
+        justify-content: flex-end;
+    }
+
+    .self-flexStart {
+        align-self: flex-start;
+    }
+
+    .verifyDiv {
+        flex: 1;
+    }
+    .txt-center{
+        text-align:center;
+    }
+</style>
+
+<div class="libBody viewReport">
+    @Html.HiddenFor(m => m.system_id, new { id = "hdnsystemid" })
+
+    <div class="form-group">
+        <div class="example-image-link txt-center" data-lightbox="example-set">
+            <img src="@Model.file_location" class="imgMinMax" />
+        </div>
+    </div>
+    <div class="d-fx jc-flex-end --gap15 mt-02">
+        <div class="d-fx --gap10 verifyDiv">
+            @Html.TextBoxFor(model => model.power_meter_reading, new { @class = "form-control barCodeInput", @placeholder = "Power Meter Reading", @onpaste = "return false;", @maxlength="5",  @id = "txtMeterReading" })
+            <input type="button" class="btn btn-primary saveBtn self-flexStart" name="btnaction" id="btnVerify" value="Verify" />
+        </div>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var hdnMinMeterReading = parseInt($('#hdnMinMeterReading').val());
+        var hdnMaxMeterReading = parseInt($('#hdnMaxMeterReading').val());
+        // below function for verify S2 manual meter reading
+        $("#btnVerify").on("click", function () {
+            var meterReading = ($("#txtMeterReading").val()).trim();
+            if (meterReading != "") {
+                meterReading = parseFloat(($("#txtMeterReading").val()).trim()).toFixed(2);
+                if (meterReading!= 0.00) {
+                    var system_id = $("#hdnsystemid").val();
+                    if (meterReading <= hdnMaxMeterReading && meterReading >= hdnMinMeterReading) {
+                        ajaxReq('NetworkTicket/VerifiedMeterReading', { system_id: system_id, meterReading: meterReading }, true, function (resp) {
+                            if (resp.status == "OK") {
+
+                                alert("Power meter reading verified successfully.");
+                                $(popup.DE.CloseChildPopup).trigger("click");
+                                $('#frmNWEntityDetails').submit();
+                            }
+                            else {
+                                alert("Error while processing the request");
+                            }
+                        }, false, false);
+                        //});
+
+                    }
+                    else {
+                        alert("Power meter reading value should be " + hdnMinMeterReading + " to " + hdnMaxMeterReading + " .");
+                    }
+                }
+                else {
+                    alert('Power meter reading value can not be 0');
+                }
+            }
+
+            else {
+                $("#txtMeterReading").css('border-color', 'red');
+            }
+
+        });
+
+        var regex = new RegExp('^[0-9\.-]$');
+        $('#txtMeterReading').bind("keypress", function (event) {
+            var readingValue= $('#txtMeterReading').val();
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                
+
+            }
+            else {
+                if (readingValue != '' && key == '-') {
+                    event.preventDefault();
+                    return false;
+                }
+                else if (key=='.' || key=='-') {
+                    if (readingValue.includes(key)) {
+                        event.preventDefault();
+                        return false;
+                    }
+                }
+            }
+        });
+
+    });
+</script>

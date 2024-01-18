@@ -1,0 +1,79 @@
+﻿@{
+    Layout = null;
+}
+@using SmartInventory.Settings;
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Admin</title>
+    <link id="favicon" rel="shortcut icon" href="@ApplicationSettings.ClientFavicon" type="image/x-icon" />
+    @Styles.Render("~/bundles/Admincss")
+    @Scripts.Render("~/bundles/AdminScripts")
+</head>
+<body>
+    @{Html.RenderPartial("_GlobalVariable");}
+    @{Html.RenderPartial("_Header");}
+    @{Html.RenderPartial("_ModalPopUp");}
+    <div id="wrapper">
+        @{Html.RenderAction("HeaderInfo_Admin", "Home");}
+        @*@{Html.RenderPartial("_MainNavigation");}*@
+        <div class="content-wrapper">
+            @RenderBody()
+        </div>
+    </div>
+    @{Html.RenderPartial("_Footer");}
+    <div id="dvProgress" style="display: none;">
+        <div id="blur" class="progresblur">
+            &nbsp;
+        </div>
+        <div id="progressbar" style="width: 247px; height: 152px; top: 40%; left: 40%;">
+            <img alt="Loading..." src="~/content/images/loading.gif" /><br />
+            <label id="lblTotalRouted"></label>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+        var appRoot = '@Url.Content("~")' + 'Admin/';
+        var baseUrl = '@Request.Url.GetLeftPart(UriPartial.Authority)';
+        $(function () {
+            //--------Progress Bar---------
+            $('<div class="b-info" ></div>').width(0).appendTo($('body'))
+                .stop().animate({ width: '100%' }, 500, 'linear', function () {
+                    $(this).remove();
+                });
+            //--------Progress Bar---------
+            var _url = window.location.pathname;
+            if (_url != null) {
+                var $nav = $('#dvNav a[href=\'' + _url + '\']');
+                $nav.removeClass('activelink');
+                $nav.addClass('activelink');
+                $nav.parent().parent().show();
+                $nav.parent().parent().parent().find('.addon').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+                $nav.parent().parent().parent().find('.addon').toggleClass('icon-Hide_Menu').toggleClass('icon-Open_Menu');
+                var $navLnk = $nav.parent().parent().parent().find('.nav-link');
+                if ($navLnk && $navLnk.length > 0) {
+                    $navLnk[0].focus();
+                }
+                else {
+                    $('#homelink').focus();
+                }
+            }
+
+        });
+    </script>
+
+
+    <script type="text/javascript">
+        var popup = new ModalPopUp(); //Modal popup Admin js file..
+        $(document).ready(function () {
+            popup.InitPopUp();
+        });
+    </script>
+    @RenderSection("equipmentScript", required: false)
+</body>
+</html>

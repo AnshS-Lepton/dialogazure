@@ -1,0 +1,87 @@
+﻿@model Models.Admin.LabelSetting
+
+<!DOCTYPE html>
+<div class="col-lg-12" id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div id="dvInfoSetting" class="update_panel">
+    <div class="title">
+        <h4><span class="icon16 icomoon-icon-bars"></span><span>Label Settings</span></h4>
+    </div>
+    @using (Html.BeginForm("SaveLabelSettings", "OSPSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmLabelSetting", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-4">
+                    <label class=" control-label">
+                        Entity type:<i class="clsMandatory">*</i>
+                    </label>
+                </div>
+                <div class=" col-md-8">
+                    @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), "--select--", new { @class = "chosen-select col-sm-12", @id = "ddllstLayers", @onchange = "onChangeAttributeBind();" })
+                </div>
+            </div>
+        </div>
+      
+            <div class="form-group">
+                <div class="row">
+                    <div class=" col-md-4">
+                        <label class=" control-label" style="float:left;"> Label Attributes:</label>
+                    </div>
+
+                    <div class=" col-md-8">
+
+
+                        <select id="ddlAttributesDetails" name="@Html.NameFor(m => m.label_columns)" class="chosen-select col-sm-12">
+                            <option value="">--select--</option>
+                            @foreach (var attribute in Model.lstLabelAttributes)
+                            {
+                                var selected = attribute.column_name == Model.label_columns ? "selected" : "";
+                                <option value="@attribute.column_name" data-selectedvalue="@attribute.is_selected" @selected>@attribute.display_name</option>
+                                
+                            }
+                        </select>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-group" id="dvBtnAction">
+                <div class="row">
+                    <div class="col-md-4"> </div>
+                    <div class="col-md-8  text-right">
+                        <a href="@Url.Action("labelSettings", "OSPSettings", new { id = 0 })" class="btn btn-default" title="Reset">Reset</a>
+                        <input type="submit" class="btn btn-primary ml-05" onclick="return IsValiddropdown();" name="btnaction" id="btnSubmit" value="Save" />
+                     </div>
+                </div>
+            </div>
+       
+        <div class="clearfix"></div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('.chosen-select').chosen({ width: '100%' });
+ 
+    });
+
+    function IsValiddropdown() {
+
+        if ($('#ddllstLayers').val() == "") {
+            $("#ddllstLayers_chosen").css({ "width": "100% !important", "border": "1px solid red" });
+            $("#ddlAttributesDetails_chosen").css({ "width": "100% !important", "border": "0px" });
+            return false;
+        }
+
+        if ($('#ddlAttributesDetails').val() == "")
+        {
+            $("#ddlAttributesDetails_chosen").css({ "width": "100% !important", "border": "1px solid red" });
+            $("#ddllstLayers_chosen").css({ "width": "100% !important", "border": "0px" });
+            return false;
+        }
+
+    }
+
+
+</script>

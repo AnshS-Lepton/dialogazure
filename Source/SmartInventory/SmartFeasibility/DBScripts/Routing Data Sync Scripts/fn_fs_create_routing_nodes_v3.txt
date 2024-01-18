@@ -1,0 +1,83 @@
+-- FUNCTION: public.fn_fs_create_routing_nodes()
+
+-- DROP FUNCTION public.fn_fs_create_routing_nodes();
+
+CREATE OR REPLACE FUNCTION public.fn_fs_create_routing_nodes(
+	)
+    RETURNS TABLE(status boolean, message text) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE RESULT text;
+DECLARE max_id integer;
+BEGIN
+	-- remove the invalid rows
+	delete from routing_data where length is null;
+
+	alter table routing_data
+	    ADD COLUMN source integer,
+	    ADD COLUMN target integer;
+
+	SELECT MAX(id) INTO max_id FROM routing_data;
+
+	-- sequence to insert records with reverse geometry
+	drop sequence if exists seq_routing;
+	create sequence seq_routing;
+	perform setval('seq_routing', max_id + 1);
+
+	-- insert same records again with reverse geometry
+	insert into routing_data(id, ufi, sn, route_no, rc, rt, sr, trf, city, state_name, country, length, cost, reverse_cost, geom, source, target, system_id)
+	select nextval('seq_routing'), currval('seq_routing'), currval('seq_routing'), currval('seq_routing'), rc, rt, sr, trf, city, state_name, country, length, cost, reverse_cost, st_reverse(geom), source, target, id 
+	from routing_data;
+	
+	-- convert to 2D (added by Hari on 13/01/2022)
+	update routing_data set geom = ST_Force2D(geom);
+
+	-- create routing topology
+	SELECT pgr_createTopology('routing_data', 0.000001, 'geom') INTO RESULT;
+	
+	if RESULT = 'OK' then
+		-- analyze the graph
+		SELECT pgr_analyzegraph('routing_data', 0.000001, 'geom') INTO RESULT;
+
+		if RESULT = 'OK' then
+			-- create noded network
+			SELECT pgr_nodeNetwork('routing_data', 0.000001, 'id', 'geom') INTO RESULT;
+
+			if RESULT = 'OK' then
+				-- create topology for noded network
+				SELECT pgr_createTopology('routing_data_noded', 0.000001, 'geom') INTO RESULT;
+
+				if RESULT = 'OK' then
+					-- analyze the noded network graph to remove dead end etc.
+					SELECT pgr_analyzegraph('routing_data_noded', 0.000001, 'geom') INTO RESULT;
+					if RESULT <> 'OK' then
+						RESULT := 'ERROR IN pgr_analyzegraph(''routing_data_noded'')';
+						RETURN QUERY Select false as status, RESULT as message;
+					END IF;
+				ELSE
+					RESULT := 'ERROR IN pgr_createTopology(''routing_data_noded'')';
+					RETURN QUERY Select false as status, RESULT as message;
+				END IF;
+			ELSE
+				RESULT := 'ERROR IN pgr_nodeNetwork(''routing_data'')';
+				RETURN QUERY Select false as status, RESULT as message;
+			END IF;
+		ELSE
+			RESULT := 'ERROR IN pgr_analyzegraph(''routing_data'')';
+			RETURN QUERY Select false as status, RESULT as message;
+		END IF;
+	ELSE
+		RESULT := 'ERROR IN pgr_createTopology(''routing_data'')';
+		RETURN QUERY Select false as status, RESULT as message;
+	END IF;
+
+	RETURN QUERY Select true as status, 'Routing Data Noded successfully!'::text  as message;
+END;
+$BODY$;
+
+ALTER FUNCTION public.fn_fs_create_routing_nodes()
+    OWNER TO postgres;

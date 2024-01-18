@@ -1,0 +1,30 @@
+﻿@model List<Models.LayerDetailsColumn>
+@using SmartInventory.Settings;
+@using Utility
+
+<div class="libDetail">
+    <div class="tab-content">
+        <div class="popTableBox">
+            <table class="grid" id="tblSummaryAll">
+                <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Count(); i++)
+                    {
+                        <tr>
+                            <td> @Model[i].column_display_name:</td>
+                            <td class="noWhiteSpace wordBreak">@Model[i].column_value</td>
+                        </tr>
+
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

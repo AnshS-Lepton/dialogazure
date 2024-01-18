@@ -1,0 +1,80 @@
+﻿@model List<Models.PlanBom>
+@using SmartInventory.Settings;
+
+
+<style>
+    .webgrid th {
+        color: #fff;
+    }
+</style>
+
+<div class="table-responsive tble_cls mt-05 mb-1">
+    @if (Model.Count > 0)
+    {
+        if (Model.FirstOrDefault().is_template_extis)
+        {
+
+            <table id="tblRecurringCharges" class="grid" cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>@Resources.Resources.SI_GBL_GBL_NET_FRM_098</th>
+                        <th>@Resources.Resources.SI_OSP_GBL_GBL_GBL_288</th>
+                        <th>
+                            @Html.Raw(String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_014, ApplicationSettings.Currency))
+
+                        </th>
+                        <th>
+                            @Resources.Resources.SI_OSP_GBL_NET_RPT_017 @string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency)
+                        </th>
+                        <th>@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_085, ApplicationSettings.Currency)</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model.Select((value, i) => new { i, value }))
+                    {
+                        var value = item.value;
+                        var index = item.i;
+                        <tr class="@(index % 2 == 0 ? "alt" : "")" id="@value.entity_type">
+                            <td>@value.entity_type</td>
+                            <td class="lngqty">@value.length_qty</td>
+                            <td class="cost_per_unit">@value.cost_per_unit</td>
+                            <td class="service_cost_per_unit">@value.service_cost_per_unit</td>
+                            <td class="amount">@value.amount</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        }
+
+
+
+    }
+    else
+    {
+        <p>No Record found</p>
+    }
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        var is_template_exits = '@Model.FirstOrDefault().is_template_extis';
+        var temp_plan_id = '@Model.FirstOrDefault().temp_plan_id';
+        $('#temp_plan_id').val(temp_plan_id);
+        if (is_template_exits == 'True') {
+            $("#btnProcessPlan").attr("disabled", false);
+            $("#ManageLoop").attr("disabled", false);
+            networkdata.CheckLoopRequired();
+        }
+        else {
+            alert('@Model.FirstOrDefault().msg');
+        }
+        
+    });
+
+</script>

@@ -1,0 +1,61 @@
+﻿@model Models.HPSMTicketRequest.ViewVSFTicketDetails 
+@{
+    WebGrid grid = new WebGrid();
+    if (Model.totalRecord > 0)
+    {
+        grid = new WebGrid(rowsPerPage: Model.totalRecord, canSort: false, ajaxUpdateContainerId: "divGvVSFTicketDetail", ajaxUpdateCallback: "ChkAddClass()");
+        grid.Bind(Model.ticketDetails, autoSortAndPage: false, rowCount: Model.totalRecord);
+        grid.PageIndex = 0;// Model.viewTicketFilter.currentPage - 1;
+    }
+}
+
+<script>
+
+</script>
+
+<div id="dvViewTicketContainer">
+    @using (Ajax.BeginForm("ViewVSFTicketDetails", "Main", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvParentModalBody" }, new { autocomplete = "off", @class = "form-horizontal", @id = "frmViewVSFTicketIssue" }))
+    {
+        <div id="divGvHPSMTicketDetail">
+            @if (Model.ticketDetails.Count > 0)
+            {
+                <div class="recordCount">
+                    <center><b>ticket history details of Ticket Id: @Model.ticketId</b></center><br />
+                    <b>Total Records:@grid.TotalRowCount</b>
+                </div>
+                <div class="table-responsive">
+                    @grid.GetHtml(tableStyle: "webgrid",
+                              headerStyle: "header",
+                              alternatingRowStyle: "alt",
+                                htmlAttributes: new { id = "divGvVSFTicketDetail" },
+                              mode: WebGridPagerModes.All,
+                columns: grid.Columns(
+                    @*grid.Column("HPSM_TICKETID", "VSF Ticket Id", format: @<text><span id="HPSM_TICKETID">@item.issue_id</span> </text>),*@
+grid.Column("ASSIGN_ID", "User Name", format: @<text><span id="ASSIGN_ID">@item.assign_id</span> </text>),
+        @*grid.Column("LATITUDE", "Latitude", format: @<text><span id="LATITUDE">@item.latitude</span> </text>),
+    grid.Column("LONGITUDE", "Longitude", format: @<text><span id="LONGITUDE">@item.longitude</span> </text>),*@
+grid.Column("STATUS", "Status", format: @<text><span id="STATUS">@item.status</span> </text>),
+grid.Column("SUB_STATUS", "Sub-Status", format: @<text><span id="SUB_STATUS">@item.sub_status</span> </text>),
+        @*grid.Column("MOBILE_TIME", "Created On", format: @<text><span id="MOBILE_TIME">@item.mobile_time</span> </text>),*@
+grid.Column("MODIFIED_ON", "Updated On", format: @<text><span id="MODIFIED_ON">@item.modified_on</span> </text>)
+        @*grid.Column("", "Action", format:
+    @<text>
+         <a href="javascript:void(0);" onclick="sp.EditRoute('@item.latitude','@item.longitude');" class="dropdown-toggle" title="Action Location"> <i class="fa fa-map-marker" style=" font-size:13px;color:blue;"></i></a>
+    </text>)*@
+
+)
+)
+                </div>
+            }
+            else
+            {
+                <div class="nr-found">
+                    <span>No record found.</span>
+                </div>
+            }
+            @Html.Hidden("dir", grid.SortDirection)
+            @Html.Hidden("col", grid.SortColumn)
+        </div>
+    }
+</div>
+

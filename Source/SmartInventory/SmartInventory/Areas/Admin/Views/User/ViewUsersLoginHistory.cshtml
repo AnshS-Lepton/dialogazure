@@ -1,0 +1,197 @@
+﻿@using SmartInventory.Settings;
+@model Models.UserLoginHistoryVM
+@using Utility
+
+<style>
+    .assign-calen {
+        position: absolute;
+        float: right;
+        top: 7px;
+        cursor: pointer;
+        right: 10px;
+        display: block !important;
+    }
+    .filterBox label {
+        margin-bottom: 0;
+    }
+    .filterBox .form-control{
+        height:auto !important;
+    }
+    .filterBox {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .nav {
+        display: table-cell !important;
+    }
+</style>
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div id="dvViewUsers">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                <span class="icon16 icomoon-icon-bars"></span><span>Users Login History</span>
+            </h4>
+        </div>
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewUsers", ajaxUpdateCallback: "onGridHeaderClick('tblUserDetail')");
+            grid.Bind(Model.lstUsers, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+            if (Model.objGridAttributes.totalRecord > 0)
+            {
+                if ((Model.objGridAttributes.searchBy != "mobile_number" && Model.objGridAttributes.searchBy != "user_email"))
+                {
+                    grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+                }
+            }
+        }
+        <div class="pad_left">
+            @using (Html.BeginForm("ViewUsersLoginHistory", "User", FormMethod.Post, new { autocomplete = "off", @id = "frmViewUsersLoginHistory" }))
+            {
+                <div class="filterBox d-flex filter-sec">
+                    <div class="d-flex">
+                        <label class="control-label pr-1">
+                            Status :
+                        </label>
+                        <div class="--input-widthlg">
+
+                            @Html.DropDownListFor(m => m.objGridAttributes.is_active, new List<SelectListItem>
+                     {
+                        new SelectListItem{ Text="Active", Value = "true" },
+                        new SelectListItem{ Text="InActive", Value = "false" }
+                     }, new { @id = "ddlStatus", @tabindex = "2", @title = "Status", @class = "chosen-select form-control" })
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <label class="control-label pr-1">
+                            Application Access :
+                        </label>
+                        <div class="--input-widthlg mr-03">
+
+                            @Html.DropDownListFor(m => m.objGridAttributes.application_access, new List<SelectListItem>
+                     {
+                       new SelectListItem{ Text="-Select-", Value = "" },
+                        new SelectListItem{ Text="Web", Value = "WEB" },
+                        new SelectListItem{ Text="Mobile", Value = "MOBILE" },
+                        new SelectListItem{ Text="Both", Value = "BOTH" }
+                     }, new { @id = "ddlApplication", @tabindex = "2", @title = "Application Access", @class = "chosen-select form-control" })
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <label class="control-label pr-1">Search By : </label>
+                        <div class="--input-widthlg mr-03">
+                            @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select form-control" })
+                        </div>
+
+                    </div>
+                    <div class="d-flex">
+                        <label class="control-label- pr-1">
+                            Search Text :
+                        </label>
+                        <div class="--input-widthlg">
+                            @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                        </div>
+                    </div>
+
+                    <div class="d-flex">
+                        <label class="control-label pr-1">
+                            From Date :
+                        </label>
+                        <div class="pose-rel">
+                            @Html.TextBoxFor(m => m.objGridAttributes.fromDate, "{0:dd-MMM-yyyy}", new { @id = "txtDateFrom", @title = "Date From", @class = "input-sm form-control", @placeholder = "Date From", @readonly = true })
+                            <img id="imgFromDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <label class="control-label pr-1" for="entities">To Date :</label>
+                        <div class="pose-rel">
+                            @Html.TextBoxFor(m => m.objGridAttributes.toDate, "{0:dd-MMM-yyyy}", new { @id = "txtDateTo", @title = "Date To", @placeholder = "Date To", @class = "input-sm form-control", @readonly = true })
+                            <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                    </div>
+
+                    <div class="d-flex ml-05" id="dvBtnAction">
+
+                        <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                        @if (@grid.TotalRowCount > 0)
+                        {
+                            <input type="button" id="btnExport" value="Export" class="btn btn-primary mr-05" />
+                        }
+                        else
+                        {
+                            <input type="button" id="btnExport" value="Export" disabled="disabled" class="btn btn-primary mr-05" />
+                        }
+                        <a href="@Url.Action("ViewUsersLoginHistory")" class="btn btn-default" title="Reset">Reset</a>
+                    </div>
+                </div>
+                
+                if (Model.lstUsers.Count > 0)
+                {
+                    <div id="divUserDetail">
+                        <div class="recordCount mb-01"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+                                htmlAttributes: new { id = "tblUserDetail" },
+                                mode: WebGridPagerModes.All,
+                                columns: grid.Columns(
+                                    grid.Column(header: "S.No.", format: @<text>@item.S_No</text>, canSort: false),
+grid.Column("user_name", "User Name", format: @<text>@item.user_name</text>, canSort: true),
+grid.Column("user_email", "Email", format: @<text>@item.user_email</text>, canSort: true),
+grid.Column("role_name", "Role Name", format: @<text>@item.role_name</text>, canSort: true),
+grid.Column("mobile_number", "Mobile No.", format: @<text>@item.mobile_number</text>, canSort: true),
+grid.Column("client_ip", "Client IP", format: @<text>@item.client_ip</text>, canSort: true),
+grid.Column("server_ip", "Server IP", format: @<text>@item.server_ip</text>, canSort: true), grid.Column("application_access", "Application Access", format: @<text>@item.application_access.Substring(0, 1).ToUpper()@item.application_access.Substring(1).ToLower()</text>, canSort: true),
+grid.Column("source", "Source", format: @<text>@item.source</text>, canSort: true),
+grid.Column("browser_name", "Browser Name", format: @<text>@item.browser_name</text>, canSort: true),
+grid.Column("browser_version", "Browser Version", format: @<text>@item.browser_version</text>, canSort: true),
+grid.Column("login_time", "Login Time", format: @<text>@(item.login_time == null ? item.login_time : MiscHelper.FormatDateTime(item.login_time.ToString()))</text>, canSort: true),
+grid.Column("logout_time", "Logout Time", format: @<text>@(item.logout_time == null ? item.logout_time : MiscHelper.FormatDateTime(item.logout_time.ToString()))</text>, canSort: true),
+grid.Column("is_active", "Status", format: @<text>@(item.is_active == "Yes" ? "Active" : "InActive")</text>, canSort: false
+)))
+
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Logs Found.
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {        
+        updateNumberstoFormatedNumber();
+        addDefaultSortingIcons("tblUserDetail");
+        setDateTimeCalendar("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+        if ($("#customedate option:selected").text() != "Custom") {
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        onGridHeaderClick('tblUserDetail');
+    });
+
+    $(document).on("click", "#btnExport", function () {
+        Report();
+    });
+
+    function Report() {
+        window.location = appRoot + 'User/DownloadUserLoginHistory';
+    }
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+</script>
+

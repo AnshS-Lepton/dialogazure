@@ -1,0 +1,84 @@
+﻿@model Models.Admin.SearchSetting
+
+<!DOCTYPE html>
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div id="dvSearchSetting" class="update_panel">
+    <div class="title">
+        <h4><span class="icon16 icomoon-icon-bars"></span><span>Search Settings</span></h4>
+    </div>
+    @using (Html.BeginForm("SaveSearchSettings", "OSPSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmSearchSetting", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-4">
+                    <label class="control-label">
+                        Entity type:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), "Select Entity Type", new { @class = "chosen-select col-sm-12", @onchange = "SearchLayerChange();", @id = "lstLayers" })
+                </div>
+            </div>
+        </div>
+        if (Model.layer_id > 0)
+        {
+            <div class="form-group">
+                <div class="row">
+                    <div class=" col-md-4">
+                        <label class=" control-label" style="float:left;"> Search Attributes:</label>
+                    </div>
+                    <div class="col-md-8" id="Categories">
+                        <ul class="clsAttributes" id="UlAttribute">
+                            <li class="clsSelectAll" id="selectLi">
+                                @Html.CheckBox("chkSelectAll", false) <label>Select All</label>&nbsp;&nbsp;
+                                &nbsp;<input type="text" placeholder="Search Attribute" id="txtSearchAttribute" onkeyup="app.SearchAttributes();" style="width:75%">
+                            </li>
+                            @for (int i = 0; i < Model.lstSearchAttributes.Count; i++)
+                            {
+                                <li id="Attributes">
+                                    @if (Model.lstSearchAttributes[i].column_name.ToUpper() == "NETWORK_ID")
+                                    {
+                                        @Html.CheckBoxFor(m => Model.lstSearchAttributes[i].is_selected, new { @onclick = "return false", @style = " opacity: 0.5;", @checked = true })
+                                    }
+                                    else
+                                    {
+                                        @Html.CheckBoxFor(m => Model.lstSearchAttributes[i].is_selected, new { @class = "attr" })
+                                    }
+                                    <label>@Model.lstSearchAttributes[i].display_name</label>
+                                </li>
+                                @Html.HiddenFor(m => Model.lstSearchAttributes[i].column_name)
+                                @Html.HiddenFor(m => Model.lstSearchAttributes[i].display_name)
+                            }
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex" id="dvBtnAction">
+                <a href="@Url.Action("SearchSettings", "OSPSettings", new { id = 0 })" class="btn btn-default ml-auto mr-05" title="Reset">Reset</a>
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" name="btnaction" id="btnSubmit" value="Save" />
+
+            </div>
+        }
+        <div class="clearfix"></div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '100%' });
+        $('#chkSelectAll').on("click", function () {
+            {
+                $(".clsAttributes li input[type=checkbox].attr").prop("checked", $(this).prop("checked"));
+            }
+        });
+        $('.attr').on("click", function () {
+            {
+                var totalAttr = $(".clsAttributes li input[type=checkbox]:not(#chkSelectAll)").length;
+                var totalSelected = $(".clsAttributes li input[type=checkbox]:not(#chkSelectAll):checked").length;
+                $('#chkSelectAll').prop("checked", totalAttr == totalSelected ? true : false);
+            }
+        });
+    });
+</script>

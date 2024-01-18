@@ -1,0 +1,169 @@
+﻿@model List<Models.DocumentResult>
+
+@{
+    var EntyLst = ((List<Models.DocumentResult>)@Model).Where(m => m.categorytype.ToLower() == "entity").ToList();
+    var SpecifnLst = ((List<Models.DocumentResult>)@Model).Where(m => m.categorytype.ToLower() == "specification").ToList();
+}
+@if (Model != null && Model.Count > 0)
+{
+    string sysHref = "Main/DownloadFilesAll?system_Id=" + @Model[0].EntitySystemId + "&entity_type=" + @Model[0].EntityType + "&DocumentType=Image";
+    <div>
+        <div class="col-sm-12 UploadAction" style="padding: 0px 10px 5px; border-bottom: solid 1px #ccc;">
+            @*<div class="col-sm-9" id="divImageUpload" style="padding: 0px;">
+                    <input type="checkbox" class="checkbox-custom img_doc_parentcheck" id="checkAll11"><b>
+                        <label for="checkAll11" class="checkbox-custom-label" style="font-weight: bold;"> Select All</label>
+                    </b>
+                </div>*@
+            @*<div class="col-sm-1 pull-right" id="divDeleteImg" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002">
+                    <a href="javascript:void(0)" onclick="si.deleteImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DeleteEntityImages', 'data-system-id', si.getElementImages);">
+                        <i class="icon-Delete" style="color:red; font-size:16px;"></i>
+                    </a>
+                </div>
+                <div class="col-sm-1 pull-right" id="divDownloadImages" title="@Resources.Resources.SI_ISP_GBL_GBL_GBL_038">
+                    <a href="javascript:void(0)" onclick="DownloadImgDocs();">
+                        <i class="icon-Download" style="font-size:16px;"></i>
+                    </a>
+                </div>*@
+            @*<div class="col-sm-1 icon-Delete cptr" id="divDeleteImages" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002">*@
+            <a href="@sysHref" style="cursor: pointer;"> @Resources.Resources.SI_GBL_GBL_JQ_FRM_038 </a>
+            <label class="pull-right">@Resources.Resources.SI_OSP_GBL_NET_FRM_188: @Model.Count()</label>
+        </div>
+        <div class="ImagesContainer" style="height: 261px; margin-bottom: 10px; overflow: auto; visibility: visible; float: left;">
+
+            <div style="">
+                <div id='ImgHolderdiv'>
+                    @if (EntyLst.Count > 0)
+                    {
+                        <div class="div-upload-seprator">@Resources.Resources.SI_OSP_GBL_GBL_FRM_193</div>
+                    }
+
+                    @foreach (var item in EntyLst)
+                    {
+                        <div class="docs-main-div">
+                            <div class="img-div">
+                                <div class="UploadedImageBox" title="@item.OrgFileName">
+                                    <div class="ImageSelectDiv">
+                                        @*<input id="chk_image_@item.Id" name="chk_image_@item.Id" data-system-id="@item.Id" data-image-location="@item.EntityType" class="checkbox-custom img_doc_childcheck" type="checkbox" style="width: 0px;">
+                                            <b style="height: 0px; float: left;margin-left: 10px;margin-top: 11px;">
+                                                <label for="chk_image_@item.Id" class="checkbox-custom-label"></label>
+                                            </b>*@
+                                        <a href="@item.FileLocation" class="example-image-link" data-lightbox="example-set" style="padding:0">
+                                            <img src="@item.FileLocation" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content-div">
+                                <div style="width:88%; float:left;">
+                                    <div class="col-sm-12 doc-lists">
+                                        <div class="contentlbl" style="width:100%;"> @item.OrgFileName    (@item.file_size)</div>
+                                    </div>
+                                    <div class="col-sm-12 doc-lists">
+                                        <div class="contentlbl" style="width:100%;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_031: </b> @item.UploadedBy</div>
+                                    </div>
+                                    <div class="col-sm-12 doc-lists">
+                                        <div class="contentlbl" style="width:100%;"><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_189: </b> @item.created_on</div>
+                                    </div>
+                                </div>
+                                <div style="width:36px; float:right; padding:5px">
+                                    <div class="col-sm-1 pull-right icons" id="divDownloadImages" title="@Resources.Resources.SI_ISP_GBL_GBL_GBL_038">
+                                        <a href="javascript:void(0)" onclick="DownloadImgDocs('@item.Id','@item.categorytype');">
+                                            <i class="icon-Download" style="font-size:15px;"></i>
+                                        </a>
+                                    </div>
+                                    @if (item.delete_action)
+                                    {
+                                    <div class="col-sm-1 pull-right icons" id="divDeleteImg" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002">
+                                        <a href="javascript:void(0)" onclick="si.deleteImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DeleteEntityImages', '@item.Id', si.getElementImages,'','Image');">
+                                            <i class="icon-Delete" style="color:red; font-size:16px;"></i>
+                                        </a>
+                                        @*onclick="si.deleteImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DeleteEntityImages', 'data-system-id', si.getElementImages);*@
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+
+                    @if (SpecifnLst.Count > 0)
+                    {
+                        <div class="div-upload-seprator">@Resources.Resources.SI_OSP_GBL_GBL_FRM_194</div>
+                    }
+
+
+                    @foreach (var item in SpecifnLst)
+                    {
+                        <div class="docs-main-div">
+                            <div class="img-div">
+                                <div class="UploadedImageBox" title="@item.OrgFileName">
+                                    <div class="ImageSelectDiv">
+                                        @*<input id="chk_image_@item.Id" name="chk_image_@item.Id" data-system-id="@item.Id" data-image-location="@item.EntityType" class="checkbox-custom img_doc_childcheck" type="checkbox" style="width: 0px;">
+                                            <b style="height: 0px; float: left;margin-left: 10px;margin-top: 11px;">
+                                                <label for="chk_image_@item.Id" class="checkbox-custom-label"></label>
+                                            </b>*@
+                                        <a href="@item.FileLocation" class="example-image-link" data-="example-set" style="padding:0">
+                                            <img src="@item.FileLocation" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content-div">
+                                <div style="width:88%; float:left;">
+                                    <div class="col-sm-12 doc-lists">
+                                        <div class="contentlbl" style="width:100%;"> @item.OrgFileName    (@item.file_size)</div>
+                                    </div>
+                                    <div class="col-sm-12 doc-lists">
+                                        <div class="contentlbl" style="width:100%;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_031: </b> @item.UploadedBy</div>
+                                    </div>
+                                    <div class="col-sm-12 doc-lists">
+                                        <div class="contentlbl" style="width:100%;"><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_189: </b> @item.created_on</div>
+                                    </div>
+                                </div>
+                                <div style="width:36px; float:right; padding:5px">
+                                    <div class="col-sm-1 pull-right icons" id="divDownloadImages" title="@Resources.Resources.SI_ISP_GBL_GBL_GBL_038">
+                                        <a href="javascript:void(0)" onclick="DownloadImgDocs('@item.Id','@item.categorytype');">
+                                            <i class="icon-Download" style="font-size:15px;"></i>
+                                        </a>
+                                    </div>
+                                    @*<div class="col-sm-1 pull-right icons" id="divDeleteImg" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002">
+                                            <a href="javascript:void(0)" onclick="si.deleteImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DeleteEntityImages', '@item.Id', si.getElementImages);">
+                                                <i class="icon-Delete" style="color:red; font-size:16px;"></i>
+                                            </a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="nr-found">
+        <span>
+            @Resources.Resources.SI_GBL_GBL_JQ_FRM_010
+         </span>
+    </div>
+        }
+<script>
+    $(document).ready(function () {
+        $('.UploadAction [title!=""]').tooltip({ title: '', html: true, placement: "bottom" });
+        $('#divImage [title!=""]').tooltip({ title: '', html: true, placement: "bottom" });
+        $(".img_doc_parentcheck").on("click", function () {
+            CheckUnCheckAll('img_doc_parentcheck', false, 'img_doc_childcheck', false);
+        })
+        $(".img_doc_childcheck").on("click", function () {
+            CheckUnCheckAllOnSingle('img_doc_parentcheck', false, 'img_doc_childcheck', false);
+        });
+        // si.loadOrbit($('#OrbitHolder').html());
+        // $('#OrbitHolder').orbit();
+    });
+
+    function DownloadImgDocs(systemid, Location) {
+        var ettType = $("#infoTB").attr("att_entitytype");
+        si.downloadImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DownloadFiles', systemid, Location, ettType);
+    }
+</script>

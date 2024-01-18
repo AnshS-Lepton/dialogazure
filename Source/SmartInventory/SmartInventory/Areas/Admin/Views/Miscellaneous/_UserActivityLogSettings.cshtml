@@ -1,0 +1,168 @@
+﻿@model Models.ViewUserActivityLogSettings
+@using Utility
+
+<script type="text/javascript" src="https://rawgit.com/Bttstrp/bootstrap-switch/master/dist/js/bootstrap-switch.js"></script>
+<div id="dvViewUsers">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                User Activity Log Settings
+            </h4>
+        </div>
+        @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvUserActivityLogSettings", ajaxUpdateCallback: "onGridHeaderClick('tblUserActivityLog')");
+        grid.Bind(Model.lstlogs, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+        if (Model.objGridAttributes.totalRecord > 0)
+        {
+        grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+        }
+        }
+        <div class="pad_left">
+            @using (Html.BeginForm("ViewUserActivityLogSettings", "Miscellaneous", FormMethod.Post, new { autocomplete = "off", @id = "frmUsersActivityLogs" }))
+            {
+
+            <div class="form-inline filter-sec">
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4">
+                        Status :
+                    </label>
+                    <div class="col-md-8">
+
+                        @Html.DropDownListFor(m => m.objGridAttributes.is_active, new List<SelectListItem>
+                            {
+                            new SelectListItem{ Text="Active", Value = "true" },
+                            new SelectListItem{ Text="InActive", Value = "false" }
+                            }, new { @id = "ddlStatus", @tabindex = "2", @title = "Status", @class = "chosen-select form-control" })
+                    </div>
+                </div>
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4 padL-05">Search By : </label>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select form-control" })
+                    </div>
+
+                </div>
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4 padL-05">
+                        Search Text :
+                    </label>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                    </div>
+                </div>
+                <div class="form-group wtd_set" id="dvBtnAction">
+                    <button class="btn btn-primary ml-05 mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                    @if (@grid.TotalRowCount > 0)
+                    {
+                    <input type="button" id="btnViewUserExport" value="Export" class="btn btn-primary mr-05" onclick="ViewActivityLogReport()" />
+                    }
+                    else
+                    {
+                    <input type="button" id="btnViwUserExport" value="Export" disabled="disabled" class="btn btn-primary mr-05" />
+                    }
+                    <a href="@Url.Action(" ViewUserActivityLogSettings","Miscellaneous")" id="btnReset" class="btn btn-default" title="Reset">Reset</a>
+
+                </div>
+            </div>
+
+            if (Model.lstlogs.Count > 0)
+            {
+            <div id="divUserActivityLog">
+                <div class="d-flex mb-01">
+                    <div class="recordCount"><b>Total Records:@grid.TotalRowCount</b></div>
+                </div>
+
+                <div class="table-responsive tble_cls">
+                    @grid.GetHtml(tableStyle: "grid",
+                    htmlAttributes: new { id = "tblUserActivityLog" },
+                    mode: WebGridPagerModes.All,
+                    columns: grid.Columns(
+                    grid.Column("", "Action", format:@<text>
+
+                        @*<a href="@Url.Action(" AddUser", "User" , new { id=@item.id })" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>*@
+                        @*<a href="javascript:OpenUserHistory(@item.user_id);"> <i class="fa fa-history action_icon fa-fw m-r-xs" title="User History"></i></a>*@
+                        <label class="switch" title="Activate/De-Activate User">
+                            <input id='Edit_@item.id' @(item.is_active= =true ? "checked" : "" ) type="checkbox" class="chk-valid" onclick="EditUserStatus('@item.id',this,event)"> @*onclick="EditUserStatus('@item.user_id',this,event)"*@
+                            <span class="slider round"></span>
+                        </label>
+                    </text>, canSort: false
+                    ),
+                    grid.Column(header: "S.No.", format: @<text>@item.S_No</text>, canSort: false),
+                    grid.Column("controller_name", "Controller Name", format: @<text>@item.controller_name</text>, canSort: true),
+                    grid.Column("action_name", "Action Name", format: @<text>@item.action_name</text>, canSort: true),
+                    grid.Column("display_action_name", "Display Action Name", format: @<text>@item.display_action_name</text>, canSort: true),
+                    grid.Column("description", "Description", format: @<text>@item.description</text>, canSort: true),
+                    grid.Column("source", "Source", format: @<text>@item.source</text>, canSort: true),
+                    grid.Column("project_name", "Project Name", format: @<text>@item.project_name</text>, canSort: true),
+                    grid.Column("is_active", "Status", format: @<text>@(item.is_active == true ? "Active" : "InActive")</text>, canSort: false),
+                    grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>, canSort: true),
+                    grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>, canSort: true)
+                    ))
+
+                    @Html.Hidden("dir", grid.SortDirection)
+                    @Html.Hidden("col", grid.SortColumn)
+                    @Html.HiddenFor(m => m.objGridAttributes.searchBy)
+                    @Html.HiddenFor(m => m.objGridAttributes.searchText)
+                </div>
+            </div>
+            }
+            }
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        addDefaultSortingIcons("tblUserActivityLog");
+
+    });
+    $("#btnExport").click(function () {
+        debugger;
+        window.location = appRoot + 'Home/Expor_Dashboard_Data';
+    })
+    function EditUserStatus(id, event, e) {
+        debugger
+        e.preventDefault();
+        var item_id = '#Edit_' + id;
+        var msg = event.checked == true ? "Are you sure you want to Activate this log?" : "Are you sure you want to de-activate this log?";
+
+        var csts = $(item_id).is(":checked");
+        showConfirm(msg, function () {
+
+            ajaxReq('Miscellaneous/EditLogStatus', { id: id, status: csts }, true, function (resp) {
+
+                if (resp.status == "OK") {
+
+                    alert(resp.message, 'Success', 'success');
+                    setTimeout(function () {
+
+                        $("#frmUsersActivityLogs").submit();
+                    }, 1000);
+                    return $(item_id).is(":checked") == true ? $(item_id).prop('checked', false) : $(item_id).prop('checked', true);
+                }
+                else
+                    alert(resp.message);
+            }, true, true);
+        }, function () {
+            if (event.checked) {
+                $(item_id).prop('checked', true);
+            }
+            else {
+                $(item_id).prop('checked', false);
+            }
+
+        });
+
+    }
+
+    function ViewActivityLogReport() {
+        window.location = appRoot + 'Miscellaneous/DownloadUserActivityLogsSettings';
+    }
+
+    //function UploadUser() {
+    //    alert("pankaj");
+    //}
+    //$('th a, tfoot a').click(function () {
+    //    $('#frmViewUsers').attr('action', $(this).attr('href')).submit();
+    //    return false;
+    //});
+</script>

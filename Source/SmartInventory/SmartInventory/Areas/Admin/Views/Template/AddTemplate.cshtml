@@ -1,0 +1,77 @@
+﻿@model Models.TemplateViewModel
+
+<style>
+    #tblNetworkLayers {
+        border: 1px #ccc solid;
+        background: white;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+
+<div id="dvUserDetail" class="update_panel fullWidth">
+
+    <div id="" class="title">
+        <h4>
+            <span class="icon16 icomoon-icon-bars"></span><span> @(Model.template_Id > 0 ? "Update Entity Template" : "Add Entity Template")</span>
+        </h4>
+
+    </div>
+    @using (Html.BeginForm("SaveTemplate", "Template", FormMethod.Post, new { autocomplete = "off", @id = "frmSaveTemplate", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+        @Html.HiddenFor(model => model.template_Id, new { id = "hdnTemplateId" })
+        <div class="filter-sec">
+                <div class="row">
+                    @if (Model.template_Id == 0)
+                    {
+                        <div class="col-md-4 d-flex">
+                            <label class="control-label mr-05">
+                                Copy Template:
+                            </label>
+                       
+                            @Html.DropDownListFor(model => model.parentTemplateId, Model.templateList, "-Select-", new { @class = "chosen-select form-control", id = "txtParentTemplate" })
+                        </div>
+                    }
+
+                    <div class="col-md-4 d-flex">
+                        <label class="control-label mr-05">
+                            Template Name<i class="clsMandatory">*</i>:
+                        </label>
+                    
+                        @Html.TextBoxFor(model => model.template_name, new { @class = "form-control", @maxlength = "50", @placeholder = "Enter Template Name", id = "txtTemplateName" })
+                    </div>
+
+                    <div class="col-md-4 d-flex">
+                        <button type="button" onclick="fnValiadateTemplate()" class="btn btn-primary mr-05" id="btnSaveTemplate">@(Model.template_Id == 0 ? "Save" : "Update")</button>
+                        <a href="@Url.Action("AddTemplate")" class="btn btn-default" title="Reset" style="display:@(Model.template_Id==0?"block":"none")">Reset</a>
+                    </div>
+                </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div id="divPermissionGrid">
+            @{Html.RenderPartial("_ViewRoleTemplatePermission", Model.objRoleMaster);}
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    function fnValiadateTemplate() {
+        ajaxReq('Template/checkTemplateExists', { templateName: $("#txtTemplateName").val().trim(), templateId: parseInt($("#hdnTemplateId").val()) }, false, function (resp) {
+            if (resp.status != "FAILED") {
+                if ($('.innerCheck[type="checkbox"]:checked').length > 0) { $('#frmSaveTemplate').submit(); } else { alert('Please select permissions!'); }
+            } else { alert(resp.message); }
+
+        }, true, true);
+    }
+    $('#txtParentTemplate').change(function () {
+        $("#divPermissionGrid").load(appRoot + '/Roles/ViewLayerRightsTemplate/' + $(this).val());
+    });
+    $('.chosen-select').chosen({ width: '100%' });
+</script>
+
+
+
+

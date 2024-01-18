@@ -1,0 +1,187 @@
+﻿@model Models.ChangeNetworkCode
+<style>
+    .dx-invalid.dx-texteditor.dx-state-focused {
+        border-color: #4b868c;
+    }
+
+    .dx-invalid.dx-texteditor {
+        border-color: #4b868c;
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    .SetCrossimg {
+        vertical-align: middle;
+        border-style: none;
+    }
+
+    .a_modal {
+        width: auto;
+    }
+</style>
+
+<!DOCTYPE html>
+<div  id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div id="dvSearchSetting" class="update_panel">
+    <div class="title">
+        <h4><span class="icon16 icomoon-icon-bars"></span><span>Change Network Code</span></h4>
+    </div>
+    @using (Html.BeginForm("ChangeNetworkCode", "Miscellaneous", FormMethod.Post, new { autocomplete = "off", @id = "frmChangeNetworkCode", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+        @Html.Hidden("hdnlayerformat")
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Entity Type<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.DropDownListFor(m => m.layer_name, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_name.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @onchange = "OnLayerChange();", @id = "lstLayers" })@*, @disabled = "disabled"*@
+                </div>
+            </div>
+        </div>
+        <div id="changenetworkcode" style="display:none;">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label" style="float:left;">Existing Network Code<i class="clsMandatory">*</i>:</label>
+                    </div>
+                    <div id="dvoldnetworkid" class="col-md-8">
+                        @Html.TextBoxFor(m => Model.old_network_id, new { @class = "form-control displayName", @maxlength = "50", id = "txtoldnetworkcode", @onchange = "networkcodevalidate(this);", style = "width:100%;float:left;text-transform: uppercase;" })
+                        <img style="margin-left: -23px;width:21px;" class="GifImg" id="ImgValidation" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label" style="float:left;">New Network Code<i class="clsMandatory">*</i>:</label>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-control displayName" style="height: 32px;font-size:12px!important;text-transform: uppercase;" id="txtMaskedNetworkId"></div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label" style="float:left;">Remarks<i class="clsMandatory">*</i>:</label>
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(m => Model.remarks, new { @class = "form-control displayName", @maxlength = "300", id = "txtremarks", style = "width:100%;float:left;text-transform: uppercase;", disabled = "disabled" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="dvBtnAction">
+            <div class="row">
+                <div class="col-md-4"> </div>
+                <div class="col-md-8 text-right">
+                    <a id="resetbutton" href="#" onclick="ResetValues();" class="btn btn-default mr-05" title="Reset">Reset</a>
+                    <input type="button" class="btn btn-primary" onclick="return updateNetworkId();" disabled="disabled" name="btnaction" id="btnSubmit" value="Save" />
+
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        if ($("#lstLayers").val() != "") {
+            OnLayerChange();
+        } else { ResetValues(); }
+
+        $('.chosen-select').chosen({ width: '100%' });
+    });
+    function OnLayerChange() {
+        if ($("#lstLayers").val() != "") {
+            $("#changenetworkcode").show();
+            $("#txtoldnetworkcode").val("");
+            getMaskedNetworkId("", 0, 'M');
+            $(".dx-texteditor-input").prop("disabled", true).attr('style', 'background: #dddddd');
+            $('#ImgValidation').hide();
+            $('#ImgValidationNew').hide();
+            $("#btnSubmit").prop('disabled', true);
+            $("#txtremarks").val("");
+            $("#txtremarks").prop('disabled', true).attr('style', 'background: #dddddd');
+        } else { ResetValues(); }
+    }
+    function ResetValues() {
+        $("#changenetworkcode").hide();
+        $("#lstLayers").val("").trigger("chosen:updated");
+        $("#txtoldnetworkcode").val("");
+        getMaskedNetworkId("", 0, 'M');
+        $(".dx-texteditor-input").prop("disabled", true).attr('style', 'background: #dddddd');
+        $('#ImgValidation').hide();
+        $('#ImgValidationNew').hide();
+        $("#btnSubmit").prop('disabled', true);
+        $("#txtremarks").val("");
+        $("#txtremarks").prop('disabled', true).attr('style', 'background: #dddddd');
+    }
+    function networkcodevalidate(networkid) {
+
+        getMaskedNetworkId("", 0, 'M');
+        $('#ImgValidation').hide();
+        $('#ImgValidationNew').hide();
+        var layername = $('#lstLayers').val();//$('#lstLayers option:selected').text();
+        if (networkid.value != null && networkid.value != '' && networkid.value != undefined)
+        { networkid.value = networkid.value.toUpperCase(); }
+        var result = checknetworkidExistence(networkid.value, layername, 'P');
+        if (result.status == "OK") {
+            $('#ImgValidation').attr('src', baseUrl + appRoot.replace('Admin', '') + '/Areas/Admin/Content/images/tick_1.gif')
+            $('#ImgValidation').show();
+            $(".dx-texteditor-input").prop('disabled', false).attr('style', 'background: none');
+            getnewnetworkcode(layername, networkid.value);
+            $(".dx-texteditor-input").attr("onChange", "Newnetworkcodevalidate(this)");
+        }
+        else {
+            $(".dx-texteditor-input").prop("disabled", true).attr('style', 'background: #dddddd');
+            $('#ImgValidation').show();
+            $('#ImgValidation').attr('src', baseUrl + appRoot.replace('Admin', '') + '/Areas/Admin/Content/images/cross.gif')
+            $("#btnSubmit").prop('disabled', true);
+        }
+    }
+    function Newnetworkcodevalidate(networkid) {
+        var layername = $('#lstLayers').val();
+        var result = checknetworkidExistence(networkid.value, layername, 'P')
+        if ($('#txtMaskedNetworkId').children(".GifImg").length <= 0)
+            $('#txtMaskedNetworkId').append(' <img src="' + baseUrl + appRoot.replace('Admin','') + '/Areas/Admin/Content/images/tick_1.gif" style="margin-top: -25px;;width:21px;" align="right" class="GifImg" id="ImgValidationNew" />')
+        if ($('#txtMaskedNetworkId').children(".SetCrossimg").length <= 0)
+            $('#txtMaskedNetworkId').append(' <img src="' + baseUrl + appRoot.replace('Admin', '') + '/Areas/Admin/Content/images/cross.gif" style="margin-top: -25px;;width:21px;" align="right" class="SetCrossimg" id="ImgValidationNewCross" />')
+        if (result.status != "OK") {
+            $('#ImgValidationNewCross').hide();
+            $('#ImgValidationNew').show();
+            $("#btnSubmit").prop('disabled', false);
+            $("#txtremarks").prop('disabled', false).attr('style', 'background: white');
+            $(".dx-texteditor-input").prop('disabled', false).attr('style', 'background: none');
+        }
+        else {
+            $('#ImgValidationNew').hide();
+            $('#ImgValidationNewCross').show();
+            $("#btnSubmit").prop('disabled', true);
+            $("#txtremarks").prop('disabled', true).attr('style', 'background: #dddddd');
+        }
+
+    }
+    function getnewnetworkcode(etype, entitynetworkid) {
+        var data = getnewnetworkcodedata(etype, entitynetworkid);
+        getMaskedNetworkId(data, 0, 'M');
+        var _requiredMaskedlength = 0;
+        var networkid = data;
+        if (networkid.indexOf('x') > -1) {
+            _requiredMaskedlength = countChar(networkid, 'x');
+        }
+        //else
+        if (networkid.indexOf('n') > -1) {
+            _requiredMaskedlength += countChar(networkid, 'n');
+        }
+        $("#hdnlayerformat").val(_requiredMaskedlength);
+    }
+</script>

@@ -1,0 +1,157 @@
+﻿@model List<Models.ViewServiceFacilityJobOrder>
+
+<style>
+    .servicexFlex {
+        flex: 0 0 34%;
+    }
+
+    .mt-02 {
+        margin-top: 2rem;
+    }
+
+    .npad {
+        padding: 0 0 0 1rem;
+    }
+
+    .typeNone {
+        list-style: none;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="d--flex mt-02">
+    @{
+        var ServiceFacilityModule = Model.Where(x => x.type == "ServiceFacility").ToList();
+        if (ServiceFacilityModule.Count > 0)
+        {
+            <div class="service-facility-section servicexFlex">
+                <label>
+                    <input type="checkbox" name="AllLayers" id="CheckAll_ServiceFacility" class="allModule allServiceFacility" onclick="CheckByClass('allServiceFacility',this)" /><b>Service Facility</b>
+                </label>
+
+                <div class="row boxes--minh">
+                    <div class="col-md-12 column" id="divServiceFacility">
+                        <ul class="mainModule servicefacility--treeview npad" style="display:block;">
+
+                            @{
+
+                                for (var i = 0; i < ServiceFacilityModule.Count; i++)
+                                {
+                                    if (ServiceFacilityModule[i].type == "ServiceFacility")
+                                    {
+                                                        <li class="collapsable typeNone">
+                                                            <div class="hitarea collapsable-hitarea"></div>
+                                                            <img style="margin-top: -8px;"   src="@Url.Content("~/Areas/Admin/Content/css/images/t.gif")">
+                                     
+                                                            @Html.CheckBoxFor(model => ServiceFacilityModule[i].is_selected, new { @class = "allModule allServiceFacility chkModule service_facility_" + ServiceFacilityModule[i].id + "", @onclick = "CheckByClass('service_facility_" + ServiceFacilityModule[i].id + "',this)", @onchange = "CheckModule()", Name = "lstRoleServiceFacilityMapping[" + i + "].is_selected" })
+                                                            @Html.HiddenFor(model => ServiceFacilityModule[i].id, new { Name = "lstRoleServiceFacilityMapping[" + i + "].id" })
+                                                            @Html.HiddenFor(model => ServiceFacilityModule[i].type, new { Name = "lstRoleServiceFacilityMapping[" + i + "].type" })
+                                                            @Html.HiddenFor(model => ServiceFacilityModule[i].name, new { Name = "lstRoleServiceFacilityMapping[" + i + "].module_name" })
+                                                            <label for="chk_parent_@ServiceFacilityModule[i].id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                                                <span>@ServiceFacilityModule[i].name</span>
+                                                            </label>
+                                                        </li>
+                                    }
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    @{
+        var JobOrder = Model.Where(x => x.type == "JobOrder").ToList();
+        if (JobOrder.Count > 0)
+        {
+            <div class="joborder-section servicexFlex">
+                <label>
+                    <input type="checkbox" name="AllLayers" id="CheckAll_JobOrder" class="allModule allJobOrder" onclick="CheckByClass('allJobOrder',this)" /><b>Job Order</b>
+                </label>
+
+                <div class="row boxes--minh">
+                    <div class="col-md-12 column" id="divJobOrder">
+                        <ul class="mainModule joborder--treeview npad" style="display:block;">
+
+                            @{
+
+                                for (var i = 0; i < JobOrder.Count; i++)
+                                {
+                                    if (JobOrder[i].type == "JobOrder")
+                                    {
+                                        <li class="collapsable typeNone">
+                                            <div class="hitarea collapsable-hitarea"></div>
+                                            <img style="margin-top: -8px;"   src="@Url.Content("~/Areas/Admin/Content/css/images/t.gif")">
+                                            @Html.CheckBoxFor(model => JobOrder[i].is_selected,
+                                                         new
+                                                         {
+                                                             @class = "allModule allJobOrder chkModule job_order_" + JobOrder[i].id + "",
+                                                             @onclick = "CheckByClass('job_order_" + JobOrder[i].id + "',this)",
+                                                             @onchange = "CheckModule()",
+                                                             Name = "lstRoleJobOrderMapping[" + i + "].is_selected"
+                                                         })
+                                            @Html.HiddenFor(model => JobOrder[i].id, new { Name = "lstRoleJobOrderMapping[" + i + "].id" })
+                                            @Html.HiddenFor(model => JobOrder[i].type, new { Name = "lstRoleJobOrderMapping[" + i + "].type" })
+                                            @Html.HiddenFor(model => JobOrder[i].name, new { Name = "lstRoleJobOrderMapping[" + i + "].module_name" })
+                                            <label for="chk_parent_@JobOrder[i].id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                                <span>@JobOrder[i].name</span>
+                                            </label>
+                                        </li>
+                                    }
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        }
+
+        var JobCategory = Model.Where(x => x.type == "Jo Category").ToList();
+        if (JobCategory.Count > 0)
+        {
+            <div class="joborder-section servicexFlex">
+                <label>
+                    <input type="checkbox" name="AllLayers" id="CheckAll_JobCategory" class="allModule allJobCategory" onclick="CheckByClass('allJobCategory',this)" /><b>Job Category</b>
+                </label>
+
+                <div class="row boxes--minh">
+                    <div class="col-md-12 column" id="divJobCategory">
+                        <ul class="mainModule joborder--treeview npad" style="display:block;">
+
+                            @{
+
+                                for (var i = 0; i < JobCategory.Count; i++)
+                                {
+                                    if (JobCategory[i].type == "Jo Category")
+                                    {
+                                        <li class="collapsable typeNone">
+                                            <div class="hitarea collapsable-hitarea"></div>
+                                            <img style="margin-top: -8px;"  src="@Url.Content("~/Areas/Admin/Content/css/images/t.gif")">
+                                            @Html.CheckBoxFor(model => JobCategory[i].is_selected,
+                                 new
+                                 {
+                                     @class = "allModule allJobCategory chkModule job_category_" + JobCategory[i].id + "",
+                                     @onclick = "CheckByClass('job_category_" + JobCategory[i].id + "',this)",
+                                     @onchange = "CheckModule()",
+                                     Name = "lstRoleJobCategoryMapping[" + i + "].is_selected"
+                                 })
+                                            @Html.HiddenFor(model => JobCategory[i].id, new { Name = "lstRoleJobCategoryMapping[" + i + "].id" })
+                                            @Html.HiddenFor(model => JobCategory[i].type, new { Name = "lstRoleJobCategoryMapping[" + i + "].type" })
+                                            @Html.HiddenFor(model => JobCategory[i].name, new { Name = "lstRoleJobCategoryMapping[" + i + "].module_name" })
+                                            <label for="chk_parent_@JobCategory[i].id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                                <span>@JobCategory[i].name</span>
+                                            </label>
+                                        </li>
+                                    }
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+

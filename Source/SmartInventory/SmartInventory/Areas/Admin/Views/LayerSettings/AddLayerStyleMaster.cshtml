@@ -1,0 +1,448 @@
+﻿@model Models.Admin.LayerStyleMaster
+
+<!DOCTYPE html>
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 14px;
+    }
+</style>
+
+<div id="dvPageMessage">
+    @if (Model.pageMsg != null)
+    {
+        Html.RenderPartial("_PageMessage", Model.pageMsg);
+    }
+
+</div>
+@{
+    Layout = null;
+}
+
+@using (Ajax.BeginForm("SaveLayerStyleMasterDetails", "LayerSettings",
+           new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddLayerStyle", OnSuccess = "OnSuccess", },
+           new { id = "frmAddLayerStyleMaster", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.id);
+    @Html.HiddenFor(m => m.layer_id);
+    @Html.HiddenFor(m => m.pageMsg);
+    @Html.HiddenFor(m => m.status);
+    @Html.HiddenFor(m => m.geom_type);
+    @Html.HiddenFor(m => m.created_by);
+    @Html.HiddenFor(m => m.created_on);
+    @Html.HiddenFor(m => m.layer_sequence, new { id = "hdn_lyr_seq" });
+    <div class="--pad-15">
+
+        @if (Model.geom_type != Models.GeometryType.Point.ToString())
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Color/Fill Color<i class="clsMandatory">*</i>:</label>
+                </div>
+                <div class="col-md-2" style="text-align:right">
+                    @if (Model.color_code_hex != null || Model.color_code_hex != "")
+                    {<input type="color" id="colorPicker" value="@Model.color_code_hex" style=" width:65px"> }
+                    else
+                    { <input type="color" id="colorPicker" style="color: #000000; width:65px">}
+                </div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(model => model.color_code_hex, new { @id = "txtcolorcodehex", @class = "form-control roledisabled", @maxlength = "100", @placeholder = "Enter Color Code", @readonly = "readonly" })
+                </div>
+            </div>
+            if (Model.geom_type == Models.GeometryType.Polygon.ToString()) 
+            {
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">Outline Color<i class="clsMandatory">*</i>:</label>
+                    </div>
+                    <div class="col-md-2" style="text-align:right">
+                        @if (Model.outline_color_hex != null || Model.outline_color_hex != "")
+                        {<input type="color" id="outlinecolorPicker" value="@Model.outline_color_hex" style=" width:65px"> }
+                        else
+                        { <input type="color" id="outlinecolorPicker" style="color: #000000; width:65px">}
+                    </div>
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(model => model.outline_color_hex, new { @id = "txtoutlinecolor", @class = "form-control roledisabled", @maxlength = "100", @placeholder = "Enter Outline Color", @readonly = "readonly" })
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Opacity/Visibility<i class="clsMandatory">*</i>:</label>
+                </div>
+                <div class="col-md-2">
+                    @if (Model.opacity != null)
+                    {<input type="range" id="sliderrange" min="0" max="1" step="0.01" style="width:70px; margin-top:5px" value="@Model.opacity"> }
+                    else
+                    { <input type="range" id="sliderrange" min="0" max="1" step="0.01" value="0.5" style="width: 70px; margin-top: 10px">}
+                </div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(model => model.opacity, new { @id = "txtopacity", @name = "txtopacity", @class = "form-control", @readonly = "readonly" })
+                    <span class="error-message" id="errorMessageforopacity"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Line width<i class="clsMandatory">*</i>:</label>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.line_width, new { @id = "txtlinewidth", @name = "txtlinewidth", @onchange = "validatelinewidth();", @class = "form-control", @maxlength = "1", @placeholder = "Enter line width" })
+                    <span class="error-message" id="errorMessagefortlinewidth"></span>
+                </div>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-md-4">
+                <label class="control-label">Label Text color<i class="clsMandatory">*</i>:</label>
+            </div>
+            <div class="col-md-2" style="text-align:right">
+                @if (Model.label_color_hex != null || Model.label_color_hex != "")
+                {<input type="color" id="labelcolorPicker" value="@Model.label_color_hex" style=" width: 65px"> }
+                else
+                { <input type="color" id="labelcolorPicker" style="color: #000000; width: 65px">}
+            </div>
+            <div class="col-md-6">
+                @Html.TextBoxFor(model => model.label_color_hex, new { @id = "txtlabelcolor", @class = "form-control", @maxlength = "100", @placeholder = "Enter label Color", @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label class="control-label">Label bg Color<i class="clsMandatory">*</i>:</label>
+            </div>
+            <div class="col-md-2" style="text-align:right">
+                @if (Model.label_bg_color_hex != null || Model.label_bg_color_hex != "")
+                {<input type="color" id="labelbgcolorPicker" value="@Model.label_bg_color_hex" style=" width: 65px"> }
+                else
+                { <input type="color" id="labelbgcolorPicker" style="color: #000000; width: 65px">}
+            </div>
+            <div class="col-md-6">
+                @Html.TextBoxFor(model => model.label_bg_color_hex, new { @id = "txtlabelbgcolor", @class = "form-control", @maxlength = "100", @placeholder = "Enter label bg color", @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label class="control-label">Label font size<i class="clsMandatory">*</i>:</label>
+            </div>
+            <div class="col-md-8">
+                @Html.TextBoxFor(model => model.label_font_size, new { @id = "txtlabelfontsizeText", @name = "txtlabelfontsizeText", @onchange = "validatelabelfontsize();", @class = "form-control", @min = "0", @maxlength = "2", @placeholder = "Enter font size" })
+                <span class="error-message" id="errorMessagefortlabelfontsize"></span>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-4">
+                <label class="control-label">Label Expression<i class="clsMandatory">*</i>:</label>
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.LableExp1, new { @id = "txtLableExp1", @name = "txtLableExp1", @class = "form-control", @placeholder = "Enter Exp" })
+            </div>
+            <div class="col-md-4" id="ddllblExpressionDetails">
+                <select id="ddllblExpression" name="@Html.NameFor(m => m.lstlblAttributes)" class="chosen-select col-sm-12">
+                    <option value="">--Select--</option>
+                    @foreach (var attribute in Model.LabelExpression)
+                    {
+                        var selected = attribute.column_name == Model.lstlblAttributes ? "selected" : "";
+                        <option value="@attribute.column_name" @selected>@attribute.display_name</option>
+                    }
+                </select>
+                <span class="error-message" id="ddllblExpression"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                @*<label class="control-label">Lable Expression<i class="clsMandatory">*</i>:</label>*@
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.LableExp2, new { @id = "txtLableExp2", @name = "txtLableExp2", @class = "form-control", @placeholder = "Enter Exp" })
+            </div>
+            <div class="col-md-4">
+                <select id="ddlLandBaseSeclblAttributesDetails" name="@Html.NameFor(m => m.SeclblAttributes)" class="chosen-select col-sm-12">
+                    <option value="">--Select--</option>
+                    @foreach (var attribute in Model.LabelExpression)
+                    {
+                        var selected = attribute.column_name == Model.SeclblAttributes ? "selected" : "";
+                        <option value="@attribute.column_name" data-selectedvalue="@attribute.is_selected" @selected>@attribute.display_name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        @*@if (Model.calegorylistbylayername.Count > 0)
+            {<div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">Category<i class="clsMandatory">*</i>:</label>
+                    </div>
+                    <div class="col-md-8">
+                        <select id="ddllblCategory" name="@Html.NameFor(m => m.entity_category)" class="chosen-select col-sm-12">
+                            <option value="">--Select--</option>
+                            @foreach (var attribute in Model.calegorylistbylayername)
+                            {
+                                var selected = attribute.column_name == Model.entity_category ? "selected" : "";
+                                <option value="@attribute.column_name" data-selectedvalue="@attribute.is_selected" @selected>@attribute.display_name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            }*@
+
+        <div class="row">
+            <div class="col-md-4">
+                <label class="control-label">Layer Sequence<i class="clsMandatory">*</i>:</label>
+            </div>
+            <div class="col-md-8">
+                @if (Model.layer_sequence == null)
+                {
+                    @Html.DropDownListFor(m => m.layer_sequence, Enumerable.Range(1, Model.max_layer_sequence).
+                        Select(i => new SelectListItem
+                        {
+                            Text = i.ToString(),
+                            Value = i.ToString()
+                        }), "Select", new { @class = "form-control", @onchange = "ValidateLayerSequence();" })
+
+                }
+                else
+                {
+                    @Html.DropDownListFor(m => m.layer_sequence, Enumerable.Range(1, Model.max_layer_sequence).
+                        Select(i => new SelectListItem
+                        {
+                            Text = i.ToString(),
+                            Value = i.ToString(),
+                            Selected = (i == Model.layer_sequence)
+                        }), "Select", new { @class = "form-control", @onchange = "ValidateLayerSequence();" })
+                }
+            </div>
+        </div>
+    </div>
+    <div class="ModalFooter" id="dvBtnAction">
+        <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+        <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveLyrGrp" value="Update" />
+    </div>
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var removeClass = false;
+        $('.chosen-select').chosen({ width: '100%' });
+    });
+
+    function validatelabelfontsize() {
+        const txtlabelfontsize = document.getElementById('txtlabelfontsizeText');
+        const errortxtlabelfontsize = document.getElementById('errorMessagefortlabelfontsize');
+        const opacityinputValue = txtlabelfontsize.value.trim();
+        const numericRegex = /^\d+$/;
+        if (opacityinputValue === '' || !numericRegex.test(opacityinputValue)) {
+            errortxtlabelfontsize.textContent = 'Enter a valid 2-digit Numeric value.';
+            return false;
+        }
+        errortxtlabelfontsize.textContent = '';
+        return true;
+    }
+
+    if ('@Model.geom_type' != '@Models.GeometryType.Point.ToString()') {
+        function validatelinewidth() {
+            const linewidthId = document.getElementById('txtlinewidth');
+            const errorMsgfortlinewidth = document.getElementById('errorMessagefortlinewidth');
+            const linewidthinputValue = linewidthId.value.trim();
+            const numericRegex = /^\d+$/;
+            if (linewidthinputValue === '' || !numericRegex.test(linewidthinputValue)) {
+                errorMsgfortlinewidth.textContent = 'Enter a valid 1-digit Numeric value.';
+                return false;
+            }
+            errorMsgfortlinewidth.textContent = '';
+            return true;
+        }
+
+        const colorPicker = document.getElementById('colorPicker');
+        const txtcolorcodehex = document.getElementById('txtcolorcodehex');
+        colorPicker.addEventListener('input', () => {
+            const selectedColor = colorPicker.value;
+            txtcolorcodehex.value = selectedColor;
+        });
+
+        const outlinecolor = document.getElementById('outlinecolorPicker');
+        const txtoutlinecolors = document.getElementById('txtoutlinecolor');
+        if (outlinecolor != null) {
+            outlinecolor.addEventListener('input', () => {
+            const selectedColor = outlinecolor.value;
+            txtoutlinecolors.value = selectedColor;
+        });
+        }
+
+        const slider = document.getElementById('sliderrange');
+        const opacityId = document.getElementById('txtopacity');
+        slider.addEventListener('input', () => {
+            const sliderValue = slider.value;
+            opacityId.value = sliderValue;
+        });
+    }
+
+    const labelcolorPkr = document.getElementById('labelcolorPicker');
+    const txtlabelcolor = document.getElementById('txtlabelcolor');
+    labelcolorPkr.addEventListener('input', () => {
+        const selectedColor = labelcolorPkr.value;
+        txtlabelcolor.value = selectedColor;
+    });
+
+    const labelbgcolor = document.getElementById('labelbgcolorPicker');
+    const txtlabelbgcolor = document.getElementById('txtlabelbgcolor');
+    labelbgcolor.addEventListener('input', () => {
+        const selectedColor = labelbgcolor.value;
+        txtlabelbgcolor.value = selectedColor;
+    });
+
+    function IsValid(event) {
+        debugger;
+        if ('@Model.geom_type' != '@Models.GeometryType.Point.ToString()') {
+            if ($('#txtcolorcodehex').val() == "") {
+                $('#txtcolorcodehex').addClass('errorClass');
+                alert("Color Code is mandatory");
+                return false;
+            }
+            else {
+                $('#txtcolorcodehex').removeClass("errorClass");
+            }
+            if ('@Model.geom_type' == '@Models.GeometryType.Polygon.ToString()') {
+                if ($('#txtoutlinecolor ').val() == "") {
+                    $('#txtoutlinecolor').addClass('errorClass');
+                    alert("Outline Color is mandatory");
+                    return false;
+                }
+                else {
+                    $('#txtoutlinecolor').removeClass("errorClass");
+                }
+            }
+            else {
+                $('#txtoutlinecolor').removeClass("errorClass");
+            }
+            if ($('#txtopacity ').val() == "" || $('#txtopacity ').val() == 0) {
+                $('#txtopacity').addClass('errorClass');
+                alert("Enter valid opacity!");
+                return false;
+            }
+            else {
+                $('#txtopacity').removeClass("errorClass");
+            }
+            if ($('#txtlinewidth ').val() == "" || $('#txtlinewidth ').val() == 0) {
+                $('#txtlinewidth').addClass('errorClass');
+                alert("Enter valid line width!");
+                return false;
+            }
+            else {
+                $('#txtlinewidth').removeClass("errorClass");
+            }
+        }
+        else {
+            $('#txtoutlinecolor').removeClass("errorClass");
+            $('#txtopacity').removeClass("errorClass");
+            $('#txtcolorcodehex').removeClass("errorClass");
+            $('#txtlinewidth').removeClass("errorClass");
+        }
+
+        if ($('#txtlabelfontsizeText ').val() == "" || $('#txtlabelfontsizeText ').val() == 0) {
+            $('#txtlabelfontsizeText').addClass('errorClass');
+            alert("Enter valid fontsize!");
+            return false;
+        }
+        else {
+            $('#txtlabelfontsizeText').removeClass("errorClass");
+        }
+        if ($('#txtlabelcolor ').val() == "") {
+            $('#txtlabelcolor').addClass('errorClass');
+            alert("Label color is mandatory");
+            return false;
+        }
+        else {
+            $('#txtlabelcolor').removeClass("errorClass");
+        }
+        if ($('#txtlabelbgcolor ').val() == "") {
+            $('#txtlabelbgcolor').addClass('errorClass');
+            alert("Label bg color is mandatory");
+            return false;
+        }
+        else {
+            $('#txtlabelbgcolor').removeClass("errorClass");
+        }
+        if ('@Model.calegorylistbylayername.Count' > 0)
+        {
+           if ($('#ddllblCategory ').val() == "") {
+               $('#ddllblCategory').addClass('errorClass');
+               alert("Category is mandatory");
+               return false;
+           }
+           else {
+               $('#ddllblCategory').removeClass("errorClass");
+           }
+        }
+            if ($('#ddllblExpression').val() == "") {
+            $('#ddllblExpressionDetails').css({
+                    "border": "1px solid #d32727"
+            });
+                return false;
+            }
+             else {
+            $('#ddllblExpression').removeClass("errorClass");
+        }
+        debugger;
+
+        if ($('#layer_sequence').val() == "") {
+            debugger;
+            $('#layer_sequence').addClass('errorClass');
+            alert("Layer Sequence is mandatory");
+            return false;
+        }
+        else {
+            debugger
+            $('#layer_sequence').removeClass('errorClass');
+        }
+
+    };
+    function ValidateLayerSequence() {
+        debugger;
+        var message = "";
+        ajaxReq('LayerSettings/CheckLayerSequence',
+            {new_sequence: $('#layer_sequence').val(),
+                layer_id: $('#layer_id').val()
+            }, false, function (resp) {
+                $('#hdn_lyr_seq').val($('#layer_sequence').val());
+                if (resp.status == "OK" && resp.rowcount > 0) {
+                    alert(resp.message, 'Warning');
+                    message = resp.message;
+                }
+
+
+
+
+        }, true, true);
+
+    }
+
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+
+    function OnSuccess(data) {
+            if (data.status == "OK") {
+                $("#closeModalPopup").trigger("click");
+                setTimeout(function () {
+                    @{ Session["GridloadWithoutRefresh"] = "Success"; }
+                    window.location = appRoot + 'LayerSettings/ViewLayerStyleMaster';
+                }, 2000);
+                alert(data.message, 'Success', 'success');
+            }
+            else {
+                alert(data.message, 'Failed', 'Failed');
+            }
+    }
+    $("#btnCancel").on("click", function () {
+            $("#closeModalPopup").trigger("click");
+        });
+</script>
+
+
+
+

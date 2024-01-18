@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+@model Models.AccessoriesMapping
+@using Models;
+
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+
+    .dvdisabled {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+</style>
+
+<div id="divAccessoriesMapping">
+    @using (Ajax.BeginForm("SaveAccessoriesMapping", "Accessories",
+                                        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAccessoriesMapping", OnSuccess = "OnSuccess", },
+                                        new { id = "frmAccessoriesMapping", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id);
+        <div class="EUTSetting">
+            @*<div class="row form-group  @(Model.id > 0 ? "dvdisabled" : "")">
+                    <div class="control-label col-md-4">Entity Type<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), "Select Entity", new { @class = "chosen-select col-sm-12 onchang", @id = "lstLayers", @onchange = "specifyType();" })
+                    </div>
+                </div>*@
+            @Html.HiddenFor(m => m.layer_id, new { id = "layer_id" })
+            <div class="row form-group @(Model.id > 0 ? "dvdisabled" : "")">
+                <div class="control-label col-md-4">Entity Type<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-8">
+                    <select id="lstLayers" onchange="specifyType();" class="form-control">
+                        <option value="">Select Entity</option>
+                        @foreach (var attribute in Model.lstLayers)
+                        {
+                            var selected = attribute.layer_id == Model.layer_id ? "selected" : "";
+                            <option value="@attribute.layer_id" data-content="@attribute.layer_name" @selected>@attribute.layer_title</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row form-group @(Model.id > 0 ? "dvdisabled" : "")" id="ddl_specifyType" style="display:none">
+                <div class="control-label col-md-4">Specify Type:</div>
+                <div class="col-md-8">
+                    @Html.DropDownListFor(m => m.specify_type, new SelectList(Model.lstSpecifyType.Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"), "Select Type", new { @class = "form-control", @id = "lstspecifytype" })
+                </div>
+            </div>
+            <div class="row form-group  @(Model.id > 0 ? "dvdisabled" : "")">
+                <div class="control-label col-md-4">Accessories Name<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-8 @(Model.id > 0 ? "dvdisabled" : "")">
+                    @Html.DropDownListFor(m => m.accessories_id, new SelectList(Model.lstAccessoriesdropdown.Select(x => new { Value = x.id.ToString(), Text = x.display_name }), "Value", "Text"), "Select Accessories", new { @class = "form-control onchang", @id = "ddl_Accessories" })
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="control-label col-md-4">Min Quantity<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.min_quantity, new { @class = "form-control onchang onchang", @maxlength = "3", @placeholder = "Min Quantity", @id = "txtmin_quantity", @onkeypress = "return allowNumberOnly(event,this);" })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="control-label col-md-4">Max Quantity<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.max_quantity, new { @class = "form-control onchang onchang", @maxlength = "3", @placeholder = "Max Quantity", @id = "txtmax_quantity", @onkeypress = "return allowNumberOnly(event,this);" })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="control-label col-md-4">Status:</div>
+                <div class="col-md-1">
+                    @Html.CheckBoxFor(m => m.is_active, new { Style = "width:100% ;", @id = "chkis_active" })
+                </div>
+            </div>
+        </div>
+        <div class="d-flex footerModal" id="dvBtnAction">
+
+            <button type="button" class="btn btn-default ml-auto mr-01" id="btnCancel">Cancel</button>
+
+            @if (Model.id > 0)
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveAccessories" value="Update" />
+            }
+            else
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveAccessories" value="Save" />
+            }
+        </div>
+    }
+</div>
+<script>
+    function IsValid() {
+        
+        if ($('#ddl_Accessories').val() == "") {
+            $('#ddl_Accessories').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddl_Accessories').removeClass("errorClass");
+        }
+        if ($('#lstLayers').val() == "") {
+            $('#lstLayers').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#lstLayers').removeClass("errorClass");
+        }
+        if ($('#txtmin_quantity').val() == 0) {
+            $('#txtmin_quantity').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txtmin_quantity').removeClass("errorClass");
+        }
+        if ($('#txtmax_quantity').val() == 0) {
+            $('#txtmax_quantity').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txtmax_quantity').removeClass("errorClass");
+        }        
+        let min = parseInt($('#txtmin_quantity').val());
+        let max = parseInt($('#txtmax_quantity').val());
+        if (min > max) {
+            $('#txtmin_quantity').addClass('errorClass');
+            alert("Minimum Quantity should be less than Maximum Quantity");
+            return false;
+        }
+        if (min >= 1 && max >= 1) {
+            if (min == max) {
+                $('#txtmin_quantity').addClass('errorClass');
+                $('#txtmax_quantity').addClass("errorClass");
+                alert("Minimum Quantity should not be same as Maximum Quantity");
+                return false;
+            }
+        }
+    };
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+    $(".onchang").change(function () { $('.onchang').removeClass("errorClass"); })
+
+    function OnSuccess(data) {
+        
+        $("#closeModalPopup").trigger("click");
+        alert(data.pageMsg.message, 'Success', 'success');
+        setTimeout(function () {
+            window.location = appRoot + 'Accessories/ViewAccessoriesMapping';
+        }, 3000);
+
+    }
+    $("#btnCancel").on("click", function () {
+        $("#closeModalPopup").trigger("click");
+    });
+    function specifyType() {
+        $("#ddl_Accessories").val('');
+        let layerid = $("#lstLayers").val();
+        $("#layer_id").attr("value", layerid);
+        var layerName = $('#lstLayers option:selected').attr('data-content');
+        if (layerName == "Pole" || layerName == "Manhole") {
+            $("#ddl_specifyType").show();
+        }
+        else {
+            $("#ddl_specifyType").hide();
+        }
+        ajaxReq('Accessories/getSpecifyTypeByLayerId', { layer_id: layerid }, false, function (response) {
+           
+            $('#lstspecifytype').html('');
+            var options = '';
+            options += "<option value>Select Type</option>";
+            for (var i = 0; i < response.length; i++) {
+                options += '<option value="' + response[i].key + '">' + response[i].value + '</option>';
+            }
+            $('#lstspecifytype').append(options);
+            $('#lstspecifytype').trigger("chosen:updated");
+        }, true, true);
+    }
+</script>

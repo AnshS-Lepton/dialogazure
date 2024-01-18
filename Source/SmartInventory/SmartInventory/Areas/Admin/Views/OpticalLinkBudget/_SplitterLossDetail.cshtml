@@ -1,0 +1,53 @@
+﻿@model Models.Admin.LinkBudgetMaster
+<style>
+    .fixHeader th {
+        position: sticky;
+        top: 0;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="EUTSetting">
+    @if (Model.lstSplitterLoss != null && Model.lstSplitterLoss.Count > 0)
+    {
+        <div class="table-responsive table_over">
+            <table border="1" class="grid">
+                <thead>
+                    <tr class="fixHeader">
+                        <th>
+                            Port Ratio
+                        </th>
+                        <th>
+                            Loss Value(@SmartInventory.Settings.ApplicationSettings.dBLossUnit)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.lstSplitterLoss.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                <label for="@Model.lstSplitterLoss[i].splitter_ratio"><span>@Model.lstSplitterLoss[i].splitter_ratio</span></label>
+                            </td>
+                            <td>
+
+                                @Html.HiddenFor(model => model.lstSplitterLoss[i].id)
+                                @Html.HiddenFor(model => model.lstSplitterLoss[i].splitter_ratio)
+                                @Html.HiddenFor(model => model.lstSplitterLoss[i].created_by)
+                                @Html.HiddenFor(model => model.lstSplitterLoss[i].created_on)
+                                @if (Model.is_active == false)
+                                {
+                                    <span>@Model.lstSplitterLoss[i].splitter_loss</span>
+                                }
+                                else
+                                {
+                                    @Html.TextBoxFor(model => model.lstSplitterLoss[i].splitter_loss, new { @class = "form-control", @onkeypress = "return allowNumberwithOneDot(event,this);", @style = "MARGIN: 0 AUTO; width:150px;", @maxlength = "5", @placeholder = "Enter Loss Value" })
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

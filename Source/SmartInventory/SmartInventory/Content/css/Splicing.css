@@ -1,0 +1,784 @@
+﻿
+.Heading {
+    width: 100%;
+    height: 55px;
+    text-decoration: none;
+    padding-top: 11px;
+    background: #c1f5ea;
+    border-bottom: 1px solid gray;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.wrapper {
+    margin: 0 0 0px 0;
+    clear: inherit;
+    display: table;
+    width: 100%;
+    vertical-align: top;
+}
+
+.tube {
+    width: 30px;
+    vertical-align: middle;
+    padding: 3px;
+    border: 1px solid black;
+    border-bottom-width: 0px;
+}
+
+.wrapper .tube:last-child {
+    border-bottom-width: 1px;
+}
+
+.tube, .core {
+    display: table-cell;
+}
+
+.otherEndCores {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.otherEndFiber {
+    width: 15px;
+    height: 4px;
+    /*margin-top: 9px;*/
+    margin-top: 12px;
+    background: #A9A9A9;
+    cursor: pointer;
+}
+
+.fiber {
+    width: 56px;
+    /*height: 5px;*/
+    height: 3px;
+    /*margin-top: 10px;*/
+    margin-top: 13px;
+    /*opacity: 0.6;*/
+    cursor: pointer;
+    font-size: 0px;
+}
+
+    .fiber div {
+        /*display:inline-block;*/
+        float: left;
+    }
+
+.cable {
+    width: 40px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right;
+}
+
+.cableContainer {
+    width: 150px;
+    display: table-cell;
+}
+
+.tubeText {
+    background: #fff;
+    margin: 0 auto;
+    text-align: center;
+    width: 25px;
+    border-radius: 50%;
+    height: 25px;
+    padding-top: 5px;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 1px;
+    border: 1px solid black;
+}
+
+}
+
+.lastCore {
+    margin-bottom: 2px;
+}
+
+.firstCore {
+    margin-top: 2px;
+}
+
+.MidSection {
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+    height: 100%;
+    display: table-cell;
+    vertical-align: top;
+}
+
+.DeviceView {
+    height: 100%;
+    border: 2px solid green;
+    max-width: 415px;
+    width: auto;
+    min-width: 300px;
+    margin: 0 auto;
+    min-height: 250px;
+    padding-top: 0%;
+}
+.VirtualSCDeviceView {
+    height: 100%;
+    border: 2px solid green;
+    max-width: 415px;
+    width: auto;
+    min-width: 300px;
+    margin: 0 auto;
+    min-height: 250px;
+    padding-top: 0%;
+    background:#FFEFB3;
+}
+
+.rightCore {
+    display: table-cell;
+    float: right;
+}
+
+.contedlegend {
+    background-color: #00ba8a;
+    opacity: 1;
+    cursor: default;
+}
+
+.rsrvdlegend {
+    background-color: #0000FF;
+    margin-left: 10px;
+}
+
+.faultylegend {
+    background-color: red;
+    margin-left: 10px;
+}
+
+.rsrvdcontlegend {
+    background-color: #EDADF4;
+    margin-left: 10px;
+}
+
+.rsrvdfaultlegend {
+    background-color: #750404;
+    margin-left: 10px;
+}
+
+.splicingLegend {
+    opacity: 1;
+    cursor: default;
+    width: 25px;
+    height: 5px;
+    margin-right: 7px;
+    margin-left: 10px;
+}
+
+.ExportConnections {
+    background: url(../images/split_img.png) no-repeat;
+    float: right;
+    background-position: -147px -118px;
+    width: 30px;
+    height: 29px;
+    cursor: pointer;
+}
+
+.UnspliceConnections {
+    background: url(../images/split_img.png) no-repeat;
+    float: right;
+    background-position: -41px -423px;
+    width: 30px;
+    height: 29px;
+    cursor: pointer;
+}
+
+.SwapConnections {
+    background: url(../images/split_img.png) no-repeat;
+    float: right;
+    background-position: -143px -426px;
+    width: 30px;
+    height: 29px;
+}
+
+.endPint {
+    width: 15px;
+    height: 5px;
+}
+
+
+
+
+.innerFiber {
+    margin-top: 1px;
+    width: 15px;
+    height: 3px;
+}
+
+.fiberNumber {
+    margin-top: -6px;
+    font-size: 12px;
+    width: 20px;
+    /*margin-left: 35px;
+    margin-right: 35px;*/
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+#dvRightCable .fiberNumber, #dvLeftCable .fiberNumber {
+    margin-top: -14px;
+    font-size: 12px;
+    width: 20px;
+    margin-left: 50px;
+    margin-right: 50px;
+    cursor: default;
+}
+
+.innerCable {
+    width: 40px;
+    height: 10px;
+    background: red;
+}
+
+.cell {
+    vertical-align: top;
+    display: table-cell;
+    height: 100%;
+}
+
+.leftFiber div {
+    float: left;
+}
+
+.leftFiber .fiberNumber {
+    text-align: right;
+}
+
+.rightFiber div {
+    float: right;
+}
+
+.rightFiber .fiberNumber {
+    text-align: left;
+}
+
+.triangle1 {
+    background: linear-gradient(to bottom right, #fff 0%, #fff 50%, #a48d01 50%, #a48d01 100%);
+}
+
+.triangle2 {
+    background: linear-gradient(to top right, #fff 0%, #fff 50%, #a48d01 50%, #a48d01 100%);
+}
+
+.triangle1, .triangle2 {
+    /*width: 150px;
+        height: 200px;*/
+}
+
+#tri3 {
+    clip-path: polygon(100% 0, 0 52%, 100% 100% );
+    width: 202px;
+    height: auto;
+    background: rgba(0, 113, 110, 0.2);
+    top: 20vh;
+    left: 50%;
+}
+
+path:hover {
+    stroke-width: 3px;
+    color: green;
+    stroke: green;
+    cursor: pointer;
+}
+
+
+.customerContainer {
+    width: 125px;
+    border: 1px solid green;
+    height: auto;
+    float: right;
+    text-align: center;
+    margin: 0 auto;
+    padding: 10px;
+    background: #e0f8e0;
+}
+
+.customer {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    border: 1px solid black;
+    float: left;
+    background: url(../images/Customer.png) no-repeat;
+    background-position: center;
+}
+
+.customerParent {
+    width: 70px;
+    margin-left: 10px;
+    height: 45px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 0px;
+}
+
+    .customerParent div {
+        float: left;
+    }
+
+.cpePort {
+    width: 15px;
+    background: red;
+    height: 5px;
+    float: left;
+}
+
+.cpeCore {
+    width: 25px;
+    height: 3px;
+    float: right;
+    background: red;
+    margin-top: 1px;
+}
+
+.spliceAllConnections {
+  background: url(../images/split_img.png) no-repeat;
+    float: right;
+    background-position: -202px -423px;
+    width: 30px;
+    height: 29px;
+    cursor: pointer;
+}
+
+.crossConnections {
+    float: right;
+    width: 27px;
+    height: 24px;
+    cursor: pointer;
+    padding-top: 6px;
+    padding-left: 7px;
+    color: green;
+    box-shadow: 0 0 4px black;
+    margin-right: 2px;
+    background-color: #ffffffab;
+    margin-top:4px;
+}
+
+#dvLeftCable {
+    padding-left: 35px;
+}
+
+#dvRightCable {
+    padding-right: 35px;
+}
+
+.rel_pop {
+    height: auto;
+    background-color: #00ba8a;
+    position: absolute;
+    margin-left: 40px;
+    margin-top: -5px;
+    z-index: 99;
+    border-radius: 5px;
+    border: 0px;
+    display: none;
+    padding-bottom: 10px;
+    margin-right: 5px;
+    margin-bottom: 4px;
+    cursor: default;
+}
+
+    .rel_pop .span_box_menu {
+        padding-left: 10px !important;
+        text-align: left;
+        font-size: 14px;
+        color: #fff;
+        width: 100%;
+        background-color: transparent;
+        float: left;
+        padding: 2px 0px 2px 0px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        margin: 0px;
+    }
+
+#btnCloseSplicingInfo {
+    color: #fff;
+}
+
+.rel_pop .span_box_menu:hover {
+    border-radius: 0px;
+    margin: 0px
+}
+
+.rel_pop {
+    padding-bottom: 0px !important;
+    border-radius: 5px !important;
+    width: 80px;
+}
+
+    .rel_pop .pointer {
+        font-size: 32px !important;
+        color: #00ba8a;
+        position: absolute;
+        left: -13%;
+        top: 0px;
+    }
+
+.cpfLegend {
+    width: 15px;
+    height: 15px;
+    background-color: #fcaf88;
+    border: 1px solid grey;
+    float: left;
+    margin-left: 10px;
+    margin-right: 6px;
+}
+
+.nav-tabs {
+    border: none;
+}
+
+    .nav-tabs > li {
+        /*border-top: 1px solid #ddd;*/
+    }
+
+#divDownStream .checkbox-custom2:checked + b .checkbox-custom2-label:before {
+    content: "\f00c";
+    font-family: 'FontAwesome';
+    color: green;
+    font-size: 12px;
+}
+
+#divDownStream .checkbox-custom2 + b .checkbox-custom2-label:before {
+    font-family: 'FontAwesome';
+    background: rgb(239, 168, 168);
+    width: 18px;
+    height: 17px;
+    border: 1px solid #395385;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 1px;
+    margin-right: 0px;
+    text-align: center;
+    margin-left: -10px;
+}
+
+#divUpStream .checkbox-custom2:checked + b .checkbox-custom2-label:before {
+    content: "\f00c";
+    font-family: 'FontAwesome';
+    color: green;
+    font-size: 12px;
+}
+
+#divUpStream .checkbox-custom2 + b .checkbox-custom2-label:before {
+    font-family: 'FontAwesome';
+    background-color: rgb(197, 200, 236);
+    width: 18px;
+    height: 17px;
+    content: '';
+    border: 1px solid #395385;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 1px;
+    margin-right: 0px;
+    text-align: center;
+    margin-left: -10px;
+}
+
+
+.upStream {
+    background-color: rgb(197, 200, 236);
+}
+
+
+.downStream {
+    background-color: rgb(239, 168, 168);
+}
+
+.checkbox-custom2 {
+    opacity: 0;
+    position: absolute;
+}
+
+.conTerningPoint {
+    background: #aef5a9 !important;
+}
+
+.coreRangeContainer {
+    width: 110px;
+    padding-bottom: 10px;
+}
+
+.splicingLegendSection {
+    display:flex;
+    align-items:center;
+    min-height: 40px;
+    background: #b6f2e4;
+    margin-bottom: 10px;
+    padding:0 1rem;
+}
+.icon-mr-auto {
+    margin-left:auto;
+}
+.left--lines{
+    margin-right:1rem;
+    display:flex;
+    align-items:center;
+}
+
+.green{
+    color:#00BA6C;
+}
+
+.coreRangeContainer .rangeLabel {
+    width: 37px;
+    height: 20px;
+    float: left;
+    text-align: center;
+    background: #25c094;
+    font-weight: bolder;
+    font-size: 12px;
+    padding: 2px;
+    color: white;
+}
+
+.coreRangeContainer .rangeInputContainer {
+    float: left;
+    width: 72px;
+    padding-left: 5px;
+}
+
+    .coreRangeContainer .rangeInputContainer input {
+        width: 23px;
+        height: 20px !important;
+        float: left;
+        border: 1px solid green;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .coreRangeContainer .rangeInputContainer .inputSeperator {
+        background: #25c094;
+        font-size: 3px;
+        width: 10px;
+        height: 8px;
+        display: block;
+        float: left;
+        text-align: center;
+        margin: 3px;
+        margin-top: 6px;
+        line-height: 1;
+        color: #25c094;
+    }
+
+.disabledExportCPF {
+    pointer-events: none;
+    cursor: default;
+}
+
+/*update new css for CPF 28/11/19*/
+
+.cpfmaindv {
+    float: right;
+    padding-top: 10px;
+    width: 215px;
+    display: none;
+}
+
+    .cpfmaindv .spn {
+        width: 230px;
+        float: left;
+        margin-left: 20px;
+        font-size: 12px;
+    }
+
+#dvSchematicView path {
+    stroke-width: 3px;
+    color: blue;
+    stroke: blue;
+    cursor: pointer;
+}
+
+.Custom_Radio_Buttons {
+    display: inline-block;
+    position: relative;
+    padding-left: 60px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+    .Custom_Radio_Buttons input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+.Custom_Radio_Buttons input:checked ~ .checkmark {
+        background-color: var(--secondary-color);
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #fff;
+    border-radius: 50%;
+    border: solid 1px #395385;
+}
+
+.Custom_Radio_Buttons input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.Custom_Radio_Buttons .checkmark:after {
+    top: 5px;
+    left: 5px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+
+.libTabContent .libTabs .nav-tabs > li {
+    height: 40px;
+}
+
+.libTabContent .libTabs .nav > li > a:hover {
+    height: 37px;
+}
+
+#dvSchematicView {
+}
+
+.modal-open .modal {
+    background-color: rgba(0 0 0 / 1%);
+}
+/*update new css for CPF 28/11/19*/
+
+
+@media (min-width: 1700px) and (max-width:2000px) {
+    .rel_pop {
+        margin-top: -15px;
+    }
+}
+
+.leftLink {
+    margin-top: -9px;
+    padding-top: -6px;
+    font-size: 12px;
+    width: 20px;
+    margin-left: 40px;
+    font-size: 15px;
+}
+
+.rightLink {
+    margin-top: -9px;
+    padding-top: -6px;
+    font-size: 12px;
+    width: 20px;
+    margin-right: 32px;
+    font-size: 15px;
+}
+
+#divPortName div {
+    height: 5px;
+    margin-top: 13px;
+    cursor: pointer;
+}
+
+.linkNumber {
+    color: #80808094;
+}
+
+.ExportConnectionsPDFIcon {
+    background: url(../images/split_img.png) no-repeat;
+    float: right;
+    width: 22px;
+    height: 29px;
+    cursor: pointer;
+    background-position: -388px -423px;
+}
+
+
+.splicing--checks{
+    display:flex;
+    align-items:center;
+}
+
+.mt-1rem{
+    margin-top:1rem;
+}
+
+.active--Border{
+    border-bottom:3px solid green !important;
+    cursor: pointer;
+}
+
+.fu--radioBtn{
+    font-size:13px;
+    margin-left:2rem;
+    display:block;
+    width:100px;
+}
+#divDownStream .checkbox-custom3 {
+    opacity: 0;
+    position: absolute;
+}
+
+#divDownStream .checkbox-custom3, b .checkbox-custom3-label {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0px !important;
+    cursor: pointer;
+}
+
+#divDownStream .checkbox-custom3-label {
+    position: relative;
+}
+
+#divDownStream .checkbox-custom3 + b .checkbox-custom3-label:before {
+    content: '';
+    background: #fff;
+    display: inline-block;
+    vertical-align: middle;
+    width: 17px;
+    height: 17px;
+    padding: 1px;
+    margin-right: 0px;
+    text-align: center;
+    margin-left: -10px;
+    margin-top: -5px;
+    border: 1px solid #395385;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.1);
+    font-size: 12px;
+    font-weight: normal !important;
+}
+
+#divDownStream .checkbox-custom3 + b .disabledCheckbox:before {
+    background: #ccc !important;
+    color: #ccc !important;
+    cursor: no-drop;
+}
+
+#divDownStream .checkbox-custom3:checked + b .checkbox-custom3-label:before {
+    content: "\f00c";
+    font-family: 'FontAwesome';
+    background: var(--oth-green-light);
+    color: #fff;
+}
+
+
+
+

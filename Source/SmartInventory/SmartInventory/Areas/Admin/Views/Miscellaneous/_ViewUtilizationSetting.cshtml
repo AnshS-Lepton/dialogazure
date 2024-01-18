@@ -1,0 +1,125 @@
+﻿@model Models.ViewEntityUtilizationSettings
+@using Utility
+
+
+
+<div id="dvViewUtilization">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>Entity Utilization Settings</h4>
+        </div>
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.objEntityUtiliSettingsFilter.pageSize, canSort: true, ajaxUpdateContainerId: "divUtilizationSetting", ajaxUpdateCallback: "onGridHeaderClick('tblUtilizationSetting')");
+            grid.Bind(Model.lstViwUtilizationSetting, autoSortAndPage: false, rowCount: Model.objEntityUtiliSettingsFilter.totalRecord);
+            if (Model.objEntityUtiliSettingsFilter.totalRecord > 0)
+            {
+                grid.PageIndex = Model.objEntityUtiliSettingsFilter.currentPage - 1;
+            }
+        }
+    <div class="--pad-15">
+        @using (Html.BeginForm("ViewUtilizationSetting", "Miscellaneous", FormMethod.Post, new { autocomplete = "off", @id = "frmViewUtilizationSetting" }))
+        {
+
+            <div class="form-inline filter-sec">
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4">Region :</label>
+                    <div class="col-md-8 wtd_set">
+                        @Html.DropDownListFor(m => m.objEntityUtiliSettingsFilter.region_id, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select", @onchange = "BindProvinceByRegion();", @id = "ddlRegions" })
+                    </div>
+                </div>
+
+                <div class="form-group wtd_set mr-01">
+                    <label class="control-label col-sm-4">Province:</label>
+                    <div class="col-md-8 pl-im-05">
+                        @Html.DropDownListFor(m => m.objEntityUtiliSettingsFilter.province_id, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select", @id = "ddlProvinces" })
+                    </div>
+                </div>
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4 pr-im-05">Entity Type:</label>
+                    <div class="col-md-8 pl-im-05">
+                        @Html.DropDownListFor(m => m.objEntityUtiliSettingsFilter.layer_id, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select", @id = "ddlLayers" })
+                    </div>
+                </div>
+                <div class="form-group wtd_set" id="dvBtnAction">
+                    <div class="col-md-8">
+                        <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                        @if (@grid.TotalRowCount > 0)
+                        {
+                            <input type="button" id="btnExportUtilizations" value="Export" class="btn btn-primary mr-05" />
+                        }
+                        else
+                        {
+                            <input type="button" id="btnExportUtilizations" value="Export" disabled="disabled" class="btn btn-primary mr-05" />
+                        }
+                        <a href="@Url.Action("ViewUtilizationSetting")" class="btn btn-default mr-05" title="Reset">Reset</a>
+
+                        <input type="button" id="btnAddNew" onclick="AddNewUtlization(0);" value="Add New" class="btn btn-primary" />
+                    </div>
+                </div>
+
+            </div>
+            if (Model.lstViwUtilizationSetting.Count > 0)
+            {
+                <div id="divUtilizationSetting">
+                    <div class="recordCount mb-1"><b>Total Records:@grid.TotalRowCount</b></div>
+
+                    <div class="table-responsive tble_cls">
+                        @grid.GetHtml(tableStyle: "grid",
+                                        htmlAttributes: new { id = "tblUtilizationSetting" },
+                                        mode: WebGridPagerModes.All,
+                                        columns: grid.Columns(
+                                                grid.Column("", "Action", format:@<text>
+                                                        <a href="#" onclick="AddNewUtlization(@item.system_id);" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                                        <a href="javascript:void(0);" onclick="DeleteUtilizationSettingsById(@item.system_id);" title="Delete"> <i class="fa fa-fw fa-trash" style="font-size: 13px; color: #f50000;"></i></a>
+                                                </text>
+),
+grid.Column("layer_name", "Entity Type", format: @<text>@item.layer_name</text>),
+grid.Column("network_status", "Network Status", format: @<text>@item.network_status</text>),
+grid.Column("Region", "Region", format: @<text>@item.Region</text>),
+grid.Column("Province", "Province", format: @<text>@item.Province</text>),
+grid.Column("utilization_range_Low", "Low(%)", format: @<text>@item.utilization_range_Low</text>),
+grid.Column("utilization_range_Moderate", "Moderate(%)", format: @<text>@item.utilization_range_Moderate</text>),
+grid.Column("utilization_range_High", "High(%)", format: @<text>@item.utilization_range_High</text>),
+grid.Column("utilization_range_Over", "Over(%)", format: @<text>@item.utilization_range_Over</text>),
+grid.Column("entity_to_be_utilized", "Entity For Utilization Report", format: @<text>@item.entity_to_be_utilized</text>),
+grid.Column("entity_utilization_percentage", "Utilization(%)", format: @<text>@item.entity_utilization_percentage</text>),
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>),
+grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>),
+grid.Column("modified_on", "Modified On", format: @<text>@(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString()))</text>
+)))
+
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div style="text-align: center; margin-top: 30px;">
+                    No Records Found.
+                </div>
+            }
+        }
+    </div>
+        <script>
+
+            $(document).ready(function () {
+                // apply choose style
+                $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+                // add sorting on grid..
+                addDefaultSortingIcons("tblUtilizationSetting");
+                //download utalization as excel format
+                $("#btnExportUtilizations").on("click", function () {
+                    window.location = appRoot + 'Miscellaneous/ExportUtilizationDetails';
+                });
+            });
+
+        </script>
+    </div>
+</div>
+
+
+
+

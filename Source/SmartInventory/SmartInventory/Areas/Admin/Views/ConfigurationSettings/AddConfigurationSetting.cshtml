@@ -1,0 +1,145 @@
+﻿@model Models.Admin.ConfigurationSetting
+<!DOCTYPE html>
+
+<div class="col-lg-12" id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+
+</div>
+
+<div id="dvInfoIsp" class="update_panel">
+
+    <div id="" class="title">
+        <h4><span class="icon16 icomoon-icon-bars">Configuration Settings</span><span>
+            </span></h4>
+    </div>
+
+    <div id="divParentForm" class="form-horizontal pad_left">
+
+        <div class="form-group" style="width: 100%; height: 33px;">
+            <div class="row">
+                <div class=" col-md-3">
+                    <label class=" control-label">
+                        Entity Type:
+                    </label>
+                </div>
+                <div class=" col-md-6">
+
+                    @Html.DropDownListFor(m => m.entity_type, new SelectList(Model.lstBindIspEntityType.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddl_entity_type", @onchange = "onChangebindEqiupmenttype();" })
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group" style="width: 100%; height: 33px;">
+            <div class="row">
+                <div class=" col-md-3">
+                    <label class=" control-label">
+                        Equipment Type:
+                    </label>
+                </div>
+                <div class=" col-md-6">
+
+                    @Html.DropDownListFor(m => m.equipment_Type, new SelectList(Model.lstBindIspEquipmentType.Select(x => new { Value = x.id.ToString(), Text = x.type }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddl_equipment_type", @onchange = "onChangebindBrandtype();" })
+
+                </div>
+
+
+                <div id="dvEquipmentType" class="col-md-3">
+                    <a href="javascript:OpenEquipmentTypeModel(isNeworUpdate='new');"><i class="fa fa-pencil" style="font-size:18px;" id="dvEquipmentType_addicon"></i></a>
+
+                    <a href="javascript:OpenEquipmentTypeModel(isNeworUpdate='edit');" class="auto" title="Edit"> <i class="fa fa-pencil-square-o" style="margin-left:15px" id="dvEquipmentType_editicon"></i></a>
+
+                    <a href="javascript:DeleteEquipmentTypeDetail();"> <i class="fa fa-fw fa-trash" style=" color: #f50000; font-size: 18px; margin-left:15px" id="dvEquipmentType_deleteicon"></i></a>
+
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group" style="width: 100%; height: 33px;">
+            <div class="row">
+                <div class=" col-md-3">
+                    <label class=" control-label">
+                        Brand Type:
+                    </label>
+                </div>
+                <div class=" col-md-6">
+                    @Html.DropDownListFor(m => m.brand_type, new SelectList(Model.lstBindIspBrand.Select(x => new { Value = x.id.ToString(), Text = x.brand }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddl_brand_type", @onchange = "onChangebindModeltype();" })
+
+                </div>
+
+                <div id="dvBrandType" class="col-md-3">
+                    <a href="javascript:OpenBrandTypeModel(isNeworUpdate='new');"><i class="fa fa-pencil" style="font-size:18px;" id="dvBrandType_addicon"></i></a>
+
+                    <a href="javascript:OpenBrandTypeModel(isNeworUpdate='edit');" class="auto" title="Edit"> <i class="fa fa-pencil" style="font-size:18px; margin-left:15px" id="dvBrandType_editicon"></i></a>
+
+                    <a href="javascript:DeleteBrandTypeDetail();"> <i class="fa fa-fw fa-trash" style="color: #f50000; font-size:18px; margin-left:15px" id="dvBrandType_deleteicon"></i></a>
+
+                </div>
+
+
+
+
+            </div>
+
+        </div>
+
+        <div class="form-group" style="width: 100%; height: 33px;">
+            <div class="row">
+                <div class=" col-md-3">
+                    <label class=" control-label">
+                        Model type:
+                    </label>
+                </div>
+                <div class=" col-md-6">
+                    @Html.DropDownListFor(m => m.model_type, new SelectList(Model.lstBindIspModel.Select(x => new { Value = x.id.ToString(), Text = x.model }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddl_model_type" })
+
+                </div>
+                <div id="dvModelType" class="col-md-3">
+                    <a href="javascript:OpenModelTypeDetail(isNeworUpdate='new');"><i class="fa fa-plus-square" style="font-size:18px;" id="dvModelType_addicon"></i></a>
+
+                    <a href="javascript:OpenModelTypeDetail(isNeworUpdate='edit');" class="auto" title="Edit"> <i class="fa fa-pencil" style="font-size:18px; margin-left:15px" id="dvModelType_editicon"></i></a>
+
+                    @*<a href="javascript:DeleteModelTypeDetailById();"> <i class="fa fa-fw fa-trash" style="color: #f50000; font-size:18px; margin-left:15px" id="dvModelType_deleteicon"></i></a>*@
+
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4 form-group" style="display:none">
+
+                    @*@Html.TextBoxFor(m => m.created_by, new { @class = "form-control", placeholder = "Created By" })*@
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script type="text/javascript">
+
+        $('#dvEquipmentType_addicon,#dvModelType_addicon, #dvBrandType_addicon').tooltip({ title: 'Add', html: false, placement: "right" });
+
+        $('#dvEquipmentType_editicon, #dvModelType_editicon, #dvBrandType_editicon').tooltip({ title: 'Edit', html: false, placement: "right" });
+
+        $('#dvEquipmentType_deleteicon, #dvModelType_deleteicon,#dvBrandType_deleteicon').tooltip({ title: 'Delete', html: false, placement: "right" });
+
+        $('#divParentForm .chosen-select').chosen({ width: '100%' });
+
+    </script>
+
+</div>

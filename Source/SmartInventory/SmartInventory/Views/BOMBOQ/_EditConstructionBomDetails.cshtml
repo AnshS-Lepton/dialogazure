@@ -1,0 +1,132 @@
+﻿@model Models.ConstructionBomDetails
+
+<!DOCTYPE html>
+@using (Ajax.BeginForm("SaveConstructionBomDetails", "BOMBOQ", new AjaxOptions
+{
+    OnSuccess = "OnSuccess",
+    HttpMethod = "POST"
+},
+    new { id = "frmConstructionBomDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.id)
+    @Html.HiddenFor(m => m.state)
+    @Html.HiddenFor(m => m.jc)
+    @Html.HiddenFor(m => m.town_name)
+    @Html.HiddenFor(m => m.town_code)
+    @Html.HiddenFor(m => m.fsa_id)
+    @Html.HiddenFor(m => m.feeder_length)
+    @Html.HiddenFor(m => m.distribution_length)
+    @Html.HiddenFor(m => m.pole_count)
+    <div id="dvConstructionBOMDetails" class="libDetail">
+        <div id="EditConstructionBOMDetails" class="tab-pane fade in active show">
+            <div class="space-pad" id="mytext">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Feeder Cable (%):
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            @Html.TextBoxFor(model => model.oh_feeder_cable, new { @class = "form-control", @maxlength = "3", @placeholder = "Enter Feeder Cable", @onkeypress = "return allowOnlyNumber(event);"})
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Distribution Cable (%):
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            @Html.TextBoxFor(model => model.oh_distribution_cable, new { @class = "form-control", @maxlength = "3", @placeholder = "Enter distribution cable", @onkeypress = "return allowOnlyNumber(event);" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Clamps (%):
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            @Html.TextBoxFor(model => model.oh_clamps, new { @class = "form-control", @maxlength = "3", @placeholder = "Enter Clamps", @onkeypress = "return allowOnlyNumber(event);" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                J-Clamps (%):
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            @Html.TextBoxFor(model => model.oh_jclamps, new { @class = "form-control", @maxlength = "3", @placeholder = "Enter j-clamps", @onkeypress = "return allowOnlyNumber(event);" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Termination set (%):
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            @Html.TextBoxFor(model => model.oh_termination_set, new { @class = "form-control", @maxlength = "3", @placeholder = "Enter termination set", @onkeypress = "return allowOnlyNumber(event);" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Suspension Set (%):
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            @Html.TextBoxFor(model => model.oh_suspension_set, new { @class = "form-control", @maxlength = "3", @placeholder = "Enter suspension set", @onkeypress = "return allowOnlyNumber(event);" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ModalFooter d-flex">
+
+            <button type="button" id="btnCancle" class="btn btn-default ml-auto" onclick="OnChildCancle();"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</button>
+            <button type="submit" id="btnUpdateConstructionBOMDetails" class="btn btn-success ml-10">
+                @Resources.Resources.GBL_GBL_GBL_GBL_GBL_003
+            </button>
+
+        </div>
+    </div>
+}
+<script>
+      function OnSuccess(data) {
+          if ('@Model.source' == "") {
+              $("#closeChildPopup").trigger("click");
+              popup.LoadModalDialog('PARENT', 'BOMBOQ/ConstructionBOMDetail', {}, "Construction BOM", 'modal-xxl');
+          }
+            else
+                $("#closeModalPopup").trigger("click");
+          alert('Default overhead logic Updated Successfully.', 'Success', MultilingualKey.GBL_GBL_GBL_JQ_GBL_001);
+          si.clearDraggableLibrary();
+      }
+    function OnCancle() {
+        $("#closeModalPopup").trigger("click");
+    }
+     function OnChildCancle() {
+        if ('@Model.source' == "")
+            $("#closeChildPopup").trigger("click");
+        else
+            $("#closeModalPopup").trigger("click");
+    }
+    $('#mytext').bind("cut copy paste", function (e) {
+        e.preventDefault();
+    });
+</script>
+
+

@@ -1,0 +1,74 @@
+﻿@model Models.Admin.UploadVendorSpecificationImageDocVM
+
+
+<fieldset class="the-fieldset">
+    <legend class="uploadeddoclegend">Uploaded Documents</legend>
+    @if (Model.lstDocuments.Count != 0)
+    {
+        @*<label><b>Total Records:@Model.lstDocuments.Count</b></label>
+            <input type="button" id="btnDownloadAll" value="Download All" style="float:right" onclick="downloadAll(@Model.lstDocuments[0].specification_id,'DOCUMENT')" />*@
+        <label><b>Total Records:@Model.lstDocuments.Count</b></label>
+        <a id="btnDownloadAll" title="Download All" class="pull-right" href="javascript:void(0)" onclick="downloadAll(@Model.lstDocuments[0].specification_id,'DOCUMENT')">
+            <i class="fa fa-download" style="font-size:15px; margin-right:5px;"></i> Download
+        </a>
+        <div>
+
+            <div class="ImagesContainer" id="Documentdiv" style="max-height: 270px;min-height:90px; margin-bottom: 10px; min-height: 253px; overflow: auto; visibility: visible; float: left;width:100%;">
+                <div style="">
+                    @foreach (var item in Model.lstDocuments)
+                    {
+
+
+                        <div class="docs-main-div">
+                            <div class="doc-div">
+                                <div class="UploadedImageBox" title="@item.org_file_name">
+                                    <div class="ImageSelectDiv">
+
+                                        <a href="@item.file_name" class="example-image-link" data-lightbox="example-set" style="padding:0;">
+
+                                        </a>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="content-div" style="width:100%;">
+                                <div style="width:88%; float:left;">
+                                    <div class="col-sm-12 doc-lists">
+                                        <div class="contentlbl" style="width:100%;"> @item.org_file_name  (@item.file_size_converted)</div>
+                                    </div>
+                                    <div class="col-sm-12 doc-lists">
+                                        <div class="contentlbl" style="width:100%;"><b>Uploaded By: </b> @item.uploaded_by_name</div>
+                                    </div>
+                                    <div class="col-sm-12 doc-lists">
+                                        <div class="contentlbl" style="width:100%;"><b>Uploaded On: </b> @item.created_on</div>
+                                    </div>
+                                </div>
+                                <div style="width:36px; float:right; padding:5px">
+                                    <div class="col-sm-1  icons" id="divDownloadImages" title="Download">
+                                        <a href="javascript:void(0)" onclick="downloadSpecificationImgDocLink('DOCUMENT',@item.id);">
+                                            <i class="fa fa-download" style="font-size:15px;"></i>
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-1 icons" id="divDeleteImg" title="Delete">
+                                        <a href="javascript:void(0)" onclick="deleteSpecificationImgDoc('DOCUMENT',@item.id,@item.specification_id);">
+                                            <i class="icon-Delete" style="color:red; font-size:16px;"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="img-link-doc-nf">
+            <img src="~/Content/images/noDocument.svg" />
+            <p> No image found.</p>
+        </div>
+    }
+
+</fieldset>

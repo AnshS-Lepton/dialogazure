@@ -1,0 +1,75 @@
+﻿@model Models.Admin.UploadVendorSpecificationImageDocVM
+
+<fieldset class="the-fieldset">
+    <legend class="doclegend">Uploaded RefLinks</legend>
+
+    @if (Model.lstRefLinks != null && Model.lstRefLinks.Count > 0)
+    {
+        <div>
+            <label><b>Total Records:@Model.lstRefLinks.Count</b></label>
+            <input type="button" id="btnDownloadAll" value="Download All" style="float:right" onclick="downloadAll(@Model.lstRefLinks[0].specification_id,'REFLINK')" />
+
+        </div>
+        <div>
+
+            <div class="ImagesContainer" style="max-height: 270px; margin-bottom: 10px; min-height: 253px; overflow: auto; visibility: visible; float: left;width:473px;">
+                <div style="">
+                    @foreach (var item in Model.lstRefLinks)
+                    {
+                        <div class="docs-main-div">
+                            <div class="content-div">
+                                <div style="width:112%; float:left;">
+                                    <div class="col-sm-12 doc-lists">
+                                        <span>Reference:</span>
+                                        <a href="javascript:void(0);" style="float:inherit; word-break:break-word" onclick="window.open('@item.file_location' , '_blank');">
+                                            @item.org_file_name
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div style="width:112%; float:left;">
+                                    <div class="col-sm-12 doc-lists">
+                                        <div class="contentlbl" style="width:100%;"><b>Uploaded By: </b> @item.uploaded_by_name</div>
+                                    </div>
+
+                                </div>
+                                @*<div style="width:4px; float:right; padding:0px">
+                                        <div class="col-sm-1  icons" id="divDeleteImg" title="Delete">
+                                            <a href="javascript:void(0)" onclick="deleteSpecificationImgDoc('REFLINKS',@item.id,@item.specification_id);">
+                                                <i class="icon-Delete" style="color:red; font-size:16px;"></i>
+                                            </a>
+                                        </div>
+                                    </div>*@
+                                <div style="width:36px; padding:5px">
+                                    <div class="col-sm-1  icons" id="divDownloadImages" title="Download">
+                                        <a href="javascript:void(0)" onclick="downloadSpecificationImgDocLink('REFLINK',@item.id);">
+                                            <i class="fa fa-download" style="font-size:15px;"></i>
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-1  icons" id="divDeleteImg" title="Delete">
+                                        <a href="javascript:void(0)" onclick="deleteSpecificationImgDoc('REFLINKS',@item.id,@item.specification_id);">
+                                            <i class="icon-Delete" style="color:red; font-size:16px;"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+<div class="img-link-doc-nf">
+    <img src="~/Content/images/NoConnection.svg" />
+    <p> No image found.</p>
+</div>
+    }
+
+</fieldset>
+<script>
+
+
+
+</script>

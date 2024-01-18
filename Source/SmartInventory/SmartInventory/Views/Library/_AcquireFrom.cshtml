@@ -1,0 +1,79 @@
+﻿@model Models.IAcquireFrom
+
+
+
+   <label class="control-label col-md-2 col-sm-2" for="RdOwnershipType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_220:</label>
+    <div class="col-md-4 col-sm-4">
+        <div class="radio">
+            <label class="col-md-6">@Html.RadioButtonFor(m => m.is_acquire_from, true, new { @value = "true", @id = "is_acquire_form", @name = "is_acquire_form_yes",@onclick = "getAcquireForm()" })<span>Yes</span></label>
+            <label class="col-md-6">@Html.RadioButtonFor(m => m.is_acquire_from, false, new { @value = "false", @id = "is_acquire_form", @name = "is_acquire_form_no",@onchange = "getAcquireForm()" })<span>No</span></label>
+        </div>
+    </div>
+    <label class="control-label col-md-2 col-sm-2" for="txtAcquireFrom">@Resources.Resources.SI_GBL_GBL_GBL_GBL_010<i class="clsMandatory enableMandatory">*</i>:</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control", @id = "txtacquire_from" ,@maxlength = "50" })
+    </div>
+
+
+<script>
+
+    $(document).ready(function () {
+         
+        if ('@Model.is_acquire_from' == 'True') {
+            $("input[name='is_acquire_form_yes']").prop("checked", true);
+            $(".enableMandatory").show();
+    }
+    else {
+            $("input[name='is_acquire_form_no']").prop("checked", true);
+            $(".enableMandatory").hide();
+    }
+    $(document).on('click', 'form button[type=submit]', function (e) {
+         
+        var acquire_form = $("input[id='is_acquire_form']:checked").val();
+        if (acquire_form == "True") {
+            if ($("#txtacquire_from").val() == "") {
+                $('#txtacquire_from').css('border-color', 'red');;
+                return false;
+            }
+            else {
+                $('#txtacquire_from').css('border-color', '');
+            }
+        }
+    });
+    });
+    function getAcquireForm() {
+         
+        var acquire_form = $("input[id='is_acquire_form']:checked").val();
+        if (acquire_form == "True") { $(".enableMandatory").show(); }
+        else { $(".enableMandatory").hide();}
+    }
+    //function getThirdPartyType() {
+    //     
+    //    var selectedownership = $("input[name='rdbOwnershipType']:checked").val();
+    //    $('#txt3rdPartyVendor').val('');
+    //    $('#txtCircuitId').val('');
+    //    if (selectedownership == 'Third Party') {
+    //        //$('#txt3rdPartyVendor').next().addClass('input-validation-error');
+    //        // $('#txtCircuitId').addClass('input-validation-error');
+    //        $('#txt3rdPartyVendor').prop('disabled', false).trigger("chosen:updated");
+    //    }
+    //    else {
+    //        // $('#txt3rdPartyVendor').next().removeClass('input-validation-error');
+    //        //$('#txtCircuitId').removeClass('input-validation-error');
+    //        $('#txt3rdPartyVendor').prop('disabled', true).trigger("chosen:updated");
+    //    }
+    //    $("#hdnOwnershipType").val(selectedownership);
+
+    //}
+
+    //function onChangeThirdParyVendor() {
+    //     
+    //    var selectedVal = $('#txt3rdPartyVendor').val();
+    //    if (selectedVal != '' && selectedVal != null) {
+    //        $('#txt3rdPartyVendor').next().removeClass('input-validation-error');
+    //    }
+    //    else {
+    //        $('#txt3rdPartyVendor').next().addClass('input-validation-error');
+    //    }
+    //}
+</script>

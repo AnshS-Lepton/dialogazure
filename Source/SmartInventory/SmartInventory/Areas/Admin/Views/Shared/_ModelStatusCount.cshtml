@@ -1,0 +1,31 @@
+﻿@model Models.Admin.ISPModelInfo
+@using System.Linq
+@using Utility
+
+ 
+ 
+    @foreach (var item in Model.lstModelStatusCount.OrderBy(x => x.statusname))
+    {
+        if (item.statusname == "Active")
+        {
+            <span class="d-flex">
+                <img class="statusImg" src="~/Areas/Admin/Content/images/active.svg" />&nbsp;@item.statusname (@item.statuscount)
+            </span>
+        }
+
+        if (item.statusname == "Pending Design")
+        {
+            <span class="d-flex">
+                <img class="statusImg" src="~/Areas/Admin/Content/images/pending.svg" />&nbsp;@item.statusname (@item.statuscount)
+            </span>
+        }
+
+        if (item.statusname == "Inactive")
+        {
+            <span class="d-flex">
+                <img class="statusImg" src="~/Areas/Admin/Content/images/inactive.svg" />&nbsp;@item.statusname (@item.statuscount)
+            </span>
+        }
+
+    }
+ 

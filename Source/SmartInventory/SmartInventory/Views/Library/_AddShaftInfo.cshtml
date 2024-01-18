@@ -1,0 +1,148 @@
+﻿@*@model List<Models.StructureShaftInfo>*@
+@using Models;
+@model Models.StructureMaster
+
+@*<style type="text/css">
+        body {
+            font-family: Arial;
+            font-size: 10pt;
+        }
+
+        .Grid {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+        }
+
+            .Grid th {
+                background-color: #F7F7F7;
+                font-weight: bold;
+            }
+
+            .Grid th, .Grid td {
+                padding: 5px;
+                width: 150px;
+                border: 1px solid #ccc;
+            }
+
+            .Grid, .Grid table td {
+                border: 0px solid #ccc;
+            }
+
+                .Grid th a, .Grid th a:visited {
+                    color: #333;
+                }
+    </style>*@
+@{  var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Structure.ToString()); }
+<!DOCTYPE html>
+<div>
+    @Html.HiddenFor(m => m.no_of_shaft)
+    <span class="shaftRowAdd  @(editPermission==true?"":"dvdisabled")" id="btnAddShaftRow" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_042">
+    </span>
+    @*<input type="button" id="btnAddShaftRow" value="Add" />*@
+    <table id="tblShaftLstInfo" class="shaftLstInfo" cellpadding="0" cellspacing="0" style="font-size:smaller; text-align: center;">
+
+        <thead>
+            <tr>
+                <th>@Resources.Resources.SI_OSP_GBL_NET_FRM_059</th>
+                <th>@Resources.Resources.SI_OSP_STR_NET_FRM_016</th>
+
+                <th>@Resources.Resources.SI_OSP_STR_NET_FRM_017</th>
+
+                <th>@Resources.Resources.SI_OSP_STR_NET_FRM_018</th>
+                <th>@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.system_id == 0)
+            {
+                for (int i = 0; i < Model.lstShaftInfo.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.TextBoxFor(m => Model.lstShaftInfo[i].shaft_name, new { @maxlength = "20", Style = " width:90%;", id = "shaft_" + i, @class = "shaftName" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(m => Model.lstShaftInfo[i].is_virtual)
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(m => Model.lstShaftInfo[i].with_riser, new { withRiser = Model.lstShaftInfo[i].with_riser, shaftId = Model.lstShaftInfo[i].system_id, @onchange = "si.setWithoutRiser(" + Model.lstShaftInfo[i].system_id + "," + Model.system_id + ",this);" })
+                        </td>
+
+                        <td>
+                            @Html.DropDownListFor(m => Model.lstShaftInfo[i].shaft_position, new SelectList(Model.lstShaftInfo[i].lstPosition.Select(x => new { Value = x.Value.ToString(), Text = x.Text }), "Value", "Text"), new { @class = "shaft-tbl-position-ddl", @style = "padding:0;", onchange = "si.checkISPLineExist(this,'" + Model.lstShaftInfo[i].shaft_position + "');" })
+                        </td>
+                        <td>
+                            @Html.HiddenFor(m => Model.lstShaftInfo[i].shaft_position, new { @id = "shaft_position_" + i + "_Info" })
+                            @Html.HiddenFor(m => m.lstShaftInfo[i].system_id)
+                            @Html.HiddenFor(m => m.lstShaftInfo[i].length)
+                            @Html.HiddenFor(m => m.lstShaftInfo[i].width)
+                            @Html.HiddenFor(m => m.lstShaftInfo[i].is_partial_shaft)
+                            <span class="shaftRowDelete  @(editPermission==true?"":"dvdisabled")" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" style="">x</span>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                for (int i = 0; i < Model.lstShaftInfo.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.TextBoxFor(m => Model.lstShaftInfo[i].shaft_name, new { @maxlength = "20", Style = " width:90%;", id = "shaft_" + Model.lstShaftInfo[i].system_id, @class = "shaftName" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(m => Model.lstShaftInfo[i].is_virtual)
+                        </td>
+
+                        <td>
+                            @Html.CheckBoxFor(m => Model.lstShaftInfo[i].with_riser, new { withRiser = Model.lstShaftInfo[i].with_riser, shaftId = Model.lstShaftInfo[i].system_id, @onchange = "si.setWithoutRiser(" + Model.lstShaftInfo[i].system_id + "," + Model.system_id + ",this);" })
+                        </td>
+
+                        <td>
+                            @*@Html.DropDownListFor(m => m.lstShaftInfo[i].shaft_position,
+                                new SelectList(new List<SelectListItem>{ new SelectListItem{ Text="left", Value = "left" },
+                                    new SelectListItem{ Text="right", Value = "right" }}, "Value", "Text"), new { @class = "shaft-tbl-position-ddl" })*@
+                            @Html.DropDownListFor(m => Model.lstShaftInfo[i].shaft_position, new SelectList(Model.lstShaftInfo[i].lstPosition.Select(x => new { Value = x.Value.ToString(), Text = x.Text }), "Value", "Text"), new { @class = "shaft-tbl-position-ddl", @style = "padding:0;", onchange = "si.checkISPLineExist(this,'" + Model.lstShaftInfo[i].shaft_position + "');" })
+
+
+                        </td>
+                        <td>
+                            @Html.HiddenFor(m => Model.lstShaftInfo[i].shaft_position, new { @id = "shaft_position_" + i + "_Info" })
+                            @Html.HiddenFor(m => m.lstShaftInfo[i].system_id)
+                            @Html.HiddenFor(m => m.lstShaftInfo[i].length)
+                            @Html.HiddenFor(m => m.lstShaftInfo[i].width)
+                            @Html.HiddenFor(m => m.lstShaftInfo[i].is_partial_shaft)
+                            @*@Html.HiddenFor(m => m.lstShaftInfo[i].shaft_position)*@
+
+
+                            @*<input type="button" value="Update" onclick="si.actionOnShaftRow(this,'update')" />
+                                <input type="button" value="Edit" onclick="si.actionOnShaftRow(this, 'edit')" style="display:none;" />
+                                <input type="button" value="Delete" onclick="si.actionOnShaftRow(this, 'delete')" />*@
+                            @*<span class="shaftRowUpdate" title="Update" onclick="si.actionOnShaftRow(this, 'update')">
+                                </span>*@
+                            <span class="shaftRowDelete @(editPermission==true?"":"dvdisabled")" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" style="">x</span>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+
+</div>
+<script>
+    $(function () {
+        if ('@Model.lstShaftInfo.Count' == 0) {
+            $('#tblShaftLstInfo').hide();
+        }
+        else {
+            $('#tblShaftLstInfo').show();
+            //setTimeout(function () {
+            $('#tblShaftLstInfo tbody tr').each(function (i, val) {
+                $("#lstShaftInfo_" + i + "__shaft_position").val($("#shaft_position_" + i + "_Info").val());
+            });
+            // }, 500);
+        }
+    });
+
+</script>

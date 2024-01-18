@@ -1,0 +1,187 @@
+﻿@model Models.Admin.LinkBudgetMaster
+
+<!DOCTYPE html>
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div id="dvLinkBudgetDetail" class="update_panel fullWidth">
+    <div class="title">
+        <h4>Add Link Budget</h4>
+    </div>
+    @using (Html.BeginForm("SaveLinkBudget", "OpticalLinkBudget", FormMethod.Post,
+        new { autocomplete = "off", @id = "frmLinkBudgetInfo", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+        @Html.HiddenFor(m => m.wavelength_id)
+        @Html.HiddenFor(m => m.created_by)
+        @Html.HiddenFor(m => m.created_on)
+        @Html.ValidationSummary(true)
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                WaveLength (nm)<i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(model => model.wavelength_value, new { @class = "form-control", @onkeypress = "return allowNumberOnly(event,this);", @maxlength = "4", @placeholder = "Enter wave length" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Splice Loss (@SmartInventory.Settings.ApplicationSettings.dBLossUnit)<i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(model => model.splice_loss, new { @class = "form-control", @onkeypress = "return allowNumberwithOneDot(event,this);", @maxlength = "5", @placeholder = "Enter Splice Loss" })
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Cable Loss (@SmartInventory.Settings.ApplicationSettings.dBLossUnit/KM)<i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(model => model.cable_loss, new { @class = "form-control", @onkeypress = "return allowNumberwithOneDot(event,this);", @maxlength = "5", @placeholder = "Enter Cable Loss" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                <span>Patch Cord Loss (@SmartInventory.Settings.ApplicationSettings.dBLossUnit/Mtr)</span>
+                                <i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(model => model.patch_cord_loss, new { @class = "form-control", @onkeypress = "return allowNumberwithOneDot(event,this);", @maxlength = "5", @placeholder = "Enter Patch Cord Loss" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Connector Loss (@SmartInventory.Settings.ApplicationSettings.dBLossUnit)<i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(model => model.connector_loss, new { @class = "form-control", @onkeypress = "return allowNumberwithOneDot(event,this);", @maxlength = "5", @placeholder = "Enter Connector Loss" })
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Misc. Loss (@SmartInventory.Settings.ApplicationSettings.dBLossUnit)<i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(model => model.misc_db_loss, new { @class = "form-control", @onkeypress = "return allowNumberwithOneDot(event,this);", @maxlength = "5", @placeholder = "Enter Misc Loss" })
+
+                        </div>
+                    </div>
+                </div>
+                @*<div class="form-group">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">
+                                   Is Mechanical Connector Included:
+                                </label>
+                            </div>
+                            <div class="col-md-8">
+                                @Html.CheckBoxFor(model => model.is_mechanical_connector_included, new { @class = "CheckAll-clone" })
+                            </div>
+                        </div>
+                    </div>*@
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Mechanical Connector Loss (@SmartInventory.Settings.ApplicationSettings.dBLossUnit):
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(model => model.mechanical_connector, new { @class = "form-control", @onkeypress = "return allowNumberwithOneDot(event,this);", @maxlength = "5", @placeholder = "Enter Mechanical Connector Loss" })
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="control-label">
+                                Splitter Loss<i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class="col-md-9">
+                            @Html.Partial("_SplitterLossDetail", Model)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex" id="dvBtnAction">
+            <a href="@Url.Action("AddLinkBudget", "OpticalLinkBudget")" class="btn btn-default ml-auto mr-05" title="Reset">Reset</a>
+            <input type="submit" class="btn btn-primary mr-01" name="btnaction" id="btnSubmit" value="Save" />
+        </div>
+    }
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //enableMechanicalConnector();
+            if('@Model.wavelength_id' != 0)
+            {
+                btnSubmit.value = "Update";
+                $('#wavelength_value').attr('readonly', true);
+            }
+            //$('#is_mechanical_connector_included').on("click", function () {
+            //    enableMechanicalConnector();
+            //    var isIncluded = $('#is_mechanical_connector_included').is(":checked");
+            //    var $mcElement = $("#mechanical_connector");
+            //    if (!isIncluded)
+            //        $mcElement.val(0);
+            //    else
+            //        $mcElement.val('');
+            //});
+        });
+        //var enableMechanicalConnector = ()=>
+        //{
+        //    var isIncluded = $('#is_mechanical_connector_included').is(":checked");
+        //    var $mcElement = $("#mechanical_connector");
+        //    $mcElement.attr("readonly", !isIncluded);
+        //}
+    </script>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,178 @@
+﻿@model Models.AreaPotentialReportFORBOM
+<style>
+    .bomGridEntity {
+        background-color: #E8E8E8;
+        font-weight: bold;
+    }
+
+    .bomGridSubEntity {
+        background-color: #ffffff;
+    }
+</style>
+<div class="libDetail">
+    <div class="libTabContent">
+        <div class="form-group ModalFooter" id="dvBtnAction" style="min-height:95px">
+            <div class="col-sm-10 col-sm-offset-2" style="float: right; text-align: right; padding-right: 25px; top:54px">
+                <button type="submit" class="btn btn-primary" id="btnShowReportData">Show</button>
+                @if (Model.lstBOM.Count > 0)
+                {
+                    <input type="button" class="btn btn-primary" id="btnBom" value="Generate BOM" />
+                    <input type="button" class="btn btn-primary" id="btnBoq" value="Generate BOQ" />
+                    <input type="button" class="btn btn-primary" id="btnExportToExcel" value="Export to Excel" />
+                }
+                else
+                {
+                    <input type="submit" class="btn btn-primary" disabled id="btnBom" value="Generate BOM" />
+                    <input type="button" class="btn btn-primary" disabled id="btnBoq" value="Generate BOQ" />
+                    <input type="button" class="btn btn-primary" disabled id="btnExportToExcel" value="Export to Excel" />
+                }
+            </div>
+        </div>
+        <div class="tab-content">
+            @using (Ajax.BeginForm("ShowAreaPotentialBOM_OnClick", "Main", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody"
+    },
+    new { id = "frmBOMReport", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+            {
+                @Html.HiddenFor(m => m.geom);
+                @Html.HiddenFor(m => m.geomType);
+                @Html.HiddenFor(m => m.buff_Radius);             
+                     
+                   <div style="position: absolute; top: 26px; left: 22px;">
+                       <label class="control-label col-sm-2">Region :</label>
+                       <div class="col-sm-4">
+                           @Html.DropDownListFor(m => m.SelectedRegionId, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @onchange = "si.onChangeRegion();", @id = "ddlRegions" })
+                       </div>
+                       <label class="control-label col-sm-2" for="txtSearchtext">Province :</label>
+                       <div class="col-sm-4">
+                           @Html.DropDownListFor(m => m.SelectedProvinceId, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlProvinces" })
+                       </div>
+                </div>
+                
+                
+                
+                
+                <div style="position: absolute; top: 80px; left: 22px;">
+                    <span style="font-size:14px;">Network Status:</span>&nbsp;&nbsp;  @Html.DropDownListFor(m => m.network_status, new List<SelectListItem>
+                     { new SelectListItem { Text = "Planned", Value = "P"},
+                       new SelectListItem { Text = "As-Built", Value = "A"},
+                       new SelectListItem { Text = "Dorment", Value = "D"},
+                       }, new { @class = "chosen-select", onchange = "dropDownlistChange();" })
+                </div>
+                <div id="Grid" style="border:none;">
+                    <div class="tab-pane active" id="divBom" style="max-height: 350px; overflow: auto;">
+                        @if (Model.lstBOM.Count > 0)
+                        {
+                            <table id="tblBomLst" class="webgrid" cellpadding="0" cellspacing="0" style="text-align: center;">
+                                <thead>
+                                    <tr class="webgridHeader">
+                                        <th>
+                                            Entity Type
+                                        </th>
+                                        <th>
+                                            Total Count
+                                        </th>
+                                        <th>
+                                            Total Cost(Rs.)
+                                        </th>
+                                        <th>
+                                            Calculated Length(m)
+                                        </th>
+                                        <th>
+                                            GIS Length(m)
+                                        </th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var EntityLst in Model.lstBOM)
+                                    {
+                                        <tr class="@(EntityLst.is_header == "1" ? "bomGridEntity" : "bomGridSubEntity")">
+                                            <td style="text-align:left;">
+                                                @if (EntityLst.is_header == "1")
+                                                {
+                                                    <span style="margin-left: 30%;">@EntityLst.entity_type</span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="margin-left: 35%;">@EntityLst.entity_sub_type</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @EntityLst.count
+                                            </td>
+                                            <td>
+                                                @EntityLst.total_cost
+                                            </td>
+                                            <td>
+                                                @(EntityLst.calculated_totla_length == 0 ? "" : Convert.ToString(EntityLst.calculated_totla_length))
+                                            </td>
+                                            <td>
+                                                @(EntityLst.gis_length == 0 ? "" : Convert.ToString(EntityLst.gis_length))
+                                            </td>
+                                            <td>
+                                                @if ((EntityLst.is_header == "1"))
+                                                {
+                                                    <span class="exportBomToExcel" id="btnExcelExport" title="Export To Excel" onclick="ExportEntityDetailInExcel('@EntityLst.entity_type')">
+                                                    </span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <span style=" text-align: center; height: 100px; display: block; font-size:14px;padding-top: 50px;" id="dvNoBulkEntityFound">No entity found!</span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '90px' });
+        $("#btnBom").click(function () {
+            var geom = $("#geom").val();
+            var geomType = $("#geomType").val();
+            var buff_Radius = $("#buff_Radius").val();
+            var network_status = $("#network_status").val();
+            var type = "BOM"
+            window.location = appRoot + 'Report/ExportBOMBOQReport?geom=' + geom + '&geomType=' + geomType + '&buff_Radius=' + buff_Radius + '&network_status=' + network_status + '&type=' + type;
+        });
+        $("#btnBoq").click(function () {
+            var geom = $("#geom").val();
+            var geomType = $("#geomType").val();
+            var buff_Radius = $("#buff_Radius").val();
+            var network_status = $("#network_status").val();
+            var type = "BOQ"
+            window.location = appRoot + 'Report/ExportBOMBOQReport?geom=' + geom + '&geomType=' + geomType + '&buff_Radius=' + buff_Radius + '&network_status=' + network_status + '&type=' + type;
+        });
+        $("#btnExportToExcel").click(function () {
+            
+            var geom = $("#geom").val();
+            var geomType = $("#geomType").val();
+            var buff_Radius = $("#buff_Radius").val();
+            var network_status = $("#network_status").val();
+            window.location = appRoot + 'Report/ExportBOMWithDetailInExcel?geom=' + geom + '&geomType=' + geomType + '&buff_Radius=' + buff_Radius + '&network_status=' + network_status;
+        });
+    });
+    function dropDownlistChange() {
+        $("#frmBOMReport").submit();
+    }
+    function ExportEntityDetailInExcel(type) {
+        
+        var geomType = $("#geomType").val();
+        var geom = $("#geom").val();
+        var network_status = $("#network_status").val();
+        var geomType = $("#geomType").val();
+        var buff_Radius = $("#buff_Radius").val();
+        window.location = appRoot + 'Report/ExportEntityDetailInExcel?geom=' + geom + '&network_status=' + network_status + '&entity_type=' + type + '&buff_Radius=' + buff_Radius + '&type=' + geomType;
+    }
+</script>

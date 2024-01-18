@@ -1,0 +1,100 @@
+﻿@model  List<Models.Admin.ISPModelColorMaster>
+
+<!DOCTYPE html>
+<div class="form-group" style="width:100%;">
+    <label class="control-label col-md-4" for="">Label Color:</label>
+    <div class="col-md-8">
+        @*<select id="ddlLabelColor" onchange="" name="LabelColors" class="form-control">
+            <option style="" value="">--Select--</option>
+            <option style="background:#2B3740;color:#FFFFFF;" value="1" data-font-color="#FFFFFF" data-bg-color="#2B3740" >Label</option>
+            <option style="background:#F2994A;color:#FFFFFF;" value="2" data-font-color="#FFFFFF" data-bg-color="#F2994A">Label</option>
+            <option style="background:#EB5757;color:#FFFFFF;" value="3" data-font-color="#FFFFFF" data-bg-color="#EB5757">Label</option>
+            <option style="background:#27AE60;color:#FFFFFF;" value="4" data-font-color="#FFFFFF" data-bg-color="#27AE60">Label</option>
+            <option style="background:#2F80ED;color:#FFFFFF;" value="5" data-font-color="#FFFFFF" data-bg-color="#2F80ED">Label</option>
+            <option style="background:#FFFFFF;color:#2B3740;" value="6" data-font-color="#2B3740" data-bg-color="#FFFFFF">Label</option>
+            <option style="background:#FFFFFF;color:#F2994A;" value="7" data-font-color="#F2994A" data-bg-color="#FFFFFF">Label</option>
+            <option style="background:#FFFFFF;color:#EB5757;" value="8" data-font-color="#EB5757" data-bg-color="#FFFFFF">Label</option>
+            <option style="background:#FFFFFF;color:#27AE60;" value="9" data-font-color="#27AE60" data-bg-color="#FFFFFF">Label</option>
+            <option style="background:#FFFFFF;color:#2F80ED;" value="10" data-font-color="#2F80ED" data-bg-color="#FFFFFF">Label</option>
+        </select>*@
+        <select id="ddlLabelColor" onchange="" name="LabelColors" class="form-control">
+            <option style="" value="">--Select--</option>
+            @foreach (var labelColor in Model)
+            {
+                <option style="background:@labelColor.fill_color_code;color:@labelColor.outline_color_code;" value="@labelColor.id" data-font-color="@labelColor.outline_color_code" data-bg-color="@labelColor.fill_color_code">Label</option>
+            }
+        </select>
+</div>
+</div>
+
+<div class="form-group" style="width:100%;" hidden>
+    <label class="control-label col-md-4" for="">Font Color:</label>
+    <div class="col-md-8">
+        @*<select class="form-control" id="selectLabelFontColor" >
+                <option value="#ffffff" style="background-color:#ffffff"></option>
+                <option value="#000000" style="background-color:#000000"></option>
+            </select>*@
+        <input type="text" class="form-control" id="selectLabelFontColor" />
+    </div>
+</div>
+<div class="form-group" style="width:100%;">
+    <label class="control-label col-md-4" for="">Font Size:</label>
+    <div class="col-md-8">
+
+        <input type="number" class="form-control" id="txtLabelFontSize" max="99" min="1" 
+                oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+               maxlength="2"/>
+        @*<input class="form-control" id="txtLabelFontSize" type="text" pattern="\d*" maxlength="2">*@
+    </div>
+</div>
+<div class="form-group" style="width:100%;" hidden>
+    <label class="control-label col-md-6" for="">Background Color:</label>
+    <div class="col-md-6">
+        @*<select class="form-control" id="selectLabelBGColor">
+                <option value="#ffffff" style="background-color:#ffffff"></option>
+                <option value="#000000" style="background-color:#000000"></option>
+            </select>*@
+        <input type="text" class="form-control" id="selectLabelBGColor" />
+    </div>
+</div>
+<div class="form-group" style="width:100%;" >
+    <label class="control-label col-md-4" for="">Font Weight:</label>
+    <div class="col-md-8">
+        <select class="form-control" id="txtLabelFontWeight">
+            <option value="400">400</option>
+            <option value="600">600</option>
+            <option value="800">800</option>
+            <option value="bold">bold</option>
+            <option value="bolder">bolder</option>
+        </select>
+       
+    </div>
+</div>
+<div class="form-group" style="width:100%;">
+    <label class="control-label col-md-4" for="">Orientation:</label>
+    <div class="col-md-8">
+        <select class="form-control" id="selectLabelOrientation">
+            <option value="LR">Left to Right</option>
+            @*<option value="LR">Right to Left</option>*@
+            <option value="TB">Top to Bottom</option>
+            @*<option value="BT">Bottom to Top </option>*@
+
+        </select>
+    </div>
+</div>
+<div class="form-group" style="width:100%;">
+    <label class="control-label col-md-4" for="">Background:</label>
+    <div class="col-md-8">
+
+        <input type="file" class="form-control" id="fileBGImage" />
+    </div>
+</div>
+<div class="form-group" style="width:100%;">
+    <label class="control-label col-md-4" for=""></label>
+    <div class="col-md-8">
+        <div id="labelImageContainer">
+            <img style="height:100px;width:100px" id="imgLBGImage" alt="No background image" />
+            <button id="delLBGImg" type="button" class="close" name="Delete">&times;</button>
+        </div>
+    </div>
+</div>

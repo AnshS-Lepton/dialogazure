@@ -1,0 +1,485 @@
+﻿@model Models.BomBoqExportReport    
+<form id="frmBOMBOQFilterData" class="form-horizontal" autocomplete="off">
+
+    @Html.HiddenFor(m => m.objReportFilters.geom)
+    @Html.HiddenFor(m => m.objReportFilters.geomType)
+    @Html.HiddenFor(m => m.objReportFilters.radius)
+    @Html.HiddenFor(m => m.objReportFilters.systemId)
+    @Html.HiddenFor(m => m.objReportFilters.systemId)
+    @Html.HiddenFor(m => m.objReportFilters.entityType)
+
+    @Html.HiddenFor(m => m.objReportFilters.SelectedParentUser, new { id = "hdnSelectedParentUsers" })
+    @{ var isAttrLos = ((List<string>)Session["ApplicableModuleList"]).Contains("dBLOSS");}
+    @{ var isGlobalSettingsEnabled = ((List<string>)Session["ApplicableModuleList"]).Contains("GBLSTNG");}
+    <div class="EEReport" id="divFilter">
+        <div class="scrollDiv space-pad">
+            <fieldset class="the-fieldset">
+                <legend class="the-legend title_popout">@Resources.Resources.SI_OSP_GBL_GBL_FRM_035</legend>
+                @if (string.IsNullOrWhiteSpace(Model.objReportFilters.geom))
+                {
+                    <div class="row form-group">
+                        <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_065:</div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedRegionId, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @onchange = "si.onChangeRegion();", @id = "ddlRegions" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_066:</div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedProvinceId, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlProvinces" })
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row form-group">
+                        <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_065:</div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedRegionId, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @onchange = "si.onChangeRegion();", @id = "ddlRegions", @disabled = "disabled" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_066:</div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedProvinceId, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlProvinces", @disabled = "disabled" })
+                        </div>
+                    </div>
+                }
+
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_067:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.objReportFilters.SelectedNetworkStatus, new SelectList(Model.lstNetworkStatus.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @class = "chosen-select", @id = "SelectedNetworkStatus", @multiple = "multiple" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_068:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.objReportFilters.SelectedParentUser, new SelectList(Model.lstParentUsers.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlParentUsers", @onchange = "si.onChangeParentUser();" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_069:</div>
+                    <div class="col-md-8">
+
+                        <select id="ddlUsers" name="objReportFilters.SelectedUserId" multiple class="chosen-select col-sm-12">
+
+                            @foreach (var attribute in Model.lstUsers.GroupBy(x => x.groupUser))
+                            {
+                                <optgroup value="@attribute.Key" label="@attribute.Key">
+                                    @foreach (var user in attribute)
+                                    {
+                                        <option value="@user.user_id">@user.user_name</option>
+                                    }
+                                </optgroup>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_020:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.objReportFilters.SelectedLayerId, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlLayers" })
+                    </div>
+                </div>
+
+
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_GBL_GBL_GBL_GBL_147</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.objReportFilters.SelectedOwnerShipType, new List<SelectListItem>
+                                {
+                                        new SelectListItem { Text = "Own", Value = "Own"},
+                                        new SelectListItem { Text = "Third Party", Value = "Third Party"},
+                                }, new { @class = "chosen-select", @id = "ddlFilterOwnershipType", @onchange = "onChangeOwnershipType()" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_GBL_GBL_GBL_GBL_148</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.objReportFilters.SelectedThirdPartyVendorId, new SelectList(Model.list3rdPartyVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), new { @multiple = "multiple", @disabled = "disabled", @class = "chosen-select form-control ", id = "ddl3rdPartyVendor" })
+                    </div>
+                </div>
+                @if (Model.lstUserModule.Contains("PROJ"))
+                {
+                    <div class="row form-group">
+                       <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_070:</div>
+                       <div class="col-md-8">
+                           @Html.DropDownListFor(m => m.objReportFilters.SelectedProjectId, new SelectList(Model.lstBindProjectCode.Select(x => new { Value = x.system_id.ToString(), Text = x.project_code.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlProjectCode" })
+                       </div>
+                   </div>
+                           <div class="row form-group">
+                       <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_008:</div>
+                       <div class="col-md-8">
+                           @Html.DropDownListFor(m => m.objReportFilters.SelectedPlanningId, new SelectList(Model.lstBindPlanningCode.Select(x => new { Value = x.system_id.ToString(), Text = x.planning_code.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlPlanningCode" })
+                       </div>
+                   </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_009:</div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedWorkOrderId, new SelectList(Model.lstBindWorkorderCode.Select(x => new { Value = x.system_id.ToString(), Text = x.workorder_code.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlWorkorderCode" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_011:</div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedPurposeId, new SelectList(Model.lstBindPurposeCode.Select(x => new { Value = x.system_id.ToString(), Text = x.purpose_code.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlPurposeCode" })
+                        </div>
+                    </div>
+                }
+                    <div class="row form-group">
+                        <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_071<i class="clsMandatory">*</i>:</div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objReportFilters.durationbasedon, new SelectList(Model.lstDurationBasedOn.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @id = "ddlDurationBasedOn" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_072<i class="clsMandatory">*</i>:</div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objReportFilters.customDate, new List<SelectListItem>{
+                                    new SelectListItem { Text = "All", Value = "9"},
+                                    new SelectListItem { Text = "Custom", Value = "1"},
+                                    new SelectListItem { Text = "Today", Value = "2"},
+                                    new SelectListItem { Text = "Previous Day", Value = "3"},
+                                    new SelectListItem { Text = "Last 7 Days", Value = "4"},
+                                    new SelectListItem { Text = "Last 30 Day", Selected=true, Value = "5"},
+                                    new SelectListItem { Text = "Last 3 Months", Value = "6"},
+                                    new SelectListItem { Text = "Last 6 Months", Value = "7"},
+                                    new SelectListItem { Text = "Last 1 Year", Value = "8"},
+
+                                }, new { @class = "chosen-select", @onchange = "onChangeCustomDate();", @id = "customedate" })
+                        </div>
+                    </div>
+                    <div class="form-group d-flex">
+                        <div class="flexBoqFC">
+                        </div>
+                        <div class="flexBoq pos-rel">
+                            @Html.TextBoxFor(m => m.objReportFilters.fromDate, new { @id = "txtDateFrom", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_096, @tabindex = "4", @class = "input-sm form-control", @readonly = true, @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_096 })
+                            <img id="imgFromDate" class="export-report-cal bomCalTop" src="@Url.Content("~/Content/images/calendar.png")">
+                        </div>
+                        <div class="flexBoq pos-rel ml-10">
+                            @Html.TextBoxFor(m => m.objReportFilters.toDate, new { @id = "txtDateTo", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_097, @tabindex = "4", @class = "input-sm form-control", @readonly = true, @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_097 })
+                            <img id="imgToDate" class="export-report-cal bomCalTop" src="@Url.Content("~/Content/images/calendar.png")">
+                        </div>
+                    </div>
+
+                </fieldset>
+
+
+            <div style="@(Model.lstUserModule.Contains("dBLOSS")?"": "cursor: not-allowed;")" title="@(Model.lstUserModule.Contains("dBLOSS")?"": @Resources.Resources.SI_GBL_GBL_GBL_GBL_1436)">
+                <div class="@(Model.lstUserModule.Contains("dBLOSS")?"":"dvdisabled")">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend title_popout">
+                            @Html.CheckBoxFor(m => m.objReportFilters.isdBLossAttrEnable, new { @checked = "true", @id = "isdBLossAttrEnable" })
+                            @Resources.Resources.SI_OSP_GBL_GBL_FRM_036
+                        </legend>
+
+                        <div class="row form-group">
+                            <div class="col-md-4">@Resources.Resources.SI_OSP_ONT_NET_RPT_025:</div>
+                            <div class="col-md-8">
+                                @Html.DropDownListFor(m => m.objReportFilters.SelectedWavelength, new SelectList(Model.lstWave_length.Select(x => new { Value = x.wavelength_id.ToString(), Text = x.wavelength_value.ToString() }), "Value", "Text"), "-Select-", new { @class = "chosen-select col-sm-12", @id = "ddlWaveLengthCode", @onchange = "GetMiscdBloss(this.value);" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                @Resources.Resources.SI_GBL_GBL_JQ_FRM_027
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                                <a onclick="si.BOMBOQReport.ViewLossdBloss('ddlWaveLengthCode');" href="javascript:void(0);" style="color:blue; text-decoration:underline;">@Resources.Resources.SI_OSP_ONT_NET_RPT_027</a>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                @Resources.Resources.SI_OSP_GBL_NET_FRM_506 (@SmartInventory.Settings.ApplicationSettings.dBLossUnit):
+                            </div>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(m => m.objReportFilters.txt_Miscdbloss, new { @class = "form-control number-decimal", @DecimalDigit = "3", @id = "txt_Miscdbloss", @value = "0", @maxlength = "5" })
+                            </div>
+                        </div>
+
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <div class="ModalFooter d-flex">
+            <button type="button" class="btn btn-default ml-auto" id="btnEntityExportClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+            <button type="button" class="btn btn-success ml-10" id="btnBomBoqNxt">@Resources.Resources.SI_OSP_GBL_GBL_GBL_040</button>
+        </div>
+    </div>
+
+
+</form>
+
+<script type="text/javascript">
+
+
+    $('.number-decimal').keypress(function (event) {
+        var dcdgit = $(this).attr("DecimalDigit");
+        if ((event.which != 46 || $(this).val().indexOf('.') != -1) &&
+            ((event.which < 48 || event.which > 57) &&
+                (event.which != 0 && event.which != 8))) {
+            event.preventDefault();
+        }
+        var text = $(this).val();
+        if (dcdgit != undefined && dcdgit != null && dcdgit != "") {
+            if ((text.indexOf('.') != -1) &&
+                (text.substring(text.indexOf('.')).length > dcdgit) &&
+                (event.which != 0 && event.which != 8) &&
+                ($(this)[0].selectionStart >= text.length - dcdgit)) {
+                event.preventDefault();
+            }
+        }
+    });
+
+
+
+    function onChangeOwnershipType() {
+
+        if ($("#ddlFilterOwnershipType").val() == 'Own' || $("#ddlFilterOwnershipType").val() == null || $("#ddlFilterOwnershipType").val() == undefined) {
+            $('#ddl3rdPartyVendor').val('');
+            $('#ddl3rdPartyVendor').prop('disabled', true).trigger("chosen:updated");
+        }
+        else {
+            $('#ddl3rdPartyVendor').prop('disabled', false).trigger("chosen:updated");
+        }
+    }
+
+
+    $('.chosen-select').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
+
+    $(document).ready(function () {
+        $("#ddlFilterOwnershipType").attr('data-placeholder', "-All-").trigger("chosen:updated");
+
+        $("#btnBomBoqNxt").on("click", function () {
+            if (isValidReportFilter()) {
+                $("[id$=liBomboqSummary]").trigger('click');
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
+
+        if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9 ) {
+            $("#customedate").val(5).trigger("chosen:updated");
+            onChangeCustomDate();
+        }
+        if ($("#customedate_chosen").children('a').text().trim() != "Custom") {
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        var SelectedRegionIds = '@Model.objReportFilters.SelectedRegionIds';
+        $("#ddlRegions").val(SelectedRegionIds.split(',')).trigger("chosen:updated");
+
+        var selectedProvinces = '@Model.objReportFilters.SelectedProvinceIds';
+        $("#ddlProvinces").val(selectedProvinces.split(',')).trigger("chosen:updated");
+
+        var selectedNetworkStatuses = '@Model.objReportFilters.SelectedNetworkStatues.Replace("'","")';
+        $("#SelectedNetworkStatus").val(selectedNetworkStatuses.split(',')).trigger("chosen:updated");
+
+        var SelectedParentUsers = '@Model.objReportFilters.SelectedParentUsers';
+        $("#ddlParentUsers").val(SelectedParentUsers.split(',')).trigger("chosen:updated");
+
+
+        var selectedLayerIds = '@Model.objReportFilters.SelectedLayerIds';
+        $("#ddlLayers").val(selectedLayerIds.split(',')).trigger("chosen:updated");
+
+        var selectedthirdpartyvalues = '@Model.objReportFilters.SelectedThirdPartyVendorIds';
+        $("#ddl3rdPartyVendor").val(selectedthirdpartyvalues.split(',')).trigger("chosen:updated");
+
+        var selectedownershiptype = '@Model.objReportFilters.SelectedOwnerShipType';
+        $("#ddlFilterOwnershipType").val(selectedownershiptype).trigger("chosen:updated");
+        onChangeOwnershipType();
+
+        var SelectedProjectIds = '@Model.objReportFilters.SelectedProjectIds';
+        $("#ddlProjectCode").val(SelectedProjectIds.split(',')).trigger("chosen:updated");
+
+        var SelectedPlanningIds = '@Model.objReportFilters.SelectedPlanningIds';
+        $("#ddlPlanningCode").val(SelectedPlanningIds.split(',')).trigger("chosen:updated");
+
+        var SelectedWorkOrderIds = '@Model.objReportFilters.SelectedWorkOrderIds';
+        $("#ddlWorkorderCode").val(SelectedWorkOrderIds.split(',')).trigger("chosen:updated");
+
+        var SelectedPurposeIds = '@Model.objReportFilters.SelectedPurposeIds';
+        $("#ddlPurposeCode").val(SelectedPurposeIds.split(',')).trigger("chosen:updated");
+
+        si.setDateTimeCalendar_ExportEntities("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+
+        if ($('#ddlParentUsers > option').length > 1) {
+            si.onChangeParentUser();
+            var SelectedUserIds = '@Model.objReportFilters.SelectedUserIds';
+            $("#ddlUsers").val(SelectedUserIds.split(',')).trigger("chosen:updated");
+        }
+         if ($('#ddlParentUsers > option').length == 1) {
+            $('#ddlParentUsers option:first-child').attr("selected", "selected").trigger("chosen:updated");
+
+            si.onChangeParentUser();
+            $('#hdnSelectedParentUsers').val($('#ddlParentUsers option:first-child').val());
+            $('#ddlParentUsers').attr("disabled", true).trigger("chosen:updated");
+
+            var SelectedUserIds = '@Model.objReportFilters.SelectedUserIds';
+            $("#ddlUsers").val(SelectedUserIds.split(',')).trigger("chosen:updated");
+        }
+        //$('.chosen-select').trigger("chosen:updated");
+    });
+
+
+
+    function isValidReportFilter()
+    {
+        if ($('#customedate option:selected').val() == 9)
+        {
+            return true;
+        }
+        else
+        {
+            if ($("#txtDateFrom").val() == "") {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
+            return false;
+        }
+            else if ($("#txtDateTo").val() == "") {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
+            return false;
+        }
+            else {
+            return true;
+        }
+        }
+    }
+
+
+    $('#btnEntityExportClear').on("click", function () {
+        ResetExportEntitesFilterValues();
+    });
+    function ResetExportEntitesFilterValues() {
+        $('#ddlLayers').val(0).trigger("chosen:updated");
+        $('#SelectedNetworkStatus').val(0).trigger("chosen:updated");
+        $('#ddlRegions').val(0).trigger("chosen:updated");
+        $('#ddlProvinces').empty().trigger("chosen:updated");
+        $('#ddlProvinces').val(0).trigger("chosen:updated");
+        //$('#ddlParentUsers').val(0).trigger("chosen:updated");
+        $('#ddlUsers').val(0).trigger("chosen:updated");
+        $('#ddlProjectCode').val('').trigger("chosen:updated");
+        $('#ddlPlanningCode').empty().trigger("chosen:updated");;
+        $('#ddlWorkorderCode').empty().trigger("chosen:updated");;
+        $('#ddlPurposeCode').empty().trigger("chosen:updated");;
+        $('#ddlDurationBasedOn').val("Created_On").trigger("chosen:updated");
+        $('#txtDateFrom').val('');
+        $('#txtDateTo').val('');
+        $('#customedate').val(9).trigger("chosen:updated");
+        $('#ddlFilterOwnershipType').val(0).trigger("chosen:updated");
+        $('#ddl3rdPartyVendor').val(0).trigger("chosen:updated");
+        $('#ddlWaveLengthCode').val('').trigger("chosen:updated");
+        $('#txt_Miscdbloss').val('0');
+        onChangeOwnershipType();
+        onChangeCustomDate();
+
+        if ($('#ddlParentUsers > option').length == 1) {
+            $('#ddlParentUsers option:first-child').attr("selected", "selected").trigger("chosen:updated");
+
+            si.onChangeParentUser();
+            $('#hdnSelectedParentUsers').val($('#ddlParentUsers option:first-child').val());
+            $('#ddlParentUsers').attr("disabled", true).trigger("chosen:updated");
+
+            var SelectedUserIds = '@Model.objReportFilters.SelectedUserIds';
+           // $("#ddlUsers").val(SelectedUserIds.split(',')).trigger("chosen:updated");
+        }
+        else {
+            $('#ddlParentUsers').val(0).trigger("chosen:updated");
+        }
+    }
+
+    function onChangeCustomDate() {
+        var value = $('#customedate option:selected').val();
+        SetFromAndToDate(value);
+    }
+
+    function SetFromAndToDate(value) {
+        var endDate = new Date();
+        var startDate = new Date();
+        var startDateDiff = 0;
+        var endDateDiff = 0;
+        if (value == 1) // custom
+        {
+            $('#txtDateFrom').val("");
+            $('#txtDateTo').val("");
+            $("#imgFromDate").show();
+            $('#imgToDate').show();
+            return;
+        }
+        else if (value == 2) { //Today
+            startDateDiff = 0;
+            endDateDiff = 0;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 3) { //previous day
+            startDateDiff = -1;
+            endDateDiff = -1;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 4) {//last 7 days
+            startDateDiff = -6;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 5) {//last 30 days
+            startDateDiff = getDaysDiffByMonth(1);
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 6) {//last 3 Months
+            startDateDiff = getDaysDiffByMonth(3);
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 7) {//last 6 Months
+            startDateDiff = getDaysDiffByMonth(6);
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 8) {//last 1 year
+            startDateDiff = getDaysDiffByMonth(12);
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+
+        startDate.setDate(startDate.getDate() + startDateDiff);
+        endDate.setDate(endDate.getDate() + endDateDiff);
+
+        var newStartDate = startDate.toDateString();
+        newStartDate = new Date(Date.parse(newStartDate));
+
+        var newEndDate = endDate.toDateString();
+        newEndDate = new Date(Date.parse(newEndDate));
+
+        $('#txtDateFrom').val(fncCurrentDate(newStartDate));
+        $('#txtDateTo').val(fncCurrentDate(newEndDate));
+        if (value == 0 || value == 9) {
+            $('#txtDateFrom').val('');
+            $('#txtDateTo').val('');
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+    }
+
+    function getDaysDiffByMonth(_monthCount) {
+        var previousDate = new Date();
+        previousDate.setMonth(previousDate.getMonth() - _monthCount);
+        return parseInt((previousDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24)) + 1;
+    }
+
+
+    $('#ddlProjectCode').change(function () {
+        si.BindPlanningDetailByProjectIds();
+    })
+    $('#ddlPlanningCode').change(function () {
+        si.BindWorkCodeDetailByPlanningIds();
+    })
+    $('#ddlWorkorderCode').change(function () {
+        si.BindPurposeCodeDetailByWorkOrderIds();
+    })
+</script>

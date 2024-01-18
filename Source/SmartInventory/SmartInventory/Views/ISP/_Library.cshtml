@@ -1,0 +1,101 @@
+﻿@model Models.ISP.ISPViewModel
+@using Models;
+@using SmartInventory.Settings;
+
+@*@helper AddISPCable()
+    {
+    { Html.Partial("~/Views/ISP/_AddISPCable.cshtml"); }
+    }*@
+@{
+    var isCableActive = Model.NetworkLayers.Where(m => m.layerName.ToUpper() == EntityType.Cable.ToString().ToUpper()).FirstOrDefault();
+}
+<!DOCTYPE html>
+<div id="ispLeftPanel" class="leftPanel clslibraryEntity">
+    <div class="leftPanelHeader">@Resources.Resources.SI_ISP_GBL_NET_FRM_003</div>
+    <ul class="ullibraryEntity lib-tabs">
+        <li id="liParent" class="active"><a href="#divParentEntity" data-tabName="Parent" data-toggle="tab" onclick="isp.ManageLibraryEvents(this);">@Resources.Resources.SI_ISP_GBL_NET_FRM_011</a></li>
+        <li id="liChild"><a href="#divChildEntity" data-tabName="Child" data-toggle="tab" onclick="isp.ManageLibraryEvents(this);">@Resources.Resources.SI_ISP_GBL_NET_FRM_012</a></li>
+        @if (isCableActive != null)
+        {
+            <li id="liCable"><a href="#divCableEntity" data-tabName="Cable" data-toggle="tab" onclick="isp.ManageLibraryEvents(this);">@Resources.Resources.SI_ISP_GBL_NET_FRM_013</a></li>
+        }
+    </ul>
+    <div class="panel-body lib-overFlow">
+        <div class="tab-content">
+            <div id="divParentEntity" class="tab-pane active">
+                <div class="ISP-form">
+                    <div class="form-group">
+                        <label class="control-label upperCase">@Resources.Resources.SI_ISP_GBL_NET_FRM_014</label>
+                        <div>
+                            <select class="chosen-select form-control" id="ddlBaseLocation" onchange="isp.filterLocationBaseEntity('#ddlBaseLocation');">
+                                <option value="0">-- Select --</option>
+                                <option value="Shaft" data-is-shaft-element="True">Shaft</option>
+                                <option value="Floor" data-is-shaft-element="False">Floor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" id="divShaftDdl">
+                        <label class="control-label upperCase">SHAFT</label>
+                        <div>
+                            @Html.DropDownList("ddlShaft", Model.ShaftList.Select(m => new SelectListItem { Value = m.systemid.ToString(), Text = m.entityname }).ToList(), "-- Select --", new { @class = "chosen-select form-control", @onchange = "isp.structureActions.shaft.onShaftChange('ddlShaft','ddlFloor');" })
+                        </div>
+                    </div>
+                    <div class="form-group" id="divFloorDdl">
+                        <label class="control-label upperCase">@Resources.Resources.SI_ISP_GBL_NET_FRM_016</label>
+                        <div>
+                            @Html.DropDownList("ddlFloor", Model.FloorList.Select(m => new SelectListItem { Value = m.systemid.ToString(), Text = m.entityname }).ToList(), "-- Select --", new { @class = "chosen-select form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="seprator sepratorBottom"></div>
+                @Html.Partial("_ElementTemplate", Model.NetworkLayers.Where(m => m.is_isp_parent_layer == true).ToList(), new ViewDataDictionary { { "UserRoleId", Model.UserRoleId } })
+            </div>
+            <div id="divChildEntity" class="tab-pane">
+                <div class="ISP-form">
+                    <div class="form-group">
+                        <label class="control-label upperCase">@Resources.Resources.SI_ISP_GBL_NET_FRM_017</label>
+                        <div>
+                            <select id="ddlParentEntityType" class="chosen-select form-control" onchange="isp.filterParentEntity('#ddlParentEntityType'); isp.filterChildEntity('#ddlParentEntityType');">
+                                <option value="0">-- Select --</option>
+                                @foreach (var item in Model.ParentEntitiesList.GroupBy(m => m.entity_type).Select(y => y.First()))
+                                {
+                                    <option value="@item.entity_type" data-entity-type="@item.entity_type" data-layer-title="@item.layer_title" data-network-id="@item.network_id">@item.layer_title</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label upperCase">@Resources.Resources.SI_ISP_GBL_NET_FRM_018</label>
+                        <div>
+                            <select id="ddlParentEntity" class="chosen-select form-control" onchange="isp.filterChildEntity('#ddlParentEntity');">
+                                <option value="0">-- Select --</option>
+                                @foreach (var item in Model.ParentEntitiesList)
+                                {
+                                    <option value="@item.system_id" data-entity-type="@item.entity_type" data-layer-title="@item.layer_title">@item.display_name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="seprator sepratorBottom"></div>
+                @Html.Partial("_ElementTemplate", Model.NetworkLayers.Where(m => m.is_isp_child_layer == true).ToList(), new ViewDataDictionary { { "is_isp_child_layer", true }, { "UserRoleId", Model.UserRoleId } })
+            </div>
+            @if (isCableActive != null)
+            {
+                <div id="divCableEntity" class="tab-pane">
+                    @Html.Partial("_AddCableTP")
+
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        @foreach (var item in Model.ParentEntitiesList)
+        {
+            @:isp.parentEntities.push({ system_id: '@item.system_id', entity_type: '@item.entity_type', network_id: '@item.network_id', entity_name: '@item.entity_name' });
+         }
+    });
+
+</script>

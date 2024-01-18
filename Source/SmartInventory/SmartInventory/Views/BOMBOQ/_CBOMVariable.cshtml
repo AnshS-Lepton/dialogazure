@@ -1,0 +1,509 @@
+﻿@model Models.Admin.ConstructionOhLogicMaster
+
+@using Utility
+
+<style>
+
+
+    .fullWidth {
+        width: 100% !important;
+    }
+
+    .update_panel {
+        width: 65%;
+        white-space: nowrap;
+        border: 1px solid #dee2e6;
+        background-color: #ffffff;
+        /* border-radius: 10px; */
+        box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+    }
+
+    .title {
+        border-bottom: 1px solid #c4c4c4;
+        color: white;
+        background: #9999ff;
+    }
+
+        .title h4 {
+            padding-left: 15px;
+            margin-bottom: 0;
+            padding-top: 9px;
+            padding-bottom: 9px;
+            font: 14px/1.3 Segoe UI, sans-serif;
+            font-weight: bold;
+            margin-top: 0;
+        }
+
+    .pad_left {
+        padding: 15px;
+        overflow: auto;
+        max-height: calc(100vh - 159px);
+    }
+
+    .cateBox {
+        width: 40%;
+        border: 1px dotted rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        background-color: #fafafa;
+    }
+
+        .cateBox h4 {
+            font-size: 1.2rem;
+            margin-top: 0;
+        }
+
+    .expressForm {
+        display: grid;
+        grid-template-columns: 25% 70%;
+        gap: 10px;
+    }
+
+        .expressForm:not(:last-child) {
+            margin-bottom: 1rem;
+        }
+
+        .expressForm label {
+            font-weight: 600;
+            align-self: center;
+            font-size: 0.9rem;
+        }
+
+    .d-flex {
+        display: flex;
+        align-items: center;
+    }
+
+    .expressForm__input {
+        position: relative;
+        transition: 0.2s;
+    }
+
+        .expressForm__input input[type="text"],
+        .fieldInput {
+            width: 100%;
+            padding: 0.7rem 3rem 0.7rem 0.7rem;
+            border: 1px solid #e4e4e4;
+            border-radius: 3px 0 0 3px;
+            box-sizing: border-box;
+        }
+
+            .expressForm__input input[type="text"]:focus,
+            .fieldInput:focus {
+                outline: none;
+                background-color: #fafafa;
+            }
+
+    .expressForm__icon {
+        position: absolute;
+        right: 0;
+        top: 0;
+        background: #9999ff;
+        padding: 0.4rem 0.5rem;
+        border-radius: 0 3px 3px 0;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .expressForm__icon:hover {
+            background-color: #8282ff;
+        }
+
+    .mb-0 {
+        margin-bottom: 0 !important;
+    }
+
+    .expField {
+        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 10%);
+        background-color: #fafafabf;
+        padding: 1rem 1.5rem 1.5rem 1.5rem;
+    }
+
+        .expField:not(:last-child) {
+            margin-bottom: 1rem;
+        }
+
+    .expLegend {
+        border-radius: 4px;
+        border: none;
+        background-color: #9999ff;
+        padding: 0.5rem 1rem;
+        color: #ffffff;
+        font-size: 1.3rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.3rem;
+        width: auto;
+    }
+
+    .expChips {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .chips,
+    .operators {
+        transition: 0.3s;
+        cursor: pointer;
+        font-weight: 600;
+        border: 1px solid #d9d9d9;
+    }
+
+    .chips {
+        border-radius: 25px;
+        background-color: #ffffff;
+        padding: 0.5rem 1rem;
+        font-size: 13px;
+        color: #999999;
+        position: relative;
+    }
+
+    .operators {
+        background: #373B44; /* fallback for old browsers */
+        background: -webkit-linear-gradient(to bottom, var(--secondary-light), #8a8aff); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to bottom, var(--secondary-light), #8a8aff); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        /*background-image: linear-gradient(to bottom, #f0f0f0, #ffffff);*/
+        box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        padding: 0.2rem 0;
+        color: #FFFFFF;
+        width: 30px;
+        text-align: center;
+        cursor: pointer;
+        border: 1px solid #5f5fff;
+        line-height: 22px;
+    }
+
+    .chips:hover {
+        border: 1px solid #cecece;
+        /*box-shadow: 0 4px 8px rgba(0, 0, 0, 15%);*/
+        background-color: #f2f2f2;
+        color: #333333;
+    }
+
+    .operators:hover {
+        border: 1px solid #cecece;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 15%);
+        background-image: linear-gradient(to bottom, #8a8aff, var(--secondary-light));
+    }
+
+    .fieldPad {
+        padding: 1.5rem;
+    }
+
+    .--gap-10 {
+        gap: 10px;
+    }
+
+    .fieldWidth {
+        width: 30%;
+        position: relative;
+    }
+
+    .fieldPer {
+        position: absolute;
+        right: 0;
+        top: 0;
+        background: rgb(0 0 0 / 8%);
+        padding: 0.45rem 0.7rem;
+        font-size: 14px;
+        color: #333333;
+        border-radius: 0 3px 3px 0;
+        font-weight: bold;
+        border-left: 1px solid #cccccc;
+        text-align: center;
+    }
+
+    .chipClose {
+        position: absolute;
+        right: -4px;
+        top: -6px;
+        display: inline-block;
+        font-size: 6px;
+        background-color: #ebebeb;
+        padding: 0.3rem;
+        border: 1px solid rgb(183 183 183);
+        border-radius: 25px;
+        z-index: 3;
+        cursor: pointer;
+        color: #000000;
+        transition: 0.3s;
+    }
+
+        .chipClose:hover {
+            background-color: white;
+        }
+
+    .chipsSpace {
+        background-color: #FFFFFF;
+        padding: 0.8rem 0.7rem;
+        border: 1px solid rgb(0 0 0 / 10%);
+        border-radius: 4px;
+    }
+
+    .icon-Left_Arrow:before {
+        content: "\e90d";
+    }
+
+    .chipsSpace {
+        background-color: #FFFFFF;
+        padding: 0.8rem 0.7rem;
+        border: 1px solid rgb(0 0 0 / 10%);
+        border-radius: 4px;
+    }
+
+    .addedChip {
+        background-color: aliceblue !important;
+        border: none !important;
+        color: #8a8aff;
+        box-shadow: none !important;
+        cursor: default !important;
+    }
+
+        .addedChip:hover {
+            cursor: default !important;
+            pointer-events: none !important;
+            color: #8a8aff;
+        }
+
+    .w-49 {
+        width: 49%;
+    }
+
+    .expField .form-control {
+        height: 29px;
+    }
+
+    .arrowL-pt-pb {
+        padding-top: 7px;
+        padding-bottom: 7px;
+    }
+</style>
+
+<!DOCTYPE html>
+
+
+<div id="dvViewUsers">
+    <div class="pad_left">
+        @if (Model.isDefaultOh)
+        {
+            <fieldset class="expField fieldPad d-flex --gap-10">
+                <div class="fieldWidth">
+                    <input type="text" id="txtdefaultoverhead" class="form-control " placeholder="eg.10%" autoocomplete="off" value="@Model.default_overhead" oninput="validateNumber(this);" maxlength="4" />
+                    <span class="fieldPer">%</span>
+                </div>
+                <input type="text" class="fieldInput2" id="txtcolumnname" style="display:none" autoocomplete="off" value="@Model.column_name" />
+                <input type="text" class="fieldInpu3" id="txtfsaid" style="display:none" autoocomplete="off" value="@Model.subarea_system_id" />
+
+                <button text="Update" class="btn btn-primary" id="btnsavedefault">Update</button>
+                <button text="Clear" class="btn btn-warning" onclick="clearbom()">Clear</button>
+                <button text="Cancel" class="btn btn-danger" onclick="closebom()">Cancel</button>
+            </fieldset>
+        }
+        else
+        {<fieldset class="expField">
+                <legend class="expLegend">Variables</legend>
+                <div class="expChips d-flex">
+                    <input type="hidden" id="column_name" value="@Model.column_name">
+                    <input type="hidden" id="fsa_id" value="@Model.subarea_system_id">
+                    <input type="hidden" id="oh_expression_json" value="@Model.oh_expression_json">
+                    @for (int i = 0; i < Model.constructionohlogicmasterlist.Count; i++)
+                    {
+                        <div class="chips" onclick="pushToExpressionStack('@Model.constructionohlogicmasterlist[i].column_name', 'variable', '@Model.constructionohlogicmasterlist[i].label')" value="@Model.constructionohlogicmasterlist[i].column_name">@Model.constructionohlogicmasterlist[i].label</div>
+
+                    }
+                </div>
+            </fieldset>
+            <div class="d-fx --gap15 mb-01">
+                <fieldset class="expField mb-0 w-49">
+                    <legend class="expLegend">Operators</legend>
+                    <div>
+                        <div class="expChips d-flex">
+                            <div class="operators" onclick="pushToExpressionStack('+','operator','+')">+</div>
+                            <div class="operators" onclick="pushToExpressionStack('-','operator','-')">-</div>
+                            <div class="operators" onclick="pushToExpressionStack('*','operator','*')">*</div>
+                            <div class="operators" onclick="pushToExpressionStack('/','operator','/')">/</div>
+                            <div class="operators" onclick="pushToExpressionStack('%','operator','%')">%</div>
+                            <div class="operators" onclick="pushToExpressionStack('(','operator','(')">(</div>
+                            <div class="operators" onclick="pushToExpressionStack(')','operator',')')">)</div>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="expField chipsField w-49">
+                    <legend class="expLegend">Numeric Value</legend>
+                    <div class="d-flex --gap10">
+                        <input id="txtNumericInput" type="number" placeholder="Enter Numeric Value" min="0" max="100" onkeydown="exp_length_limit(this);" onkeyup="exp_length_limit(this);" class="form-control" />
+
+                        <button id="btnNumericInput" text="validate" class="btn btn-primary ml-01">Submit</button>
+                    </div>
+                </fieldset>
+            </div>
+
+            <fieldset class="expField fieldPad">
+                <legend class="expLegend">Expression</legend>
+                <div id="dvExpression" class="expChips d-flex chipsSpace"></div>
+
+                <div class="d-flex mt-01 --gap-10">
+                    <button text="cancel" class="btn btn-primary ml-auto arrowL-pt-pb" onclick="handleBackspace()"><span class="icon-Search_back"></span></button>
+                    <button text="cancel" class="btn btn-danger" onclick="closebom()">Cancel</button>
+                    <button text="clear" class="btn btn-warning" onclick="clearbom()">Clear</button>
+                    <button text="validate" class="btn btn-primary" onclick="validateExpression()">Validate</button>
+                    <button text="ok" class="btn btn-primary" id="btnSavebom" disabled>OK</button>
+                </div>
+
+            </fieldset>
+        }
+
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(() => {
+
+        $('#btnNumericInput').click(() => {
+            let numValue = $('#txtNumericInput').val();
+            if (numValue && numValue.length && parseFloat(numValue) >= 0 && parseFloat(numValue) <= 100) {
+                pushToExpressionStack(numValue, 'numeric', numValue);
+                $('#txtNumericInput').val('');
+            }
+            else {
+                alert('Enter a valid numeric value between 0 and 100.');
+            }
+        });
+
+        $("#btnSavebom").click(function () {
+
+            if (!isValidExp()) {
+                $("#btnSavebom").prop("disabled", true);
+                alert('Invalid Expression!');
+                return false;
+            }
+
+            var fsa_id = $("#fsa_id").val();
+            var column_name = $("#column_name").val();
+
+
+            let dto = {
+                DisplayFormula: display_expression,
+                FSAId: fsa_id,
+                OhLogic: expression,
+                ColumnName: column_name,
+                OhExpressionJson: JSON.stringify(expression_stack)
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("savebomlogic", "BOMBOQ")',
+                data: JSON.stringify(dto),
+
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (response.Message) {
+                        alert("Saved successfully!");
+                        $('#btnConstructionBOM').click()
+                    } else {
+                        alert("Something went wrong!", 'Error', 'error');
+                    }
+
+                    $("#id_" + response.id).val(response.formula);
+                    $("#closeChildPopup").trigger('click');
+                },
+                error: function () {
+
+                    alert("Error while inserting data", 'Error', 'error');
+                }
+            });
+            return false;
+
+
+        });
+
+        let hdn_json = $('#oh_expression_json').val();
+        if (hdn_json) {
+            let oh_expression_json = JSON.parse(hdn_json);
+            if (oh_expression_json && oh_expression_json.length) {
+                expression_stack = oh_expression_json;
+                generateExpression();
+            }
+            else {
+                resetExpressionData();
+            }
+        }
+        else {
+            resetExpressionData();
+        }
+
+    });
+</script>
+<script>
+        function closebom() {
+             
+            $("#closeChildPopup").trigger('click');
+        }
+
+
+        function clearbom() {
+            resetExpressionData();
+            $("#txtdefaultoverhead").val('');
+            $("#btnSavebom").prop("disabled", true);
+
+        }
+
+
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46) {
+            return false;
+        }
+        return true;
+    }
+
+    $("#btnsavedefault").click(function () {
+         
+        var defaultvalue = $("#txtdefaultoverhead").val();
+        var columnname = $("#txtcolumnname").val();
+        var fsaid = $("#txtfsaid").val(); txtfsaid
+            $.ajax({
+               type: 'POST',
+                url: '@Url.Action("saveDefaultvalue", "BOMBOQ")',
+                data: '{defaultvalue: ' + JSON.stringify(defaultvalue) + ',columnname: ' + JSON.stringify(columnname) + ',fsaid: ' + JSON.stringify(fsaid) + '}',
+
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                     
+                    if (response.Message == true) {
+                        alert("Data has been Saved successfully.");
+                        $('#btnConstructionBOM').click()
+                    } else {
+                        alert("Fail To Save successfully.");
+
+                    }
+
+                    $("#closeChildPopup").trigger('click');
+                },
+                error: function () {
+
+                    alert("Error while inserting data");
+                }
+            });
+            return false;
+        $
+
+    });
+
+
+    var validNumber = new RegExp(/^\d*\.?\d*$/);
+    var lastValid = $("#txtdefaultoverhead").val();// document.getElementById("txtdefaultoverhead").value;
+    function validateNumber(elem) {
+        if (validNumber.test(elem.value)) {
+            lastValid = elem.value;
+        } else {
+            elem.value = lastValid;
+        }
+    }
+</script>
+

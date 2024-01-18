@@ -1,0 +1,180 @@
+﻿@model Models.LogicalViewVM
+    <style>
+        .logicalContent {
+            width: 90px;
+            text-align: center;
+            display: block;
+            margin: 0 auto;
+            word-break:break-all;
+            letter-spacing:1px;
+        }
+    </style>
+@if (Model.lstport != null && Model.lstport.Count != 0)
+{
+    <div id="divLogicalContainer">
+        <div class="logicalHeaderSection">
+            <div id="divNetworkId" style="float:left;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_001:</b> @Model.networkId</div>
+            <a class="printLogicalView btn btn-success" onclick="ExportDivToPDF('divlogicalDiagram', 'Logical Plan', document.getElementById('divNetworkId').innerText,true);" title="@Resources.Resources.SI_OSP_HTB_NET_FRM_012"><i class="fa fa-file-pdf-o"></i></a>
+        </div>
+
+        <div class="logicalDiagram">
+            <div id="divlogicalDiagram" class="MainLogicalEntity">
+                <div class="logicalLegend">
+                    <p class="legendHeading">@Resources.Resources.SI_OSP_ONT_NET_FRM_007</p>
+                    <p class="legendSubHeading">@Resources.Resources.SI_OSP_GBL_NET_FRM_029</p>
+                    @foreach (var item in Model.listPortStatus)
+                    {
+                        <div><span class="legendDot" style="background:@(item.color_code)"></span><span>@item.status</span></div>
+                    }
+                    <p class="legendSubHeading">@Resources.Resources.SI_OSP_ONT_NET_FRM_008</p>
+
+                    <div><span class="legendSquare" style="background: #ff8eff80;"></span><span>@Resources.Resources.SI_OSP_ONT_NET_FRM_009</span></div>
+                    <div><span class="legendSquare" style="background:#9595fc80"></span><span>@Resources.Resources.SI_OSP_ONT_NET_FRM_010</span></div>
+                </div>
+                @{
+
+                    foreach (var childItem in Model.lstport.GroupBy(m => new { m.source_system_id, m.source_entity_type, m.source_network_id, m.source_display_name }).ToList())
+                    {
+                        <div style="float:left;">
+                            <div class="ParentLogicalEntity">
+                                <div class="core">
+                                    @*Render input ports of main entity*@
+                                    @foreach (var portItem in Model.lstport.Where(m => m.source_system_id == childItem.Key.source_system_id && m.source_entity_type == childItem.Key.source_entity_type && m.source_port_type == "I").OrderBy(m => m.source_port_number).Select((value, i) => new { i, value }))
+                                    {
+                                        var conn_e_type = portItem.value.connected_entity_type;
+                                        <div class="leftport">
+                                            <span class="leftportText" style="visibility:@(conn_e_type != "" ? "visible" : "hidden");">
+                                                <i class="icon-@conn_e_type.ToUpper()" title="@conn_e_type" style="color:@(conn_e_type.ToUpper() == "CUSTOMER" ? "Red" : "Blue");"></i>
+                                                &nbsp;@((conn_e_type != "CUSTOMER") ? portItem.value.connected_label + " (" + portItem.value.connected_port_text + ")" : portItem.value.connected_label)
+                                            </span>
+                                            <div class="leftportNumber">@(Math.Abs(portItem.value.source_port_number))</div>
+                                            <div class="leftportDot" style="background:@(portItem.value.port_status_color)" title="@portItem.value.port_comment"></div>
+
+                                        </div>
+                                    }
+                                </div>
+                                @*Render main entity box *@
+                                @{
+                                    var childEntity = Model.lstport.Where(m => m.source_system_id == childItem.Key.source_system_id && m.source_entity_type == childItem.Key.source_entity_type).FirstOrDefault();
+                                    <div class="logicalEntityBox" style="background:@((string.IsNullOrEmpty(childEntity.source_entity_category) ? "" : childEntity.source_entity_category.ToUpper()).Contains("PRIMARY") ? "#ff8eff80" : "#9595fc80");">
+                                        <span class="logicalContent">
+                                            @(childItem.Key.source_display_name.ToString())
+
+                                            <br />@(string.Concat(childEntity.source_ratio, childEntity.source_ratio.Split(':').Length > 1 ? "" : " Ports"))
+                                        </span>
+</div>
+                                }
+                                <div class="core">
+                                    @*Render output ports of main entity*@
+                                    @foreach (var portItem in Model.lstport.Where(m => m.source_system_id == childItem.Key.source_system_id && m.source_entity_type == childItem.Key.source_entity_type && m.source_port_type == "O").Select((value, i) => new { i, value }))
+                                    {
+                                        var conn_e_type = portItem.value.connected_entity_type;
+
+                                        var splitterId = portItem.value.source_system_id + "_" + childItem.Key.source_entity_type + "_" + portItem.value.source_port_number;
+                                        var portText = conn_e_type != "SPLITTER" ? ((conn_e_type != "CUSTOMER") ? portItem.value.connected_label + " (" + portItem.value.connected_port_text + ")" : portItem.value.connected_label) : "";
+                                        <div class="rightport">
+                                            <div class="rightportNumber">@(Math.Abs(portItem.value.source_port_number))</div>
+                                            <div class="rightportDot" title="@(!string.IsNullOrEmpty(portItem.value.connected_label) ? portItem.value.connected_label : portItem.value.port_comment)"
+                                                 style="background:@(portItem.value.port_status_color)">
+                                            </div>
+                                            @if (conn_e_type != "")
+                                            {
+
+                                                <span class="rightportText" id="Left_@splitterId">
+                                                    @if (conn_e_type.ToUpper() != "SPLITTER" && conn_e_type.ToUpper() != "ONT")
+                                                    {
+                                                        <i class="icon-@conn_e_type.ToUpper()" title="@conn_e_type" style="color:@(conn_e_type.ToUpper() == "CUSTOMER" ? "Red" : "Blue");"></i>
+                                                        @portText
+                                                    }
+                                                </span>
+
+                                                <span class="rightportTextDotConnector" id="@splitterId"></span>
+                                            }
+                                        </div>
+
+                                    }
+                                </div>
+                                @*Render parent box of main entity*@
+                                @if (childItem.Key.source_entity_type.ToUpper() == "SPLITTER" || childItem.Key.source_entity_type.ToUpper() == "FMS")
+                                {
+                                    <div class="logicalEntityParentBox">
+                                        @childItem.Key.source_display_name
+                                    </div>
+                                }
+                            </div>
+                            @{
+                                var lstSecondLevelData = Model.lstport.Where(m => m.source_system_id == childItem.Key.source_system_id && m.source_entity_type == childItem.Key.source_entity_type && m.source_port_type != "I" && (m.connected_entity_type.ToUpper() == "SPLITTER" || m.connected_entity_type.ToUpper() == "ONT"));
+                                if (lstSecondLevelData.Count() > 0)
+                                {
+                                    <div class="ChildLogicalEntity">
+                                        @*Render 2nd level splitter boxes..*@
+                                        @foreach (var modelitems in lstSecondLevelData.Select((value, i) => new { i, value }))
+                                        {
+                                            var conn_e_type = childItem.Key.source_entity_type;
+                                            var sourceId = modelitems.value.source_system_id + "_" + conn_e_type + "_" + modelitems.value.source_port_number;
+                                            var targetId = modelitems.value.connected_system_id + "_" + modelitems.value.connected_entity_type + "_" + modelitems.value.connected_port_number;
+                                            <div id="divSplitterSecondary" style="display:table;">
+                                                <div class="core" style="display: table-cell; vertical-align:middle;">
+                                                    @*Render 2nd level splitter input port*@
+                                                    <div class="leftport" style="width: 50px;">
+                                                        <div id="@targetId" class="leftportDot ConnectedEntity"
+                                                             style="margin-top:14px;background:@(modelitems.value.port_status_color)"
+                                                             data-system-id="@modelitems.value.connected_system_id"
+                                                             data-source-id="@sourceId"
+                                                             data-target-id="@targetId" title="@modelitems.value.port_comment">
+                                                        </div>
+                                                        <div class="leftportNumber" style="margin-top:8px;">@(Math.Abs(Convert.ToInt32(modelitems.value.connected_port_number)))</div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="logicalEntityBox" style="background:@((modelitems.value.connected_entity_category == null ? "" : modelitems.value.connected_entity_category.ToString().ToUpper()).Contains("PRIMARY") ? "#ff8eff80" : "#9595fc80");">
+                                                    @(modelitems.value.destination_display_name)
+                                                    <br />@(modelitems.value.connected_ratio)
+                                                </div>
+                                                <div class="core">
+                                                    <div class="rightport2">
+                                                        1 <br><b></b><b></b>
+                                                        @(modelitems.value.connected_ratio.Split(':')[modelitems.value.connected_ratio.Split(':').Length - 1].ToString())
+                                                        <br>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="ConnectedEntityParentBox">
+                                                @(modelitems.value.destination_display_name)
+                                            </div>
+                                            <br />
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        setTimeout(function () {
+            $('.ConnectedEntity').each(function () {
+                var src = $(this).attr('data-source-id');
+                var tgt = $(this).attr('data-target-id');
+                if ($("#" + src).length > 0 && $("#" + tgt).length > 0) {
+                    jsPlumb.connect({
+                        source: src,
+                        target: tgt,
+                        detachable: false,
+                        anchors: ["Right", "Left"],
+                        paintStyle: { strokeStyle: "#00ba8a", lineWidth: 1 },
+                        connector: ["Bezier", { stub: 1 }],
+                        endpoint: ["Blank", { radius: 1 }]
+                    });
+                }
+            });
+        }, 100);
+    });
+</script>
+

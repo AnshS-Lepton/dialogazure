@@ -1,0 +1,180 @@
+﻿@model Models.Feasibility.FeasibilityCableType
+
+<!DOCTYPE html>
+<div id="maindiv">
+
+    <div class="libDetail">
+        @using (Ajax.BeginForm("SaveCableType", "Main", new AjaxOptions
+        {
+
+            HttpMethod = "POST",
+            OnSuccess = "OnSuccessCableType()",
+            UpdateTargetId = "maindiv",
+            LoadingElementId = "dvProgress",
+        },
+               new { id = "frmCableType", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+        @Html.Hidden("cable_type_id");
+
+                                        <div class="libTabContent pa20">
+                                            <!-- Tab panes -->
+                                            <div class="tab-content">
+                                                <div class="tab-pane active" id="GISInfo">
+
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-3" for="txtLongitude">@Resources.Resources.SF_GBL_GBL_NET_FRM_027 <i class="clsMandatory">*</i> :</label>
+                                                        <div class="col-md-3">
+                                                            @Html.TextBoxFor(m => m.display_name, new { @class = "form-control", @maxlength = "50", @placeholder = Resources.Resources.SF_GBL_GBL_NET_FRM_083 })
+                                                        </div>
+                                                        <label class="control-label col-md-3" for="txtLatitude">@Resources.Resources.SF_GBL_GBL_NET_FRM_029 <i class="clsMandatory">*</i> :</label>
+                                                        <div class="col-md-3">
+                                                            @Html.TextBoxFor(m => m.cores, new { @class = "form-control", @onkeypress = "return sf.allowOnlyNumber(event);", @maxlength = "5" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-3" for="txtLatitude">@Resources.Resources.SF_GBL_GBL_NET_FRM_030 (@SmartFeasibility.Settings.ApplicationSettings.CustomerCurrency) <i class="clsMandatory">*</i> :</label>
+                                                        <div class="col-md-3">
+                                                            @Html.TextBoxFor(m => m.material_price_per_unit, new { @class = "form-control", @onkeypress = "return sf.allowNumberwithDot(event);", @minlength = "1", @maxlength = "5" })
+                                                        </div>
+                                                        <label class="control-label col-md-3" for="txtLongitude">@Resources.Resources.SF_GBL_GBL_NET_FRM_031 (@SmartFeasibility.Settings.ApplicationSettings.CustomerCurrency) <i class="clsMandatory">*</i> :</label>
+                                                        <div class="col-md-3">
+                                                            @Html.TextBoxFor(m => m.service_price_per_unit, new { @class = "form-control", @onkeypress = "return sf.allowNumberwithDot(event);", @minlength = "1", @maxlength = "5" })
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group ModalFooter" id="dvBtnAction">
+
+                                            <div class="ModalFooterControll dfButtons pr20">
+                                                @if (Model.cable_type_id > 0)
+                                                {
+                                                <button type="submit" class="btn btn-primary" id="btnSaveCableType">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                                                <a href="javascript:void(0);" onclick="Resetform()" class="btn btn-default">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</a>
+                                                }
+                                                else
+                                                {
+                                                <button type="submit" class="btn btn-primary mr10" id="btnSaveCableType">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                                                <a href="javascript:void(0);" onclick="Resetform()" class="btn btn-default">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</a>
+                                                }
+                                            </div>
+
+                                        </div>
+                                        <div class="clearfix"></div>
+        }
+
+        @*<div class="libTabs">
+            <ul class="nav nav-tabs tabs-left">
+
+                <li class="active"><a href="#curentRecord" data-toggle="tab" onclick="sf.showBomRecord(0);">@Resources.Resources.SF_GBL_GBL_NET_FRM_032</a></li>
+                <li><a href="#historyRecord" data-toggle="tab" onclick="sf.showHistory(76, 'feasibility_cable_type');">@Resources.Resources.SF_GBL_GBL_NET_FRM_033</a></li>
+            </ul>
+        </div>*@
+
+
+        <div class="libTabContent pa20">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="curentRecord">
+                    <div id="CableType_list">
+                    </div>
+                </div>
+                <div class="tab-pane" id="historyRecord">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+        $(document).ready(function () {
+            var t = '@Model.cable_type_id';
+            $('#cable_type_id').val(t);
+            sf.GetCableTypeLst();
+        callFormValidator("frmCableType");
+        });
+
+        function Resetform() {
+            showConfirm(MultilingualKey.Reset_BOM_Settings, function () {
+                $('#frmCableType').find("input[type=text]").val("");
+                $('#cable_type_id').val('');
+                $("#btnSaveCableType").html(MultilingualKey.Save);
+            });
+
+        }
+
+        $("#display_name").keyup(function () {
+            if ($("#display_name").val() == "") {
+                Resetfrmtext();
+            }
+
+        });
+
+        function Resetfrmtext()
+        {
+            $('#cable_type_id').val('');
+            $("#btnSaveCableType").html(MultilingualKey.Save);
+            $('#frmCableType').find('#cores').val(0)
+            $('#material_price_per_unit').val(0);
+            $('#service_price_per_unit').val(0);
+        }
+
+    $("#display_name").blur(function () {
+            var keyEvent = $.Event("keydown");
+            keyEvent.keyCode = $.ui.keyCode.ENTER;
+            $(this).trigger(keyEvent);
+            // Stop event propagation if needed
+            return false;
+        }).autocomplete({
+            source: function (request, response) {
+                var res = ajaxReq('Main/GetCableTypeSearchResult', { SearchText: $.trim(request.term) }, false, function (data) {
+                     
+                    if (data.length ==0)
+                    {
+                        Resetfrmtext();
+                    }
+                    
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.display_name, value: item.cable_type_id, cores: item.cores, material_price_per_unit: item.material_price_per_unit, service_price_per_unit: item.service_price_per_unit, display_name: item.display_name
+                            }
+
+                        }))
+                   
+                   
+                }, true, false);
+
+            },
+            minLength: 1,
+            autoFocus: true,
+            select: function (event, ui) {
+                event.preventDefault();
+                $('#cable_type_id').val(ui.item.value);
+                $('#frmCableType').find('#cores').val(ui.item.cores);
+                $('#display_name').val(ui.item.display_name);
+                $('#material_price_per_unit').val(ui.item.material_price_per_unit);
+                $('#service_price_per_unit').val(ui.item.service_price_per_unit);
+                $("#btnSaveCableType").html(MultilingualKey.Update);
+            },
+        });
+
+        function OnSuccessCableType() {
+            var isExist = '@Model.IsExists';
+            if (isExist == "True") {
+                alert(MultilingualKey.already_exist);
+            }
+
+            else {
+                alert(MultilingualKey.Saved_Successfully);
+                sf.GetCableTypeLst();
+            }
+           
+        }
+</script>
+
+

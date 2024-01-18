@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+	<Mapping id="1">
+		<DbColName>network_id</DbColName>
+		<TemplateColName>network_id</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="2">
+		<DbColName>structure_name</DbColName>
+		<TemplateColName>Structure_Name</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>50</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="3">
+		<DbColName>business_pass</DbColName>
+		<TemplateColName>Business_Pass</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>int4</UdtName>
+		<CharacterMaxLength>0</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="4">
+		<DbColName>home_pass</DbColName>
+		<TemplateColName>Home_Pass</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>int4</UdtName>
+		<CharacterMaxLength>0</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="5">
+		<DbColName>no_of_units</DbColName>
+		<TemplateColName>No_Of_Units</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>int4</UdtName>
+		<CharacterMaxLength>0</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="6">
+		<DbColName>no_of_occupants</DbColName>
+		<TemplateColName>No_Of_Occupants</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>int4</UdtName>
+		<CharacterMaxLength>0</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="7">
+		<DbColName>remarks</DbColName>
+		<TemplateColName>Remarks</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>200</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="9">
+		<DbColName>parent_id</DbColName>
+		<TemplateColName>Parent_Network_ID</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="10">
+		<DbColName>parent_entity_type</DbColName>
+		<TemplateColName>Parent_Entity_Type</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+</Mappings>

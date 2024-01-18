@@ -1,0 +1,63 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+   .CheckJunkKeyProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 4;
+        margin-left: 0px;
+        background-color: white;
+        align-content:center;
+        background-image: url('../../Content/images/loading-buffering.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+        
+    }
+}
+</style>
+<div id="dvJunkKeyProgress" class="CheckJunkKeyProgress"></div>
+<div style="width:100%; height:500px" id="dvViewUsers">
+    <h4 style="text-align:center;margin-bottom:50px">Check Resource Junk Keys</h4>
+    <div style="text-align:center">
+        <input type="button" id="btnSubmit" value="Submit" class="btn btn-success"/>
+    </div>
+    
+</div>
+
+<script src="~/Scripts/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+   
+    
+    
+    $(document).ready(function () {
+       
+        $('#btnSubmit').on("click", function () {
+            var msg = confirm("Are you sure you want to check junk Key?!");
+            if (msg == true) {
+              
+                $("#dvJunkKeyProgress").show();
+               
+              $.ajax('/MultilingualJunkKeys/CheckjunkKey',   // request url
+           {
+               success: function (data, status, xhr) {    // success callback function
+                   $("#dvJunkKeyProgress").hide();
+               }
+           });
+             
+            } else {
+              return false;
+            }
+           
+        });
+
+    });
+
+    
+
+</script>

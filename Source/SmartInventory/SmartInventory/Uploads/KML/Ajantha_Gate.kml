@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Folder><name>Ajantha_Gate</name>
+  <Placemark>
+	<name>Ajantha Gate
+1</name>
+	<Style><LineStyle><color>FF0000ff</color><width>3</width></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+      <LineString><coordinates>78.471381,17.38863 78.473928,17.38507</coordinates></LineString>
+  </Placemark>
+  <Placemark>
+	<name>Ajantha Gate
+2</name>
+	<Style><LineStyle><color>FFff0000</color><width>3</width></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+      <LineString><coordinates>78.473817,17.384969 78.471252,17.388536</coordinates></LineString>
+  </Placemark>
+  <Placemark>
+	<name>Ajantha Gate
+3</name>
+	<Style><LineStyle><color>FF00ff00</color><width>3</width></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+      <LineString><coordinates>78.47028,17.385825 78.472451,17.386875 78.472495,17.386889 78.472542,17.386895 78.472593,17.38689 78.472633,17.38688 78.473926,17.385075</coordinates></LineString>
+  </Placemark>
+  <Placemark>
+	<name>Ajantha Gate
+4</name>
+	<Style><LineStyle><color>FF00ffff</color><width>3</width></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+      <LineString><coordinates>78.473813,17.384971 78.472668,17.386569 78.472664,17.386599 78.472666,17.386633 78.472667,17.386654 78.472669,17.386668 78.472679,17.386691 78.472689,17.386716 78.472702,17.386744 78.472728,17.386779 78.472753,17.386819 78.472792,17.386854 78.47285,17.386914 78.472944,17.38701 78.473279,17.387341</coordinates></LineString>
+  </Placemark>
+  <Placemark>
+	<name>Ajantha Gate
+6</name>
+	<Style><LineStyle><color>FFff00aa</color><width>3</width></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+      <LineString><coordinates>78.471372,17.38862 78.472551,17.386992 78.472561,17.386956 78.472557,17.386931 78.472549,17.386903 78.472519,17.386864 78.472477,17.386839 78.470308,17.385775</coordinates></LineString>
+  </Placemark>
+  <Placemark>
+	<name>Ajantha Gate5</name>
+	<Style><LineStyle><color>FF00aa00</color><width>3</width></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+      <LineString><coordinates>78.4733,17.387311 78.472849,17.386856 78.472718,17.386762 78.472687,17.386743 78.472651,17.386736 78.472619,17.386731 78.472585,17.386738 78.472555,17.386743 78.472531,17.386758 78.471252,17.388536</coordinates></LineString>
+  </Placemark>
+</Folder>
+</Document></kml>

@@ -1,0 +1,89 @@
+﻿@model Models.RedlineFilter
+
+
+@{
+    var grid = new WebGrid(rowsPerPage: Model.pageSize, ajaxUpdateContainerId: "NwhistoryRecord", canSort: true);
+    grid.Bind(Model.lstRedlineEntityHistory, autoSortAndPage: false, rowCount: Model.totalRecord);
+    var footerText = "showing " + (((Model.currentPage - 1) * Model.pageSize) + 1) + " to " + (Model.currentPage * Model.pageSize) + " of " + Model.totalRecord + " items";
+}
+<!DOCTYPE html>
+<div class="viewReport" id="dvChildModalBody">
+    @using (Ajax.BeginForm("Redline_Entity_History", "Redline", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "dvProgress" },
+                                 new { id = "frmNewworkTEHistory", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.system_id);
+        @Html.HiddenFor(m => m.task_id);
+        @Html.HiddenFor(m => m.userId);
+
+        if (Model.lstRedlineEntityHistory.Count > 0)
+        {
+            <div class="d-flex space-pad" id="dvBtnAction">
+                <div class="div_totalRecord"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@Model.lstRedlineEntityHistory.Count</b></div>
+                <div class="ml-auto">
+                    @if (@grid.TotalRowCount > 0)
+                    {
+                        <span id="btnExport" value="Export" class="exp--btn"><i class="icon-Export"></i> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</span>
+                    }
+                    else
+                    {
+                        <input type="button" id="btnExport" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" disabled="disabled" class="exp--btn" />
+                    }
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+            <div id="NwhistoryRecord">
+
+                @if (Model.lstRedlineEntityHistory.Count > 0)
+                {
+                    <div class="tablePad--tn">
+                        <div class="table-responsive">
+                            @grid.GetHtml(tableStyle: "grid",
+                         htmlAttributes: new { id = "tblNWEHistory" },
+                            mode: WebGridPagerModes.All,
+                           columns: grid.Columns(
+                                 grid.Column("task_name", Resources.Resources.SI_OSP_GBL_GBL_FRM_149, format: @<text>@item.task_name</text>),
+                            grid.Column("task_type", Resources.Resources.SI_OSP_GBL_GBL_FRM_150, format: @<text>@item.task_type</text>),
+                             grid.Column("status", Resources.Resources.SI_OSP_GBL_NET_GBL_160, format: @<text>@item.status</text>),
+                             grid.Column("created_on", Resources.Resources.SI_OSP_BUL_NET_GBL_007, format: @<text>@item.created_on</text>),
+                             grid.Column("user_name", Resources.Resources.SI_OSP_BUL_NET_GBL_006, format: @<text>@item.user_name</text>),
+                             grid.Column("remarks", Resources.Resources.SI_OSP_GBL_GBL_GBL_006, format: @<text>@item.remarks</text>)))
+                            @*//columns:Model.webColumns)*@
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+                        </div>
+                    </div>
+                }
+            </div>
+
+        }
+        else
+        {
+            <div class="nr-found">
+                <span>@Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+            </div>
+        }
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+         
+        changeColor('tblNWEHistory');
+        addDefaultSortingIcons('tblNWEHistory');
+        $("#btnExport").on("click", function () {
+            // SurveyAssignmentExport();
+            window.location = appRoot + 'Redline/ExportRedlineEntity_History';
+        });
+        $('th a, tfoot a').on("click", function () {
+             
+            var url = $(this).attr('href') + "&task_id=" + parseInt($("#task_id").val()) + "&userId=" + parseInt($("#userId").val());
+           
+            $('#frmNewworkTEHistory').attr('action', url).submit();
+            return false;
+        });
+    });
+
+
+</script>

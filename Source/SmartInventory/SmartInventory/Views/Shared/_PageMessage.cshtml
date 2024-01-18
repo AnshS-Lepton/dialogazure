@@ -1,0 +1,58 @@
+﻿@model Models.PageMessage
+<div id="dvPageMsg"></div>
+
+@if (Model.status == "OK" || Model.status == "VALIDATION_FAILED")
+{
+
+    <script>       
+        if ($("#dvPageMsg").closest('.modal-body').attr('id') == "dvChildModalBody") {
+            $(popup.DE.ModalPopUp).find('form').submit();
+            $(popup.DE.CloseChildPopup).trigger("click");
+        }
+        else if ($("#dvPageMsg").closest('.modal-body').attr('id') == "dvModalBody") {
+            $(popup.DE.closeModalPopup).trigger("click");
+        }
+        var type = '@Model.status' == 'VALIDATION_FAILED' ? 'warning' : 'success';
+        var header = '@Model.status' == 'VALIDATION_FAILED'? MultilingualKey.SI_GBL_GBL_JQ_FRM_060:MultilingualKey.GBL_GBL_GBL_JQ_GBL_001;
+       
+        alert('@Html.Raw(Model.message)', type,header);
+        $(document).ready(function () {
+            refreshStructureInfo({
+                structureId: @Model.structureId,
+                systemId: @Model.systemId,
+                entityType: '@Model.entityType',
+                shaftId: @Model.shaftId,
+                floorId: @Model.floorId,
+                pSystemId: @Model.pSystemId,
+                pEntityType: '@Model.pEntityType'
+                });
+            var isNew = '@Model.isNewEntity';
+            if (isNew && si != null) {
+                si.loadLayerOnEntity();
+
+            }
+            if (si != null) {
+                si.mappedId = 0;
+                si.mapped_network_id = '';
+            }
+            if ($('.mainlyr input[type="checkbox"]:checked').length == 0 && si != null)
+            { si.clearDraggableLibrary() }
+        })
+        $('#hdnGeomType').val('');
+    </script>
+}
+else if (Model.status == "FAILED" || Model.status == "ERROR")
+{
+    <script>
+        if (isp != null) {
+            alert('@Html.Raw(Model.message)', 'warning',  MultilingualKey.SI_GBL_GBL_JQ_FRM_059);
+        } else {
+            alert('@Html.Raw(Model.message)', 'danger',  MultilingualKey.SI_GBL_GBL_JQ_FRM_059);
+        }
+    </script>
+}
+
+
+
+
+

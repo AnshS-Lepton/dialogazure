@@ -1,0 +1,191 @@
+﻿@model Models.AccessoriesViewModel
+@using Utility
+@using Models;
+
+<!DOCTYPE html>
+<div id="accessoriesContainer">
+
+
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objFilterAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvModalBody", ajaxUpdateCallback: "onGridHeaderClick('tblAcccessories')");
+        grid.Bind(Model.lstData, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+        if (Model.objFilterAttributes.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objFilterAttributes.currentPage - 1;
+        }
+
+        var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.parent_systemId, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.parent_network_status, Model.parent_eType);
+    }
+
+    @using (Ajax.BeginForm("GetAccessories", "Library",
+                                                new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody" },
+                                                new { id = "frmViewAccesseries", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        @Html.HiddenFor(x => x.parent_eType, new { @id = "hdnParentType" })
+        @Html.HiddenFor(x => x.parent_systemId, new { @id = "hdnParentSystemId" })
+        @Html.HiddenFor(x => x.parent_network_id, new { @id = "hdnParentNetworkId" })
+        @Html.HiddenFor(m => m.geomType)
+
+        <section>
+            <div class="tablePad-bn d-flex">
+                @if (Model.lstData.Count == 1)
+                {
+                    <div class="recordCount"><b>Total Record:@grid.TotalRowCount</b></div>
+                    <span class="openAddAccessories btn btn-primary ml-auto mr-01 @(editPermission==true?"":"dvdisabled")" id="addAccessories" value="Add" title="Add Accessories"><i class="glyphicon glyphicon-plus white-color"></i> Add</span>
+                    <span id="btnAccessoriesExport" value="Export" class="exp--btn" title="Export Accessories"><i class="icon-Export"></i> Export</span>
+                }
+                @if (Model.lstData.Count > 1)
+                {
+                    <div class="recordCount"><b>Total Records:@grid.TotalRowCount</b></div>
+                    <span class="openAddAccessories btn btn-primary ml-auto mr-01 @(editPermission==true?"":"dvdisabled")" id="addAccessories" value="Add" title="Add Accessories"><i class="glyphicon glyphicon-plus white-color"></i> Add</span>
+                    <span id="btnAccessoriesExport" value="Export" class="exp--btn" title="Export Accessories"><i class="icon-Export"></i> Export</span>
+                }
+            </div>
+
+
+
+            @if (Model.lstData.Count > 0)
+            {
+                <div id="divViewAccesseriesDetail">
+
+
+                    <div class="space-pad">
+                        <div class="table-responsive">
+                            @grid.GetHtml(tableStyle: "grid",
+                                                htmlAttributes: new { id = "tblAcccessories" },
+                                                mode: WebGridPagerModes.All,
+                                                columns: grid.Columns(
+
+                                                grid.Column("", "Action", format:
+                                                                                        @<text>
+                                                                                            <div class="d-flex">
+                                                                                                <span id="@item.system_id" class="ConvertNetworkStatus">
+                                                                                                    @if (item.network_status == "Planned")
+                                                                                                    {
+                                                                                                        <i class="accessoriesNS ConvertToAsBuilt" onclick="si.UpdateAccessoriesNetworkStatus('A',@item.system_id)"><label id="chk_@item.system_id" hidden="hidden">@item.system_id</label></i>
+                                                                                                        <i class="accessoriesNS converttoDormant" onclick="si.UpdateAccessoriesNetworkStatus('D',@item.system_id)"><label id="chk_@item.system_id" hidden="hidden">@item.system_id</label></i>
+                                                                                                    }
+                                                                                                    @if (item.network_status == "As Built")
+                                                                                                    {
+                                                                                                        <i class="accessoriesNS ConvertToPlanned" onclick="si.UpdateAccessoriesNetworkStatus('P',@item.system_id)"><label id="chk_@item.system_id" hidden="hidden">@item.system_id</label></i>
+                                                                                                        <i class="accessoriesNS converttoDormant" onclick="si.UpdateAccessoriesNetworkStatus('D',@item.system_id)"><label id="chk_@item.system_id" hidden="hidden">@item.system_id</label></i>
+                                                                                                    }
+
+                                                                                                    @if (item.network_status == "Dormant")
+                                                                                                    {
+                                                                                                        <i class="accessoriesNS ConvertToPlanned" onclick="si.UpdateAccessoriesNetworkStatus('P',@item.system_id)"><label id="chk_@item.system_id" hidden="hidden">@item.system_id</label></i>
+                                                                                                    }
+                                                                                                </span>
+                                                                                                <span data-accessories-id="@item.system_id" class="openAuditAccessories" title="History"><i class="fa fa-history action_icon fa-fw m-r-xs" id=""></i></span>
+                                                                                                <span data-accessories-id="@item.system_id" class="openAddAccessories" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></span>
+                                                                                                <span data-accessories-id="@item.system_id" class="openDeleteAccessories @(editPermission==true?"":"dvdisabled")" title="Delete"> <i class="fa fa-fw fa-trash"></i></span>
+                                                                                            </div>
+                                                                                        </text>),
+
+grid.Column("entity_type", "Entity Type", format: @<text>@item.entity_type</text>),
+grid.Column("quantity", "Quantity", format: @<text>@item.quantity</text>),
+grid.Column("remarks", "Remark", format: @<text>@item.remarks</text>),
+grid.Column("specification", "Specification", format: @<text>@item.specification</text>),
+grid.Column("vendor_name", "Vendor Name", format: @<text>@item.vendor_name</text>),
+grid.Column("item_code", "Item Code", format: @<text>@item.item_code</text>),
+
+grid.Column("subcategory1", "Sub Category 1", format: @<text>@item.subcategory1</text>),
+grid.Column("subcategory2", "Sub Category 2", format: @<text>@item.subcategory2</text>),
+grid.Column("subcategory3", "Sub Category 3", format: @<text>@item.subcategory3</text>),
+grid.Column("network_status", "Network Status", format: @<text>@item.network_status</text>),
+
+                        @*grid.Column("is_active", "Status", format: @<text>@(item.is_active == true ? "Active" : "InActive")</text>),*@
+
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>),
+
+grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>),
+
+grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>)
+
+))
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+                        </div>
+                        </div>
+                </div>
+            }
+        </section>
+    }
+    @if (Model.lstData.Count == 0)
+    {
+        <div class="nr-found">
+            <span>
+                No Records Found.
+            </span>
+        </div>
+        <div class="d-flex justify-cont-center">
+            <div class="openAddAccessories add-acces-btn btn btn-primary  @(editPermission==true?"":"dvdisabled")" id="addAccessories" title="Add Accessories" data-accessories-id="0" style="">
+                <i class="glyphicon white-color glyphicon-plus"></i>
+            </div>
+        </div>
+    }
+    <script>
+        $(document).ready(function () {
+            addDefaultSortingIcons("tblAcccessories");
+            $('#ModalPopUp').off('click','.openAddAccessories');
+            $('#ModalPopUp').off('click','.openDeleteAccessories');
+            $('#ModalPopUp').off('click','.openAuditAccessories');
+            $('#ModalPopUp').on('click','.openAddAccessories', function () {
+                let systemId = $(this).data('accessoriesId');
+                ajaxReq('main/getGeometryDetail', { systemId: @Model.parent_systemId, entityType: '@Model.parent_eType', geomType: '@Model.geomType' }, true, function (resp) {
+                    if (resp.status = 'OK') {
+                        if (resp.result != null && resp.result != undefined) {
+                            var pgString = resp.result.sp_geometry;
+                            pgString = pgString.substring(pgString.lastIndexOf('(') + 1, pgString.indexOf(')'));
+
+                            popup.LoadModalDialog('child', 'Library/AddAccessories', {systemId:systemId, parentSystemId: @Model.parent_systemId, parentEType :'@Model.parent_eType',parentNetworkId:'@Model.parent_network_id',parent_networkStatus:'@Model.parent_network_status',geom:pgString,geomType:'@Model.geomType'}, 'Accessories', 'modal-md');
+                        }
+                    }
+                }, true, false);
+
+            });
+            $('#ModalPopUp').on('click','.openDeleteAccessories', function () {
+                let systemId = $(this).data('accessoriesId');
+                confirm('Are you sure you want to delete?',function(){
+                    ajaxReq('Library/DeleteAccessoriesById', { systemId: systemId }, true, function (res) {
+
+                        if (res.status == 'OK')
+                        {
+                            alert(res.message,'information');
+                            $('#tblAcccessories a').first().trigger('click');
+                        }
+                    }, false, false, true);
+                });
+
+            });
+            $('#ModalPopUp').on('click','.openAuditAccessories', function () {
+                let systemId = $(this).data('accessoriesId');
+                popup.LoadModalDialog('child', 'Audit/GetAccessoriesHistory', {accessoriesId:systemId}, 'Accessories History', 'modal-md');
+            });
+            $('#tblAcccessories th a,#tblAcccessories  tfoot a').on("click", function () {
+                $('#frmViewAccesseries').attr('action', $(this).attr('href')).submit();
+                return false;
+            });
+
+            //$('#tblAcccessories a').on("click", function () {
+            //    var pType = $('#hdnParentType').val();
+            //    var pSystemId = $('#hdnParentSystemId').val();
+            //    $(this).attr('href', function () {
+            //        return this.href += '&parent_systemId=' + encodeURIComponent(pSystemId) + '&parent_eType=' + encodeURIComponent(pType);
+            //    });
+            //});
+        });
+        $("#btnAccessoriesExport").on("click", function () {
+            Report();
+        });
+
+        function Report() {
+            window.location = appRoot + 'Library/DownloadAccessories';
+        }
+
+
+    </script>
+
+</div>

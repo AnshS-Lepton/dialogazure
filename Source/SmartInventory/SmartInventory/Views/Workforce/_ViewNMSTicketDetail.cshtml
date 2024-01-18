@@ -1,0 +1,89 @@
+﻿@model Models.HPSMTicketRequest.ViewNMSTicketDetails
+@{
+    WebGrid grid = new WebGrid();
+    if (Model.viewTicketFilter.totalRecord > 0)
+    {
+        grid = new WebGrid(rowsPerPage: Model.viewTicketFilter.totalRecord, canSort: false, ajaxUpdateContainerId: "divGvHPSMTicketDetail", ajaxUpdateCallback: "ChkAddClass()");
+        grid.Bind(Model.TaskDetails, autoSortAndPage: false, rowCount: Model.viewTicketFilter.totalRecord);
+        grid.PageIndex = 0;// Model.viewTicketFilter.currentPage - 1;
+    }
+}
+
+
+
+
+<div id="dvViewTicketContainer">
+    @using (Ajax.BeginForm("ViewNMSTicketDetails", "Main", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvParentModalBody" }, new { autocomplete = "off", @class = "form-horizontal", @id = "frmViewHPSMTicketIssue" }))
+    {
+        <div id="divGvHPSMTicketDetail">
+            @if (Model.TaskDetails.Count > 0)
+            {
+                <div class="recordCount">
+                    <center><b>NMS ticket details of NMS_TICKET_ID: @Model.viewTicketFilter.ticketId</b></center><br />
+                    <b>Total Records:@grid.TotalRowCount</b>
+                </div>
+
+                <div class="table-responsive" style="Max-Height:350px">
+                    @grid.GetHtml(tableStyle: "webgrid", headerStyle: "header", alternatingRowStyle: "alt",
+        htmlAttributes: new { id = "tblUserDetail" },
+        mode: WebGridPagerModes.All,
+        columns: grid.Columns(
+    grid.Column("createdTime", "Created_Time", format: @<text>@item.createdTime</text>),
+grid.Column("impactType", "Impact_Type", format: @<text>@item.impactType</text>),
+grid.Column("deviceRole", "Device_Role", format: @<text>@item.deviceRole</text>),
+
+grid.Column("customercount", "Customer_count", format: @<text>@item.customercount</text>),
+grid.Column("ticketStatus", "Ticket_Status", format: @<text>@item.ticketStatus</text>),
+grid.Column("networkentity", "Network_Entity", format: @<text>@item.networkentity</text>),
+
+grid.Column("gisId", "Gis_Id", format: @<text>@item.gisId</text>),
+grid.Column("remarks", "Remarks", format: @<text>@item.remarks</text>),
+grid.Column("inventoryName", "Inventory_Name", format: @<text>@item.inventoryName</text>),
+grid.Column("eventSource", "EventSource", format: @<text>@item.eventSource</text>),
+grid.Column("port", "Port", format: @<text>@item.port</text>),
+grid.Column("trailId", "TrailId", format: @<text>@item.trailId</text>),
+grid.Column("region", "Region", format: @<text>@item.region</text>),
+grid.Column("rootcauseDesc", "RootcauseDesc", format: @<text>@item.rootcauseDesc</text>),
+grid.Column("cityDivision", "City_Division", format: @<text>@item.cityDivision</text>),
+grid.Column("popLocation", "PopLocation", format: @<text>@item.popLocation</text>),
+grid.Column("area", "Area", format: @<text>@item.area</text>),
+grid.Column("ticketType", "Ticket_Type", format: @<text>@item.ticketType</text>),
+grid.Column("probableCause", "Probable_Cause", format: @<text>@item.probableCause</text>),
+grid.Column("specificProblem", "Specific_Problem", format: @<text>@item.specificProblem</text>),
+grid.Column("clearedTime", "Cleared_Time", format: @<text>@item.clearedTime</text>),
+
+grid.Column("ownerGroup", "Owner_Group", format: @<text>@item.ownerGroup</text>),
+grid.Column("assignedGroup", "assigned_Group", format: @<text>@item.assignedGroup</text>),
+grid.Column("etr", "Etr", format: @<text>@item.etr</text>),
+grid.Column("previousAction", "PreviousAction", format: @<text>@item.previousAction</text>),
+grid.Column("alarmDispName", "AlarmDispName", format: @<text>@item.alarmDispName</text>),
+grid.Column("fetchCustomers", "FetchCustomers", format: @<text>@item.fetchCustomers</text>),
+        @*grid.Column("jsondata", "Jsondata", format: @<text>@item.jsondata</text>),*@
+
+grid.Column("province_name", "Province_Name", format: @<text>@item.province_name</text>),
+grid.Column("primary_cluster_id", "Crimary_cluster_Id", format: @<text>@item.primary_cluster_id</text>),
+grid.Column("primary_cluster_name", "Primary_Cluster_Name", format: @<text>@item.primary_cluster_name</text>),
+grid.Column("pop_id", "Pop_id", format: @<text>@item.pop_id</text>),
+grid.Column("pop_name", "Pop_Name", format: @<text>@item.pop_name</text>),
+grid.Column("olt_id", "Olt_Id", format: @<text>@item.olt_id</text>),
+grid.Column("olt_name", "Olt_Name", format: @<text>@item.olt_name</text>),
+grid.Column("pon_port_id", "Pon_Port_Id", format: @<text>@item.pon_port_id</text>),
+grid.Column("fat_id", "Fat_Id", format: @<text>@item.fat_id</text>),
+grid.Column("primary_splitter_id", "Primary Splitter Id", format: @<text>@item.primary_splitter_id</text>),
+grid.Column("secondary_splitter_id", "Secondary Splitter Id", format: @<text>@item.secondary_splitter_id</text>)
+
+)
+)
+                </div>
+                }
+                else
+                {
+                <div class="nr-found">
+                    <span>No record found.</span>
+                </div>
+            }
+            @Html.Hidden("dir", grid.SortDirection)
+            @Html.Hidden("col", grid.SortColumn)
+        </div>
+    }
+</div>

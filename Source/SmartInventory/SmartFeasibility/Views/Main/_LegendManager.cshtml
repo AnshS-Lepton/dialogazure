@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<div id="wrapper">
+    <div class="main">
+        <div class="legend-wrapp">
+            <div class="legend-main">
+                <div class="ref-icon">
+                    <h4><span><img src="Content/images/Planned.png" alt="printLayerImg"></span><span class="leg-text">Planned</span></h4>
+                    <h4 class="fl-right"><span><img src="Content/images/AsBuilt.png" alt="printLayerImg"></span><span class="leg-text">As Build</span> </h4>
+                </div>
+                <!--START:: ONT Legend-->
+                <div class="legend-header">
+                    <h3>ONT</h3>
+                    <div class="legend-button fl-right">
+                        @*<a href="javascript:void(0)" id="show-legengd" onclick="showLegend('ont-range');"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>*@
+                        <a href="javascript:void(0)" onclick="showHideLegend(this,'ont-range');"><i class="fa fa-minus-square-o" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <ul class="ont-range" id="hide-le">
+                 
+                    <div class="legend-row">
+                        
+                        <div class="legend-col">
+                            <ul>
+                                <li><span><img src="~/Content/images/plnasb/onta-g.png" alt="ont-g"></span><span class="entity-percent"> 0 - 50%</span></li>
+                                <li><span><img src="~/Content/images/plnasb/onta-y.png" alt="ont-y"></span> <span class="entity-percent">51 - 80%</span></li>
+                                <li><span><img src="~/Content/images/plnasb/onta-r.png" alt="ont-r"></span><span class="entity-percent"> 81-100%</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </ul>
+                
+                <!--END:: Customer Switch Legend-->
+                <!--START:: Splitter Legend-->
+                <div class="legend-header">
+                    <h3>Splitter</h3>
+                    <div class="legend-button fl-right">
+                        @*<a href="javascript:void(0)" id="show-legengd" onclick="showLegend('splitter-range');"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>*@
+                        <a href="javascript:void(0)" onclick="showHideLegend(this,'splitter-range');"><i class="fa fa-minus-square-o" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <ul class="splitter-range" id="hide-le">
+
+                    @*<div class="ref-icon">
+                        <h4><span><i</span>Planned</h4>
+                        <h4 class="fl-right"><span></span>As Build </h4>
+                    </div>*@
+                    <div class="legend-row">
+                        <div class="legend-col">
+                            <h5>Primary</h5>
+                            <ul>
+                                <li><span><img src="~/Content/images/plnasb/PSARange1.png" alt="PSARange1"></span> <span class="entity-percent">0 - 50%</span></li>
+                                <li><span><img src="~/Content/images/plnasb/PSARange2.png" alt="PSARange2"></span> <span class="entity-percent">51 - 80%</span></li>
+                                <li><span><img src="~/Content/images/plnasb/PSARange3.png" alt="PSARange3"></span> <span class="entity-percent">81-100%</span></li>
+                            </ul>
+                            <h5>Secondary</h5>
+                            <ul>
+                                <li><span><img src="~/Content/images/plnasb/SSARange1.png" alt="SSARange1"></span><span class="entity-percent"> 0 - 50%</span></li>
+                                <li><span><img src="~/Content/images/plnasb/SSARange2.png" alt="SSARange2"></span> <span class="entity-percent">51 - 80%</span></li>
+                                <li><span><img src="~/Content/images/plnasb/SSARange3.png" alt="SSARange3"></span><span class="entity-percent"> 81-100%</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </ul>
+                <!--END:: Splitter Legend-->
+
+                <div class="legend-header">
+                    <h3>Others</h3>
+                    <div class="legend-button fl-right">
+                         <a href="javascript:void(0)" onclick="showHideLegend(this,'other-range');"><i class="fa fa-minus-square-o" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <ul class="other-range" id="hide-le">
+                    <div class="legend-row">
+                        <div class="legend-col legend-left" style="width: 100%; padding-top: 5px;">
+                            <ul>
+                                <li><span><img src="~/Content/images/LayerIcon/POD.png" alt="PSPRange1"></span> POP</li>
+                                <li><span><img src="~/Content/images/LayerIcon/MPOD.png" alt="PSPRange2"></span> MPOD</li>
+                                <li><span><img src="~/Content/images/LayerIcon/Manhole.png" alt="PSPRange3"></span> Manhole</li>
+                                <li><span><img src="~/Content/images/LayerIcon/Structure.png" alt="PSPRange3"></span> Structure</li>
+                                <li><span><img src="~/Content/images/LayerIcon/ADB.png" alt="PSPRange3"></span> ADB</li>
+                                <li><span><img src="~/Content/images/LayerIcon/BDB.png" alt="PSPRange3"></span> FDC</li>
+                                <li><span><img src="~/Content/images/LayerIcon/CDB.png" alt="PSPRange3"></span> CDB</li>
+                                <li><span><img src="~/Content/images/LayerIcon/HTB.png" alt="PSPRange3"></span> HTB</li>
+                                <li><span><img src="~/Content/images/LayerIcon/FDB.png" alt="PSPRange3"></span> FAT</li>
+                                <li><span><img src="~/Content/images/LayerIcon/Cabinet.png" alt="PSPRange3"></span> Cabinet</li>
+                                <li><span><img src="~/Content/images/LayerIcon/Vault.png" alt="PSPRange3"></span> Vault</li>
+                            </ul>                         
+                        </div>
+                        
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,152 @@
+﻿
+.maindiv {
+    width: 650px;
+    height: 500px;
+    margin: auto;
+    background-color: #ffffff;
+    border-radius: 5px;
+    border: 1px solid #b9b7b7;
+}
+
+.headerMD {
+    width: 100%;
+    height: 30px;
+    background-color: #02bb8a;
+}
+
+div.scrollmenu {
+    background-color:var(--tabBg);
+    white-space: nowrap;
+    font-size: 14px;
+    display: flex;
+    border-bottom: 1px solid #efefef;
+    position: relative;
+}
+
+div.scrollerhide {
+    overflow: hidden;
+}
+
+div.scrollerhide .nav-tabs {
+    display: flex;
+}
+
+/*    div.scrollerhide .nav-tabs > li > a {
+        padding: 5px 10px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }*/
+
+
+.spanSide {
+    padding: 6px 10px;
+    background-color: #efefef;
+    cursor: pointer;
+    font-size: 16px;
+    height: 100%;
+    top: 6px;
+    position: relative;
+}
+
+.scrollmenu .overflow a {
+    display: inline-block;
+    color: #6a6a6a;
+    text-align: center;
+    padding: 7px 12px;
+    text-decoration: none;
+    border-radius: 0px;
+}
+
+.scrollmenu .overflow a:hover {
+    background-color: #30be74;
+    color: #fff;
+    border-radius: 0px;
+}
+
+.dropMenu ul li a {
+    color: #6a6a6a;
+    text-decoration: none;
+    border-radius: 0px;
+    padding:0;
+}
+.dropMenu {
+    position: absolute;
+    width: 200px;
+    background-color: white;
+    right: 0px;
+    margin: 0px 8px 0px 0px;
+    box-shadow: #ccc 0px 0 10px;
+    color: #888;
+    display: none;
+    top: 35px;
+    z-index: 9;
+}
+
+.dropMenu ul {
+    padding: 0px;
+    margin:0;
+    max-height:250px;
+    overflow:hidden;
+    overflow-y:auto;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+}
+
+.dropMenu ul li {
+    list-style: none;
+    padding: 8px 0px 8px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+    transition:0.3s;
+}
+
+.dropMenu ul li:hover {
+    background-color:#f1f1f1;
+    border-left: 3px solid var(--secondary-color);
+    padding: 8px 0px 8px 13px;
+    cursor:pointer;
+}
+
+
+.dropMenu .alltabs {
+    padding: 10px;
+    background-color: #ededed;
+    font-weight: 600;
+}
+
+.arrowDropUp {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #ededed;
+    position: absolute;
+    z-index: 12;
+    right: 8px;
+    top: 28px;
+    display: none;
+}
+
+.dropMenu::-webkit-scrollbar-thumb {
+    background: #02bb8a;
+}
+
+/*.activeMenu {
+        background-color: #30be74;
+        color: #fff !important;
+    }*/
+
+.activeSideMenu {
+    background-color: #efefef;
+    border-left: 3px solid #02bb8a;
+    font-weight: 600;
+}
+
+.go-left {
+    border-right: 1px solid #b9b7b7;
+}
+
+.go-right {
+    border-left: 1px solid #b9b7b7;
+}

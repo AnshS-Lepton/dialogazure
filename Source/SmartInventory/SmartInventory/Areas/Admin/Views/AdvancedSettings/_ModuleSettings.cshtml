@@ -1,0 +1,402 @@
+﻿<!DOCTYPE html>
+@model Models.Admin.ModuleSettings
+@using SmartInventory.Settings;
+
+
+<style>
+    #divWebModule, #divMobileModule, #divAdminModule {
+        max-height: calc(101vh - 310px);
+        overflow:auto;
+    }
+
+    #dvUserDetail .chosen-container-single .chosen-single {
+        height: 28px;
+    }
+
+    #ddl_UserRole_chosen {
+        width: 82% !important;
+    }
+
+    .ViewRolebtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        width: 17%;
+    }
+
+    .Nextbtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        float: right;
+    }
+
+    .Previousbtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        margin-right: 20px;
+    }
+
+    .saveBtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+    }
+
+    #dvUserDetail .form-group {
+        margin-bottom: 5px;
+    }
+
+    
+
+    #dvUserDetail {
+        margin: auto;
+        padding: 10px;
+        max-width: 700px;
+    }
+
+    .checkStep {
+        display: none;
+        height: 30px;
+        width: 29px;
+    }
+
+    .title {
+        margin: 0 auto;
+    }
+
+    .clsStepsContainer {
+        width: 100%;
+        margin-left: 0px;
+        min-width: 516px;
+        height: auto;
+    }
+
+    .clsUserContainer .content {
+        width: 80%;
+        margin: auto;
+        margin-top: 25px;
+        height: auto;
+    }
+
+    .successImg {
+        margin-top: 150px;
+        min-height: 300px;
+        width: 100%;
+        top: 40%;
+        text-align: center;
+        position: relative;
+    }
+
+    .mainModule li {
+        background: none !important;
+        padding: 0px 0pt 0px 0px !important;
+    }
+
+    .mainModule input[type="checkbox"] {
+        position: absolute !important;
+    }
+
+    ul {
+        list-style: none;
+        padding-left: 20px;
+    }
+
+    .d--flex {
+        display: flex;
+    }
+    .just-right{
+        justify-content:flex-end;
+    }
+
+    .Admin-section, .Web-section, .Mobile-section {
+        flex: 0 0 33%;
+    }
+
+    .boxes--minh {
+        height: 265px;
+        overflow-y: auto;
+        margin-right: 10px;
+    }
+    .admin--treeview li label{
+        margin-bottom:1rem !important;
+    }
+</style>
+
+
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div class="dvUserDetail update_panel fullWidth">
+    <div class="title">
+        <h4>
+           Activate / Deactivate Modules
+        </h4>
+    </div>
+    @using (Html.BeginForm("SaveModuleSettings", "AdvancedSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmRoleModuleInfo", @class = "form-horizontal pad_left", onsubmit = "return CheckModule()" }))
+    {
+
+
+        <!-- your steps content here -->
+        <div id="modulerights-part" class="content active">
+            <div id="module-data">
+                <label>
+                    <input type="checkbox" name="AllLayers" id="CheckAll_Module" class="allModule" onclick="CheckByClass('allModule',this)" /><b>Select All</b>
+                </label>
+                <div id="partionTable" class="d--flex">
+                    <div class="Web-section">
+                        <label>
+                            <input type="checkbox" name="AllLayers" id="CheckAll_Web" class="allModule allWeb" onclick="CheckByClass('allWeb',this)" /><b>Web</b>
+                        </label>
+                        <div class="row mr-1">
+                            <div class="col-md-12 column" id="divWebModule">
+                                <ul class="mainModule admin--treeview" style="display:block;">
+
+                                    @{ var count = 0;
+                                        var parentModule = Model.lstUserModule.Where(x => x.parent_module_id == 0).OrderBy(x => x.module_sequence).ToList();
+                                        for (var i = 0; i < parentModule.Count; i++)
+                                        {
+                                            if (parentModule[i].type == "Web")
+                                            {
+                                                <li class="collapsable">
+                                                    <div class="hitarea collapsable-hitarea"></div>
+                                                    @*<input id="chk_parent_@parentModule[i].Id" type="checkbox" class="checkbox-custom">*@
+
+                                                    @Html.CheckBoxFor(model => parentModule[i].is_selected, new { @class = "allModule allWeb chkModule module_" + parentModule[i].id + "", @onclick = "CheckByClass('chkModuleChild_" + parentModule[i].id + "',this)", @onchange = "CheckModule()", Name = "lstUserModule[" + count + "].is_selected" })
+                                                    @Html.HiddenFor(model => parentModule[i].id, new { Name = "lstUserModule[" + count + "].Id" })
+                                                    @Html.HiddenFor(model => parentModule[i].type, new { Name = "lstUserModule[" + count + "].type" })
+                                                    @Html.HiddenFor(model => parentModule[i].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+
+
+                                                    <label for="chk_parent_@parentModule[i].id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                                        <span>@parentModule[i].module_name</span>
+                                                    </label>
+
+                                                   
+                                                </li>
+                                            }
+                                        }
+                                    }
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Mobile-section">
+                        <label>
+                            <input type="checkbox" name="AllLayers" id="CheckAll_Mobile" class="allModule allMobile" onclick="CheckByClass('allMobile',this)" /><b>Mobile</b>
+                        </label>
+                        <div class="row mr-1">
+                            <div class="col-md-12 column" id="divMobileModule">
+                                <ul class="mainModule admin--treeview" style="display:block;">
+
+                                    @{
+                                        //var mobileParentModule = Model.lstUserModule.Where(x => x.parent_module_id == 0).ToList();
+                                        for (var i = 0; i < parentModule.Count; i++)
+                                        {
+                                            if (parentModule[i].type == "Mobile")
+                                            {
+                                                <li class="collapsable">
+                                                    <div class="hitarea collapsable-hitarea"></div>
+                                                    @*<input id="chk_parent_@parentModule[i].Id" type="checkbox" class="checkbox-custom">*@
+
+                                                    @Html.CheckBoxFor(model => parentModule[i].is_selected, new { @class = "allModule allMobile chkModule module_" + parentModule[i].id + "", @onclick = "CheckByClass('chkModuleChild_" + parentModule[i].id + "',this)", @onchange = "CheckModule()", Name = "lstUserModule[" + count + "].is_selected" })
+                                                    @Html.HiddenFor(model => parentModule[i].id, new { Name = "lstUserModule[" + count + "].Id" })
+                                                    @Html.HiddenFor(model => parentModule[i].type, new { Name = "lstUserModule[" + count + "].type" })
+                                                    @Html.HiddenFor(model => parentModule[i].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+
+
+                                                    <label for="chk_parent_@parentModule[i].id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                                        <span>@parentModule[i].module_name</span>
+                                                    </label>
+
+                                                    @{count = count + 1;
+                                                        var childMobileModule = Model.lstUserModule.Where(x => x.parent_module_id == parentModule[i].id).OrderBy(x => x.module_sequence).ToList();
+                                                        for (var j = 0; j < childMobileModule.Count; j++)
+                                                        {
+
+
+                                                            <ul class="collapsable" style="display: block; margin-top: -8px;">
+                                                                <li>
+                                                                    <img style="margin-top: -8px;" src="~/Areas/Admin/Content/css/images/t.gif" />
+                                                                    @*<input id="chk_child_@childModule[j].Id" class="checkbox-custom" type="checkbox">*@
+                                                                    @Html.CheckBoxFor(model => childMobileModule[j].is_selected, new { @class = "allModule allMobile chkModule chkModuleChild_" + parentModule[i].id + "", @onchange = "checkModuleSelected(" + parentModule[i].id + ")", Name = "lstUserModule[" + count + "].is_selected" })
+                                                                    @Html.HiddenFor(model => childMobileModule[j].id, new { Name = "lstUserModule[" + count + "].Id" })
+                                                                    @Html.HiddenFor(model => childMobileModule[j].type, new { Name = "lstUserModule[" + count + "].type" })
+                                                                    @Html.HiddenFor(model => childMobileModule[j].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+
+                                                                    <label for="chk_child_@childMobileModule[j].id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                                                        <span>@childMobileModule[j].module_name</span>
+                                                                    </label>
+
+                                                                </li>
+                                                            </ul>
+                                                            count = count + 1;
+                                                        }
+                                                    }
+                                                </li>
+                                            }
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Admin-section">
+                        <label>
+                            <input type="checkbox" name="AllLayers" id="CheckAll_Admin" class="allModule allAdmin" onclick="CheckByClass('allAdmin',this)" /><b>Admin</b>
+                        </label>
+                        <div class="row">
+                            <div class="col-md-12 column" id="divAdminModule">
+                                <ul class="mainModule admin--treeview" style="display:block;">
+
+                                    @{
+                                        //var AdminParentModule = Model.lstUserModule.Where(x => x.parent_module_id == 0).ToList();
+                                        for (var i = 0; i < parentModule.Count; i++)
+                                        {
+                                            if (parentModule[i].type == "Admin")
+                                            {
+                                                <li class="collapsable">
+                                                    <div class="hitarea collapsable-hitarea"></div>
+                                                    @*<input id="chk_parent_@parentModule[i].Id" type="checkbox" class="checkbox-custom">*@
+
+                                                    @Html.CheckBoxFor(model => parentModule[i].is_selected, new { @class = "allModule allAdmin chkModule module_" + parentModule[i].id + "", @onclick = "CheckByClass('chkModuleChild_" + parentModule[i].id + "',this)", @onchange = "CheckModule()", Name = "lstUserModule[" + count + "].is_selected" })
+                                                    @Html.HiddenFor(model => parentModule[i].id, new { Name = "lstUserModule[" + count + "].Id" })
+                                                    @Html.HiddenFor(model => parentModule[i].type, new { Name = "lstUserModule[" + count + "].type" })
+                                                    @Html.HiddenFor(model => parentModule[i].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+
+
+                                                    <label for="chk_parent_@parentModule[i].id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                                        <span>@parentModule[i].module_name</span>
+                                                    </label>
+
+                                                    @{count = count + 1;
+                                                        var childAdminModule = Model.lstUserModule.Where(x => x.parent_module_id == parentModule[i].id).OrderBy(x => x.module_sequence).ToList();
+                                                        for (var j = 0; j < childAdminModule.Count; j++)
+                                                        {
+
+
+                                                            <ul class="collapsable" style="display: block; margin-top: -8px;">
+                                                                <li>
+                                                                    <img style="margin-top: -8px;" src="~/Areas/Admin/Content/css/images/t.gif" />
+                                                                    @*<input id="chk_child_@childModule[j].Id" class="checkbox-custom" type="checkbox">*@
+                                                                    @Html.CheckBoxFor(model => childAdminModule[j].is_selected, new { @class = "allModule allAdmin chkModule chkModuleChild_" + parentModule[i].id + "", @onchange = "checkModuleSelected(" + parentModule[i].id + ")", Name = "lstUserModule[" + count + "].is_selected" })
+                                                                    @Html.HiddenFor(model => childAdminModule[j].id, new { Name = "lstUserModule[" + count + "].Id" })
+                                                                    @Html.HiddenFor(model => childAdminModule[j].type, new { Name = "lstUserModule[" + count + "].type" })
+                                                                    @Html.HiddenFor(model => childAdminModule[j].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+
+                                                                    <label for="chk_child_@childAdminModule[j].id" style="margin-left:19px;" class="checkbox-custom-label ">
+                                                                        <span>@childAdminModule[j].module_name</span>
+                                                                    </label>
+
+                                                                </li>
+                                                            </ul>
+                                                            count = count + 1;
+                                                        }
+                                                    }
+                                                </li>
+                                            }
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label style="color:red; display:none;" id="errModule"><b>* Aleast one module right should be given!</b></label>
+                    </div>
+                </div>
+                <div class="form-group" id="dvBtnAction">
+                    <div class="d--flex just-right">
+                            <button class="btn btn-primary savebtn mr-1">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".mainModule").treeview({
+            collapsed: false,
+            animated: "medium",
+            persist: "location"
+        });
+        $("div").removeClass("expandable-hitarea");
+        displayApplicationModule();
+    });
+
+
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ placeholder_text_multiple: 'All', width: '100%' });
+        // hideShowModuleList();
+        //  onChangeUserRole()
+        setAllCheckBox();
+    });
+
+    function hideShowModuleList() {
+        if ($("#ddl_UserRole").val() == 0 || $("#ddl_UserRole").val() == "") {
+            $(".update_section").hide();
+            $(".errorSelected").show();
+        } else {
+            $(".update_section").show();
+            $(".errorSelected").hide();
+        }
+    }
+
+    function onChangeUserRole() {
+        hideShowModuleList();
+        if ($("#ddl_UserRole").val() != 0 || $("#ddl_UserRole").val() != "") {
+            //$("#dvProgress").show();
+            //$('#dvProgress').css('display', 'block');
+            ajaxReq('AdvancedSettings/GetModuleSettings', null, true, function (resp) {
+                $('#partionTable').html(resp);
+                $(".mainModule").not(".grpNetwork").treeview({
+                    collapsed: false,
+                    animated: "medium",
+                    persist: "location"
+                });
+                //$("#dvProgress").hide();
+                //$('#dvProgress').css('display', 'none');
+                setAllCheckBox();
+            })
+        }
+
+    }
+    //###################################
+    function CheckByClass(clsNmae, obj) {
+        $("." + clsNmae + "[type='checkbox']").prop("checked", $(obj).prop("checked"));
+        setAllCheckBox();
+    }
+    function checkModuleSelected(moduleId) {
+        var isChildActive = $('.chkModuleChild_' + moduleId).is(":checked");
+        $(".module_" + moduleId).prop('checked', isChildActive);
+        setAllCheckBox();
+    }
+    function checkModuleSelected(moduleId) {
+        var isChildActive = $('.chkModuleSubChild_' + moduleId).is(":checked");
+        $(".chkModuleChild_" + moduleId).prop('checked', isChildActive);
+        setAllCheckBox();
+    }
+
+   
+    function setAllCheckBox() {
+        
+        $('#CheckAll_Web').prop("checked", $("#divWebModule input[type=checkbox]").length == $("#divWebModule input[type=checkbox]:checked").length);
+        $('#CheckAll_Mobile').prop("checked", $("#divMobileModule  input[type=checkbox]").length == $("#divMobileModule  input[type=checkbox]:checked").length);
+        $('#CheckAll_Admin').prop("checked", $("#divAdminModule  input[type=checkbox]").length == $("#divAdminModule  input[type=checkbox]:checked").length);
+        var $allModuleCheckbox = $("#modulerights-part input[type=checkbox]").not("#CheckAll_Module");
+        var $allModuleCheckedCheckbox = $("#modulerights-part input[type=checkbox]:checked").not("#CheckAll_Module");
+        $('#CheckAll_Module').prop("checked", $allModuleCheckbox.length == $allModuleCheckedCheckbox.length);
+    }
+    function CheckModule() {
+
+        if ($(".chkModule").is(":checked") == false && $("#modulerights-part").hasClass('active')) {
+            $("#errModule").show();
+            return false;
+        }
+        setAllCheckBox();
+        $("#errModule").hide();
+        return true;
+
+    }
+</script>

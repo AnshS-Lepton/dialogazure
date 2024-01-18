@@ -1,0 +1,184 @@
+﻿@model Models.fiberLinkAssociation
+ 
+<style>
+    .ui-menu-item { 
+        margin: 0;
+        padding: 6px 0px 6px 20px;
+        list-style: none;
+        background-repeat: no-repeat;
+        background-position: left center;
+        background-size: 17px;
+        border-bottom: 1px solid #dedbdb;
+        margin-left: 5px;
+        margin-right: 5px;
+        max-width: 266px !important;
+        overflow: hidden;
+        height: auto;
+    }
+
+    .ui-state-focus {
+        border-width: 0px 0px 0px 0px !important;
+        border-bottom: 1px solid #dedbdb !important;
+        background-color: #bab3b3 !important;
+    }
+
+    .TickCrossicon { 
+        margin-left: 264px;
+    } 
+
+    .crossIcon {
+        display: none;
+    }
+
+    .tickIcon {
+        display: none;
+    }
+
+    .tickCrossImg { 
+        width: 17px;
+        cursor: pointer;
+        margin-top: -22px; 
+        margin-right: 27px;
+        margin-left: 265px;
+    }
+    .progressbarShow{
+        display:none;
+    }
+</style>
+<input type="hidden" value="0" id="hdnLinkSystemId" />
+@Html.HiddenFor(x=>x.link_system_id,new { id= "hdnModelLinkSystemId" })
+@Html.HiddenFor(x => x.cable_id, new { id = "hdnCableId" })
+@Html.HiddenFor(x=>x.fiber_number,new { id = "hdnFiberNumber" })
+
+<!DOCTYPE html>
+<div class="modal-header">
+    <span type="button" class="icon-close" data-original-title="" style="float:right;cursor: pointer;" title="Close" onclick="fiberLink.closepopup();"></span>
+    <h4 class="modal-title" style="float: left;font-size: 15px;">@Resources.Resources.SI_GBL_GBL_GBL_GBL_128</h4>
+</div>
+<div class="row padRow">
+    <div class="form-group">
+        <div>
+            <input type="text" name="LinkId" class="form-control ui-autocomplete-input" id="txtFiberLinkId" maxlength="100" style="width: 86%;margin-top: 12px;margin-left: 22px;"  value="@Model.link_id" />
+        </div>
+        <div class="TickCrossicons" style="position: absolute">
+            <img src="~/Content/images/cross.gif" class="tickCrossImg crossIcon @(Model.link_system_id==0?"crossIcon":"")" id="IconCross" />
+            <img src="~/Content/images/tick_1.gif" class="tickCrossImg tickIcon @(Model.link_system_id>0?"tickIcon":"")" id="ImgTick" />
+            @*<img style="display:none; border:4px solid rgb(250 255 255);height:25px;" id="progressbar" alt="Loading..." src="~/content/images/loading_new.gif" /><br />*@
+            <i id="progressbar" class="progressbarShow" style="padding-top: 38px;">
+                <img style="border:4px solid rgb(250 255 255);height:25px;margin-top: 27px; margin-left: 119px;" alt="Loading..." src="~/content/images/loading_new.gif" /><br />
+            </i>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <p style="background-color:#bfedba;color:#0044cc;padding:4px;white-space: initial;font-size: 12px;margin-left: 15px;margin-right: 13px;">
+            @*<b style="color:#0044cc;">Note:</b>*@
+                @*This Link ID will be associate with the<br /> corresponding connected fiber Number.*@
+            @Html.Raw(Resources.Resources.SI_OSP_GBL_NET_FRM_427)
+        </p>
+    </div>
+</div>
+<div class="form-group ModalFooter" id="dvAssociateLinkFooter" style="border-top: 1px solid #bdbcbc;width: 280px;">
+    <div class="col-md-6 col-sm-6 ModalFooterControll">
+        <input type="button" class="btn btn-primary" id="btnok" name="btnaction" value="@(Model.link_system_id==0?"Save":"Update")" onclick="fiberLink.AssociatelinkId();" />
+        <button type="button" id="btnclear" class="btn btn-default" onclick="fiberLink.btnclearLinkId();" style="float: left;margin-left: -150px;"> @Resources.Resources.SI_GBL_GBL_GBL_GBL_129</button>
+    </div>
+</div>
+<div class="clearfix"></div>
+<script src="~/Content/js/FiberLink.js"></script>
+<script type="text/javascript">
+    var fiberLink = new FiberLink();
+    $(document).ready(function () {
+        fiberLink.InitApp();
+        @*$('.chosen-select').chosen({ width: '164%' });
+        $('#dvAssociateLink').draggable({ containment: "parent" });
+        if ('@Model.link_system_id' > 0) {
+            $('.tickIcon').css('display', 'block');
+        }
+        $('#hdnLinkSystemId').val(@Model.link_system_id);*@
+    });
+    @*function updateLinkId() { 
+        var _linkId = $('#txtFiberLinkId').val();
+        var _fiberNo = '@Model.fiber_number';
+        var _cableId = '@Model.cable_id';
+         
+            validateFiberlinkId(_linkId, _fiberNo, _cableId);
+         
+        var _linkSystemId = $('#hdnLinkSystemId').val(); 
+    }
+
+    $("#btnclear").on("click", function () {
+        $('#txtFiberLinkId').val('');
+        $('#txtFiberLinkId').css('border-color', '');
+        $('.crossIcon').css('display', 'none');
+        $('.tickIcon').css('display', 'none');
+    });
+    $('#close').on("click", function () {
+        $(this).closest('#Model').hide()
+    });
+
+    function validateFiberlinkId(_linkId, _fiberNo, _cableId) {
+
+            ajaxReq('FiberLink/validateFiberlinkId', { linkId: _linkId.trim(), columnName: "link_id" }, true, function (resp) {
+                if (resp.objfiberLink != null) {
+                    $('#hdnLinkSystemId').val(resp.objfiberLink.system_id);
+                    $('.crossIcon').css('display', 'none');
+                    $('.tickIcon').css('display', 'block'); 
+                    $('#txtFiberLinkId').css('border-color', '');
+                    associateFiberLink(resp.objfiberLink.system_id, _linkId, _fiberNo, _cableId, 'A');
+                }
+                else {
+                    if (parseInt($('#hdnLinkSystemId').val()) && $('#txtFiberLinkId').val().trim().length == 0) {
+                        associateFiberLink($('#hdnLinkSystemId').val(), _linkId, _fiberNo, _cableId, 'D');
+                    }
+                    else {
+                        $('.crossIcon').css('display', 'block');
+                        $('.tickIcon').css('display', 'none');
+                        $('#txtFiberLinkId').css('border-color', 'red');
+                    }
+                }
+
+            }); 
+    }
+
+    function associateFiberLink(_linkSystemId, _linkId, _fiberNo, _cableId, _action) {
+         
+        var gridFiberNumber = _fiberNo;
+        var cableId = _cableId;
+        var linkSystemId = 0;
+        if (_linkSystemId!="0")
+            linkSystemId = _linkSystemId;
+        else
+            linkSystemId = $('#hdnLinkSystemId').val();
+
+        ajaxReq('FiberLink/AssociateFiberLinkWithCable', { link_system_id: _linkSystemId, cable_id: _cableId, fiber_no: _fiberNo, action: _action }, true, function (resp) {
+            if (resp.status == 'OK') {
+                 
+                $('.crossIcon').css('display', 'none');
+                $('.tickIcon').css('display', 'none'); 
+                $('#dvAssociateLink').hide();
+                alert("Link Associated Successfully!");
+                if (linkSystemId > 0 && $('#txtFiberLinkId').val().trim().length > 0) {
+
+                    $('#lblGrdLinkId_' + gridFiberNumber).html($('#txtFiberLinkId').val());
+                }
+                else {
+
+                    $('#lblGrdLinkId_' + gridFiberNumber).html('Enter Link Id');
+                } 
+            }
+            else {
+
+                $('.crossIcon').css('display', 'block');
+                $('.tickIcon').css('display', 'none'); 
+            }
+
+        });
+    }
+    function closepopup() {
+        $('#dvAssociateLink').hide();
+    }*@  
+</script>
+
+

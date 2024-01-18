@@ -1,0 +1,238 @@
+﻿@model Models.RedlineMaster
+@helper pageMessage()
+{
+{ Html.RenderPartial("_PageMessage", Model.pageMsg); }
+
+}
+<style>
+    .required > .chosen-single {
+        border: 1px solid red;
+    }
+
+    .disable {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+</style>
+
+<!DOCTYPE html>
+@using (Ajax.BeginForm("SaveRedline", "Redline", new AjaxOptions
+{
+    OnSuccess = "OnSuccess",
+    HttpMethod = "POST"
+},
+                                                new { id = "frmAddRedline", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    <div id="dvRedline" class="libDetail">
+        <div id="CreateRedline" class="tab-pane fade in active show">
+                <div class="space-pad">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_152</legend>
+                        <div class="form-group row">
+
+                            <label class="control-label col-sm-2" for="txtTaskName">@Resources.Resources.SI_OSP_GBL_GBL_FRM_149<i class="clsMandatory">*</i>:</label>
+                            @Html.HiddenFor(m => m.system_id, new { @id = "hdnRedlineId" })
+                            @Html.HiddenFor(m => m.geom, new { @id = "hdnGeomtxt" })
+                            @Html.HiddenFor(m => m.geom_type, new { @id = "hdnGeomType" })
+                            <div class="col-md-4" id="dvTaskName">
+                                @Html.TextBoxFor(m => m.task_name, new { @id = "txtTaskName", @title = Resources.Resources.SI_OSP_GBL_GBL_FRM_149, @tabindex = "4", @class = "input-sm form-control validation", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_FRM_149, @maxlength = "50" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtTaskType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_150<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4" id="dvTaskType">
+                                @Html.TextBoxFor(m => m.task_type, new { @id = "txtTaskType", @title = Resources.Resources.SI_OSP_GBL_GBL_FRM_150, @tabindex = "4", @class = "input-sm form-control validation", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_FRM_150, @maxlength = "50" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="ddlTaskAction">@Resources.Resources.SI_OSP_GBL_GBL_FRM_151<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4" id="dvRefRedlineId">
+                                @*@Html.TextBoxFor(m => m.task_action, new { @id = "txtTaskAction", @title = "Task Action", @tabindex = "4", @class = "input-sm form-control validation", @placeholder = "Task Action", maxlength = 50 })*@
+                                @Html.DropDownListFor(m => m.task_action, new List<SelectListItem>
+                              { new SelectListItem { Text = "ADD", Value = "ADD"},
+                               new SelectListItem { Text = "EDIT", Value = "EDIT"},
+                               new SelectListItem { Text = "DELETE", Value = "DELETE"},
+                               }, "--Select--", new { @class = "chosen-select form-control validation", @id = "ddlTaskAction" })
+                            </div>
+                            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_RPT_011<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4" readonly>
+                                @Html.TextBoxFor(m => m.assigned_by, new { @id = "txtAssignedBy", @title = Resources.Resources.SI_OSP_GBL_NET_RPT_011, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_RPT_011, @maxlength="50" })
+                            </div>
+
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="ddlassignedto">@Resources.Resources.SI_OSP_GBL_NET_FRM_105 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @*@Html.DropDownListFor(x => x.assigned_to_id, new SelectList(Model.lstAssignedTo.Select(x => new { Value = x.user_id, Text = x.user_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control validation", @id = "ddlassignedto" })*@
+                                @Html.DropDownListFor(m => m.lstAssignedUsers, new SelectList(Model.lstAssignedTo.Select(x => new { Value = x.user_id, Text = x.user_name }), "Value", "Text"), "Select Type", new { @multiple = "multiple", @class = "chosen-select form-control validation", @style = "padding:0;", @id = "ddlassignedto" })
+
+                            </div>
+                            <label class="control-label col-sm-2" for="ddlTaskStatus">@Resources.Resources.SI_OSP_GBL_GBL_GBL_280 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @Html.DropDownListFor(m => m.status_id, new SelectList(Model.statusDropdown.Select(x => new { Value = x.status_id, Text = x.status_name }), "Value", "Text"), "Select Status", new { @class = "chosen-select form-control validation", @id = "ddlTaskStatus" })
+                                @*@Html.DropDownListFor(m => m.status_id, new List<SelectListItem>
+                                    { new SelectListItem { Text = "Assigned", Value = "1"},
+                                     new SelectListItem { Text = "InProgress", Value = "2"},
+                                     new SelectListItem { Text = "Closed", Value = "3"},
+                                     new SelectListItem { Text = "ReAssigned", Value = "4"},
+                                     }, "--Select--", new { @class = "chosen-select form-control validation", @id = "ddlTaskStatus" })*@
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtremarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(x => x.task_remarks, new { @id = "txtremarks", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_006, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_006, @maxlength = "500", @resize = "none" })
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+        </div>
+        <div class="ModalFooter d-flex">
+            @if (Model.system_id > 0)
+            {
+
+                <button type="button" id="btnCancle" class="btn btn-warning ml-auto mr-01" onclick="OnChildCancle();"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</button>
+                <button type="submit" id="btnUpdateRedline" class="btn btn-success" onclick="return isFormValid();">
+                    @Resources.Resources.GBL_GBL_GBL_GBL_GBL_003
+                </button>
+            }
+            else
+            {
+                <button type="button" id="btnCancle" class="btn btn-warning ml-auto" onclick="OnCancle();"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</button>
+                <button type="submit" id="btnCreateRedline" class="btn btn-success ml-10" onclick="return isFormValid();"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+
+            }
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        // remove popup overflow on chosen select 
+        $(document).on('click', '.chosen-container', function () {
+            $('.libDetail').addClass('overInitial');
+        });
+        $(document).on('blur', '.chosen-container', function () {
+            $('.libDetail').removeClass('overInitial');
+        });
+        $('.chosen-select').chosen({ placeholder_text_multiple: '--All--', width: '100%' });
+        var Model = '@Html.Raw(Json.Encode(Model))';
+        var listUser = JSON.parse(Model).lstAssignedUsers;
+        if (listUser != null) {
+            $('#ddlassignedto').val(listUser).trigger("chosen:updated");
+        }
+        if ($("#txtAssignedBy").val() != "") {
+            $('#txtAssignedBy').attr('readonly', true);
+        }
+        if ($("#ddlassignedto").val() != "" && $("#ddlassignedto").val() != null) {
+            //$('#ddlassignedto').attr('readonly', true);
+            $("#ddlassignedto_chosen").addClass("disable");
+        }
+        if ($("#ddlTaskAction").val() != "") {
+            //$('#ddlTaskAction').attr('readonly', true);
+            $("#ddlTaskAction_chosen").addClass("disable");
+        }
+        //$('#dvNetworkRedline .chosen-select').chosen({ placeholder_text_multiple: '--All--', width: '100%' });
+        //$("#ddlProvince").val(selectedProvinces.split(',')).trigger("chosen:updated");
+        //$("#ddlRegion").val(selectedRegions.split(',')).trigger("chosen:updated");
+        //si.NetworkRedline.setDateTimeCalendar('target_date', 'img_permit_date', '', true);
+        //$('.chosen-select').chosen({ width: '100%', });
+        //$('#hdnprovinceid').val(selectedProvinces);
+        //$('#hdnregionid').val(selectedRegions);
+    });
+
+    $(".validation").keypress(function () {
+        $('.validation').css('border-color', '');
+    });
+    $(".validation").change(function () {
+         
+        $(".chosen-container").removeClass('required');
+    });
+    function OnSuccess(data) {
+         
+        if (data.pageMsg.status == "Save") {
+            $("#closeModalPopup").trigger("click");
+        }
+        if (data.pageMsg.status == "Update") {
+            $("#closeChildPopup").trigger("click");
+            $('#btnResetSearchFilter').trigger("click");
+        }
+        si.resetShapeTools();
+        alert(data.pageMsg.message, 'Success', MultilingualKey.GBL_GBL_GBL_JQ_GBL_001);
+        @*if ('@Model.geom' != "")
+            $(si.DE.lyrRefresh).trigger("click");*@
+    }
+    function OnCancle() {
+         
+        $("#closeModalPopup").trigger("click");
+    }
+    function OnChildCancle() {
+         
+        $("#closeChildPopup").trigger("click");
+        @*if ('@Model.source' == "")
+            $("#closeChildPopup").trigger("click");
+        else
+            $("#closeModalPopup").trigger("click");*@
+    }
+    function isFormValid() {
+         
+        if ($("#txtTaskName").val() == "") {
+            $("#txtTaskName").css('border-color', 'red');
+            return false;
+        } else {
+            $("#txtTaskName").css('border-color', '');
+        }
+        if ($("#txtTaskType").val() == "") {
+            $('#txtTaskType').css('border-color', 'red');
+            return false;
+        } else {
+            $('#txtTaskType').css('border-color', '');
+        }
+        if ($("#ddlTaskAction").val() == "") {
+            $('#ddlTaskAction_chosen').addClass('required');
+            return false;
+        } else {
+            $('#ddlTaskAction_chosen').removeClass('required');
+        }
+        if ($("#txtAssignedBy").val() == "") {
+            $('#txtAssignedBy').css('border-color', 'red');
+            return false;
+        } else {
+            $('#txtAssignedBy').css('border-color', '');
+        }
+        if ($("#ddlassignedto").val() == "" || $("#ddlassignedto").val() == null) {
+            $('#ddlassignedto_chosen').addClass('required');
+            alert('Please choose Assigned To value from drop-down', 'warning');
+            return false;
+        } else {
+            $('#ddlassignedto_chosen').removeClass('required');
+        }
+        if ($("#ddlTaskStatus").val() == "") {
+            $('#ddlTaskStatus_chosen').addClass('required');
+            return false;
+        } else {
+            $('#ddlTaskStatus_chosen').removeClass('required');
+        }
+        if ($("#txtremarks").val() == "") {
+            $('#txtremarks').css('border-color', 'red');
+            return false;
+        } else {
+            $('#txtremarks').css('border-color', '');
+        }
+    }
+    function btnReset() {
+         
+        $("#frmAddRedline")[0].reset();
+        //$('#ddlRedlineTypes').val('').trigger("chosen:updated");
+        //$('#ddlRefType').val('').trigger("chosen:updated");
+        //if ($('#hdngeom').val() == '' || $('#hdngeom').val() == null) {
+        //    $('#ddlRegion').val('').trigger("chosen:updated");
+        //    $('#ddlProvince').val('').trigger("chosen:updated");
+        //};
+        $('#ddlassignedto').val('').trigger("chosen:updated");
+        $('#ddlTaskAction').val('').trigger("chosen:updated");
+        $('#ddlTaskStatus').val('').trigger("chosen:updated");
+    }
+</script>
+
+
+

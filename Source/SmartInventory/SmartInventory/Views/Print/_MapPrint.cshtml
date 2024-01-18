@@ -1,0 +1,65 @@
+﻿@model Models.PrintMap
+
+<form class="form-horizontal">
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(m => m.layerURL)
+    @Html.HiddenFor(m => m.mapCenterLat)
+    @Html.HiddenFor(m => m.mapCenterLng)
+    @Html.HiddenFor(m => m.mapType)
+    @Html.HiddenFor(m => m.mapCurrentZoom)
+    @Html.HiddenFor(m => m.mapCordinates)
+    @Html.HiddenFor(m => m.mapCanvasWidth)
+    @Html.HiddenFor(m => m.mapCanvasHeight)
+    @Html.HiddenFor(m => m.layerFilters)
+    @Html.HiddenFor(m => m.legendData)
+    <div style="padding: 20px;">
+        <div class="form-group">
+            <label class="control-label col-sm-4" for="status">Page Size<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-8">
+                @Html.DropDownList("pageSize", new List<SelectListItem>
+                {
+                    new SelectListItem{ Text="A4", Value = "A4" },
+                    new SelectListItem{ Text="A3", Value = "A3" },
+                    new SelectListItem{ Text="A2", Value = "A2" },
+                     new SelectListItem{ Text="A1", Value = "A1" },
+                      new SelectListItem{ Text="A0", Value = "A0" },
+                 }, new { @class = "chosen-select col-sm-12" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4" for="status">Page Layout<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-8">
+                @Html.DropDownList("pageLayout", new List<SelectListItem>
+                {
+          
+                   new SelectListItem{ Text="Landscape", Value = "Landscape" }
+                 }, new { @class = "chosen-select col-sm-12" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4" for="status">Page Title<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.pageTitle, new { @class = "input-sm form-control", autocomplete = "off", @maxlength = "100" })
+                @Html.ValidationMessageFor(model => model.pageTitle)
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group ModalFooter" id="dvBtnAction">
+        <div class="col-sm-7 col-sm-offset-2" style="float: right; text-align: right; padding-right: 25px;">
+            <input type="button" class="btn btn-primary" name="btnaction" id="btnGenerate" onclick="si.printMap2()" value="Export">
+            <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">Cancel</a>
+        </div>
+    </div>
+</form>
+<div class="PrintLegend">
+
+</div>
+<script>
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '100%', disable_search_threshold: '5' });
+    });
+
+</script>

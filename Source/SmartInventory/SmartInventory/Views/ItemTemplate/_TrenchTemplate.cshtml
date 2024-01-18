@@ -1,0 +1,128 @@
+﻿@model Models.TrenchItemMaster
+@using Models;
+@using SmartInventory.Settings;
+<script>
+    //Set color of template icon as green in NE library
+    if ('@Model.id' > 0) {
+        $(".clsTemplateIcon[data-lyrname='Trench']").css('background-color', '#9999FF');
+    }
+</script>
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Trench.ToString().ToUpper()).FirstOrDefault() : null;
+}
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+@helper TrenchTemplateMaster()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_TrenchTemplateMaster.cshtml", (TrenchTemplateMaster)Model); }
+}
+<!DOCTYPE html>
+<div class="libDetail">
+
+    @using (Ajax.BeginForm("SaveTrenchTemplate", "ItemTemplate", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnFailure = "si.handleError",
+
+    },
+    new { id = "frmItemTemplate", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id)
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="ItemSpecfication">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_NET_FRM_218</legend>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtTrenchHeight">@layerDetail.layer_title @Resources.Resources.SI_OSP_WMT_NET_FRM_006<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.trench_height, new { @class = "form-control", @onkeypress = "return si.allowNumberwithOneDot(event,'trench_height');", @onkeyup = "return ValidateHeight();", @maxlength = "10", id = "txtTrenchHeight" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtTrenchWidth">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_120<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+
+                                @Html.TextBoxFor(m => m.trench_width, new { @class = "form-control", @onkeypress = "return si.allowNumberwithOneDot(event,'trench_width');", @onkeyup = "return ValidateWidth();", @maxlength = "10", id = "txtTrenchWidth" })
+
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtTrenchType">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.trench_type, new SelectList(Model.trenchTypeIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "Select Trench Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                            </div>
+
+
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtTrenchType">Trench Serving Type<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.trench_serving_type, new SelectList(Model.lstTrenchServingType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                            </div>
+                        </div>
+                    </fieldset>
+                    @TrenchTemplateMaster()
+                </div>
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            @if (Model.id > 0)
+            {
+                <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+
+            callFormValidator("frmItemTemplate");
+
+            $('#id').val('@Model.id');
+
+        $("#frmItemTemplate").on("submit", function () {
+            if ($('#txtTrenchHeight').val() <= 0) {
+                $('#txtTrenchHeight').css('border-color', 'red');
+                return false;
+            }
+            else if ($('#txtTrenchWidth').val() <= 0){
+                $('#txtTrenchWidth').css('border-color', 'red');
+                return false;
+            }
+
+        });
+
+        //notAllowZero('#txtTrenchHeight,#txtTrenchWidth');
+
+    });
+    function ValidateHeight() {
+         
+        if ($('#txtTrenchHeight').val() <= 0 || $('#txtTrenchHeight').val()=='') {
+            $('#txtTrenchHeight').css('border-color', 'red');
+        }
+        else {
+            $('#txtTrenchHeight').css('border-color', '');
+        }
+
+    }
+    function ValidateWidth() {
+        if ($('#txtTrenchWidth').val() <= 0 || $('#txtTrenchWidth').val()=='') {
+            $('#txtTrenchWidth').css('border-color', 'red');
+        }
+        else {
+            $('#txtTrenchWidth').css('border-color', '');
+        }
+    }
+</script>

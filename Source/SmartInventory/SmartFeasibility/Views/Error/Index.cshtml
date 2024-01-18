@@ -1,0 +1,55 @@
+﻿@{
+    Layout = null;
+}
+@using Models;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>Error</title>
+    <style>
+        .link {
+            background: #189361;
+            padding: 5px;
+            float: right;
+            margin-right: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
+            border: 1px solid white;
+            color: white;
+        }
+
+            .link:hover {
+                text-decoration: none;
+                color: white;
+            }
+    </style>
+</head>
+<body>
+
+    <div id="header">
+        <div id="logo">
+            @SmartFeasibility.Settings.ApplicationSettings.ApplicationName
+        </div>
+        <div class="account">
+            @if (Session["userDetail"] != null)
+            {
+                <a class="link" href="@Url.Action("Logout", "Login")">Logout</a>
+
+            }
+            <a class="link" href="@Url.Action("Index", "Login")">Back To Home</a>
+
+        </div>
+    </div>
+    <div id="content" class="w3" style="height: calc(100% - 78px); position: relative; overflow: hidden; background: white; margin-top: 7px; text-align:center;">
+        <h3 style = "margin-top: 100px; color: red;"> An error occourred  while processing your request. Please contact administrator!</h3>
+    </div>
+    <div class="footer">
+    </div>
+    <div class="bottom-title">
+
+    </div>
+</body>
+</html>

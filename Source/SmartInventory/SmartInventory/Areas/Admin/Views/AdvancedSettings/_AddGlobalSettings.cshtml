@@ -1,0 +1,207 @@
+﻿@model Models.GlobalSetting
+@using Utility
+
+@{
+    Layout = null;
+}
+<style>
+    #dvGlobalSettingDetail .row {
+        margin-top: 10px;
+    }
+
+    .field-validation-error {
+        bottom: auto;
+        right: 49px;
+    }
+</style>
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div id="dvGlobalSettingDetail">
+    @using (Ajax.BeginForm("SaveGlobalSetting", "AdvancedSettings", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        Confirm = "Are you sure to update value for selected setting?",
+        //Confirm= "Updating value for selected setting require application restart due to which all exisitng session will expire.<br> Do you want to continue?",
+        OnSuccess = "fnRedirectToGlobalSettings"
+    },
+
+                new { id = "frmGlobalSettingDetail", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id)
+        <div class="pad_left">
+            <div class="row">
+                <label class="control-label col-sm-3"> Key:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.key, new { @class = "form-control", @readonly = "true" })
+                </div>
+            </div>
+            <div class="row">
+                <label class="control-label col-sm-3"> Value:</label>
+                <div class="col-sm-9">
+                    @if (Model.data_type.ToUpper() == "BOOLEAN")
+                    {
+                        var checkedText = Model.value == "1" ? "checked" : "";
+                        <input type="checkbox" id="chkBoolenType" onchange="fnSetValue(this);" @checkedText />
+                    }
+                    else
+                    {
+                        var onKeyPressFunction = (Model.data_type.ToUpper() == "INTEGER" || Model.data_type.ToUpper() == "INT") ? "return isNumber(event)" : (Model.data_type.ToUpper() == "DOUBLE" ? "return allowNumberwithOneDot(event,this)" : "");
+                        @Html.TextBoxFor(m => m.value, new
+                   {
+                       id = "txtValue",
+                       @class = "input-sm form-control",
+                      // @maxlength = 200,
+                       @dataType = Model.data_type,
+                       @dataMinValue = Model.min_value,
+                       @dataMaxValue = Model.max_value,
+                       @onkeypress = @onKeyPressFunction,
+                       @onblur = "ValidateValue(this.id);"
+                   })
+                        if (Model.data_type.ToUpper() == "STRING")
+                        { }
+                        else
+                        {
+                            <div>
+                                <label class="control-label"> Min Value:</label> @Model.min_value &nbsp;<label class="control-label"> Max Value:</label> @Model.max_value
+                            </div>
+                        }
+                    }
+                    @Html.HiddenFor(s => s.value, new { id = "hdnBoolenType" })
+                </div>
+
+            </div>
+            <div class="row">
+                <label class="control-label col-sm-3"> Description:</label>
+                <div class="col-sm-9">
+                    @Html.TextAreaFor(m => m.description, new { @class = "form-control", @row = "3", @readonly = "true" })
+                </div>
+            </div>
+            <div class="row" style="display:@(((Models.User)(Session["userDetail"])).user_name!="Administrator"?"none":"")">
+                <label class="control-label col-sm-3"> is_web_key:</label>
+                <div class="col-sm-9">
+                    @if (Model.is_web_key == true || Model.is_web_key == false)
+                    {
+                        var checkedText = Model.is_web_key == true ? "checked" : "";
+                        <input type="checkbox" id="chkwebkey" onchange="fnSetValueforwebkey(this);" @checkedText />
+                    }
+                    @Html.HiddenFor(s => s.is_web_key, new { id = "hdnIsWebKey" })
+                </div>
+
+                <label class="control-label col-sm-3"> is_mobile_key:</label>
+                <div class="col-sm-9">
+                    @if (Model.is_mobile_key == true || Model.is_mobile_key == false)
+                    {
+                        var checkedText = Model.is_mobile_key == true ? "checked" : "";
+                        <input type="checkbox" id="chkmobilekey" onchange="fnSetValueformobilekey(this);" @checkedText />
+
+
+                    }
+                    @Html.HiddenFor(s => s.is_mobile_key, new { id = "hdnIsMobileKey" })
+
+                </div>
+
+            </div>
+
+        </div>
+        <div class="ModalFooter jc-flex-end" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto mr-05" data-dismiss="modal" id="btnCancel">Cancel</a>
+            <input type="submit" class="btn btn-primary" name="btnSaveGlobalSettings" id="btnSaveGlobalSettings" value="Update" />
+        </div>
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#btnSaveGlobalSettings").on("click", function (e) {
+            
+            var status = true;
+            if (!ValidateValue('txtValue')) { status = false; }
+            if (!status) { e.preventDefault(); }
+        });
+    });
+    function fnSetValue(obj) {
+        if (obj != undefined) {
+            $("#hdnBoolenType").val($(obj).is(':Checked') == true ? "1" : "0");
+        }
+    }
+
+
+    function fnSetValueformobilekey(obj) {
+        
+        if (obj != undefined) {
+            $("#hdnIsMobileKey").val($(obj).is(':Checked') == true ? true : false);
+
+        }
+    }
+    function fnSetValueforwebkey(obj) {
+        
+        if (obj != undefined) {
+            $("#hdnIsWebKey").val($(obj).is(':Checked') == true ? true : false);
+
+        }
+    }
+
+
+    function fnRedirectToGlobalSettings(response) {
+        
+        window.open(appRoot + '/AdvancedSettings/ViewGlobalSettings/?msg=' + response.message + '&status=' + response.status, "_self");
+    }
+
+    function ValidateValue(elementId) {
+        
+        var curObj = $('#' + elementId)
+        if (curObj.length > 0) {
+            var value = curObj.val();
+            var dataType = curObj.attr('dataType');
+            var minValue = curObj.attr('dataMinValue');
+            var maxValue = curObj.attr('dataMaxValue');
+            if (dataType != undefined) {
+                //common condition to validate blank..
+                if (value == 'undefined' || value == null || value == "") {
+                    $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                    return false;
+                }
+                //if (dataType.toUpperCase() == "INTEGER" || dataType.toUpperCase() == "DOUBLE") {
+                if (validateType(dataType)) {
+                    // validation for min max range
+                    if (parseInt(value) < parseInt(minValue)) {
+                        alert("Value should be between or equal to minValue and maxValue!");
+                        $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                        return;
+                    }
+                    else if (parseInt(value) > parseInt(maxValue)) {
+                        alert("Value should be between or equal to minValue and maxValue!");
+                        $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                        return;
+                    }
+                    else {
+                        $('#' + elementId).addClass('valid').removeClass('input-validation-error');
+                        return true;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    function validateType(datatype) {
+        
+        var validDataTypes = ["Integer", "int", "double precision", "Double"];
+        var isValidDataType = false;
+        for (var i = 0; i < validDataTypes.length; i++) {
+            if (datatype.toUpperCase() == validDataTypes[i].toUpperCase()) {
+                isValidDataType = true;
+                break;
+            }
+        }
+        return isValidDataType;
+    }
+
+</script>
+
+
+
+
+
+

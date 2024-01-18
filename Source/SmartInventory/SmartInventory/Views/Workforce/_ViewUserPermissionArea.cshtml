@@ -1,0 +1,32 @@
+﻿@model Models.WFM.GetUserPermissionArea
+
+<link href="~/Content/js/Calendar/calendar.css" rel="stylesheet" />
+<script src="~/Content/js/Calendar/calendar.js"></script>
+<script src="~/Content/js/Calendar/calendar-en.js"></script>
+<script src="~/Content/js/Calendar/calendar-setup.js"></script>
+
+<div id="dvAssignPanel">
+
+    <div id="dvAddManagerRemarks" class="modalNbody">
+
+        <div class="libDetail">
+
+            <div class="assign--data">
+                <label>Country Name:</label> <lable id="lblcountry" class="fw-bold">@Model.country_name</lable>
+
+
+                <label> Region Name:</label> <lable id="lblregion" class="fw-bold">@Model.region_name</lable>
+
+                <label> Province Name:</label> <lable id="lblprovince" class="fw-bold">@Model.province_name</lable>
+
+                <label> Municipality Name:</label> <lable id="lblsubdistrict" class="fw-bold">@Model.subdistrict_name</lable>
+                <label> Barangay Name:</label> <lable id="lblblock" class="fw-bold">@Model.block_name</lable>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+

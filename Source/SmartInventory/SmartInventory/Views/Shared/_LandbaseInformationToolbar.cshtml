@@ -1,0 +1,50 @@
+﻿
+@using Models;
+@using SmartInventory.Settings;
+
+<style>
+    .infoIcon {
+        float: left;
+        width: 32px;
+        height: 26px;
+        background-color: rgba(224,224,224,0.5);
+        border-radius: 4px;
+        margin-left: 4px;
+        cursor: pointer;
+        font-size: 20px;
+        text-align: center;
+        line-height: 1.6;
+        margin-bottom: 6px;
+    }
+</style>
+
+
+<a title="Back to List" class="infoBack" onclick="si.HideElementInfo()"></a>
+<div id="LandbaseEntityExport" data-action="Export" class="Export  " data-entity-title="Export" title="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" style="display:block;">
+</div>
+<div id="LandbaseEntityZoom" data-action="Zoom" class="Zoom  " data-entity-title="Zoom on Map" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_252" style="display:block;">
+</div>
+<div id="LandbaseEntityDetail" data-action="Detail" class="Detail  " data-entity-title="Landbase Detail" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_456" style="display:block;">
+</div>
+<div id="LandbaseEntityLocationEdit" data-action="LocationEdit" class="LocationEdit  " data-entity-title="Location Edit" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_254" style="display:block;">
+</div>
+<div id="LandbaseEntityCancel" data-action="Cancel" class="Cancel" data-entity-title="Cancel" title="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006" style="display: none;">
+    <span>&nbsp;</span>
+</div>
+<div id="LandbaseEntitySave" data-action="Save" class="Save  " data-entity-title="Save" title="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" style="display: none;">
+</div>
+<div id="LandbaseEntityDelete" data-action="Delete" class="Delete  " data-entity-title="Delete" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" style="display:block;">
+</div>
+<div id="LandbaseEntityUploadImage" data-action="UploadImage" class="UploadImage  " data-entity-title="Upload Image/Document" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_132" style="display:block;">
+</div>
+<div id="LandbaseEntityHistory" data-action="History" class="History  " data-entity-title="History" title="@Resources.Resources.SF_GBL_GBL_NET_FRM_033" style="display:block;">
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#OSP_tool_bar [title!=""]').tooltip({ title: '', html: true, placement: "top", container: 'body' });
+    })
+</script>
+
+
+

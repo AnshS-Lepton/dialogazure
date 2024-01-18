@@ -1,0 +1,214 @@
+﻿@Styles.Render("~/bundles/NetworkPlanning/css")
+
+<!DOCTYPE html>
+<div class="sidenetworkDatabar">
+    <header>
+        <h3>
+            @Resources.Resources.SI_OSP_GBL_GBL_FRM_208
+        </h3>
+        <span id="closePlanToolsproutPlanning" class="kmlClose">×</span>
+    </header>
+    <div class="libTabs">
+        <ul class="nav nav-tabs tabs-left">
+            <li class="active"><a href="#planTool" data-toggle="tab" onclick="clearManualPlanning();">@Resources.Resources.SI_OSP_GBL_NET_FRM_144</a></li>
+            @*<li><a href="#divP2PPlann" onclick="P2PNetwork();" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_145</a></li>*@
+        </ul>
+    </div>
+    <div class="libTabContent">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active space-pad  layer-space" id="planTool">
+                <textarea name="textarea" id="txtBuildingIDs" class="form-control" style="max-height:200px;" placeholder="@Resources.Resources.SI_OSP_GBL_NET_FRM_146"></textarea>
+
+                <input type="button" id="btnProcessPlan" class="btn btn-success mt-1rem" maxlength="100" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_147" />
+            </div>
+            <div class="tab-pane layer_right  layer-space" id="divP2PPlann">
+                <div style="width:300px; height: 200px;text-align: center;padding: 65px;font-size: 17px;">
+                    <span>@Resources.Resources.SI_OSP_GBL_NET_FRM_148</span>
+                </div>
+                <input type="button" id="btnProcessPlan2" class="btn btn-success" onclick="point2pointPlaiing();" maxlength="100" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_147" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function clearManualPlanning() {
+        removeOldMarkers();
+        si.point2pointgeom = [];
+    }
+    function point2pointPlaiing() {
+        if (MarkerList.length == 2) {
+
+
+            var start = new google.maps.LatLng(si.sourcePoint.lat(), si.sourcePoint.lng());
+            var end = new google.maps.LatLng(si.endPoint.lat(), si.endPoint.lng());
+            var request = {
+                origin: start,
+                destination: end,
+                travelMode: google.maps.DirectionsTravelMode.DRIVING,
+                provideRouteAlternatives: true
+            };
+            var geom = [];
+            directionsService.route(request, function (response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(response);
+                    directionsDisplay.setMap(si.map);
+                    MarkerList[0].setMap(null);
+                    MarkerList[1].setMap(null);
+                    if (response.routes.length) {
+                        var path = google.maps.geometry.encoding.decodePath(response.routes[0].overview_polyline);
+                        for (ll of path) {
+                            si.point2pointgeom.push(ll.lng() + ' ' + ll.lat());
+                        }
+                        if (si.point2pointgeom.length > 0) {
+                            var finalData = { geom: si.point2pointgeom.toString() };
+                            ajaxReq('Plan/Point2PointPlan', finalData, false, function (resp) {
+                                removeOldMarkers();
+                                $('.lyrRefresh').trigger("click");
+                                si.point2pointgeom = [];
+                                P2PNetwork();
+                                return resp;
+                            }, false, false, false);
+                        }
+                    }
+                }
+                else {
+                    alert('Directions not found between source and destination.');
+                    window.setTimeout(function () {
+                        src.setMap(null); dest.setMap(null);
+                    }, 1000);
+                }
+            });
+
+
+        } else {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_097);
+        }
+    }
+    $(document).ready(function () {
+
+        //$(document).on('click', '.divRowlst .dvRow', function (e) {
+        //    $('.divRowlst .dvRow').parent().css('background-color', 'unset');
+        //    $(this).parent().css('background-color', 'lightgreen');
+        //});
+
+        $('#closePlanToolsproutPlanning').on("click", function () {
+             
+            $("#divPlanTool").hide('slide', { direction: 'up' }, 500);
+        });
+
+        function wait(ms) {
+            var start = new Date().getTime();
+            var end = start;
+            while (end < start + ms) {
+                end = new Date().getTime();
+            }
+        }
+
+        var process = function (item) {
+             
+            if (item.building_location != null) {
+            var buildingLL = item.building_location.split(' ');
+            var mhLL = item.mh_location.split(' ');
+            var directionsService = new google.maps.DirectionsService();
+            var start = new google.maps.LatLng(buildingLL[1], buildingLL[0]);
+            var end = new google.maps.LatLng(mhLL[1], mhLL[0]);
+
+            var request = {
+                origin: start,
+                destination: end,
+                travelMode: 'DRIVING',
+                provideRouteAlternatives: false
+            };
+
+            var geom = [];
+            directionsService.route(request, function (result, status) {
+                if (status == 'OK') {
+                    if (result.routes.length) {
+
+                        var path = google.maps.geometry.encoding.decodePath(result.routes[0].overview_polyline);
+                        geom.push(buildingLL[0] + ' ' + buildingLL[1]);
+                        for (ll of path) {
+                            //geom += ll.lng() + ' ' + ll.lat() + ', ';
+                            geom.push(ll.lng() + ' ' + ll.lat());
+                        }
+                        geom.push(mhLL[0] + ' ' + mhLL[1]);
+
+                        var finalData = { building_id: item.building_id, manhole_id: item.manhole_id, geom: geom.toString() };
+                        //console.log(finalData);
+
+                        ajaxReq('Plan/processPlan', finalData, false, function (resp) {
+                            showProgress();
+                            return resp;
+                        }, false, true, false);
+
+
+                    }
+                }
+            });
+            }
+            else { alert("Please Select Approved Buildings!"); return false }
+
+            //return geom;
+        }
+
+        $('#btnProcessPlan').on("click", function () {
+             
+            $('#btnProcessPlan').addClass('dvdisabled');
+            //var finalData = [];
+            let buildingIDs = $('#txtBuildingIDs').val();
+            if (buildingIDs.trim().length) {
+
+                //showProgress();
+                ajaxReq('Plan/getNearestManholes', { buildingIDs: buildingIDs }, false, function (resp) {
+                    if (resp.status == 'OK') {
+                        showProgress();
+                        var nearestMHS = resp.result;
+                        if (nearestMHS.length) {
+                            var successCount = 0;
+                            for (item of nearestMHS) {
+                               
+                                    var processStatus = process(item);
+                               
+                                //if (processStatus && processStatus.status == 'OK')
+                                //si.LoadLayersOnMap();
+                                //  successCount += 1;
+                                //finalData.push(item);
+                                //wait(2000);
+                            }
+
+                            //showProgress();
+                            setTimeout(function () {
+                                $('#btnProcessPlan').removeClass('dvdisabled');
+                                alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_154);
+                                si.reqver++;
+                                si.LoadLayersOnMap();
+                                hideProgress();
+                            }, 15000);
+                            //alert("Processed Successfully.");
+                            //si.LoadLayersOnMap();
+                            //alert(successCount);
+                            //console.log(nearestMHS);
+                            //for(item of nearestMHS) {
+                            //    console.log(item.geom);
+                            //    console.log(item.geom.toString());
+                            //}
+                        }
+                        //hideProgress();
+                    }
+                }, false, false, false);
+
+                //console.log(finalData);
+                //for(item of finalData) {
+                //    for(u of item.geom) {
+                //        console.log(u);
+                //    }
+                //}
+            }
+            else {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_015);
+            }
+        });
+    });
+</script>

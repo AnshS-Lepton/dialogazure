@@ -1,0 +1,69 @@
+﻿@model Models.NWEntitySummaryReport
+@using System.Globalization;
+@using Models;
+
+<!DOCTYPE html>
+<div class="libDetail viewReport" id="dvChildModalBody">
+    @using (Ajax.BeginForm("NWEntitySummaryReport", "NetworkTicket",
+                                                                            new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "dvViewNWEntitySummary" },
+                                                                            new { id = "frmNWEntitySummary", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        <div class="tablePad-bn d-flex">
+           
+                @if (Model.lstEntitySummaryReport.Count > 0)
+                {
+                    <button type="button" class="btn exp--btn ml-auto" onclick="ExportSummaryDetail()"  id="btnExportEntityDetails" value="Export"><span class="fa fa-download ml-3"></span> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+                }
+
+         
+            </div>
+          
+
+        if (Model.lstEntitySummaryReport.Count > 0)
+        {
+        <div class="space-pad">
+            <div class="table-responsive">
+            <table class="grid" id="tblSummaryAll">
+                <thead>
+                    <tr>
+                        <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_GBL_008</th>
+                        <th scope="col">@Resources.Resources.SI_GBL_GBL_JQ_FRM_024</th>
+                        <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_FRM_459</th>
+                        <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_FRM_460</th>
+                        <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_063</th>
+
+                        <th align="center" scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_041</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.lstEntitySummaryReport)
+                    {
+                        <tr>
+                            <td>@Html.Raw(item.layer_title)</td>
+                            <td>@Html.Raw(item.new_entity)</td>
+                            <td>@Html.Raw(item.edit_location)</td>
+                            <td>@Html.Raw(item.edit_details)</td>
+                            <td>@Html.Raw(item.network_status)</td>
+                            <td><b>@item.total</b></td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+</div>
+                }
+                else
+                {
+                <div class="nr-found">
+                    <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+                </div>
+                }
+                }
+
+            </div>
+<script>
+    function ExportSummaryDetail() {
+        window.location = appRoot + 'NetworkTicket/ExportNWEntitySummaryReport';
+    }
+</script>

@@ -1,0 +1,122 @@
+﻿@model Models.XMLBuilderDashboardFilter
+@using Utility;
+@using Models;
+
+
+
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.pagerecord, canSort: false, ajaxUpdateContainerId: "VwXMLBuilderGrid", ajaxUpdateCallback: "onGridHeaderClick('tblXMLDashboardGrid')");
+    grid.Bind(Model.lstXML, autoSortAndPage: false, rowCount: Model.totalrecords);
+    if (Model.totalrecords > 0)
+    {
+        grid.PageIndex = Model.pageno - 1;
+    }
+}
+<style>
+    .bothorder {
+        background: var(--tableHeader) url() no-repeat scroll right center !important;
+    }
+        .bothorder:last-child {
+            background: var(--tableHeader) url() no-repeat scroll 93% center !important;
+        }
+</style>
+<!DOCTYPE html>
+<div class="tab-content" id="Dashboardfrm">
+    <div id="dvEntitydetailsProgress" class="EntitydetailsProgress"></div>
+    <div id="Dashboard" class="tab-pane fade in active show">
+        @using (Ajax.BeginForm("XmlBuilderDashboard", "Main", new AjaxOptions
+        {
+            OnSuccess = "OnSuccess",
+            HttpMethod = "POST",
+            UpdateTargetId = "Dashboardfrm",
+            LoadingElementId = "dvDashboardProgress",
+            InsertionMode = InsertionMode.Replace
+        },
+                                      new { id = "frmXMLDashboard", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+
+            <div>
+                <div class="space-pad">
+                    <div class="d-flex align-itm">
+                        <div class="d-flex align-itm ml-auto">
+                            @Html.TextBoxFor(m => m.searchText, new { @id = "txtSearchTxt", @class = "form-control input-mr search--padding form--height",@placeholder="Search Text"})
+                            <i class="glyphicon glyphicon-search SearchIco"></i>
+                            <button type="submit" class="btn btn-success ml-2" id="btnSearch"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                            <button type="submit" class="btn btn-default ml-10" id="btnReset"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+                        </div>
+                        <div class="divPads ml-10 @(Model.lstXML.Count > 0 ? "" : "dvdisabled")">
+                            <button type="button" class="exp--btn" id="btnExportXMLBuilderDashboard" value="Export"><span class="fa fa-download"></span> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.lstXML.Count > 0)
+                {
+                    <div class="tablePad--tn">
+                        <div id="VwXMLBuilderGrid">
+                            <div class="d-flex mb-15">
+                                @if (@grid.TotalRowCount > 1)
+                                {
+                                    <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@Model.lstXML[0].totalrecords</b>
+                                }
+                                else
+                                {
+                                    <b>Total Record:&nbsp;</b> @Model.lstXML[0].totalrecords
+                                }
+
+
+                            </div>
+                            <div class="table-responsive tble_cls fa-min-max">
+                                @grid.GetHtml(tableStyle: "stickyTh",
+
+htmlAttributes: new { id = "tblXMLDashboardGrid" },
+mode: WebGridPagerModes.All,
+columns: grid.Columns(
+grid.Column("file_name", "File Name", format: @<text>@item.file_name </text>),
+grid.Column("nas_status", "NAS Status", format: @<text> @item.nas_status</text>),
+grid.Column("created_by", "Created By", format: @<text> @item.created_by</text>),
+grid.Column("created_on", "Created On", format: @<text> @item.created_on</text>),
+grid.Column("reset_by", "Reset By", format: @<text> @item.reset_by</text>),
+grid.Column("reset_on", "Reset On", format: @<text> @item.reset_on</text>)
+
+))
+
+                                @Html.Hidden("dir", grid.SortDirection)
+                                @Html.Hidden("col", grid.SortColumn)
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="nr-found">
+                        <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+                    </div>
+                }
+
+            </div>
+        }
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        onGridHeaderClick('tblXMLDashboardGrid');
+        addDefaultSortingIcons("tblXMLDashboardGrid");
+        $("#btnExportXMLBuilderDashboard").on("click", function () {
+            window.location = appRoot + 'Main/ExportXMLBuilderDashboard';
+        });
+
+        $("#btnReset").on("click", function () {
+            $('#txtSearchTxt').val('');
+        });
+        $("#frmXMLDashboard").submit(function () {
+            $("#dvEntitydetailsProgress").show();
+        });
+    });
+    function OnSuccess(data) {
+        $("#dvEntitydetailsProgress").hide();
+
+    }   
+</script>
+

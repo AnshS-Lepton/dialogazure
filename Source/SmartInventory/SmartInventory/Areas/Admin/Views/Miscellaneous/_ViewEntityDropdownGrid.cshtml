@@ -1,0 +1,77 @@
+﻿@model List<Models.EntityDropDownMasterList>
+<div>
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: 10, canSort: false, 
+            ajaxUpdateContainerId: "divEntityDropDownGridBind");
+        grid.Bind(Model, autoSortAndPage: false, rowCount: Model.Count);
+    }
+    @if (Model.Count > 0)
+    {
+        <div id="divEntityDropDownGridBind">
+            <div class="recordCount"><b>Total Records:@grid.TotalRowCount</b></div>
+            <div class="table-responsive tble_cls">
+                @grid.GetHtml(tableStyle: "grid",
+                     headerStyle: "webGridHeader",
+                     alternatingRowStyle: "alt",
+                     htmlAttributes: new { id = "tblEntityDropDownGrid" },
+                     mode: WebGridPagerModes.All,
+                     columns:
+
+
+                    grid.Columns(
+                    grid.Column("", "Actions", format: @<text>
+    <span class="floorRowDelete" onclick="DeAssociatePop(''@item.fieldName');" title="Edit" 
+          style="width: auto;font-size: medium;">Edit</span>&nbsp;&nbsp;
+
+
+                    </text>),
+                    grid.Column("layer_name", "Entity Name", format: @<text>@item.layer_name</text>),
+                    grid.Column("FieldName", "Field Name", format: @<text>@item.FieldName</text>),
+                    grid.Column("FieldValue", "Value", format: @<text>@item.FieldValue</text>),
+                    grid.Column("IsVisible", "IsVisible", format: @<text>@item.IsVisible</text>)
+))
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <div>    No Records To Show. </div>
+    }
+</div>
+<div id="dvViewEntityDropDownGrid" class="EntityDropDownGrid">
+
+    @using (Html.BeginForm("ViewEntityDropDownGrid", "Miscellaneous",
+                                FormMethod.Post, new { autocomplete = "off", @id = "frmViewEntityDropDownGrid" }))
+    {
+        <div class="form-inline filter-sec ">
+
+            <div class="form-group wtd_set" id="dvBtnAction" style="width:18%">
+                <div class="col-md-8 offset-md-4  text-right">
+
+                    <input type="button" id="btnExportUtilizations" value="Export" class="btn btn-primary" />
+                </div>
+            </div>
+
+        </div>
+
+        <br />
+       
+
+
+    }
+    <script>
+
+        $(document).ready(function () {
+            // apply choose style
+            $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+            // add sorting on grid..
+            addDefaultSortingIcons("tblEntityDropDownGrid");
+            //download utalization as excel format
+            $("#btnExportUtilizations").click(function () {
+                window.location = appRoot + 'Miscellaneous/ExportUtilizationDetails';
+            });
+        });
+
+    </script>
+</div>

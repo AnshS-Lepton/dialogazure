@@ -1,0 +1,229 @@
+﻿@model Models.Admin.ViewLayerGroupMapping
+@using Utility
+@using SmartInventory.Settings;
+<style>
+    .noMove, .noMove:hover {
+        cursor: not-allowed;
+    }
+
+    .Move {
+        cursor: move;
+        background-color: white;
+    }
+
+    #tblReportColumnsInfo tr:hover:not(.noMove) {
+        color: white !important;
+        background-color: #154777 !important;
+    }
+
+    .field-validation-error {
+        bottom: auto;
+        right: 49px;
+    }
+</style>
+
+
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div id="dvReportColumnSettings" class="update_panel fullWidth">
+    <div class="title">
+        <input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+        <h4>Layer Group Mapping</h4>
+    </div>
+    @using (Html.BeginForm("SaveLayerGroupMapping", "LayerSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmReportColumnSettings", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+
+        if (Model.lstLayerGroupsMapping.Count > 0)
+        {
+
+
+            <div class="d-flex --gap-05 mb-01">
+                <input type="button" id="btnExport" value="Export" class="btn btn-warning ml-auto" />
+                <input type="submit" class="btn btn-primary" name="btnaction" id="btnSubmit" value="Save" />
+            </div>
+
+            <div class="d-flex mb-01">
+                <span><b>Note:</b> Drag drop rows to reorder layers. </span>
+                <b class="ml-auto">Total Columns:<span data="spanTotalRowCount"> @Model.lstLayerGroupsMapping.Count</span></b>
+            </div>
+            <div class="table-responsive tble_over">
+
+                <table id="tblLayerColumnsInfo" class="grid">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Layer Name</th>
+                            <th>Group Name</th>
+                            <th>Group Description</th>
+                            <th>Modified By</th>
+                            <th>Modified On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ var rowIndex = 0;}
+                        @{ var lstDataWithoutGroup = Model.lstLayerGroupsMapping.Where(m => m.group_name == null && m.group_id == 0).OrderBy(m => m.layer_seq).ToList();
+                        }
+
+                        @for (int j = 0; j < lstDataWithoutGroup.Count; j++)
+                        {
+
+                            <tr class="Move" data-id='@lstDataWithoutGroup[j].layer_id' data-group-id='@lstDataWithoutGroup[j].group_id' data-layer_name=' @lstDataWithoutGroup[j].layer_name'>
+                                <td>
+                                    @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "layer_id"), lstDataWithoutGroup[j].layer_id)
+                                    @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "group_id"), lstDataWithoutGroup[j].group_id)
+                                    @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "layer_seq"), lstDataWithoutGroup[j].layer_seq, new { @class = "setSqens" })
+                                    @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "mapping_id"), lstDataWithoutGroup[j].mapping_id)
+                                    @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "created_by"), lstDataWithoutGroup[j].created_by)
+                                    @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "created_on"), lstDataWithoutGroup[j].created_on)
+                                    @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "layer_name"), lstDataWithoutGroup[j].layer_name)
+                                    <a href="#" onclick="AddNewLayerGroupMapping(@lstDataWithoutGroup[j].mapping_id);" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                </td>
+                                <td>
+                                    @lstDataWithoutGroup[j].layer_title
+
+                                </td>
+                                <td>
+                                    @lstDataWithoutGroup[j].group_name
+                                </td>
+                                <td>
+                                    @lstDataWithoutGroup[j].group_description
+                                </td>
+                                <td>
+                                    @lstDataWithoutGroup[j].modified_by_text
+                                </td>
+                                <td>
+                                    @lstDataWithoutGroup[j].modified_on_formated
+                                </td>
+                            </tr>
+
+
+                            rowIndex++;
+
+
+
+                        }
+
+
+
+
+                        @for (int i = 0; i < Model.lstLayerGroups.Count; i++)
+                        {
+                            if (Model.lstLayerGroups[i].status == true)
+                            {
+                                var lstGroupData = Model.lstLayerGroupsMapping.Where(m => m.group_name == Model.lstLayerGroups[i].group_name).OrderBy(m => m.layer_seq).ToList();
+                                <tr id='@Model.lstLayerGroups[i].group_name'
+                                    class="noMove"
+                                    style="background-color: gainsboro;"
+                                    data-group-id='@Model.lstLayerGroups[i].group_id'
+                                    data-group-name='@Model.lstLayerGroups[i].group_name'
+                                    data-group-description='@Model.lstLayerGroups[i].group_description'>
+                                    <td colspan="7">@Model.lstLayerGroups[i].group_name</td>
+                                </tr>
+
+
+                                if (lstGroupData.Count > 0)
+                                {
+                                    for (int j = 0; j < lstGroupData.Count; j++)
+                                    {
+
+                                        <tr class="Move" data-id='@lstGroupData[j].layer_id' data-group-id='@lstGroupData[j].group_id' data-layer_name=' @lstGroupData[j].layer_name'>
+                                            <td>
+                                                @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "layer_id"), lstGroupData[j].layer_id)
+                                                @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "group_id"), lstGroupData[j].group_id)
+                                                @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "layer_seq"), lstGroupData[j].layer_seq, new { @class = "setSqens" })
+                                                @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "mapping_id"), lstGroupData[j].mapping_id)
+                                                @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "created_by"), lstGroupData[j].created_by)
+                                                @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "created_on"), lstGroupData[j].created_on)
+                                                @Html.Hidden(string.Concat("lstLayerGroupsMapping[", rowIndex, "].", "layer_name"), lstGroupData[j].layer_name)
+                                                <a href="#" onclick="AddNewLayerGroupMapping(@lstGroupData[j].mapping_id);" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                            </td>
+                                            <td>
+                                                @lstGroupData[j].layer_title
+
+                                            </td>
+                                            <td>
+                                                @lstGroupData[j].group_name
+                                            </td>
+                                            <td>
+                                                @lstGroupData[j].group_description
+                                            </td>
+                                            <td>
+                                                @lstGroupData[j].modified_by_text
+                                            </td>
+                                            <td>
+                                                @lstGroupData[j].modified_on_formated
+                                            </td>
+                                        </tr>
+
+
+                                        rowIndex++;
+
+
+
+                                    }
+
+                                }
+
+                                else
+                                {
+                                    <tr class="Move" style="height:0px !important; visibility:hidden;" no-sequence="y">
+                                        <td colspan="7" style="height:0px !important">
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+
+        }
+        <div class="clearfix"></div>
+    }
+</div>
+<script>
+    $("#btnExport").on("click", function () {
+        window.location = appRoot + 'LayerSettings/DownloadViewGroupsMappingDetail';
+    });
+
+    $(document).ready(function () {
+        updateNumberstoFormatedNumber();
+        $("#tblLayerColumnsInfo  tbody").sortable({
+            items: "tr:not(.noMove)",
+            update: function (event, ui) {
+                var currentGroup = ui.item.prevAll('tr.noMove').first();
+
+                ui.item.attr("data-group-id", currentGroup.attr("data-group-id"));
+                ui.item.find("td:eq(2)").text(currentGroup.attr("data-group-name"));
+                ui.item.find("td:eq(3)").text(currentGroup.attr("data-group-description"));
+
+                ui.item.find("td:eq(0)").find('input[id$="group_id"]').val(currentGroup.attr("data-group-id"));
+
+
+                var index = 1;
+
+                $('#tblLayerColumnsInfo  tbody tr').each(function () {
+
+                    if ($(this).attr("no-sequence") == undefined && $(this).attr("data-layer_name") != undefined) {
+                        $(this).find("td:eq(0)").find('.setSqens').val(index);
+                        index++;
+                    }
+                });
+
+
+            }
+        });
+    });
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+</script>

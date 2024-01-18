@@ -1,0 +1,369 @@
+﻿@model Models.MainViewModel
+@using Models
+
+
+
+@{
+    var IsFTTH = ((List<string>)Session["ApplicableModuleListForFeasibility"]).Contains("FTTH");
+}
+<!DOCTYPE html>
+<span class="icon-arrow_right sidectrlright" id="open-close-right"></span>
+<div id="floating-panel-right">
+    <div class="header">
+        @{
+            User objuser = new User();
+            objuser = (User)Session["userDetail"];
+            if (objuser != null)
+            {
+                <div class="nameUser">
+                    <div class="admindrop">
+                        <span class="icon-user_profile"></span>
+                        @objuser.user_name
+                        <span class="fa fa-chevron-down"></span>
+                    </div>
+                    <div class="logoutpannel">
+                        <span class="spnCableType"><i class="icon-cable_type"></i> @Resources.Resources.SF_GBL_GBL_JQ_FRM_001 </span>
+                        <span class="spnLogout"><i class="fa fa-sign-out"></i> @Resources.Resources.SF_GBL_GBL_NET_FRM_042</span>
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+
+    <div class="panelBody">
+
+
+
+
+        @*<div class="row feasTypeWrapperright">
+                <div class="col-md-6 text-center activeRightadmin feasTypeadmin">
+                    <span class="">Feasibility Layers</span>
+                </div>
+                <div class="col-md-6 text-center feasTypeadmin">
+                    <span class="">Map Layers</span>
+                </div>
+            </div>*@
+
+
+        @*<div class="row feasTypeWrapperright">
+                <ul class="nav nav-tabs tabs-left">
+
+                    <li class="active"><a href="#Feasibility_Layers" data-toggle="tab">Feasibility Layers</a></li>
+                    <li><a href="#MapLayers" data-toggle="tab">Map Layers</a></li>
+                </ul>
+            </div>*@
+
+        <div class="libTabContent">
+
+            <div class="div-tab right-tabs" id="div-tab-panel" style="display:none;">
+                <ul class="nav nav-tabs d-fx">
+                    <li class="active">
+                        <a href="javascript:void(0);" id="btn-ntwrk-lyr" class="btn-small btn-blue" onclick="showHideTab('network-panel');">Network</a>
+                    </li>
+                    @if (IsFTTH)
+                    {
+                        <li>
+                            <a href="javascript:void(0);" id="btn-ftth-lyr" class="btn-small btn-gray" onclick="showHideTab('ftth-panel');">FTTH</a>
+                        </li>
+                    }
+                    <li>
+                        <a href="javascript:void(0);" id="btn-wrless-lyr" class="btn-small" onclick="showHideTab('wireless-panel');">Wireless</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div id="FFTH-layer-panel" class="tab-pane">
+                    <div class="col-xs-12">
+                        <ul>
+                            @{
+                                if (Model.NELayers != null)
+                                {
+                                    var groupLst = Model.NELayers.GroupBy(x => x.LayerGroup).ToList();
+                                    for (int i = 0; i < groupLst.Count; i++)
+                                    {
+                                        if (groupLst[i].Count() > 1)
+                                        {
+                                            var neLyrs = groupLst[i].ToList();
+                                            <li>
+                                                <input type="checkbox" name="@neLyrs[i].LayerGroup" onchange="CheckAllLayrs('@neLyrs[i].LayerGroup', this.checked)" />@neLyrs[i].LayerGroup
+                                            </li>
+
+                                            for (int j = 0; j < neLyrs.Count; j++)
+                                            {
+                                                <li class="sub">
+                                                    <input type="checkbox" name="@neLyrs[i].LayerGroup" value="@neLyrs[j].LayerTable" onchange="CheckLayer(this, '@neLyrs[j].LayerName', this.checked, !0)" />
+                                                    <img src="~/Content/Images/LayerIcon/@(neLyrs[j].LayerName+".png")" class="img-width mr05" />
+                                                    <span>@neLyrs[j].LayerTitle</span>
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var neLyr = groupLst[i].FirstOrDefault();
+                                            <li>
+                                                <input type="checkbox" name="@neLyr.LayerGroup" onchange="CheckAllLayrs('@neLyr.LayerGroup', this.checked)" />@neLyr.LayerGroup
+                                            </li>
+                                            <li class="sub">
+                                                <input type="checkbox" name="@neLyr.LayerGroup" value="@neLyr.LayerTable" onchange="CheckLayer(this, '@neLyr.LayerName', this.checked, !0)" />
+                                                <span>@neLyr.LayerName</span>
+                                            </li>
+                                        }
+                                    }
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="tab-pane" id="Feasibility_Layers">
+
+                    <div class="form-check">
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkActiveLayers">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkActiveLayers">Active Layers</label></b>
+                    </div>
+                    <div class="form-check chkBox">
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkONT">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkONT">ONT</label></b>
+                        <br />
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkPS">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkPS">Primary Splitter</label></b>
+                        <br />
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkSS">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkSS">Secondary Splitter</label></b>
+                        <br />
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkPassiveLayers">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkPassiveLayers">Passive Layers</label></b>
+                    </div>
+                    <div class="form-check chkBox">
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkPOP">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkPOP">POP</label></b>
+                        <br />
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkMPOD">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkMPOD">MPOD</label></b>
+                        <br />
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkADB">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkADB">ADB</label></b>
+                        <br />
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkFMS">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkFMS">FMS</label></b>
+                        <br />
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkHTB">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkHTB">HTB</label></b>
+                        <br />
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkFAT">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkFAT">FAT</label></b>
+                        <br />
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkManhole">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkManhole">Manhole</label></b>
+                        <br />
+                        <input type="checkbox" class="checkbox-custom form-check-input" id="chkStructure">
+                        <b><label class="form-check-label checkbox-custom-label" for="chkStructure">Structure</label></b>
+                        <br />
+                    </div>
+
+                </div>
+                <div class="tab-pane active" id="MapLayers">
+                    <div id="layersContainer">
+
+                        <div class="lyrRefresh" title="Refresh Layers">
+                            &nbsp;
+                        </div>
+
+                        <div class="layers" data-group="NetworkLayers">
+                            <h2> @Resources.Resources.SF_GBL_GBL_NET_FRM_039<i class="fa fa-minus lyracrdn" title="Expand/Shrink"></i></h2>
+
+
+                            <div id="dvNetworkActions" class="layHeading">
+                                @*<div style="width: 100%; height: 19px; padding-right: 14px;">
+                                        <label for="projectSpecification" class="checkbox-custom-label" style="cursor: pointer; float: right;" onclick="si.ClearProjectSpeciFilter()" id="btnclrFilter" hidden="hidden" title="Clear Project Filter"> <a href="#" style="color:blue; text-decoration:underline;">Clear</a></label>
+                                        <label for="projectSpecification" class="checkbox-custom-label" style="cursor: pointer; float: right;" onclick="si.GetProjecSpeciFilter()" title="Advanced Filters"> <a href="#" style="color:blue; text-decoration:underline;">Advance Filters</a></label>
+                                    </div>*@
+                                <div class="selectBox">
+                                    <input type="checkbox" class="checkbox-custom" id="checkAll"><b><label for="checkAll" class="checkbox-custom-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_040</label></b>
+                                    @*<label for="projectSpecification" class="checkbox-custom-label" style="cursor: pointer; float: right;" onclick="si.GetProjecSpeciFilter()">Project Specification</label>*@
+                                    <span class="selectRight">
+                                        @*<b title="Zoom Level(Min-Max)" style="display:none;">Zoom</b>*@
+                                        <input type="checkbox" id="chkPlannedAll" class="checkbox-custom1" name="networkALL" onclick="sf.handlePrClick(this);" data-all="P"><b><label for="chkPlannedAll" title="Planned" class="checkbox-custom1-label"><span class="spn_contnt">P</span></label></b>
+                                        <input type="checkbox" id="chkAsBuiltAll" class="checkbox-custom1" name="networkALL" onclick="sf.handlePrClick(this);" data-all="A"><b><label for="chkAsBuiltAll" title="As Built" class="checkbox-custom1-label"><span class="spn_contnt">A</span></label></b>
+                                        <input type="checkbox" id="chkDormentAll" class="checkbox-custom1" name="networkALL" onclick="sf.handlePrClick(this);" data-all="D"><b><label for="chkDormentAll" title="Dormant" class="checkbox-custom1-label"><span class="spn_contnt">D</span></label></b>
+                                        <input type="checkbox" id="chklabelAll" class="checkbox-custom1" name="networkALL" onclick="sf.handlePrClick(this);" data-all="L"><b><label for="chklabelAll" title="Show Label" class="checkbox-custom1-label"><span class="spn_contnt">L</span></label></b>
+                                    </span>
+                                </div>
+                            </div>
+
+                            @if (Model.lstNetworkLayers != null && Model.lstNetworkLayers.Count > 0)
+                            {
+                                int Chkid = 0;
+                                var groupItem = (from c in Model.lstNetworkLayers
+                                                 select c.layerNetworkGroup)
+                                                                .Distinct()
+                                                                .OrderByDescending(x => x);
+
+                                <ul class="mainlyr grpNetwork" style="display:block;">
+                                    @foreach (var grpLayer in groupItem)
+                                    {
+                                        Chkid++;
+
+                                        <li data-mapabbr="@grpLayer" class="liStyle" style="margin-bottom:2px;">
+                                            <input id="chkid_@Chkid" class="mainLyr checkbox-customgrp checkPos" type="checkbox" />
+                                            <b><label for="chk_@grpLayer" class="checkbox-customgrp-label labelMargins"><span>&nbsp;@grpLayer</span></label></b>&nbsp;
+
+                                            <ul class="mainlyr network" style="display:block;">
+
+                                                @foreach (var objLayer in Model.lstNetworkLayers.Where(x => x.layerNetworkGroup == grpLayer && x.isvisible == true).ToList())
+                                                {
+
+                                                    <li data-mapabbr="@objLayer.mapAbbr" data-geomtype="@(objLayer.layerName=="Building"?"Polygon": objLayer.geomType)">
+                                                        <img src="Content/css/images/t.gif" alt="">
+                                                        <input id="chk_nLyr_@objLayer.layerId" class="mainLyr checkbox-custom" type="checkbox" data-mapabbr="@objLayer.mapAbbr" data-layerid="@objLayer.layerId" data-layergroup="chkid_@Chkid"
+                                                               data-minzoomlvl="@objLayer.minZoomLevel" data-maxzoomlvl="@objLayer.maxZoomLevel" data-layername="@objLayer.layerName" data-isnetworktyperequired="@objLayer.isNetworkTypeRequired" data-maplayerseq="@objLayer.maplayerseq" style="width: 0px;" data-is-networktype-required="@objLayer.isNetworkTypeRequired" data-is-network-entity="@objLayer.isNetworkEntity" data-entity-geom-type="@objLayer.geomType" />
+                                                        <b><label for="chk_nLyr_@objLayer.layerId" class="checkbox-custom-label"><span>@objLayer.layerTitle</span></label></b>&nbsp;
+                                                        <span class="floatVisibility">
+
+                                                            <input id="chk_netP_@objLayer.layerId" type="checkbox" class="chknetwork-P checkbox-custom2" data-layerid="Chd_@objLayer.layerId" data-networktype="P" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.planned_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
+                                                            <b><label for="chk_netP_@objLayer.layerId" class="checkbox-custom2-label @(objLayer.isNetworkTypeRequired==true && objLayer.planned_view==false?"viewDisabledCheckbox":"") @(objLayer.isNetworkTypeRequired==false?"disabledCheckbox":"")"></label></b>
+
+                                                            <input id="chk_netA_@objLayer.layerId" type="checkbox" class="chknetwork-A checkbox-custom2" data-layerid="Chd_@objLayer.layerId" data-networktype="A" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.asbuild_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
+                                                            <b><label for="chk_netA_@objLayer.layerId" class="checkbox-custom2-label @(objLayer.isNetworkTypeRequired==true && objLayer.asbuild_view==false?"viewDisabledCheckbox":"") @(objLayer.isNetworkTypeRequired==false?"disabledCheckbox":"")"></label></b>
+
+                                                            <input id="chk_netD_@objLayer.layerId" type="checkbox" class="chknetwork-D checkbox-custom2" data-layerid="Chd_@objLayer.layerId" data-networktype="D" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.dormant_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
+                                                            <b><label for="chk_netD_@objLayer.layerId" class="checkbox-custom2-label @(objLayer.isNetworkTypeRequired==true && objLayer.dormant_view==false?"viewDisabledCheckbox":"") @(objLayer.isNetworkTypeRequired==false?"disabledCheckbox":"")"></label></b>
+
+                                                            <input id="chk_netL_@objLayer.layerId" type="checkbox" class="chknetwork-L checkbox-custom2" data-mapabbr="@objLayer.mapAbbr" data-layerid="Chd_@objLayer.layerId" data-networktype="L" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-ntp="@objLayer.isNetworkTypeRequired">
+                                                            <b><label for="chk_netL_@objLayer.layerId" class="checkbox-custom2-label "></label></b>
+                                                        </span>
+
+                                                        <span class="z_frm" id="MinMaxZoom" style="display:none;" data-min-zoom="@objLayer.minZoomLevel" data-max-zoom="@objLayer.maxZoomLevel">Z:(@objLayer.minZoomLevel-@objLayer.maxZoomLevel)</span>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </li>
+
+                                    }
+                                </ul>
+                            }
+                        </div>
+                        <div class="layers" data-group="RegionProvince">
+                            <h2> @Resources.Resources.SF_GBL_GBL_NET_FRM_043<i class="fa fa-minus lyracrdn" title="Expand/Shrink"></i></h2>
+                            @foreach (var Country in Model.lstRegionProvinceLayers.OrderBy(x => x.countryname.ToLower()).Select(x => x.countryname.ToLower()).Distinct())
+                            {
+
+                                <label class="checkbox-custom-label countryName clabel" data-country-name="@Country"><span>@Country</span></label>
+                                if (Model.lstRegionProvinceLayers != null && Model.lstRegionProvinceLayers.Count > 0)
+                                {
+                                    <ul class="mainlyr region" style="display:block;">
+
+                                        @foreach (var objLayer in Model.lstRegionProvinceLayers.Where(x => x.countryname.ToLower() == Country.ToLower()))
+                                        {
+                                            <li data-country-name="@Country">
+                                                <input id="chk_rLyr_@objLayer.regionId" type="checkbox" class="checkbox-custom" data-regionid="@objLayer.regionId" /><b><label for="chk_rLyr_@objLayer.regionId" class="checkbox-custom-label"><span>@objLayer.regionName</span></label></b>
+                                                @if (objLayer.lstProvince != null && objLayer.lstProvince.Count > 0)
+                                                {
+                                                    <ul class="province">
+                                                        @foreach (var objSubLayer in objLayer.lstProvince)
+                                                        {
+                                                            <li>
+                                                                <img src="Content/css/images/t.gif" alt="">
+                                                                <input id="chk_pLyr_@objSubLayer.provinceId" class="checkbox-custom" type="checkbox" data-provinceid="@objSubLayer.provinceId" /><b><label for="chk_pLyr_@objSubLayer.provinceId" class="checkbox-custom-label"><span>@objSubLayer.provinceName</span></label></b>
+
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                }
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane right-tabs" id="wireless_Layers" style="display:none;">
+                    <ul class="mt10">
+                        <li>Layers</li>
+                        <li class="sub">
+                            <input type="checkbox" class="wireless" name="Layer1" value="att_details_cdb" onchange="CheckLayer(this, 'CDB', this.checked, !0)">
+                            <img src="/Content/Images/LayerIcon/CDB.png" class="img-width mr05">
+                            <span>Tower Own</span>
+                        </li>
+                        <li class="sub">
+                            <input type="checkbox" class="wireless" name="Layer2" value="att_details_cdb" onchange="CheckLayer(this, 'CDB', this.checked, !0)">
+                            <img src="/Content/Images/LayerIcon/CDB.png" class="img-width mr05">
+                            <span>Tower Other</span>
+                        </li>
+                        <li class="sub">
+                            <input type="checkbox" class="wireless" name="Layer3" value="att_details_cdb" onchange="CheckLayer(this, 'CDB', this.checked, !0)">
+                            <img src="/Content/Images/LayerIcon/CDB.png" class="img-width mr05">
+                            <span>Sector</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<div class="footerBox" style="display:none;">
+    <div class="footerBox__topBar">
+        <input type="text" placeholder="Filter" class="form-control" />
+    </div>
+    <div class="footerBox__wrap">
+        <div class="footerBoox__table">
+            <table class="webgrid">
+                <thead>
+                    <tr>
+                        <th>Heading 1</th>
+                        <th>Heading 2</th>
+                        <th>Heading 31</th>
+                        <th>Heading 4</th>
+                        <th>Heading 5</th>
+                        <th>Heading 6</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Heading 1</td>
+                        <td>Heading 2</td>
+                        <td>Heading 31</td>
+                        <td>Heading 4</td>
+                        <td>Heading 5</td>
+                        <td>Heading 6</td>
+                    </tr>
+                    <tr>
+                        <td>Heading 1</td>
+                        <td>Heading 2</td>
+                        <td>Heading 31</td>
+                        <td>Heading 4</td>
+                        <td>Heading 5</td>
+                        <td>Heading 6</td>
+                    </tr>
+                    <tr>
+                        <td>Heading 1</td>
+                        <td>Heading 2</td>
+                        <td>Heading 31</td>
+                        <td>Heading 4</td>
+                        <td>Heading 5</td>
+                        <td>Heading 6</td>
+                    </tr>
+                    <tr>
+                        <td>Heading 1</td>
+                        <td>Heading 2</td>
+                        <td>Heading 31</td>
+                        <td>Heading 4</td>
+                        <td>Heading 5</td>
+                        <td>Heading 6</td>
+                    </tr>
+<tbody>
+            </table>
+        </div>
+        <div class="footerBoox__graph">
+            adsfasfd
+        </div>
+    </div>
+</div>

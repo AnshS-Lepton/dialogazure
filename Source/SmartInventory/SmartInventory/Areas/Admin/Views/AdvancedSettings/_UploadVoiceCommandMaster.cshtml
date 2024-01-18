@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<div id="dvInfoVoiceCommandMapping" class="update_panel">
+    <div class="title">
+        <h4>Voice Command Mapping Bulk Upload</h4>
+    </div>
+    <div class="--pad-15">
+        <div class="d-flex">
+            <label class="mr-01">File:</label>
+            <div>
+                <input type="file" id="UploadVoiceCommandMapping" accept=".xls,.xlsx" multiple />
+            </div>
+        </div>
+        <label id="lblUploadProgress"></label>
+    </div>
+    <div class="ModalFooter" id="dvBtnAction">
+        @Html.ActionLink("Download Template", "DownloadVoiceCommandMappingUploadTemplate", "AdvancedSettings", new { FileName = "VoiceCommandMappingTemplate" }, new { @class = "btn btn-primary ml-auto", @id = "lnkDownloadTemplate" })
+        <button class="btn btn-warning ml-05" type="button" onclick="UploadFile('UploadVoiceCommandMapping','@Url.Action("UploadVoiceCommandMappingData", "AdvancedSettings")','@Url.Action("DownloadUploadVoiceCommandMappingLogs", "AdvancedSettings")');">
+            Upload
+        </button>
+    </div>
+</div>
+<script>
+    var iteration = 0; //used for bulk upload progress..
+    var loadingtext = "Uploading";//used for bulk upload progress..
+    var timer = null;//used for bulk upload progress..;
+    var Updatedfields = [];
+    function UploadFile(controlId, postUrl, logUrl) {
+        
+
+        var formData = new FormData();
+        var totalFiles = document.getElementById(controlId).files.length;
+        if (totalFiles > 0) {
+            if (isValidFileExtn(controlId)) {
+                
+                var file = $('#UploadVoiceCommandMapping').get(0);
+                file = file.files;
+                for (var i = 0; i < file.length; i++) {
+                    formData.append(file[i].name, file[i]);
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            alert("Please select a file!");
+            return false;
+        }
+        
+        PostFile(formData, postUrl, logUrl);
+    }
+    function PostFile(formdata, posturl, logUrl) {
+        $.ajax({
+            type: "POST",
+            url: posturl,
+            data: formdata,
+            async: true,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function () {
+                $(".ui-dialog").css("pointerEvents", "none");
+                $("#lblUploadProgress").css("display", "inline-block");
+                timer = setInterval(showUploadProgress, 500);
+            },
+            success: function (response) {
+                if (response.msg.toLowerCase() == "success") {
+                    //download logs..
+                    window.location = logUrl;
+                }
+                alert(response.strReturn);
+                $(".ui-dialog").css("pointerEvents", "auto");
+                $("#lblUploadProgress").css("display", "none");
+                clearInterval(timer);
+            },
+            error: function (error) {
+                $(".ui-dialog").css("pointerEvents", "auto");
+                $("#lblUploadProgress").css("display", "none");
+                clearInterval(timer);
+                alert(error);
+                $(".ui-dialog").css("pointerEvents", "auto");
+            }
+        });
+    }
+
+    function isValidFileExtn(controlid) {
+        var ext = $('#' + controlid).val().split('.').pop().toLowerCase();
+        if ($.inArray(ext, ['xls', 'xlsx']) == -1) {
+            ShowFormMessage(false, "Please select files having extensions .xls or .xlsx only!", "");
+            return false;
+        }
+        return true;
+    }
+
+    function showUploadProgress() {
+        $("#lblUploadProgress").html(loadingtext + Array((++iteration % 5) + 1).join("."));
+    }
+
+</script>
+

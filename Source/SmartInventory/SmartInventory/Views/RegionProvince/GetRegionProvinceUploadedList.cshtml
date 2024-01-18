@@ -1,0 +1,118 @@
+﻿@model Models.ImportRegionProvince
+@using System.Globalization;
+@{
+    Layout = null;
+    CultureInfo ci = new CultureInfo("en-US");
+}
+<style>
+    .notfound {
+        display: none;
+    }
+</style>
+
+<!DOCTYPE html>
+@if (Model.lstUpdateRegionProvince.Count > 0)
+{
+    <input type='text' id='txt_searchall' class="input-sm form-control" placeholder='@Resources.Resources.SI_OSP_GBL_NET_FRM_360' style="margin-left: 15px;width: 95%;">
+    <div>
+        <div class="text-left" style="font-size: 14px;font-weight: bold;padding-top: 7px;margin-left: 13px;">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035: @Model.lstUpdateRegionProvince.Count</div>
+        <div class="text-right" style="font-size: 14px;font-weight: bold;margin-top: -20px;margin-right: 15px;">@Resources.Resources.SI_OSP_GBL_NET_FRM_361: @Html.Label("0", new { id = "lblSelectedRecords" })</div>
+    </div>
+    <table id="tblRegionProvinceLstInfo" border="1" class="webgrid" cellpadding="0" cellspacing="0" style="text-align: center;width: 95%;">
+        @Html.HiddenFor(m => m.boundary_type)
+        @if (Model.lstUpdateRegionProvince.Count > 0)
+        {
+            <thead>
+                <tr>
+                    <th scope="col"><input type="checkbox" id="chkAll" name="chkAll" onclick="checkallentity(this)" /></th>
+                    <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_002</th>
+                    @if (Model.boundary_type.ToLower() == "region")
+                    {
+                    <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_FRM_358</th>
+                    }
+                    @if (Model.boundary_type.ToLower() == "province")
+                    {
+                    <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_003</th>
+                    <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_FRM_352</th>
+                    }
+                    <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_FRM_362</th>
+                    <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_014</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody id="tblRegionProvinceLstInfoBody">
+
+                @for (int i = 0; i < Model.lstUpdateRegionProvince.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.CheckBoxFor(m => Model.lstUpdateRegionProvince[i].IschkBoundary, new { @class = "clsBoundary", data_shapeId = Model.lstUpdateRegionProvince[i].id, onclick = "checkentity(this)" })
+                        </td>
+                        <td>
+                            @Html.HiddenFor(m => Model.lstUpdateRegionProvince[i].region_name)
+                            @Model.lstUpdateRegionProvince[i].region_name
+                        </td>
+                        @if (Model.boundary_type.ToLower() == "region")
+                        {
+                            <td>
+                                @Html.HiddenFor(m => Model.lstUpdateRegionProvince[i].region_abbreviation)
+                               @Model.lstUpdateRegionProvince[i].region_abbreviation.ToString(ci)
+                            </td>
+                        }
+                        @if (Model.boundary_type.ToLower() == "province")
+                        {
+                            <td>
+                                @Html.HiddenFor(m => Model.lstUpdateRegionProvince[i].province_name)
+                                @Model.lstUpdateRegionProvince[i].province_name
+                            </td>
+                            <td>
+                                @Html.HiddenFor(m => Model.lstUpdateRegionProvince[i].province_abbreviation)
+                                @Model.lstUpdateRegionProvince[i].province_abbreviation
+                            </td>
+                        }
+                        <td>
+                            @Html.HiddenFor(m => Model.lstUpdateRegionProvince[i].country_name)
+                            @Model.lstUpdateRegionProvince[i].country_name
+                        </td>
+                        <td>
+                            @Html.HiddenFor(m => Model.lstUpdateRegionProvince[i].entryStatus)
+                            @Model.lstUpdateRegionProvince[i].entryStatus
+                        </td>
+                        <td>
+                            @Html.HiddenFor(m => Model.lstUpdateRegionProvince[i].geomtext)
+                            <a href="#" id="aShowBoundary" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="ShowOnMap(this)"><i class="fa fa-map-marker" aria-hidden="true" style="color:grey;font-size: 21px;"></i></a>
+                        </td>
+                    </tr>
+                }
+                <tr class="notfound">
+                    <td id="tdnotfound" >@Resources.Resources.SI_ISP_GBL_GBL_GBL_001</td>
+                </tr>
+            </tbody>
+
+        }
+
+
+    </table>
+}
+<script>
+    $(document).ready(function () {
+        var colCount = $("table").find("tr:first th").length;
+        $("#tdnotfound").attr('colspan', colCount);
+        
+        $('#txt_searchall').keyup(function () {
+            var cnt = 0;
+            var value = $(this).val().toLowerCase();
+            $("#tblRegionProvinceLstInfoBody tr:not(.notfound)").filter(function () {
+                if ($(this).text().toLowerCase().indexOf(value) <= -1)
+                    cnt = 1;
+                else
+                    cnt = 0;
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            })
+            if (cnt > 0)
+                $('.notfound').show();
+            else
+                $('.notfound').hide();
+        });
+    })
+</script>

@@ -1,0 +1,28 @@
+﻿@model dynamic
+
+<style>
+    .libTabContentFiber {
+        background-image: url('@Url.Content("~/content/images/loading_new.gif")');
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        overflow:auto;
+    }
+</style>
+<div class="libDetail">
+ <script>
+     var cable_id = '@Model.cableId';
+ </script>
+    <div class="libTabContentFiber" style="padding: 10px; height: 500px;">
+        <div id="FiberDetail">
+        </div>
+    </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            ajaxReq('Library/GetCableFiberDetail', { cableId: '@Model.cableId',type:'@Model.type' }, true, function (resp) {
+               
+                $("#FiberDetail").html(resp);
+                $(".libTabContentFiber").css({ "background-image": "none" });
+            }, false, false);
+        });
+    </script>

@@ -1,0 +1,487 @@
+﻿@model Models.BomBoqExportReport
+@using SmartInventory.Settings;
+@{var CblCnt = 0; }
+<style>
+    .ExportReportbody .chosen-drop-bottom .chosen-container-single .chosen-drop {
+        bottom: auto;
+    }
+
+    #tblBomLst br {
+        display: none;
+    }
+
+    .TabContent--max-over {
+        max-height: 450px;
+        padding: 0;
+    }
+    .bomGridSubEntity td:first-child {
+        text-indent: 12px;
+    }
+</style>
+
+<form id="frmBOMBOQSummaryData" autocomplete="off" class="form-horizontal">
+
+    @*@Html.HiddenFor(m => m.objReportFilters.geom)
+        @Html.HiddenFor(m => m.objReportFilters.geomType)
+        @Html.HiddenFor(m => m.objReportFilters.radius)*@
+    <input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+
+    @if (Model.BomBoqReportList.Count > 0)
+    {
+        <div class="space-pad d-flex jc-sb">
+            <div id="TotalRowsCount">
+                <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<span data="spanTotalRowCount"> @Model.BomBoqReportList.Count</span></b>
+            </div>
+
+            <div class="col-sm-4 d-flex" id="dvBtnAction">
+                <label class="control-label col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_FRM_067 :</label>
+                <div class="col-sm-5 chosen-drop-bottom" style="width: 135px;">
+                    @*@Html.DropDownList("Network_Status", new List<SelectListItem>
+                        { new SelectListItem { Text = "--All--", Value = "",Selected=true}
+                          }, new { @class = "chosen-select", @id = "ddlNetworkStatus", @onchange = "FilterBomBoqReport();" })*@
+                    @Html.DropDownList("Network_Status", new SelectList(Model.lstNetworkStatus.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "-All-", new { @class = "chosen-select", @id = "ddlNetworkStatus", @onchange = "FilterBomBoqReport();" })
+                </div>
+
+            </div>
+            <div>
+                <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                <div class="dropbox bom--width">
+                    <span onclick="si.BOMBOQReport.ExportAttribute(this, 'PDF-BOM')">BOM (PDF)</span>
+                    <span onclick="si.BOMBOQReport.ExportAttribute(this, 'EXCEL-BOM')">BOM (Excel)</span>
+                    <span onclick="si.BOMBOQReport.ExportAttribute(this, 'PDF-BOQ')">BOQ (PDF)</span>
+                    <span onclick="si.BOMBOQReport.ExportAttribute(this, 'EXCEL-BOQ')">BOQ (Excel)</span>
+                </div>
+            </div>
+        </div>
+    }
+    <div id="Grid" class="p-15 pt-0">
+        <div class="TabContent--max-over pt-0">
+            @if (Model.BomBoqReportList.Count > 0)
+            {
+
+                <table id="tblBomLst" class="stickyTh" cellpadding="0" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Resources.Resources.SI_OSP_GBL_NET_GBL_008
+                            </th>
+                            <th>
+                                @Resources.Resources.SI_OSP_GBL_GBL_GBL_077
+                            </th>
+                            <th>
+                                @Resources.Resources.SI_OSP_GBL_GBL_GBL_068
+                            </th>
+                            <th>
+                                @Resources.Resources.SI_OSP_GBL_NET_RPT_015
+                            </th>
+                            <th>Served By Ring</th>
+                            <th>
+                                @Html.Raw(String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_014, ApplicationSettings.Currency))
+
+                            </th>
+                            <th>
+                                @Html.Raw(String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_017, ApplicationSettings.Currency))
+                            </th>
+                            <th>@Resources.Resources.SI_OSP_GBL_NET_GBL_226</th>
+                            <th>@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_085, ApplicationSettings.Currency)</th>
+                            <th>@string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_022, ApplicationSettings.Currency)</th>
+                            <th>@Html.Raw(Resources.Resources.SI_OSP_GBL_NET_FRM_476)</th>
+                            <th>@Resources.Resources.SI_OSP_GBL_NET_FRM_477</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{var NtStatus = ""; }
+                        @{var sts = ""; }
+                        @{var cssCls = ""; }
+                        @{var LstCnt = 0; }
+                        @{var PL = 0; }
+                        @{var AsB = 0; }
+                        @{var Dmt = 0; }
+
+                        @foreach (var objBom in Model.BomBoqReportList)
+                        {
+                            {
+                                sts = @objBom.NetworkStatus == "P" ? "Planned" : @objBom.NetworkStatus == "A" ? "As-Built" : @objBom.NetworkStatus == "D" ? "Dormant" : "Combined";
+                            }
+                            if (NtStatus != @objBom.NetworkStatus)
+                            {
+                                if (NtStatus != "")
+                                {
+                                    <tr class="bomFooter content" datafilterText="@NtStatus">
+                                        <td>
+                                            @Resources.Resources.SI_OSP_GBL_GBL_GBL_041
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.total_count)
+                                        </td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.total_cost)
+                                        </td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.total_service_cost)
+                                        </td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.calculated_length)
+                                        </td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.gis_length)
+
+                                        </td>
+                                    </tr>
+                                }
+                                PL = PL + (@objBom.NetworkStatus.ToUpper() == "P" ? 1 : 0);
+                                AsB = AsB + (@objBom.NetworkStatus.ToUpper() == "A" ? 1 : 0);
+                                if (ApplicationSettings.IsDormantEnabled)
+                                {
+                                    Dmt = Dmt + (@objBom.NetworkStatus.ToUpper() == "D" ? 1 : 0);
+                                }
+                                else { Dmt = Dmt = 1; }
+
+                                if (@objBom.NetworkStatus.ToUpper() == "C")
+                                {
+                                    if (PL == 0)
+                                    {
+                                        <tr class="bg-primary content" datafiltertext="P"><td colspan="12" class="text-white text-left" style="font-weight:bold;">Planned</td></tr>
+                                        <tr class="content" datafilterText="P"><td style="padding-left: 8rem;" colspan="12" class="text-left">@Resources.Resources.SI_OSP_GBL_GBL_GBL_051</td></tr>
+                                    }
+                                    if (AsB == 0)
+                                    {
+                                        <tr class="bg-primary content" datafiltertext="A"><td colspan="12" class="text-white text-left" style="font-weight:bold;">As-Built</td></tr>
+                                        <tr class="content" datafilterText="A"><td style="padding-left: 8rem;" class="text-left" colspan="12">@Resources.Resources.SI_OSP_GBL_GBL_GBL_051</td></tr>
+                                    }
+                                    if (Dmt == 0)
+                                    {
+                                        <tr class="bg-primary content" datafiltertext="D"><td colspan="12" class="text-white text-left" style="font-weight:bold;">Dormant</td></tr>
+                                        <tr class="content" datafilterText="D"><td style="padding-left: 8rem;" colspan="12" class="text-left">@Resources.Resources.SI_OSP_GBL_GBL_GBL_051</td></tr>
+                                    }
+                                }
+
+                                <tr class="bg-primary content" datafilterText="@objBom.NetworkStatus" style="@cssCls"><td colspan="12" class="text-white text-left" style="font-weight:bold;">@sts</td></tr>
+
+                                NtStatus = @objBom.NetworkStatus;
+                            }
+                            if (@objBom.entity_type.ToUpper() == "CABLE")
+                            {
+                                CblCnt = CblCnt + 1;
+                            }
+
+                            <tr class="@(objBom.is_header == true ? "bomGridEntity" : "bomGridSubEntity") content" datafilterText="@objBom.NetworkStatus" style="@cssCls">
+                                <td style="text-align:left;">
+                                    @if (objBom.is_header)
+                                    {
+                                        <span> @objBom.entity_type </span>
+                                    }
+                                    else
+                                    {
+                                        <span> @objBom.entity_sub_type </span>
+                                    }
+
+                                </td>
+                                <td style="text-align:left;">
+                                    @objBom.name
+                                </td>
+                                @if (@objBom.NetworkStatus.ToUpper() != "A")
+                                {
+                                    <td style="text-align:left;">
+                                        @objBom.item_code
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td style="text-align:left;">
+                                    </td>
+
+                                }
+                                <td style="text-align:left;">
+                                    @objBom.specification
+                                </td>
+                                <td style="text-align:left;">
+                                    @objBom.served_by_ring
+                                </td>
+
+                                <td>
+                                    @(objBom.is_header == true ? "" : objBom.cost_per_unit.ToString())
+                                </td>
+                                <td contenteditable="true">
+
+                                    @(objBom.is_header == true ? "" : objBom.service_cost_per_unit.ToString())
+
+
+                                </td>
+
+                                <td>
+                                    @objBom.total_count
+                                </td>
+                                <td>
+                                    @objBom.total_cost
+                                </td>
+                                <td>
+                                    @objBom.total_service_cost
+                                </td>
+                                <td>
+                                    @(objBom.geom_type.ToUpper() == "LINE" ? objBom.calculated_length.ToString() : "")
+                                </td>
+                                <td>
+                                    @(objBom.geom_type.ToUpper() == "LINE" ? objBom.gis_length.ToString() : "")
+                                </td>
+                            </tr>
+
+                            LstCnt = LstCnt + 1;
+                            if ((LstCnt == Model.BomBoqReportList.Count))
+                            {
+                                var NtwkSts = Model.objReportFilters.SelectedNetworkStatues.ToUpper();
+                                if (NtwkSts == "P" || NtwkSts == "A" || NtwkSts == "D")
+                                {
+                                    <tr class="bomFooter content" datafilterText="@NtStatus">
+                                        <td>
+                                            @Resources.Resources.SI_OSP_GBL_GBL_GBL_041
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => p.is_header && p.NetworkStatus == NtStatus).Sum(m => m.total_count))
+
+                                        </td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.total_cost)
+                                        </td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.total_service_cost)
+                                        </td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.calculated_length)
+                                        </td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.gis_length)
+                                        </td>
+                                    </tr>
+                                }
+
+                                if ((NtStatus == "C"))
+                                {
+                                    <tr class="bomFooter content" datafilterText="@NtStatus">
+                                        <td>
+                                            Grand Total
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.total_count)
+                                        </td>
+
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.total_cost)
+                                        </td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.total_service_cost)
+                                        </td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.calculated_length)
+                                        </td>
+                                        <td>
+                                            @Model.BomBoqReportList.Where(p => (p.is_header == true) && (p.NetworkStatus == NtStatus)).Sum(m => m.gis_length)
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+
+                
+                    if (Model.objReportFilters.isdBLossAttrEnable == true)
+                    {
+                        if (CblCnt > 0)
+                        {
+                            <table id="tblLossLst" class="grid mt-2" cellpadding="0" cellspacing="0">
+                                <thead style="color:white;">
+                                    <tr class="bg-primary text-left"><th colspan="12">@Resources.Resources.SI_OSP_GBL_GBL_FRM_043</th></tr>
+                                    <tr class="webgridHeader">
+                                        <th>
+                                            @Resources.Resources.SI_OSP_GBL_GBL_FRM_044
+
+                                        </th>
+                                        <th>
+                                            @Resources.Resources.SI_OSP_GBL_GBL_GBL_302 (Km)
+                                        </th>
+                                        <th>
+                                            @Resources.Resources.SI_GBL_GBL_NET_FRM_100 (@ApplicationSettings.dBLossUnit)
+                                        </th>
+                                        <th>
+                                            @Resources.Resources.SI_OSP_GBL_GBL_FRM_212 (@ApplicationSettings.dBLossUnit)
+
+                                        </th>
+                                        <th>
+                                            @Resources.Resources.SI_OSP_GBL_GBL_FRM_213 (@ApplicationSettings.dBLossUnit)
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.objdBLoss.Count > 0)
+                                    {
+                                        foreach (var objloss in Model.objdBLoss)
+                                        {
+                                            <tr class="bomGridSubEntity">
+                                                <td style="text-align:left;">
+                                                    <span style="margin-left: 15%;"> @objloss.cable_category </span>
+                                                </td>
+                                                <td style="text-align:left;">
+                                                    @objloss.total_cable_length
+                                                </td>
+                                                <td style="text-align:left;">
+                                                    @objloss.cable_total_splice_loss
+                                                </td>
+                                                <td>
+                                                    @objloss.misc_loss
+                                                </td>
+                                                <td>
+                                                    @objloss.totalLoss
+                                                </td>
+                                            </tr>
+
+                                        }
+                                    }
+
+                                </tbody>
+                                <tfoot>
+                                    @if (Model.objdBLoss.Count > 0)
+                                    {
+                                        <tr class="bomFooter content" datafilterText="@NtStatus">
+                                            <td colspan="12">
+                                                @Resources.Resources.SI_OSP_GBL_GBL_FRM_049 (@ApplicationSettings.dBLossUnit)
+                                            </td>
+                                            <td>
+                                                @Model.objdBLoss.Sum(m => m.totalLoss)
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr><td colspan="12">@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</td></tr>
+                                    }
+                                </tfoot>
+                            </table>
+                        }
+                    }
+                
+            }
+            else
+            {
+                <div class="nr-found">
+                    <span>@Resources.Resources.SI_OSP_GBL_GBL_GBL_051</span>
+                </div>
+            }
+        </div>
+    </div>
+    <input type="hidden" id="CrntRptType" value="" />
+</form>
+<script src="~/Content/js/Utility.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        UpdateFormattedNumbers();
+    })
+    function UpdateFormattedNumbers() {
+        // Get the table element
+        const table = document.getElementById('tblBomLst');
+
+        // Loop through the rows
+        if (table && table.rows) {
+            for (let rowIndex = 0; rowIndex < table.rows.length; rowIndex++) {
+                const row = table.rows[rowIndex];
+
+
+                // Loop through the cells in the row
+                for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
+                    const cell = row.cells[cellIndex];
+
+                    // Extract data from the cell
+                    const cellData = cell.textContent.trim();
+
+                    // Do something with the cell data
+                    if ($.isNumeric(cellData) && cellIndex != 2)
+                        row.cells[cellIndex].textContent = getFormattedNumber(cellData);
+                }
+            }
+        }
+    }
+    $('.chosen-select').chosen({ width: '100%' });
+    $(function () {
+        setTimeout(function () { Set_NetworkStatus(); }, 1000);
+    });
+    function FilterBomBoqReport() {
+            UpdateFormattedNumbers();
+        
+        var ddlsel = $('[id$=ddlNetworkStatus]').val();
+        var rex = new RegExp(ddlsel);
+        if (rex == "") { clearFilter() } else {
+            $('.content').hide();
+            $('.content').filter(function () {
+                var atrval = $(this).attr("datafilterText");
+                return rex.test(atrval);
+            }).show();
+        }
+        var cnts = $("#TotalRowsCount").html();
+        var cntarr = cnts.split(":");
+        var tocnt = $('#tblBomLst tbody tr').filter(function () {
+            return $(this).css('display') !== 'none';
+        }).length;
+        tocnt = ddlsel.length == 0 ? (tocnt - 4) : ddlsel.length == 2 ? (tocnt - 2) : (tocnt - 1);
+        $("#TotalRowsCount").html(cntarr[0] + ": " + tocnt);
+    }
+
+    function clearFilter() {
+        $('.ddlNetworkStatus').val('');
+        $('.content').show();
+    }
+
+    function Set_NetworkStatus() {
+        debugger;
+        //$('#ddlNetworkStatus').empty();
+        var myValues = $('#SelectedNetworkStatus').chosen().val();
+        myValues = myValues == null ? "" : myValues;
+        myValues = myValues.length > 1 ? myValues + ',C' : myValues;
+        if (myValues.length == 0) {
+            myValues = "C";
+            var arra = myValues.split(',');
+            //$('#ddlNetworkStatus').append('<option value="" selected>--All--</option>');
+            for (var i = 0; i < arra.length; i++) {
+                var strs = arra[i] == "C" ? "Combined" : "";
+                $('#ddlNetworkStatus').append('<option value="' + arra[i] + '" >' + strs + '</option>');
+            }
+        }
+        else
+            if (myValues.length == 1) {
+                var strs = myValues == "P" ? "Planned" : myValues == "A" ? "As-Built" : myValues == "D" ? "Dormant" : "";
+                $('#ddlNetworkStatus').append('<option value="' + myValues + '" selected>' + strs + '</option>');
+            }
+            else {
+                var arra = myValues.split(',');
+                //$('#ddlNetworkStatus').append('<option value="" selected>--All--</option>');
+                for (var i = 0; i < arra.length; i++) {
+                    var strs = arra[i] == "C" ? "Combined" : "";
+                    $('#ddlNetworkStatus').append('<option value="' + arra[i] + '">' + strs + '</option>');
+                }
+            }
+        $("#ddlNetworkStatus").trigger("chosen:updated");
+    }
+
+
+</script>
+
+

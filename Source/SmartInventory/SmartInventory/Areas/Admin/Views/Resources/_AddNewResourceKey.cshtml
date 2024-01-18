@@ -1,0 +1,284 @@
+﻿@model Models.ResourceKeyMaster
+
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+</style>
+
+@using (Ajax.BeginForm("AddNewKey", "Resources", new AjaxOptions
+{
+    HttpMethod = "POST",
+    LoadingElementId = "dvProgress",
+    OnSuccess = "OnSuccess"
+},
+                        new { id = "frmLabelSetting", enctype = "multipart/form-data", autocomplete = "off", @class = "form-form-horizontal" }))
+{
+    <div class="pad_left">
+        <div class="form-group">
+            <div class="row">
+                <div id="divAlretContainer">
+
+                </div>
+            </div>
+            <div class="row">
+                <div class=" col-md-4">
+                    <label class=" control-label">
+                        Project type:
+                    </label>
+                </div>
+                <div class=" col-md-8">
+                    @Html.DropDownListFor(m => m.Projectkey, new SelectList(Model.lstProjects.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--select--", new { @class = "chosen-select col-sm-12", @id = "ddlProject" })
+                    <input type="hidden" id="Projectvalue" name="Projectvalue" />
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-4">
+                    <label class=" control-label">
+                        Module type:
+                    </label>
+                </div>
+                <div class=" col-md-8">
+                    @Html.DropDownListFor(m => m.Modulekey, new SelectList(Model.lstModule.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--select--", new { @class = "chosen-select col-sm-12", @id = "ddlModule" })
+                    <input type="hidden" id="Modulevalue" name="Modulevalue" />
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-4">
+                    <label class=" control-label">
+                        Sub Module type:
+                    </label>
+                </div>
+                <div class=" col-md-8">
+                    @Html.DropDownListFor(m => m.Sub_Modulekey, new SelectList(Model.lstSub_Module.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--select--", new { @class = "chosen-select col-sm-12", @id = "ddlSub_Module" })
+                    <input type="hidden" id="Sub_Modulevalue" name="Sub_Modulevalue" />
+                </div>
+            </div>
+        </div>
+        @if (Session["AppType"].ToString() != "mobile")
+        {
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-4">
+                    <label class=" control-label">
+                        DotNet JQuery type:
+                    </label>
+                </div>
+                <div class=" col-md-8">
+                    @Html.DropDownListFor(m => m.DotNet_JQuerykey, new SelectList(Model.lstDotNet_JQuery.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--select--", new { @class = "chosen-select col-sm-12", @id = "ddlDotNet_JQuery" })
+                    <input type="hidden" id="DotNet_JQueryvalue" name="DotNet_JQueryvalue" />
+                </div>
+            </div>
+        </div>
+        }
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-4">
+                    <label class=" control-label">
+                        Purpose type:
+                    </label>
+                </div>
+                <div class=" col-md-8">
+                    @Html.DropDownListFor(m => m.Purpose_Typekey, new SelectList(Model.lstPurpose_Type.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--select--", new { @class = "chosen-select col-sm-12", @id = "ddlPurpose_Type", @onchange = "onPurpose_type();" })
+                    <input type="hidden" id="Purpose_Typevalue" name="Purpose_Typevalue" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Key
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.key, new { @class = "form-control", placeholder = "Key", @readonly = "readonly" })
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Value
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.Value, new { @class = "form-control", @id = "LstValue", placeholder = "Value" })
+
+                </div>
+            </div>
+        </div>
+        @if (Session["AppType"].ToString() != "mobile")
+        {
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Is used in Jquery:
+                    </label>
+                </div>
+                <div class="col-md-1">
+                    @Html.CheckBoxFor(m => m.is_jquery_used, new { @class = "form-control", @id = "chkisJqery" })
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    <div class="ModalFooter" id="dvBtnAction">
+        <input type="reset" class="btn btn-default ml-auto mr-01" id="btnReset" value="Reset" />
+        <input type="submit" class="btn btn-primary" onclick="return IsValiddropdown();" name="btnaction" id="btnSubmit" value="Save" />
+    </div>
+}
+<script>
+    function OnSuccess(data) {
+        if (data.status = "200") {
+            $("#closeModalPopup").trigger("click");
+            alert(data.msg, 'Success', 'success');
+        }
+    }
+
+    function IsValiddropdown() {
+
+        if ($('#ddlProject').val() == "") {
+
+            $('#ddlProject').addClass('errorClass');
+
+            return false;
+        }
+        else {
+            $('#ddlProject').trigger("chosen:updated");
+        }
+
+        if ($('#ddlModule').val() == "") {
+
+            $('#ddlModule').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddlModule').trigger("chosen:updated");
+        }
+        if ($('#ddlSub_Module').val() == "") {
+            $('#ddlSub_Module').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddlSub_Module').trigger("chosen:updated");
+        }
+
+
+        if ($('#ddlDotNet_JQuery').val() == "") {
+            $('#ddlDotNet_JQuery').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddlDotNet_JQuery').trigger("chosen:updated");
+        }
+
+
+        if ($('#ddlPurpose_Type').val() == "") {
+            $('#ddlPurpose_Type').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddlPurpose_Type').trigger("chosen:updated");
+        }
+
+        if ($('#LstValue').val() == "") {
+            $('#LstValue').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#LstValue').trigger("chosen:updated");
+        }
+
+
+    }
+
+    $("#ddlProject").on("change", function () {
+        $("#Projectvalue").val($(this).find("option:selected").text());
+        checkKeyCreated();
+    });
+    $("#ddlModule").on("change", function () {
+        $("#Modulevalue").val($(this).find("option:selected").text());
+        checkKeyCreated();
+    });
+    $("#ddlSub_Module").on("change", function () {
+        $("#Sub_Modulevalue").val($(this).find("option:selected").text());
+        checkKeyCreated();
+    });
+    $("#ddlDotNet_JQuery").on("change", function () {
+        $("#DotNet_JQueryvalue").val($(this).find("option:selected").text());
+        checkKeyCreated();
+    });
+    //$("#ddlPurpose_Type").on("change", function () {
+    //    $("#Purpose_Typevalue").val($(this).find("option:selected").text());
+    //});
+
+    function onPurpose_type() {
+        $("#Purpose_Typevalue").val($(this).find("option:selected").text());
+        var reskeyMaster = [];
+        //var thisValue=$(this).val()
+
+        //var projectkey = $('#ddlProject').val();
+        //var modulekey = $('#ddlModule').val();
+        //var sub_Modulekey = $('#ddlSub_Module').val();
+        //var dotNet_JQuerykey = $('#ddlDotNet_JQuery').val();
+        //var purpose_Typekey = $('#ddlPurpose_Type').val();
+        checkKeyCreated();
+
+
+    }
+
+    function checkKeyCreated() {
+        var projectkey = $('#ddlProject').val();
+        var modulekey = $('#ddlModule').val();
+        var sub_Modulekey = $('#ddlSub_Module').val();
+        var dotNet_JQuerykey = $('#ddlDotNet_JQuery').val();
+        var purpose_Typekey = $('#ddlPurpose_Type').val();
+        if (projectkey != '' && modulekey != '' && sub_Modulekey != '' && dotNet_JQuerykey != '' && purpose_Typekey != '') {
+            created_key(projectkey, modulekey, sub_Modulekey, dotNet_JQuerykey, purpose_Typekey);
+        }
+    }
+
+    function created_key(projectkey, modulekey, sub_Modulekey, dotNet_JQuerykey, purpose_Typekey) {
+
+        var reskeyMaster = [];
+
+        var reskeyMaster = {
+            Projectkey: projectkey,
+            Modulekey: modulekey,
+            Sub_Modulekey: sub_Modulekey,
+            DotNet_JQuerykey: dotNet_JQuerykey,
+            Purpose_Typekey: purpose_Typekey
+        };
+        ajaxReq('Resources/getNewKey', { ReskeyMaster: reskeyMaster }, false, function (resp) {
+
+            if (resp.Data != '') {
+                $('#key').val(resp.Data);
+            }
+
+        }, true, true);
+
+
+    }
+
+    $('#btnReset').on("click", function () {
+
+        $("#frmLabelSetting")[0].reset();
+        $('#LstValue').removeClass("form-control errorClass").addClass("form-control");
+    });
+</script>
+
+
+

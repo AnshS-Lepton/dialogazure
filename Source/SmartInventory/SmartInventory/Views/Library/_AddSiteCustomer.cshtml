@@ -1,0 +1,572 @@
+﻿@model Models.Customer
+ 
+@helper pageMessage()
+{
+{ Html.RenderPartial("_PageMessage", Model.objPM); }
+    
+}
+<style>
+    #dvSiteCustomerForm .col-md-6 {
+        padding-left: 0px;
+    }
+
+    #dvSiteCustomerForm .mrgn_btm {
+        height: 25px;
+            margin-bottom: 10px;
+    }
+   #divDocumentUpload {
+    display: inline-block;
+    padding-left: 5px;
+}
+
+    #divDocumentUpload input[type=file] {
+        display: block;
+    }
+    #divDocumentUpload a, #divDocumentUpload a:visited {
+        text-decoration:none;color:#01a3c6;font-family:helvetica;padding:0.3em;border-radius:0.2em;
+    }
+    #divDocumentUpload .icon-close,#divDocumentUpload cptr {
+    text-align: center;
+    color: red;
+}
+     #ulSiteCustomerGrid a, #ulSiteCustomerGrid a:visited {
+        text-decoration:none;color:#01a3c6;font-family:helvetica;padding:0.3em;border-radius:0.2em;
+    }
+    #ulSiteCustomerGrid .icon-close {
+    text-align: center;
+    color: red;
+}
+.UploadAction {
+    padding: 10px 0px 0px 0px;
+    margin-bottom: 10px;
+} 
+/*a, a:visited {}*/
+
+   .assign-calen {
+    position: absolute;
+    float: right;
+    top: 3px;
+    /* margin-right: 5px; */
+    cursor: pointer;
+    /* margin-right: 0px; */
+    right: 19px;
+}
+   
+</style>
+
+@*<div class="libDetail" style="height:220px;">*@
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SaveSiteCustomer", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        LoadingElementId = "dvProgress",
+        UpdateTargetId = Model.childModel == "" ? "dvModalBody" : "dvChildModalBody",
+
+        OnSuccess = "SiteCustomer.SiteCustomerInfo.addCustomerResponse(" + Model.system_id + "," + Model.site_id + ",'" + Model.lmc_type + "','" + Model.childModel + "');"
+    },
+                                   new { id = "dvSiteCustomerForm", FormMethod.Post, enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.site_id)
+        @Html.HiddenFor(m => m.lmc_type)
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.region_name)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.province_name)
+        @Html.HiddenFor(m => m.childModel)
+        <div class="TabContent--max-over">
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_OSP_STR_NET_FRM_038</legend>
+                        <div class="form-group">
+                            <div id="dvcustomerinfo">
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_CUS_NET_FRM_001<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @if (Model.system_id > 0)
+                                        {
+                                            @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly numbers-only", @minlength = "6", @maxlength = "7", @id = "txtNetworkId", @readonly = true })
+                                        }
+                                        else
+                                        {
+                                            Model.network_id = string.Empty;
+                                            @Html.TextBoxFor(m => m.network_id, new { @class = "form-control numbers-only", @onkeypress = "return allowOnlyNumber(event);", @minlength = "6", @maxlength = "7", @id = "txtNetworkId" })
+                                            @Html.ValidationMessageFor(model => model.network_id)
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_109<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm @(Model.system_id >0? "dvdisabled": "")">
+                                        @Html.TextBoxFor(m => m.customer_site_id, new { @class = "form-control", @maxlength = "20", @id = "txtCustomerSiteId" })
+                                      
+                                    </div>
+                                </div>
+                                @*<div class="col-md-6 col-sm-6"  data-DarkFiber="false" data-Enterprise="false" data-SmallCell="false" data-FTTH="true">*@
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                                    <label class="control-label col-md-5 col-sm-5" style="padding-top:0px">@Resources.Resources.SI_OSP_GBL_NET_FRM_393<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.customer_name, new { @class = "form-control", @maxlength = "30", @id = "txtCustomerName" })
+                                        @Html.ValidationMessageFor(m => m.customer_name)
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_GBL_FRM_006<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @*@Html.DropDownListFor(m => m.Floor_Name, new SelectList(Model.lstFloorInfo.Select(x => new { Value = x.floor_name, Text = x.floor_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlFloorName", @onchange = "SiteCustomer.ddlChangeRemoveCss(this.id, 'Floor_Name');" })*@
+                                        @Html.DropDownListFor(m => m.floor_id, new SelectList(Model.lstFloorInfo.Select(x => new { Value = x.system_id, Text = x.floor_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlFloorName", @onchange = "SiteCustomer.ddlChangeRemoveCss(this.id, 'Floor_Name');" })
+                                         
+                                    </div>
+                                </div>
+                                 
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="true" data-SmallCell="false" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_106<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.customer_area, new { @class = "form-control", @maxlength = "50" })
+                                      
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_110<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.opco, new { @class = "form-control", @maxlength = "20" })
+                                      
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_FRM_400<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.DropDownListFor(m => m.electrical_meter_type, new SelectList(Model.lstElectricalmeter.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlElectricmeter", @onchange = "SiteCustomer.ddlChangeRemoveCss(this.id, 'electrical_meter_type');" })
+                                       
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_111<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.rtn_name, new { @class = "form-control", @maxlength = "20" })
+                                       
+                                    </div>
+                                </div><div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_112<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.small_cell_installed, new { @class = "form-control", @maxlength = "4", @onkeypress = "return allowOnlyNumber(event);" })
+                                       
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_113<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.agl, new { @class = "form-control", @maxlength = "4", @onkeypress = "return allowOnlyNumber(event);" })
+                                     
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="false" data-FTTH="true">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_096<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.DropDownListFor(m => m.cable_entry_point, new SelectList(Model.lstCableEntryPoints.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlCableEntiryPoint", @onchange = "SiteCustomer.ddlChangeRemoveCss(this.id, 'cable_entry_point');" })
+                                     
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="false" data-FTTH="true">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_098<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.cluster_id, new { @class = "form-control", @maxlength = "20" })
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="false" data-FTTH="true">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_097<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.cluster_name, new { @class = "form-control", @maxlength = "30" })
+                                       
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="false" data-FTTH="true">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_099<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm @(Model.system_id >0 ?"dvdisabled" :"")">
+                                        @Html.TextBoxFor(m => m.paf_no, new { @class = "form-control", @maxlength = "20", @id = "txtPAFNO" })
+                                     
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="false" data-FTTH="true">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_100<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.paf_signing_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @id = "txtPAFSIGNINGYDATE" })
+                                       
+                                    </div><img id="Img_PAF_Signing_Date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;margin-right: 15px;" />
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="false" data-FTTH="true">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_101<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.paf_expiry_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @id = "txtPAFEXPIRYDATE" })
+                                     
+                                    </div><img id="Img_PAF_Expirry_Date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;margin-right: 15px;" />
+                                </div>
+
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="true" data-SmallCell="false" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_107<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.remote_pop, new { @class = "form-control", @maxlength = "20" })
+                                     
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="false" data-SmallCell="false" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_102<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.order_tenure, new { @class = "form-control", @maxlength = "4", @onkeypress = "return allowOnlyNumber(event);" })
+                                       
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="false" data-SmallCell="false" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_103<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.site_details, new { @class = "form-control", @maxlength = "50" })
+                                       
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="false" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_104<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm @(Model.system_id >0? "dvdisabled":"")">
+                                        @Html.TextBoxFor(m => m.po_number, new { @class = "form-control", @maxlength = "20", @id = "txtPONumber" })
+                                       
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="false" data-SmallCell="false" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_105<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.po_issue_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @id = "txtPOISSUEDATE" })
+                                       
+                                    </div><img id="Img_po_issue_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;margin-right: 15px;" />
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="true" data-SmallCell="false" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_FRM_394<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.po_expiry_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @id = "txtPOEXPIRYDATE" })
+                                      
+                                    </div><img id="Img_po_expiry_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;margin-right: 15px;" />
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_FRM_395<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.rfai_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @id = "txtRFAIDate" })
+                                       
+                                    </div><img id="img_rfai_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;margin-right: 15px;" />
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_148<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.rfs_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @id = "txtRFSDate" })
+                                  
+                                    </div><img id="Img_rfs_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;margin-right: 15px;" />
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_FRM_396<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                        @Html.TextBoxFor(m => m.contract_end_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @id = "txtContractEndDate" })
+                                       
+                                    </div><img id="Img_contract_end_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;margin-right: 15px;" />
+                                </div>
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                                    <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_FRM_397<i class="clsMandatory">*</i>:</label>
+                                    <label class="col-md-3 col-sm-3">
+                                        @Html.RadioButtonFor(m => m.is_power_back_up_available, true, new { @id = "radioIsPowerBackupTrue",@onclick="powerBackupTrue();"}) Yes
+                                    </label><label class="col-md-3 col-sm-3">
+                                        @Html.RadioButtonFor(m => m.is_power_back_up_available, false, new { @id = "radioIsPowerBackupFalse", @onclick = "powerBackupFalse();" }) No
+                                    </label>
+                                </div>
+                               
+                                    
+                                <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                                    <label class="control-label col-md-5 col-sm-5">@Resources.Resources.SI_OSP_GBL_NET_FRM_398 <br/> @Resources.Resources.SI_OSP_GBL_NET_FRM_399<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7 col-sm-7 mrgn_btm">
+                                @if (Model.is_power_back_up_available)
+                                {
+                                        @Html.TextBoxFor(m => m.power_back_up_capacity, new { @class = "form-control", @maxlength = "4", @onkeypress = "return allowOnlyNumber(event);", @id = "txtPwrBkpCapacity" })
+                                    }
+                                else
+                                    {
+                                         @Html.TextBoxFor(m => m.power_back_up_capacity, new { @class = "form-control", @maxlength = "4",@readonly=true, @onkeypress = "return allowOnlyNumber(event);", @id = "txtPwrBkpCapacity" })
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    @if (Model.system_id > 0)
+                    {
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_047</legend>
+                            <div class="col-md-12 col-sm-12 UploadAction">
+                                <div class="col-md-6 col-sm-6" id="divDocumentUpload" style="display:flex; text-decoration:underline;">
+                                    <input type="file" class="file" name="customerDocUpload" id="SiteCustomerDocUpload">
+                                    <a href="#" onclick="SiteCustomer.SiteCustomerInfo.attachment.upload(@Model.system_id,'Customer',@Model.site_id);" value="Upload" id="btnUploadDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008</a>
+                                    <a href="#" onclick="SiteCustomer.SiteCustomerInfo.clear();" value="Clear" id="btnClearDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</a>
+                                </div>
+                                <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
+                            </div>
+
+                            <div id="divSiteCustomerAttachment" class="tab-pane x-scroll">
+                                @Html.Partial("~/Views/Library/_ViewSiteCustomerAttachment.cshtml", Model.lstSiteCustomerAttachment)
+                            </div>
+                        </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <div class="ml-auto">
+                @if (Model.system_id == 0)
+                {
+                    <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                    <button type="button" class="btn btn-primary" id="btnSaveSiteCust" onclick="ValidateCustomer();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+
+                }
+                else if (Model.system_id > 0)
+                {
+                    <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                    <button type="button" class="btn btn-primary" id="btnSaveSiteCust" onclick="ValidateCustomer();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008</button>
+
+                }
+
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    }
+</div>
+    
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                
+                $('.chosen-select').chosen({ width: '100%' });
+                SiteCustomer.setDateTimeCalendar('txtRFAIDate', 'img_rfai_date', '', true);
+                SiteCustomer.setDateTimeCalendar('txtContractEndDate', 'Img_contract_end_date', '', true);
+                SiteCustomer.setDateTimeCalendar('txtPOEXPIRYDATE', 'Img_po_expiry_date', '', true);
+                SiteCustomer.setDateTimeCalendar('txtPOISSUEDATE', 'Img_po_issue_date', '', true);
+                SiteCustomer.setDateTimeCalendar('txtPAFEXPIRYDATE', 'Img_PAF_Expirry_Date', '', true);
+                SiteCustomer.setDateTimeCalendar('txtRFSDate', 'Img_rfs_date', '', true);
+                SiteCustomer.setDateTimeCalendar('txtPAFSIGNINGYDATE', 'Img_PAF_Signing_Date', '', true);
+                //setDateTimeCalendar('txtRFAIDate', 'img_rfai_date');
+                //setDateTimeCalendar('txtContractEndDate', 'Img_contract_end_date');
+                //setDateTimeCalendar('txtPOEXPIRYDATE', 'Img_po_expiry_date');
+                //setDateTimeCalendar('txtPOISSUEDATE', 'Img_po_issue_date');
+                //setDateTimeCalendar('txtPAFEXPIRYDATE', 'Img_PAF_Expirry_Date');
+                //setDateTimeCalendar('txtRFSDate', 'Img_rfs_date');
+                //setDateTimeCalendar('txtPAFSIGNINGYDATE', 'Img_PAF_Signing_Date');
+
+                var ddlLMCSelected1 = '@Model.lmc_type';
+                var ddlLMCSelected = ddlLMCSelected1.replace(/\s+/g,'')
+                //var ddlLMCSelected = $('#ddlLMCType').val().replace(/\s+/g,'') 
+                $('div[data-' + ddlLMCSelected + '="true"]').show();
+                $('div[data-' + ddlLMCSelected + '="false"]').hide();
+
+                $('div[data-' + ddlLMCSelected + '="false"] .form-control').attr('data-val', false);
+                $('div[data-' + ddlLMCSelected + '="true"] .form-control').attr('data-val', true);
+                callFormValidator("dvSiteCustomerForm");
+            });
+            
+
+            function powerBackupTrue() {
+                  
+                $("#txtPwrBkpCapacity").prop("readonly", false);
+               
+            }
+            function powerBackupFalse()
+            {
+                 
+                $("#txtPwrBkpCapacity").prop("readonly", true);
+                $("#txtPwrBkpCapacity").val('0');
+            }
+            //$('#ddlFloorName').on('change', function () {
+            //     
+            //    var ddlValue = $(this).val().replace(/\s+/g, '');
+            //    var abc = $(this).find('option:selected').attr('id');
+            //});
+
+            function ValidateCustomer() {
+                 
+                var _CustomerSiteId = $('#txtCustomerSiteId').val().trim();
+                var _poNumber = $('#txtPONumber').val().trim();
+                var _pafNumber = $('#txtPAFNO').val().trim();
+                var ddlLMCSelected1 = '@Model.lmc_type';
+                var ddlLMCSelected = ddlLMCSelected1.replace(/\s+/g, '')
+                //var ddlLMCSelected = $('#ddlLMCType').val().replace(/\s+/g, '')
+                var isvalid = true;
+                var inputLength = $('#txtNetworkId').val().length;
+                var canId = $('#txtNetworkId').val();
+                 
+
+                $('#dvSiteCustomerForm div[data-' + ddlLMCSelected + '="true"]  .form-control[data-val="true"]').removeClass('input-validation-error').addClass('valid');
+                $.each($('#dvSiteCustomerForm div[data-' + ddlLMCSelected + '="true"] .form-control[data-val="true"]'), function (index, item) {
+                    if ($(this).val().trim() == '' || $(this).val().trim() == null) {
+                        if ($(this).hasClass("chosen-select")) {
+                            $(this).next().addClass('input-validation-error');
+                        } else {
+                            $(this).addClass('input-validation-error');
+                        }
+
+                    }
+                });
+                if ($('#dvSiteCustomerForm div[data-' + ddlLMCSelected + '="true"] .form-control[data-val="true"]').filter(function () {
+            return $(this).val().trim() == '' || $(this).val().trim() == null;
+                }).length > 0) {
+                     isvalid = false;
+                }
+                 
+                     if (($('#ddlFloorName').val() > 0) && ($('#ddlFloorName').val()!="")) {
+                         ajaxReq('Library/ValidateUnitsOnFloor', { floorId: $('#ddlFloorName').val(), customerId:@Model.system_id }, false, function (resp) {
+                             if (!resp.status) {
+                                 var message =MultilingualKey.SI_ISP_GBL_JQ_GBL_042;
+                                 message += '<br/>'+MultilingualKey.SI_ISP_GBL_JQ_GBL_043; 
+                                 alert(message)
+                                 isvalid = false;
+                                 return false;
+                             }
+                         }, true, false);
+                     }
+                if ('@Model.system_id' == 0 && ddlLMCSelected=="SmallCell") {
+                    if (_CustomerSiteId.length > 0) {
+                        ajaxReq('Library/GetCustomerSiteId', { CustomerSiteId: _CustomerSiteId }, true, function (resp) {
+                            if (resp.system_id > 0) {
+                                var message =  MultilingualKey.SI_ISP_GBL_JQ_GBL_044;
+                                message += '<br/><div class="table-responsive tble_cls"><table border="1" width="100%" class="webgrid"><tbody>';
+                                message += '<tr><td>' +MultilingualKey.SI_ISP_GBL_JQ_GBL_045 +' </td><td> ' + resp.network_id + '</td></tr>';
+                                message += '<tr><td>' +MultilingualKey.SI_OSP_GBL_GBL_GBL_089+ '</td><td> ' + resp.customer_name + '</td></tr>';
+                                message += '</tbody></table></div>';
+                                alert(message);
+                                isvalid = false;
+                                //alert('Customer Site Id already exists!');
+                                return false;
+                            }
+                             
+                            else {
+                                if (inputLength <= 0 || inputLength > 7) {
+                                    isvalid = false;
+                                    return false;
+                                }
+                                else {
+                                    ajaxReq('Library/IsNetworkIdExist', { networkId: canId, entityType: 'Customer', networkStage: 'P' }, false, function (resp) {
+                                        if (resp != undefined && resp.status == 'OK') {
+                                            alert( MultilingualKey.SI_OSP_GBL_JQ_GBL_055)
+                                            isvalid = false;
+                                            return false;
+                                        }
+                                        else {
+                                            
+                                            if (isvalid) {
+                                                $('#dvSiteCustomerForm').submit();
+                                            }
+                                        }
+                                    }, true, false);
+                                }
+                            }
+                        }, false, false)
+                    }
+                    //else {
+                    //    alert('Customer Site Id is required!');
+                    //    return false;
+                    //}
+                }
+                else if (('@Model.system_id' == 0 && ddlLMCSelected == "DarkFiber") || ('@Model.system_id' == 0 && ddlLMCSelected == "Enterprise")) {
+                    if (_poNumber.length > 0) {
+                        ajaxReq('Library/GetSiteCustomerPO', { PONumber: _poNumber }, true, function (resp) {
+                            if (resp.system_id > 0) {
+                                 
+                                var message =  MultilingualKey.SI_ISP_GBL_JQ_GBL_046;
+                                message += '<br/><div class="table-responsive tble_cls"><table border="1" width="100%" class="webgrid"><tbody>';
+                                message += '<tr><td>' +MultilingualKey.SI_ISP_GBL_JQ_GBL_045 +' </td><td> ' + resp.network_id + '</td></tr>';
+                                message += '<tr><td>'+ MultilingualKey.SI_OSP_GBL_GBL_GBL_089+'</td><td> ' + resp.customer_name + '</td></tr>';
+                                message += '</tbody></table></div>';
+                                alert(message);
+                                isvalid = false;
+                                //alert('PO Number already exists for customer '+resp.customer_name+' !');
+                                return false;
+                            }
+                            else {
+                                if (inputLength <= 0 || inputLength > 7) {
+                                    isvalid = false;
+                                    return false;
+                                }
+                                else {
+                                    ajaxReq('Library/IsNetworkIdExist', { networkId: canId, entityType: 'Customer', networkStage: 'P' }, false, function (resp) {
+                                        if (resp != undefined && resp.status == 'OK') {
+                                            alert( MultilingualKey.SI_OSP_GBL_JQ_GBL_055)
+                                            isvalid = false;
+                                            return false;
+                                        }
+                                        else {
+                                           
+                                            if (isvalid) {
+                                                $('#dvSiteCustomerForm').submit();
+                                            }
+                                        }
+                                    }, true, false);
+                                }
+                            }
+                        }, false, false)
+                    }
+                    //else {
+                    //    alert('PO Number is required!');
+                    //    return false;
+                    //}
+                }
+                else if ('@Model.system_id' == 0 && ddlLMCSelected == "FTTH") {
+                    if (_pafNumber.length > 0) {
+                        ajaxReq('Library/GetSiteCustomerPAF', { PAFNO: _pafNumber }, true, function (resp) {
+                            if (resp.system_id > 0) {
+                                var message = MultilingualKey.SI_OSP_GBL_JQ_GBL_056;
+                                message += '<br/><div class="table-responsive tble_cls"><table border="1" width="100%" class="webgrid"><tbody>';
+                                message += '<tr><td>' +MultilingualKey.SI_ISP_GBL_JQ_GBL_045 +'</td><td> ' + resp.network_id + '</td></tr>';
+                                message += '<tr><td>'+ MultilingualKey.SI_OSP_GBL_GBL_GBL_089+'</td><td> ' + resp.customer_name + '</td></tr>'; 
+                                message += '</tbody></table></div>';
+                                alert(message);
+                                isvalid = false;
+                               // alert('PAF Number already exists for customer '+resp.customer_name+' !');
+                                return false;
+                            }
+                            else {
+                                if (inputLength <= 0 || inputLength > 7) {
+                                    isvalid = false;
+                                    return false;
+                                }
+                                else {
+                                    ajaxReq('Library/IsNetworkIdExist', { networkId: canId, entityType: 'Customer', networkStage: 'P' }, false, function (resp) {
+                                        if (resp != undefined && resp.status == 'OK') {
+                                            alert( MultilingualKey.SI_OSP_GBL_JQ_GBL_055)
+                                            isvalid = false;
+                                            return false;
+                                        }
+                                        else {
+                                            
+                                            if (isvalid) {
+                                                $('#dvSiteCustomerForm').submit();
+                                            }
+                                        }
+                                    }, true, false);
+                                }
+                            }
+                        }, false, false)
+                    }
+                    //else {
+                    //    alert('PAF Number is required!');
+                    //    return false;
+                    //}
+                }
+                else {
+                    if (isvalid) {
+                        $('#dvSiteCustomerForm').submit();
+                    }
+                }
+               
+                 
+            }
+             
+           
+        </script>

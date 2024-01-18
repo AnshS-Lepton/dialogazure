@@ -1,0 +1,458 @@
+﻿@model Models.ISP.ISPViewModel
+
+@using SmartInventory.Settings;
+
+@{
+    Models.NetworkLayer rackLayer = (Models.NetworkLayer)TempData["RackRolesData"] == null ? new Models.NetworkLayer() : (Models.NetworkLayer)TempData["RackRolesData"];
+
+    Models.NetworkLayer equipmentLayer = (Models.NetworkLayer)TempData["EquipmentRolesData"] == null ? new Models.NetworkLayer() : (Models.NetworkLayer)TempData["EquipmentRolesData"];
+}
+<script src="~/Content/js/jspdf.min.js"></script>
+<script src="~/Content/js/canvg.min.js"></script>
+<script src="~/Content/js/html2canvas.js"></script>
+<style>
+    #divConnectionFilter {
+        position: absolute;
+        left: 32%;
+        z-index: 9999;
+        background: #fff;
+        top: 25%;
+        width: 600px;
+        display: none;
+        box-shadow: 0px 12px 32px #00000033 !important;
+    }
+   /* #rackViewDisplay > .svgDiv {
+    background: none;
+    margin: 0;
+    border-radius: 5px;
+    border: none;
+    padding: 0px;
+    position: relative;
+}*/
+  
+   #rackLibFilterContext > .RadioDivCreate .RadioFunction {
+    width: auto;
+    white-space:nowrap;
+}
+   #rackLibFilterContext > .LibCell {
+    float: left;
+    border-radius: 5px;
+    width: 100%;
+}
+
+</style>
+
+<!DOCTYPE html>
+<div class="ISPTabs">
+    <ul class="nav nav-tabs tabs-left">
+        @if (Model.StructureId > 0)
+        {
+            <li id="tabIspView" class="active">
+                <a href="#ISPInfo" data-toggle="tab" data-isp="true">@Resources.Resources.SI_ISP_GBL_NET_FRM_001</a>
+            </li>
+        }
+        <li id="tabRoomView" class="event" style="display:none;">
+            <a href="#RoomView" data-toggle="tab" data-room="true">@Resources.Resources.SI_ISP_GBL_NET_FRM_002</a>
+            <i id="closeRoomView" class="icon-close"></i>
+        </li>
+        <li  id="tabEquipmentView" class="" style="display:none;">
+            <a href="#divEquipmentView" id="linkEquipmentView" data-toggle="tab"  data-equipment="true">Equipment View</a>
+            <i id="closeEquipmentView" class="icon-close"></i>
+        </li>
+    </ul>
+</div>
+
+
+
+
+
+<div class="tab-content">
+    @if (Model.StructureId > 0)
+    {
+        <div id="ISPInfo" class="tab-pane active">
+            <div class="ISP-Content">
+                <div id="divleftMenu" class="leftMenu">
+                    <div class="neLibrary icon-library" data-panel-class="clslibraryEntity" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_003"></div>
+                    <div class="neLayer icon-layers" data-panel-class="clsNetworkLayer" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_004"></div>
+                    <div class="ispInfoTool icon-Entity-Info" data-panel-class="clsInfoTool" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_005"></div>
+                </div>
+                <div id="divStructureInfo">
+                    <div>
+                        @Html.Partial("_Library")
+                    </div>
+
+                    <div id="divISPNetworkLayer">
+                        @Html.Partial("_NetworkLayer", Model.NetworkLayerElements)
+                    </div>
+                    <div id="divEntityInformation">
+                        @Html.Partial("_Information", Model.entityInformation)
+                    </div>
+                    
+                </div>
+                <div id="divSplicingWindow" class="leftPanel">
+
+                </div>
+
+
+                
+
+
+                @Ajax.ActionLink("ISP", "StructureInfo", "ISP", new { structureId = Model.StructureId }, new AjaxOptions { LoadingElementId = "dvProgress", UpdateTargetId = "divStructureView", InsertionMode = InsertionMode.Replace, OnSuccess = "isp.bindStructureEvents()" }, new { style = "display:none;", id = "ancrStructureInfo" })
+                <div id="divStructureView">
+                    @Html.Partial("_StructureInfo", Model)
+                </div>
+                <div class="ISP-Tool">
+                    @if (Model.lstUserModule.Contains("MNS"))
+                    {
+                        <div class="wirelineTool icon-Manual-Splicing" id="divManualSplicing" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_006"></div>
+                    }
+                    @if (Model.lstUserModule.Contains("CPF"))
+                    {
+                        <div class="wirelineTool icon-Connection-Path-finder" id="divCPF" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_007" onclick="splicing.SinglePathFind(true);" style="display:none"></div>
+                    }
+                    <div class="ispInfoTool wirelineTool icon-information" id="divInformation" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_008"></div>
+                </div>
+                <div class="ISPlegend" style="display: none;">
+                    <div class="info_ISPlegend_bg">
+                        <h5>Legend</h5>
+                        <span class="icon-close ml-auto" onclick="isp.ClosedISPLegend()"></span>
+                    </div>
+                    <div class="LegendContent">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div id="RoomView" class="tab-pane " style="display:none;">
+        <div id="divConnectionFilter"></div>
+        <div class="ISP-Content">
+            <div id="divRoomleftMenu" class="leftMenu">
+                <div id="navRoomLib" class="neLibrary icon-library activeISPTab" data-panel-class="clsRoomlib" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_003"></div>
+                <div id="navRoomInfo" class="ispInfoTool icon-Entity-Info" data-panel-class="clsRoomInfo" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_010"></div>
+            </div>
+        </div>
+
+        <div id="roomLeftPanel" class="clsRoomlib leftPanel" style="display:none;">
+            @Html.Partial("_RoomLibrary")
+        </div>
+
+        <div id="roomRackInfo" class="clsRoomInfo leftPanel" style="display:none;">
+            @Html.Partial("_Information", Model.entityInformation)
+        </div>
+            
+
+                    @*<h4 class="modal-title">@Resources.Resources.SI_OSP_GBL_NET_FRM_451</h4>
+                </div>*@
+
+            
+
+        <div id="divRoomStructureView" class="roomViewPanel">
+            @Html.HiddenFor(x => x.POPId, new { @id = "ispPOPId" })
+            @Html.HiddenFor(x => x.POPType, new { @id = "ispPOPType" })
+            @Html.Partial("_RoomView")
+        </div>
+        
+    </div>
+    <div id="divEquipmentView" style="display:none;">
+
+    </div>
+    <footer class="ISPFooter" id="ISPFooter" style="display:none;">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-10">
+                @*<i class="fa fa-bars" aria-hidden="true"></i>*@
+                <div id="rackTabContext">
+
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div id="divConnectionContainer" style="position: relative;z-index: 999;height: 452px;top: 68px;width: 858px;margin: 0 auto;background-color: #fff;display:none;border:1px solid #8080803d;box-shadow: 16px 16px 16px #8080805e"></div>
+    @*@Html.Partial("_ConnectionEditor")*@
+</div>
+
+
+@section roomViewScript
+{
+    <script type="text/javascript">
+        var conBuilder = null;
+        $(function ($, window, document, d3) {
+            $('.leftMenu [title!=""]').tooltip({ title: '', html: true, placement: "right" });
+            $('.ISP-Tool [title!=""]').tooltip({ title: '', html: true, placement: "left" });
+            $('[title!=""]').tooltip({ title: '', html: true, placement: "top" });
+            let configs = {
+                roleAccess: {
+                    rack: {
+                        planned_add: '@rackLayer.planned_add',
+                        planned_edit: '@rackLayer.planned_edit',
+                        planned_delete: '@rackLayer.planned_delete',
+                        planned_view: '@rackLayer.planned_view',
+
+                        asbuild_add: '@rackLayer.asbuild_add',
+                        asbuild_edit: '@rackLayer.asbuild_edit',
+                        asbuild_delete: '@rackLayer.asbuild_delete',
+                        asbuild_view: '@rackLayer.asbuild_view',
+
+                        dormant_add: '@rackLayer.dormant_add',
+                        dormant_edit: '@rackLayer.dormant_edit',
+                        dormant_delete: '@rackLayer.dormant_delete',
+                        dormant_view: '@rackLayer.dormant_view',
+                    },
+                    equipment: {
+                        planned_add: '@equipmentLayer.planned_add',
+                        planned_edit: '@equipmentLayer.planned_edit',
+                        planned_delete: '@equipmentLayer.planned_delete',
+                        planned_view: '@equipmentLayer.planned_view',
+
+                        asbuild_add: '@equipmentLayer.asbuild_add',
+                        asbuild_edit: '@equipmentLayer.asbuild_edit',
+                        asbuild_delete: '@equipmentLayer.asbuild_delete',
+                        asbuild_view: '@equipmentLayer.asbuild_view',
+
+                        dormant_add: '@equipmentLayer.dormant_add',
+                        dormant_edit: '@equipmentLayer.dormant_edit',
+                        dormant_delete: '@equipmentLayer.dormant_delete',
+                        dormant_view: '@equipmentLayer.dormant_view',
+                    }
+                },
+                defaultSizes: [{ height: 400, width: 400, border_width: 0 },
+                   { height: 200, width: 300, border_width: 20 },
+                   { height: 50, width: 200, border_width: 0 },
+                   { height: 50, width: 200, border_width: 0 },
+                   { height: 50, width: 50, border_width: 0 },
+                   { height: 5, width: 200, border_width: 0 }],
+                gridCellSize: '@ApplicationSettings.RoomCellSize',
+                grid_scale: '@ApplicationSettings.RoomScale',
+                eq_grid_scale: '@ApplicationSettings.WorkspaceScale',
+                eq_gridCellSize: '@ApplicationSettings.WorkspaceCellSize',
+                displayScale: 1000,
+                eq_displayScale: 1,
+                librarySize: 110,
+                portKey: '5',
+                chessisKey: '2',
+                equipmentKey: '1',
+                trayKey: '6',
+                slotKey: '3',
+                cardKey: '4',
+                labelKey: '7',
+                FMSMap: 'fmsMap',
+                roomLeftPanel: '#roomLeftPanel',
+                ispLeftPanel: '#ispLeftPanel',
+                tabRoomView: '#tabRoomView',
+                tabEquipmentView: '#tabEquipmentView',
+                tabIspView: '#tabIspView',
+                clslibraryEntity: 'clsRoomlib',
+                entityRoomView: '#EntityRoomView',
+                InfoRoomViewFloor: "#btnRoomViewFloor",
+                
+                //entityRoomViewFloor: ".icon-room-view-floor-shaft",
+                entityRoomViewFloor: "#btnRoomViewFloor .icon-UNIT",
+                roomView: '#RoomView',
+                sourceType: '#SourceType',
+                closeRoomView: '#closeRoomView',
+                infoContext: '#divEntityInformation',
+                roomInfoContext: '#roomRackInfo',
+                ispAllPanel: '.ispAllPanel',
+                svgWorkArea: '#roomViewContext',
+                svgLibArea: '#library',
+                svgRoomViewLibArea: '#libraryRoomView',
+                defaultLength: 1000,
+                defaultHeight: 1000,
+                defaultWidth: 1000,
+                defaultDepth: 0,
+                defaultDoor: '',
+                color_code: '#e4e4e4', //'#EFEFEF',
+                stroke: '#000000',
+                workAreaContext: '.roomContext',
+                roomPanel: '#RoomView',
+                ispPanel: '#ISPInfo',
+                leftPanel: '.leftPanel',
+                lblmsg: '#lblmsg',
+                lblRoomViewMsg: '#lblRoomViewMsg',
+                verticalRuler: 'verticalRuler',
+                horizontalRuler: 'horizontalRuler',
+                libraryId: 'data-lib-id',
+                libraryImgId: 'data-img-id',
+                dataModelId: 'data-model-id',
+                dataModelTypeId: 'data-model-type-id',
+                dataColorCode: 'data-color-code',
+                dataStrokeCode: 'data-stroke-code',
+                dataUnitsNo: 'data-units-no',
+                tempModel: 'tempModel',
+                modelElementId: 'modelElement',
+                elementRect: 'element-rect',
+                libFilterOptions: "input[name='LibFilterCheck']",
+                roomLibFilterOptions: "input[name='roomLibFilterCheck']",
+                libFilterContext: '.RadioDivCreate',
+                equipmentType: '#equipmentType',
+                roomViewEquipmentType: '#roomViewEquipmentType',
+                selectLibTypes: '#selectLibTypes',
+                selectRoomViewLibTypes: '#selectRoomViewLibTypes',
+                txtSearchLibraryData: '#SearchModel',
+                //txtSearchRoomLibraryData: '#selectRoomViewLibTypes',
+                txtSearchRoomViewLibraryData: '#searchRoomViewModel',
+                linkRackView: '#linkRackView',
+                linkRoomView: '#linkRoomView',
+                rackTitle: '#rackTitle',
+                rackLibFilterContext: '#rackLibFilterContext',
+                roomLibFilterContext: '#roomLibFilterContext',
+                stroke: '#000000',
+                portColor: '#bcbcbc',
+                chassisColor: '#E0E0E0',
+                chassisInnerColor: 'url(#chassisGrid)',
+                chassisStroke: '#B6B6B6',
+                cardHatch: 'url(#cardHatch)',
+                svgRackArea: '#rackViewContext',
+                rackAreaContext: '.rackContext',
+
+                subMenuContext: '#subMenuContext',//'#rackSubMenu',
+                rackCancel: '#cancelSubMenuContext',
+                rackSave: '#rackSave',
+
+                selectedClass: 'pathAnimationGreen',
+                selectedGreenClass: 'pathAnimationGreen',
+                elementId: 'data-element-id',
+                portNumber: 'data-port-number',
+                superParent: 'data-super-parent',
+                networkId: 'data-network-id',
+                portStatus: 'data-port-status',
+                rackDelete: '#deleteSubMenuContext',
+                defaultDoorWidth: '0',
+                defaultDoorWidth: 'none',
+                subRackMenuContext: '#subMenuContext',
+                cancelSubMenuContext: '#cancelSubMenuContext',
+                copySubMenuContext: '#copySubMenuContext',
+                deleteSubMenuContext: '#deleteSubMenuContext',
+                rackTabContext: '#rackTabContext',
+                rackViewFooter: '#ISPFooter',
+                rackTab: '.rackTab',
+                rackRoom: '.rackRoom',
+                equipmentTab: '.equipmentTab',
+                linkConnection: '#linkConnection',
+                roomViewTitle: '#roomViewTitle',
+                entityInfo: '#dvEntityInformationDetail',
+                selectedRackId: '#selectedRackId',
+                selectedRackName: '#selectedRackName',
+                entityInfoPanel: '#divEntityInformation .leftPanel',
+                deleteEntity: '.icon-Delete',
+                entityLocationEdit: '#EntityLocationEdit',
+                entityCancel: "#EntityCancel",
+                entitySave: "#EntitySave",
+                entityRackView: '#EntityRackView',
+                divLeftMenu: '#divleftMenu .neLibrary',
+                divInfoMenu: '#divleftMenu .ispInfoTool',
+                roomDoor: 'roomDoor',
+                rack_color: '#5897fb',
+                closeModalPopup: "#closeModalPopup",
+                topBorder: 'upperBorder',
+                leftBorder: 'leftBorder',
+                leftBorderMark: 'leftBorderMark',
+                bottomBorder: 'bottomBorder',
+                rightBorder: 'rightBorder',
+                outerColor: '#7c7c7c',
+                roomDoorRect: 'roomDoorRect',
+                scaleText: '.scale-text',
+                rackActive: 'rackActive',
+                navRoomLib: '#navRoomLib',
+                navRoomInfo: '#navRoomInfo',
+                roomRackInfo: '#roomRackInfo',
+                activeTabClass: 'activeISPTab',
+                editSubMenuContext: '#editPosSubMenuContext',
+                savePosSubMenuContext: '#savePosSubMenuContext',
+                revertPosSubMenuContext: '#revertPosSubMenuContext',
+                roomEquipmentLib: '#roomEquipment',
+                equipmentLib: ".equipmentLib",
+                divImage: '#divImage',
+                liImage: '#liImage',
+                divDetail: '#divDetailroom',
+                divImage: "#divImageroom",
+                divDocument: "#divDocumentroom",
+                deleteImages: "#divDeleteImagesroom",
+                liDocument: "#liDocument",
+                uploadImage: "#ImgUpload",
+                downloadImages: "#divDownloadImages",
+                uploadDocument: "#DocUpload",
+                deleteDocuments: "#divDeleteDocuments",
+                downloadDocuments: "#divDownloadDocuments",
+                liDetailTab: "#liDetail",
+                EntityConvertToPlanned: "#EntityConvertToPlanned",
+                EntityConvertToAsBuilt: "#EntityConvertToAsBuilt",
+                EntityConvertToDormant: "#EntityConvertToDormant",
+                EntityExport: '#EntityExport',
+                EntityExportWithConnection: '#EntityExportWithConnection',
+                EntityExportWithoutConnection: '#EntityExportWithoutConnection',
+                EntityRackCount: '.RackCountNo',
+                RackDisplay: '.rackDisplay',
+                FloorInfoBOX: '.FloorInfoBox',
+                EntityHistory: '#EntityHistory',
+                EntityDetail: '#EntityDetail',
+                StructureId: '#hdnStructureId',
+                trayColor: '#3E6B70',
+                selectedRoomId: '#selectedRoomId',
+                roomBorder: 'roomBorder',
+                rackIconPath1: '#rackIconPath1',
+                eqStatusBorder: 'eqStatusBorder',
+                ispPOPId: '#ispPOPId',
+                ispPOPType: '#ispPOPType',
+                no_of_port: '#no_of_port',
+                existedFMS: '.mappingEntity',
+                selectExistedFms: '#selectExistedFms',
+                selectModelType: '#selectModelType',
+                modelGroup: 'modelGroup',
+                defaultFontSize: 14,
+                roleDisabledClass: 'roledisabled',
+                connectionContext: '#connectionContext',
+                chkShowConnections: '#chkShowConnections',
+                modelGroup: 'modelGroup',
+                viewConSubMenuContext: '#viewConSubMenuContext',
+                connectionFilter: '#divConnectionFilter',
+                defaultBorderColor: '#6E6E6E',
+                portOpacity: '0.3',
+                blinkClass: 'blink-connected-port',
+                portRect: 'svg[data-port-status=2]',
+                connectionDV: '#dvConnection',
+                dvProgress: '#dvProgress',
+                divConnContainer: '#divConnContainer',
+                dvConnection: 'dvConnection',
+                dvDropbox: '.divNetworkCode .dropbox',
+                ElementLine: 'ElementLine',
+                OuterElementLine: 'OuterElementLine',
+                closeConnection: '#btnCloseMultiConnection',
+                EquipmentViewSubMenuContext: "#EquipmentViewSubMenuContext",
+				tabEquipmentView:"#tabEquipmentView",
+                liRefLink: "#liRefLink",
+                divRefLink: '#divRefLink',
+                divRefLink: '#divRefLinkroom',
+                uploadRefLink: "#uploadRefLinkupload",
+                uploadSaveRefLink: "#btnSaveRefLink",
+                EntityCustomerDetails: "#EntityCustomerDetails"
+            };
+            roomManager.init(configs);
+            var connectionConfig = {
+                connectionContext: '#connectionContext',
+                linkConnection: '#linkConnection',
+                selectedRoomId: '#selectedRoomId',
+                selectRackLeft: '#selectRackLeft',
+                selectRackRight: '#selectRackRight',
+                selectEquipmentRight: '#selectEquipmentRight',
+                selectEquipmentLeft: '#selectEquipmentLeft',
+            };
+            //connectionBuilder.init(connectionConfig);
+            //conBuilder = new connectionBuilder();
+            //conBuilder.initApp();
+            //$('#viewConSubMenuContext').on("click", function ()
+            //{
+            //    conBuilder.insideConnectivity(316, 'DEL-POD274-OLT3422222_222_2222');
+            //});
+            $('#linkConnection').on("click", function () {
+                $('.divNetworkCode .dropbox').hide();
+                splicing.connectionEditor();
+            });
+            
+        }($, window, document, d3));
+
+       
+    </script>
+}

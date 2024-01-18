@@ -1,0 +1,221 @@
+﻿@model Models.UserReportMappingVM
+@using SmartInventory.Settings;
+
+
+<style>
+
+    /*.mobile-unit {
+        padding: 0 0 0 48px;
+    }
+
+    #dvUserDetail .chosen-container-single .chosen-single {
+        height: 28px;
+    }
+
+    #ddl_UserRole_chosen {
+        width: 82% !important;
+    }
+
+    .ViewRolebtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        width: 17%;
+    }
+
+    .Nextbtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        float: right;
+    }
+
+    .Previousbtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        margin-right: 20px;
+    }
+
+    .saveBtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+    }
+
+    #dvUserDetail .form-group {
+        margin-bottom: 5px;
+    }
+
+    .clsUserContainer {
+        width: 98%;
+        border: 2px solid #dee2e6;
+        margin: 0 auto;
+        border-top: 0px;
+    }
+
+    #dvUserDetail {
+        margin: auto;
+        padding: 10px;
+        max-width: 700px;
+    }
+
+    .checkStep {
+        display: none;
+        height: 30px;
+        width: 29px;
+    }
+
+    .title {
+        margin: 0 auto;
+    }
+
+    .clsStepsContainer {
+        width: 100%;
+        margin-left: 0px;
+        min-width: 516px;
+        height: auto;
+    }
+
+    .clsUserContainer .content {
+        width: 80%;
+        margin: auto;
+        margin-top: 25px;
+        height: auto;
+    }*/
+
+    /*.successImg {
+        margin-top: 150px;
+        min-height: 300px;
+        width: 100%;
+        top: 40%;
+        text-align: center;
+        position: relative;
+    }*/
+
+    /*.mainModule li {
+        background: none !important;
+        padding: 0px 0pt 0px 0px !important;
+    }
+
+    .mainModule input[type="checkbox"] {
+        position: absolute !important;
+    }*/
+
+    /*#partTable td {
+        width: 55%;
+        vertical-align: top;
+    }*/
+</style>
+
+<!DOCTYPE html>
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div class="dvUserDetail update_panel fullWidth pose-rel">
+    <div class="title">
+        <h4>
+            User Report Mapping
+        </h4>
+    </div>
+    @using (Html.BeginForm("SaveReportUserMapping", "User", FormMethod.Post, new { autocomplete = "off", @id = "frmUserReportInfo", @class = "form-horizontal pad_left", onsubmit = "return CheckModule()" }))
+    {
+        @Html.HiddenFor(m => m.is_all_users_mapped ,new {@id ="isallUsersMapped"})
+        <div id="form-group">
+            <div class="d-flex mb-01">
+                <div class="mappSelectWidth">
+                    User :
+                    @Html.DropDownListFor(m => m.user_id, new SelectList(Model.lstUser.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddl_User", @onchange = "onChangeUser();", @required = true })
+                    <i id="progressbar" class="pose-loader" style="display:none;">
+                        <img style="border:4px solid rgb(250 255 255);height:25px;" alt="Loading..." src="~/content/images/loading_new.gif" /><br />
+                    </i>
+                    <span class="hideWithSelect dropLable" style="display:@(Model.user_id == 0?"block":"none")"> Please select user to map with other users</span>
+                </div>
+                <div class="ml-auto updatebtn" style="display:@(Model.user_id != 0?"block":"none")">
+                    <button class="btn btn-primary" type="submit">Update</button>
+                </div>
+            </div>
+            <div id="partTable" class="showWithSelect">
+
+                @if (Model.UserReportMappingList.Count() > 0)
+                {
+                    @Html.Partial("_UserReportList", Model.UserReportMappingList)
+                }
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '100%' });
+        //$(".showWithSelect").hide();
+        //alert("runing");
+        totalSelected();
+    });
+    $(document).on("keyup", "#search", function () {
+        var value = $(this).val().toUpperCase();
+        var $rows = $("table tbody tr");
+        if(value === ''){
+            $rows.show();
+            return false;
+        }
+        $rows.each(function(index) {
+            if (index !== 0) {
+                $row = $(this);
+                var column2 = $row.text().toUpperCase();
+                if ( (column2.indexOf(value) > -1)) {
+                    $row.show();
+                }
+                else {
+                    $row.hide();
+                }
+            }
+        });
+        if ($("tbody > tr.Others:not('.parenttr'):visible").length > 0) {
+            $("tr.parenttr.Others").show();
+        } else { $("tr.parenttr.Others").hide(); }
+
+        if ($("tbody > tr.same:not('.parenttr'):visible").length > 0) {
+            $("tr.parenttr.same").show();
+        } else { $("tr.parenttr.same").hide(); }
+    });
+    function totalSelected() {
+        var selectedCount = $(":input[type=checkbox]:checked").not(".allselect").length;
+        var totalUsers = parseInt($(".totalUsers").text());
+        $('.selectedUsers').text(selectedCount);
+        if (selectedCount == totalUsers) {
+            $(".allselect").prop('checked', true);
+        }
+        else {
+            $(".allselect").prop('checked', false);
+        }
+    }
+
+    $(document).on("click", ":input[type=checkbox]", function () {
+        totalSelected();
+    });
+
+    function onChangeUser() {
+        if ($("#ddl_User").val() != 0 || $("#ddl_User").val() != "") {
+            $(".updatebtn").show()
+            $(".showWithSelect").show();
+            $(".hideWithSelect").hide();
+            $("#progressbar").show();
+            ajaxReq('user/UserReportList', { user_id: $("#ddl_User").val() }, true, function (resp) {
+                $('#partTable').html(resp);
+                totalSelected();
+                $("#progressbar").hide();
+            });
+        }
+        else {
+            $("#progressbar").hide();
+            $(".updatebtn").hide()
+            $(".showWithSelect").hide();
+            $(".hideWithSelect").show();
+        }  
+    } 
+
+    function selectAllCheckBox() {
+        var is_all_users_mapped = $(".allselect").prop('checked');
+        $('#isallUsersMapped').val(is_all_users_mapped);
+        var isSelected = $(".allselect").prop('checked') ;
+        $(":input[type=checkbox]").not(".dvdisabled").prop('checked', isSelected);
+    }
+</script>

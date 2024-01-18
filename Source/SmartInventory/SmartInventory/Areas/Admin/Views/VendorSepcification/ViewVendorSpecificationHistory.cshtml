@@ -1,0 +1,98 @@
+﻿@model Models.ViewAuditMasterModel
+@using Utility
+@using SmartInventory.Settings;
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objFilterAttributes.pageSize, canPage: true, canSort: false, ajaxUpdateContainerId: "objViewAuditHistory");
+    grid.Bind(Model.lstData, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+    if (Model.objFilterAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objFilterAttributes.currentPage - 1;
+    }
+}
+
+<!DOCTYPE html>
+<div class="libDetail">
+    @using (Ajax.BeginForm("DownloadVendorSpecificationHistory", "VendorSepcification", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody" },
+                                     new { id = "frmVendorSpecificationHistory", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+        @Html.HiddenFor(m => m.systemId);
+
+        if (Model.lstData.Count > 0)
+        {
+            <div class="form-group row" id="dvBtnAction" style="padding: 10px 10px 8px 10px;margin:0px;">
+                <div class="div_totalRecord col-sm-4" style="float: left;"><b>Total Records:&nbsp;<span>@grid.TotalRowCount</span></b></div>
+                <div class="col-sm-8" style="float: right; text-align: right; cursor:pointer;">
+                    @if (@grid.TotalRowCount > 0)
+                    {
+                        <input type="button" id="btnExport" value="Export" class="btn btn-primary" />
+                    }
+                    else
+                    {
+                        <input type="button" id="btnExport" value="Export" disabled="disabled" class="btn btn-primary" />
+                    }
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+            <div id="objViewAuditHistory" style="padding:10px;padding-top:0px;">
+
+                @if (Model.lstData.Count > 0)
+                {
+                    <div id="dvViewExportData" style="padding: 4px;padding-top: 0px;    white-space: nowrap;">
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+                       
+                         htmlAttributes: new { id = "tblVendorSpecificationHistory" },
+                            mode: WebGridPagerModes.All,
+                             columns: grid.Columns(
+     grid.Column("entity_type", "Entity Type", format: @<text>@item.entity_type</text>),
+     grid.Column("specification", "Specification", format: @<text>@item.specification</text>),
+     grid.Column("vendor_name", "Vendor Name", format: @<text>@item.vendor_name</text>),
+     grid.Column("code", "Item Code", format: @<text>@item.code</text>),
+     @*grid.Column("cost_per_unit", "Cost Per Unit/Mtr (Rs.)", format: @<text>@item.cost_per_unit</text>),*@
+     grid.Column("cost_per_unit", string.Format("Cost Per Unit/Mtr({0})",ApplicationSettings.Currency), format: @<text>@item.cost_per_unit</text>),
+     @*grid.Column("service_cost_per_unit", "Service Cost Per Unit/Mtr (Rs.)", format: @<text>@item.service_cost_per_unit</text>),*@
+     grid.Column("service_cost_per_unit", string.Format("Service Cost Per Unit/Mtr({0})",ApplicationSettings.Currency), format: @<text>@item.service_cost_per_unit</text>),
+     grid.Column("iop_value", "Port/Fiber Info", format: @<text>@item.iop_value</text>),
+grid.Column("item_type", "Item Type", format: @<text>@item.item_type</text>),
+grid.Column("unit_measurement", "Unit Measurement", format: @<text>@item.unit_measurement</text>),
+grid.Column("is_arfs", "is A-RFS item", format: @<text>@(item.is_arfs == "True" ? "Yes" : "No")</text>),
+grid.Column("is_brfs", "is B-RFS item", format: @<text>@(item.is_brfs == "True" ? "Yes" : "No")</text>),
+grid.Column("is_crfs", "is C-RFS item", format: @<text>@(item.is_crfs == "True" ? "Yes" : "No")</text>),
+
+     grid.Column("subcategory_1", "Sub Category 1", format: @<text>@item.subcategory_1</text>),
+     grid.Column("subcategory_2", "Sub Category 2", format: @<text>@item.subcategory_2</text>),
+     grid.Column("subcategory_3", "Sub Category 3", format: @<text>@item.subcategory_3</text>),
+     grid.Column("is_active", "Status", format: @<text>@(Convert.ToBoolean(item.is_active) == true ? "Active" : "InActive")</text>),
+     grid.Column("action", "Action", format: @<text>@item.action</text>),
+     grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>),
+     grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>),
+     grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>),
+     grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>)))
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="nr-found">
+                <span>No Records Found.</span>
+            </div>
+        }
+    }
+</div>
+<script>
+    $(document).ready(function () {
+
+        changeColor('tblVendorSpecificationHistory');
+
+        $("#btnExport").on("click", function () {
+            EntityAuditReport("DownloadVendorSpecificationHistory");
+        });
+    });
+
+    function EntityAuditReport(downloadEntity) {
+        window.location = appRoot + 'VendorSepcification/' + downloadEntity;
+    }
+</script>

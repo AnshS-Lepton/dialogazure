@@ -1,0 +1,188 @@
+﻿@model Models.ManageResources
+@using Utility
+@using SmartInventory.Settings;
+<!DOCTYPE html>
+<div id="dvViewUsers">
+    <input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: false, ajaxUpdateContainerId: "dvCableTypeLst", ajaxUpdateCallback: "onGridHeaderClick('WebGrid')");
+        grid.Bind(Model.ResourcesList, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+        if (Model.objGridAttributes.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+        }
+    }
+
+
+    <div id="dvPageMessage">
+        @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+    </div>
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>Resource List</h4>
+        </div>
+        <div class="pad_left">
+            <div class="d-flex mb-01 resourceGap">
+                <input type="submit" class="btn btn-outline-primary ml-auto" onclick="GenerateResourceList()" value="Add New Language">
+                @if (Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["IsAddNewMobResKey"]) == true && Session["AppType"].ToString() == "mobile")
+                {
+                    <input type="submit" value="+ Add new" onclick="AddNewResourceKey()" class="btn btn-outline-primary border-primary ">
+                }
+                @if (Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["IsAddNewResourcesKeyEnabled"]) == true && Session["AppType"].ToString() == "web")
+                {
+                    <input type="submit" value="+ Add new" onclick="AddNewResourceKey()" class="btn btn-outline-primary border-primary ">
+                }
+                <input type="submit" class="btn btn-outline-primary" onclick="UploadResourceFile()" value="Upload Resource File">
+                @Html.DropDownListFor(m => m.Type, new List<SelectListItem>
+                     {
+                        new SelectListItem{ Text="Web", Value = "web"},
+                        new SelectListItem{ Text="Mobile", Value = "mobile"  }
+                     }, new { @id = "ddlType", @tabindex = "2", @title = "Application Type", @class = "border-primary btn ", @style = "color:#007bff;" })
+
+            </div>
+
+
+            @using (Html.BeginForm("Index", "Resources", FormMethod.Post, new { autocomplete = "off", @id = "Resourcelist" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-inline filter-sec">
+
+                    <div class="d-flex">
+                        <label class="control-label mr-03">Search By : </label>
+                        <div class="--input-width">
+                            @Html.DropDownListFor(m => m.key, new List<SelectListItem>
+                         {
+                            new SelectListItem{ Text="Key", Value = "key" },
+                            new SelectListItem{ Text="Text", Value = "value" }
+                         }, "--Select--", new { @id = "ddlStatus", @tabindex = "2", @title = "Status", @class = "chosen-select form-control mr-01" })
+                        </div>
+
+                    </div>
+                    <div class="form-group wtd_set">
+                        <label class="control-label ml-01">
+                            Search Text:
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(x => x.value, new { @class = "input-sm form-control mr-01", @placeholder = "Search a key,text" })
+                            @Html.HiddenFor(x => x.Type, new { @id = "hdnType" })
+                        </div>
+                    </div>
+
+                    <div class="form-group wtd_set">
+                        <div class="col-md-8 text-right">
+                            <input type="submit" value="Search" class="btn btn-primary mr-05" id="btnSearch">
+                            <a href="@Url.Action("index", "Resources", new { btnAction ="Reset" })" class="btn btn-default" naem="btnAction" title="Reset">Reset</a>
+                        </div>
+                    </div>
+
+                    <div class="form-group wtd_set">
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.culture, new SelectList(Model.ResourceLangugeList.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), new { @class = "chosen-select form-control", @id = "dropdown_key", @onchange = "onChangeResourcelang();" })
+                        </div>
+                        <div class="col-md-4  text-right">
+                            <input type="button" value="Update" id="btnSave" onclick="updateResources()" class="btn btn-primary mr-05" />
+                            <input type="button" class="btn btn-outline-primary" id="btnExport" value="Export Data">
+                        </div>
+                    </div>
+
+                </div>
+
+                if (Model.ResourcesList.Count > 0)
+                {
+                    var lang = "English";
+
+                    if (ViewData["lang"] != null)
+                    {
+                        lang = ViewData["lang"].ToString();
+                    }
+
+
+                    <div id="divUserDetail">
+                        <div class="recordCount mb-01"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+                                    htmlAttributes: new { id = "tblUserDetail" },
+                                    mode: WebGridPagerModes.All,
+                                    columns: grid.Columns(
+                                         grid.Column(format: @<text><input name="checkbox" id="chk_@item.s_no" type="checkbox" value="some value" /></text>),
+@*grid.Column("Is Jquery Used",format: @<text><input name="IsJquery" id="isJquery_@item.s_no" checked="@item.is_jquery_used" disabled="@item.is_jquery_used"   type="checkbox" /></text>),*@
+grid.Column("Key", format: @<text><lable id="lblName_@item.s_no">@item.key</lable> </text>),
+grid.Column("English Text", format: @<text><lable id="lblvalue">@item.value</lable><label id="lblCulture_@item.s_no" hidden="hidden">@item.culture</label><label id="isJquery_@item.s_no" hidden="hidden">@item.is_jquery_used</label> <label id="lbldescription_@item.s_no" hidden="hidden">@item.description</label> </text>),
+grid.Column(lang.ToString() + " " + "Language Text", format: @<text><input name="textbox" class="input-sm form-control" type="text" id="txtvalue_@item.s_no" value="@item.CurrentValue" /><input type="hidden" value="@item.language" id="hdnlanguage_@item.s_no" /></text>)))
+                            <input type="hidden" id="hdnSession" value="@Request.RequestContext.HttpContext.Session["user_id"]" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Record Found.
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        updateNumberstoFormatedNumber();
+
+        addDefaultSortingIcons("tblUserDetail");
+        $('tfoot a').on("click", function () {
+            $('#Resourcelist').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+
+        //Post form on page header click..
+        $('th a').on("click", function () {
+            $('#Resourcelist').attr('action', $(this).attr('href')).submit();
+
+            return false;
+        });
+
+
+    });
+
+
+
+    $('#checkall').on("click", function (e, parameters) {
+        var nonUI = false;
+
+        var check = nonUI ? !this.checked : this.checked;
+
+        $("input[name='checkbox']").prop("checked", check);
+
+    });
+    $("input[name='checkbox']").on("click", function (e, parameters) {
+        var nonUI = false;
+        var check = nonUI ? !this.checked : this.checked;
+        if (check == false) {
+            $('#checkall').prop("checked", check);
+        }
+    });
+    $("#btnExport").on("click", function () {
+        Report();
+    });
+
+    function Report() {
+        window.location = appRoot + 'Resources/DownloadResourceList';
+    }
+
+    $("#ddlType").bind("change", function () {
+        $("#hdnType").val($(this).val());
+        $("#btnSearch").trigger("click");
+
+    });
+
+
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+</script>
+

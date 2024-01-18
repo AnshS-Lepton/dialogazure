@@ -1,0 +1,111 @@
+﻿@model Models.EmailSettingsModel
+<!DOCTYPE html>
+@if (Model != null)
+{
+    <div id="dvPageMessage">
+        @{
+            Html.RenderPartial("_PageMessage", Model.pageMsg);
+        }
+    </div>
+}
+
+<div class="update_panel fullWidth">
+    <div class="title">
+        <h4>Email Settings</h4>
+    </div>
+</div>
+<div id="emailsettings" class="pad_left">
+    <div id="emailsettingsform">
+        @using (Html.BeginForm("updateEmailSettings", "EmailSettings", FormMethod.Post, new { autocomplete = "off", @id = "UpdateEmailSettings", enctype = "multipart/form-data", @class = "form-horizontal" }))
+        {
+            @Html.HiddenFor(m => m.id)
+            <div class="clsStepsContainer">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">
+                            SMTP Host :
+                        </label>
+                    </div>
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(m => m.smtp_host, new { @class = "form-control", @id = "smtp_host" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">
+                            Port :
+                        </label>
+                    </div>
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(m => m.port, new { @class = "form-control", @id = "port", @maxlength = "4", @max = "9999", @placeholder = 0 })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">
+                            Email Address :
+                        </label>
+                    </div>
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(m => m.email_address, new { @class = "form-control", @id = "email_address", @maxlength = "50", @placeholder = "Enter Email ID" })
+                        @Html.ValidationMessageFor(m => m.email_address)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">
+                            Email Password :
+                        </label>
+                    </div>
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(m => m.email_password, new { @class = "form-control", @id = "email_password", @maxlength = "20", @placeholder = "Enter Password", @title = "1 lower and 1 upper case letter. 1 number and 1 special character. Minimum 8 character long!" })
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom:0px;">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Auth :
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            @Html.CheckBoxFor(m => m.auth, new { @class = "chk", @checked = "checked", @id = "auth" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom:0px;">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Enable SSL :
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            @Html.CheckBoxFor(m => m.enablessl, new { @class = "chk", @id = "enable_ssl" })
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom:0px;">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Use Default Credentials :
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            @Html.CheckBoxFor(m => m.usedefaultcredentials, new { @class = "chk", @id = "use_def_cred"})
+
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex mt-01" id="dvBtnAction">
+                    <a href="@Url.Action("Index", "EmailSettings")"  class="btn btn-default ml-auto mr-05" title="Reset">Reset</a>
+                    <button type="submit" class="btn btn-primary mr-05" id="btnUEmail">Update</button>
+                </div>
+
+            </div>
+        }
+        
+    </div>
+</div>

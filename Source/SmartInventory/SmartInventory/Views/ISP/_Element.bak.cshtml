@@ -1,0 +1,60 @@
+﻿@model Models.ISP.ISPViewModel
+
+@if (Model.parentElementInfo.is_Element_Drawn == false)
+{
+    var childElements = Model.StructureElements.Where(m => m.parent_mapping_id == Model.parentElementInfo.mapping_id).ToList();
+    if (childElements.Count > 0)
+    {
+        <div data-ref="RO" class="e_B_first infotool" title="@Model.parentElementInfo.entity_title" id="Parent_@(Model.parentElementInfo.entity_system_id)" data-title="@Model.parentElementInfo.entity_title" elementid="@Model.parentElementInfo.entity_system_id">
+            <span class="@Model.parentElementInfo.entityClass rightInfo parentEntity" id="@(Model.parentElementInfo.entity_type.ToUpper() + "_" + Model.parentElementInfo.entity_system_id)"
+                  data-shaftid="@Model.parentElementInfo.shaft_id"
+                  data-floorid="@Model.parentElementInfo.floor_id"
+                  data-mappingid="@Model.parentElementInfo.mapping_id"
+                  data-networkid="@Model.parentElementInfo.network_id"
+                  data-entitytitle="@Model.parentElementInfo.entity_title"
+                  data-additionalattr="@Model.parentElementInfo.additional_attributes"
+                  data-parentmappingid="@Model.parentElementInfo.parent_mapping_id"
+                  data-entitytype="@Model.parentElementInfo.entity_type"
+                  data-systemid="@Model.parentElementInfo.entity_system_id"
+                  data-entityname="@Model.parentElementInfo.entity_name" data-cable-count-v="0" data-cable-count-h="0" data-osp-cable-id="@(Model.parentElementInfo.osp_cable_id == null ? 0 : Model.parentElementInfo.osp_cable_id)" data-ports="@(Model.parentElementInfo.total_ports == null ? "" : Model.parentElementInfo.total_ports)" style="visibility:visible;" onmouseover="isp.setParentTitle(this);" data-network-status="@(Model.parentElementInfo.network_status == null ? "" : Model.parentElementInfo.network_status)">
+            </span>
+            <div style="height: 60px; width: 100%; overflow-y: auto;">
+                @foreach (var ChildElement in childElements)
+                {
+                    <span class="@ChildElement.entityClass rightInfo" id="@(ChildElement.entity_type.ToUpper() + "_" + ChildElement.entity_system_id)"
+                          data-shaftid="@Model.parentElementInfo.shaft_id"
+                          data-floorid="@Model.parentElementInfo.floor_id"
+                          data-mappingid="@ChildElement.mapping_id"
+                          data-networkid="@ChildElement.network_id"
+                          data-entitytitle="@ChildElement.entity_title"
+                          data-additionalattr="@ChildElement.additional_attributes"
+                          data-parentmappingid="@ChildElement.parent_mapping_id"
+                          data-entitytype="@ChildElement.entity_type"
+                          data-systemid="@ChildElement.entity_system_id"
+                          data-entityname="@ChildElement.entity_name" data-cable-count-v="0" data-cable-count-h="0" data-ports="@(ChildElement.total_ports == null ? "" : ChildElement.total_ports)" style="visibility:visible;" onmouseover="isp.setParentTitle(this);" onmouseout="isp.resetTitle(this);" data-network-status="@(ChildElement.network_status == null ? "" : ChildElement.network_status)">
+                    </span>
+                    ChildElement.is_Element_Drawn = true;
+                }
+            </div>
+        </div>
+    }
+    else if (Model.parentElementInfo.parent_mapping_id == 0)
+    {
+        <div data-ref="RO" class="e_B_rooms infotool" title="@Model.parentElementInfo.entity_title" id="Parent_@(Model.parentElementInfo.entity_system_id)" elementid="@Model.parentElementInfo.entity_system_id">
+            <span class="@Model.parentElementInfo.entityClass rightInfo" id="@(Model.parentElementInfo.entity_type.ToUpper() + "_" + Model.parentElementInfo.entity_system_id)"
+                  data-shaftid="@Model.parentElementInfo.shaft_id"
+                  data-floorid="@Model.parentElementInfo.floor_id"
+                  data-mappingid="@Model.parentElementInfo.mapping_id"
+                  data-networkid="@Model.parentElementInfo.network_id"
+                  data-entitytitle="@Model.parentElementInfo.entity_title"
+                  data-additionalattr="@Model.parentElementInfo.additional_attributes"
+                  data-parentmappingid="@Model.parentElementInfo.parent_mapping_id"
+                  data-entitytype="@Model.parentElementInfo.entity_type"
+                  data-systemid="@Model.parentElementInfo.entity_system_id"
+                  data-entityname="@Model.parentElementInfo.entity_name" data-cable-count-v="0" data-cable-count-h="0" data-osp-cable-id="@(Model.parentElementInfo.osp_cable_id == null ? 0 : Model.parentElementInfo.osp_cable_id)" data-ports="@(Model.parentElementInfo.total_ports == null ? "" : Model.parentElementInfo.total_ports)" style="visibility:visible;" data-network-status="@(Model.parentElementInfo.network_status == null ? "" : Model.parentElementInfo.network_status)">
+
+            </span>
+        </div>
+    }
+    Model.parentElementInfo.is_Element_Drawn = true;
+}

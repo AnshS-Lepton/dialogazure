@@ -1,0 +1,235 @@
+﻿@model  IEnumerable<Models.WorkSpaceMaster>
+@using System.Globalization;
+
+@{
+    CultureInfo ci = new CultureInfo("en");
+}
+<style>
+    .wp-table a {
+        padding: 0.2em;
+    }
+    .tdFCWidth{
+        min-width:288px;
+    }
+    .grid tr td{
+        padding:4px 8px;
+    }
+    .toolBox {
+        position: absolute;
+        padding: 0.5rem;
+        right: 49px;
+        top: -6px;
+        background-color: #FFFFFF;
+        border: 1px solid #CCCCCC;
+        transition: 0.6s;
+        transform: translateX(-40px);
+        border-radius: 4px;
+        opacity: 0;
+        visibility: hidden;
+        box-shadow: 5px 6px 8px rgba(0,0,0,0.1);
+        text-align: left;
+        z-index: 99;
+        word-break: break-word;
+        display: flex;
+    }
+
+    .toolBoxShow {
+        visibility: visible;
+        opacity: 1;
+        transform: translateX(0px);
+    }
+
+    .toolBox::after, .toolBox::before {
+        content: '';
+        width: 0;
+        height: 0;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        position: absolute;
+    }
+
+    .toolBox::after {
+        right: -8px;
+        top: 21%;
+        border-left: 8px solid #ffffff;
+        z-index: 3;
+    }
+
+    .toolBox::before {
+        right: -10px;
+        top: 22%;
+        border-left: 8px solid #cccccc;
+    }
+
+    .arrow-left {
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-right: 10px solid blue;
+    }
+
+    .arrow-top {
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid blue;
+    }
+
+    .arrow-bottom {
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 10px solid blue;
+    }
+
+    .arrow-right {
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-left: 10px solid blue;
+    }
+
+    .fx-lg {
+        font-size: 16px;
+    }
+
+    .activeBlue {
+        color: #509af8;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="infoNElements">
+    <div id="attrScroll">
+        <div class="SaveWorkspace">
+            <div class="wp-form">
+                <div id="dvWSInput">
+                    <input type="text" class="form-control" id="txtWorkspace" placeholder="@Resources.Resources.SI_OSP_WSP_NET_FRM_001" maxlength="30" />
+                </div>
+                <div id="dvWSActions">
+                    <input type="button" class="btn btn-primary ml-1" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" onclick="si.saveWorkSpace()" />
+                </div>
+            </div>
+            <div>
+                @*<label class="lblSavedWorkSpaces">Saved Workspaces:</label>*@
+                <input class="form-control" type="text" placeholder="@Resources.Resources.SI_OSP_WSP_NET_FRM_002" onkeyup="si.srchworkspace()" id="txtWorkspaceSrch" />
+                @*<input class="form-control clsReadOnly" data-val="true" data-val-required="The a_location field is required." id="a_location" name="a_location" readonly="True" type="text" value="GGN-JCL000140">*@
+            </div>
+        </div>
+        <div class="wp-table">
+            <div class="scrollTable">
+                <table id="infoTable" border="0" cellspacing="0" cellpadding="5" class="WorspaceList grid">
+                    @if (Model.Count() > 0)
+                    {
+                        foreach (var lstWorkSpace in Model)
+                        {
+                            <tr>
+                                <td class="cptr tdFCWidth" onclick="si.OpenWorkspace(@lstWorkSpace.id);" title="@Resources.Resources.SI_OSP_WSP_NET_FRM_005">
+                                    <a id="workspace_@lstWorkSpace.id" href="javascript:void(0)"> @(lstWorkSpace.modified_on != null ? Models.DateTimeHelper.DateTimeFormate( lstWorkSpace.modified_on.Value.ToString()) : Models.DateTimeHelper.DateTimeFormate( lstWorkSpace.created_on.ToString()))- @lstWorkSpace.workspace_name</a>
+                                </td>
+                                <td>
+                                    <div class="d-flex pos-rel --gap03">
+                                        <a href="#" title="@Resources.Resources.SI_OSP_WSP_NET_FRM_005" class="cptr i-icons-style" onclick="si.OpenWorkspace(@lstWorkSpace.id);"><i class="icon-Edit-floor-shaft"></i></a>
+                                        <a href="#" title="@Resources.Resources.SI_OSP_WSP_NET_FRM_004" class="cptr i-icons-style" onclick="si.DeleteWorkspace(@lstWorkSpace.id)"><i class="icon-Delete"></i></a>
+                                        <a href="#" title="@Resources.Resources.SI_OSP_WSP_NET_FRM_003" class="cptr i-icons-style" onclick="si.saveWorkSpace(@lstWorkSpace.id)"><i class="icon-Save"></i></a>
+                                        <span title="Create Markings">
+                                            <a href="#" title="Create Markings" class="cptr i-icons-style dvdisabled" name="DrawMarkings_@lstWorkSpace.id" id="iconListAdded" onkeydown="fnCheckMarking(@lstWorkSpace.id,event)" onclick="CreateMarking(@lstWorkSpace.id);"><i class="icon-LocationEdit"></i></a>
+                                        </span>
+                                        <span class="cptr" title="Hide/Show Markings">
+                                            <a href="#" title="Hide/Show Markings" class="glyphicon glyphicon-eye-open cptr i-icons-style dvdisabled" onclick="si.WorkAreaMarking.HideShowMarkings(@lstWorkSpace.id)" name="showmarking_@lstWorkSpace.id"></a>
+                                            </span>
+                                        <div class="addedIconList toolBox --gap05" name="divmarking_@lstWorkSpace.id">
+                                            <span title="Delete Marking">
+                                                <a href="#" class="icon-Delete fx-lg i-icons-style dvdisabled" name="divdeletemarking_@lstWorkSpace.id" onclick="si.WorkAreaMarking.DeleteMarkings(@lstWorkSpace.id)"></a>
+                                            </span>
+                                            <span title="Edit Marking">
+                                                <a href="#" class="icon-Edit fx-lg i-icons-style dvdisabled" name="diveditmarking_@lstWorkSpace.id" onclick="si.WorkAreaMarking.EditMarkings(@lstWorkSpace.id)"></a>
+                                            </span>
+                                            <span title="Save Edited Marking">
+                                                <a href="#" class="icon-Save fx-lg dvdisabled i-icons-style" name="divsavemarking_@lstWorkSpace.id" onclick="si.WorkAreaMarking.SaveEditedMarkings(@lstWorkSpace.id)"></a>
+                                            </span>
+                                            <a href="#" class="icon-Measure_Distance fx-lg i-icons-style" title="Draw Line Marking" onclick="si.WorkAreaMarking.initiateDrawingsWorkArea(this, 'PolyLine',@lstWorkSpace.id)"></a>
+                                            <a href="#" class="icon-Draw_Polygon fx-lg i-icons-style" title="Draw Polygon Marking" onclick="si.WorkAreaMarking.initiateDrawingsWorkArea(this, 'Polygon',@lstWorkSpace.id)"></a>
+                                            <a href="#" class="icon-Location_Pointer fx-lg i-icons-style" title="Draw Point Marking" onclick="si.WorkAreaMarking.initiateDrawingsWorkArea(this, 'Point',@lstWorkSpace.id)"></a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="2" id="noRecord" style="text-align: center;">@Resources.Resources.SI_OSP_WSP_NET_FRM_006</td></tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function CreateMarking(_id) {
+        si.LastEditedMarking = 0;
+        $("[name='divmarking_" + _id + "']").toggleClass('toolBoxShow');
+        for (k = 0; k < si.gPolyLineMapObj.length; k++) {
+            si.gPolyLineMapObj[k].obj.setMap(null);
+        }
+        for (k = 0; k < si.gPointMapObj.length; k++) {
+            si.gPointMapObj[k].obj[k].setMap(null);
+        }
+        for (k = 0; k < si.gPolyMapObj.length; k++) {
+            si.gPolyMapObj[k].obj.setMap(null);
+        }
+        for (k = 0; k < si.entityOBJ.length; k++) {
+            si.entityOBJ[k].setMap(null);
+        }
+        if (si.gMapObj.shapeObj)
+            si.gMapObj.shapeObj.setMap(null);
+        if (si.PointentityOBJ.length > 0) {
+            for (var k = 0; k < si.PointentityOBJ.length; k++) {
+                si.PointentityOBJ[k].setMap(null);
+            }
+            si.PointentityOBJ = [];
+        }
+        si.entityOBJ = [];
+        si.gPolyLineMapObj = [];
+        si.gPointMapObj = [];
+        si.gPolyMapObj = [];
+        si.gPointMapObj = [];
+        $("[name='divsavemarking_" + _id + "']").addClass('dvdisabled');  
+        ajaxReq('Main/GetWorkareaByWorkspaceId', { id: _id }, true, function (resp) {
+            if (resp.lstMarkings.length > 0) {
+                for (k = 0; k < si.gpolyline.length; k++) {
+                    si.gpolyline[k].setMap(null);
+                }
+                for (k = 0; k < si.gpoint.length; k++) {
+                    si.gpoint[k].setMap(null);
+                }
+                for (k = 0; k < si.gpolygons.length; k++) {
+                    si.gpolygons[k].setMap(null);
+                }
+                si.gpolyline = [];
+                si.gpoint = [];
+                si.gpolygons = [];
+                for (var i = 0; i < resp.lstMarkings.length; i++) {
+                    si.ShowWorkAreaLayerOnMap(resp.lstMarkings[i].marking_type, resp.lstMarkings[i].geom);
+                }
+            }
+        });
+
+    }
+
+    function fnCheckMarking(_id, event) {
+        if ($("[name='DrawMarkings_" + _id + "']").hasClass('dvdisabled')) {
+            if (event.which == '13') {
+                event.preventDefault();
+                return false;
+            }
+        }
+    }
+
+</script>

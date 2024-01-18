@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<div class="libDetail">
+    <div class="libTabContent pad-0">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="UploadImage">
+                <div class="space-pad">
+                    <div class="form-group row">
+                        <label class="control-label col-md-3" for="txtCableCode">
+                            @Resources.Resources.SI_OSP_UPP_NET_FRM_001:
+                        </label>
+                        <div class="col-md-9">
+                            <input type="file" name="fuImgUpload" id="fuImgUpload">
+                        </div>
+                    </div>
+                </div>
+                <div class="ModalFooter d-flex" id="dvBtnAction">
+                    <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                    <button type="submit" class="btn btn-primary ml-10" onclick="si.uploadProfilePic();" id="btnSaveFile">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                </div>    
+            </div>
+        </div>
+    </div>
+</div>

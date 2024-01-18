@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<div class="promptumenu_contents">
+    <div class="map_heading">
+       @Resources.Resources.SI_OSP_GBL_NET_FRM_024
+    </div>
+    <ul class="map-grid cs-style-6">
+        <li onclick="sf.setMapType('roadmap')">
+            <figure>
+                <img src="Content/images/mapManager/roadmap.png" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_121" />
+            </figure>
+        </li>
+        <li onclick="sf.setMapType('satellite')">
+            <figure>
+                <img src="Content/images/mapManager/satellite.png" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_048" />
+            </figure>
+        </li>
+        <li onclick="sf.setMapType('hybrid')">
+            <figure>
+                <img src="Content/images/mapManager/hybrid.png" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_122" />
+            </figure>
+        </li>
+        <li onclick="sf.setMapType('terrain')">
+            <figure>
+                <img src="Content/images/mapManager/terrain.png" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_123" />
+            </figure>
+        </li>
+        
+    </ul>
+    <div class="map_heading">
+        @Resources.Resources.SI_OSP_GBL_NET_FRM_023
+    </div>
+    <ul id="add-ons" class="map-grid cs-style-6">
+        <li>
+            <figure>
+                <img src="Content/images/mapManager/traffic.png" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_125" onclick="sf.showMapLyr('Traffic')" />
+                <a title="" href="#" class="close"></a>
+            </figure>
+        </li>
+        <li>
+            <figure>
+                <img src="Content/images/mapManager/no-map.png" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_029" onclick="sf.toggleWhiteMap('No Map')" />
+                <a title="" href="#" class="close"></a>
+            </figure>
+        </li>
+    </ul>
+</div>

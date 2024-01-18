@@ -1,0 +1,57 @@
+﻿
+
+.webGridHeader:last-child {
+    color: white;
+}
+
+.webGridHeader {
+    background: #20b78f;
+}
+
+    .webGridHeader a:hover {
+        color: white;
+    }
+
+
+.webgrid {
+    margin: 4px;
+    border-collapse: collapse;
+    width: 98%;
+    white-space: nowrap;
+    font-size:13px;
+}
+
+    .webgrid tfoot tr td a {
+        color: black;
+        text-decoration: underline;
+        padding: 5px;
+    }
+
+
+.header {
+    padding: 6px 5px;
+    text-align: center;
+    background-color: #00b0ca;
+    border: 1px solid #333333;
+    height: 31px;
+    color: white !important;
+    font-weight: bold;
+}
+
+.webgrid th, .webgrid td {
+    border: 1px solid #333333;
+    padding: 5px;
+    padding-right: 17px;
+}
+
+
+.exportBomToExcel {
+    background: url(../images/split_img.png) no-repeat -61px -121px;
+    height: 25px;
+    width: 25px;
+    float: left;
+    margin: -1px 0px 0px 2px;
+    cursor: pointer;
+        background-position: -344px -400px;
+}
+

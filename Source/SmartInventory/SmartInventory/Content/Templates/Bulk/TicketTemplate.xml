@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+	<Mapping id="0">
+		<DbColName>ticket_type</DbColName>
+		<TemplateColName>Ticket Type</TemplateColName>
+	</Mapping>
+	<Mapping id="1">
+		<DbColName>reference_type</DbColName>
+		<TemplateColName>Reference Type</TemplateColName>
+	</Mapping>
+	<Mapping id="2">
+	<DbColName>can_id</DbColName>
+	<TemplateColName>Can Id</TemplateColName>
+</Mapping>
+	<Mapping id="3">
+		<DbColName>customer_name</DbColName>
+		<TemplateColName>Customer Name</TemplateColName>
+	</Mapping>
+	<Mapping id="4">
+		<DbColName>Address</DbColName>
+		<TemplateColName>Address</TemplateColName>
+	</Mapping>
+	<Mapping id="5">
+		<DbColName>building_code</DbColName>
+		<TemplateColName>Building Code</TemplateColName>
+	</Mapping> 
+	<Mapping id="6">
+		<DbColName>assigned_to</DbColName>
+		<TemplateColName>Assigned To</TemplateColName>
+	</Mapping>
+	<Mapping id="7">
+		<DbColName>target_date</DbColName>
+		<TemplateColName>Target Date</TemplateColName>
+	</Mapping> 
+</Mappings>

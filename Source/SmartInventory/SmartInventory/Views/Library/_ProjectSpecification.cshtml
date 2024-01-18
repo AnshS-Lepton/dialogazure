@@ -1,0 +1,160 @@
+﻿@model Models.IProjectSpecification
+
+<!DOCTYPE html>
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="txtLatitude">@Resources.Resources.SI_OSP_HTB_NET_FRM_004:</label>
+    <div class="col-md-4">
+
+        <select id="ddl_ProjectSpeciCode" name="@Html.NameFor(m => m.project_id)" class="chosen-select col-sm-12">
+            <option value="0">-Select-</option>
+            @foreach (var projspeci in Model.lstBindProjectCode)
+            {
+                var selected = projspeci.system_id == Model.project_id ? "selected" : "";
+                <option value="@projspeci.system_id" data-projectname="@projspeci.project_name" @selected>@projspeci.project_code</option>
+            }
+        </select>
+    </div>
+    <label class="control-label col-sm-2" for="txtLongitude">@Resources.Resources.SI_OSP_GBL_NET_FRM_007:</label>
+    <div class="col-md-4">
+        @*@Html.TextBoxFor(m => m.project_name, new { @class = "form-control", @Readonly = true })*@
+        @Html.TextBox("project_name", null, new { @class = "form-control", @Readonly = true })
+
+      
+
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="ddPlanningCode">@Resources.Resources.SI_OSP_GBL_NET_FRM_008:</label>
+    <div class="col-md-4">
+        <select id="ddl_PlanningSpeciCode" name="@Html.NameFor(m => m.planning_id)" class="chosen-select col-sm-12">
+            <option value="0">-Select-</option>
+            @if (Model.project_id > 0)
+            {
+                foreach (var projspeci in Model.lstBindPlanningCode)
+                {
+                    var selected = projspeci.system_id == Model.planning_id ? "selected" : "";
+                    <option value="@projspeci.system_id" data-planningname="@projspeci.planning_name" @selected>@projspeci.planning_code</option>
+                }
+            }
+
+        </select>
+
+
+    </div>
+    <label class="control-label col-sm-2" for="txtProvinceName">@Resources.Resources.SI_OSP_GBL_NET_GBL_001:</label>
+    <div class="col-md-4">
+        @*@Html.TextBoxFor(m => m.planning_name, new { @class = "form-control", @Readonly = true })*@
+        @Html.TextBox("planning_name", null, new { @class = "form-control", @Readonly = true })
+
+
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="txtRegionName">@Resources.Resources.SI_OSP_GBL_NET_FRM_009:</label>
+    <div class="col-md-4">
+        <select id="ddl_WorkorderSpeciCode" name="@Html.NameFor(m => m.workorder_id)" class="chosen-select col-sm-12">
+            <option value="0">-Select-</option>
+            @if (Model.planning_id > 0)
+            {
+                foreach (var projspeci in Model.lstBindWorkorderCode)
+                {
+                    var selected = projspeci.system_id == Model.workorder_id ? "selected" : "";
+                    <option value="@projspeci.system_id" data-workordername="@projspeci.workorder_name" @selected>@projspeci.workorder_code</option>
+                }
+            }
+        </select>
+    </div>
+    <label class="control-label col-sm-2" for="txtProvinceName">@Resources.Resources.SI_OSP_GBL_NET_FRM_010:</label>
+    <div class="col-md-4">
+        @*@Html.TextBoxFor(m => m.workorder_name, new { @class = "form-control", @Readonly = true })*@
+        @Html.TextBox("workorder_name", null, new { @class = "form-control", @Readonly = true })
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="txtBuildingName">@Resources.Resources.SI_OSP_GBL_NET_FRM_011:</label>
+    <div class="col-md-4">
+
+        <select id="ddl_PurposeSpeciCode" name="@Html.NameFor(m => m.purpose_id)" class="chosen-select col-sm-12">
+            <option value="0">-Select-</option>
+            @if (Model.workorder_id > 0)
+            {
+                foreach (var projspeci in Model.lstBindPurposeCode)
+                {
+                    var selected = projspeci.system_id == Model.purpose_id ? "selected" : "";
+                    <option value="@projspeci.system_id" data-purposename="@projspeci.purpose_name" @selected>@projspeci.purpose_code</option>
+                }
+            }
+        </select>
+    </div>
+    <label class="control-label col-sm-2" for="txtHousePlotNo">@Resources.Resources.SI_OSP_GBL_NET_GBL_002:</label>
+    <div class="col-md-4">
+        @*@Html.TextBoxFor(m => m.purpose_name, new { @class = "form-control", @Readonly = true })*@
+        @Html.TextBox("purpose_name", null, new { @class = "form-control", @Readonly = true })
+    </div>
+</div>
+
+<script>
+    
+    $('.chosen-select').chosen({ width: '100%' });
+
+    $('#ddl_ProjectSpeciCode').change(function () {  
+        debugger;
+        BindPlanningDetail();
+
+    })
+    $('#ddl_PlanningSpeciCode').change(function () {
+       
+        BindWorkCodeDetail();
+
+    })
+
+    $('#ddl_WorkorderSpeciCode').change(function () {       
+        BindPurposeCodeDetail();
+
+    })
+
+   
+    $('#ddl_PurposeSpeciCode').change(function () {      
+        $('#purpose_name').val($('#ddl_PurposeSpeciCode').find(':selected').data('purposename'));
+
+    })
+
+
+  
+
+
+    $('#project_name').val($('#ddl_ProjectSpeciCode').find(':selected').data('projectname'));
+    $('#planning_name').val($('#ddl_PlanningSpeciCode').find(':selected').data('planningname'));
+    $('#workorder_name').val($('#ddl_WorkorderSpeciCode').find(':selected').data('workordername'));
+    $('#purpose_name').val($('#ddl_PurposeSpeciCode').find(':selected').data('purposename'));
+
+    $(document).ready(function () {
+        $('#divRightMenu .dropMenu ul li a').click(
+           function () {
+               //si.autoScroll(this);
+               var leftliCount = $('.libTabs .tabs-left li').length / 2;
+               var scrollValue = $(".scrollerhide").scrollLeft();
+               var index = $(this).parent().index();
+               $('.libTabs .tabs-left li').removeClass('active');
+               var width = $('.libTabs .tabs-left li').eq(index).addClass('active').width();
+               if (parseInt(index) <= leftliCount) {
+                   scrollValue -= width;
+               } else {
+                   scrollValue += width;
+               }
+               $(".scrollerhide").scrollLeft(scrollValue);
+           }
+           );
+        //setTimeout(function () {
+        //    var allTabWidth = 0;
+        //    $.each($('.libTabs .tabs-left li'), function (indx, itm) {
+        //        allTabWidth += $(this).width();
+        //    });
+        //    if (allTabWidth > $('#dvModalBody').width()) {
+        //        $('#spnRightMenu,#divRightMenu').show();
+        //    }
+        //}, 500)
+    });
+</script>

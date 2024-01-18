@@ -1,0 +1,95 @@
+﻿@model Models.GeoTaggedImagesFilter
+@using Utility
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "GeoTaggedImgHistoryRecord", ajaxUpdateCallback: "onGridHeaderClick('tblGeoTaggedImgHistory');");
+    grid.Bind(Model.lstGeoTaggedImghistory, autoSortAndPage: false, rowCount: Model.totalRecord);
+    if (Model.totalRecord > 0)
+    {
+        grid.PageIndex = Model.currentPage - 1;
+    }
+
+}
+<!DOCTYPE html>
+<div class="libDetail viewReport" id="dvChildModalBody">
+    @using (Ajax.BeginForm("GeoTaggedImageHistory", "Library", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "dvProgress" },
+                 new { id = "frmGeoTaggedImageHistory", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        if (Model.lstGeoTaggedImghistory.Count > 0)
+        {
+            <div class="d-flex space-pad" id="dvBtnAction">
+                <div class="div_totalRecord"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@grid.TotalRowCount</span></b></div>
+                <div class="ml-auto">
+                    @if (@grid.TotalRowCount > 0)
+                    {
+                        <span id="btnExport" value="Export" class="exp--btn"><i class="icon-Export mr-03"></i> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</span>
+                    }
+                    else
+                    {
+                        <input type="button" id="btnExport" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" disabled="disabled" class="btn btn-primary" />
+                    }
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+            <div id="GeoTaggedImgHistoryRecord">
+
+                @if (Model.lstGeoTaggedImghistory.Count > 0)
+                {
+                    <div class="tablePad--tn">
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+             
+              htmlAttributes: new { id = "tblGeoTaggedImgHistory" },
+                 mode: WebGridPagerModes.All,
+                columns: grid.Columns(
+                    grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>
+                            <a href="javascript:void(0);" onclick="si.GeoTaggedImage.showGeoImagesOnMap('@item.id');" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036"><i class="fa fa-map-marker" style="font-size: 13px; color: #f50000;"></i></a>
+                    </text>),
+grid.Column("file_name", Resources.Resources.SI_OSP_GBL_GBL_GBL_029, format: @<text>@item.file_name</text>),
+grid.Column("file_description", "File Description", format: @<text>@item.file_description</text>),
+grid.Column("image_link", "Image Link", format: @<text>@item.image_link</text>),
+grid.Column("longitude", Resources.Resources.SI_OSP_STR_NET_HIS_017, format: @<text>@item.longitude</text>),
+grid.Column("latitude", Resources.Resources.SI_OSP_STR_NET_HIS_016, format: @<text>@item.latitude</text>),
+grid.Column("file_extension", "File Extension", format: @<text>@item.file_extension</text>),
+grid.Column("image_uploaded_by", Resources.Resources.SI_ISP_GBL_GBL_GBL_036, format: @<text>@item.image_uploaded_by</text>),
+grid.Column("image_uploaded_on", Resources.Resources.SI_OSP_GBL_GBL_FRM_189, format: @<text>@(item.image_uploaded_on == null ? item.image_uploaded_on : MiscHelper.FormatDateTime(item.image_uploaded_on.ToString()))</text>),
+grid.Column("region_name", Resources.Resources.SI_OSP_AR_NET_HIS_004, format: @<text>@item.region_name</text>),
+grid.Column("province_name", Resources.Resources.SI_OSP_GBL_GBL_GBL_107, format: @<text>@item.province_name</text>)))
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+                        </div>
+                    </div>
+                }
+            </div>
+
+        }
+        else
+        {
+            <div class="nr-found">
+                <span> @Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+            </div>
+        }
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        addDefaultSortingIcons('tblGeoTaggedImgHistory');
+
+        $("#btnExport").on("click", function () {
+            // SurveyAssignmentExport();
+            window.location = appRoot + 'Library/ExportGeoImages_History';
+        });
+
+        $("#closeModalPopup").on("click", function () {
+             
+            if (si.gMapObj.shapeObj) {
+                $('.CustomMarker').hide();
+                si.infowindow.close();
+            }
+        });
+
+    });
+</script>

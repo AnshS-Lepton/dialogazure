@@ -1,0 +1,60 @@
+﻿@model Models.ROWTemplateMaster
+<fieldset class="the-fieldset">
+    <legend class="the-legend">@Resources.Resources.SI_OSP_ROW_NET_FRM_088</legend>
+    <div class="form-group">
+        <div class="form-group">
+            <label class="control-label col-sm-4"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_023<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-8 col-sm-8 dvdisabled">
+                @Html.DropDownListFor(m => m.type, new SelectList(Model.rowtypelist.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @onchange = "showHideOnPolygon();" })
+            </div>
+        </div>
+        <div class="form-group" id="divwidth" style="display:@(Model.type==Models.GeometryType.Polygon.ToString()?"none":"block")">
+            <label class="control-label col-sm-4"> @Resources.Resources.SI_OSP_ROW_NET_FRM_090<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-8 col-sm-8">
+                @Html.DropDownListFor(m => m.width, new SelectList(Model.rowwidthlist.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @onchange = "ddlChangeRemoveCss(this.id, 'width'); showHideCustomWidth();" })
+            </div>
+        </div>
+        <div class="form-group" id="custdiv" style="display:@(Model.isCustomWidthEnable?"block":"none")">
+            <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_ROW_NET_FRM_089:</label>
+            <div class="col-md-8 col-sm-8">
+                @Html.TextBoxFor(m => m.customized, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new { @class = "form-control",  @onkeypress = "return si.allowNumberwithOneDot(event,'customized');",@maxlength="5" }))
+            </div>
+        </div>
+    </div>
+</fieldset>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#type').val('Line').trigger("chosen:updated");
+        $('.chosen-select').chosen({ width: '100%' });
+        if ($('#type').val() == "Polygon") {
+            $('#customized').val('0.1');
+        }
+    });
+    function showHideCustomWidth() {
+        if ($('#width').val() == "0") {
+            $('#custdiv').show();
+            $('#customized').val('');
+        } else {
+            $('#custdiv').hide();
+        }
+
+    }
+    function showHideOnPolygon() {
+        if ($('#type').val() != "Polygon") {
+            $('#width').val('').trigger("chosen:updated");
+        }
+        else {
+            $('#width').val('1').trigger("chosen:updated");
+        }
+        //
+        $('#custdiv').hide();
+        $('#customized').val('0.0');
+        if ($('#type').val() == "Polygon") {
+            $('#divwidth').hide();
+        }
+        else {
+            $('#divwidth').show();
+            $('#customized').val('');
+        }
+    }
+</script>

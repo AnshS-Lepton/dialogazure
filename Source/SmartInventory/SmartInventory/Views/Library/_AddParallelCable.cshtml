@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<div class="libDetail">
+    <!-- Message Pop-up -->
+    <div class="libTabContent">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="GISInfo">
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_CAB_NET_FRM_051</legend>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="txtSubAreaName">@Resources.Resources.SI_OSP_CAB_NET_FRM_052<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-8">
+                            @Html.TextBox("txtOffsetValue", 1, new { @class = "form-control", @maxlength = "3", @onkeypress = "return si.allowNumberwithOneDot(event,'txtOffsetValue');" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4 pt-12">@Resources.Resources.SI_OSP_CAB_NET_FRM_053:</label>
+                        <label class="control-label col-sm-2 pt-12">@Resources.Resources.SI_OSP_CAB_NET_FRM_054</label>
+                        <div class="col-sm-2">
+                            @Html.RadioButton("rdoParallelCableLeft", -1, true, new { @class = "form-control", @onchange = "si.checkUncheck(this);" })
+                        </div>
+                        <label class="control-label col-sm-2 pt-12">@Resources.Resources.SI_OSP_CAB_NET_FRM_055</label>
+                        <div class="col-sm-2">
+                            @Html.RadioButton("rdoParallelCableRight", 1, false, new { @class = "form-control", @onchange = "si.checkUncheck(this);" })
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex ModalFooter" id="dvBtnAction">
+        <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCableCancel" onclick="$('#closeModalPopup').trigger("click");">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        <button type="submit" class="btn btn-primary ml-10" id="bttnCreateParallelCable">@Resources.Resources.SI_OSP_GBL_GBL_GBL_038</button>
+    </div>
+</div>
+

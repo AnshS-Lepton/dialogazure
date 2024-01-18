@@ -1,0 +1,42 @@
+﻿@model Models.CabinetTemplateMaster
+@using Models;
+@helper ItemSpecification()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
+}
+@helper SystemSpecification()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_SystemSpecification.cshtml", (itemMaster)Model); }
+}
+<fieldset class="the-fieldset">
+    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
+    @ItemSpecification()
+</fieldset>
+@*<fieldset class="the-fieldset">
+    <legend class="the-legend">Model Mapping & System Specification</legend>
+    @SystemSpecification()
+
+</fieldset>*@
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '100%' });
+        $('#specification').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindVendor(dID);
+        });
+        $('#ddlVendor').chosen().change(function (event) {
+            var specfi = $("#specification option:selected").val(); //
+            var vandorid = $(this).val();
+            var entitytype = $('#entityType').val();
+            bindCateSubcat(entitytype,specfi, vandorid);
+        });
+        $('#ddlType').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindBrand(dID);
+        });
+        $('#ddlBrand').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindModel(dID);
+        });
+    });
+</script>

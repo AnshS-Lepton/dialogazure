@@ -1,0 +1,404 @@
+﻿@model Models.ViewJobAssignment
+@using Utility;
+
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objFilterAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewJobAssignment", ajaxUpdateCallback: "onGridHeaderClick('tblJobAssignment')");
+    grid.Bind(Model.lstJobAssignment, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+    if (Model.objFilterAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objFilterAttributes.currentPage - 1;
+    }
+}
+<style>       
+    .mgn-btm {
+        margin-bottom: 1.5rem;
+    }
+
+    .font-weight-bold {
+        font-weight: 700 !important;
+    }
+
+    .margin-btm {
+        margin-bottom: 0px;
+    }
+
+    .fntCol {
+        font-size: 14px;
+        color: #fff;
+    }
+
+    .breadcrumb {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        padding: .75rem 1rem;
+        margin-bottom: 1rem;
+        list-style: none;
+        background-color: #e9ecef;
+        border-radius: .25rem;
+    }
+
+    .SpanCricle {
+        display: inline-block;
+        width: 70px;
+        height: 70px;
+        margin: 6px;
+        text-align: center;
+        background-color: #fff;
+        font-size: 28px;
+        line-height: 2.5;
+        cursor: pointer;
+    }
+
+    .rounded-circle {
+        border-radius: 50% !important;
+    }
+
+    .fntCol > i {
+        line-height: 6;
+        float: right;
+        padding-right: 20px;
+    }
+
+    .adminarea {
+        width: 99%;
+        background-color: #FFF;
+        border-radius: 20px 0px 0px 0px;
+        padding: 10px;
+        color: #a2a2a2;
+    }
+
+    .bg-info {
+        background-color: #17a2b8 !important;
+    }
+
+    .bg-success {
+        background-color: #28a745 !important;
+    }
+
+    .bg-warning {
+        background-color: #ffc107 !important;
+    }
+
+    .bg-primary {
+        background-color: #007bff !important;
+    }
+
+    .bg-secondary {
+        background-color: #6c757d !important;
+    }
+
+    .bg-danger {
+        background-color: #dc3545 !important;
+    }
+
+    .text-secondary {
+        color: #6c757d !important;
+    }
+
+    .text-warning {
+        color: #ffc107 !important;
+    }
+
+    .text-primary {
+        color: #007bff !important;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+    }
+
+    .text-success {
+        color: #28a745 !important;
+    }
+    .floorRowDelete {    
+    height: 25px;
+    width: 25px;   
+    margin: -1px 0px 0px 2px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    color: red;
+    float: inherit;
+}
+</style>
+<!DOCTYPE html>
+<div class="libDetail">
+    <div class="libTabs">
+        <ul class="nav nav-tabs tabs-left">
+
+            <li class="active"><a href="#DashboardInfo" data-toggle="tab">Dashboard</a></li>
+            <li><a href="#ItemJobs" id="anchrViewJob" data-toggle="tab">View Jobs</a></li>
+        </ul>
+    </div>
+</div>
+<div class="libTabContent">
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="DashboardInfo">
+            <div class="adminarea">
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">Status</legend>
+                    <div class="row">
+                        <div class="col-md-4 mgn-btm">
+
+                            <div class="bg-info fntCol">
+                                <span class="rounded-circle SpanCricle text-info" data-toggle="modal" data-target="#myModal">@Model.AllJobAssignment.Where(m => m.Job_status == "New").Count()</span>
+                                <i>New</i>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4 mgn-btm">
+
+                            <div class="bg-success fntCol">
+                                <span class="rounded-circle SpanCricle text-success" data-toggle="modal" data-target="#myModal">@Model.AllJobAssignment.Where(m => m.Job_status == "Assigned").Count()</span>
+                                <i>Assigned</i>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4 mgn-btm">
+
+                            <div class="bg-warning fntCol">
+                                <span class="rounded-circle SpanCricle text-warning" data-toggle="modal" data-target="#myModal">@Model.AllJobAssignment.Where(m => m.Job_status == "Stage1").Count()</span>
+                                <i>Stage 1</i>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mgn-btm">
+
+                            <div class="bg-danger fntCol">
+                                <span class="rounded-circle SpanCricle text-danger" data-toggle="modal" data-target="#myModal">@Model.AllJobAssignment.Where(m => m.Job_status == "Stage2").Count()</span>
+                                <i>Stage 2</i>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4 mgn-btm">
+
+                            <div class="bg-secondary fntCol">
+                                <span class="rounded-circle SpanCricle text-secondary" data-toggle="modal" data-target="#myModal">@Model.AllJobAssignment.Where(m => m.Job_status == "Stage3").Count()</span>
+                                <i>Stage 3</i>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4 mgn-btm">
+
+                            <div class="bg-primary fntCol">
+                                <span class="rounded-circle SpanCricle text-primary" data-toggle="modal" data-target="#myModal">@Model.AllJobAssignment.Where(m => m.Job_status == "Completed").Count()</span>
+                                <i>Completed</i>
+                            </div>
+
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="tab-pane" id="ItemJobs">
+            <div class="libDetail">
+
+                @using (Ajax.BeginForm("ViewJobPacks", "JobPack", new AjaxOptions
+                {
+                    HttpMethod = "POST",
+                    UpdateTargetId = "dvModalBody",
+                    OnSuccess = "$('#anchrViewJob').trigger("click");"
+                },
+        new { id = "frmAssignJob", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+                {
+                    @Html.HiddenFor(m => m.objFilterAttributes.role_id)
+                    <div class="libTabContent1" style="padding: 10px; padding-top: 20px;">
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="GISInfo">
+                                <div class="form-group">
+
+                                    <label class="control-label col-sm-2" for="status">Job Status:</label>
+                                    <div class="col-sm-45">
+                                       @Html.DropDownListFor(m => m.objFilterAttributes.JobStatus, new SelectList(Model.ListJobstatus.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text", "New"), "--select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                    </div>
+                                    <label class="control-label col-sm-2" for="txtDateTo">Assigned To:</label>
+                                    <div class="col-sm-45">
+                                       @Html.DropDownListFor(m => m.objFilterAttributes.JobContractUser, new SelectList(Model.lstJobContractUser.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text", 0),"--select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="txtDatefrom">Date From:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.objFilterAttributes.searchFrom, new { @id = "txtDateFrom", @title = "Date From", @tabindex = "4", @class = "input-sm form-control", @readonly = true })
+                                        <img id="imgFromDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                                    </div>
+                                    <label class="control-label col-sm-2" for="txtDateTo">Date To:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.objFilterAttributes.searchTo, new { @id = "txtDateTo", @title = "Date To", @tabindex = "4", @class = "input-sm form-control", @readonly = true })
+                                        <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+
+                                    <label class="control-label col-sm-2" for="Search by">Search by:</label>
+                                    <div class="col-sm-45">
+                                        @Html.DropDownListFor(m => m.objFilterAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12" })
+                                    </div>
+                                    <label class="control-label col-sm-2" for="txtSearchtext">Search Text:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.objFilterAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 50, @onkeypress = "fnOnKeyPress(event)" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group ModalFooter" id="dvBtnAction">
+                        <div class="col-sm-12 col-sm-offset-2" style="float: right; text-align: right; padding-right: 45px;">
+
+                            <button type="submit" class="btn btn-primary" id="btnSearchJobs">Search</button>
+
+
+                            <button type="submit" class="btn btn-default" id="btnJobClear">Clear</button>
+                            <input type="hidden" id="JobSystemId" value="" />
+
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+
+
+                    if (Model.lstJobAssignment.Count > 0)
+                    {
+                        <div id="dvViewJobAssignment" style="padding: 10px;">
+                            <div class="recordCount"><b>Total Records:&nbsp;@grid.TotalRowCount</b></div>
+                            <div class="table-responsive tble_cls">
+                                @grid.GetHtml(tableStyle: "webgrid",
+                         headerStyle: "webGridHeader",
+                            alternatingRowStyle: "alt",
+                            htmlAttributes: new { id = "tblJobAssignment" },
+
+                            mode: WebGridPagerModes.All,
+                            columns: grid.Columns(
+                            grid.Column("", "Action", format:
+                            @<text>
+                                <a href="#" onclick="si.highlightJobOnMap('@item.latitude','@item.longitude');$(popup.DE.MinimizeModel).trigger("click");" class="dropdown-toggle" title="Show On Map">
+                                    <i class="fa fa-globe fa-fw m-r-xs"></i>
+                                </a>
+                                <a href="#" onclick="si.CreateJobPack('@item.system_id','CHILD',false)" class="dropdown-toggle" title="Edit">
+                                    <i class="fa fa-edit fa-fw m-r-xs"></i>
+                                </a>
+                                @if (item.job_status == "New")
+                                {
+                                    <a href="#" onclick="si.assignJob('@item.system_id','@item.job_type','@item.job_description');" class="dropdown-toggle" title="Assign">
+                                        <i class="fa fa-address-book-o fa-fw m-r-xs"></i>
+                                    </a>
+                                    <span class="floorRowDelete" onclick="si.deleteJob('@item.system_id');" title="Delete" style="">x</span>
+                                    @*<a href="#"  class="dropdown-toggle floorRowDelete" title="Delete">
+                                        <i class="fa fa-address-book-o fa-fw m-r-xs" style="color: #1b9461; font-size: 13px;"></i>
+                                    </a>*@
+                                }
+                            </text>),
+                             grid.Column("job_type", "Job Type", format: @<text>@item.job_type </text>),
+                             grid.Column("job_description", "Job Description", format: @<text>@item.job_description</text>),
+                             grid.Column("manual_address", "Manual Address", format: @<text>@item.manual_address</text>),
+                             grid.Column("assigned_to_user", "Assigned To", format: @<text>@item.assigned_to_user</text>),
+                             grid.Column("assigned_date", "Assigned On", format: @<text> @item.assigned_date </text>),
+                             grid.Column("assigned_by", "Assigned by", format: @<text> @item.assigned_by</text>),
+                             grid.Column("Job_status", "Status", format: @<text>@item.Job_status</text>),
+                             grid.Column("created_by", "Created By", format: @<text>@item.created_by</text>),
+                             grid.Column("created_date", "Created On", format:  @<text> @(item.created_date) </text>),
+                             grid.Column("modified_by_user", "Modified By", format: @<text>@item.modified_by_user</text>),
+                             grid.Column("modified_date", "Modified On", format:  @<text> @(item.modified_date) </text>)
+                             ))
+                                @Html.Hidden("dir", grid.SortDirection)
+                                @Html.Hidden("col", grid.SortColumn)
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="text-align: center; margin-top: 30px;">
+                            No Data Found.
+                        </div>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+
+
+        //si.setSurveyDateTimeCalendar("txtDateFrom", "imgFromDate", "1", false);
+        //si.setSurveyDateTimeCalendar("txtDateTo", "imgToDate", "1", false);
+        si.setDateTimeCalendar_Survey("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+
+
+        $('tfoot a').on("click", function () {
+            $('form').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+
+        //Post form on page header click..
+        $('th a').on("click", function () {
+            $('form').attr('action', $(this).attr('href')).submit();
+
+            return false;
+        });
+        $('.chosen-select').chosen({ width: '100%' });
+
+        $("#btnSearchJobs").on("click", function () {
+
+            var frmdate = $("#txtDateFrom").val();
+            var todate = $("#txtDateTo").val();
+            var chkValid = false;
+            chkValid = ValidateFilterDate(frmdate, todate);
+            if (chkValid) {
+                return true;
+            }
+            else {
+                var msg = frmdate == '' ? "From" : "To";
+                alert(msg + ' Date required !');
+                return false;
+            }
+        });
+
+
+        $("#btnJobClear").on("click", function () {
+
+            if ($("#objFilterAttributes_role_id").val() != '3') {
+
+                $("#txtDateFrom").val("");
+                $("#txtDateTo").val(""); //
+                $("#objFilterAttributes_JobStatus").val("All").trigger("chosen:updated");
+                $("#objFilterAttributes_JobContractUser").val("0").trigger("chosen:updated");
+                $("#objFilterAttributes_searchBy").val("Name").trigger("chosen:updated");
+                $("#txtSearchText").val("");
+
+
+
+            }
+            else {
+                $("#txtDateFrom").val("");
+                $("#txtDateTo").val(""); //
+                $("#objFilterAttributes_JobStatus").val("Assigned").trigger("chosen:updated");
+
+                $("#objFilterAttributes_searchBy").val("Name").trigger("chosen:updated");
+                $("#txtSearchText").val("");
+            }
+            $("btnSearchJobs").trigger("click");
+        });
+
+    });
+
+
+    $(document).ready(function () {
+        addDefaultSortingIcons("tblJobAssignment");
+        onGridHeaderClick('tblJobAssignment')
+    });
+
+</script>

@@ -1,0 +1,139 @@
+﻿@model Models.TerminationPointMaster
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+</style>
+<div id="divAddNewTerminationPoint">
+    @using (Ajax.BeginForm("SaveTerminationPoint", "Miscellaneous",
+                                        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddNewTerminationPoint", OnSuccess = "OnSuccess", },
+                                        new { id = "frmAddTerminationPoint", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id);
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Entity Name<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstLineLayerDetails.Select(x => new { Value = x.layer_id, Text = x.layer_title }), "Value", "Text"), "--select--", new { @class = "chosen-select form-control", @id = "ddlLayerName", @onchange = "onChangeEntityName()" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">TP Entity Name<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.tp_layer_id, new SelectList(Model.lstTPLayerDetails.Select(x => new { Value = x.layer_id, Text = x.layer_name }), "Value", "Text"), "--select--", new { @class = "chosen-select form-control", @id = "ddlTPLayerName" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">IS ISP TP:</div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.is_isp_tp, new { Style = "width:100% ;", @id = "chkis_isp_tp" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">IS OSP TP:</div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.is_osp_tp, new { Style = "width:100% ;", @id = "chkis_osp_tp" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Status:</div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.is_enabled, new { Style = "width:100% ;", @id = "chkis_active", @checked = "checked" })
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="ModalFooter" id="dvBtnAction">
+            <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+            @if (Model.id > 0)
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveTP" value="Update" />
+            }
+            else
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveTP" value="Save" />
+            }
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+        if ('@Model.id' != 0) {
+            $('#ddlLayerName').next().addClass('.EUTSetting chosen-disabled');
+            $('#ddlTPLayerName').next().addClass('.EUTSetting chosen-disabled');
+        }
+    });
+    function IsValid() {
+         
+        if ($('#ddlLayerName').val() == "") {
+            $('#ddlLayerName').next().addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddlLayerName').next().removeClass("errorClass");
+        }
+        if ($('#ddlTPLayerName').val() == "") {
+            $('#ddlTPLayerName').next().addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddlTPLayerName').next().removeClass("errorClass");
+        }
+
+    };
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+
+function OnSuccess(data) {
+         
+        if (data.status == "OK") {
+            $("#closeModalPopup").trigger("click");
+        }
+
+    alert(data.message, 'Success', 'success');
+    window.location = appRoot + 'Miscellaneous/ViewTerminationPoint';
+        //setTimeout(function () {
+        //    window.location = appRoot + 'Miscellaneous/ViewTerminationPoint';
+        //}, 3000);
+
+}
+$("#btnCancel").on("click", function () {
+    $("#closeModalPopup").trigger("click");
+});
+
+    function onChangeEntityName() {
+
+        $('#ddlTPLayerName').empty();
+        $('#ddlTPLayerName').append($("<option></option>").val('').html('--select--'));
+        var layer_id = $('#ddlLayerName').val();
+        ajaxReq('Miscellaneous/BindTPDropdownList', { layer_id: layer_id }, false, function (resp) {
+             
+            if (resp.Data.length > 0) {
+                // $('#ddl_db_column_naem').append($("<option></option>").val('').html('--select--'));
+
+
+                $.each(resp.Data, function (data, value) {
+                    $('#txtSequence').val(value.sequence);
+                    var data_type = value.data_type;
+                    $('#ddlTPLayerName').append($("<option d></option>").val(value.layer_id).html(value.layer_name));
+                });
+            }
+            else {
+                $('#ddlTPLayerName').empty();
+                $('#ddlTPLayerName').append($("<option></option>").val('').html('--select--'));
+
+            }
+            $('#ddlTPLayerName').trigger("chosen:updated");
+        }, true, true);
+    }
+
+</script>

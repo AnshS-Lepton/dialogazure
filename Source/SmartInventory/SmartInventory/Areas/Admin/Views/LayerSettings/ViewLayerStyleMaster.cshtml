@@ -1,0 +1,155 @@
+﻿@model Models.Admin.LayerStyleMaster
+@using Utility
+@using SmartInventory.Settings;
+
+<style>
+    .disable-click {
+        pointer-events: none;
+    }
+    .grid tr th:nth-child(4), .grid tr th:nth-child(8) {
+        width: 120px;
+    }
+    .colorstyle {
+        height: 21px;
+        width: 25px;
+        float: right;
+        border: hidden;
+    }
+    .chosen-container .chosen-results{
+        max-height:105px;
+    }
+    .layerSetTableWidth{
+        width:calc(100vw - 200px);
+    }
+</style>
+<div id="dvViewLayerStyle">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>Layer Style Settings</h4>
+            <input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+        </div>
+
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewLayerStyle", ajaxUpdateCallback: "onGridHeaderClick('tblLayerStyle')");
+            grid.Bind(Model.lstLayerGroups, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+            if (Model.objGridAttributes.totalRecord > 0)
+            {
+                grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+            }
+        }
+
+        @using (Html.BeginForm("ViewLayerStyleMaster", "LayerSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmViewLayerStyle" }))
+        {
+            <section class="--pad-15">
+                <div class="form-inline filter-sec ">
+                    <div class="form-group wtd_set">
+                        <label class="control-label col-sm-4">
+                            Search By :
+                        </label>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstBindSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group wtd_set">
+                        <label class="control-label col-sm-4">
+                            Search Text:
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                        </div>
+                    </div>
+                    <div class="form-group wtd_set" id="dvBtnAction">
+                        <div class="col-md-8">
+                            <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>                            
+                            <a href="@Url.Action("ViewLayerStyleMaster")" class="btn btn-default  mr-05" title="Reset">Reset</a>
+                        </div>
+                    </div>
+
+                </div>
+
+                @if (Model.lstLayerGroups.Count > 0)
+                {
+                    <div id="divLayerStyleDetail">
+                        <div class="recordCount mb-01">
+                            <b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b>
+                        </div>
+
+                        <div class="table-responsive">
+                            @grid.GetHtml(tableStyle: "grid layerSetTableWidth",
+            htmlAttributes: new { id = "tblLayerStyle" },
+            mode: WebGridPagerModes.All,
+            columns: grid.Columns(
+
+     grid.Column("", "Action", format:
+                            @<text>
+                                <a href="#" onclick="AddLayerStyleMaster(@item.layer_id,@item.id, '@item.layer_name','@item.entity_category');" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                            </text>),
+grid.Column("layer_name", "Layer Name", format: @<text>@item.layer_name</text>),
+grid.Column("entity_category", "Entity Category", format: @<text>@if (item.entity_category == null)
+                         {<span id="opacitytxt">  NA</span> }
+                 else
+                 {@item.entity_category}</text>),
+grid.Column("layer_sequence", "Layer Sequence", format: @<text>@item.layer_sequence</text>),
+                        @*grid.Column("entity_sub_category", "EntitySub Category", format: @<text>@item.entity_sub_category</text>),*@
+grid.Column("color_code_hex", "Color/Fill Color", format: @<text>@if (item.color_code_hex == "NA")
+                            {<span id="colorcodehextxt">  NA</span> }
+                            else
+                            {@item.color_code_hex <input type="color" class="disable-click colorstyle" value="@item.color_code_hex">}</text>),
+grid.Column("outline_color_hex", "Outline Color", format: @<text>@if (item.outline_color_hex == "NA" || item.layer_name == "Cable")
+                         {<span id="outlinecolorhex">  NA</span> }
+                 else
+                 {@item.outline_color_hex <input type="color" class="disable-click colorstyle" value="@item.outline_color_hex">}</text>),
+grid.Column("opacity", "Opacity/Visibility", format: @<text>@if (item.opacity == 0)
+                         {<span id="opacitytxt">  NA</span> }
+                 else
+                 {@item.opacity} </text>),
+grid.Column("label_font_size", "Label font size", format: @<text>@item.label_font_size</text>),
+grid.Column("label_color_hex", "Label Text color", format: @<text>@item.label_color_hex  <input type="color" class="disable-click colorstyle" value="@item.label_color_hex"></text>),
+grid.Column("label_bg_color_hex", "Label bg color", format: @<text>@item.label_bg_color_hex  <input type="color" class="disable-click colorstyle" value="@item.label_bg_color_hex"></text>),
+                        @*grid.Column("icon_file_name", "Icon file name", format: @<text>@item.icon_file_name</text>),*@
+grid.Column("line_width", "Line width", format: @<text>@if (item.line_width == 0)
+                            {<span id="linewidthtxt">  NA</span> }
+                            else
+                            {@item.line_width}</text>)
+
+))
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+                            @Html.HiddenFor(m => m.id)
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Records Found.
+                    </div>
+                }
+
+            </section>
+
+
+        }
+
+        <script>
+            $(document).ready(function () {
+                updateNumberstoFormatedNumber();
+                addDefaultSortingIcons("tblLayerStyle");
+            });
+            setTimeout(function () {
+                $('#msgshow').hide();
+            }, 7000);
+
+            function updateNumberstoFormatedNumber() {
+                $('span[data]').each(function (index) {
+                    // Get the value of the data-target attribute for each element
+                    var targetValue = $(this).data('data');
+
+                    // Do whatever you want with the element or its data
+                    $(this).text(getFormattedNumber($(this).text().trim()));
+                });
+            }
+        </script>
+    </div>
+</div>

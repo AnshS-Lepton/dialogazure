@@ -1,0 +1,364 @@
+@font-face {
+    font-family: 'icomoon';
+    src: url('../fonts/icomoon.eot?s3ils1');
+    src: url('../fonts/icomoon.eot?s3ils1#iefix') format('embedded-opentype'), url('../fonts/icomoon.ttf?s3ils1') format('truetype'), url('../fonts/icomoon.woff?s3ils1') format('woff'), url('../fonts/icomoon.svg?s3ils1#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+.icon-PATCHCORD:before {
+  content: "\e900";
+}
+.icon-Download:before {
+  content: "\e901";
+}
+.icon-BDB:before {
+  content: "\e902";
+}
+.icon-CUSTOMER:before {
+  content: "\e903";
+}
+.icon-FDB-backup:before {
+  content: "\e904";
+}
+.icon-FMS:before {
+  content: "\e905";
+}
+.icon-HTB:before {
+  content: "\e906";
+}
+.icon-MPOD:before {
+  content: "\e907";
+}
+.icon-ARROW_DOWN:before {
+  content: "\e908";
+}
+.icon-ONT:before {
+  content: "\e909";
+}
+.icon-SPLITTER:before {
+  content: "\e90a";
+}
+.icon-UNIT:before {
+  content: "\e90b";
+}
+.icon-close:before {
+  content: "\e90c";
+}
+.icon-ARROW_UP:before {
+  content: "\e90d";
+}
+.icon-Delete:before {
+  content: "\e90e";
+}
+.icon-layers:before {
+  content: "\e90f";
+}
+.icon-library:before {
+  content: "\e910";
+}
+.icon-SEARCH:before {
+  content: "\e911";
+}
+.icon-Minimize:before {
+  content: "\e912";
+}
+.icon-building_survey:before {
+  content: "\e913";
+}
+.icon-Bulk_Operation:before {
+  content: "\e914";
+}
+.icon-Bulk_Splicing:before {
+  content: "\e915";
+}
+.icon-Clear_route:before {
+  content: "\e916";
+}
+.icon-Connection_Path_Finder:before {
+  content: "\e917";
+}
+.icon-Directions_and_Ruler:before {
+  content: "\e918";
+}
+.icon-Draw_Polygon:before {
+  content: "\e919";
+}
+.icon-DrawCircle:before {
+  content: "\e91a";
+}
+.icon-DrawRectangle:before {
+  content: "\e91b";
+}
+.icon-EndtoEndSchematicView:before {
+  content: "\e91c";
+}
+.icon-export_report:before {
+  content: "\e91d";
+}
+.icon-ExportReport:before {
+  content: "\e91e";
+}
+.icon-Find_Direction:before {
+  content: "\e91f";
+}
+.icon-information:before {
+  content: "\e920";
+}
+.icon-kml:before {
+  content: "\e921";
+}
+.icon-Manual_Splicing:before {
+  content: "\e922";
+}
+.icon-Measure_Distance:before {
+  content: "\e923";
+}
+.icon-NE_Library:before {
+  content: "\e924";
+}
+.icon-Optical_Link_Budget:before {
+  content: "\e925";
+}
+.icon-print_map:before {
+  content: "\e926";
+}
+.icon-search:before {
+  content: "\e927";
+}
+.icon-SQL:before {
+  content: "\e928";
+}
+.icon-Survey-Assignment:before {
+  content: "\e929";
+}
+.icon-Survey_Building:before {
+  content: "\e92a";
+}
+.icon-Survey_Path_Tracker:before {
+  content: "\e92b";
+}
+.icon-Toggle_base_map:before {
+  content: "\e92c";
+}
+.icon-Upload_Buildings:before {
+  content: "\e92d";
+}
+.icon-wireline_tool:before {
+  content: "\e92e";
+}
+.icon-Filter:before {
+  content: "\e92f";
+}
+.icon-Upload:before {
+  content: "\e930";
+}
+.icon-Shift:before {
+  content: "\e931";
+}
+.icon-History:before {
+  content: "\e932";
+}
+.icon-Detail:before {
+  content: "\e933";
+}
+.icon-Edit:before {
+  content: "\e934";
+}
+.icon-help-support:before {
+  content: "\e935";
+}
+.icon-Export:before {
+  content: "\e936";
+}
+.icon-Floor:before {
+  content: "\e937";
+}
+.icon-Manual-Splicing:before {
+  content: "\e938";
+}
+.icon-Wireline-tool:before {
+  content: "\e939";
+}
+.icon-Split:before {
+  content: "\e93a";
+}
+.icon-Connection-Path-finder:before {
+  content: "\e93b";
+}
+.icon-Success:before {
+  content: "\e93c";
+}
+.icon-Error-warning:before {
+  content: "\e93d";
+}
+.icon-warning:before {
+  content: "\e93e";
+}
+.icon-collapse:before {
+  content: "\e93f";
+}
+.icon-expand:before {
+  content: "\e940";
+}
+.icon-sort-2:before {
+  content: "\e941";
+}
+.icon-Collapse_expand:before {
+  content: "\e942";
+}
+.icon-Add_shaft-floor:before {
+  content: "\e943";
+}
+.icon-BOM-BOQ-Report:before {
+  content: "\e944";
+}
+.icon-POD:before {
+  content: "\e945";
+}
+.icon-Subtract_shaft-floor:before {
+  content: "\e946";
+}
+.icon-Entity-Info:before {
+  content: "\e947";
+}
+.icon-Edit-floor-shaft:before {
+  content: "\e948";
+}
+.icon-CABLE:before {
+  content: "\e949";
+}
+.icon-Manua-Splicing:before {
+  content: "\e94a";
+}
+.icon-FDB:before {
+  content: "\e94b";
+}
+.icon-Cancel:before {
+  content: "\e94c";
+}
+.icon-LocationEdit:before {
+  content: "\e94d";
+}
+.icon-Save:before {
+  content: "\e94e";
+}
+.icon-ConvertToAsBuilt:before {
+  content: "\e94f";
+}
+.icon-ConvertToDormant:before {
+  content: "\e950";
+}
+.icon-ConvertToPlanned:before {
+  content: "\e951";
+}
+.icon-CRICLE_PLUS:before {
+  content: "\e952";
+}
+.icon-CUSTOMER_INFO:before {
+  content: "\e953";
+}
+.icon-CUSTOMER_MANAGEMENT:before {
+  content: "\e954";
+}
+.icon-MANAGE_ENTITIES:before {
+  content: "\e955";
+}
+.icon-ONT_REPLACEMENT:before {
+  content: "\e956";
+}
+.icon-SHIFT_ELEMENT:before {
+  content: "\e957";
+}
+.icon-TICKETS:before {
+  content: "\e958";
+}
+.icon-WCR_DETAILS:before {
+  content: "\e959";
+}
+.icon-about_us:before {
+  content: "\e95a";
+}
+.icon-back:before {
+  content: "\e95b";
+}
+.icon-Contact:before {
+  content: "\e95c";
+}
+.icon-hamburger:before {
+  content: "\e95d";
+}
+.icon-logout:before {
+  content: "\e95e";
+}
+.icon-next:before {
+  content: "\e95f";
+}
+.icon-building_survey1:before {
+  content: "\e960";
+}
+.icon-Delete1:before {
+  content: "\e961";
+}
+.icon-new_connectivity:before {
+  content: "\e962";
+}
+.icon-port_user-icon:before {
+  content: "\e963";
+}
+.icon-structure:before {
+  content: "\e964";
+}
+.icon-map-view:before {
+  content: "\e965";
+}
+.icon-Search:before {
+  content: "\e966";
+}
+.icon-Search_back:before {
+  content: "\e967";
+}
+.icon-ticket_new:before {
+  content: "\e968";
+}
+.icon-View-details:before {
+  content: "\e969";
+}
+.icon-Navigator:before {
+  content: "\e96a";
+}
+.icon-RackView:before {
+  content: "\e96b";
+}
+.icon-CableConnection:before {
+  content: "\e96c";
+}
+.icon-RoomView:before {
+  content: "\e96d";
+}
+.icon-logicalview:before {
+  content: "\e96e";
+}
+.icon-PATCHPANEL:before {
+    content: "\e9a1";
+}
+.icon-geoImgLocation:before {
+    content: "\e9ab";
+}

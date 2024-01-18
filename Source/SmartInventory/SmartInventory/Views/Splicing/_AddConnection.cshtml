@@ -1,0 +1,71 @@
+﻿@model Models.AddConnection
+<style>
+    .mrgn_btm {
+        margin-bottom: 10px;
+    }
+
+    .singlAllowed {
+        background: #aaaaaa;
+        color: #fff;
+    }
+
+    .multiAllowed {
+        background: #0076f9;
+        color: #fff;
+    }
+
+    .disabled-result {
+        background-color: #00BA6C !important;
+    }
+</style>
+<!DOCTYPE html>
+<div class="libTabContent">
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active">
+            <fieldset class="the-fieldset">
+                <legend class="the-legend">From</legend>
+                <div class="form-group">
+                    <div class="col-md-12 mrgn_btm">
+                        @Html.DropDownListFor(m => m.cardId, new SelectList(Model.cardList.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", id = "ddlCards", @onchange = "conBuilder.bindPortsList(this,'#ddlLeftPorts');" })
+                    </div>                    
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12 mrgn_btm">
+                        @Html.DropDownListFor(m => m.sourcePortNo, Enumerable.Empty<SelectListItem>(), "--Select--", new { @class = "chosen-select form-control", id = "ddlLeftPorts" })
+                    </div>                    
+                </div>                
+                <div class="clearfix"></div>
+            </fieldset>
+            <fieldset class="the-fieldset">
+                <legend class="the-legend">To</legend>
+                <div class="form-group">                    
+                    <div class="col-md-12 mrgn_btm">
+                        @Html.DropDownListFor(m => m.cardId, new SelectList(Model.cardList.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", id = "ddlRightCards", @onchange = "conBuilder.bindPortsList(this,'#ddlRightPorts');" })
+                    </div>
+                </div>
+                <div class="form-group">                    
+                    <div class="col-md-12 mrgn_btm">
+                        @Html.DropDownListFor(m => m.destinationPortNo, Enumerable.Empty<SelectListItem>(), "--Select--", new { @class = "chosen-select form-control", id = "ddlRightPorts" })
+                    </div>
+                </div>
+                
+            </fieldset>
+            <div class="d-flex ModalFooter" id="dvBtnAction">
+                <div class="col-md-12 col-sm-12" style="border-top: 1px solid #80808026;width: 104%;left: -10px;margin-bottom: 5px;margin-top: 5px;"></div>
+                <div class="col-md-3 col-sm-3" style="float: right; text-align: right;">
+                    <input type="submit" class="btn btn-primary" value="Apply" id="btnAddConnection" onclick="conBuilder.SaveManulConnection();" />
+                </div>
+                <div class="col-md-3 col-sm-3">
+                    <input type="button" class="btn btn-primary" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" id="btnResteFilter" />
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+<script>
+    $('.chosen-select').chosen({ search_contains: true, width: '100%' });
+</script>
+
+

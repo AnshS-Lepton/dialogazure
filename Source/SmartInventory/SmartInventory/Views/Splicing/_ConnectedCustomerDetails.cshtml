@@ -1,0 +1,160 @@
+﻿@model Models.ViewOSPCPFModel
+@using Utility;
+@{
+    WebGrid grid = new WebGrid(canPage: false, canSort: false, ajaxUpdateContainerId: "dvViewConnectedCustomerDetails", ajaxUpdateCallback: "onGridHeaderClick('tblConnectedCustomerDetails')");
+    grid.Bind(Model.lstConnectedCustomer, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+}
+@Scripts.Render("~/bundles/endToEndSchematic/Scripts")
+<style>
+    .dropbox {
+        position: absolute;
+        width: 80px !important;
+        height: auto;
+        background-color: #fff;
+        right: 0px;
+        margin: 3px 15px 0px 0px;
+        box-shadow: 0px 1px 3px #b3b3b3;
+        border-radius: 2px;
+        text-align: left;
+        font-size: 14px;
+        z-index: 10000;
+        display: none;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="libDetail">
+    @using (Ajax.BeginForm("GetConnectedCustomerDetails", "Splicing", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+    },
+                               new { id = "frmCPF", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.objFilterAttributes.entity_type)
+        @Html.HiddenFor(m => m.objFilterAttributes.entityid)
+        @Html.HiddenFor(m => m.objFilterAttributes.port_no)
+        @Html.HiddenFor(m => m.entity_geomid)
+        if (Model.isControllEnable)
+        {
+            <div class="libTabs">
+                <ul class="nav nav-tabs tabs-left">
+                    <li class="active"><a href="#PathTrack" data-toggle="tab">@Resources.Resources.SI_OSP_ONT_NET_RPT_006</a></li>
+                    <li><a href="#OpticalLinkBudget" data-toggle="tab">@Resources.Resources.SI_OSP_ONT_NET_RPT_007</a></li>
+                </ul>
+            </div>
+        }
+        <div class="libTabContent" style="overflow:visible;">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="PathTrack">
+
+
+                    @if (Model.lstConnectedCustomer.Count > 0)
+                    {
+
+                        <div class="form-group" id="dvBtnAction" style="margin-bottom: -30px;">
+                            <div style="float:right;padding-top: 10px;width: auto;" id="divParentStream">
+                                <div class="col-md-4 divPads text-right"><button type="button" class="btn btn-primary" style="margin:10px; margin-left: auto" id="btnConnectedCustomerExport" value="Export"><span class="fa fa-download"></span> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button></div>
+                                @*<a id="btncpfExport" style="float:right;margin-top: -3px;" href="javascript:void(0);" class="ExportConnections @(grid.TotalRowCount == 0 ? "disabledExportCPF" : "")"></a>*@
+
+                            </div>
+                        </div>
+
+
+                        <div class="tab-content">
+                            <div id="dvViewConnectedCustomerDetails" class="tab-pane active cc_table">
+                                <div class="tablePad-bn">
+                                    <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp; <span id="spnTotalRecord">@grid.TotalRowCount</span></b><div style="float:right;font-weight:bold;">
+                                        <b>@Resources.Resources.SI_GBL_GBL_NET_FRM_091 &nbsp; (Core/Port): &nbsp;&nbsp; <span id="spnTotalRecord">@Model.equipment_id &nbsp; (@Model.objFilterAttributes.port_no)</span></b>
+
+                                    </div>
+                                </div>
+                                <div class="space-pad">
+                                    <div class="table-responsive">
+                                        @grid.GetHtml(tableStyle: "grid",
+                  htmlAttributes: new { id = "tblConnectedCustomerDetails" },
+
+                  mode: WebGridPagerModes.All,
+                  columns: grid.Columns(
+
+                  grid.Column("can_id", Resources.Resources.SI_ISP_GBL_JQ_GBL_045, format: @<text>@item.can_id</text>),
+grid.Column("customer_name", Resources.Resources.SF_GBL_GBL_NET_FRM_010, format: @<text> @item.customer_name</text>),
+grid.Column("customer_type", Resources.Resources.SI_OSP_CUS_NET_GBL_001, format: @<text>@item.customer_type </text>),
+grid.Column("LMC_Type", Resources.Resources.SI_OSP_CAB_NET_FRM_046, format: @<text>@item.LMC_type </text>),
+grid.Column("address", Resources.Resources.SI_ISP_GBL_GBL_GBL_015, format: @<text>@item.address</text>),
+grid.Column("mobile_no", "Mobile Number", format: @<text>@item.mobile_no</text>),
+grid.Column("phone_no", "Phone Number", format: @<text>@item.phone_no</text>),
+grid.Column("email_id", "Email Id", format: @<text>@item.email_id</text>),
+grid.Column("region_name", Resources.Resources.SI_ISP_GBL_GBL_GBL_011, format: @<text>@item.region_name</text>),
+grid.Column("province_name", Resources.Resources.SI_ISP_GBL_GBL_GBL_013, format: @<text>@item.province_name</text>),
+
+grid.Column("created_on", Resources.Resources.SI_ISP_GBL_GBL_GBL_004, format: @<text> @(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString())) </text>),
+grid.Column("created_by", Resources.Resources.SI_OSP_GBL_GBL_GBL_056, format: @<text>@item.created_by</text>)))
+
+                                        @Html.Hidden("dir", grid.SortDirection)
+                                        @Html.Hidden("col", grid.SortColumn)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="nr-found" style="display:@(Model.lstConnectedCustomer.Count == 0 ? "display;" : "none;")" id="divNoRecordExist">
+                        <span>@Resources.Resources.SI_GBL_GBL_NET_FRM_090</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        splicing.initApp();
+        $('.chosen-select').chosen({ width: '100%', disable_search_threshold: '5' });
+        @*$('#dvSchematicViewContainer #pageSize_chosen').css('width', '40%')
+        if ('@Model.objFilterAttributes.totalRecord' == 0) {
+            $('#txt_transmit').val(0);
+        }*@
+
+        //$("#tblConnectedCustomerDetails tbody tr").each(function (i, row) {
+        //    var $actualRow = $(row);
+        //    if ($actualRow.find('input[id^=hdnIsBackwardPath]').val().toUpperCase() == "FALSE") {
+        //        $actualRow.addClass('downStream');
+        //    }
+        //    else {
+        //        $actualRow.addClass('upStream');
+        //    }
+        //    $actualRow.attr('data-calculated-length', $actualRow.find('input[id^=hdncalculatedLength]').val());
+        //    $actualRow.attr('data-measured-length', $actualRow.find('input[id^=hdnMeasuredLength]').val());
+        //    $("#tblConnectedCustomerDetails tbody tr").css('display', 'table-row')
+        //});
+
+        //$($("#tblConnectedCustomerDetails tbody tr.downStream")[0]).addClass('conTerningPoint');
+        //$($("#tblConnectedCustomerDetails tbody tr.upStream")[0]).addClass('conTerningPoint');
+
+    });
+    @*splicing.upStream = null;
+    splicing.downStream = null;
+    if ('@Model.upStreamPath' != '' && '@Model.upStreamPath' != null) {
+        PdfPortNo = $("#ddlCore option:selected").text();
+        equipmentId = $('#equipment_id').val();
+        splicing.upStream = '@Model.upStreamPath'.replace(/&quot;/g, '"');
+        SchematicView(splicing.upStream, "#dvSchematicView", 870, 320);
+        $('#divCPFPrint').show();
+        $('#dvSchematicView').removeClass('divErrorMessage');
+    }
+    if ('@Model.downStreamPath' != '' && '@Model.downStreamPath' != null) {
+        PdfPortNo = $("#ddlCore option:selected").text();
+        equipmentId = $('#equipment_id').val();
+        splicing.downStream = '@Model.downStreamPath'.replace(/&quot;/g, '"');
+        $('#divCPFPrint').show();
+        $('#dvSchematicView').removeClass('divErrorMessage');
+    }*@
+</script>
+
+
+
+

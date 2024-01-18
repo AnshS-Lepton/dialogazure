@@ -1,0 +1,718 @@
+﻿@model Models.BomBoqInfoSummary
+@using SmartInventory.Settings
+@{
+    var grpmasterList = @Model.lstBomBoqInfo.Where(m => m.is_master == true || m.is_master == false).ToList();
+}
+
+<style>
+    .ui-draggable, .ui-droppable {
+        background-position: top;
+    }
+
+
+    .grid tbody td input[type=text] {
+        width: 50px;
+    }
+
+    .content {
+        height: auto !important;
+    }
+
+    .modal-dialog {
+         width: 1330px;
+    }
+
+    #ModalPopUp .modal-dialog {
+        left: 0 !important;
+        right:0 !important;
+        top: 5% !important;
+        margin:0 auto !important;
+    }
+
+
+    .grid {
+        border-top: none;
+        border-bottom: none;
+        white-space:normal;
+    }
+
+        .grid table {
+            border-collapse: collapse;
+            border-top: none;
+            border-bottom: none;
+        }
+
+        .grid thead tr, .grid tbody tr {
+            display: flex;
+           /* align-items: center;*/
+        }
+
+        .grid thead th {
+            width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /*height: 34px;*/
+            line-height: 16px;
+            position: sticky;
+            text-align:left;
+            border-left:none;
+        }
+
+        .grid tbody td {
+            /*width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;*/
+            min-height: 33px;
+           /* line-height: 28px;*/
+        }
+
+            .grid tbody td:last-child {
+                border-right: none;
+            }
+
+    .content .grid tbody td:last-child {
+        border-right: 1px solid var(--tableBorder);
+    }
+
+    /*, .ui-state-active .ui-state-active td {
+        background: rgba(0,0,0,0.05) !important;
+    }*/
+
+    .grid tbody td .btn {
+        padding: 1px 6px !important;
+    }
+
+    .ui-accordion .ui-accordion-content {
+        padding: 0 !important;
+    }
+
+    .ui-state-default, .th-Outer {
+        border: none;
+    }
+
+    .ui-accordion .ui-accordion-header, .th-Outer {
+        @if (@Model.status == "TEMP")
+        {
+            @("width: 1788!important;");
+
+        } else
+        {
+             @("width: 2138px!important;");
+
+            }
+        padding: 0;
+        margin: 0;
+        }
+
+    .bom-max-h {
+        overflow:hidden;
+    }
+
+    .theaderOverflow {
+        overflow: hidden;
+    }
+   /* .newScroller{
+        width:1298px;
+        overflow-x:auto;
+        overflow-y:hidden;
+    }*/
+
+    .tbodyOverflow {
+        @*@if (@Model.status == "TEMP")
+         {
+            @("width: 1878!important;");
+
+         } else
+         {
+             @("width: 2080!important;");
+
+             }*@
+        overflow-y: auto;
+        max-height: 410px;
+        scrollbar-color: #c9d0d8 #efefef;
+        scrollbar-width: thin;
+    }
+
+    .CustomSuccess {
+        color: #449d44;
+        background-color: white;
+        border-radius: 4px 0px 0px 4px;
+        border-color: #949292;
+        outline: none;
+        padding: 2px 8px;
+        border-right-width: 0px;
+        font-size: 12px;
+    }
+
+    .CustomSuccessDisabled {
+        color: gray;
+        background-color: white;
+        border-radius: 4px 0px 0px 4px;
+        border-color: #949292;
+        outline: none;
+        padding: 2px 8px;
+        border-right-width: 0px;
+        font-size: 12px;
+        cursor: not-allowed !important;
+    }
+
+        .CustomSuccessDisabled:hover, .CustomSuccessDisabled:focus, .CustomSuccessDisabled:active {
+            color: gray;
+            background-color: white !important;
+        }
+
+    .CustomError {
+        color: red;
+        background-color: white;
+        border-radius: 0px 4px 4px 0px;
+        border-color: #949292;
+        outline: none;
+        padding: 2px 12px;
+        margin-left: -4px;
+        font-size: 12px;
+    }
+
+    .CustomErrorDisabled {
+        color: gray;
+        background-color: white;
+        border-radius: 0px 4px 4px 0px;
+        border-color: #949292;
+        outline: none;
+        padding: 2px 12px;
+        margin-left: -4px;
+        font-size: 12px;
+        cursor: not-allowed !important;
+    }
+
+        .CustomErrorDisabled:hover, .CustomErrorDisabled:focus, .CustomErrorDisabled:active {
+            color: gray;
+            background-color: white !important;
+        }
+        @if (@Model.status == "TEMP")
+        {
+            @("#th-Outer{width: 1788px !important;}");
+
+        }
+    .bodytOuter{
+        width:1788px;
+    }
+
+
+    h3.NoChild > span.ui-icon-plus {
+        display: none;
+    }
+
+    h3.NoChild > span.ui-icon-minus {
+        display: none;
+    }
+    .warning-text{
+        color:#ff0000;
+        font-size:1.4rem;
+    }
+
+    .hide_element{
+        display:none;
+    }
+    .thTd00 {
+        width: 100px !important;
+    }
+
+    .thTd01 {
+        width: 130px !important;
+    }
+    .grid tbody td:first-child {
+        padding-left: 36px;
+    }
+    .thTd02 {
+        width: 90px !important;
+    }
+    .thTd03 {
+        width: 200px !important;
+    }
+    .thTd04 {
+        width: 150px !important;
+    }
+    .thTd05 {
+        width: 152px !important;
+    }
+    .thTd06 {
+        width: 76px !important;
+    }
+    .thTd07 {
+        width: 155px !important;
+    }
+    .thTd08 {
+        width: 105px !important;
+    }
+    .thTd09 {
+        width: 120px !important;
+        padding-right:3px !important;
+    }
+    .thTd10 {
+        width: 148px !important;
+    }
+    .thTd11 {
+        width: 83px !important;
+    }
+    .thTd12 {
+        width: 104px !important;
+    }
+    .thTd14 {
+        width: 82px !important;
+    }
+    .thTd15 {
+        width: 110px !important;
+    }
+    .thTd16 {
+        width: 155px !important;
+    }
+    .thTd17, .thTd18 {
+       width: 350px !important;
+    }
+    .thTd19 {
+        width: 85px !important;
+    }
+    .thTd20 {
+        width: 75px !important;
+    }
+    .thTd03, .thTd04, .thTd05, thTd06, .thTd17, .thTd18, .thTd19 {
+        white-space: normal !important;
+        word-break: break-word;
+    }
+
+    .ui-icon {
+        width: 18px !important;
+        height: 18px !important;
+        padding: 0.4rem;
+        background-color: #CCCCCC;
+        margin-top: 0px !important;
+    }
+    .subChild {
+        border: 1px solid #d3e3da !important;
+    }
+        .subChild tr {
+            background: #ebebeb !important;
+        }
+
+    .thTd18, .thTd14, .thTd06, .thTd07, .thTd10, .thTd01, .thTd02, .thTd00 {
+        display: none;
+    }
+    .ui-accordion .ui-accordion-header .ui-accordion-header-icon{
+        top:27%;
+    }
+    .grid thead th:last-child{
+        text-align:center;
+    }
+    .stuckHead {
+        position: sticky;
+        top: 0;
+    }
+    .plus-minus {
+        width: 14px;
+        line-height: 10px;
+        background-color: #0069ff;
+        display: inline-block;
+        padding: 2px;
+        font-size: 14px;
+        color: #ffffff !important;
+        margin-right: 4px;
+        cursor: pointer;
+    }
+    .collapsible {
+        background-color: #f9f9f9;
+    }
+
+</style>
+
+<div class="space-pad bom-max-h">
+
+    @if (@Model.status != "NA")
+    {
+        <div class="d-flex mb-01">
+            <div class="d-flex">
+                <span>Subarea Id:&nbsp;&nbsp; </span><b> @Model.fsa_id</b>
+                <span class="ml-1">Subarea Name:&nbsp;&nbsp; </span><b> @Model.fsa_name</b>
+            </div>
+            <button onclick="ExportBOMBOQ('@Model.bom_boq_id','@Model.status')" class="btn exp--btn ml-auto"><span class="fa fa-download"></span> Export</button>
+        </div>
+
+                <div class="tbodyOverflow">
+                    <table id="tblConstructionBom" class="grid">
+                        <thead class="stuckHead">
+                            <tr>
+                                <th class="thTd01" title="fsa_id">FSA ID</th>
+                                <th class="thTd02">FSA Name</th>
+                                <th class="thTd04">Entity Class</th>
+                                <th class="thTd03">Entity Type</th>
+                                <th class="thTd05">Model Name</th>
+                                <th class="thTd15">Item Code</th>
+                                <th class="thTd17">Short Description</th>
+                                <th class="thTd18">Long Description</th>
+                                <th class="thTd14">GIS UOM</th>
+                                <th class="thTd19">UOM</th>
+                                <th class="thTd06">GIS QTY</th>
+                                <th class="thTd07" title="Overhead Percentage">Overhead Percentage</th>
+                                @if (!Model.status.Equals("temp", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <th class="thTd08">Construction BOM QTY</th>
+                                    <th class="thTd09">Custom QTY</th>
+                                    <th class="thTd10" title="Additional NON Design Material QTY">Additional NON Design Material QTY</th>
+                                    <th class="thTd11">Final QTY</th>
+                                }
+                                else
+                                {
+                                    <th class="thTd08">Design QTY</th>
+                                }
+                            <th class="thTd12">Cost Per Unit (@string.Format(ApplicationSettings.Currency))</th>
+                                <th class="thTd16">PTS Code</th>
+                                <th class="thTd20">Revision</th>
+                                @if (!Model.status.Equals("temp", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <th class="thTd00" title="Action" align="center">Action</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{var Level1ItemList = @Model.lstBomBoqInfo.Where(m => m.hierarchy_level == 1).OrderBy(t => t.is_non_design_item == true ? 1 : 0).ThenBy(t => t.display_sequence).ThenBy(t => t.entity_class).ToList(); }
+                            @foreach (Models.BomBoqInfo Level1Item in Level1ItemList)
+                            {
+
+                                @Html.Partial("_BomBOQViewRow", new ViewDataDictionary { { "itemList", Level1Item }, { "status", Model.status } });
+                                var Level2ItemList = Model.lstBomBoqInfo.Where(m => m.hierarchy_level == 2 && m.entity_class == Level1Item.entity_class).OrderBy(t => t.display_sequence).ThenBy(t => t.entity_sub_class).ToList();
+                                foreach (Models.BomBoqInfo Level2Item in Level2ItemList)
+                                {
+                                    @Html.Partial("_BomBOQViewRow", new ViewDataDictionary { { "itemList", Level2Item }, { "status", Model.status } });
+                                    var Level3ItemList = Model.lstBomBoqInfo.Where(m => m.hierarchy_level == 3 && m.entity_class == Level2Item.entity_class && m.entity_sub_class == Level2Item.entity_sub_class).OrderBy(t => t.display_sequence).ThenBy(t => t.sub_category_1).ToList();
+                                    foreach (Models.BomBoqInfo Level3Item in Level3ItemList)
+                                    {
+                                        @Html.Partial("_BomBOQViewRow", new ViewDataDictionary { { "itemList", Level3Item }, { "status", Model.status } });
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+    }
+    else
+    {
+        <div class="nr-found">
+            <span>@string.Concat("No ", @Model.action == "DesignBOMBOQ" ? "Design" : "Construction", " BOM/BOQ Exists")</span>
+        </div>
+    }
+</div>
+<div class="d-flex ModalFooter">
+
+    @Html.Hidden("hdn_bom_boq_id", @Model.bom_boq_id)
+    @Html.Hidden("hdn_status", @Model.status)
+    @if (@Model.status == "TEMP")
+    {
+        <span class="warning-text"><b>Note :</b> Incase of any change, modify the design </span>
+    }
+    <input type="button" value="Cancel" data-dismiss="modal" class="btn btn-warning ml-auto mr-01" />
+
+
+    @if (@Model.status != "NA")
+    {
+        <input type="button" value="Submit" id="btnsubmitBOMBOQ" class="btn btn-primary" onclick="submitBOMBOQ();" />
+    }
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        // level-2 the level-3 rows by default
+        $("[level=level-1]").addClass("CloseTR");
+        $("[level=level-2]").addClass("CloseTR").hide();
+        $("[level=level-3]").hide();
+        // Add click event listener to the collapsible rows
+        $(".plus-minus").click(function () {
+            var id = $(this).closest('tr').attr("id");
+            var level = $(this).closest('tr').attr("level");
+            var action = $(this).closest('tr').hasClass("CloseTR") == true ? "OpenTR" : "CloseTR";
+            //console.log(id);
+            //console.log(level);
+            //console.log(action);
+            if (level == "level-1" && action == "OpenTR") {
+                $(this).closest('tr').removeClass("CloseTR");
+                $(this).html("&#8722;");
+                $("[id^='" + id + "'][level='level-2']").show().addClass("CloseTR");
+                $("[id^='" + id + "'][level='level-3']").hide().addClass("CloseTR");
+            } else if (level == "level-1" && action == "CloseTR") {
+                $(this).closest('tr').addClass("CloseTR");
+                $(this).html("&#43;");
+                $("[id^='" + id + "'][level='level-2']").find(".plus-minus").html("&#43;");
+                $("[id^='" + id + "'][level='level-2']").hide().addClass("CloseTR");;
+                $("[id^='" + id + "'][level='level-3']").hide().addClass("CloseTR");;
+            } else if (level == "level-2" && action == "OpenTR") {
+                $(this).closest('tr').removeClass("CloseTR");
+                $(this).html("&#8722;");
+                $("[id^='" + id + "'][level='level-3']").show().removeClass("CloseTR");;
+            } else if (level == "level-2" && action == "CloseTR") {
+                $(this).closest('tr').addClass("CloseTR");
+                $(this).html("&#43;");
+                $("[id^='" + id + "'][level='level-3']").hide().addClass("CloseTR");;
+            }
+        });
+        UpdateFormattedNumber('tblConstructionBom', false, ["Item Code", "PTS Code", "JC SAP ID","JC Name"]);
+    });
+
+
+    function submitBOMBOQ() {
+        // 
+        var bomboqinfosummary = {
+            bom_boq_id: parseInt($('#hdn_bom_boq_id').val()),
+            status: $('#hdn_status').val()
+        }
+        ajaxReq('BOMBOQ/SubmitBOMBOQ', bomboqinfosummary
+            , false, function (resp) {
+                if (resp.status == 'OK') {
+                    $('#btnsubmitBOMBOQ').attr("disabled", true);
+                    alert(resp.message);
+                    $('#closeModalPopup').trigger("click");
+                } else
+                    alert(resp.message, 'Error', 'error');
+            }, false, true, true);
+    }
+
+
+    function allowOnlyNumber(evt, elem) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if (
+            (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // “.” CHECK DOT, AND ONLY ONE.
+            (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        var maxlength = parseInt(getNum($(elem).attr('maxlength')));
+        console.log(elem.value);
+        console.log(elem.value.length);
+        console.log(maxlength);
+        if (elem.value.length == maxlength) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    function CalculateTotal(item_code, element) {
+        //Declare The Variables
+         
+        var id = $(element).closest('tr').attr("id");
+        var level = $(element).closest('tr').attr("level");
+        var group_name = $(element).closest('tr').attr("group_name");
+        var sub_group_name = $(element).closest('tr').attr("sub_group_name");
+        var Sub_Group_AddQty = 0.0;
+        var Sub_Group_DesignQty = 0.0;
+        var Sub_Group_AddNonDgnQty = 0.0;
+        var Sub_Group_FinalQty = 0.0;
+        var Sub_Group_total_Capex = 0.0;
+        var Group_AddQty = 0.0;
+        var Group_DesignQty = 0.0;
+        var Group_AddNonDgnQty = 0.0;
+        var Group_FinalQty = 0.0;
+        var Group_total_Capex = 0.0;
+        var temp_cost_per_unit = 0.0;
+        var temp_DesignQty = 0.0;
+
+        //Calculate the cost for single item with updated qty
+        var itemlist = $("tr[group_name=" + CSS.escape(group_name) + "][sub_group_name=" + CSS.escape(sub_group_name) + "][level=" + CSS.escape("level-3") + "]");
+        itemlist.each(function () {
+            console.log($(this).attr("item_row_identity"));
+            var item_row_identity = $(this).attr("item_row_identity");
+            var designQtyTextboxId = item_row_identity + "_design_qty";
+            var AddQtyTextboxId = item_row_identity + "_additional_qty";
+            var AddNoNDesignQtyTextboxId = item_row_identity + "_additional_non_design_material_qty";
+            var CostPerUnitLabelId = item_row_identity + "_cost_per_unit";
+            var FinalQtyLabelId = item_row_identity + "_final_qty";
+            var TotalCapexLabelId = item_row_identity + "_jpf_total_capex";
+
+            var DesignQtyTextboxId = $('#' + CSS.escape(designQtyTextboxId));
+            temp_cost_per_unit = $('#' + CSS.escape(CostPerUnitLabelId)).text();
+            temp_DesignQty = parseFloat(getNum($(DesignQtyTextboxId).val()));
+            temp_AddQty = parseFloat(getNum($('#' + CSS.escape(AddQtyTextboxId)).val()));
+            temp_AddNonDgnQty = parseFloat(getNum($('#' + CSS.escape(AddNoNDesignQtyTextboxId)).val()));
+            temp_FinalQty = getNum(temp_DesignQty + temp_AddQty + temp_AddNonDgnQty);
+            temp_total_Capex = getNum(temp_FinalQty * temp_cost_per_unit);
+            //Calculate the cost for sub group with updated qty
+            Sub_Group_DesignQty = Sub_Group_DesignQty + temp_DesignQty;
+            Sub_Group_AddQty = Sub_Group_AddQty + temp_AddQty;
+            Sub_Group_AddNonDgnQty = Sub_Group_AddNonDgnQty + temp_AddNonDgnQty;
+            Sub_Group_FinalQty = Sub_Group_FinalQty + temp_FinalQty;
+            Sub_Group_total_Capex = Sub_Group_total_Capex + temp_total_Capex;
+            $('#' + CSS.escape(TotalCapexLabelId)).text(temp_total_Capex.toFixed(2));
+            $('#' + CSS.escape(FinalQtyLabelId)).text(temp_FinalQty.toFixed(2));
+        });
+        var SubGrouplist = $("tr[group_name=" + CSS.escape(group_name) + "][sub_group_name=" + CSS.escape(sub_group_name) + "][level=" + CSS.escape("level-2") + "]");
+        SubGrouplist.each(function () {
+            //Update the cost for sub group with updated qty
+            var sub_group_row_identity = $(this).attr("item_row_identity");
+            designQtyLabelId = sub_group_row_identity + "_design_qty_span";
+            designQtyTextBoxId = sub_group_row_identity + "_design_qty";
+            AddQtyLabelId = sub_group_row_identity + "_additional_qty_span";
+            AddNoNDesignQtyLabelId = sub_group_row_identity + "_additional_non_design_material_qty_span";
+            FinalQtyLabelId = sub_group_row_identity + "_final_qty";
+            TotalCapexLabelId = sub_group_row_identity + "_jpf_total_capex";
+            console.log("Sub_Group_DesignQty:" + Sub_Group_DesignQty);
+            //$('#' + CSS.escape(designQtyLabelId)).text(Sub_Group_DesignQty.toFixed(2));
+            $('#' + CSS.escape(AddQtyLabelId)).text(Sub_Group_AddQty.toFixed(2));
+            $('#' + CSS.escape(AddNoNDesignQtyLabelId)).text(Sub_Group_AddNonDgnQty.toFixed(2));
+            $('#' + CSS.escape(TotalCapexLabelId)).text(Sub_Group_total_Capex.toFixed(2));
+            $('#' + CSS.escape(FinalQtyLabelId)).text(Sub_Group_FinalQty.toFixed(2));
+        });
+        var SubGrouplist = $("tr[group_name=" + CSS.escape(group_name) + "][level=" + CSS.escape("level-2") + "]");
+        SubGrouplist.each(function () {
+            //calculate the cost for group with updated qty
+            var sub_group_row_identity = $(this).attr("item_row_identity");
+            designQtyLabelId = sub_group_row_identity + "_design_qty_span";
+            designQtyTextBoxId = sub_group_row_identity + "_design_qty";
+            AddQtyLabelId = sub_group_row_identity + "_additional_qty_span";
+            AddNoNDesignQtyLabelId = sub_group_row_identity + "_additional_non_design_material_qty_span";
+            FinalQtyLabelId = sub_group_row_identity + "_final_qty";
+            TotalCapexLabelId = sub_group_row_identity + "_jpf_total_capex";
+            Sub_Group_DesignQty = parseFloat(getNum($('#' + CSS.escape(designQtyTextBoxId)).val()));
+            Sub_Group_AddQty = parseFloat(getNum($('#' + CSS.escape(AddQtyLabelId)).text()));
+            Sub_Group_AddNonDgnQty = parseFloat(getNum($('#' + CSS.escape(AddNoNDesignQtyLabelId)).text()));
+            Sub_Group_FinalQty = parseFloat(getNum($('#' + CSS.escape(FinalQtyLabelId)).text()));
+            Sub_Group_total_Capex = parseFloat(getNum($('#' + CSS.escape(TotalCapexLabelId)).text()));
+            console.log(FinalQtyLabelId);
+            Group_AddQty = Group_AddQty + Sub_Group_AddQty;
+            Group_DesignQty = Group_DesignQty + Sub_Group_DesignQty;
+            Group_AddNonDgnQty = Group_AddNonDgnQty + Sub_Group_AddNonDgnQty;
+            Group_FinalQty = Group_FinalQty + Sub_Group_FinalQty;
+            Group_total_Capex = Group_total_Capex + Sub_Group_total_Capex;
+            console.log("Sub_Group_DesignQty:" + Sub_Group_DesignQty + "-" + designQtyLabelId);
+
+        });
+        var Grouplist = $("tr[group_name=" + CSS.escape(group_name) + "][level=" + CSS.escape("level-1") + "]");
+        Grouplist.each(function () {
+            //update the cost for group with updated qty
+            var group_row_identity = $(this).attr("item_row_identity");
+            designQtyLabelId = group_row_identity + "_design_qty_span";
+            AddQtyLabelId = group_row_identity + "_additional_qty_span";
+            AddNoNDesignQtyLabelId = group_row_identity + "_additional_non_design_material_qty_span";
+            FinalQtyLabelId = group_row_identity + "_final_qty";
+            TotalCapexLabelId = group_row_identity + "_jpf_total_capex";
+            console.log("Group_DesignQty:" + Group_DesignQty);
+            //$('#' + CSS.escape(designQtyLabelId)).text(Group_DesignQty.toFixed(2));
+            $('#' + CSS.escape(AddQtyLabelId)).text(Group_AddQty.toFixed(2));
+            $('#' + CSS.escape(AddNoNDesignQtyLabelId)).text(Group_AddNonDgnQty.toFixed(2));
+            $('#' + CSS.escape(TotalCapexLabelId)).text(Group_total_Capex.toFixed(2));
+            $('#' + CSS.escape(FinalQtyLabelId)).text(Group_FinalQty.toFixed(2));
+        });
+    }
+
+    function getNum(val) {
+        if (isNaN(val) || val == null || val== '') {
+            return 0;
+        }
+        return val;
+    }
+
+    function saveBomBOQItem(element) {
+        var id = $(element).closest('tr').attr("id");
+        var level = $(element).closest('tr').attr("level");
+        var group_name = $(element).closest('tr').attr("group_name");
+        var sub_group_name = $(element).closest('tr').attr("sub_group_name");
+        var sub_group_row_identity = $(element).closest('tr').attr("item_row_identity");
+        var designQtyLabelId = sub_group_row_identity + "_design_qty_span";
+        var designQtyTextBoxId = sub_group_row_identity + "_design_qty";
+        var is_dependent_calculation = $(element).attr("IsDependentCalculation");
+        console.log(is_dependent_calculation);
+        var itemlist = $("tr[group_name=" + CSS.escape(group_name) + "][sub_group_name=" + CSS.escape(sub_group_name) + "][level=" + CSS.escape("level-3") + "]");
+        var bomBoqinfo = [];
+        var actual_Sub_Group_DesignQty = 0;
+        var Sub_Group_AddQty = 0.0;
+        var Sub_Group_DesignQty = 0.0;
+        var Sub_Group_AddNonDgnQty = 0.0;
+        var Sub_Group_FinalQty = 0.0;
+        var Sub_Group_total_Capex = 0.0;
+        var Group_AddQty = 0.0;
+        var Group_DesignQty = 0.0;
+        var Group_AddNonDgnQty = 0.0;
+        var Group_FinalQty = 0.0;
+        var Group_total_Capex = 0.0;
+        actual_Sub_Group_DesignQty = parseFloat(getNum($('#' + CSS.escape(designQtyTextBoxId)).val()));
+        itemlist.each(function () {
+            console.log($(this).attr("item_row_identity"));
+            var item_row_identity = $(this).attr("item_row_identity");
+            var designQtyTextboxId = item_row_identity + "_design_qty";
+            var AddQtyTextboxId = item_row_identity + "_additional_qty";
+            var AddNoNDesignQtyTextboxId = item_row_identity + "_additional_non_design_material_qty";
+            var CostPerUnitLabelId = item_row_identity + "_cost_per_unit";
+            var FinalQtyLabelId = item_row_identity + "_final_qty";
+            var TotalCapexLabelId = item_row_identity + "_jpf_total_capex";
+
+            var DesignQtyTextboxId = $('#' + CSS.escape(designQtyTextboxId));
+            temp_cost_per_unit = $('#' + CSS.escape(CostPerUnitLabelId)).text();
+            temp_DesignQty = parseFloat(getNum($(DesignQtyTextboxId).val()));
+            temp_AddQty = parseFloat(getNum($('#' + CSS.escape(AddQtyTextboxId)).val()));
+            temp_AddNonDgnQty = parseFloat(getNum($('#' + CSS.escape(AddNoNDesignQtyTextboxId)).val()));
+            temp_FinalQty = getNum(temp_DesignQty + temp_AddQty + temp_AddNonDgnQty);
+            temp_total_Capex = getNum(temp_FinalQty * temp_cost_per_unit);
+            //Calculate the cost for sub group
+            console.log("temp_DesignQty - >" + temp_DesignQty);
+            console.log("Sub_Group_DesignQty - >" + Sub_Group_DesignQty);
+            var x = (Sub_Group_DesignQty + temp_DesignQty);
+            console.log('x- > ' + x);
+            Sub_Group_DesignQty = (parseFloat(Sub_Group_DesignQty.toString()) + parseFloat(temp_DesignQty.toString())).toFixed(2);
+            console.log("After sum Sub_Group_DesignQty - >" + Sub_Group_DesignQty);
+            Sub_Group_AddQty = Sub_Group_AddQty + temp_AddQty;
+            Sub_Group_AddNonDgnQty = Sub_Group_AddNonDgnQty + temp_AddNonDgnQty;
+            Sub_Group_FinalQty = Sub_Group_FinalQty + temp_FinalQty;
+            Sub_Group_total_Capex = Sub_Group_total_Capex + temp_total_Capex;
+            var bomBoqinfoitemlist = {
+                bom_boq_id: parseInt($('#hdn_bom_boq_id').val()),
+                id: $(DesignQtyTextboxId).attr("dataid"),
+                item_code: $(DesignQtyTextboxId).attr("dataitemcode"),
+                design_qty: getNum($(DesignQtyTextboxId).val()),
+                additional_qty: getNum($('#' + CSS.escape(AddQtyTextboxId)).val()),
+                additional_non_design_material_qty: getNum($('#' + CSS.escape(AddNoNDesignQtyTextboxId)).val()),
+                entity_class: group_name,
+                entity_sub_class: sub_group_name
+            }
+            bomBoqinfo.push(bomBoqinfoitemlist);
+        });
+        console.log(Sub_Group_DesignQty);
+        console.log(actual_Sub_Group_DesignQty);
+        if (Sub_Group_DesignQty != actual_Sub_Group_DesignQty && (group_name != "Suspension Set"
+            && group_name != "Termination Set")) {
+            alert("Total Design Qty value is not matching with sum of its sub Design Qty");
+            return false;
+        }
+        ajaxReq('BOMBOQ/SaveBOMBOQView', { 'objBomBoqInfo': bomBoqinfo }
+            , false, function (resp) {
+                if (resp.status == 'OK') {
+                    alert(resp.message);
+                } else
+                    alert(resp.message, 'Error', 'error');
+        }, true, true, true);
+
+        if (is_dependent_calculation == "True") {
+            console.log("call the function to calculate the dependent items");
+            //alert("call the function to calculate the dependent items for " + group_name + " and " + sub_group_name);
+            ajaxReq('BOMBOQ/GetDependentItems', { 'objBomBoqInfo': bomBoqinfo }
+                , false, function (resp) {
+                    if (resp.status == 'OK') {
+                         
+                        resp.result.forEach(function (refresh_item) {
+                            // do something with `item`
+                            var sitem_row_identity = refresh_item.item_code + "_" + refresh_item.id;
+                            var designQtyTextBoxId = sitem_row_identity + "_design_qty";
+                            $('#' + CSS.escape(designQtyTextBoxId)).val(refresh_item.design_qty);
+                            $('#' + CSS.escape(designQtyTextBoxId)).trigger("keyup");
+                        });
+                    } else
+                        alert(resp.message, 'Error', 'error');
+                }, true, true, true);
+        }
+    }
+
+      function ExportBOMBOQ() {
+        // 
+        //var applicationUrl = '@string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"))';
+        var bom_boq_id = parseInt($('#hdn_bom_boq_id').val());
+        var status = $('#hdn_status').val();
+        window.location = baseUrl + '/BOMBOQ/ExportBOMBOQ?id=' + bom_boq_id + '&status=' + status;
+
+    }
+</script>

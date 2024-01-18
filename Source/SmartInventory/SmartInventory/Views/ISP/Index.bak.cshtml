@@ -1,0 +1,216 @@
+﻿@model Models.ISP.ISPViewModel
+@using SmartInventory.Settings;
+@{
+    ViewBag.Title = "ISP View";
+}
+@{
+//var lstleftShafts = Model.ShaftList.Where(m => m.isLeftShaft == true).ToList();
+//var lstRightShafts = Model.ShaftList.Where(m => m.isLeftShaft == false).ToList();
+//var SplitterList = Model.ShaftFloorElements.Where(m => m.element_type.ToUpper() == Models.EntityType.Splitter.ToString().ToUpper()).ToList();
+//var SpliceClosureList = Model.ShaftFloorElements.Where(m => m.element_type.ToUpper() == Models.EntityType.Spliceclosure.ToString().ToUpper()).ToList();
+// var shaftcount = Model.ShaftList != null ? Model.ShaftList.Count() : 0;
+// var floorCssClass = "col-md-" + (12 - shaftcount);
+// Model.ShaftFloorElements = Model.ShaftFloorElements.Where(m => m.element_type.ToUpper() != Models.EntityType.Splitter.ToString().ToUpper()).ToList();
+
+}
+
+
+<style>
+    .clsLabels {
+        background: #e3f3d9;
+        padding: 1px;
+        font-size: 11px;
+        z-index: 2;
+        color: #131212;
+        border-radius: 2px;
+        border: 1px solid black !important;
+        font-weight: bold;
+        letter-spacing: 1px;
+        display: none;
+    }
+
+
+    .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
+        padding: 0px;
+        position: initial;
+    }
+
+    .col-md-7 {
+        width: 58.33333333%;
+    }
+
+    /*.col-md-2 {
+        width: 16.66666667%;
+    }*/
+
+    path:hover {
+        stroke-width: 5px !important;
+        cursor: pointer;
+    }
+
+    /*svg {
+        z-index: 2000000;
+    }*/
+
+    #dvFloors .FloorBox {
+        padding-top: 0px;
+        padding-bottom: 18px;
+    }
+
+    .noprint {
+        display: none;
+    }
+
+        .noprint #pageSize_chosen {
+            width: 55px !important;
+        }
+
+    #ChildPopUp {
+        z-index: 999999;
+    }
+
+    #dvSplicingElements .form-group {
+        padding: 10px;
+    }
+</style>
+<script src="~/Content/js/DivToImage.js"></script>
+<script src="~/Content/js/jspdf.min.js"></script>
+<script src="~/Content/js/Utility.js"></script>
+<link href="~/Content/css/animate.css" rel="stylesheet" />
+<div id="divLibrary">
+    <div class="form-group noprint">
+        @Html.DropDownList("pageSize", new List<SelectListItem>
+                {
+                    new SelectListItem{ Text="A4", Value = "A4" },
+                    new SelectListItem{ Text="A3", Value = "A3" },
+                    new SelectListItem{ Text="A2", Value = "A2" },
+                    new SelectListItem{ Text="A1", Value = "A1" },
+                    new SelectListItem{ Text="A0", Value = "A0" },
+                 }, new { @class = "chosen-select col-sm-4", @style = "width: 81px !important;" })
+        <a onclick="DownloadDivAsPdfOrImg('pdf', 'PrintContainer',null);" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i> Save as PDF</a>
+    </div>
+    <input type="hidden" id="StructureId" value="@Model.StructureId" />
+    <div class="row" id="divBaseLocation">
+        <label class="control-label" for="ddlBaseLocation">
+            Base Location<i class="clsMandatory">*</i>:
+        </label>
+        <div class="form-group">
+            <select id="ddlBaseLocation" class="chosen-select form-control" onchange="isp.SetDropDownSequence()">
+                <option value="0">--Select--</option>
+                <option value="1">Shaft</option>
+                <option value="2">Floor</option>
+            </select>
+        </div>
+    </div>
+    <div class="row" style="display:none;" id="divShaft">
+        <label class="control-label" for="ddlShaft">Shaft:</label>
+        <div class="form-group">
+            @Html.DropDownList("ddlShaft", Model.ShaftList.Select(m => new SelectListItem { Value = m.systemid.ToString(), Text = m.entityname }).ToList(), "-- Select Shaft --", new { @class = "chosen-select form-control" })
+        </div>
+    </div>
+    <div class="row" id="dvElementType" style="display:none;">
+        <label class="control-label" for="ElementType">Element Type<i class="clsMandatory">*</i>:</label>
+        <div class="form-group">
+            <select class="chosen-select form-control" onchange="isp.getElementTemplate()" id="ElementType">
+                <option value="0">--Select Element--</option>
+                @foreach (var item in Model.ISPLayers)
+                {
+                    <option value="@item.layer_id" data-layer-child="@(item.is_isp_child_layer?1:0)" data-layer-name="@item.layer_name">@item.layer_title</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="row" id="divSplitterParent" style="display:none;">
+        <label class="control-label">Parent Entity</label>
+        <div class="form-group">
+            @Html.DropDownList("ddlSplitterParent", Model.SplitterParents.Select(m => new SelectListItem { Value = m.element_type.ToString() + "_" + m.systemid, Text = m.network_id }).ToList(), "-- Select Parent --", new { @class = "chosen-select form-control" })
+        </div>
+    </div>
+    <div class="row" id="divCustomerParent" style="display:none;">
+        <label class="control-label">Parent Element</label>
+        <div class="form-group">
+            @Html.DropDownList("ddlCustomerParent", Model.ONTlist.Select(m => new SelectListItem { Value = m.element_type.ToString() + "_" + m.systemid, Text = m.network_id }).ToList(), "-- Select ONT --", new { @class = "chosen-select form-control" })
+        </div>
+    </div>
+    <div class="row" id="divFMSParent" style="display:none;">
+        <label class="control-label">Parent Element</label>
+        <div class="form-group">
+            @Html.DropDownList("ddlFMSParent", Model.PODMODlist.Select(m => new SelectListItem { Value = m.element_type.ToString() + "_" + m.systemid, Text = m.network_id }).ToList(), "-- Select --", new { @class = "chosen-select form-control" })
+        </div>
+    </div>
+    <div class="row" style="display:none;" id="divFloor">
+        <label class="control-label" for="ddlLevel">Floor<i class="clsMandatory">*</i>:</label>
+        <div class="form-group">
+            @Html.DropDownList("ddlLevel", Model.FloorList.Select(m => new SelectListItem { Value = m.systemid.ToString(), Text = m.entityname }).ToList(), "-- Select Floor --", new { @class = "chosen-select form-control" })
+        </div>
+    </div>
+
+
+
+    <div class="row" id="dvIspCable" style="display:none;">
+        <div class="tab-pane active" id="divTP" style="width: 99%; height:110px;overflow: auto;">
+            <table id="tblISPTerminationPoint" class="structureLst" style="width: 98%; /* padding-left: 46px; */float: right; margin-right: 3px;">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            Entity Id
+                        </th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody style="text-align:center;"></tbody>
+            </table>
+            <span style="text-align: center;  display: block;" id="dvISPNoTerminatePoint">Click on element and select <b>Add TP</b>  to add termination point!</span>
+        </div>
+        <div class="ModalFooter" id="dvBtnAction">
+                <input type="button" class="btn btn-primary ml-auto mr-01" id="btnEditISPCableTemplate" value="Edit Template" />
+                <input type="button" class="btn btn-primary" id="btnCreateISPCable" value="Create" />
+        </div>
+    </div>
+    <div class="row" id="dvElementList">
+        @Html.Partial("_ElementTemplate", Model.ElementTemplates)
+    </div>
+    <div class="row" style="margin-top: 20px;">
+        <div id="layersContainer">
+            <div class="layers" data-group="NetworkLayers">
+                <h2> Network Layers<i class="fa lyracrdn fa-plus" title="Expand/Shrink"></i></h2>
+                <div id="dvNetworkActions" style="padding: 5px; display: none;">
+                <input type="checkbox" id="checkAll" class="checkbox-custom" checked="checked"><b><label for="checkAll" class="checkbox-custom-label"><span>Select All</span></label></b></div>
+                <ul class="mainlyr network treeview" style="display: none;">
+                    @{
+                        int count = 0;
+                        if (Model.StructureElements.Count > 0)
+                        {
+                            var distinctRecord = Model.StructureElements.Select(m => new { entity_type = m.entity_type }).Distinct().ToList();
+                            foreach (var item in distinctRecord)
+                            {
+
+                                var layerTitle = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == item.entity_type.ToUpper()).FirstOrDefault().layer_title : string.Empty;
+                                <li class="@(count == distinctRecord.Count ? "last" : "")ispLayerTree">
+
+                                    <input id="chk_nLyr_@item.entity_type" type="checkbox" data-mapabbr="@item.entity_type.ToUpper()" class="checkbox-custom" checked="checked">
+                                    <b><label for="chk_nLyr_@item.entity_type" class="checkbox-custom-label"><span>@layerTitle</span></label></b>
+                                </li>
+                                count++;
+
+
+                            }
+                        }
+                        else
+                        {
+                            <li id="liNoLayer">
+                                <span>No layer found</span>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+@Ajax.ActionLink("ISP", "StructureInfo", "ISP", new { structureId = Model.StructureId }, new AjaxOptions { LoadingElementId = "dvProgress", UpdateTargetId = "divISPView", OnSuccess = "isp.showRightPop();" }, new { style = "display:none;", id = "ancrStructureInfo" })
+<div id="divISPView">
+    @Html.Action("StructureInfo", "ISP", new { structureId = Model.StructureId })
+</div>
+
+

@@ -1,0 +1,231 @@
+﻿@model Models.rowApproveRejectStage
+@using SmartInventory.Settings;
+<style>
+    #divRowStageRemarks .row {
+        margin-left: 10px;
+    }
+</style>
+@{
+
+    var recurringCharge = "Recurring Charges=Actual Access Charges Amount  * No. of Years (After every 365 days start from Access Charge Start Date)";
+    var totalPaidAmount = "Total Amount Paid=Actual Access Charges Amount  + Actual RI Amount + Actual Deposit Amount";
+}
+@using (Ajax.BeginForm("SaveApproveROW", "Library", new AjaxOptions
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "dvModalBody",
+            LoadingElementId = "dvProgress",
+            //OnBegin = "return si.ROW.isAttachmentTypeValid(false)",
+            Confirm = Resources.Resources.SI_OSP_ROW_NET_FRM_103
+    },
+                                    new { id = "frmApproveROW", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.row_system_id)
+    @Html.HiddenFor(m => m.geomType)
+    @Html.HiddenFor(m => m.rowType)
+
+
+    <fieldset class="the-fieldset">
+        <legend class="the-legend">@Resources.Resources.SI_OSP_ROW_NET_FRM_004</legend>
+        <div class="form-group">
+            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_060<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">@Html.TextBoxFor(m => m.demand_note, new { @class = "form-control", @maxlength = "10", @onkeypress = "return allowNumberwithOneDot(event,'demand_note');" })</div>
+            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_061<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.DropDownListFor(m => m.row_status, new SelectList(Model.listRowStatus.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"),
+            "--Select--", new { @class = "chosen-select form-control clsReadOnly", id = "ddlRowStatus", @onchange = "si.ROW.setAttachmentDropDown();" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_062<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">@Html.TextBoxFor(m => m.actual_row_route, new { @class = "form-control", @maxlength = "12", @onkeypress = "return allowNumberwithOneDot(event,'actual_row_route');" })</div>
+            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_063<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">@Html.TextBoxFor(m => m.dlp_factor, new { @class = "form-control", @maxlength = "5", @onkeypress = "return allowNumberwithOneDot(event,'dlp_actor');" })</div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_064,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">@Html.TextBoxFor(m => m.actual_rate, new { @class = "form-control", @maxlength = "12", @onkeypress = "return allowNumberwithOneDot(event,'actual_rate');" })</div>
+            <label class="control-label col-sm-2">@Html.Raw(string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_065,ApplicationSettings.Currency)) <i class="clsMandatory">*</i>:  </label>
+            <div class="col-sm-4">@Html.TextBoxFor(m => m.actual_deposit_amount, new { @class = "form-control", id = "txtActualDepositAmount", @maxlength = "12", @onkeypress = "return allowNumberwithOneDot(event,'txtActualDepositAmount');" })</div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_067,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">@Html.TextBoxFor(m => m.actual_ri_amount, new { @class = "form-control", id = "txtActualRIAmount", @maxlength = "12", @onkeypress = "return allowNumberwithOneDot(event,'txtActualRIAmount');" })</div>
+            <label class="control-label col-sm-2">@Html.Raw(string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_068,ApplicationSettings.Currency))<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">@Html.TextBoxFor(m => m.actual_access_charge_amount, new { @class = "form-control", id = "txtActualAccessCharge", @maxlength = "12", @onkeypress = "return allowNumberwithOneDot(event,'txtActualAccessCharge');" })</div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2">@Html.Raw(string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_066,ApplicationSettings.Currency))<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">@Html.TextBoxFor(m => m.actual_refundable_amount, new { @class = "form-control", id = "txtActualRefundableAmount", @maxlength = "12", @onkeypress = "return allowNumberwithOneDot(event,'txtActualRefundableAmount');" })</div>
+            <label class="control-label col-sm-2" title="@totalPaidAmount" id="lblTotalPaidAmount">@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_069,ApplicationSettings.Currency)<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">@Html.TextBoxFor(m => m.total_paid_amount, new { @class = "form-control clsReadOnly", @readonly = true, id = "txtApproveTotalPaidAmount" })</div>
+        </div>
+        @*<div class="form-group">
+                <label class="control-label col-md-2 col-sm-2">Route Length(Mtr)<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4 col-sm-4">@Html.TextBoxFor(m => m.route_length, new { @class = "form-control clsReadOnly", id = "txtROWRouteLength", @readonly = true })</div>
+            </div>*@
+        <div class="form-group">
+            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_070<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.paymentDate, new { @class = "form-control clsReadOnly", id = "txtPaymentDate", @readonly = true })
+                <img id="imgPaymentDate" class="assign-calen" src="@Url.Content("~/Content/images/calendar.png")" style="display: @(Model.system_id>0?"none":"block");">
+            </div>
+            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_071<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.startDate, new { @class = "form-control clsReadOnly", id = "txtStartDate", @readonly = true })
+                <img id="imgStartDate" class="assign-calen" src="@Url.Content("~/Content/images/calendar.png")" style="display: @(Model.system_id>0?"none":"block");">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_ROW_NET_FRM_072<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.endDate, new { @class = "form-control clsReadOnly", id = "txtEndDate", @readonly = true, @onchange = "si.ROW.getWindow()" })
+                <img id="imgEndtDate" class="assign-calen" src="@Url.Content("~/Content/images/calendar.png")" style="display: @(Model.system_id>0?"none":"block");">
+            </div>
+            <label class="control-label col-sm-2">@Html.Raw(Resources.Resources.SI_OSP_ROW_NET_FRM_073)<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.accessChargeStartDate, new { @class = "form-control clsReadOnly", id = "txtAccessChargeDate", @readonly = true })
+                <img id="imgAccessChargeDate" class="assign-calen" src="/Content/images/calendar.png" style="display: @(Model.system_id>0?"none":"block");">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" id="lblRecurringCharge" title="@recurringCharge">@Html.Raw(string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_075,ApplicationSettings.Currency))<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.total_recurring_charge, new { @class = "form-control clsReadOnly", id = "txtTotalRecurringCharge", @readonly = true })
+
+            </div>
+        </div>
+        @*<div class="form-group">
+                <label class="control-label col-sm-2">Window(Days)<i class="clsMandatory">*</i>:</label>
+                <div class="col-sm-4">@Html.TextBoxFor(m => m.row_window, new { @class = "form-control clsReadOnly", id = "txtROWWindow", @readonly = true })</div>
+            </div>*@
+    </fieldset>
+    <fieldset class="the-fieldset attach">
+        <legend class="the-legend">@Resources.Resources.SI_OSP_ROW_NET_FRM_022</legend>
+        <div class="form-group rowStageUploadAction">
+            <div class="col-md-3 col-sm-3" id="dvAttachmentType">
+                <select class="form-control chosen-select" id="ddlApproveRejectAttachmentType">
+                    <option value="0">--Select--</option>
+                    @foreach (var item in Model.listAttachmentType)
+                    {
+                        <option value="@item.attachment_type" style="display:none;" data-max-limit="@item.attachment_limit" data-category="@item.category" data-attachment-type="@item.attachment_type" data-is-required="@item.is_mandatory">@item.attachment_type</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-3 col-sm-3" id="divDocumentUpload" style="display:flex; text-decoration:underline;">
+                <input type="file" class="file" multiple name="file[]" id="rowStageDocUpload">
+                <a href="#" onclick="si.ROW.attachment.upload(@Model.row_system_id,'','ROW','rowStageDocUpload','ddlApproveRejectAttachmentType');" value="Upload" id="btnUploadDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008</a>
+                <a href="#" onclick="si.ROW.clear();" value="Clear" id="btnClearDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</a>
+            </div>
+            <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
+        </div>
+        <div class="form-group">
+            <div id="divRowStageDocument" class="tab-pane y-scroll">
+                @Html.Partial("_ROWAttachmentsFiles", Model.fileList)
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="the-fieldset">
+        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006</legend>
+        <div class="form-group"><span class="referenceRowAdd" id="btnRowAddRemarks" title="@Resources.Resources.SI_OSP_ROW_NET_FRM_086"></span></div>
+        <div class="form-group" id="divRowStageRemarks">
+            @if (Model.system_id == 0)
+            {
+                <div class="row">
+                    <div class="col-md-2 col-sm-2">
+                        <label class="control-label" style="margin-bottom: 8px;">@Resources.Resources.SI_OSP_ROW_NET_FRM_023:</label>
+                    </div>
+                    <div class="col-md-10 col-sm-10 rowremarks">
+                        <input name="remarksList[0].id" id="remarksList_0__id" type="hidden" value="0">
+                        <input name="remarksList[0].row_system_id" id="remarksLists_0__row_system_id" type="hidden" value="@Model.row_system_id">
+                        <input name="remarksList[0].row_stage" id="remarksList_0__row_stage" type="hidden" value="Apply">
+                        <input type="text" class="form-control" name="remarksList[0].remarks" id="remarksList_0__remarks" maxlength="100" />
+                    </div>
+                </div>
+            }
+            else if (Model.system_id > 0 && Model.remarksList.Count > 0)
+            {
+                for (int i = 0; i < Model.remarksList.Count; i++)
+                {
+                    <div class="row">
+                        <div class="col-md-2 col-sm-2">
+                            <label class="control-label " style="margin-bottom: 8px;margin-left: -14px;">@Resources.Resources.SI_OSP_ROW_NET_FRM_087-@(i + 1):</label>
+                        </div>
+                        <div class="col-md-10 col-sm-10 rowremarks">
+                            @Html.HiddenFor(m => m.remarksList[i].id)
+                            @Html.HiddenFor(m => m.remarksList[i].row_system_id)
+                            @Html.HiddenFor(m => m.remarksList[i].row_stage)
+                            @Html.TextBoxFor(m => m.remarksList[i].remarks, new { @class = "form-control", @maxlength = "100" })
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="row" style="text-align: center;">@Resources.Resources.SI_OSP_ROW_NET_FRM_024
+ </div>
+            }
+        </div>
+    </fieldset>
+
+    <div class="col-md-3 col-sm-3 ModalFooterControll" id="divRowStageAction">
+        <button type="button" class="btn btn-primary" id="btnApproveRow">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+        <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancelROW">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+    </div>
+    <div class="clearfix"></div>
+}
+<script type="text/javascript">
+    var inputs = [];
+    $(document).ready(function () {
+        $('#actual_row_route,#dlp_factor,#actual_rate,#actual_deposit_amount,#actual_ri_amount,#actual_access_charge_amount').on('input', function () {
+            this.value = this.value.match(/^\d+\.?\d{0,2}/);
+        });
+        notAllowZero('#demand_note');
+        $("#btnApproveRow").on("click", function () {
+            var _rowStatus=$('#ddlRowStatus').val();
+            for(var i=0;i < $('#divRowStageRemarks .rowremarks').length;i++)
+            {
+                $('#divRowStageRemarks #remarksList_'+i+'__row_stage').val(_rowStatus);
+            }
+
+            var isValid=true;
+            if($('#txtAccessChargeDate').val()!='' && $('#txtAccessChargeDate').val()!=null)
+            {
+                isValid=si.ROW.isAttachmentTypeValid(false);
+            }
+            if(isValid)
+            {
+                $('#frmApproveROW').submit();
+            }
+        });
+        $('#ApproveStage .control-label[title!=""]').tooltip({ title: '', html: true, placement: "bottom" });
+        si.setDateTimeCalendar("txtPaymentDate", "imgPaymentDate", false, true);
+        si.ROW.setDateTimeCalendar("txtStartDate", "imgStartDate","txtEndDate", "imgEndtDate", false, true);
+        si.ROW.setAccessChargeCalendar("txtAccessChargeDate", "imgAccessChargeDate", false, true);
+        $("#btnRowAddRemarks").on("click", function () {
+            var RowIndex = $('#divRowStageRemarks .rowremarks ').length;
+            AddRemarkRow(RowIndex,@Model.row_system_id,$('#ddlRowStatus').val(),'divRowStageRemarks');
+        });
+        $('.chosen-select').chosen({ width: '100%' });
+        callFormValidator("frmApproveROW");
+        if ('@Model.system_id' > 0)
+        {
+            $('#divRowStageAction').hide();
+            $('.rowStageUploadAction,#btnRowAddRemarks').hide();
+        }
+        else
+        {
+            $.each($("input[type='text']"), function (i, item) {
+                if($(item).val()==0)
+                {
+                    $(item).val(null);
+                }
+            })
+            $('#txtActualAccessCharge,#txtActualRIAmount,#txtActualDepositAmount').on('keyup', function() {
+                si.ROW.setPaidAmount();
+                si.ROW.setRecurringCharge();
+            })
+        }
+    });
+</script>

@@ -1,0 +1,755 @@
+﻿@model Models.CableMaster
+@using SmartInventory.Settings;
+@helper pageMessage()
+{
+{ Html.RenderPartial("_PageMessage", Model.LMCCableInfo.objPM); }
+
+}
+<style>
+    #dvLMCInfo .col-md-6 {
+        /*padding-left: 0px;*/
+        padding-left: 13px;
+    }
+
+    #dvLMCInfo .mrgn_btm {
+        height: 25px;
+    }
+
+    .ui-menu-item {
+        /*// padding-left:15px;*/
+        margin: 0;
+        padding: 6px 0px 6px 20px;
+        list-style: none;
+        background-repeat: no-repeat;
+        background-position: left center;
+        background-size: 17px;
+        border-bottom: 1px solid #dedbdb;
+        margin-left: 5px;
+        margin-right: 5px;
+        max-width: 165px !important;
+        overflow: hidden;
+        height: auto;
+    }
+
+    .ui-state-focus {
+        border-width: 0px 0px 0px 0px !important;
+        border-bottom: 1px solid #dedbdb !important;
+        background-color: #bab3b3 !important;
+    }
+
+    .TickCrossicon {
+        position: absolute;
+        font-size: 13px;
+        right: 0;
+        margin: 6px 18px 0px 0px;
+    }
+
+        .TickCrossicon i {
+            background: #00ba8a;
+            color: #fff;
+            padding: 4px;
+            border-radius: 19px;
+            height: 18px;
+            width: 19px;
+            cursor: pointer;
+            float: right;
+            margin: -3px 2px;
+            font-size: 12px;
+        }
+
+    .crossIcon {
+        display: none;
+    }
+
+    .tickIcon {
+        display: none;
+    }
+
+    .detailsicon {
+        display: none;
+    }
+
+    #dvcustomerpopup {
+        position: absolute;
+        background: white;
+        height: auto;
+        border: 1px solid;
+        margin-left: 201px;
+        z-index: 1000;
+        top: 141px;
+        display: none;
+    }
+
+        #dvcustomerpopup table {
+            width: 97%;
+            height: auto;
+            font-size: 13px;
+            margin: 5px;
+        }
+
+            #dvcustomerpopup table tr:nth-child(odd) {
+                background: white;
+            }
+
+            #dvcustomerpopup table tr:nth-child(even) {
+                background: #f1f4f7;
+            }
+
+            #dvcustomerpopup table tr td:first-child {
+                width: 105px;
+            }
+
+            #dvcustomerpopup table tr td {
+                padding: 5px;
+            }
+
+        #dvcustomerpopup .headerInfo {
+            width: 100%;
+            height: 27px;
+            background: #31bd72;
+            text-align: center;
+            vertical-align: middle;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+    .GifImg {
+        width: 22px;
+        cursor: pointer;
+        margin-top: -5px;
+    }
+</style>
+@Html.HiddenFor(m => m.LMCCableInfo.cable_system_id)
+@Html.HiddenFor(m => m.LMCCableInfo.system_id)
+@Html.HiddenFor(m => m.system_id)
+@Html.HiddenFor(m => m.LMCCableInfo.customer_system_id, new { @id = "txtCustomerSystemId" })
+
+<!DOCTYPE html>
+<div id="dvcustomerpopup">
+    <div class="headerInfo">Site & Customer Detail</div>
+    <table id="tblCustomerinfo">
+        <tr><td>Barcode</td><td>:</td><td></td></tr>
+        <tr><td>Route Id</td><td>:</td><td></td></tr>
+        <tr><td>Is Used</td><td>:</td><td>Yes</td></tr>
+        <tr><td>Network ID</td><td>:</td><td>DEL-CBL000084</td></tr>
+        <tr><td>Cable Name</td><td>:</td><td>DEL-CBL000084</td></tr>
+    </table>
+</div>
+<div class="tab-pane fade in active show">
+            <fieldset class="the-fieldset">
+                @if (Model.LMCCableInfo.system_id > 0)
+                {
+                    <div class="col-sm-4 icon-delete cptr" id="deleteLMC" style="margin-left: 600px;width: auto;margin-top: -34px;margin-bottom: 8px;" onclick="si.LMCInfo.deleteLMC(@Model.LMCCableInfo.system_id,@Model.LMCCableInfo.cable_system_id);"> @Resources.Resources.SI_GBL_GBL_GBL_GBL_002</div>
+                    <div class="col-sm-4 icon-History cptr" id="historySite" style="margin-left: 526px; width: auto; margin-top: -34px;margin-bottom: 8px;" onclick="si.LMCInfo.showLMCHistory(@Model.LMCCableInfo.system_id,'@Model.LMCCableInfo.lmc_type');"> @Resources.Resources.SI_OSP_GBL_NET_FRM_339</div>
+
+                }
+                <legend class="the-legend">@Resources.Resources.SI_OSP_CAB_NET_FRM_045</legend>
+                <div class="form-group row">
+
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_CAB_NET_FRM_046<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm  @(Model.LMCCableInfo.system_id > 0 ? "dvdisabled" : "")">
+                            @Html.DropDownListFor(m => m.LMCCableInfo.lmc_type, new SelectList(Model.LMCCableInfo.lstLMCType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), new { @class = "chosen-select form-control", @id = "ddlLMCType" })
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        @*<div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">*@
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_CAB_NET_FRM_069<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.lmc_id, new { @class = "form-control clsReadOnly", @minlength = "8", @maxlength = "20", @id = "txtLmcId", @readonly = true })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_109<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            <div class="TickCrossicon">
+                                <i class="icon-View-details detailsicon @(Model.LMCCableInfo.system_id>0?"detailsicon":"")" id="iconViewDetails" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_137" onclick="showDetails(this,'Customer Site Id');"></i>
+                                <img src="~/Content/images/cross.gif" class="GifImg crossIcon @(Model.LMCCableInfo.system_id==0?"crossIcon":"")" id="IconCross" />
+                                <img src="~/Content/images/tick_1.gif" class="GifImg tickIcon @(Model.LMCCableInfo.system_id>0?"tickIcon":"")" id="ImgTick" />
+
+                            </div>
+                            @Html.TextBoxFor(m => m.LMCCableInfo.customer_site_id, new { @class = "form-control", @maxlength = "20", @id = "txtCustomerSiteId", @onblur = "validateSiteCustomer(this.value,'Customer Site Id');" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="false" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_099<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            <div class="TickCrossicon">
+                                <i class="icon-View-details detailsicon @(Model.LMCCableInfo.system_id>0?"detailsicon":"")" id="iconViewDetails" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_137" onclick="showDetails(this, 'PAF');"></i>
+                                <img src="~/Content/images/cross.gif" class="GifImg crossIcon @(Model.LMCCableInfo.system_id==0?"crossIcon":"")" id="IconCross" />
+                                <img src="~/Content/images/tick_1.gif" class="GifImg tickIcon @(Model.LMCCableInfo.system_id>0?"tickIcon":"")" id="ImgTick" />
+                                @*@if (Model.LMCCableInfo.system_id == 0)
+                                    {
+                                        <i class="icon-View-details detailsicon" id="iconViewDetails" title="View Detail" onclick="showDetails(this,'PAF');"></i>
+                                        <img src="~/Content/images/cross.gif" class="GifImg crossIcon" id="IconCross"/>
+                                        <img src="~/Content/images/tick_1.gif" class="GifImg tickIcon" id="ImgTick"/>
+                                    }
+                                    else
+                                    {
+                                        <i class="icon-View-details" id="iconViewDetails" title="View Detail" onclick="showDetails(this,'PAF');"></i>
+                                        <img src="~/Content/images/tick_1.gif" class="GifImg" id="ImgTick" />
+                                    }*@
+                            </div>
+                            @Html.TextBoxFor(m => m.LMCCableInfo.paf_no, new { @class = "form-control", @maxlength = "20", @id = "txtPAFNO", @onblur = "validateSiteCustomer(this.value,'paf');" })
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="false" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_104<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            <div class="TickCrossicon">
+                                <i class="icon-View-details detailsicon @(Model.LMCCableInfo.system_id>0?"detailsicon":"")" id="iconViewDetails" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_137" onclick="showDetails(this,'PO');"></i>
+                                <img src="~/Content/images/cross.gif" class="GifImg crossIcon @(Model.LMCCableInfo.system_id==0?"crossIcon":"")" id="IconCross" />
+                                <img src="~/Content/images/tick_1.gif" class="GifImg tickIcon @(Model.LMCCableInfo.system_id>0?"tickIcon":"")" id="ImgTick" />
+                                @*@if (Model.LMCCableInfo.system_id == 0)
+                                    {
+                                        <i class="icon-View-details detailsicon" id="iconViewDetails" title="View Detail" onclick="showDetails(this,'PO');"></i>
+                                        <img src="~/Content/images/cross.gif" class="GifImg crossIcon" id="IconCross" />
+                                        <img src="~/Content/images/tick_1.gif" class="GifImg tickIcon" id="ImgTick" />
+                                    }
+                                    else
+                                    {
+                                        <i class="icon-View-details" id="iconViewDetails" title="View Detail" onclick="showDetails(this,'PO');"></i>
+                                        <img src="~/Content/images/tick_1.gif" class="GifImg" id="ImgTick" />
+                                    }*@
+                            </div>
+
+                            @Html.TextBoxFor(m => m.LMCCableInfo.po_number, new { @class = "form-control", @maxlength = "20", @id = "txtPONumber", @onblur = "validateSiteCustomer(this.value,'PO');" })
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_119<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.DropDownListFor(m => m.LMCCableInfo.lmc_cascaded_standalone, new SelectList(Model.LMCCableInfo.lstLMCCascadedStandalone.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlLMCCascadedStandalone", @onchange = "si.ddlChangeRemoveCss(this.id, 'lmc_cascaded_standalone'); ShowCascadedSiteName(this.id);" })
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_111<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.rtn_name, new { @class = "form-control", @maxlength = "50", @id = "txtRtnName" })
+
+                        </div>
+                    </div>
+                    @*<div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                            <label class="control-label col-md-6 col-sm-6">RTN Latitude<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-6 col-sm-6 mrgn_btm">
+                                @Html.TextBoxFor(m => m.LMCCableInfo.rtn_latitude, new { @class = "form-control", @maxlength = "6", @minlength = "6", @id = "txtRtnLat" })
+
+                            </div>
+                        </div>*@
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="false" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_120<br /> @Resources.Resources.SI_OSP_GBL_NET_GBL_121<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.DropDownListFor(m => m.LMCCableInfo.rtn_building_side_tapping_point, new SelectList(Model.LMCCableInfo.lstRTNBuildingSiteTappingPoint.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlRTNBuildingSiteTappingPoint", @onchange = "si.ddlChangeRemoveCss(this.id, 'rtn_building_side_tapping_point');" })
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="false" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_122<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.rtn_building_side_tapping_latitude, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtRtnBuildingsidelat" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="false" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_123<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.rtn_building_side_tapping_longitude, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtRtnBuildingsidelong" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 hideStandalone" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false" id="dvCascaded">
+                        <label class="control-label col-md-6 col-sm-6" for="txtCascadeSiteName">@Resources.Resources.SI_OSP_GBL_NET_GBL_124<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm ui-widget">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.cascading_from_site_name, new { @class = "form-control ui-autocomplete-input", @maxlength = "50", @id = "txtCascadeSiteName", @onkeyup = "si.GetAutoSiteUID();" })
+                        </div>
+                    </div>
+                    @*<div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                            <label class="control-label col-md-6 col-sm-6">Fiber Type<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-6 col-sm-6 mrgn_btm">
+                                @Html.DropDownListFor(m => m.LMCCableInfo.fiber_type, new SelectList(Model.LMCCableInfo.lstFiberCount.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlFiberType", @onchange = "si.ddlChangeRemoveCss(this.id, 'fiber_type');" })
+                                  </div>
+                        </div>*@
+
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="true" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_125<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+
+                            @*@Html.DropDownListFor(m => m.LMCCableInfo.termination_detail, new SelectList(Model.LMCCableInfo.lstTerminationDetails.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlTerminationDetails", @onchange = "si.ddlChangeRemoveCss(this.id, 'termination_detail');" })*@
+                            @Html.DropDownListFor(m => m.LMCCableInfo.termination_detail, new SelectList(Model.LMCCableInfo.lstTerminationDetails.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlTerminationDetails", @onchange = "si.ddlChangeRemoveCss(this.id, 'termination_detail');" })
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_126<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.otdr_length, new { @class = "form-control", @maxlength = "4", @id = "txtOTDRLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtOTDRLength');" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_127<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.otm_length, new { @class = "form-control", @maxlength = "4", @id = "txtOTMLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtOTMLength');" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="false" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_128<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.otl_length, new { @class = "form-control", @maxlength = "4", @id = "txtOTLLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtOTLLength');" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="false" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_129<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.intra_society_length, new { @class = "form-control", @maxlength = "4", @id = "txtISCLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtISCLength');" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="false" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_130<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.ug_length, new { @class = "form-control", @maxlength = "4", @id = "txtUGLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtUGLength');" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_131<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.no_of_core_used, new { @class = "form-control", @maxlength = "4", @id = "txtCoreused", @onkeypress = "return si.allowOnlyNumber(event);" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="true" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_132<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.core_numbers, new { @class = "form-control", @maxlength = "50", @id = "txtCoreNumbers" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_133<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.pop_type, new { @class = "form-control", @maxlength = "50", @id = "txtPOPType" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_134<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.pop_infra_id, new { @class = "form-control", @maxlength = "50", @id = "txtPOPInfraId" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="false" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_135<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.pop_infra_provider, new { @class = "form-control", @maxlength = "50", @id = "txtPOPInfraProvider" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="true" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_136<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.no_of_patch_cord, new { @class = "form-control", @maxlength = "50", @id = "txtNoOfPatchCord", @onkeypress = "return si.allowOnlyNumber(event);" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="false" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@String.Format(Resources.Resources.SI_OSP_GBL_NET_GBL_137,ApplicationSettings.Currency) <i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.row_ri_deposit, new { @class = "form-control", @maxlength = "12", @id = "txtROWRIDeposit", @onkeypress = "return si.allowNumberwithOneDot(event,'txtROWRIDeposit');" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="false" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_138<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.handhole, new { @class = "form-control", @maxlength = "4", @id = "txthandhole", @onkeypress = "return si.allowOnlyNumber(event);" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="true" data-SmallCell="false" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_139<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.pop_name, new { @class = "form-control", @maxlength = "40", @id = "txtPOPName" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="true" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_140<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.pop_latitude, new { @class = "form-control", @maxlength = "12", @id = "txtPOPLat", @onkeypress = "return allowNumberwithOneDot(event,'txtPOPLat');" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="false" data-Enterprise="true" data-SmallCell="true" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_141<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.pop_longitude, new { @class = "form-control", @maxlength = "12", @id = "txtPOPLong", @onkeypress = "return allowNumberwithOneDot(event,'txtPOPLong');" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="false" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_142<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.ibd_length, new { @class = "form-control", @maxlength = "4", @id = "txtIBDLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtIBDLength');" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="false" data-SmallCell="false" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_143<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.route_no, new { @class = "form-control", @maxlength = "50", @id = "txtRouteNo" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="false" data-SmallCell="false" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_144<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.route_details, new { @class = "form-control", @maxlength = "50", @id = "txtRouteDetails" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="false" data-SmallCell="false" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_145<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.ri_length, new { @class = "form-control", @maxlength = "4", @id = "txtRILength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtRILength');" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="false" data-SmallCell="false" data-FTTH="false">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_146<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.no_of_pits, new { @class = "form-control", @maxlength = "4", @id = "txtNoOfPITs", @onkeypress = "return si.allowOnlyNumber(event);" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" data-DarkFiber="true" data-Enterprise="true" data-SmallCell="false" data-FTTH="true">
+                        <label class="control-label col-md-6 col-sm-6">@Resources.Resources.SI_OSP_GBL_NET_GBL_147<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-6 col-sm-6 mrgn_btm">
+                            @Html.TextBoxFor(m => m.LMCCableInfo.permit_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @id = "txtPermitDate" })
+                        </div><img id="img_permit_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;margin-right: 15px;" />
+                    </div>
+                </div>
+            </fieldset>
+            @if (Model.LMCCableInfo.system_id > 0)
+            {
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_CAB_NET_FRM_047</legend>
+                    <div class="col-md-12 col-sm-12 UploadAction" style="margin-left: -6px;">
+                        <div class="col-md-6 col-sm-6" id="divDocumentUpload" style="display:flex; text-decoration:underline;">
+                            <input type="file" class="file" name="LMCDocUpload" id="LMCDocUpload">
+                            <a href="#" onclick="si.LMCInfo.attachment.upload(@Model.LMCCableInfo.system_id,'Cable');" value="Upload" id="btnUploadDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008</a>
+                            <a href="#" onclick="si.LMCInfo.clear();" value="Clear" id="btnClearDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</a>
+                        </div>
+                        <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
+                    </div>
+
+                    <div id="divSiteInfoAttachment" class="tab-pane y-scroll">
+                        @Html.Partial("_ViewLMCAttachments", Model.LMCCableInfo.lstLMCAttachment)
+                    </div>
+                </fieldset>
+            }
+
+</div>
+<div class="ModalFooter d-flex" id="dvLMCCableFooter">
+
+    @if (Model.LMCCableInfo.system_id == 0)
+    {
+        <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancelLMCInfo">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        <button type="button" class="btn btn-primary ml-05" name="actionTab" id="btnLMCCable" value="LMCInfoTab" onclick="updateLMCInfo();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+
+    }
+
+    else if (Model.LMCCableInfo.system_id != 0)
+    {
+        <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancelSiteInfo">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        <button type="button" class="btn btn-primary ml-05" name="actionTab" id="btnSiteInfo" value="SiteInfoTab" onclick="updateLMCInfo();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+    }
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '100%' });
+        callFormValidator("frmAddCable");
+        si.SiteInfo.setDateTimeCalendar('txtPermitDate', 'img_permit_date', '', true);
+
+        if ('@Model.LMCCableInfo.lmc_type' == '') {
+
+            $('#ddlLMCType').val('FTTH').trigger('chosen:updated');
+        }
+        showHideLMCAttribute($('#ddlLMCType').val().replace(/\s+/g, ''));
+        if ('@Model.LMCCableInfo.system_id' > 0) {
+            $('.tickIcon').css('display', 'block');
+            $('.detailsicon').css('display', 'block');
+            $('.crossIcon').css('display', 'none');
+        }
+         
+        if ('@Model.LMCCableInfo.lmc_type' == "Small Cell") {
+            ShowCascadedSiteName('ddlLMCCascadedStandalone');
+        }
+
+    });
+
+    $('#ddlLMCType').on('change', function () {
+         
+        var ddlValue = $(this).val().replace(/\s+/g, '');
+        $('div[data-' + ddlValue + '="true"]  .form-control').removeClass('input-validation-error').addClass('valid');
+        $('div[data-' + ddlValue + '="true"] .chosen-container').removeClass('input-validation-error').addClass('valid');
+
+        clearformvalue();
+
+        showHideLMCAttribute(ddlValue);
+
+    });
+
+    $('#txtRILength,#txtIBDLength,#txtUGLength,#txtISCLength,#txtOTLLength,#txtOTMLength,#txtOTDRLength').on('input', function () {
+        this.value = this.value.match(/^\d+\.?\d{0,2}/);
+    });
+
+
+    function updateLMCInfo() {
+         
+        var a = $('#txtCustomerSystemId').val();
+        var b = $('#customer_system_id').val();
+        var ddlValue = $('#ddlLMCType').val().replace(/\s+/g, '');
+        var ImgTick = document.getElementById("ImgTick");
+        var _unique = "";
+        if (ddlValue == '') {
+            $('#ddlLMCType').next().addClass('input-validation-error');
+            return false;
+        }
+        if (ddlValue == "DarkFiber") {
+            _unique = "PO Number"
+        }
+        else if (ddlValue == "Enterprise") {
+            _unique = "PO Number"
+        }
+        else if (ddlValue == "SmallCell") {
+            _unique = "Customer Site Id"
+        }
+        else if (ddlValue == "FTTH") {
+            _unique = "PAF No."
+        }
+
+        if ($(".crossIcon").css("display") === "block")
+        {
+            alert(String.Format(Resources.Resources.SI_OSP_GBL_JQ_FRM_093, _unique, _unique));
+            return false;
+        }
+        //if (ImgTick.style.display === "none")
+        //{
+        //    alert(_unique+' does not exists.Please enter a valid ' +_unique+' !');
+        //    return false;
+        //}
+
+        $('#dvLMCInfo div[data-' + ddlValue + '="true"]  .form-control[data-val="true"]').removeClass('input-validation-error').addClass('valid');
+        $.each($('#dvLMCInfo div[data-' + ddlValue + '="true"] .form-control[data-val="true"]'), function (index, item) {
+            if ($(this).val().trim() == '' || $(this).val().trim() == null) {
+                if ($(this).hasClass("chosen-select")) {
+                    $(this).next().addClass('input-validation-error');
+                } else {
+                    $(this).addClass('input-validation-error');
+                }
+
+            }
+        });
+
+        $('#hdnCableTab').val('LMCInfoTab');
+        if ($('div[data-' + ddlValue + '="true"] .form-control[data-val="true"]').filter(function () {
+            return $(this).val().trim() == '' || $(this).val().trim() == null;
+        }).length == 0) {
+            $('#frmAddCable').submit();
+        }
+
+
+    }
+
+    function showHideLMCAttribute(_lmcType) {
+        if (_lmcType != null && _lmcType != undefined) {
+
+            $('div[data-' + _lmcType + '="true"]').show();
+            $('div[data-' + _lmcType + '="false"]').hide();
+
+            // Form validation based on LMC TYPE
+            $('div[data-' + _lmcType + '="false"] .form-control').attr('data-val', false);
+            $('div[data-' + _lmcType + '="true"] .form-control').attr('data-val', true);
+        }
+
+    }
+
+    function clearformvalue() {
+        $("#ddlLMCCascadedStandalone").val('').trigger('chosen:updated');
+        $("#txtCustomerSiteId").val('');
+        $("#txtRtnName").val('');
+        $("#ddlRTNBuildingSiteTappingPoint").val('').trigger('chosen:updated')
+        $("#txtCascadeSiteName").val('');
+        $("#txtOTDRLength").val('0');
+        $("#txtOTMLength").val('0');
+        $("#txtOTLLength").val('0');
+        $("#txtISCLength").val('0');
+        $("#txtUGLength").val('0');
+        $("#txtCoreused").val('0');
+        $("#txtCoreNumbers").val('');
+        $("#txtPOPType").val('');
+        $("#txtPermitDate").val('');
+        $("#ddlTerminationDetails").val('').trigger('chosen:updated')
+        $("#txtPOPInfraProvider").val('');
+        $("#txtNoOfPatchCord").val('0');
+        $("#txtPAFNO").val('');
+        $("#txtROWRIDeposit").val('');
+        $("#txthandhole").val('');
+        $("#txtPONumber").val('');
+        $("#txtPOPName").val('');
+        $("#txtPOPLat").val('');
+        $("#txtPOPLong").val('');
+        $("#txtIBDLength").val('0');
+        $("#txtRouteNo").val('');
+        $("#txtRouteDetails").val('');
+        $("#txtPOPInfraId").val('');
+        $("#txtNoOfPITs").val('0');
+        $('.tickIcon').css('display', 'none');
+        $('.detailsicon').css('display', 'none');
+        $('.crossIcon').css('display', 'none');
+    }
+
+    function validateSiteCustomer(_searchText, _columnName) {
+         
+        var _lmcType = $('#ddlLMCType').val().replace(/\s+/g, '');
+        if (_searchText.length > 0) {
+
+            ajaxReq('Library/validateSiteCustomer', { searchText: _searchText, columnName: _columnName, lmcType: _lmcType }, true, function (resp) {
+                 
+                if (resp.status != 'OK') {
+                    // $('#IconCross').attr('src', 'Content/images/cross.gif');
+                    // $("#ImgTick").hide();
+                    //  $("#IconCross").show();
+                    //  $("#iconViewDetails").hide();
+
+                    $('.tickIcon').css('display', 'none');
+                    $('.detailsicon').css('display', 'none');
+                    $('.crossIcon').css('display', 'block');
+                }
+                
+                else {
+                    // $('#ImgTick').attr('src', 'Content/images/tick_1.gif');
+                    // $("#ImgTick").show();
+                    // $("#iconViewDetails").show();
+                    // $("#IconCross").hide();
+                    if (resp.status == 'OK') {
+                        $('#txtCustomerSystemId').val(resp.result.customer_system_id);
+                    }
+                    $('.crossIcon').css('display', 'none');
+                    $('.tickIcon').css('display', 'block');
+                    $('.detailsicon').css('display', 'block');
+                }
+
+            })
+
+        }
+        else {
+            // $("#IconCross").hide();
+            //$("#ImgTick").hide();
+            //  $("#iconBldMapp").hide();
+
+            $('.tickIcon').css('display', 'none');
+            $('.detailsicon').css('display', 'none');
+            $('.crossIcon').css('display', 'none');
+        }
+    }
+
+    function showDetails(_text, _columnName) {
+         
+        var _searchTextPAFNO = $('#txtPAFNO').val();
+        var _searchTextPONO = $('#txtPONumber').val();
+        var _searchTextCustomerSiteId = $('#txtCustomerSiteId').val();
+        var _lmcType = $('#ddlLMCType').val().replace(/\s+/g, '');
+        if (_searchTextPAFNO.length > 0) {
+            ajaxReq('Library/validateSiteCustomer', { searchText: _searchTextPAFNO, columnName: _columnName, lmcType: _lmcType }, true, function (resp) {
+                 
+                if (resp.status = 'OK') {
+                    if (resp.result != null && resp.result != undefined) {
+                        $('#tblCustomerinfo tr').remove();
+                        var i = 0;
+
+                        $.each(resp.result, function (key, value) {
+                            if (value == null) {
+                                value = "";
+                            }
+                            $('#tblCustomerinfo').append(' <tr class="' + ((i % 2 == 0) ? ('#dvcustomerpopup table tr:nth-child(add)') : ('#dvcustomerpopup table tr:nth-child(even)')) + '"><td width="105">' + key + '</td><td>:</td><td>' + value + '</td></tr>');
+
+                            i++;
+                        });
+                        $('#dvcustomerpopup').slideToggle();
+                    }
+                }
+            }, true, true);
+        }
+
+        if (_searchTextPONO.length > 0) {
+            ajaxReq('Library/validateSiteCustomer', { searchText: _searchTextPONO, columnName: _columnName, lmcType: _lmcType }, true, function (resp) {
+                 
+                if (resp.status = 'OK') {
+                    if (resp.result != null && resp.result != undefined) {
+                        $('#tblCustomerinfo tr').remove();
+                        var i = 0;
+
+                        $.each(resp.result, function (key, value) {
+                            if (value == null) {
+                                value = "";
+                            }
+                            if (key == 'customer_system_id') {
+                                $('#txtCustomerSystemId').val(value);
+                                return false;
+                            }
+
+                            $('#tblCustomerinfo').append('<tr class="' + ((i % 2 == 0) ? ('#dvcustomerpopup table tr:nth-child(add)') : ('#dvcustomerpopup table tr:nth-child(even) ')) + '"><td width="105">' + key + '</td><td>:</td><td>' + value + '</td></tr>');
+
+                            i++;
+
+                        });
+
+                        $('#dvcustomerpopup').slideToggle();
+                    }
+                }
+            }, true, true);
+        }
+
+        if (_searchTextCustomerSiteId.length > 0) {
+            ajaxReq('Library/validateSiteCustomer', { searchText: _searchTextCustomerSiteId, columnName: _columnName, lmcType: _lmcType }, true, function (resp) {
+                 
+                if (resp.status = 'OK') {
+                    if (resp.result != null && resp.result != undefined) {
+                        $('#tblCustomerinfo tr').remove();
+                        var i = 0;
+
+                        $.each(resp.result, function (key, value) {
+                            if (value == null) {
+                                value = "";
+                            }
+                            $('#tblCustomerinfo').append(' <tr class="' + ((i % 2 == 0) ? ('#dvcustomerpopup table tr:nth-child(add)') : ('#dvcustomerpopup table tr:nth-child(even)')) + '"><td width="105">' + key + '</td><td>:</td><td>' + value + '</td></tr>');
+
+                            i++;
+                        });
+                        $('#dvcustomerpopup').slideToggle();
+                    }
+                }
+            }, true, true);
+        }
+    }
+    $(document).mouseup(function (e) {
+        var container = $('#dvcustomerpopup');
+
+        // if the target of the click isn't the container nor a descendant of the container
+        if (!container.is(e.target) && container.has(e.target).length === 0) {
+            container.hide();
+        }
+    });
+
+    function ShowCascadedSiteName(_Selected) {
+         
+        var _lmcType = $('#ddlLMCType').val().replace(/\s+/g, '');
+        var selectedValue = $('#' + _Selected).val();
+        if (selectedValue == "Standalone") {
+            $('.hideStandalone').attr('data-SmallCell', 'false');
+            $("#txtCascadeSiteName").val('');
+            $("#dvCascaded").hide();
+
+
+        }
+        else {
+            // $("#txtCascadeSiteName").prop("readonly", false);
+            $("#dvCascaded").show();
+            $('.hideStandalone').attr('data-SmallCell', 'true');
+        }
+    }
+</script>

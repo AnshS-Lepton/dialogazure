@@ -1,0 +1,31 @@
+﻿@*@{
+    Layout = null;
+}
+@using System.Data
+@using NonFactors.Mvc.Grid
+@model DataTable
+
+@(Html
+						.Grid(Model.Rows.Cast<DataRow>())
+						.Build(columns =>
+						{
+							foreach (DataColumn? column in Model.Columns)
+							{
+								String name = column!.ColumnName;
+								if(column.DataType.Name=="String")
+								columns.Add(model => model[name] as String).Filterable(true).Sortable(true).Named(name).Titled(column.Caption).UsingDefaultFilterMethod("equals");
+								else
+								columns.Add(model => model[name]).Filterable(false).Sortable(false).Named(name).Titled(column.Caption);
+							}
+						})
+						.Empty("No data found")
+						.Id("grdKPIList")
+						.Pageable(pager =>
+						{
+							 pager.PageSizes = new Dictionary<Int32, String> { { 0, "All" }, {10, "10" }, { 25, "25" }, { 50, "50" }, { 100, "100" } };
+							pager.ShowPageSizes = true;
+							pager.PagesToDisplay = 5;
+							pager.CurrentPage = 1;
+							pager.RowsPerPage = 10;
+						})
+					)*@

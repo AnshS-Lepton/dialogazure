@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+@using Models
+@model Models.VoiceCommandMaster
+
+<div class="col-lg-12" id="dvPageMessage">
+    @{
+        if (@Model.pageMsg != null)
+        {
+            Html.RenderPartial("_PageMessage", Model.pageMsg);
+        }
+    }
+</div>
+
+<div id="dvVoiceCommandMaster" class="update_panel fullWidth">
+    <div class="title">
+        <h4>Voice Command Mapping</h4>
+    </div>
+    @Html.HiddenFor(m => m.id)
+    @Html.HiddenFor(m => m.created_by)
+    @Html.HiddenFor(m => m.created_on)
+    @Html.HiddenFor(m => m.command_id)
+    @Html.HiddenFor(m => m.actual_command_name)
+    @using (Html.BeginForm("SaveVoiceCommandMaster", "AdvancedSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmVoiceCommandMaster", enctype = "multipart/form-data", @class = "form-horizontal" }))
+    {
+
+        <div class="--pad-15">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label class="control-label">
+                            Actual Command Name<i class="clsMandatory">*</i>:
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(m => m.command_id, new SelectList(Model.lstVoiceCommand.Select(x => new { Value = x.id, Text = x.actual_command_name }), "Value", "Text"), "Actual Command Name", new { @id = "selectVoiceCommand", @title = "Actual command name", @class = "chosen-select form-control", @onchange = "return validateDropdown(this.id);" })
+                    </div>
+               
+                    <div class="col-md-2">
+                        <label class="control-label">
+                            Command Pronounce<i class="clsMandatory">*</i>:
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.command_pronounce, new { @id = "txtCommandPronounce", @title = "Command pronounce text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Command Pronounce", @maxlength = 100, @onkeyup = "return validateTextbox(this.id);" })
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex" id="dvBtnAction">
+                <input type="submit" class="btn btn-primary ml-auto mr-05" name="btnaction" id="btnSubmit" value="Save" />
+            </div>
+        </div>
+    }
+    @{Html.RenderPartial("~/Areas/Admin/Views/AdvancedSettings/_ViewVoiceCommandMaster.cshtml", (VoiceCommandMaster)Model);}
+
+    <script>
+        $(document).ready(function () {
+            $('.chosen-select').chosen({ width: '100%' });
+        })
+        $("#btnSubmit").on("click", function (e) {
+            var status = true;
+            if (!validateDropdown('selectVoiceCommand')) { status = false; }
+            if (!validateTextbox('txtCommandPronounce')) { status = false; }
+
+            if (!status) { e.preventDefault(); }
+        });
+
+        function validateDropdown(elementId) {
+            $("#" + elementId + "_chosen").removeClass("highlight_chosen_select");
+            if ($("#" + elementId).val() == '') {
+                $("#" + elementId + "_chosen").addClass("highlight_chosen_select");
+                if ($('#frmVoiceCommandMaster').valid() != false) {
+                    return false;
+                }
+
+            }
+            if ($('#' + elementId).length > 0) {
+                var value = $('#' + elementId).val();
+
+                if (value == null || value == "" || value == "0-0") {
+                    $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                    return false;
+                }
+                else {
+                    $('#' + elementId).addClass('valid').removeClass('input-validation-error');
+                    return true;
+                }
+            }
+            return true;
+        }
+
+        function validateTextbox(elementId) {
+            if ($('#' + elementId).length > 0) {
+                var value = $('#' + elementId).val();
+
+                if (value == null || value == "" || parseFloat(value) == 0.0) {
+                    $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                    return false;
+                }
+                else {
+                    $('#' + elementId).addClass('valid').removeClass('input-validation-error');
+                    return true;
+                }
+            }
+            return true;
+        }
+
+        $("#btnExport").on("click", function () {
+            Report();
+        });
+        function Report() {
+            window.location = appRoot + 'AdvancedSettings/DownloadVoiceCommandDetail';
+        }
+    </script>
+
+</div>
+

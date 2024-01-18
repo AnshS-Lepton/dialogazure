@@ -1,0 +1,661 @@
+﻿@model Models.NetworkTicketFilter
+
+
+@{
+    var objNWTicketDetails = (Models.NetworkTicket)Session["NWTicketDetails"];
+    WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "VwTicketGrid",
+ajaxUpdateCallback: "onGridHeaderClick('tblNetworkTicketManagerGrid');GridColor();");
+    grid.Bind(Model.lstNetworkTicket, autoSortAndPage: false, rowCount: Model.totalRecord);
+    if (Model.totalRecord > 0)
+    {
+        grid.PageIndex = Model.currentPage - 1;
+    }
+}
+<style>
+    .padRow {
+        padding: 5px;
+        margin: 0px;
+    }
+
+    .divPads {
+        padding: 3px;
+    }
+
+    .padRow .divPads {
+        display: flex;
+    }
+
+    .modal-body .FilterDiv .padRow .divPads {
+        display: inline-block;
+    }
+
+    .nav-tabs {
+        border-bottom: 1px solid #ddd;
+    }
+
+
+    .SearchIco {
+        position: absolute;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.25);
+        margin: 8px 0px 0px 125px;
+    }
+
+    .WrapText {
+        width: 120px;
+        overflow: hidden;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .tooltip-inner{
+      color: black;
+      background-color: white;
+      word-wrap: break-word;
+      text-align: left;
+      white-space: pre-line;
+    }
+    .EntitydetailsProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url('Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+
+    .calendar {
+        position: absolute;
+        display: block;
+        left: 650px!important;
+        top: 65px!important;
+    }
+         .colEnableDisable {
+   display: @(Model.objNetworkTicket.lstUserModule.Contains("PAT") ? "" : "none")
+}
+      .gridHeaderStyle{
+    white-space: nowrap;
+    }
+ .modal-open .modal {
+    background-color: rgba(0,0,0,0)!important;
+}
+    #dvModelid {
+        position: absolute;
+        z-index: 9;
+        left: 35%;
+        top: 20%;
+        /*  transform:translate(-50%, -50%);*/
+    }
+    .disabled{
+    pointer-events:none;
+    opacity:0.4;
+}
+
+    .advanveFlt {
+        width: 100%;
+        height: 100vh;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="tab-content" id="Dashboardfrm">
+    <div id="dvEntitydetailsProgress" class="EntitydetailsProgress"></div>
+    <ul class="nav nav-tabs" id="ultab">
+
+        <li id="networkEntityDashboard" class="active"><a data-toggle="tab" href="#" class="active show" onclick='getDashboard()'>@Resources.Resources.SI_OSP_GBL_NET_FRM_434</a></li>
+        <li id="networkEntityDetails"> <a id="NwEntityDetails" class="disabled" href="#">@Resources.Resources.SI_OSP_GBL_NET_FRM_435</a></li>
+        @*<li id="networkEntityDetails"> <a id="NwEntityDetails" class="disabled" href="#">@Resources.Resources.SI_OSP_GBL_NET_FRM_435</a></li>*@
+
+    </ul>
+    <div id="Dashboard" class="tab-pane fade in active show">
+        @using (Ajax.BeginForm("ShowNetworkDashboard", "NetworkTicket", new AjaxOptions
+        {
+            OnSuccess = "OnSuccess",
+            HttpMethod = "POST",
+            UpdateTargetId = "Dashboardfrm",
+            LoadingElementId = "dvDashboardProgress",
+            InsertionMode = InsertionMode.Replace
+        },
+                          new { id = "frmTicket", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+            <div class="d-flex space-pad">
+                <div class="redline-drop-box" id="dvTicketType">
+                    @Html.DropDownListFor(x => x.objNetworkTicket.ticket_type_id, new SelectList(Model.objNetworkTicket.lstTicketTypeMaster.Select(x => new { Value = x.id, Text = x.ticket_type }), "Value", "Text"), "Ticket Type(All)", new { @class = "chosen-select form-control", @id = "ddlTicketType", @onchange = "onChangeTicketType();" })
+                </div>
+                <div class="d-flex ml-auto jc-sb">
+                    @if (Model.objticketstatus != null)
+                    {
+                        if (Model.objticketstatus.Count > 0)
+                        {
+                            foreach (var item in Model.objticketstatus)
+                            {
+                                <div style="background-color:@(item.color_code);" class="colorDots"></div>
+                                <div class="Assign assignColor">
+                                    @item.ticket_status ( <span data="spanTicketCount"> @item.ticket_count </span>)
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+            <div>
+                <div class="tablePad--tn d-flex">
+                    <div class="redline-drop-box">
+                        @Html.DropDownListFor(m => m.searchByText, (IEnumerable<SelectListItem>)ViewData["listItem"], new { @class = "chosen-select", @id = "ddlsearchBy" })
+                    </div>
+                    <div class="ml-auto d-flex">
+                        <div class="searchInput d-flex">
+                            @Html.TextBoxFor(m => m.searchText, new { @id = "txtSearchTxt", @class = "form-control input-mr search--padding", @style = "height:26px;" })
+                            <i class="glyphicon glyphicon-search"></i>
+                        </div>
+                        <button type="submit" class="btn btn-success ml-10" id="btnTicketData"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                        <button type="submit" class="btn btn-default ml-10" id="btnResetSearchFilter"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+
+                        <div class="ml-10 @(Model.lstNetworkTicket.Count > 0 ? "" : "dvdisabled")" style="cursor:pointer;@(Model.objNetworkTicket.user_role_id != 1 ? "" : "pointer-events: none;opacity: 0.4;")">
+                            <button type="button" class="exp--btn" id="btnExportTickets" value="Export"><span class="fa fa-download mr-03"></span> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.lstNetworkTicket.Count > 0)
+                {
+
+                    <div id="VwTicketGrid" class="tablePad--tn d-flex">
+                        <div class="recordCount"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:</b>&nbsp;<span data="spanTicketCount">@grid.TotalRowCount</span></div>
+
+
+                        <button type="button" class="btn btn-success ml-auto" OnClick=ShowAdvanceFilter() id="btnAdvanceFilte" value=""> @Resources.Resources.SI_OSP_GBL_NET_GBL_052</button>
+                    </div>
+                    <div class="tablePad--tn">
+                        <div class="table-responsive">
+                            @grid.GetHtml(tableStyle: "grid tableWFont",
+
+     htmlAttributes: new { id = "tblNetworkTicketManagerGrid" },
+     mode: WebGridPagerModes.All,
+     columns: grid.Columns(
+     grid.Column(Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>
+                            <div class="fDisBtn d-flex --gap-05">
+                                @if ((item.ticket_status == "Assigned" || item.ticket_status == "InProgress" || item.ticket_status == "Rejected") && item.assigned_to == Convert.ToString(@Model.userId))
+
+                                {
+
+                                    if (objNWTicketDetails != null && (item.ticket_id == Convert.ToString(objNWTicketDetails.ticket_id)))
+                                    {
+                                        <i class="icon-create_ticket i-icons-style i-icons-ptpb" title="Already Selected" disabled="disabled"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="icon-create_ticket i-icons-style i-icons-ptpb" title="Ticket Details" onclick="setNWTicketDetailSession(@item.ticket_id,'@item.network_id','@item.ticket_status','@item.is_approve',@Model.objNetworkTicket.user_role_id,'@item.ticket_type','@item.assigned_to',@item.region_id,@item.province_id,'@item.name')"></i>
+
+                                    }
+                                }
+                                @if (item.ticket_status_id == "4")
+                                {
+                                    @*<a id="btnAction" class="pad-0">*@
+
+                                    <button class="fa fa-fw fa-edit i-icons-style i-icons-ptpb" id="iconEdit" onclick="editNetworkTicket(@item.ticket_id);" tabindex="5"
+                                            @if (item.is_edit == "True") { { @: title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_003"
+                                            } } else { { @: disabled title="Unauthorized Access"
+                                            } }></button>
+                                    <i class="fa fa-fw fa-trash i-icons-style i-icons-ptpb" id="DeleteTicket" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" onclick="deleteTicket(@item.ticket_id);"></i>
+                                
+
+                                @*</a>*@
+                            }
+                            else
+                            {
+
+                                <i class="glyphicon glyphicon-eye-open i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_435" onclick="getNWEntitydetais(@item.ticket_id,'@item.network_id','@item.ticket_status','@item.is_approve',@Model.objNetworkTicket.user_role_id,'@item.ticket_type','@item.assigned_to')"></i>
+                                <i class="fa fa-globe fa-fw m-r-xs i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="si.Networkticket.showNetworkOnMap(@item.ticket_id,'@item.network_id',@item.region_id,@item.province_id,'@item.name')"></i>
+                            }
+                                </div>
+
+                        </text>, canSort: false),
+grid.Column("ticket_status", Resources.Resources.SI_OSP_GBL_NET_RPT_026, format: @<text><lable class="clsTSts" colorcode="@item.ticket_status_color_code">@item.ticket_status</lable></text>),
+grid.Column("network_id", Resources.Resources.SI_OSP_GBL_NET_GBL_153, format: @<text> @item.network_id</text>),
+grid.Column("ticket_type", Resources.Resources.SI_OSP_GBL_NET_FRM_133, format: @<text> @item.ticket_type</text>),
+grid.Column("name", Resources.Resources.SI_OSP_GBL_NET_FRM_059, format: @<text> @item.name</text>),
+grid.Column("region_name", Resources.Resources.SI_OSP_GBL_NET_FRM_065, format: @<text> @item.region_name</text>),
+grid.Column("province_name", Resources.Resources.SI_OSP_GBL_NET_FRM_066, format: @<text> @item.province_name</text>),
+grid.Column("assigned_to_text", Resources.Resources.SI_OSP_GBL_NET_FRM_105, format: @<text> @item.assigned_to_text </text>),
+grid.Column("target_date", Resources.Resources.SI_OSP_GBL_NET_FRM_141, format: @<text>@(item.target_date) </text>),
+grid.Column("for_network_type", Resources.Resources.SI_OSP_GBL_NET_GBL_154, format: @<text> @item.for_network_type </text>),
+                        @*grid.Column("project_code", Resources.Resources.SI_OSP_GBL_GBL_GBL_074, style: "colEnableDisable gridHeaderStyle", format: @<text>@if (Model.objNetworkTicket.lstUserModule.Contains("PAT"))
+    {@item.project_code}</text>),*@
+grid.Column("account_code", Resources.Resources.SI_OSP_GBL_NET_FRM_436, style: "colEnableDisable gridHeaderStyle", format: @<text>@if (Model.objNetworkTicket.lstUserModule.Contains("PAT"))
+                            {@item.account_code} </text>),
+grid.Column("reference_type", Resources.Resources.SI_OSP_GBL_NET_FRM_134, format: @<text>@item.reference_type</text>),
+grid.Column("reference_ticket_id", Resources.Resources.SI_OSP_GBL_GBL_FRM_031, format: @<text> @item.reference_ticket_id</text>),
+grid.Column("reference_description", Resources.Resources.SI_OSP_GBL_NET_GBL_152, format: (item) => Html.Raw("<span data-toggle='tooltip' class='WrapText' title='" + item.reference_description + "'>" + (string.IsNullOrEmpty(Convert.ToString(item.reference_description)) ? "" : item.reference_description.PadRight(30).Substring(0, 30)) + "</span>")),
+grid.Column("remarks", Resources.Resources.SI_OSP_GBL_GBL_GBL_006, format: (item) => Html.Raw("<span data-toggle='tooltip' class='WrapText' title='" + item.remarks + "'>" + (string.IsNullOrEmpty(Convert.ToString(item.remarks)) ? "" : item.remarks.PadRight(30).Substring(0, 30)) + "</span>")),
+grid.Column("created_by_text", Resources.Resources.SI_OSP_GBL_GBL_GBL_056, format: @<text> @item.created_by_text </text>),
+grid.Column("created_on", Resources.Resources.SI_OSP_GBL_GBL_GBL_055, format: @<text> @item.created_on </text>),
+grid.Column("modified_by_text", Resources.Resources.SI_OSP_GBL_GBL_GBL_058, format: @<text> @item.modified_by_text </text>),
+grid.Column("modified_on", Resources.Resources.SI_OSP_GBL_GBL_GBL_057, format: @<text> @item.modified_on </text>)
+))
+
+                            @Html.Hidden("dir", grid.SortDirection)
+
+                            @Html.Hidden("col", grid.SortColumn)
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="nr-found">
+                        <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+                    </div>
+                }
+
+            </div>
+            <div id="AdvanceFilter" class="modal fade in advanveFlt" role="dialog" draggable="true">
+
+                <div class="modal-content1" id="dvModelid">
+                    <div class="modal-header d-flex">
+                        <h4 class="modal-title"> @Resources.Resources.SI_OSP_GBL_NET_GBL_052</h4>
+                        <span class="icon-Close ml-auto" id="CloseAdvanceFilter">
+
+                        </span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="space-pad">
+                            <div class="row form-group">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        @Resources.Resources.SI_OSP_GBL_NET_FRM_065:
+                                    </label>
+                                </div>
+                                <div class="col-md-9">
+                                    @Html.DropDownListFor(m => m.objNetworkTicket.region_id, new SelectList(Model.objNetworkTicket.lstRegion.Select(x => new { Value = x.regionId, Text = x.regionName }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @onchange = "si.onChangeRegionsForFilter();", @id = "ddlRegions" })
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        @Resources.Resources.SI_OSP_GBL_NET_FRM_066:
+                                    </label>
+                                </div>
+                                <div class="col-md-9">
+                                    @Html.DropDownListFor(m => m.objNetworkTicket.province_id, new SelectList(Model.objNetworkTicket.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlProvinces" })
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        @Resources.Resources.SI_OSP_GBL_NET_GBL_160:
+                                    </label>
+                                </div>
+                                <div class="col-md-9">
+                                    @Html.DropDownListFor(m => m.objNetworkTicket.ticket_status_id, new List<SelectListItem>{
+                                new SelectListItem { Text = "Assigned", Value = "4"},
+                                new SelectListItem { Text = "InProgress", Value = "5"},
+                                new SelectListItem { Text ="Completed", Value = "6"},
+                                 new SelectListItem { Text = "Approved", Value = "8"},
+                                  new SelectListItem { Text = "Rejected", Value = "9"},
+                            },
+                            "-Select-",
+                                 new { @class = "chosen-select", @id = "ddlStatus" })
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        @Resources.Resources.SI_OSP_GBL_NET_FRM_072:
+                                    </label>
+                                </div>
+                                <div class="col-md-9">
+
+                                    @Html.DropDownListFor(m => m.customDate, new List<SelectListItem>{
+                                       new SelectListItem { Text = "Custom", Value = "1"},
+                                new SelectListItem { Text = "Today", Value = "2"},
+                                new SelectListItem { Text = "Previous Day", Value = "3"},
+                                new SelectListItem { Text = "Last 7 Days", Value = "4"},
+                                new SelectListItem { Text = "Last 30 Day", Value = "5"},
+                                new SelectListItem { Text = "Last 3 Months", Value = "6"},
+                                new SelectListItem { Text = "Last 6 Months", Value = "7"},
+                              new SelectListItem { Text = "Last 1 Year", Value = "8"},
+                            }, "-Select-",
+                           new { @class = "chosen-select", @onchange = "onChangeCustomDate();", @id = "customedate" })
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        @Resources.Resources.SI_GBL_GBL_NET_GBL_006:
+                                    </label>
+                                </div>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(m => m.fromDate, new { @id = "txtDateFrom", @title = "Select", @class = "input-sm form-control", @readonly = true })
+                                    <img id="imgFromDate" class="assign-calen" style="margin-right:1px;" src="~/Content/images/calendar.png" />
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        @Resources.Resources.SI_OSP_ROW_NET_GBL_051:
+                                    </label>
+                                </div>
+                                <div class="col-md-9">
+
+                                    @Html.TextBoxFor(m => m.toDate, new { @id = "txtDateTo", @title = "Select", @class = "input-sm form-control", @readonly = true })
+                                    <img id="imgToDate" class="assign-calen" style="margin-right:1px;" src="~/Content/images/calendar.png" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ModalFooter d-flex">
+                            <button type="button" class="btn btn-default ml-auto" id="advanceFilterbtnReset">
+                                @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005
+                            </button>
+                            <button type="submit" id="btnFilter" class="btn btn-success ml-10">
+                                @Resources.Resources.GBL_GBL_GBL_GBL_GBL_007
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+    <div id="EntityDetails" class="tab-pane"> </div>
+</div>
+<script>
+    $(document).ready(function () {
+        updateNumberstoFormatedNumber();
+        $(".fade").removeClass('modal-backdrop fade in');
+        $('th a, tfoot a').on("click", function () {
+            $('#frmTicket').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        addDefaultSortingIcons("tblNetworkTicketManagerGrid");
+        onGridHeaderClick('tblNetworkTicketManagerGrid');
+
+        $("#dvModelid").draggable();
+        $($('#tblNetworkTicketManagerGrid tr:first th')).addClass('gridHeaderStyle');
+
+        $('#tblNetworkTicketManagerGrid tbody tr:first').find('td.colEnableDisable').each(function (i, td) {
+            var indexOfHiddenColumn = $(td).index();
+            $('#tblNetworkTicketManagerGrid thead th').eq(indexOfHiddenColumn).addClass('colEnableDisable');
+        });
+        $('[data-toggle="tooltip"]').tooltip();
+        if ($('#AdvanceFilter').length) {
+            si.Networkticket.setDateTimeCalendar_NwtworkTicket("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+        }
+        $('#tblNetworkTicketManagerGrid thead tr th:eq(0)').removeClass('bothorder');
+
+        $('.chosen-select').chosen({ width: '100%', });
+        $("#btnExportTickets").on("click", function () {
+            window.location = appRoot + 'NetworkTicket/ExportTickets';
+        });
+        if ($("#customedate_chosen").children('a').text().trim() != "Custom") {
+
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        $("#btnResetSearchFilter").on("click", function () {
+            $('#ddlTicketType').val('').trigger("chosen:updated");
+            $('#txtSearchTxt').val('');
+            $('#ddlsearchBy').val('').trigger("chosen:updated");
+            $('#ddlRegions').val('').trigger("chosen:updated");
+            $('#ddlProvinces').val('').trigger("chosen:updated");
+            $('#ddlStatus').val('').trigger("chosen:updated");
+            $('#customedate').val('').trigger("chosen:updated");
+            $('#txtDateFrom').val('');
+            $('#txtDateTo').val('');
+        });
+        $("#advanceFilterbtnReset").on("click", function () {
+            $("#frmTicket")[0].reset();
+            $('#ddlRegions').val('').trigger("chosen:updated");
+            $('#ddlProvinces').val('').trigger("chosen:updated");
+            $('#ddlStatus').val('').trigger("chosen:updated");
+            $('#customedate').val('').trigger("chosen:updated");
+            $('#txtDateFrom').val('');
+            $('#txtDateTo').val('');
+        });
+        GridColor();
+        $("#frmTicket").submit(function () {
+            $("#dvEntitydetailsProgress").show();
+        });
+
+    });
+    $("#closeModalPopup").on("click", function () { $("#closeShowNetowkOnMap").trigger("click"); });
+
+    $("#CloseAdvanceFilter").on("click", function () {
+        $("#frmTicket")[0].reset();
+        $('#ddlRegions').val('').trigger("chosen:updated");
+        $('#ddlProvinces').val('').trigger("chosen:updated");
+        $('#ddlStatus').val('').trigger("chosen:updated");
+        $('#customedate').val('').trigger("chosen:updated");
+        $('#txtDateFrom').val('');
+        $('#txtDateTo').val('');
+    })
+
+    function OnSuccess(data) {
+        $("#dvEntitydetailsProgress").hide();
+    }
+    function GetDaysDifference(firstDate, secondDate, configuredDay) {
+
+        var oneDay = 24 * 60 * 60 * 1000;
+        var diff = 0;
+        diff = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / (oneDay)));
+
+
+        if (diff > configuredDay) {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_015)
+            return false;
+
+        }
+    }
+    function GridColor() {
+
+        $("#tblNetworkTicketManagerGrid tbody tr").each(function (e) {
+
+            var ticket_stauts = $(this).closest('tr').find(".clsTSts")[0].innerHTML.trim().toUpperCase();//$($(this).children('td')[7]).text();
+            var colorcode = $(this).closest('tr').find(".clsTSts")[0].attributes["colorcode"].value;
+
+            $(this).children('td').css({ "background-color": hexToRgbA(colorcode, 50) });
+        });
+    }
+    function hexToRgbA(hex, opacity) {
+        hex = hex.replace('#', '');
+        r = parseInt(hex.substring(0, 2), 16);
+        g = parseInt(hex.substring(2, 4), 16);
+        b = parseInt(hex.substring(4, 6), 16);
+
+        result = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
+        return result;
+    }
+    function deleteTicket(ticket_id) {
+        showConfirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_105, function () {
+            ajaxReq('NetworkTicket/DeleteNetworkTicket', { ticket_id: ticket_id, }, true, function (resp) {
+                if (resp.status == "OK") {
+
+                    alert(resp.message);
+                    $('#frmTicket').submit();
+                }
+                else {
+                    alert(resp.message);
+                }
+            }, false, false)
+        });
+
+    }
+    function onChangeCustomDate() {
+
+        var value = $('#customedate option:selected').val();
+
+        SetFromAndToDate(value);
+    }
+    $("#btnFilter").on("click", function () {
+        var value = $('#customedate option:selected').val();
+        if (value == 1) // custom
+        {
+            if ($('#txtDateFrom').val() == "" || $('#txtDateTo').val() == "") {
+                alert('Please select From Date and To Date');
+                return false;
+            }
+        }
+    });
+    //Nik
+    $("#btnTicketData").on("click", function () {
+        if ($("#ddlsearchBy").val() == "" || $("#ddlsearchBy").val() == null || $("#ddlsearchBy").val() == 0) {
+            alert('Please select Search By!', 'warning');
+            return false;
+
+        }
+    });
+    //Nik
+    function SetFromAndToDate(value) {
+
+        var endDate = new Date();
+        var startDate = new Date();
+        var startDateDiff = 0;
+        var endDateDiff = 0;
+
+        if (value == 1) // custom
+        {
+            $('#txtDateFrom').val("");
+            $('#txtDateTo').val("");
+            $("#imgFromDate").show();
+            $('#imgToDate').show();
+            return;
+        }
+        else if (value == 2) { //Today
+            startDateDiff = 0;
+            endDateDiff = 0;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 3) { //previous day
+            startDateDiff = -1;
+            endDateDiff = -1;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 4) {//last 7 days
+            startDateDiff = -6;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 5) {//last 30 days
+            startDateDiff = -29;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 6) {//last 3 Months
+            startDateDiff = -89;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 7) {//last 6 Months
+            startDateDiff = -179;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 8) {//last 6 Months
+            startDateDiff = -364;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+
+        startDate.setDate(startDate.getDate() + startDateDiff);
+        endDate.setDate(endDate.getDate() + endDateDiff);
+
+        var newStartDate = startDate.toDateString();
+        newStartDate = new Date(Date.parse(newStartDate));
+
+        var newEndDate = endDate.toDateString();
+        newEndDate = new Date(Date.parse(newEndDate));
+
+        $('#txtDateFrom').val(fncCurrentDate(newStartDate));
+        $('#txtDateTo').val(fncCurrentDate(newEndDate));
+        if (value == 0) {
+            $('#txtDateFrom').val('');
+            $('#txtDateTo').val('');
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+    }
+    function onChangeTicketType() {
+        $("#btnTicketData").trigger("click");
+    }
+    function ShowAdvanceFilter() {
+        $("#AdvanceFilter").modal("show");
+        si.Networkticket.setDateTimeCalendar_NwtworkTicket("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+    }
+    $("#CloseAdvanceFilter").on("click", function () {
+        $("#AdvanceFilter").modal("hide");
+    })
+
+    function editNetworkTicket(ticket_id) {
+        showConfirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_025, function () {
+            popup.LoadModalDialog('CHILD', 'NetworkTicket/AddTicketDetails', { 'ticket_id': ticket_id }, MultilingualKey.SI_OSP_GBL_JQ_FRM_156, 'modal-xl');
+        });
+    }
+    function getNWEntitydetais(ticket_id, network_id, ticket_status, fndTypeid, user_role_id, ticket_type, assigned_to) {
+        $("#dvEntitydetailsProgress").show();
+        ajaxReq('NetworkTicket/NetworkTicketEntityDetails', {
+            'objNetworkTicket.ticket_id': ticket_id, 'objNetworkTicket.network_id': network_id, 'objNetworkTicket.ticket_status': ticket_status, 'objNetworkTicket.ticket_type_id_match': fndTypeid, 'objNetworkTicket.user_role_id': user_role_id, 'objNetworkTicket.ticket_Type': ticket_type, 'objNetworkTicket.assigned_to': assigned_to
+        }, true, function (resp) {
+            $("#networkEntityDetails").toggleClass("active");
+            $("#networkEntityDashboard").toggleClass("active");
+            $("#Dashboard").hide();
+            $("#EntityDetails").show();
+            $("#EntityDetails").html(resp);
+            $("#NwEntityDetails").trigger("click");
+            $("#NwEntityDetails").removeClass("disabled");
+            $("#dvEntitydetailsProgress").hide();
+
+
+        }, false, false)
+    };
+    function getDashboard() {
+        $("#Dashboard").show();
+        $("#EntityDetails").hide();
+        $("#NwEntityDetails").addClass("disabled");
+
+    }
+    function getBarcodeToVerify(ticket_id) {
+        showConfirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_025, function () {
+            popup.LoadModalDialog('CHILD', 'NetworkTicket/getBarcodeToVerify', { 'ticket_id': ticket_id }, MultilingualKey.SI_GBL_GBL_GBL_GBL_1437, 'modal-xl');
+        });
+    }
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+  
+    function setNWTicketDetailSession(ticket_id, network_id, ticket_status, fndTypeid, user_role_id, ticket_type, assigned_to, _regionId, _provinceId, _ticketName) {
+        visibleNetworkLayer = true;
+        $("#dvProgress").show();
+        ajaxReq('NetworkTicket/NetworkTicketSessionDetails', {
+            'ticket_id': ticket_id, 'network_id': network_id, 'ticket_status': ticket_status, 'ticket_type_id_match': fndTypeid, 'user_role_id': user_role_id, 'ticket_Type': ticket_type, 'assigned_to': assigned_to, 'region_id': _regionId, 'province_id': _provinceId, 'Action':'Add'
+        }, true, function (resp) {
+            if (resp.status == "OK") {
+                $("#closeModalPopup").trigger("click");
+                $("#NWticketAction").show();                
+                $("#ticketWork_id").text("Ticket ID: " + network_id + "");
+                TicketNetworkId = network_id;
+                si.Networkticket.RedirectNetworkOnMap(ticket_id, network_id, _regionId, _provinceId, _ticketName);
+                $("#dvProgress").hide();
+            }
+            else {
+                $("#ticketWork_id").text(''); 
+                TicketNetworkId = '';
+                $("#NWticketAction").hide();
+                $("#dvProgress").hide();
+            }
+            }, false, false)
+
+  };
+</script>

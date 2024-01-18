@@ -1,0 +1,21 @@
+﻿@model List<Models.ISP.ElementTemplateView>
+@using SmartInventory.Settings;
+
+<label class="control-label">Templates:</label>
+<div id="ParentElement">
+    <div id="l_e_A3" class="e_A">
+        <div id="ElementList" style="float:left;">
+            @foreach (var item in Model)
+            {
+                var layerTitle = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == item.Element_type.ToString().ToUpper()).FirstOrDefault().layer_title : string.Empty;
+
+                var title = item.Element_Template_Name + " " + (item.Element_type == "ROOM" ? (item.Element_length + "*" + item.Element_width) : "");
+                <div data-ref="RO" class="e_B_rooms Element infotool"  id="Parent_@(item.systemid)" elementid="@item.systemid" width="@item.Element_width" height="@item.Element_height" length="@item.Element_length" data-is-template-filled="@item.isTemplateFilled">
+                    <span class="@item.entityclass rightInfo"></span>
+                    <span class="mls roomlabel">@layerTitle</span>
+                </div>          
+                <i class="clsTemplateIcon" data-lyrname="@item.Element_type" data-title="@layerTitle" data-href="@item.template_form_url" style="background-color:@(item.isTemplateFilled==true?"#31bd72;":"gray;")">T</i>
+            }
+        </div>
+    </div>
+</div>

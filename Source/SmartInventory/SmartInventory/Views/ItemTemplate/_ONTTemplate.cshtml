@@ -1,0 +1,66 @@
+﻿@model Models.ONTItemMaster
+@using Models;
+
+<script>
+    //Set color of template icon as green in NE library
+    if ('@Model.id' > 0) {
+        $(".clsTemplateIcon[data-lyrname='ONT']").css('background-color', '#9999FF');
+    }
+</script>
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+@helper ONTTemplateMaster()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_ONTTemplateMaster.cshtml", (ONTTemplateMaster)Model); }
+}
+<!DOCTYPE html>
+    <div class="libDetail">
+
+    @using (Ajax.BeginForm("SaveONTTemplate", "ItemTemplate", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnFailure = "si.handleError",
+
+    },
+    new { id = "frmItemTemplate", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id)
+             <!-- Message Pop-up -->
+            @pageMessage()
+         <div class="libTabContent">
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="ItemSpecfication">
+                       @ONTTemplateMaster()
+                    </div>
+                </div>
+            </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                @if (Model.id > 0)
+                {
+                    <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                }
+                
+            </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+
+            callFormValidator("frmItemTemplate");
+           
+            $('#id').val('@Model.id');
+
+
+    });
+
+</script>

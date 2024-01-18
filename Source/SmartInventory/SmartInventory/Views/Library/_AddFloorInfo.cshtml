@@ -1,0 +1,73 @@
+﻿@*@model List<Models.StructureShaftInfo>*@
+@model Models.StructureMaster
+@using Models;
+@{  var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Structure.ToString()); }
+
+<!DOCTYPE html>
+<div>
+    @Html.HiddenFor(m => m.no_of_floor)
+    <span class="floorRowAdd  @(editPermission==true?"":"dvdisabled")" id="btnAddFloorRow" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_042">
+    </span>
+
+    <table id="tblFloorLstInfo" class="floorLstInfo" cellpadding="0" cellspacing="0" style="font-size:smaller; text-align: center;">
+
+        <thead>
+            <tr>
+                <th>@Resources.Resources.SI_OSP_GBL_NET_FRM_059</th>
+                <th>@Resources.Resources.SI_OSP_STR_NET_FRM_019</th>
+                <th>@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.system_id == 0 && Model.lstFloorInfo.Count==0)
+            {
+                <tr>
+                    <td>
+                        <input style="width:90%;" maxlength="20" id="lstFloorInfo_0__floor_name" name="lstFloorInfo[0].floor_name" type="text" value="floor_1" class="floorName">
+                    </td>
+                    <td>
+                        <input style="width:30%;" maxlength="3" id="lstFloorInfo_0__no_of_units" name="lstFloorInfo[0].no_of_units" type="text" value="1" class="FloorUnit" data-total-placed-unit="0" onkeypress="return allowOnlyNumber(event);">
+                    </td>
+                    <td>
+                        <input data-val="true" data-val-number="The field system_id must be a number." data-val-required="The system_id field is required." id="lstFloorInfo_0__system_id" name="lstFloorInfo[0].system_id" type="hidden" value="0">
+                        <input data-val="true" data-val-number="The field length must be a number." data-val-required="The length field is required." id="lstFloorInfo_0__length" name="lstFloorInfo[0].length" type="hidden" value="0">
+                        <input data-val="true" data-val-number="The field width must be a number." data-val-required="The width field is required." id="lstFloorInfo_0__width" name="lstFloorInfo[0].width" type="hidden" value="0">
+                        <input data-val="true" data-val-number="The field height must be a number." data-val-required="The width field is required." id="lstFloorInfo_0__height" name="lstFloorInfo[0].height" type="hidden" value="0">
+                        <span class="floorRowDelete  @(editPermission==true?"":"dvdisabled")" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002">x</span>
+                    </td>
+                </tr>
+            }
+            @for (int i = 0; i < Model.lstFloorInfo.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Html.TextBoxFor(m => Model.lstFloorInfo[i].floor_name, new { @maxlength = "20", Style = " width:90%;", @class="floorName" })
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => Model.lstFloorInfo[i].no_of_units, new { @maxlength = "3", Style = " width:30%;", @class = "FloorUnit", data_total_placed_unit = Model.lstFloorInfo[i].total_Placed_Units, onkeypress = "return allowOnlyNumber(event);" })
+                    </td>
+
+                    <td>
+                        @Html.HiddenFor(m => m.lstFloorInfo[i].system_id)
+                        @Html.HiddenFor(m => m.lstFloorInfo[i].length)
+                        @Html.HiddenFor(m => m.lstFloorInfo[i].width)
+                        @Html.HiddenFor(m => m.lstFloorInfo[i].height)
+
+                        <span class="floorRowDelete  @(editPermission==true?"":"dvdisabled")" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" style="">x</span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</div>
+<script>
+    $(function () {
+        
+        @*if ('@Model.system_id' == 0)
+        {
+            $('#btnAddFloorRow').trigger("click");
+        }*@
+    });
+</script>

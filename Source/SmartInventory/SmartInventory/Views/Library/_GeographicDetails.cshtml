@@ -1,0 +1,104 @@
+﻿@model Models.IGeographicDetails
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_546</legend>
+    <div class="form-group row">
+        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_164</label>
+        <div class="col-md-10">
+            @if (!string.IsNullOrEmpty(Model.region_abbreviation))
+            {
+                Model.geographic_id += Model.region_abbreviation;
+            }
+            @if (!string.IsNullOrEmpty(Model.province_abbreviation))
+            {
+                Model.geographic_id += '/' + Model.province_abbreviation;
+            }
+            @if (!string.IsNullOrEmpty(Model.area_id))
+            {
+                Model.geographic_id += '/' + Model.area_id;
+            }
+            @if (!string.IsNullOrEmpty(Model.subarea_id))
+            {
+                Model.geographic_id += '/' + Model.subarea_id;
+            }
+            @if (!string.IsNullOrEmpty(Model.dsa_id))
+            {
+                Model.geographic_id += '/' + Model.dsa_id;
+            }
+            @if (!string.IsNullOrEmpty(Model.csa_id))
+            {
+                Model.geographic_id += '/' + Model.csa_id;
+            }
+            @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_545</label>
+        <div class="col-md-4 ">
+            @Html.TextBoxFor(m => m.subarea_id, new {@class = "form-control", @readonly = true })
+        </div>
+        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_544</label>
+        <div class="col-md-4">
+            @Html.TextBoxFor(m => m.area_id, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_547</label>
+        <div class="col-md-4 ">
+            @Html.TextBoxFor(m => m.dsa_id, new { @class = "form-control", @readonly = true })
+        </div>
+        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_548</label>
+        <div class="col-md-4">
+            @Html.TextBoxFor(m => m.csa_id, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_549</label>
+        <div class="col-md-4 ">
+            @Html.TextBoxFor(m => m.region_name, new { @class = "form-control", @readonly = true })
+        </div>
+        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_550</label>
+        <div class="col-md-4 ">
+            @Html.TextBoxFor(m => m.province_name, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-sm-2">PRMS ID:</label>
+        <div class="col-md-4 ">
+            @Html.TextBoxFor(m => m.prms_id, new { @class = "form-control", @readonly = true })
+        </div>
+        <label class="control-label col-sm-2">JC ID:</label>
+        <div class="col-md-4 ">
+            @Html.TextBoxFor(m => m.jc_id, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group row">
+        @if (!string.IsNullOrWhiteSpace(Model.entityType))
+        {
+            if ((!Model.entityType.ToUpper().Contains("AREA")) && (!Model.entityType.ToUpper().Contains("SUBAREA")) && (!Model.entityType.ToUpper().Contains("DSA")) && (!Model.entityType.ToUpper().Contains("CSA")))
+            {
+                <label class="control-label col-sm-2">NE ID:</label>
+                <div class="col-md-4 ">
+                    @Html.TextBoxFor(m => m.ne_id, new { @class = "form-control", @readonly = true })
+                </div>
+            }
+        }
+        <label class="control-label col-sm-2">Mzone ID:</label>
+        <div class="col-md-4 ">
+            @Html.TextBoxFor(m => m.mzone_id, new { @class = "form-control", @readonly = true })
+        </div>
+   
+        @if (!string.IsNullOrWhiteSpace(Model.entityType))
+        {
+            if ((Model.entityType.ToUpper().Contains("SUBAREA")))
+            {
+                <label class="control-label col-sm-2">Partner Name:</label>
+                <div class="col-md-4 ">
+                    @Html.TextBoxFor(m => m.partner_name, new { @class = "form-control", @readonly = true })
+                </div>
+            }
+        }
+    </div>
+</fieldset>
+
+

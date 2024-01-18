@@ -1,0 +1,179 @@
+﻿@model Models.ROWAssociation
+@using Models;
+@using SmartInventory.Settings;
+@helper pageMessage()
+{
+
+{ Html.RenderPartial("_PageMessage", Model.pageMsg); }
+
+}
+@{
+    List<string> entityTypeList = new List<string>();
+    var layerDetail = ApplicationSettings.listLayerDetails;
+    if (layerDetail.Count > 0)
+    {
+        entityTypeList = layerDetail.Where(m => m.is_row_association_enabled == true).Select(m => m.layer_name).ToList();
+    }    
+    var allEntityList = Model.entityList;
+}
+<style>
+    .disabledCheckbox {
+        background: #ccc !important;
+        color: #ccc !important;
+        cursor: no-drop !important;
+        pointer-events: none !important;
+        opacity: 0.5 !important;
+    }
+
+    .disableRow {
+        background-color: #ffff0042;
+    }
+
+    .table-responsive {
+        min-height: .01%;
+        overflow: auto;
+        max-height: 342px;
+    }
+
+    .TerminationPoint {
+        background-color: #fcaf88;
+    }
+</style>
+<div class="libDetail">
+    @using (Ajax.BeginForm("SaveROWAssociation", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress"
+    },
+          new { id = "frmSaveROWAssociation", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.parent_network_id)
+    <!-- Message Pop-up -->
+        @pageMessage()
+        if (Model.entityList.Count() > 0)
+        {
+            <div style="max-height: 400px;padding-top: 10px;padding:5px;">
+
+                @*<div class="recordCount">
+                        <b>Total Records:&nbsp; @Model.entityList.Count()</b>
+                    </div>
+                    <div style="padding-left:5px;width:250px;">
+                        <b>Network ID:&nbsp;&nbsp;@Model.parent_network_id</b>
+                    </div>*@
+
+
+                <div class="table-responsive tble_cls">
+                    <table id="tblLineEnLstInfo" class="webgrid" cellpadding="0" cellspacing="0" style="width:97%;">
+
+                        <thead class="webGridHeader">
+                            <tr>
+                                <th scope="col" style="text-align:left;">
+                                    <input type="checkbox" style="opacity: 1;  position: inherit;" id="checkAllAssociation" onchange="si.checkAllAssociation();">
+                                    <span style="margin-left:10px;">@Resources.Resources.SI_OSP_GBL_GBL_GBL_037</span>
+                                </th>
+                                <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_160</th>
+                                <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_FRM_020	</th>
+                                <th scope="col">@Resources.Resources.SI_OSP_CAB_NET_RPT_003</th>
+                                <th scope="col">@Resources.Resources.SI_OSP_CAB_NET_RPT_004</th>
+                                <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in entityTypeList)
+                            {
+                                Model.entityList = allEntityList.Where(m => m.entity_type.ToUpper() == item.ToUpper()).ToList();
+                                if (Model.entityList.Count() > 0)
+                                {
+                            <tr class="entityCount" style="font-weight: bold;"><td style="border-right:none;">@(""+item + "(" + Model.entityList.Count()+")")</td><td style="border: none;"></td><td style="border: none;"></td><td style="border: none;"></td><td style="border: none;"></td><td style="border-left: none;"></td></tr>
+                                    for (int i = 0; i < Model.entityList.Count; i++)
+                                    {
+                            <tr class="@(i % 2 == 0 ? "alt" : "")">
+                                <td style="width:60px;">
+                                    @Html.CheckBoxFor(m => Model.entityList[i].is_associated, new
+                                       {
+                                           systemId = Model.entityList[i].system_id,
+                                           entityType = Model.entityList[i].entity_type,
+                                           network_id = Model.entityList[i].network_id,
+                                           onchange = "si.ROW.checkAssociation(this)",
+                                           id = "chk_" + (Model.entityList[i].system_id) + "_" + Model.entityList[i].entity_type + "",
+                                           data_geom_type = Model.entityList[i].geom_type
+                                       })
+
+
+                                    @Html.HiddenFor(m => m.entityList[i].is_associated, new { id = "hdnIsAssociate_" + Model.entityList[i].entity_type + "_" + Model.entityList[i].system_id, entityType = Model.entityList[i].entity_type })
+                                </td>
+                                <td>
+                                    <span>@Model.entityList[i].network_id</span>
+                                    @Html.HiddenFor(m => m.entityList[i].network_id)
+
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => m.entityList[i].system_id)
+                                    <span>@(Model.entityList[i].entity_type)</span>
+                                    @Html.HiddenFor(m => m.entityList[i].entity_type)
+                                </td>
+                                <td>@Model.entityList[i].associated_by</td>
+                                <td>@Model.entityList[i].associated_on</td>
+                                <td>
+                                    <a href="#" onclick="si.ShowEntityOnMap('@Model.entityList[i].system_id','@Model.entityList[i].entity_type','@Model.entityList[i].geom_type');$(popup.DE.MinimizeModel).trigger("click");" class="dropdown-toggle" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036">
+                                        <i class="fa fa-globe fa-fw m-r-xs"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="form-group ModalFooter" id="dvBtnAction">
+                <div class="col-sm-10 col-sm-offset-2" style="float: right; text-align: right; padding-right: 25px;">
+                    <button type="button" class="btn btn-primary" style="display:@(Model.isExportEnabled?"inline-block":"none")" onclick="si.ROW.exportAssociation('@Model.parent_system_id','@Model.parent_entity_type','@Model.parent_network_id');">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+                    <button type="button" class="btn btn-primary" id="btnSaveAssociation" onclick="si.ROW.saveAssociation();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                    <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        }
+        else
+        {
+            <div style="text-align: center; height: 60px; padding: 20px; font-size: 15px;">@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</div>
+        }
+    }
+</div>
+<script>
+    $(function () {
+        var shaftTblbody = $('#tblLineEnLstInfo tbody tr:not(.entityCount)');
+        shaftTblbody.each(function (i, val) {
+            $(this).find("input").each(function (n, nval) {
+
+                if ($(this).attr('name') != undefined)
+                    $(this).attr('name', $(this).attr('name').replace(/\[\d+\]/, "[" + (i) + "]"));
+
+                if ($(this).attr('id') != undefined)
+                    $(this).attr('id', $(this).attr('id').replace(/\_\d+\_/, "_" + (i) + "_"));
+            });
+        });
+
+        if ('@allEntityList.Count()' == 0) {
+            $('#tblLineEnLstInfo').hide();
+        }
+        else {
+            $('#tblLineEnLstInfo').show();
+        }
+        if ($('#tblLineEnLstInfo input:checkbox:checked').length > 0) {
+            $('#btnExportAssociation').show();
+        }
+        $('#closeModalPopup').on('click', function () {
+            si.removeSrchHoverItem();
+        });
+        if ($('#tblLineEnLstInfo tbody :checkbox:checked').length > 0) {
+            $('#checkAllAssociation').prop("checked", true);
+        }
+    });
+</script>
+

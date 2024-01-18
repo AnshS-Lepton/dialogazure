@@ -1,0 +1,29 @@
+﻿@model Models.ISP.EntityInformation
+<!DOCTYPE html>
+<div class="leftPanel clsInfoTool">
+    <div>
+        @if (Model.entityInformationDetail == null && Model.lstEntityInformation == null)
+        {
+            <div id="dvEntityInformationList" class="infoContext">
+                @if (Model.lstEntityInformation != null && Model.lstEntityInformation.Count > 1)
+                {
+                    @Html.Partial("_InformationList", Model.lstEntityInformation)
+                }
+                <div id="divInfoNoRecordFound" class="nr-found">
+                    <span>@Resources.Resources.SI_ISP_GBL_GBL_GBL_001</span>
+                </div>
+
+            </div>
+
+            <div id="dvEntityInformationDetail" class="infodiv">
+                @if (Model.entityInformationDetail != null && Model.entityInformationDetail.system_id > 0)
+                {
+                    @Html.Partial("_InformationDetail", Model.entityInformationDetail)
+                }
+                <div class="NoRecordInfo">@Resources.Resources.SI_ISP_GBL_NET_FRM_043</div>
+            </div>
+
+        }
+
+    </div>
+</div>

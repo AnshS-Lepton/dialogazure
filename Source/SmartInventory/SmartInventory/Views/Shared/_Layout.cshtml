@@ -1,0 +1,395 @@
+﻿@using SmartInventory.Settings;
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Main</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1" />
+    <link id="favicon" rel="shortcut icon" href="@ApplicationSettings.ClientFavicon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link href="~/Content/css/color_stylesheet.css" rel="stylesheet" />
+    @Styles.Render("~/css")
+    <script type="text/javascript">
+
+        var appRoot = '@Url.Content("~")';
+        var baseUrl = '@Request.Url.GetLeftPart(UriPartial.Authority)';
+    </script>
+</head>
+<body>
+    @{Html.RenderPartial("_GlobalVariable");}
+    <div id="header">
+        @{Html.RenderAction("HeaderInfo", "Main");}
+    </div>
+    <div id="content" class="w3">
+        @RenderBody()
+
+        @{Html.RenderPartial("_UtilizationOnMap");}
+        @{Html.RenderPartial("_ShowNetworkOnMap");}
+    </div>
+    <div class="footer">
+    </div>
+    <div id="dvProgress" style="display: none;">
+        <div id="blur" class="progresblur">
+            &nbsp;
+        </div>
+        <div id="progressbar" style="width: 247px; height: 152px; top: 40%; left: 40%;">
+            <img alt="Loading..." src="content/images/loading.gif" /><br />
+            <label id="lblTotalRouted"></label>
+        </div>
+    </div>
+    <div id="dvProgressSplice" style="display: none;">
+        <div id="blur" class="progresblur">
+            &nbsp;
+        </div>
+        <div id="progressbar" style="width: 247px; height: 152px; top: 40%; left: 40%;">
+            <img alt="Loading..." src="content/images/loading.gif" /><br />
+
+        </div>
+    </div>
+    <div class="info_block" id="InfoDiv">
+        <div class="info_content">
+            <div class="modal-header d-fx aln-item" id="info--Header">
+                <h4 id="lblInformation" class="modal-title">@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001</h4>
+                <a href="javascript:void(0)" class="close collapseModel ml-auto mr-05"> <i class="fa fa-minus"></i> </a>
+                <span class="icon-close" id="closeModalPopup2" onclick="si.clearInfoRelatedObjects(); if (si.entityOBJ.length == 0 &&  $('.saveClone').css('display') == 'none') { si.map.setOptions({ draggableCursor: '' }); si.removeEventListnrs('click'); }"></span>
+            </div>
+            <div class="infoMain">
+
+            </div>
+        </div>
+    </div>
+    <div class="info_block" id="SplicingDiv" style="overflow:visible;height:310px;">
+        <div class="info_content">
+            <div class="info_header_bg" id="splicingHeader">
+                <label id="Information">@Resources.Resources.SI_ISP_GBL_GBL_FRM_006</label>
+                <span onclick="splicing.cancelSplice()"></span>
+                <a href="javascript:void(0)" class="close collapseModel"> <i class="fa fa-minus"></i> </a>
+            </div>
+            <div class="splicingMain">
+
+            </div>
+        </div>
+    </div>
+    @*Div used for show pop-up for Merge Cables*@
+    <div class="tp_block" id="MergeCablesDiv">
+        <div class="tp_content">
+            <div class="modal-header d-fx aln-item">
+                <h4 class="modal-title" id="lblMergeCables">Merge Cables</h4>
+                <button class="close collapseModel ml-auto mr-01"> <i class="fa fa-minus"></i> </button>
+                <span onclick="si.clearTPRelatedObjects()" class="icon-close" id="closeModalPopup2"></span>
+            </div>
+            <div class="tp-MergeCables">
+
+            </div>
+        </div>
+    </div>
+    @*Div used for show pop-up for termination point*@
+    <div class="tp_block" id="TerminationPointDiv">
+        <div class="tp_content">
+            <div class="modal-header d-flex">
+                <h4 class="modal-title" id="lblTerminationPoint">Termination Point</h4>
+                <button class="close collapseModel ml-auto mr-05"> <i class="fa fa-minus"></i> </button>
+                <span onclick="si.clearTPRelatedObjects()" class="icon-close" id="closeModalPopup2"></span>
+            </div>
+            <div class="tp-Main">
+
+            </div>
+        </div>
+    </div>
+    <div class="tp_block" id="GroupLibraryTPDiv">
+        <div class="tp_content">
+            <div class="modal-header d-fx">
+                <h4 class="modal-title" id="lblGroupLibraryTP">Termination Point</h4>
+                <span onclick="si.GLLine.clearGLTPRelatedObjects()"></span>
+                <button class="close collapseModel ml-auto"><i class="fa fa-minus"></i></button>
+            </div>
+            <div class="GLtp-Main">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="terminationMain" id="searchTpoint" style="height:auto !important;">
+        <div class="modal-header d-flex">
+            <h4 id="lblInformation" class="modal-title">Termination Point</h4>
+            <span onclick="si.closeTpoint();" class="icon-close ml-auto" id="closeModalPopup2"></span>
+        </div>
+        <div style="padding:5px;z-index:9;display:none;" class="col-sm-12" id="divSearchtTpoint">
+            <input class="form-control" type="text" placeholder="Search" id="txtSearchtTpoint">
+        </div>
+        <ul class="autoSplice" id="ulTerminationPointLst" style="display:block;"></ul>
+    </div>
+
+    @*<div class="autoSplice" id="closeTpoint" style="display: block;width: 28px;height: 28px;text-align: center;" onclick="si.closeTpoint();">X</div>*@
+
+    @*Div used for show pop-up for termination point*@
+    <div @*id="gMapProjSpecification"*@ class="gMapProjSpecific iconBaricomoonfooter bulkOhide">
+        <a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" class="footerMenuOption" onclick="initiateDrawingsBulkAsBuilt(this,'Polygon')"><span class="icon-Draw_Polygon"></span></a>
+        <a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" class="footerMenuOption" onclick="initiateDrawingsBulkAsBuilt(this,'Rectangle')"><span class="icon-DrawRectangle"></span></a>
+        <a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" class="footerMenuOption" onclick="initiateDrawingsBulkAsBuilt(this,'Circle')"><span class="icon-DrawCircle"></span></a>
+    </div>
+
+
+    <div id="gAreaPotential" class="gAreaPotentialTools iconBaricomoonfooter">
+        <a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" class="footerMenuOption" onclick="initiateDrawingsPotential(this, 'Polygon')"><span class="icon-Draw_Polygon"></span></a>
+        <a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" class="footerMenuOption" onclick="initiateDrawingsPotential(this, 'Rectangle')"><span class="icon-DrawRectangle"></span></a>
+        <a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" class="footerMenuOption" onclick="initiateDrawingsPotential(this, 'Circle')"><span class="icon-DrawCircle"></span></a>
+    </div>
+
+    <div id="gExportPotential" class="gExportPotentialTools iconBaricomoonfooter">
+        <a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" class="footerMenuOption" onclick="initiateDrawingsExportReport(this, 'Polygon')"><span class="icon-Draw_Polygon"></span></a>
+        <a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" class="footerMenuOption" onclick="initiateDrawingsExportReport(this, 'Rectangle')"><span class="icon-DrawRectangle"></span></a>
+        @*<a title="Draw Circle" onclick="initiateDrawingsExportReport(this, 'Circle')"></a>*@
+    </div>
+
+    <div id="gAreaPotentialForBOM" class="gAreaPotentialForBOMTools">
+        <a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="initiateDrawingsPotentialFORBOM(this, 'Polygon')"></a>
+        <a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="initiateDrawingsPotentialFORBOM(this, 'Rectangle')"></a>
+        <a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="initiateDrawingsPotentialFORBOM(this, 'Circle')"></a>
+    </div>
+
+    <div id="gMapToolBar" class="gmapTools">
+        <a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="initiateDrawings('Polygon')"></a><a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041"
+                                                                                                            onclick="initiateDrawings('Rectangle')"></a><a title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="initiateDrawings('Circle')"></a>
+    </div>
+
+    @*Div used for show pop-up for termination point*@
+    <div class="be_block" id="BulkEntityDiv">
+        <div class="be_header_bg">
+            <label id="lblBulkEntity">Entity List</label>
+            <span onclick="si.clearBulkEntityInfo()"></span>
+        </div>
+        <div class="bulkentity_Main">
+
+        </div>
+    </div>
+
+    <div class="pop">
+        <div class="arrow"></div>
+        <div class="drag-title">
+        </div>
+    </div>
+
+    <input type="hidden" id="hdnMapUrl" />
+    <input type="hidden" id="hdnMapCordinates" />
+    <input type="hidden" id="hdnMapRectangleGeom" />
+    <input type="hidden" id="hdnPrintHighQuality" />
+    <input type="hidden" id="hdnPrintAreaType" />
+    <input type="hidden" id="hdnLegendRequired" value="false" />
+    <input type="hidden" id="hdnBckMap" value="false" />
+    <input type="hidden" id="hdnBckClipping" value="false" />
+    @{Html.RenderPartial("_LibraryAction");}
+    @{Html.RenderPartial("_ModalPopUp");}
+    @{Html.RenderPartial("_MapReference");}
+    @{Html.RenderPartial("_GlobalSettings");}
+    <script src="~/Content/js/Deckgl/unpkg.com_deck.gl@8.9.19_dist.min.js"></script>
+    <script src="~/Content/js/Deckgl/unpkg.com_turf_turf6.5.0_turf.min.js"></script>
+    @*<script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>*@
+    @Scripts.Render("~/bundles/Scripts")
+    @*<script src="~/Areas/Admin/Content/js/jquery.min.js"></script>*@
+    @if (ApplicationSettings.IsSignalRIsEnable == 1)
+    {
+    <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
+    <script src="~/SignalR/hubs"></script>
+    <script src="~/Content/js/NotifySignalR.js"></script>
+    }
+    <script src="~/Content/js/datauploader.js"></script>
+    <script src="~/Content/js/regionprovincedatauploader.js"></script>
+    <script src="~/Content/js/LandBase.js"></script>
+
+    <script type="text/javascript">
+        var PostCount = 0;
+        var si = new Main();
+        var LandBase = new LandBase();
+        var splicing = new splicing();
+        var SiteCustomer = new SiteCustomer();
+        var st = new spliceTray();
+        //var osp = new OSPSplice();
+        var isp = null;
+        var notification = new Notification();
+        var popup = new ModalPopUp(); //Modal popup js file..
+        var dataUploader = new DataUploader();
+        var rpdataUploader = new RPDataUploader();
+        $(document).ready(function () {
+            si.initApp();
+            splicing.initApp();
+            if (parseInt($('#hdnIsSignalRIsEnable').val()) == 1);
+            {
+                notification.initApp();
+            }
+            LandBase.initApp();
+            st.initApp();
+            //dataUploader.InitializeUploader();
+            var treeView = $(".mainlyr ").not(".grpNetwork").treeview({
+                collapsed: true,
+                animated: "medium",
+                persist: "location"
+            });
+
+            $(".grpNetwork ").treeview({
+                collapsed: false,
+                animated: "medium",
+                persist: "location"
+            });
+
+            $(".mainLBlyr ").treeview({
+                collapsed: false,
+                animated: "medium",
+                persist: "location"
+            });
+            popup.InitPopUp();
+            $('.legend').draggable({ scroll: false, handle: ".info_legend_bg", containment: "window" });
+            $('#searchTpoint').draggable({ scroll: false, handle: ".modal-header", containment: "window" });
+
+        });
+
+
+    </script>
+    <script type="text/javascript">
+        function resetActiveClassFromMenuItem() {
+
+            $('.myMenu ul li a').each(function () {
+                $(this).removeClass("activeToolBar");
+            });
+            $('.iconBaricomoonfooter a').each(function () {
+                $(this).removeClass("activeToolBar");
+            });
+
+            $('.iconBaricomoonfooter').removeClass("activeToolBar");
+        }
+        function getAddressRemoveActiveClass() {
+            $('.dvNorthIcon, .dvGetMapAddress').removeClass("activeGoogIcon");
+        }
+
+
+        $(document).ready(function () {
+            $('.myMenu ul li a, .myMenu ul li button').on("click", function () {
+                //  $("li a").removeClass("activeToolBar");
+                resetActiveClassFromMenuItem();
+                $(this).addClass('activeToolBar')
+                //if ($(this).hasClass('activeToolBar')) {
+                //    $(this).removeClass('activeToolBar')
+                //} else {
+                //    $(this).addClass('activeToolBar')
+                //}
+                $(this).parent().siblings().find('ul').slideUp(300);
+                $(this).next('ul').stop(true, false, true).slideToggle(300).css("display", "flex").css("height", "34px");
+                $('.gMapProjSpecific, .gmapLineTools').not('.footerMenu').not('.footerRemove').addClass('bulkOhide'); // hide footer icon menus
+                $('.logout').slideUp(500); // slide up logout menu
+                $('#dvNELibrary').hide('slide', { direction: 'right' }, 500); // hide library menu while clicking on other link or button
+                getAddressRemoveActiveClass() // remove activeGoogIcon class from get address map icons
+                 //var dropdownList = $(".dropDownMenu li ul");
+                //var dropdownOffset = $(this).offset();
+                //var offsetLeft = dropdownOffset.left + 120; // adjust dropdown position, when no space left from right side
+                //var dropdownWidth = dropdownList.width();
+                //var docWidth = $(window).width();
+
+                //var subDropdown = $(".dropDownMenu li ul").eq(1);
+                //var subDropdownWidth = subDropdown.width();
+
+                //var isDropdownVisible = offsetLeft + dropdownWidth <= docWidth;
+                //var isSubDropdownVisible =
+                //    offsetLeft + dropdownWidth + subDropdownWidth <= docWidth;
+
+                //if (!isDropdownVisible || !isSubDropdownVisible) {
+                //    $(".dropDownMenu li ul").addClass("pull-right");
+                //} else {
+                //    $(".dropDownMenu li ul").removeClass("pull-right");
+                //}
+                return false;
+            });
+
+            $('.iconBaricomoonfooter').on("click", function () {
+                //  $("li a").removeClass("activeToolBar");
+                resetActiveClassFromMenuItem();
+                if ($(this).find('a').length == 0)
+                    $(this).addClass("activeToolBar");
+
+                return false;
+            });
+
+
+            $('.collapseModel').on('click', function () {
+                var $collapseElement = this;
+                var modelId = $($collapseElement).parent().parent().parent().attr('id');
+
+                $apnData = $('#' + modelId);
+
+                // $('#' + modelId + ' .info_header_bg').attr('style', '');
+                //$('.modal-backdrop').toggleClass('out').toggleClass('in');
+                $apnData.css('width', '');
+                $('#' + modelId + ' [class*=_content]').toggleClass('minimize', function () {
+                    $('#' + modelId + ' .collapseModel>i').toggleClass('fa-plus').toggleClass('fa-clone');
+                    if ($('#' + modelId + ' [class*=_content]').hasClass('minimize')) {
+                      //  $('#' + modelId + ' [class*=_content]').css('height', '33px');
+                        //$('.modal-backdrop').hide();
+                        //$apnData.removeClass('modal');
+                        //$apnData.addClass('MinMax');
+                        // $('#ModalPopUp').removeClass('modal');
+                        // $(app.DE.ModalDialog).addClass('MinMax');
+                        // $apnData.addClass('ModalPopUpPosition');
+                        $apnData.css('width', '');
+                    } else {
+                        //$('.modal-backdrop').show();
+                        //$apnData.addClass('modal');
+                        //$apnData.removeClass('MinMax');
+                        $apnData.css('width', '450px');
+                        $('#' + modelId + ' [class*=_content]').css('height', '');
+                        // $('#ModalPopUp').addClass('modal');
+                        // $(app.DE.ModalDialog).removeClass('MinMax');
+                        // $apnData.removeClass('ModalPopUpPosition');
+                    }
+                });
+            });
+
+        });
+
+        // Draggable div Javascript - made some changes on draggable div as well - add id
+
+        // Make the DIV element draggable:
+        dragElement(document.getElementById("InfoDiv"));
+
+        function dragElement(elmnt) {
+            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (document.getElementById(elmnt.id + "info--Header")) {
+                // if present, the header is where you move the DIV from:
+                document.getElementById(elmnt.id + "info--Header").onmousedown = dragMouseDown;
+            } else {
+                // otherwise, move the DIV from anywhere inside the DIV:
+                document.getElementById("info--Header").onmousedown = dragMouseDown;
+            }
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                // get the mouse cursor position at startup:
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                // call a function whenever the cursor moves:
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                // calculate the new cursor position:
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                // set the element's new position:
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                // stop moving when mouse button is released:
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+    </script>
+</body>
+
+</html>

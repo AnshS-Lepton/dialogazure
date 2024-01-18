@@ -1,0 +1,116 @@
+﻿@model Models.Admin.ViewIspModelImage
+@using Utility
+@using SmartInventory.Settings;
+<link href="~/Areas/Admin/Content/css/spectrum.css" rel="stylesheet" />
+<script src="~/Areas/Admin/Content/js/spectrum.js"></script>
+@*<style>
+          .tble_cls table tbody tr td svg{
+        width:50px!important;
+        height:50px!important;
+    }
+
+    </style>*@
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div id="dvViewISPModelImage">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                View Model Images
+            </h4>
+        </div>
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewISPModelImage", ajaxUpdateCallback: "onGridHeaderClick('tblISPModelImage')");
+            grid.Bind(Model.listISPModelImage, autoSortAndPage: false, rowCount: Model.totalRecord);
+            if (Model.totalRecord > 0)
+            {
+                grid.PageIndex = Model.currentPage - 1;
+            }
+        }
+        <div class="pad_left">
+            @using (Html.BeginForm("ViewModelsImage", "Equipment", FormMethod.Post, new { autocomplete = "off", @id = "frmViewISPModelImage" }))
+            {
+
+
+                <div class="form-inline filter-sec">
+                    <div class="form-group wtd_set mr-01">
+                        <label class="control-label mr-05">Search By : </label>
+                        <div class="--input-width">
+                            @Html.DropDownListFor(m => m.searchBy, new List<SelectListItem>
+                     {
+                       new SelectListItem{ Text="Search By", Value = "" },
+                       new SelectListItem{ Text="Model Name", Value = "model_name" },
+                     }, new { @id = "ddlSearchBy", @tabindex = "2", @title = "Search By", @class = "chosen-select form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group wtd_set">
+                        <label class="control-label mr-05">
+                            Search Text :
+                        </label>
+                        <div class="--input-widthMd">
+                            @Html.TextBoxFor(m => m.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                        </div>
+                    </div>
+                    <div class="ml-01 wtd_set" id="dvBtnAction">
+                        <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+
+                        <a href="@Url.Action("ViewModelsImage")" class="btn btn-default mr-05" title="Reset">Reset</a>
+                        <span>
+                            <input type="button" id="btnAddNew" onclick="AddNewISPModelImage(0);" value="Upload" class="btn btn-primary" />
+                        </span>
+                    </div>
+                </div>
+
+                if (Model.listISPModelImage.Count > 0)
+                {
+                    <div id="divUserDetail">
+                        <div class="recordCount mb-01"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+                                htmlAttributes: new { id = "tblISPModelImage" },
+                                mode: WebGridPagerModes.All,
+                                columns: grid.Columns(
+                                           grid.Column("", "Action", format:@<text>
+                                                    <a href="#" onclick="AddNewISPModelImage(@item.id);" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                                    <a href="javascript:void(0);" onclick="DeleteISPModelImageById(@item.id);" title="Delete"> <i class="fa fa-fw fa-trash" style="font-size: 13px; color: #f50000;"></i></a>
+
+                                        </text>, canSort: false),
+grid.Column("model_name", "Model Name", format: @<text>@item.model_name</text>, canSort: true),
+grid.Column("image_data", "Image", format: (item) => Html.Raw(item.image_data), canSort: true),
+grid.Column("is_active", "Is Active", format: @<text>@(item.is_active == true ? "Yes" : "No")</text>, canSort: true),
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>, canSort: true),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>, canSort: true)
+))
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Termination Point Found.
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        updateNumberstoFormatedNumber();
+        addDefaultSortingIcons("tblISPModelImage");
+    });
+    function ViewISPModelImageReport() {
+        window.location = appRoot + 'Miscellaneous/DownloadViewISPModelImage';
+    }
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+</script>

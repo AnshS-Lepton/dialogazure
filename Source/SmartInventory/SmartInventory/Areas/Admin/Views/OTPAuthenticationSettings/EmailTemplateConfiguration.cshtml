@@ -1,0 +1,144 @@
+@using Models.Admin
+@model Models.Admin.EmailBinder
+
+
+<script type="text/javascript" src="https://rawgit.com/Bttstrp/bootstrap-switch/master/dist/js/bootstrap-switch.js"></script>
+
+<!DOCTYPE html>
+<div id="emailconfigurationForm">
+
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                Email Template Configuration
+            </h4>
+        </div>
+        <div class="pad_left">
+
+            @using (Html.BeginForm("EmailConfiguration", "OTPAuthenticationSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmUserInfo", enctype = "multipart/form-data", @class = "form-horizontal" }))
+            {
+
+                <div class="grid-filters filter-sec">
+                    <div class="d-flex">
+                        <label class="control-label pr-1">
+                            Email Event :
+                        </label>
+                        <div class="--input-width">
+                            @Html.DropDownListFor(m => m.trigger_event, new SelectList(Model.templatelist.Select(x => new { Value = x.trigger_event, Text = x.trigger_event }), "Value", "Text"), "--select--", new { @class = "chosen-select form-control", @id = "ddltriggerevent" })
+                        </div>
+                    </div>
+                    <div class="d-flex --gap03" id="dvBtnAction">
+
+
+                        <button type="submit" class="btn btn-default" id="btnSearch" name="submitButton" value="Search">Search</button>
+
+                        <a href="@Url.Action("EmailConfiguration", "OTPAuthenticationSettings")" id="btnReset" class="btn btn-default" title="Reset">Reset</a>
+
+                    </div>
+                </div>
+
+                
+                 
+                        <div style="height: 10px; width: 10px; font-size: 13px; color: red">
+                            @ViewBag.SuccessMessage
+                        </div>
+                        <br />
+                    
+                    if (Model.objEmailEventTemplate != null)
+                    {
+                        <div class="update_panel clsStepsContainer" style="margin-bottom: 0px; width: 100%">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        Email Template Enable :
+                                    </label>
+                                </div>
+                                <div class="col-md-1">
+                                    @Html.CheckBoxFor(m => m.objEmailEventTemplate.is_active, new { Style = "width:100% ;", @id = "chkis_email_template_enabled" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        Project Phase :
+
+                                    </label>
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(model => model.objEmailEventTemplate.project_phase, new { @class = "form-control", @maxlength = "300", @placeholder = "Enter Project Phase", id = "txtproject_phase" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        Trigger Event
+                                    </label>
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(model => model.objEmailEventTemplate.trigger_event, new { @class = "form-control", @readonly = "readonly", @maxlength = "300", @placeholder = "Enter Trigger Event", id = "txttrigger_event" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        Recipient Role
+                                    </label>
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(model => model.objEmailEventTemplate.recipient_role, new { @class = "form-control", @maxlength = "1000", @placeholder = "Enter Recipient Role", id = "txtrecipient_role" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        Recipient List
+                                    </label>
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.TextAreaFor(model => model.objEmailEventTemplate.recipient_list, new { cols = 35, rows = 5, @placeholder = "Enter Recipient List", id = "txtrecipient_list" })
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        Subject
+                                    </label>
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(model => model.objEmailEventTemplate.subject, new { @class = "form-control", @maxlength = "3000", @placeholder = "Enter Subject", id = "txtsubject" })
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="control-label">
+                                        Template
+                                    </label>
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.TextAreaFor(model => model.objEmailEventTemplate.template, new {  cols = 35, rows = 8, @placeholder = "Enter Template", id = "txttemplate" })
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="dvBtnAction">
+                                <div class="row">
+                                    <div class="col-md-4"> </div>
+                                    <div class="col-md-8 text-right">
+                                        <button type="submit" class="btn btn-default" id="btnSubmit" name="submitButton" value="Update">Update</button>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                }
+            </div>
+    </div>
+</div>
+<script>
+
+
+</script>

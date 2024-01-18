@@ -1,0 +1,599 @@
+﻿@model Models.RedlineFilter
+
+
+@*@{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "VwTicketGrid",
+       ajaxUpdateCallback: "onGridHeaderClick('tblNetworkTicketManagerGrid');GridColor();");
+        grid.Bind(Model.lstNetworkTicket, autoSortAndPage: false, rowCount: Model.totalRecord);
+        if (Model.totalRecord > 0)
+        {
+            grid.PageIndex = Model.currentPage - 1;
+        }
+    }*@
+
+@{
+    var grid = new WebGrid(rowsPerPage: Model.pageSize, ajaxUpdateContainerId: "VwTicketGrid", canSort: true);
+    grid.Bind(Model.lstNetworkTicket, autoSortAndPage: false, rowCount: Model.totalRecord);
+    var footerText = "showing " + (((Model.currentPage - 1) * Model.pageSize) + 1) + " to " + (Model.currentPage * Model.pageSize) + " of " + Model.totalRecord + " items";
+}
+<style>
+
+
+    .modal-body .FilterDiv .padRow .divPads {
+        display: inline-block;
+    }
+
+
+    .Assign {
+        float: left;
+        width: 21%;
+        color: #fff;
+        font-size: 12px;
+        padding: 4px;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 4px;
+        margin-right: 3px;
+    }
+
+    .nav-tabs {
+        border-bottom: 1px solid #ddd;
+        margin-top: 5px;
+    }
+
+        .nav-tabs > li {
+            border-top: 1px solid #ddd;
+            border-radius: 5px 5px 0px 0px;
+            margin-right: 2px;
+            border-left: 1px solid #ddd;
+        }
+
+    .tble_cls {
+        overflow: auto;
+        margin: 8px;
+        border: solid 1px #000;
+    }
+
+        .tble_cls .table {
+            font-size: 13px;
+            margin: 0px;
+        }
+
+            .tble_cls .table tbody tr {
+                border-top: solid 1px #ccc;
+            }
+
+            .tble_cls .table > thead > tr > th {
+                border-bottom: none;
+            }
+
+            .tble_cls .table .webgrid > tfoot > tr > td {
+                text-align: left !important;
+            }
+
+    /* .tab-content > .active {
+        border-top: #31bd72 solid 1px;
+    }
+    */
+
+    .WrapText {
+        width: 120px;
+        overflow: hidden;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .EntitydetailsProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url('../../Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+
+    .calendar {
+        position: absolute;
+        display: block;
+        left: 650px !important;
+        top: 65px !important;
+    }
+
+    .gridHeaderStyle {
+        white-space: nowrap;
+    }
+
+    .modal-open .modal {
+        background-color: rgba(0,0,0,0) !important;
+    }
+
+    #dvModelid {
+        position: absolute;
+        z-index: 9;
+    }
+
+    .disabled {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="tab-content" id="Dashboardfrm">
+    <div id="dvEntitydetailsProgress" class="EntitydetailsProgress"></div>
+    <div id="Dashboard" class="tab-pane fade in active show">
+        @using (Ajax.BeginForm("ShowRedlineDashboard", "Redline", new AjaxOptions
+        {
+            OnSuccess = "OnSuccess",
+            HttpMethod = "POST",
+            UpdateTargetId = "Dashboardfrm",
+            LoadingElementId = "dvDashboardProgress",
+            InsertionMode = InsertionMode.Replace
+        },
+                                      new { id = "frmTicket", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+
+            <div>
+                <div class="space-pad">
+                    <div class="d-flex align-itm">
+
+                        <div class="redline-drop-box">
+                            @Html.DropDownListFor(m => m.searchByText, new List<SelectListItem>{
+                             new SelectListItem { Text = "Search By", Value = "0"},
+                             new SelectListItem { Text = "Task Name", Value = "task_name"},
+                             new SelectListItem { Text = "Task Type", Value = "task_type"},
+                             new SelectListItem { Text = "Task Remarks", Value = "task_remarks"},
+                             new SelectListItem { Text = "Task Action", Value = "task_action"},
+                             new SelectListItem { Text = "Assigned By", Value = "assigned_by"},
+                             new SelectListItem { Text = "Assigned To", Value = "assigned_to"},
+                             new SelectListItem { Text = "Task Status", Value = "task_status"},
+
+                          },
+                             new { @class = "chosen-select" })
+                        </div>
+                        <div class="d-flex align-itm ml-auto">
+                            @Html.TextBoxFor(m => m.searchText, new { @id = "txtSearchTxt", @class = "form-control input-mr search--padding form--height" })
+                            <i class="glyphicon glyphicon-search SearchIco"></i>
+                            <button type="submit" class="btn btn-success ml-2" id="btnTicketData"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                            <button type="submit" class="btn btn-default ml-10" id="btnResetSearchFilter"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+                        </div>
+                        <div class="divPads ml-10 @(Model.lstNetworkTicket.Count > 0 ? "" : "dvdisabled")">
+                            <button type="button" class="exp--btn" id="btnExportRedline" value="Export"><span class="fa fa-download"></span> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                @if (Model.lstNetworkTicket.Count > 0)
+                {
+                    <div class="tablePad--tn">
+                        <div id="VwTicketGrid">
+                            <div class="d-flex mb-15">
+                                <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@Model.lstNetworkTicket.Count</b>
+                                <button type="button" class="btn btn-success ml-auto" OnClick=ShowAdvanceFilter() id="btnAdvanceFilte" value=""> @Resources.Resources.SI_OSP_GBL_NET_GBL_052</button>
+                            </div>
+                            <div class="table-responsive">
+                                @grid.GetHtml(tableStyle: "grid",
+
+        htmlAttributes: new { id = "tblNetworkTicketManagerGrid" },
+        mode: WebGridPagerModes.All,
+        columns: grid.Columns(
+            @*grid.Column(Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>
+
+    </text>, canSort: false),*@
+grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>
+                <div class="d-flex">
+                    <a href="javascript:void(0);" class="i-icons-style icon-fs" onclick="showOnMap('@item.task_system_id');" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036"><i class="fa fa-map-marker"></i></a>
+                    <a href="javascript:void(0);" class="i-icons-style icon-fs" onclick="EditRecord('@item.task_system_id','@item.assigned_to_id');" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_003"><i class="fa far fa-edit"></i></a>
+                    <a href="javascript:void(0);" class="i-icons-style icon-fs" onclick="RedlineHistory('@item.task_system_id', '@item.assigned_to_id');" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_339"><i class="fa far fa-history"></i></a>
+                </div>
+            </text>),
+     grid.Column("task_name", Resources.Resources.SI_OSP_GBL_GBL_FRM_149, format: @<text>@item.task_name</text>),
+grid.Column("task_type", Resources.Resources.SI_OSP_GBL_GBL_FRM_150, format: @<text> @item.task_type</text>),
+grid.Column("task_remarks", Resources.Resources.SI_OSP_GBL_GBL_GBL_279, format: @<text>@item.task_remarks </text>),
+grid.Column("task_action", Resources.Resources.SI_OSP_GBL_GBL_FRM_151, format: @<text> @item.task_action</text>),
+grid.Column("assigned_by", Resources.Resources.SI_OSP_GBL_NET_RPT_011, format: @<text> @item.assigned_by</text>),
+grid.Column("created_date", Resources.Resources.SI_OSP_GBL_GBL_GBL_192, format: @<text> @item.created_date</text>),
+grid.Column("assigned_to", Resources.Resources.SI_OSP_GBL_NET_FRM_105, format: @<text> @item.assigned_to</text>),
+grid.Column("modified_date", Resources.Resources.SI_OSP_GBL_GBL_GBL_193, format: @<text> @item.modified_date</text>),
+grid.Column("task_status", Resources.Resources.SI_OSP_GBL_GBL_GBL_280, format: @<text> @item.task_status</text>)
+))
+                                @Html.Hidden("dir", grid.SortDirection)
+                                @Html.Hidden("col", grid.SortColumn)
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="nr-found">
+                        <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+                    </div>
+                }
+
+            </div>
+            <div id="AdvanceFilter" class="modal fade in" role="dialog" draggable="true">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content1" id="dvModelid">
+                        <div class="modal-header d-flex">
+                            <h4 class="modal-title">Redline</h4>
+                            <span class="ml-auto icon-close" id="CloseAdvanceFilter">
+
+                            </span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="space-pad">
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            @Resources.Resources.SI_OSP_GBL_GBL_FRM_149:
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(m => m.objRedline.task_name, new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="row  form-group">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            @Resources.Resources.SI_OSP_GBL_NET_FRM_105:
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.DropDownListFor(m => m.objRedline.assigned_to, new SelectList(Model.objRedline.AssignedBy.Select(x => new { Value = x.user_id, Text = x.user_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @onchange = "si.onChangeRegionsForFilter();", @id = "ddlAssignedTo" })
+                                    </div>
+                                </div>
+
+
+                                <div class="row  form-group">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            @Resources.Resources.SI_OSP_GBL_NET_RPT_011:
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.DropDownListFor(m => m.objRedline.assigned_by, new SelectList(Model.objRedline.AssignedBy.Select(x => new { Value = x.user_id, Text = x.user_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @onchange = "si.onChangeRegionsForFilter();", @id = "ddlAssignedBy" })
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            @Resources.Resources.SI_OSP_GBL_NET_GBL_160:
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.DropDownListFor(m => m.objRedline.status_id, new List<SelectListItem>{
+                                    new SelectListItem { Text = "Assigned", Value = "1"},
+                                    new SelectListItem { Text = "InProgress", Value = "2"},
+                                    new SelectListItem { Text = "Closed", Value = "3"},
+                                     new SelectListItem { Text = "ReAssigned", Value = "4"},
+                                },
+                                "-Select-",
+                                     new { @class = "chosen-select", @id = "ddlStatus" })
+                                    </div>
+                                </div>
+
+
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            @Resources.Resources.SI_OSP_GBL_NET_FRM_072:
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+
+                                        @Html.DropDownListFor(m => m.customDate, new List<SelectListItem>{
+                                           new SelectListItem { Text = "Custom", Value = "1"},
+                                    new SelectListItem { Text = "Today", Value = "2"},
+                                    new SelectListItem { Text = "Previous Day", Value = "3"},
+                                    new SelectListItem { Text = "Last 7 Days", Value = "4"},
+                                    new SelectListItem { Text = "Last 30 Day", Value = "5"},
+                                    new SelectListItem { Text = "Last 3 Months", Value = "6"},
+                                    new SelectListItem { Text = "Last 6 Months", Value = "7"},
+                                  new SelectListItem { Text = "Last 1 Year", Value = "8"},
+                                }, "-Select-",
+                               new { @class = "chosen-select", @onchange = "onChangeCustomDate();", @id = "customedate" })
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            @Resources.Resources.SI_GBL_GBL_NET_GBL_006:
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(m => m.fromDate, new { @id = "txtDateFrom", @title = "Select", @class = "input-sm form-control", @readonly = true })
+                                        <img id="imgFromDate" class="assign-calen" style="margin-right:1px;" src="~/Content/images/calendar.png" />
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            @Resources.Resources.SI_OSP_ROW_NET_GBL_051:
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+
+                                        @Html.TextBoxFor(m => m.toDate, new { @id = "txtDateTo", @title = "Select", @class = "input-sm form-control", @readonly = true })
+                                        <img id="imgToDate" class="assign-calen" style="margin-right:1px;" src="~/Content/images/calendar.png" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ModalFooter d-flex">
+                                <button type="button" class="btn btn-default ml-auto" id="advanceFilterbtnReset">
+                                    @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005
+                                </button>
+                                <button type="submit" id="btnFilter" onclick="clearTheTextField()" class="btn btn-success ml-10">
+                                    @Resources.Resources.GBL_GBL_GBL_GBL_GBL_007
+                                </button>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+    <div id="EntityDetails" class="tab-pane"> </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+         
+        $("#dvModelid").draggable();
+        $($('#tblNetworkTicketManagerGrid tr:first th')).addClass('gridHeaderStyle');
+
+        $('#tblNetworkTicketManagerGrid tbody tr:first').find('td.colEnableDisable').each(function (i, td) {
+            var indexOfHiddenColumn = $(td).index();
+            $('#tblNetworkTicketManagerGrid thead th').eq(indexOfHiddenColumn).addClass('colEnableDisable');
+        });
+        $('[data-toggle="tooltip"]').tooltip();
+        if ($('#AdvanceFilter').length) {
+            si.Networkticket.setDateTimeCalendar_NwtworkTicket("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+        }
+
+        $('th a, tfoot a').on("click", function () {
+            $('#frmTicket').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        onGridHeaderClick('tblNetworkTicketManagerGrid');
+        addDefaultSortingIcons("tblNetworkTicketManagerGrid");
+
+        $('.chosen-select').chosen({ width: '100%', });
+        $("#btnExportRedline").on("click", function () {
+            window.location = appRoot + 'Redline/ExportRedline';
+        });
+        if ($("#customedate_chosen").children('a').text().trim() != "Custom") {
+
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        $("#btnResetSearchFilter").on("click", function () {
+            $("#frmTicket")[0].reset();
+            $('#ddlTicketType').val('').trigger("chosen:updated");
+            $('#txtSearchTxt').val('');
+            $('#searchByText').val('').trigger("chosen:updated");
+            $("#objRedline_task_name").val('');
+            $('#ddlAssignedTo').val('').trigger("chosen:updated");
+            $('#ddlAssignedBy').val('').trigger("chosen:updated");
+            $('#ddlStatus').val('').trigger("chosen:updated");
+            $('#customedate').val('').trigger("chosen:updated");
+            $('#txtDateFrom').val('');
+            $('#txtDateTo').val('');
+            if (si.gMapObj.shapeObj)
+                si.gMapObj.shapeObj.setMap(null);
+        });
+
+        $("#advanceFilterbtnReset").on("click", function () {
+            $("#frmTicket")[0].reset();
+            $("#objRedline_task_name").val('');
+            $('#ddlAssignedTo').val('').trigger("chosen:updated");
+            $('#ddlAssignedBy').val('').trigger("chosen:updated");
+            $('#ddlStatus').val('').trigger("chosen:updated");
+            $('#customedate').val('').trigger("chosen:updated");
+            $('#txtDateFrom').val('');
+            $('#txtDateTo').val('');
+        });
+
+        //GridColor();
+
+        // 
+        //si.setDateTimeCalendar_ExportEntities("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+        $("#frmTicket").submit(function () {
+            $("#dvEntitydetailsProgress").show();
+        });
+        RemoveArrows();
+    });
+    $('th a, tfoot a').on("click", function () {
+        $('#tblNetworkTicketManagerGrid thead th').addClass('bothorder1');
+    });
+
+    function RemoveArrows() {
+        $('#tblNetworkTicketManagerGrid thead th').eq(0).removeClass("bothorder");
+    };
+
+
+    function OnSuccess(data) {
+        $("#dvEntitydetailsProgress").hide();
+
+    }
+    function GetDaysDifference(firstDate, secondDate, configuredDay) {
+
+        var oneDay = 24 * 60 * 60 * 1000;
+        var diff = 0;
+        diff = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / (oneDay)));
+
+
+        if (diff > configuredDay) {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_015)
+            return false;
+
+        }
+    }
+
+    function hexToRgbA(hex, opacity) {
+        hex = hex.replace('#', '');
+        r = parseInt(hex.substring(0, 2), 16);
+        g = parseInt(hex.substring(2, 4), 16);
+        b = parseInt(hex.substring(4, 6), 16);
+
+        result = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
+        return result;
+    }
+
+    function onChangeCustomDate() {
+
+        var value = $('#customedate option:selected').val();
+
+        SetFromAndToDate(value);
+    }
+
+    $("#btnFilter").on("click", function () {
+        var value = $('#customedate option:selected').val();
+        if (value == 1) // custom
+        {
+            if ($('#txtDateFrom').val() == "" || $('#txtDateTo').val() == "") {
+                alert('Please select From Date and To Date');
+                return false;
+            }
+        }
+    });
+
+    //Nik
+  
+    $("#btnTicketData").on("click", function () {
+        if ($("#searchByText").val() == "" || $("#searchByText").val() == null || $("#searchByText").val() == 0) {
+            alert('Please select Search By !!', 'warning');
+            return false;
+        }
+    });
+    //Nik
+
+    function SetFromAndToDate(value) {
+
+        var endDate = new Date();
+        var startDate = new Date();
+        var startDateDiff = 0;
+        var endDateDiff = 0;
+
+        if (value == 1) // custom
+        {
+            $('#txtDateFrom').val("");
+            $('#txtDateTo').val("");
+            $("#imgFromDate").show();
+            $('#imgToDate').show();
+            return;
+        }
+        else if (value == 2) { //Today
+            startDateDiff = 0;
+            endDateDiff = 0;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 3) { //previous day
+            startDateDiff = -1;
+            endDateDiff = -1;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 4) {//last 7 days
+            startDateDiff = -6;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 5) {//last 30 days
+            startDateDiff = -29;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 6) {//last 3 Months
+            startDateDiff = -89;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 7) {//last 6 Months
+            startDateDiff = -179;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 8) {//last 6 Months
+            startDateDiff = -364;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+
+        startDate.setDate(startDate.getDate() + startDateDiff);
+        endDate.setDate(endDate.getDate() + endDateDiff);
+
+        var newStartDate = startDate.toDateString();
+        newStartDate = new Date(Date.parse(newStartDate));
+
+        var newEndDate = endDate.toDateString();
+        newEndDate = new Date(Date.parse(newEndDate));
+
+        $('#txtDateFrom').val(fncCurrentDate(newStartDate));
+        $('#txtDateTo').val(fncCurrentDate(newEndDate));
+        if (value == 0) {
+            $('#txtDateFrom').val('');
+            $('#txtDateTo').val('');
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+    }
+    function onChangeTicketType() {
+        $("#btnTicketData").trigger("click");
+    }
+    function ShowAdvanceFilter() {
+        $("#AdvanceFilter").modal("show");
+        si.Networkticket.setDateTimeCalendar_NwtworkTicket("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+    }
+    $("#CloseAdvanceFilter").on("click", function () {
+        $(".modal-backdrop").remove();
+        $("#AdvanceFilter").modal("hide");
+    })
+
+    function getDashboard() {
+        $("#Dashboard").show();
+        $("#EntityDetails").hide();
+        $("#NwEntityDetails").addClass("disabled");
+
+    }
+
+    function clearTheTextField() {
+        document.getElementById('txtSearchTxt').value = '';
+
+    }
+    function EditRecord(task_system_id, assigned_to_id) {
+         
+        popup.LoadModalDialog('CHILD', 'Redline/AddRedlineDetails', { 'objRedlineMaster.system_id': task_system_id, 'objRedlineMaster.assigned_to_id': assigned_to_id }, 'Redline Details', 'modal-xxl');
+    }
+
+    function RedlineHistory(task_system_id, assigned_to_id) {
+         
+        popup.LoadModalDialog('CHILD', 'Redline/Redline_Entity_History', { 'objRedlineFilters.task_id': task_system_id, 'objRedlineFilters.userId': assigned_to_id }, 'Redline Details', 'modal-xxl');
+    }
+
+    function showOnMap(task_system_id) {
+
+        $('#ModalPopUp .minmizeModel>i').trigger("click");
+        si.Redline.showLayerOnMap(task_system_id);
+    }
+
+    $("#closeModalPopup").on("click", function () {
+        if (si.gMapObj.shapeObj)
+            si.gMapObj.shapeObj.setMap(null);
+    });
+</script>
+

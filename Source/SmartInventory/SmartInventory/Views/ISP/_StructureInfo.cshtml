@@ -1,0 +1,289 @@
+﻿@model Models.ISP.ISPViewModel
+@using Models;
+@using SmartInventory.Settings;
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.UNIT.ToString().ToUpper()).FirstOrDefault() : null;
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.StructureId, (List<Models.NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, Models.EntityType.Structure.ToString());
+}
+<!DOCTYPE html>
+<div class="structureInfo">
+    @Html.HiddenFor(m => m.total_unit, new { id = "hdnTotalUnits" })
+    @Html.HiddenFor(m => m.StructureId, new { id = "hdnStructureId" })
+    @Html.HiddenFor(m => m.StructureCode, new { id = "hdnStructureNwId" })
+    <div class="divNetworkCode">
+       
+        <div id="dvstructurenetworkid"><i class="strcode">@Model.StructureCode (@Model.StructureName)</i></div> 
+
+        <label class="switch">
+            <input type="checkbox" id="chkISPLegend" onchange="isp.OpenISPLegend()">
+            <span class="slider round"></span>
+        </label>
+        <span>@Resources.Resources.SI_ISP_GBL_NET_FRM_009</span>
+        @*<span><i class="shaft-strip-box-normal"></i>Normal Shaft</span>
+            <span style="margin-right:10px;"><i class="shaft-strip-box"></i>Virtual Shaft</span>*@
+
+    </div>
+        <div class="table-scroll">
+            <div class="table-wrap" id="divforstructureprint">
+                <div id="divSVGContainer" class="SVGContainer">
+                    <svg id="svgCable" class="svgCableContainer" pointer-events="none" onresize="isp.resetSVG()" style="visibility:hidden">
+                        <circle r="10" id="circleMarker" class="" transform="" circle-index="" fill="#044B94" fill-opacity="0.4" style="visibility:hidden" data-trace-buffer="@ApplicationSettings.TraceISPCableBuffer" data-split-buffer="@ApplicationSettings.SplitISPCableBuffer"></circle>
+                        <path id="tempPath" d="" data-is-edit-mode="false" data-a-system-id="" data-a-entity-type="" data-a-location="" data-a-node-type="" data-b-system-id="" data-b-entity-type="" data-b-location="" data-b-node-type="" data-cable-type="" data-system-id=""></path>
+
+                        @foreach (var item in Model.lstStructurCables)
+                        {
+                            var dashstyle = item.network_status == "P" ? "10 5" : item.network_status == "D" ? "10,5,2,5" : "6 1";
+
+                            <path style="fill:none;stroke-width: 2px;/* stroke-dasharray: 6 1; */ stroke-dasharray: @dashstyle;stroke: blue;" pointer-events="visibleStroke" d="@item.line_geom" class="entityInfo @item.network_status" id="ispCable_@item.system_id" title="@item.network_id"
+                                  data-system-id="@item.system_id" data-total-core="@item.total_core" data-entity-type="@item.entity_name" data-entity-title="@item.entity_title" data-entity-geomtype="LINE"
+                                  data-network-id="@item.network_id" data-cable-type="@item.cable_type" data-network-status="@item.network_status"
+                                  data-a-system-id="@item.a_system_id" data-a-entity-type="@item.a_entity_type"
+                                  data-a-location="@item.a_location" data-a-node-type="@item.a_node_type"
+                                  data-b-system-id="@item.b_system_id" data-b-entity-type="@item.b_entity_type" data-b-location="@item.b_location"
+                                  data-b-node-type="@item.b_node_type">
+                                <title>@item.network_id</title>
+                            </path>
+                        }
+
+                    </svg>
+                    <svg id="svgPatchCable" class="svgPatchCableContainer" pointer-events="none" onresize="isp.resetSVG()" style="visibility:hidden">
+                    </svg>
+                </div>
+                <table class="str-main-table">
+                    <tbody>
+                        <tr class="str-top-row">
+                            <td>
+                                <div class="floor-strip-box top-floor-strip-box">
+                                    <div class="floor-strip-circle dark-strip-color"></div>
+                                    <div class="floor-strip-line top-floor-strip-line"></div>
+                                </div>
+                                <div style="float:right">
+                                    <div class="shaft-fixed-dot dark-strip-color"></div>
+                                    <div class="shfat-strip-line shfat-strip-fixed-line"></div>
+                                </div>
+                            </td>
+
+                            @foreach (var leftShaft in Model.ShaftList.Where(m => m.isLeftShaft == true))
+                            {
+                                <td>
+                                    <div class="shaft-strip-tool">
+                                        <div class="shaft-strip-controls">
+                                            <div class="clsShaftActionControls">
+                                                <div id="divShaftTopControl">
+                                                    <div class="shaft-strip-puls icon-Add_shaft-floor"></div>
+                                                    <div class="shaft-doted-line"></div>
+                                                </div>
+                                            </div>
+                                            <div class="shaft-strip-circle" style="margin-left: 1px; margin-top:3px;"></div>
+                                            <div class="clsShaftActionControls">
+                                                <div id="divShaftBottomControl">
+                                                    <div class="shaft-doted-line"></div>
+                                                    <div class="shaft-strip-minus icon-Subtract_shaft-floor"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="shfat-strip-line"></div>
+                                    </div>
+                                    <div class="ShaftNameContainer shaft-left" title="@leftShaft.entityname">
+                                        <div class="ShaftSeprator">
+                                            <div class="ShaftInnerSeprator"></div>
+                                        </div>
+                                        <input type="text" class="ShaftName form-control labledTextbox" value="@(leftShaft.entityname.Length > 10 ? leftShaft.entityname.Substring(0, 10) + "..." : leftShaft.entityname)" data-system-id="@leftShaft.systemid" data-structure-id="@leftShaft.structureid" data-current-name="@leftShaft.entityname" maxlength="20" id="txtShaft_@leftShaft.systemid" />
+                                        <div class="@(editPermission == true ? "" : "roledisabled") ShaftEditIcon icon-Edit" data-system-id="@leftShaft.systemid" data-structure-id="@leftShaft.structureid" id="btnEditShaft"></div>
+                                        <div>@(leftShaft.withriser == true ? Resources.Resources.SI_ISP_GBL_NET_FRM_067 : Resources.Resources.SI_GBL_GBL_NET_FRM_089)</div>
+                                    </div>
+                                    <div class="str-shaft str-top-shaft shaft-left  @(leftShaft.isVirtualShaft ? "virtualShaft" : "normalShaft")"></div>
+                                </td>
+                            }
+
+                            <td>
+                                <div class="shaft-top-floor-strip-container">
+                                    <div class="shfat-strip-line shaft-strip-top-floor-line"></div>
+                                </div>
+                                <div class="str-floor str-top-floor"><div class="continous-sign"></div></div>
+                            </td>
+                            @foreach (var rightShaft in Model.ShaftList.Where(m => m.isLeftShaft == false))
+                            {
+                                <td>
+                                    <div class="shaft-strip-tool">
+                                        <div class="shfat-strip-line"></div>
+                                        <div class="shaft-strip-controls">
+                                            <div class="clsShaftActionControls">
+                                                <div id="divShaftTopControl">
+                                                    <div class="shaft-strip-puls icon-Add_shaft-floor"></div>
+                                                    <div class="shaft-doted-line"></div>
+                                                </div>
+                                            </div>
+                                            <div class="shaft-strip-circle" style="margin-left:2px; margin-top:3px;"></div>
+                                            <div class="clsShaftActionControls">
+                                                <div id="divShaftBottomControl">
+                                                    <div class="shaft-doted-line"></div>
+                                                    <div class="shaft-strip-minus icon-Subtract_shaft-floor"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ShaftNameContainer" title="@rightShaft.entityname">
+                                        <div class="ShaftSeprator">
+                                            <div class="ShaftInnerSeprator"></div>
+                                        </div>
+                                        <input type="text" title="@rightShaft.entityname" class="ShaftName form-control labledTextbox" value="@(rightShaft.entityname.Length > 10 ? rightShaft.entityname.Substring(0, 10) + "..." : rightShaft.entityname)" data-system-id="@rightShaft.systemid" data-structure-id="@rightShaft.structureid" data-current-name="@rightShaft.entityname" maxlength="20" id="txtShaft_@rightShaft.systemid" />
+                                        <div class="ShaftEditIcon icon-Edit @(editPermission == true ? "" : "roledisabled")" data-system-id="@rightShaft.systemid" data-structure-id="@rightShaft.structureid" id="btnEditShaft"></div>
+                                        <div>@(rightShaft.withriser == true ? Resources.Resources.SI_ISP_GBL_NET_FRM_067 : Resources.Resources.SI_GBL_GBL_NET_FRM_089)</div>
+                                    </div>
+                                    <div class="str-shaft str-top-shaft shaft-right @(rightShaft.isVirtualShaft ? "virtualShaft" : "normalShaft")">
+
+                                    </div>
+                                </td>
+                            }
+                            <td>
+                                <div class="shfat-strip-line shfat-strip-fixed-line"></div>
+                                <div class="shaft-fixed-dot dark-strip-color" style="margin-left:-5px;"></div>
+                            </td>
+                        </tr>
+                        @{var isFloorRoomView = Model.listLayerAction.Where(x => x.action_name.ToLower() == "roomview").FirstOrDefault();}
+                        @foreach (var item in Model.FloorList.Select((value, i) => new { i, value }))
+                    {
+                            <tr>
+                                <td>
+                                    <div class="floor-box">
+                                        <div class="floor-strip-box">
+                                            <div style="width:74px;height: 20px;">
+                                                <div class="clsFloorActionControls">
+                                                    <div id="divFloorLeftControl">
+                                                        <div class="floor-strip-plus icon-Add_shaft-floor"></div>
+                                                        <div class="floor-horizontal-dot-line floor-left-horizontal-dot-line"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="floor-strip-circle"></div>
+                                                <div class="clsFloorActionControls">
+                                                    <div id="divFloorRightControl">
+                                                        <div class="floor-horizontal-dot-line floor-horizontal-right-dot-line"></div>
+                                                        <div class="floor-strip-minus icon-Subtract_shaft-floor"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @if (item.i < Model.FloorList.Count - 1)
+                                        {
+                                                <div class="floor-strip-line"></div>
+                                        }
+                                        </div>
+                                        <div class="FloorInfoParent">
+                                            <div class="FloorSeprator"></div>
+                                            <div class="FloorInfoBox" data-system-id="@item.value.systemid">
+                                                <div class="FloorInfo" title="@item.value.entityname" >
+                                                    <input type="text" class="FloorName form-control labledTextbox" value="@(item.value.entityname.Length>17?item.value.entityname.Substring(0,17)+"...":item.value.entityname)" data-system-id="@item.value.systemid" data-structure-id="@item.value.structureid" data-current-name="@item.value.entityname" maxlength="20" id="txtFloor_@item.value.systemid" />
+                                                    @*<div class="FloorEditIcon icon-Edit"></div>*@
+                                                </div>
+                                                <div class="Dimensions">
+                                                    <span>@Resources.Resources.SI_ISP_GBL_GBL_FRM_019:</span>
+                                                    <div style="margin-left: 6px;" class="@(editPermission==true?"":"roledisabled")" data-system-id="@item.value.systemid" id="btnEditFloor"><i class="icon-Edit-floor-shaft" title="Floor Detail"></i></div>
+                                                    @*<a href="#" id="EntityRoomView" class="icon-RoomView " data-system-id="495" data-entity-type="UNIT" data-entity-title="Room View" data-geom-type="POINT" data-network-status="A" title="" data-original-title="Room View"></a>*@
+
+                                                    @if (isFloorRoomView != null)
+                                                    {
+                                                        <div id="btnRoomViewFloor"><i data-entity-type="Floor" data-geom-type="POINT" data-network-status="A" data-system-id="@item.value.systemid" class="icon-UNIT" title="Room View"></i></div>
+                                                    }
+                                                  
+                                                </div>
+                                                <div class="FloorDiension"><span>@item.value.length</span><span class="LengthColor">L</span></div>
+                                                <div class="FloorDiension"><span>@item.value.width</span><span class="WidthColor">W</span></div>
+                                                <div class="FloorDiension"><span>@item.value.height</span><span class="HeightColor">H</span></div>
+                                              @{ var isDisplay = item.value.total_Placed_Racks > 0 ? "block" : "none";}
+                                                <div class="rackDisplay" style="display:@isDisplay" >
+                                                    <div class="RackCountText">Rack Count:</div><div class="RackCountNo">@item.value.total_Placed_Racks</div>
+                                                </div>
+                                                @{ var isLoopDisplay = item.value.total_loop > 0 ? "block" : "none";}
+                                                <div class="loopDisplay" style="display:@isLoopDisplay">
+                                                    <div class="LoopCountText">Loop Count:</div><div class="LoopCountNo">@item.value.total_loop</div>
+                                                </div>
+                                                <div class="UnitNoText">@layerDetail.layer_title @Resources.Resources.SI_GBL_GBL_NET_FRM_215:</div><div class="UnitNo">@item.value.no_of_units</div>
+                                           
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                @foreach (var shaftItem in Model.ShaftList.Where(m => m.isLeftShaft == true))
+                            {
+                                var shaftId = "div_shaft_" + shaftItem.systemid + "_Floor_" + item.value.systemid;
+                                var disabledClass = "";
+                                if (Model.lstShaftRange.Count > 0 && Model.lstShaftRange.Where(m => m.shaft_id == shaftItem.systemid).ToList().Count > 0)
+                                {
+                                    disabledClass = "shaftdisabled";
+                                }
+                                if (Model.lstShaftRange.Count > 0 && (Model.lstShaftRange.Where(m => m.shaft_id == shaftItem.systemid && (item.value.systemid >= m.shaft_start_range && item.value.systemid <= m.shaft_end_range)).ToList().Count() > 0))
+                                {
+                                    disabledClass = "";
+                                }
+                                <td>
+                                    <div class="str-shaft shaft-left @(shaftItem.isVirtualShaft? "virtualShaft" : "normalShaft") @disabledClass" id="@shaftId">
+                                        @Html.Partial("_Element", Model, new ViewDataDictionary { { "ShaftId", shaftItem.systemid }, { "FloorId", item.value.systemid } })
+                                    </div>
+                                </td>
+                            }
+                                <td>
+                                    <div class="str-floor" id="divFloor_@item.value.systemid" data-width="@item.value.width" data-height="@item.value.height" data-length="@item.value.length" data-total-unit="@item.value.no_of_units">
+                                        @Html.Partial("_Element", Model, new ViewDataDictionary { { "ShaftId", 0 }, { "FloorId", item.value.systemid } })
+                                    </div>
+                                </td>
+
+                                @foreach (var shaftItem in Model.ShaftList.Where(m => m.isLeftShaft == false))
+                            {
+                                var shaftId = "div_shaft_" + shaftItem.systemid + "_Floor_" + item.value.systemid;
+                                var disabledClass = "";
+                                if (Model.lstShaftRange.Count > 0 && Model.lstShaftRange.Where(m => m.shaft_id == shaftItem.systemid).ToList().Count > 0)
+                                {
+                                    disabledClass = "shaftdisabled";
+                                }
+                                if (Model.lstShaftRange.Count > 0 && (Model.lstShaftRange.Where(m => m.shaft_id == shaftItem.systemid && (item.value.systemid >= m.shaft_start_range && item.value.systemid <= m.shaft_end_range)).ToList().Count() > 0))
+                                {
+                                    disabledClass = "";
+                                }
+                                <td>
+                                    <div class="str-shaft shaft-right @(shaftItem.isVirtualShaft? "virtualShaft" : "normalShaft") @disabledClass" id="@shaftId">
+                                        @Html.Partial("_Element", Model, new ViewDataDictionary { { "ShaftId", shaftItem.systemid }, { "FloorId", item.value.systemid } })
+                                    </div>
+                                </td>
+                            }
+                            </tr>
+                    }
+                        <tr class="str-bottom-row">
+
+                            <td>
+
+                                <div style="width:90px; float:right;">
+                                    <div class="str-bottom-left-border"></div>
+                                    <div id="divOSPCable" class="ospCable" style="top: 20px;right: -10px;width: 100px;height: 25px;position: relative;">
+                                        <img id="ospCableImg1" src="~/Content/images/osp_cable_icon1.svg" />
+                                        <img id="ospCableImg2" src="~/Content/images/osp_cable_icon2.svg" />
+                                    </div>
+                                </div>
+                            </td>
+                            @foreach (var shaftItem in Model.ShaftList.Where(m => m.isLeftShaft == true))
+                        {
+                                <td class="str-bottom-section"></td>
+                        }
+                            <td class="str-bottom-section"></td>
+                            @foreach (var shaftItem in Model.ShaftList.Where(m => m.isLeftShaft == false))
+                        {
+                                <td class="str-bottom-section"></td>
+                        }
+                            <td><div class="str-bottom-right-border"></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.tooltip').hide();// remove tooltips in case of refreshing the structure.
+        //var extrawidth = $('.str-main-table').offset().left + $('.table-wrap').offset().left + $('.table-scroll').offset().left + $('.structureInfo').offset().left;
+        // $('#svgCable').css({ 'width': $('.str-main-table').width() + extrawidth, 'height': $('.str-main-table').height(), 'max-width': $('.str-main-table').width() + extrawidth, 'max-height': $('.str-main-table').height() });
+        $('#svgCable,#svgPatchCable').css({ 'width': $('.str-main-table').width(), 'height': $('.str-main-table').height(), 'max-width': $('.str-main-table').width(), 'max-height': $('.str-main-table').height() });
+        $('.structureInfo [title!=""]:not(path)').tooltip({ title: '', html: true, placement: "top", container: 'body' });
+        $("#svgCable").css('left', $('.str-main-table').offset().left);
+        $("#svgPatchCable").css('left', $('.str-main-table').offset().left);
+    });
+</script>

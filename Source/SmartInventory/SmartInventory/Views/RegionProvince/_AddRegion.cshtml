@@ -1,0 +1,137 @@
+﻿@model Models.UpdateGeomtaryValue
+
+@{
+    Layout = null;
+    var buttonText = Model.lstUpdateRegionProvince[0].existing_id > 0 ? "Update" : "Save";
+}
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.pageMsg); }
+
+}
+<style>
+    .RegProvFooter {
+        margin-bottom: -10px;
+        margin-top: 20px;
+    }
+
+    .ValidationError {
+        width: 100%;
+        border: 1px solid red;
+    }
+
+    .ValidationSucess {
+        width: 100%;
+        border: 1px solid red;
+    }
+</style>
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SaveRegion", "RegionProvince", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress", OnSuccess = "si.refreshRegionProvince();" }, new { id = "frmSaveRegionProvince", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.lstUpdateRegionProvince[0].geomtext)
+        @Html.HiddenFor(m => m.lstUpdateRegionProvince[0].existing_id)
+        @Html.HiddenFor(m => m.lstUpdateRegionProvince[0].entryStatus)
+        @Html.HiddenFor(m => m.lstUpdateRegionProvince[0].boundarytype, new { id = "hdnBoundaryType" })
+        @pageMessage()
+        <div class="space-pad">
+
+            <div class="row form-group">
+                <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_065<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.lstUpdateRegionProvince[0].region_name, new { @id = "txtRegionName", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_002, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_357, maxlength = 20 })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_358<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.lstUpdateRegionProvince[0].region_abbreviation, new { @id = "txtRegionAbbreviation", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_358, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_359, maxlength = 5 })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_353<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.lstUpdateRegionProvince[0].country_name, new { @id = "txtCountry", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_353, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_354, maxlength = 20 })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Is Active?
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.CheckBoxFor(m => m.is_active, new { @class = "chk" })
+
+                </div>
+            </div>
+        </div>
+        <div class="d-flex ModalFooter">
+            <button type="button" class="btn btn-default ml-auto mr-01" id="btnRegionClear" onclick="$('#ModalPopUp  #closeModalPopup').trigger("click");">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</button>
+            <button type="submit" class="btn btn-primary" id="btnAddRegion" onclick="return ValidateRegion();">@buttonText</button>
+        </div>
+
+    }
+</div>
+<script>
+    $(document).ready(function () {
+         
+        if (@Model.lstUpdateRegionProvince[0].existing_id > 0)
+        {
+            $("#txtCountry").prop('readonly', true);
+        }
+        else{
+            $("#txtCountry").prop('readonly', false);
+        }
+        @*if (@Model.lstUpdateRegionProvince[0].existing_id > 0 && '@Model.pageMsg.message' != "") {
+            alert('@Model.pageMsg.message');
+        }
+        else if ('@Model.pageMsg.message' != "")
+        {
+            if('@Model.pageMsg.status' == "OK")
+            {
+                ResetRegion();
+            }
+            alert('@Model.pageMsg.message');
+            $('#closeModalPopup').trigger("click");
+        }*@
+    });
+    function ResetRegion() {
+        $("#txtRegionName").val("").addClass("ValidationSuccess").removeClass("ValidationError");
+        $("#txtRegionAbbreviation").val("").addClass("ValidationSuccess").removeClass("ValidationError");
+        if (@Model.lstUpdateRegionProvince[0].existing_id <= 0)
+            $("#txtCountry").val("").addClass("ValidationSuccess").removeClass("ValidationError");
+    }
+    function ValidateRegion() {
+        var purpose = $("#hdnBoundaryType").val().toUpperCase();
+        if ($("#txtRegionName").val().trim() == "" && $("#txtRegionAbbreviation").val().trim() == "" && $("#txtCountry").val().trim() == "") {
+            $("#txtRegionName").addClass("ValidationError").removeClass("ValidationSuccess");
+            $("#txtRegionAbbreviation").addClass("ValidationError").removeClass("ValidationSuccess");
+            $("#txtCountry").addClass("ValidationError").removeClass("ValidationSuccess");
+            return false;
+        }
+
+        if ($("#txtRegionName").val().trim() == "") {
+            $("#txtRegionName").addClass("ValidationError").removeClass("ValidationSuccess");
+            return false;
+        }
+        else {
+            $("#txtRegionName").addClass("ValidationSuccess").removeClass("ValidationError");
+        }
+        if ($("#txtRegionAbbreviation").val().trim() == "") {
+            $("#txtRegionAbbreviation").addClass("ValidationError").removeClass("ValidationSuccess");
+            return false;
+        }
+        else {
+            $("#txtRegionAbbreviation").addClass("ValidationSuccess").removeClass("ValidationError");
+        }
+        if ($("#txtCountry").val().trim() == "") {
+            $("#txtCountry").addClass("ValidationError").removeClass("ValidationSuccess");
+            return false;
+        }
+        else {
+            $("#txtCountry").addClass("ValidationSuccess").removeClass("ValidationError");
+        }
+        return true;
+    }
+</script>

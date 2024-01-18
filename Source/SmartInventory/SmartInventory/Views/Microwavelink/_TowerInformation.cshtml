@@ -1,0 +1,57 @@
+﻿@model Models.MicrowaveLinkMaster
+<fieldset class="the-fieldset">
+    <legend class="the-legend">
+        @Resources.Resources.SI_OSP_GBL_GBL_FRM_105 </legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" ></label>
+        <label class="control-label col-sm-5">Tower A</label>
+        <label class="control-label col-sm-5">Tower B</label>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" >@Resources.Resources.SI_OSP_GBL_NET_FRM_518</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterA.network_id, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterB.network_id, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_GBL_212</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterA.network_name, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterB.network_name, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2">@Resources.Resources.SI_ISP_GBL_GBL_GBL_010:<i class="clsMandatory">*</i>:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterA.longitude, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterB.longitude, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_GBL_106:<i class="clsMandatory">*</i>:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterA.latitude, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterB.latitude, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+   
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_GBL_245 (m):<i class="clsMandatory">*</i>:</label>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterA.elevation, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="col-sm-5">
+            @Html.TextBoxFor(m => m.towerMasterB.elevation, new { @class = "form-control",  @readonly = true })
+        </div>
+    </div>
+
+</fieldset>

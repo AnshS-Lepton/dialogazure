@@ -1,0 +1,210 @@
+﻿   
+    .divPads {
+        padding: 3px;
+    }
+    .modal-body .FilterDiv .padRow .divPads {
+        display: inline-block;
+    }
+
+    .divPads .assign-calen {
+        position: absolute;
+        margin-top: 5px;
+        margin-right: 19px;
+        cursor: pointer;
+        right: 0px;
+    }
+    .numList {
+        padding: 1px 6px;
+        background-color: #252324;
+        border-radius: 10px;
+        width: fit-content;
+        margin: auto;
+    }
+     
+    .col-md-2 {
+        width: 16.66666667%;
+    }
+    .DateIco {
+        position: absolute;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.25);
+        right: 0;
+        margin: 11px 9px 0px 0px;
+        cursor: pointer;
+    }
+
+    .glyphicon-filter {
+        color: #1890FF;
+    }
+
+    .BDR {
+        color: #1890FF;
+        border: 1px solid #1890FF !important;
+    }
+    .nav-tabs {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .nav-tabs > li {
+        border-radius:0;
+        }
+         
+    .lineMR {
+        font-size: 18px;
+        line-height: 2;
+        text-align: right;
+        opacity: 0.7;
+        display: block !important;
+    }
+    .padRow .form-group {
+        margin-bottom: 1rem !important;
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+   /* .tab-content > .active {
+        border-top: #31bd72 solid 1px;
+    }*/
+
+    .ViewLink > li {
+        border-bottom: none !important;
+    }
+    .FilterDiv {
+        position: relative;
+        width: 100%;
+        height: auto;
+        /*box-shadow: 0px 0 5px rgba(0, 0, 0, 0.5);*/
+        /*border-radius: 4px;*/
+        background-color: #fff;
+        /*margin: 45px 0px 0px -180px;*/
+    }
+     
+        .FilterDiv .padRow {
+            border-bottom: 1px solid rgba(204, 204, 204, 0.5);
+        }
+
+            .FilterDiv .padRow .text-left {
+                color: #E30000;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            .FilterDiv .padRow .text-right {
+                color: #2567C5;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+    #VwFiberLinkGrid {
+        top: -6px;
+    }
+
+.dropbox {
+    position: absolute;
+    width: 60px;
+    background-color: var(--tableOddBg);
+    right: 0px;
+    margin: 3px 15px 0px 0px;
+    box-shadow: 0px 1px 3px #b3b3b3;
+    text-align: left;
+    font-size: 14px;
+    z-index: 10000;
+    display: none;
+}
+  
+ .ui-menu-item {
+        /*// padding-left:15px;*/
+        margin: 0;
+        padding: 6px 0px 6px 20px;
+        list-style: none;
+        background-repeat: no-repeat;
+        background-position: left center;
+        background-size: 17px;
+        border-bottom: 1px solid #dedbdb;
+        margin-left: 5px;
+        margin-right: 5px;
+        max-width: 241px !important;
+        overflow: hidden;
+        height: auto;
+    }
+
+    .ui-state-focus {
+        border-width: 0px 0px 0px 0px !important;
+        border-bottom: 1px solid #dedbdb !important;
+        background-color: #bab3b3 !important;
+    }
+
+    .TickCrossicon {
+        position: absolute;
+        font-size: 13px;
+        right: 0;
+        margin: 6px 18px 0px 0px;
+    }
+
+        .TickCrossicon i {
+            background: #00ba8a;
+            color: #fff;
+            padding: 4px;
+            border-radius: 19px;
+            height: 18px;
+            width: 19px;
+            cursor: pointer;
+            float: right;
+            margin: -3px 2px;
+            font-size: 12px;
+        }
+
+    .crossIcon, .tickIcon, .detailsicon, .crossStartIcon, .tickStartIcon, .crossEndIcon, .tickEndIcon{
+        display: none;
+    }
+
+   
+    .chosen-container {
+        width: 110px !important;
+    }
+    .GifImg{
+        width: 22px;
+        cursor: pointer;
+        margin-top: -5px;
+    }
+    .tickCrossImg { 
+        width: 17px;
+        cursor: pointer;
+        margin-top: -22px; 
+        margin-right: 27px;
+    }
+    .TickCrossicons { 
+        margin-left: 264px;
+    } 
+    .fiberlnkStatus{
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        float: left;
+        margin-right: 7px;
+        margin-top: 2px;
+    }
+    .progressIcon {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url(../images/loading_new.gif);
+        background-position: center;
+        background-repeat: no-repeat;
+}
+.the-fieldset .chosen-container{
+    width:100% !important;
+}
+.fiber--min-height {
+    max-height: 450px;
+    overflow-y: auto;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+}
+     

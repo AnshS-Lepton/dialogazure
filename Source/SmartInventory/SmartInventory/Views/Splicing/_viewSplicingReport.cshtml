@@ -1,0 +1,96 @@
+﻿@model Models.connectionInput
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "SplicingReport", ajaxUpdateCallback: "onGridHeaderClick('tblSplicingReport');changeColor('tblSplicingReport');");
+    grid.Bind(Model.listSplicingReport, autoSortAndPage: false, rowCount: Model.totalRecord);
+    if (Model.totalRecord > 0)
+    {
+        grid.PageIndex = Model.currentPage - 1;
+    }
+}
+
+<!DOCTYPE html>
+<div class="viewReport" id="dvChildModalBody">
+    @using (Ajax.BeginForm("GetSplicingReport", "Splicing", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "dvProgress" },
+                 new { id = "frmSplicingReport", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.source_system_id);
+        @Html.HiddenFor(m => m.source_entity_type);
+
+        if (Model.listSplicingReport.Count > 0)
+        {
+            <div class="d-flex space-pad" id="dvBtnAction">
+               <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@grid.TotalRowCount</span></b>
+                <div class="ml-auto">
+                    @if (@grid.TotalRowCount > 0)
+                    {
+                        <a href="#" id="btnExport" class="exp--btn"><i class="icon-Export mr-03"></i> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</a>
+                    }
+                    else
+                    {
+                        <input type="button" id="btnExport" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" disabled="disabled" class="btn btn-primary" />
+                    }
+                </div>
+            </div>
+            
+            <div id="SplicingReport">
+
+                @if (Model.listSplicingReport.Count > 0)
+                {
+                    <div class="tablePad--tn">
+                        <div class="print-maxH">
+                            @grid.GetHtml(tableStyle: "stickyTh",
+                         htmlAttributes: new { id = "tblSplicingReport" },
+                            mode: WebGridPagerModes.All,
+                           columns: grid.Columns(
+                             grid.Column("source", "Source", format: @<text>@item.source</text>, canSort: false),
+grid.Column("source_entity_type", "Source Entity Type", format: @<text>@item.source_entity_type</text>, canSort: false),
+grid.Column("source_tube_no", "Source Tube No.", format: @<text>@item.source_tube_no</text>, canSort: false),
+grid.Column("source_port_no", "Source Port No.", format: @<text>@item.source_port_no</text>, canSort: false),
+grid.Column("via_entity", "Via Entity", format: @<text>@item.via_entity</text>, canSort: false),
+grid.Column("via_entity_type", "Via Entity Type", format: @<text>@item.via_entity_type</text>, canSort: false),
+grid.Column("via_port_no", "Via Entity Port No.", format: @<text>@item.via_port_no</text>, canSort: false),
+grid.Column("tray_name", "Via Tray Name", format: @<text>@item.tray_name</text>, canSort: false),
+grid.Column("using_entity", "Using Entity", format: @<text>@item.using_entity</text>, canSort: false),
+grid.Column("using_entity_type", "Using Entity Type", format: @<text>@item.using_entity_type</text>, canSort: false),
+grid.Column("using_port_in", "Using Entity Port In", format: @<text>@item.using_port_in</text>, canSort: false),
+grid.Column("using_port_out", "Using Entity Port Out", format: @<text>@item.using_port_out</text>, canSort: false),
+grid.Column("destination", "Destination", format: @<text>@item.destination</text>, canSort: false),
+grid.Column("destination_entity_type", "Destination Entity Type", format: @<text>@item.destination_entity_type</text>, canSort: false),
+grid.Column("destination_tube_no", "Destination Tube No.", format: @<text>@item.destination_tube_no</text>, canSort: false),
+grid.Column("destination_port_no", "Destination Port No.", format: @<text>@item.destination_port_no</text>, canSort: false)
+))
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="nr-found">
+                <span> @Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+            </div>
+        }
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+         
+        //changeColor('tblSplicingReport');
+        //addDefaultSortingIcons('tblSplicingReport');
+       
+        $('th a, tfoot a').on("click", function () {
+            $('#frmSplicingReport').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+      
+      
+      
+        $("#btnExport").on("click", function () {
+            // SurveyAssignmentExport();
+            window.location = appRoot + 'Splicing/ExportSplicing';
+        });
+        
+    });
+</script>

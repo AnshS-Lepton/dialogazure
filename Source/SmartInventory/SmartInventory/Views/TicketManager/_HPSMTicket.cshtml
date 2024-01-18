@@ -1,0 +1,159 @@
+﻿@using Models
+@model Models.TicketMaster
+
+@{
+    var RestrictedTicketAttachments = SmartInventory.Settings.ApplicationSettings.RestrictedTicketAttachments;
+    var TicketAttachmentMaxSize = SmartInventory.Settings.ApplicationSettings.TicketAttachmentMaxSize;
+}
+<link href="~/Content/css/HPSMTicket.css" rel="stylesheet" />
+<script src="~/Content/js/HPSMTicket.js"></script>
+
+<!DOCTYPE html>
+<div class="wrapper">
+    <h2 class="content">
+        Fill in the form to report any issues. Kindly provide a detailed description so that we
+        understand your needs better and give faster solutions
+    </h2>
+    <div class="form-group">
+        <div class="fieldsRow">
+            <div class="fieldInput">
+                <label class="control-label">
+                    Name
+                </label>
+                @Html.TextBoxFor(m => m.customer_name, new { @id = "txtCustomerName", @title = "Name", @class = "input-sm form-control", @placeholder = "eg. Angrie Singh", @readonly = "readonly" })
+            </div>
+            <div class="fieldInput">
+                <label class="control-label">
+                    Mobile Number
+                </label>
+                <div class="pose-rel">
+                    @Html.TextBoxFor(m => m.contact_no, new { @id = "txtContactNo", @title = "Mobile Number", @class = "input-sm form-control", @placeholder = "9818XXXX10", @readonly = "readonly" })
+                </div>
+            </div>
+        </div>
+        <div class="fieldsRow mt-1">
+            <div class="fieldInput">
+                <label class="control-label">
+                    Business Name
+                </label>
+                @Html.TextBoxFor(m => m.ticket_reference, new { @id = "txtTicketReference", @title = "Business Name", @class = "input-sm form-control", @placeholder = "JioFiber", @readonly = "readonly" })
+            </div>
+
+            <div class="fieldInput">
+                <label class="control-label">
+                Category
+                </label>
+                @Html.DropDownListFor(x => x.ticket_type_id, new SelectList(Model.lstTicketTypeMaster.Select(x => new { Value = x.id, Text = x.ticket_type }), "Value", "Text"), " -Select Category-", new { @class = "chosen-select form-control", @id = "ddlTicketTypes", @onchange = "return validateDropdown(this.id);" })
+                @*<div class="dropdownBox">
+                    <div onclick="myFunction()" class="dropbtn pos-rel" id="category">
+                        <lable id="lbltxt">
+                            -Select Category-</lable>
+                        <lable><img src="~/Content/images/sArrow.svg" class="dropdown-content_search"></lable>
+</div>
+                    <div id="myDropdown" class="dropdown-content">
+                        <input type="text" placeholder="Search.." id="myInput" maxlength="30" onkeyup="filterFunction()">
+                        <div class="dropdown-content_contBox">
+                            @foreach (var item in @Model.lstTicketTypeMaster)
+                            {
+                                <a href="#" onclick="getselectedCategory(this); return false;" id="@item.id">@item.ticket_type</a>
+                            }
+                        </div>
+                    </div>
+                </div>*@
+            </div>
+        </div>
+        <br />
+        <div class="fieldInput">
+            <label class="control-label">
+                Enter Ticket Description<span class="vdesc"> (Valid characters are a-zA-Z0-9 ,._%# &#64;()+-=!?)</span>
+            </label>
+            <div class="pose-rel fieldTextArea">
+                @Html.TextAreaFor(m => m.ticket_description, 5, 100, new { @id = "txtDescription", @title = "Ticket Description", @placeholder = "Write Something...", @maxlength = 200,@Style = "resize: none" })
+                <div class="textArea--content"><span id="charLength">0</span>/200</div>
+            </div>
+        </div>
+
+        <div class="attachFile mt-1 d-flex align-top">
+            <div class="fileUploadBtn">
+                <button class="btn">
+                    <img src="~/Content/images/attach.svg" />
+                </button>
+                <input type="file" id="FileHPSMTicket" name="FileHPSMTicket" multiple style="font-size: 13px;height:37px;width: 195px;" onchange="return isValidUploadFile('@RestrictedTicketAttachments', '@TicketAttachmentMaxSize');" />
+                @*@Html.ValidationSummary(true)
+
+                    @Html.TextBoxFor(a => a.FileHPSMTicket, new { @type = "file" })*@
+                @*<label id="lblUploadProgress" style="font-weight: bold; margin-top: 15px; font-size: 13px; width: 200px;"></label>*@
+                  <div class="fileContent">
+                      <p>Attach a File</p>
+                      <span id="fileName" class="fileName"></span>                    
+                      <span class="maxFile">
+                          Max file size @TicketAttachmentMaxSize MB<br />
+                          Only '@RestrictedTicketAttachments' are acceptable
+                      </span>
+                  </div>
+            </div>
+
+        </div>
+        <div class="fieldsRow mt-1">
+            <div class="fieldInput">
+                <input type="submit" class="btn btn-primary" name="btnaction" id="btnSubmit" width="20" value="Save" onclick="return SaveHPSMTicket('@RestrictedTicketAttachments' , '@TicketAttachmentMaxSize')" />
+            </div>
+        </div>
+    </div>
+    <input type="text" id="ddlTicketTypes" name="ddlTicketTypes" value="" style="opacity:0;height:1px;width:1px">
+    <input type="text" id="TicketType" name="TicketType" value="" style="opacity:0;height:1px;width:1px">
+</div>
+<script>
+    /* When the user clicks on the button,
+    toggle between hiding and showing the dropdown content */
+
+    function myFunction() {
+       // document.getElementById("myDropdown").classList.toggle("showDropDown");
+        //drp = document.getElementById("myDropdown");
+        ////if (document.getElementById("lbltxt").innerText == '-Select Category-') {drp.style.display = "block";}else{drp.style.display = "none";}
+        //drp.style.display = "block";
+        
+    }
+
+    function filterFunction() {
+        var input, filter, ul, li, a, i;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        div = document.getElementById("myDropdown");
+        a = div.getElementsByTagName("a");
+        for (i = 0; i < a.length; i++) {
+            txtValue = a[i].textContent || a[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                a[i].style.display = "";
+            } else {
+                a[i].style.display = "none";
+            }
+        }
+    }
+
+    function getselectedCategory(obj) {
+        var txt = obj.innerText;
+        var pid = obj.id
+        document.getElementById("lbltxt").innerText = txt;
+        drp = document.getElementById("myDropdown");
+        drp.style.display = "none";
+        document.getElementById("ddlTicketTypes").value = obj.id;
+        document.getElementById("TicketType").value = obj.innerHTML;
+        $('#' + 'category').addClass('valid').removeClass('input-validation-error');
+    }
+    
+    //$('#category').mouseleave(function (e) {
+    //    drp = document.getElementById("myDropdown");
+    //  //  if (document.getElementById("lbltxt").innerText != '-Select Category-') { drp.style.display = "none"; $('#myInput').value = ''; }\
+    //    drp.style.display = "none";
+
+    //});
+
+    $('#ddlTicketTypes_chosen').on("click", function () { 
+        $(this).children('.chosen-drop').children('.chosen-search').children('.chosen-search-input')[0].value = '';
+        var srch = $(this).children('.chosen-drop').children('.chosen-search').children('.chosen-search-input')[0];
+        srch.maxLength = 30;
+        
+    });
+    
+</script>

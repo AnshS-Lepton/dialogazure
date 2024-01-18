@@ -1,0 +1,297 @@
+﻿@model Models.VizButterFlyNetwork
+@using SmartInventory.Settings;
+@{
+    Layout = null;
+    var iconBaseUrl = Url.Content("~/Content/images/icons/lib/VisIcons/");
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ButterFly Diagram</title>
+    <link id="favicon" rel="shortcut icon" href="@ApplicationSettings.ClientFavicon" type="image/x-icon" />
+    @Styles.Render("~/VizNetworkCSS")
+    @Scripts.Render("~/VizNetworkScripts")
+</head>
+<body>
+    <input type="hidden" id="ImgBaseUrl" value="@iconBaseUrl" />
+    <div id="header">
+        <div id="logo">
+            @ApplicationSettings.ApplicationName
+        </div>
+    </div>
+    <div id="content" class="mainContainer">
+        <div class="contentHeader">
+            <div class="pagetitle">
+                <h2>@string.Concat(Model.entityTitle, " ButterFly Diagram")</h2>
+            </div>
+            <div class="midContent"> @Model.entityDisplayText</div>
+            <div class="exportActions">
+                <input type="button" id="btnExport" value="Export" class="Download" onclick="downloadPDF();" />
+            </div>
+        </div>
+        <div class="visContainer">
+            <div class="visDiagram">
+                <div id="divCheckboxes" style="width: 128px; height: 100px; position: absolute; z-index: 99999;">
+                    @if (Model.lstChekbox != null && Model.lstChekbox.Count() > 0)
+                    {
+                        foreach (var item in Model.lstChekbox)
+                        {
+                            <label style="display:block;float:left;">
+
+                                <input type="checkbox" id="@string.Concat("chk", item.checkbox_entity_type)" checked name="chkEntity" style="float:left;">
+                                <span style="background: @item.color; opacity: 1; cursor: default; float: left; width: 16px; height: 5px; margin-top: 9px; margin-right: 10px; margin-left: 10px;"></span>
+                                <span class="checkmark">
+                                    <span class="spn">@string.Concat(item.checkbox_entity_type, " (", item.count, ")")</span>
+                                </span>
+
+                            </label>
+                        }
+                    }
+                </div>
+                <div id="mynetwork"></div>
+                <canvas id="newCanvas"></canvas>
+            </div>
+            <div class="contentFooter">
+                <div class="legand1">
+                    <div class="Legend1Heading">Entity Legend</div>
+                    <div class="legend1IconContainer">
+                        @if (Model.lstlegend != null)
+                        {
+                            foreach (var item in Model.lstlegend)
+                            {
+                                if (!string.IsNullOrWhiteSpace(item.entity_type))
+                                {
+                                    <div class="legend1Icon">
+                                        <img src="@Url.Content(string.Concat(iconBaseUrl, item.entity_type, ".svg"))" />
+                                        <span> @item.entity_title</span>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+
+        var nodes = null;
+        var edges = null;
+        var network = null;
+        var container;
+        var data;
+        var options;
+        var network;
+        var tscale;
+        pageTitle = $(".pagetitle>h2").text();
+        // contain the Entity icons and detail in key value format.
+        var lstVisIcons = {};
+        $(document).ready(function () {
+            lstVisIcons = getVisIcons('@Model.legends');
+            var nodesJSON = $.parseJSON(('@Model.nodes'.replace(/&quot;/g, '"')));
+            var edgesJSON = $.parseJSON(('@Model.edges'.replace(/&quot;/g, '"')));
+            nodes = new vis.DataSet(nodesJSON);
+            edges = new vis.DataSet(edgesJSON);
+            drawDiagram();
+
+            var newEdge = $.parseJSON(('@Model.edges'.replace(/&quot;/g, '"')));
+             var newNode = $.parseJSON(('@Model.nodes'.replace(/&quot;/g, '"')));
+            $('[name="chkEntity"]').change(function () {
+
+                var Entity = $(this).context.id.slice(3);
+                newEdge = newEdge.filter(({ checkbox_entity_type }) => checkbox_entity_type !== Entity);
+                newNode = newNode.filter(({ checkbox_entity_type }) => checkbox_entity_type !== Entity);
+
+                if ($(this).context.checked == true) {
+                    var jso = $.parseJSON(('@Model.edges'.replace(/&quot;/g, '"')));
+                     var ndo = $.parseJSON(('@Model.nodes'.replace(/&quot;/g, '"')));
+                    for (var i = 0; i < jso.length; i++) {
+
+                        if (jso[i].checkbox_entity_type == Entity) {
+                            newEdge.push(jso[i]);
+                        }
+                    }
+                    for (var j = 0; j < ndo.length; j++) {
+                        if (ndo[j].checkbox_entity_type == Entity) {
+                            newNode.push(ndo[j]);
+                        }
+                    }
+
+                }
+                nodes = new vis.DataSet(newNode);
+                edges = new vis.DataSet(newEdge);
+                drawDiagram();
+            });
+        });
+
+        function getVisIcons(legendJSON) {
+            var Icons = {};
+            var legends = $.parseJSON((legendJSON.replace(/&quot;/g, '"')));
+            for (var item, i = 0; item = legends[i++];) {
+                var img = $("#ImgBaseUrl").val() + item.entity_type + ".svg";
+                Icons[item.entity_type] = { shape: 'image', color: "#2B7CE9", size: 10, image: img, font: { size: 16 } };
+            }
+            return Icons;
+        }
+
+        // Called when the Visualization API is loaded.
+        function drawDiagram() {
+            if (edges != undefined && edges.length > 0) {
+                $("#btnExport").prop('disabled', false);
+                // create a network
+                container = document.getElementById('mynetwork');
+                data = { nodes: nodes, edges: edges };
+                options = {
+                    nodes: {
+                        margin: 10,
+                        scaling: {
+                            min: 16,
+                            max: 16,
+                        },
+                    },
+                    edges: {
+                        color: "gray",
+                        smooth: false,
+                    },
+                    physics: {
+                        barnesHut: { gravitationalConstant: -30000 },
+                        stabilization: { iterations: 2500 },
+                    },
+                    layout: {
+                        randomSeed: 0.1,
+                        improvedLayout: true,
+                    },
+                    groups: lstVisIcons,
+                };
+
+                network = new vis.Network(container, data, options);
+
+
+                /////[[dynamic height settings
+                let yMin = Number.MAX_SAFE_INTEGER
+                let yMax = Number.MIN_SAFE_INTEGER
+
+                let xMin = Number.MAX_SAFE_INTEGER
+                let xMax = Number.MIN_SAFE_INTEGER
+                nodes.forEach(node => {
+                    // Using bounding box takes node height into account
+                    const boundingBox = network.getBoundingBox(node.id)
+                    if (boundingBox.top < yMin)
+                        yMin = boundingBox.top
+
+                    if (boundingBox.bottom > yMax)
+                        yMax = boundingBox.bottom
+
+                    if (boundingBox.left < xMin)
+                        xMin = boundingBox.left
+
+                    if (boundingBox.right > xMax)
+                        xMax = boundingBox.right
+                })
+
+                // Accounts for some node label clipping
+                let heightOffset = 50
+                // "Natural" aka 1.0 zoom height of the network
+                let naturalHeight = yMax - yMin + heightOffset;
+                let naturalWidth = xMax - xMin + (heightOffset + 50);
+                //set the minimum height of page as 100% -65 px;
+                naturalHeight = naturalHeight > container.parentElement.offsetHeight ? naturalHeight : (container.parentElement.offsetHeight);
+                naturalWidth = naturalWidth > container.parentElement.offsetWidth ? naturalWidth : (container.parentElement.offsetWidth);
+
+                // container is a <div /> around the network with fixed px height;
+                // the child network <canvas /> is height 100%
+                container.style.height = naturalHeight + 'px' //'608px'//
+                container.style.width = naturalWidth + 'px' //'1155px'//
+
+                // Lets the network adjust to its new height inherited from container,
+                // then fit() to zoom out as needed; note `autoResize` must be DISABLED for the network
+                network.redraw();
+                network.fit();
+                // Sometimes the network grows too wide and fit() zooms out accordingly;
+                // in this case, scale the height down and redraw/refit
+                container.style.height = naturalHeight + 'px'
+                container.style.width = naturalWidth + 'px'
+                network.redraw();
+
+                network.on("stabilizationIterationsDone", function () { network.setOptions({ physics: false }) });
+                network.on("zoom", function (data) {
+                    var tscale = data.scale;
+                    network.moveTo({ scale: tscale });
+                });
+
+            }
+            else {
+                $("#btnExport").prop('disabled', true);
+                $('#mynetwork').innerHTML = '<div style="text-align: center; margin-top: 100px; font: 20px bold; color: #ff0000;">No network found!.</div>';
+            }
+        }
+
+        function downloadPDF() {
+            network.redraw();
+            network.fit();
+            setTimeout(function () {
+                var logoImage = "";
+                var filename = "";
+                //optimize in last
+                convertImgToDataURLviaCanvas('@ApplicationSettings.ClientLogoImageBytesForWeb', function (base64_data) {
+                    logoImage = base64_data;
+                });
+
+                var targetElem = $(".visContainer");
+
+                // prepare file name
+                var dt = new Date();
+                var timeStamp = dt.getDate() + "" + dt.getMonth() + "" + dt.getFullYear() + "_" + dt.getHours() + dt.getMinutes() + dt.getSeconds();
+                var filename = filename.concat(pageTitle.replace(/ /g, "_"), "_", timeStamp, ".pdf");
+                var HTML_Width = $(targetElem)[0].scrollWidth;
+                var HTML_Height = $(targetElem)[0].scrollHeight;
+                var top_left_margin = 15;
+                var PDF_Width = HTML_Width + (top_left_margin * 2);
+                var PDF_Height = HTML_Height + (top_left_margin * 2);
+                var canvas_image_width = HTML_Width;
+                var canvas_image_height = HTML_Height;
+                var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+                // At this point the container has no SVG, it only has HTML and Canvases.
+                html2canvas($(targetElem)[0], {
+                    windowWidth: $(targetElem)[0].scrollWidth, windowHeight: $(targetElem)[0].scrollHeight,
+                    width: $(targetElem)[0].scrollWidth, height: $(targetElem)[0].scrollHeight, quality: 2, scale: 2
+                }, { allowTaint: true, useCORS: true }).then(function (canvas) {
+
+                    setTimeout(function () { window.location.href = image; }, 0)
+                    canvas.getContext('2d').scale(5, 5);
+                    var imgData = canvas.toDataURL("image/jpeg", 1.0);
+                    var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+                    pdf.deletePage(1);
+                    pdf.addPage(PDF_Width, canvas_image_height + 50);
+                    pdf.setFontSize(16);
+                    pdf.text('@Model.entityDisplayText', (canvas_image_width / 2), 20, 'center');
+                    pdf.setFontSize(14);
+                    pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin + 20, canvas_image_width, canvas_image_height);
+                    pdf.height = canvas_image_height + 50;
+                    setTimeout(function () { pdf.save(filename); }, 0);
+                });
+                return false;
+            }, 1000);
+        }
+        var convertImgToDataURLviaCanvas = function (url, callback) {
+            var img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = function () {
+                var canvas = document.createElement('CANVAS');
+                var ctx = canvas.getContext('2d');
+                var dataURL;
+                canvas.height = this.height;
+                canvas.width = this.width;
+                ctx.drawImage(this, 0, 0);
+                dataURL = canvas.toDataURL();
+                callback(dataURL);
+                canvas = null;
+            };
+            img.src = url;
+        }
+
+    </script>
+</body>
+</html>

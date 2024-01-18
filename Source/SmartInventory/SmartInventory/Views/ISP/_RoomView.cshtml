@@ -1,0 +1,238 @@
+﻿<style>
+    #progressbar {
+        width: 247px;
+        height: 152px;
+        /* top: 40%; */
+        /* left: 40%; */
+        width: 247px;
+        height: 108px;
+        z-index: 90000;
+        position: absolute;
+        text-align: center;
+        /*padding-top: 52px;*/
+    }
+    .DivSelect {
+        margin:0 0 10px 0px;
+        background-color: #FFFFFF;
+    }
+    .divNetworkCode .dropbox {
+        width: 190px !important;
+        margin: 8px 0px 0px 0px;
+        border:1px solid  #e1e1e1;
+    }
+    .divNetworkCode .dropbox span{
+        padding:8px 9px;
+        font-size:13px;
+        font-weight:500;
+        transition:0.3s;
+    }
+    .divNetworkCode .dropbox span:not(:last-child){
+        border-bottom:1px solid #e3e3e3;
+    }
+    
+    .divNetworkCode .dropbox:after, .divNetworkCode .dropbox:before {
+        bottom: 100%;
+        left: 50%;
+        border: solid transparent;
+        content: "";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+    }
+    .divNetworkCode .dropbox:after {
+        border-bottom-color: #FFFFFF;
+        border-width: 10px;
+        margin-left: 68px;
+    }
+
+    .divNetworkCode .dropbox:before {
+        border-bottom-color: #e1e1e1;
+        border-width: 12px;
+        margin-left: 66px;
+    }
+
+</style>
+<!DOCTYPE html>
+<div class="divNetworkCode" data-original-title="" title="">
+    <div class="row">
+        <div class="col-md-5"></div>
+        <div class="col-md-3 roomTitle" id="roomViewTitle"></div>
+        <div class="col-md-1" style="width:150px;display:none">
+            <div id="connectionContext" class="bottom_txt" style="" title="">
+                <label class="switch">
+                    <input id="chkShowConnections" onchange="" type="checkbox" />
+                    <span class="slider round"></span>
+                </label>
+                <label id="" style="font-size:small;float:right;">@Resources.Resources.SI_GBL_GBL_NET_FRM_094</label>
+            </div>
+        </div>
+        <div class="col-md-2" style="float:right;">
+            <label class="scale-text" id="scaleContext" style="font-size:small;float:right;">@Resources.Resources.SI_ISP_GBL_GBL_GBL_053</label>
+            <label id="scaleContext" style="font-size:small;float:right;">@Resources.Resources.SI_ISP_GBL_NET_FRM_065 :</label>
+        </div>
+
+
+        </div><span class="icon-Export" data-original-title="" title="" hidden>@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</span>
+    <div class="rightRoomIcon">
+        <a class="rightRoomStaticIcon" href="#" style="cursor: default;" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_078"><i class="icon-Navigator"></i></a>
+        <a id="linkRoomView" class=""  style="display:none;"  title="@Resources.Resources.SI_ISP_GBL_NET_FRM_079"><i class="icon-RoomView"></i></a>
+        <a id="linkRackView" class="" style="display:none;" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_080" ><i class="icon-RackView"></i></a>
+        <a  id="linkConnection" class="" href="#" style="display:none;" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_081"  ><i class="icon-CableConnection"></i></a>
+        <a id="linkExport" href="#" title="Export" ><i class="icon-Export" style="position:static;"></i></a>
+        <div class="dropbox">
+            <span onclick="ExportRoomViewDetail(true,'EXCEL')">With Connection(EXCEL)</span>
+            <span onclick="ExportRoomViewDetail(true,'PDF')">With Connection(PDF)</span>
+            <span onclick="ExportRoomViewDetail(false,'EXCEL')">Without Connection(EXCEL)</span>
+            <span onclick="ExportRoomViewDetail(false,'PDF')">Without Connection(PDF)</span>
+        </div>
+            <a class="" style="display:none;" href="#"><i class="icon-information"></i></a>
+
+        </div>
+   
+    <div class="roomContext" style="">
+        @*<div id="rackSubMenu" class="rightPopupRack" style="display:none;">
+            <a href="#" class="list-group-item" id="rackSave" data-template-id="0" data-is-template-required="False" data-entity-type="Rack" data-is-isp-child-layer="True" data-is-isp-parent-layer="True" title="Save Rack"><i class="fa fa-save"></i></a>
+            <a href="#" class="list-group-item" id="rackCancel" title="Hide Sub Menu"><i class="fa fa-ban"></i></a>
+            <a href="#" class="list-group-item" id="rackDelete" title="Delete Rack"><i class="fa fa-trash"></i></a>
+        </div>*@
+        <input type="hidden" id="selectedRoomId" />
+        <input type="hidden" id="selectedRackId" />
+        <input type="hidden" id="selectedRackName" />
+        <input type="hidden" id="SourceType" value="POP" />
+        <input type="hidden" id="ParentType" value="POP" />
+        <input type="hidden" id="ParentID" value="0" />
+        <input type="hidden" id="EquipmentID" value="0" />
+        <svg id="roomViewContext" style="width:100%;height:100%;"></svg>
+
+    </div>
+    <div class="rackContext" style="display:none;">
+       
+        <svg id="rackViewContext" style="width:100%;height:100%;">
+           
+        </svg>
+        <svg>
+            <defs>
+                <pattern id="rackGrid" width="50" height="50" patternUnits="userSpaceOnUse">
+                    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#C3C3C3" stroke-width="4" />
+                </pattern>
+            </defs>
+        </svg>
+
+    </div>
+    <div>
+        <svg>
+            <defs>
+                <pattern id="chassisGrid" width="50" height="50" patternUnits="userSpaceOnUse">
+                    <path d="M 50 0 L 0 0 0 50 50 50z" fill="#FFF" stroke="#E0E0E0" stroke-width="2" pointer-events="none" />
+                </pattern>
+                <pattern id="cardHatch" width="48" height="24" patternUnits="userSpaceOnUse">
+                    <path d="M48 24V0L0 0V24L48 24Z" fill="transparent" />
+                    <path d="M13.2421 24H12.3983L0 11.6017V10.7579L13.2421 24Z" fill="#636363" />
+                    <path d="M21.1619 24H20.3182L0 3.68185V2.83805L21.1619 24Z" fill="#636363" />
+                    <path d="M29.0818 24H28.238L4.238 0H5.08179L29.0818 24Z" fill="#636363" />
+                    <path d="M37.0016 24H36.1578L12.1578 0H13.0016L37.0016 24Z" fill="#636363" />
+                    <path d="M44.9215 24H44.0777L20.0777 0H20.9215L44.9215 24Z" fill="#636363" />
+                    <path d="M48 19.1587V20.0025L27.9975 0H28.8413L48 19.1587Z" fill="#636363" />
+                    <path d="M48 11.2388V12.0826L35.9174 0H36.7612L48 11.2388Z" fill="#636363" />
+                    <path d="M48 3.31898V4.16278L43.8372 0H44.681L48 3.31898Z" fill="#636363" />
+                    <path d="M0 18.6777L5.32225 24H4.47846L0 19.5215V18.6777Z" fill="#636363" />
+                </pattern>
+            </defs>
+        </svg>
+    </div>
+    <div id="subMenuContext" class="rightPopup" style="display: none;">
+		<div class="list-group">
+			<a href="#" class="list-group-item" id="rackSave" data-template-id="0" data-is-template-required="False" data-entity-type="Rack" data-is-isp-child-layer="True" data-is-isp-parent-layer="True"><i class="fa fa-save"></i> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</a>
+			@*<a href="#" class="list-group-item" id="copySubMenuContext"><i class="fa fa-copy"></i>  Copy</a>*@
+			<a href="#" class="list-group-item" id="editPosSubMenuContext"><i class="fa fa-edit"></i>  @Resources.Resources.SI_ISP_GBL_NET_FRM_066</a>
+			<a href="#" style="display:none" class="list-group-item" id="savePosSubMenuContext"><i class="fa fa-save"></i>  @Resources.Resources.SI_ISP_GBL_GBL_FRM_003</a>
+			<a href="#" style="display:none" class="list-group-item" id="revertPosSubMenuContext"><i class="fa fa-undo"></i>  @Resources.Resources.SI_ISP_GBL_NET_FRM_082</a>
+			<a href="#" class="list-group-item" id="EquipmentViewSubMenuContext" style="display:none;"><i class="fa fa-edit"></i> Equipment View</a>
+			<a href="#" class="list-group-item" id="viewConSubMenuContext"><i class="icon-CableConnection"></i> @Resources.Resources.SI_GBL_GBL_NET_FRM_070</a>
+			<a href="#" class="list-group-item" id="deleteSubMenuContext"><i class="fa fa-trash"></i> @Resources.Resources.SI_GBL_GBL_GBL_GBL_002</a>
+			<a href="#" class="list-group-item" id="cancelSubMenuContext"><i class="fa fa-ban"></i> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+		</div>
+    </div>
+    <div class="outConnectionGrid clearfix icon-Arrowtop"  id="dvConnection" style="background-image:url(../content/images/loading_new.gif);background-repeat:no-repeat;background-position: center;">
+        @*<div id="dvProgress" style="display: block;" data-original-title="" title="">
+            <div id="blur" class="progresblur" data-original-title="" title="" style="background-color:#fff;width:100%;">
+                <div id="progressbar" class="conProgressBar"  data-original-title="" title="">
+                    <img alt="Loading..." src="../content/images/loading_new.gif" style="border: none;"><br data-original-title="" title="">
+                </div>
+            </div>
+        </div>*@
+        <div id="divConnContainer"></div>
+    </div>
+</div>
+<div class="FinalResult" style="display:none"></div>
+
+<script>
+    $("#linkExport").on("click", function () {
+        $(".dropbox").slideToggle();
+    });
+    //document.ready(function () {
+    //    $('.dropbox').css("display", "none");
+    //});
+
+    
+   //function ExportRoomViewDetail(IsConnectionFilter) {
+   //      
+   //     var SourceId = "";
+   //     var targetElem = "";
+   //     var SourceType =   $('#SourceType').val();
+   //     if (SourceType == "Rack")
+   //     {
+   //         SourceId = $('#rackTabContext').find('.rackActive').attr('data-db-id');
+   //         targetElem = $('.rackContext');
+            
+   //     }
+   //     else if(SourceType =="POP")
+   //     {
+   //         SourceId = $('#ispPOPId').val();
+   //         targetElem = $('.roomContext');
+   //     }
+        
+        
+   //     showProgress();
+   //     var elements = targetElem.closest('svg g').find('svg').map(function () {
+   //         var svg = $(this);
+   //         var canvas = $('<canvas></canvas>').css({ position: 'absolute', fill: 'none', left: svg.css('left'), top: svg.css('top') });
+   //         svg.replaceWith(canvas);
+   //         //  Get the raw SVG string and curate it
+   //         var content = svg.wrap('<p></p>').parent().html();
+   //         svg.unwrap();
+   //         canvg(canvas[0], content);
+   //         return {
+   //             svg: svg,
+   //             canvas: canvas
+   //         };
+   //     });
+        
+   //     html2canvas($(targetElem)[0], {
+   //         allowTaint: true, useCORS: true, logging: false, height: window.outerHeight + window.innerHeight, windowHeight: window.outerHeight + window.innerHeight
+   //     }).then(function (canvas) {
+   //         // Put the SVGs back in place
+   //         elements.each(function () {
+   //             this.canvas.replaceWith(this.svg);
+   //         });
+   //         var base64encodedstring = canvas.toDataURL("image/png", 1);
+   //         var canvasimgdata = base64encodedstring.replace(/^data:image\/(png|jpg);base64,/, "");
+   //         //Save Image in filesystem and get fullpath of image
+   //         ajaxReq('ISP/SaveCaptureImage', { 'imgdata': canvasimgdata }, true, function (resp) {
+   //             if (resp != null && resp.status == true) {
+   //                  
+   //                 console.log(resp);                    //Get Excel file with Image
+   //                 window.location = appRoot + 'ISP/ExportRoomViewConnections?is_source_connected='
+   //                     + IsConnectionFilter + "&source_type=" + SourceType + "&source_id=" + SourceId +
+   //                   '&image_path=' + resp.file;
+
+   //                 hideProgress();
+   //             }
+   //         }, false, true, false);
+   //     });
+
+        
+   // }
+    
+</script>

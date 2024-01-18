@@ -1,0 +1,190 @@
+﻿
+@{
+    Layout = null;
+}
+<style>
+    .error {
+        color: red;
+    }
+</style>
+@model Models.Feasibility.FTTHFeasibilityModel
+<!DOCTYPE html>
+@using (Ajax.BeginForm("SavefeasibilityDetailsftth", "FeasibilityDetails", new AjaxOptions
+{
+    HttpMethod = "POST",
+    LoadingElementId = "dvProgress",
+   // OnBegin = "ValidateForm()",
+    OnSuccess = "onSuccessSubmissionFTTH(data,this)",
+    // UpdateTargetId = Model.BuildingMaster.childModel == "" ? "dvModalBody" : "dvChildModalBody",
+    UpdateTargetId = "dvModalBody"
+},
+   new { id = "frmfeasibilityFtthEntity", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.feasibility_id)
+    @Html.HiddenFor(m => m.path_distance)
+    @Html.HiddenFor(m => m.entity_id)
+    @Html.HiddenFor(m => m.entity_location)
+    for (int i = 0; i < @Model.path_geometry.Length; i++)
+    {
+        // var path = Model.path_geometry[i];
+        @Html.HiddenFor(m => m.path_geometry[i])
+    }
+       @* @Html.HiddenFor(m => m.objFeasibilityModel.start_point_name)
+    @Html.HiddenFor(m => m.objFeasibilityModel.end_point_name)*@
+
+    @*@Html.HiddenFor(m => m.objFeasibilityModel.core_level_result, "hdn_core_level_result")
+        @Html.HiddenFor(m => m.objFeasibilityModel.feasibility_result, "hdn_feasibility_result")*@
+
+    @*@Html.HiddenFor(Model=>Json.Encode(Model.lstFeasibilityGeometry))*@
+    @*<form id="frmfeasibilityEntity" onsubmit="sf.Savefeasibility()">*@
+    <div id="dvModalBody" class="modal-body pa20">
+        <div class="libDetail">
+            <div id="dvPageMsg"></div>
+            <div class="libTabs">
+                <ul class="nav nav-tabs tabs-left">
+                    <li class="active"><a href="#ItemSpecfFtth" data-toggle="tab">Feasibility Detail</a></li>
+                </ul>
+            </div>
+            <div class="libTabContent">
+                <!-- Tab panes -->
+                <div class="tab-content">
+
+                    <div class="tab-pane active" id="ItemSpecfFtth">
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="">Feasibility Id<i class="clsMandatory">*</i> :</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.feasibility_name, new { @class = "form-control", @id = "feasibility_name" })
+                            </div>
+                            <label class="control-label col-md-3" for="">Customer Name<i class="clsMandatory">*</i> :</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.customer_name, new { @class = "form-control", @id = "customer_name" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="">Customer Id<i class="clsMandatory">*</i> :</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.customer_id, new { @class = "form-control", @id = "customer_id" })
+                            </div>
+                            <label class="control-label col-md-3" for="">Latitude<i class="clsMandatory">*</i> :</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.lat, new { @class = "form-control", @id = "txtLatitude", @readOnly = "true" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="">Longitude<i class="clsMandatory">*</i> :</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.lng, new { @class = "form-control", @id = "txtLongitude", @readOnly = "true" })
+                            </div>
+                            <label class="control-label col-md-3" for="">Buffer Radius(m)<i class="clsMandatory">*</i> :</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.buffer_radius, new { @class = "form-control", @id = "txtbuffer_radius", @readOnly = "true" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                        </div>
+                        @*@{int j = 0;}
+                            @foreach (var Items in Model.lstFeasibilityGeometry)
+                            {
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].isSelected, new { id = "objGeometryIsSelected_" + j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].cable_geometry, new { id = "objGeometryCable_geometry_" + j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].path_type, new { id = "objGeometryPath_Type_" + j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].cable_length, new { id = "objGeometryCable_Length_" + j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].system_id, new { id = "objGeometryCable_Length_" + j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].network_status, new { id = "objGeometryCable_Length_" + j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].available_cores, new { id = "objGeometryCable_Length_" + j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].total_cores, new { id = "objGeometryCable_Length_" + j })
+                                j++;
+                            }*@
+                    </div>
+                </div>
+            </div>
+            <div class="form-group ModalFooter modalfBorder">
+
+                <div class="col-md-6 feaBtnDiv" id="feasibilitybtnDv">
+                    @*<button type="button" class="btn btn-default" onclick="$($('.libTabs ul li a')[0]).trigger('click');">Back</button>*@
+                    <button type="submit" class="btn btn-primary" id="btnFtthfeasibilitySubmit">Save</button>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+    </div>
+    <script>
+        $(document).ready(function () {
+            $("#frmfeasibilityFtthEntity").validate({ // initialize the plugin
+                rules: {
+                    feasibility_name: {
+                        required: true
+
+                    },
+                    customer_name: {
+                        required: true
+                    },
+                    customer_id: {
+                        required: true
+                    }
+                },
+                messages: {
+                    feasibility_name: {
+                        required: 'Enter feasibility name'
+                    },
+                    customer_name: {
+                        required: 'Enter customer name'
+                    },
+                    customer_id: {
+                        required: 'Enter customer id'
+                    }
+                }
+            });
+            //  $('#cable_type_text').val($("#cableType option:selected").text());
+        });
+        function onSuccessSubmissionFTTH(result, ref) {
+            if (result.status == "ERROR") {
+                alert(result.message);
+                return;
+            }
+            alert(result.message);
+           // sf.resetFields();
+            $(".savefeasibility").trigger("click");
+            if ($("#ModalPopUp_bulk").css('display') == 'block') {
+                //    sf.bulkFeasibility_popUp.LoadModalDialog('ModalPopUp_bulk', 'BulkFeasibility/Index', '{}',MultilingualKey.Bulk_Feasibility, 'modal-xl');
+                //    bulkFeasibility.postFormData(sf.bulkFeasibilityData);
+                //    bulkFeasibility.AddArraySavedFeasibility(result.result);
+                //    // sf.feasibility_saved.push(result.result);
+
+                //    bulkFeasibility.FeasibilityKMLModel = result.result;
+                //    bulkFeasibility.EnableKMZbutton();
+
+                //    bulkFeasibility.DisplayDownloadFeasibleDiv();
+
+                ajaxReq('BulkFeasibility/Index', '{}', true, function (response, status, xhr) {
+                    if (status == "error") {
+                        $("#ModalPopUp_bulk .modal-body").html("<h6 style='color:red'>Error: " + xhr.status + " " + xhr.statusText + "</h6>");
+                    }
+                    else {
+                        $("#ModalPopUp_bulk .modal-body").html(response);
+                        var resObj = JSON.parse(result.result);
+                        if (resObj && resObj != undefined && resObj.history_id) {
+                            //bulkFeasibility.setHistoryID(resObj.history_id);
+                            bulkFeasibility.postFormData(sf.bulkFeasibilityData, resObj.history_id);
+                            bulkFeasibility.AddArraySavedFeasibility(result.result);
+                            //sf.feasibility_saved.push(result.result);
+
+                            bulkFeasibility.FeasibilityKMLModel = result.result;
+                            bulkFeasibility.EnableKMZbutton();
+                        }
+
+                        //bulkFeasibility.DisplayDownloadFeasibleDiv();
+                    }
+                }, true, true, false);
+
+            }
+        }
+    </script>
+    @*</form>*@
+}
+@*</div>*@
+
+

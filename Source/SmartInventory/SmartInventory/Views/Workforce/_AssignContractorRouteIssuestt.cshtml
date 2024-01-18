@@ -1,0 +1,68 @@
+﻿@model Models.WFM.ViewManagerRouteIssueApprove
+
+<link href="~/Content/js/Calendar/calendar.css" rel="stylesheet" />
+<script src="~/Content/js/Calendar/calendar.js"></script>
+<script src="~/Content/js/Calendar/calendar-en.js"></script>
+<script src="~/Content/js/Calendar/calendar-setup.js"></script>
+@*<script src="~/Content/js/AssignedRoute.js"></script>*@
+<script>
+    $(function () {
+        si.setDateTimeCalendar("assignedDate", "txtEndDate", "imgassignDate", "imgToDate", false);
+        //commenting because select2 is not a function
+        //$('select').select2({ width: '100%' });
+    });
+
+    function fnFormValidation(event) {
+         
+        var result = true;
+
+        if ($("#frtUserId").val() == "") {
+            alert("Please select Supervisor!");
+            return false;
+        }
+        return result;
+    }
+
+</script>
+<div id="dvAssignPanel">
+
+    <div id="dvAddManagerRemarks" class="modalNbody">
+        @using (Ajax.BeginForm("AssingContractorRouteIssue", "Workforce", new AjaxOptions
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "dvChildModalBody",
+            OnFailure = "si.handleError",
+            OnSuccess = "si.handleSuccess"
+        }, new { autocomplete = "off", @class = "form-horizontal", @id = "frmViewAssignIssues" }))
+        {
+            <div class="form-group row">
+                @Html.HiddenFor(m => m.issuesId)
+                @Html.HiddenFor(m => m.status)
+                <div class="col-sm-12">
+                    @Html.DropDownListFor(m => m.frtUserId, new SelectList(Model.lstUserDetail.Select(x => new { Value = x.user_id.ToString(), Text = x.name + " (" + x.user_name + ") (" + x.group_name + ")" }), "Value", "Text"), "Select Dispatcher", new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group row" style="display:none">
+                <label class="control-label col-sm-12" for="txtStartDate">Assigned Date:</label>
+                <div class="col-sm-12">
+                    @Html.TextBoxFor(m => m.assignedDate, new { @class = "form-control", placeholder = "DD-MMM-YYYY", @readonly = true })
+                    <img id="imgassignDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                </div>
+
+            </div>
+            <div class="form-group row">
+                @*<label class="control-label col-sm-2" for="txtManagerRemarks">Remarks:</label>*@
+                <div class="col-sm-12">
+                    @Html.TextAreaFor(m => m.remarks, new { @class = "form-control", @placeholder = "Remarks", @id = "txtManagerRemarks", cols = "55", rows = "5", @maxlength = "200", @style = "resize: none;" })
+                </div>
+            </div>
+            <div class="ModalFooter d-flex" id="dvbtnRejectAction">
+                <a href="javascript:void(0);" class="btn btn-default ml-auto" id="btnCancelRejectRemarks" data-dismiss="modal">Cancel</a>
+                <button type="submit" class="btn btn-primary ml-10" id="btnSaveApproveManager" onclick="return fnFormValidation(this);">Submit</button>
+            </div>
+        }
+    </div>
+
+</div>
+

@@ -1,0 +1,103 @@
+﻿@model Models.RoomTemplate
+@helper pageMessage()
+{
+{ Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+<script>
+    //Set color of template icon as green in NE library
+    if ('@Model.system_id' > 0) {
+        $(".clsTemplateIcon[data-lyrname='UNIT']").css('background-color', '#9999FF');
+    }
+</script>
+<!DOCTYPE html>
+<div class="panel-body">
+    @using (Ajax.BeginForm("SaveUnitTemplate", "ItemTemplate", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnFailure = "si.handleError",
+    },
+            new { id = "frmAddRoom", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.created_by)
+        @pageMessage()
+        <div class="row form-group marginAll" style="display:none;">
+            <div class="col-md-4"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_003<i class="clsMandatory">*</i>:</label></div>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.room_type, new { @class = "form-control", @autocomplete = "off" })
+                @Html.ValidationMessageFor(m => m.room_type)
+            </div>
+        </div>
+
+        <div class="row form-group marginAll">
+            <div class="col-md-4"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_004<i class="clsMandatory">*</i>:</label></div>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.room_width, new { @class = "form-control", @maxlength = "5", @autocomplete = "off", id = "txtRoomWidth" })
+                @Html.ValidationMessageFor(m => m.room_width)
+            </div>
+        </div>
+        <div class="row form-group marginAll">
+            <div class="col-md-4"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_005<i class="clsMandatory">*</i>:</label></div>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.room_height, new { @class = "form-control", @maxlength = "5", @autocomplete = "off", id = "txtRoomHeight" })
+                @Html.ValidationMessageFor(m => m.room_height)
+            </div>
+        </div>
+        <div class="row form-group marginAll">
+            <div class="col-md-4"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_006<i class="clsMandatory">*</i>:</label></div>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.room_length, new { @class = "form-control", @maxlength = "5", @autocomplete = "off", id = "txtRoomLength" })
+                @Html.ValidationMessageFor(m => m.room_length)
+            </div>
+        </div>
+        <div class="row form-group marginAll">
+            <div class="col-md-4"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_007<i class="clsMandatory">*</i>:</label></div>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.area, new { @class = "form-control clsReadOnly", @maxlength = "10", @autocomplete = "off", id = "txtArea", @readonly = true })
+                @Html.ValidationMessageFor(m => m.area)
+            </div>
+        </div>
+        <div class="row form-group marginAll">
+            <div class="col-md-4"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_008<i class="clsMandatory">*</i>:</label></div>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.unit_type, Model.lstUnitType.Select(m => new SelectListItem { Value = m.dropdown_value.ToString(), Text = m.dropdown_key, Selected = m.dropdown_status }).ToList(), "--select--", new { @class = "chosen-select form-control",id="ddlUnitType" })
+                @Html.ValidationMessageFor(m => m.unit_type)
+            </div>
+        </div>
+        <div class="form-group ModalFooter">
+            <div class="col-sm-12 col-sm-offset-2 ModalFooterControll">
+                <input type="button" class="btn btn-primary" id="btnSaveUnitTemplate" value="@(Model.system_id == 0 ? "Save" : "Update")" onclick="submitForm();" />
+                <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            </div>
+        </div>
+
+
+    }
+</div>
+<script type="text/javascript" language=javascript>
+    $.validator.unobtrusive.parse(document);
+    $(document).ready(function () {
+        $("#txtRoomWidth,#txtRoomHeight").blur(function () {
+            var roomWidth = $('#txtRoomWidth').val().replace(/ /g, "");
+            var roomHeight = $('#txtRoomHeight').val().replace(/ /g, "");
+            if (roomWidth == '' || roomHeight == '') { $('#txtArea').val(''); return false; } else { var roomArea = (parseFloat(roomWidth) * parseFloat(roomHeight)); $('#txtArea').val('').val(roomArea); }
+        });
+        notAllowZero('#txtRoomWidth,#txtRoomLength,#txtRoomHeight,#txtArea');
+        $('.chosen-select').chosen({ width: '100%' });
+        //isp.notAllowZero('#txtRoomWidth,#txtRoomHeight,#txtRoomLength,#txtArea');
+        if ('@Model.system_id' == 0)
+        {
+            $('#txtRoomWidth,#txtRoomLength,#txtRoomHeight,#txtArea').val(null)
+        }
+    });
+    function submitForm() {
+        if ($('#ddlUnitType').val() == '')
+        {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_128, ' warning');
+            return false;
+        }
+        $('#frmAddRoom').submit();
+    }
+</script>

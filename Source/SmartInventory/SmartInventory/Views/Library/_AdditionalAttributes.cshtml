@@ -1,0 +1,132 @@
+﻿@model Models.PODMaster
+
+<!DOCTYPE html>
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="txtONTCode">ERP Code</label>
+    <div class="col-md-4 col-sm-4">@Html.TextBoxFor(m => m.extraAttributes.erp_code, new { @class = "form-control", @maxlength = "100" })</div>
+
+    <label class="control-label col-sm-2" for="txtONTCode">ERP Name</label>
+    <div class="col-md-4 col-sm-4">@Html.TextBoxFor(m => m.extraAttributes.erp_name, new { @class = "form-control", @maxlength = "100" })</div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="txtONTCode">EF Customers</label>
+    <div class="col-md-4 col-sm-4">@Html.TextBoxFor(m => m.extraAttributes.ef_customers, new { @class = "form-control", @maxlength = "100" })</div>
+    <label class="control-label col-sm-2" for="txtONTCode">Lock/Unlock</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.extraAttributes.status, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text="Yes", Value = "Yes" },
+                                new SelectListItem{ Text="No", Value = "No" }
+                             }, new { @class = "form-control chosen-select" })
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="txtONTCode">Zone</label>
+    <div class="col-md-4 col-sm-4">@Html.TextBoxFor(m => m.extraAttributes.zone, new { @class = "form-control", @maxlength = "100" })</div>
+    <label class="control-label col-sm-2" for="txtONTCode">RFS Date & Month</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.TextBoxFor(m => m.extraAttributes.rfsSetDate, new { @class = "form-control", @maxlength = "100", id = "txtRfsDate" })
+        <img id="imgDate" class="assign-calen" src="~/Content/images/calendar.png" />
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="txtONTCode">Hub Maintained</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.extraAttributes.hub_maintained, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text="Yes", Value = "Yes" },
+                                new SelectListItem{ Text="No", Value = "No" }
+                             }, new { @class = "form-control chosen-select" })
+    </div>
+    <label class="control-label col-sm-2" for="txtONTCode">HM - Power BB</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.extraAttributes.hm_power_bb, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text="Yes", Value = "Yes" },
+                                new SelectListItem{ Text="No", Value = "No" }
+                             }, new { @class = "form-control chosen-select" })
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="txtONTCode" title="HM-Earthing Rating(Neutral-Earthing)">HM-Earthing...</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.TextBoxFor(m => m.extraAttributes.hm_earthing_rating, new { @class = "form-control", @maxlength = "100" })
+    </div>
+    <label class="control-label col-sm-2" for="txtONTCode">HM-Rack</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.extraAttributes.hm_rack, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text="Yes", Value = "Yes" },
+                                new SelectListItem{ Text="No", Value = "No" }
+                             }, new { @class = "form-control chosen-select" })
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="txtONTCode">HM-OLT BB</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.extraAttributes.hm_olt_bb, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text="Yes", Value = "Yes" },
+                                new SelectListItem{ Text="No", Value = "No" }
+                             }, new { @class = "form-control chosen-select" })
+    </div>
+    <label class="control-label col-sm-2" for="txtONTCode">HM-FMS</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.extraAttributes.hm_fms, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text="Yes", Value = "Yes" },
+                                new SelectListItem{ Text="No", Value = "No" }
+                             }, new { @class = "form-control chosen-select" })
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="txtONTCode">Splicing Machine</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.extraAttributes.splicing_machine, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text="Yes", Value = "Yes" },
+                                new SelectListItem{ Text="No", Value = "No" }
+                             }, new { @class = "form-control chosen-select" })
+    </div>
+    <label class="control-label col-sm-2" for="txtONTCode">Optical Power Meter</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.extraAttributes.optical_power_meter, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text="Yes", Value = "Yes" },
+                                new SelectListItem{ Text="No", Value = "No" }
+                             }, new { @class = "form-control chosen-select" })
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="txtONTCode">OTDR</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.extraAttributes.otdr, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text="Yes", Value = "Yes" },
+                                new SelectListItem{ Text="No", Value = "No" }
+                             }, new { @class = "form-control chosen-select" })
+    </div>
+    <label class="control-label col-sm-2" for="txtONTCode" title="Laptop With Giga Port">Laptop With...</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.extraAttributes.laptop_with_giga_port, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text="Yes", Value = "Yes" },
+                                new SelectListItem{ Text="No", Value = "No" }
+                             }, new { @class = "form-control chosen-select" })
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="txtONTCode" title="L3 updation on INMS">L3 updation...</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.extraAttributes.l3_updation_on_inms, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text="Yes", Value = "Yes" },
+                                new SelectListItem{ Text="No", Value = "No" }
+                             }, new { @class = "form-control chosen-select" })
+    </div>
+</div>
+<script type="text/javascript">
+    $('.chosen-select').chosen({ search_contains: true, width: '100%' });
+    $('[title!=""]').tooltip({ title: '', html: true, placement: "top" });
+    setDateTimeCalendarAttributes("txtRfsDate", "imgDate");
+</script>

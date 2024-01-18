@@ -1,0 +1,431 @@
+﻿@model Models.RoleMaster
+@using SmartInventory.Settings;
+<style>
+    .searchinput {
+        width: 230px;
+    }
+
+    .searchitem {
+        cursor: pointer;
+        position: absolute;
+        right: 9px;
+        padding:0;
+    }
+
+    .nilRecord {
+        text-align: center;
+        display: none;
+        color: red;
+    }
+
+    .modal.show .modal-dialog {
+        overflow: hidden !important;
+    }
+
+    .scorllable--div {
+        max-height: 311px;
+        overflow: auto;
+    }
+    /*.divDisabled {
+        pointer-events:auto !important;
+    }*/
+
+</style>
+
+<!DOCTYPE html>
+<div class="layers" data-group="NetworkLayers">
+    <div id="ViewRoleDetails" style="display:@(Model.isDisabled?"block":"none");">
+        <div class="row">
+            <div class="col-md-3">
+                <label class="control-label">
+                    Role Name:
+                </label>
+            </div>
+            <div class="col-md-3">
+                <label class="control-label">
+                    @Model.role_name
+                </label>
+            </div>
+        </div>
+        <div class="row" style="margin-top: -15px;">
+            <div class="col-md-3">
+                <label class="control-label">
+                    Reporting Role Name:
+                </label>
+            </div>
+            <div class="col-md-3">
+                <label class="control-label">
+                    @Model.reporting_role_name
+                </label>
+            </div>
+        </div>
+        <div class="row" style="margin-top: -15px;">
+            <div class="col-md-3">
+                <label class="control-label">
+                    Role Description:
+                </label>
+            </div>
+            <div class="col-md-8">
+                <label class="control-label">
+                    @Model.remarks
+                </label>
+            </div>
+
+        </div>
+    </div>
+
+    @if (Model.lstTemplatePermission != null && Model.lstTemplatePermission.Count > 0)
+    {
+        <div>
+            <div class="pose-rel d-flex jc-flex-end mb-1">
+                <input type="text" class="form-control searchinput" id="searchInput" onkeyup="searchFunction(this)" placeholder="Search for Entity...">
+                <i class="fa fa-search fa-lg searchitem" aria-hidden="true"></i>
+            </div>
+            <div class="scorllable--div">
+                <table border="1" cellpadding="5" id="tblNetworkLayers" class="@(Model.isDisabled?"divDisabled":"") grid">
+                    <thead>
+                        <tr>
+                            <th>Entity Name</th>
+                            <th colspan="4" align="center">
+
+                                <input type="checkbox" name="Planned" id="CheckAll_Planned" class="all allPlanned" onclick="setPermissionByNWStatus('allP',this)" /> Planned
+                            </th>
+                            <th colspan="4" align="center">
+
+                                <input type="checkbox" name="AsBuilt" id="CheckAll_AsBuilt" class="all allAsBuilt" onclick="setPermissionByNWStatus('allA',this)" /> As-Built
+                            </th>
+                            @if (ApplicationSettings.IsDormantEnabled)
+                            {
+                                <th colspan="4" align="center">
+
+                                    <input type="checkbox" name="Dormat" id="CheckAll_Dormant" class="all allDormant" onclick="setPermissionByNWStatus('allD',this)" /> Dormant
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tr id="layerAllActions">
+                        <td>
+                            <input type="checkbox" name="AllLayers" id="CheckAll_Layers" class="allLayers" onclick="setPermissionByNWStatus('all',this)" /> All
+                        </td>
+                        <td>
+                            <input type="checkbox" name="CheckAllAdd_Planned" id="CheckAllAdd_Planned" class="allP all allAddPlanned actionP" data-networktype="P" onclick="setPermissionByNWStatus('addP',this)" /> Add
+                        </td>
+                        <td>
+                            <input type="checkbox" name="CheckAllUpdate_Planned" id="CheckAllUpdate_Planned" class="allP all allUpdatePlanned actionP" data-networktype="P" onclick="setPermissionByNWStatus('updateP',this)" /> Edit
+                        </td>
+                        <td>
+
+                            <input type="checkbox" name="CheckAllDelete_Planned" id="CheckAllDelete_Planned" class="allP all allDeletePlanned actionP" data-networktype="P" onclick="setPermissionByNWStatus('deleteP',this)" /> Delete
+                        </td>
+                        <td>
+                            <input type="checkbox" name="CheckAllView_Planned" id="CheckAllView_Planned" class="allP all allViewPlanned viewactionP" data-networktype="P" onclick="setPermissionByNWStatus('viewP',this)" /> View
+                        </td>
+                        <td>
+                            <input type="checkbox" name="CheckAllAdd_AsBuilt" id="CheckAllAdd_AsBuilt" class="allA all allAddAsBuilt actionA" data-networktype="A" onclick="setPermissionByNWStatus('addA',this)" /> Add
+                        </td>
+                        <td>
+                            <input type="checkbox" name="CheckAllUpdate_AsBuilt" id="CheckAllUpdate_AsBuilt" class="allA all allUpdateAsBuilt actionA" data-networktype="A" onclick="setPermissionByNWStatus('updateA', this)" /> Edit
+                        </td>
+
+                        <td>
+                            <input type="checkbox" name="CheckAllDelete_AsBuilt" id="CheckAllDelete_AsBuilt" class="allA all allDeleteAsBuilt actionA" data-networktype="A" onclick="setPermissionByNWStatus('deleteA', this)" />  Delete
+                        </td>
+                        <td>
+                            <input type="checkbox" name="CheckAllView_AsBuilt" id="CheckAllView_AsBuilt" class="allA all allViewAsBuilt viewactionA" data-networktype="A" onclick="setPermissionByNWStatus('viewA', this)" /> View
+                        </td>
+                        @if (ApplicationSettings.IsDormantEnabled)
+                        {
+                            <td>
+                                <input type="checkbox" name="CheckAllAdd_Dormat" id="CheckAllAdd_Dormat" class="allD all allAddDormant actionD" data-networktype="D" onclick="setPermissionByNWStatus('addD',this)" />  Add
+                            </td>
+                            <td>
+                                <input type="checkbox" name="CheckAllUpdate_Dormat" id="CheckAllUpdate_Dormat" class="allD all allUpdateDormant actionD" data-networktype="D" onclick="setPermissionByNWStatus('updateD', this)" /> Edit
+                            </td>
+                            <td>
+                                <input type="checkbox" name="CheckAllDelete_Dormat" id="CheckAllDelete_Dormat" class="allD all allDeleteDormant actionD" data-networktype="D" onclick="setPermissionByNWStatus('deleteD', this)" /> Delete
+                            </td>
+                            <td>
+                                <input type="checkbox" name="CheckAllView_Dormat" id="CheckAllView_Dormat" class="allD all allViewDormant viewactionD" data-networktype="D" onclick="setPermissionByNWStatus('viewD', this)" /> View
+                            </td>
+                        }
+                    </tr>
+                    @for (int i = 0; i < Model.lstTemplatePermission.Count; i++)
+                    {
+                        @Html.HiddenFor(m => Model.lstTemplatePermission[i].layer_id)
+                        @Html.HiddenFor(m => Model.lstTemplatePermission[i].entity_name)
+                        @Html.HiddenFor(m => Model.lstTemplatePermission[i].id)
+                        @Html.HiddenFor(m => Model.lstTemplatePermission[i].created_by)
+                        @Html.HiddenFor(m => Model.lstTemplatePermission[i].created_on)
+                        @Html.HiddenFor(m => Model.lstTemplatePermission[i].template_id)
+
+
+                <tr class="lyrActions" id="row_@i">
+                    <td>
+                        <input type="checkbox" class="all entityname" datalyrid="@Model.lstTemplatePermission[i].layer_id" onclick="setPermissionByLayer(@Model.lstTemplatePermission[i].layer_id, this)" id="CheckAll_layer_@Model.lstTemplatePermission[i].layer_id" />  @Model.lstTemplatePermission[i].entity_name
+
+                    </td>
+
+                    <td>
+                        @Html.CheckBoxFor(m => Model.lstTemplatePermission[i].add_planned, new { type = "checkbox", @class = "addP allP all innerCheck actionP", @data_networktype = 'P', @datalyrId = Model.lstTemplatePermission[i].layer_id, @dataparentclass = "allAddPlanned allPlanned allLayers" })
+                    </td>
+                    <td>
+                        @Html.CheckBoxFor(m => Model.lstTemplatePermission[i].update_planned, new { @class = "updateP allP all innerCheck  actionP", @data_networktype = 'P', @datalyrId = Model.lstTemplatePermission[i].layer_id, @dataparentclass = "allUpdatePlanned allPlanned allLayers" })
+                    </td>
+                    <td>
+                        @Html.CheckBoxFor(m => Model.lstTemplatePermission[i].delete_planned, new { @class = "deleteP allP all innerCheck actionP", @data_networktype = 'P', @datalyrId = Model.lstTemplatePermission[i].layer_id, @dataparentclass = "allDeletePlanned allPlanned allLayers" })
+                    </td>
+                    <td>
+                        @Html.CheckBoxFor(m => Model.lstTemplatePermission[i].view_planned, new { @class = "viewP allP all innerCheck", @data_networktype = 'P', @datalyrId = Model.lstTemplatePermission[i].layer_id, @dataparentclass = "allViewPlanned allPlanned allLayers" })
+                    </td>
+
+                    <td>
+                        @Html.CheckBoxFor(m => Model.lstTemplatePermission[i].add_asbuilt, new { @class = "addA allA all innerCheck actionA", @data_networktype = 'A', @datalyrId = Model.lstTemplatePermission[i].layer_id, @dataparentclass = "allAddAsBuilt allAsBuilt allLayers" })
+                    </td>
+                    <td>
+                        @Html.CheckBoxFor(m => Model.lstTemplatePermission[i].update_asbuilt, new { @class = "updateA allA all innerCheck actionA", @data_networktype = 'A', @datalyrId = Model.lstTemplatePermission[i].layer_id, @dataparentclass = "allUpdateAsBuilt allAsBuilt allLayers" })
+                    </td>
+                    <td>
+                        @Html.CheckBoxFor(m => Model.lstTemplatePermission[i].delete_asbuilt, new { @class = "deleteA allA all innerCheck actionA", @data_networktype = 'A', @datalyrId = Model.lstTemplatePermission[i].layer_id, @dataparentclass = "allDeleteAsBuilt allAsBuilt allLayers" })
+                    </td>
+                    <td>
+                        @Html.CheckBoxFor(m => Model.lstTemplatePermission[i].view_asbuilt, new { @class = "viewA allA all innerCheck", @data_networktype = 'A', @datalyrId = Model.lstTemplatePermission[i].layer_id, @dataparentclass = "allViewAsBuilt allAsBuilt allLayers" })
+                    </td>
+                    @if (ApplicationSettings.IsDormantEnabled)
+                    {
+                        <td>
+                            @Html.CheckBoxFor(m => Model.lstTemplatePermission[i].add_dormant, new { @class = "addD allD all innerCheck actionD", @data_networktype = 'D', @datalyrId = Model.lstTemplatePermission[i].layer_id, @dataparentclass = "allAddDormant allDormant allLayers" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(m => Model.lstTemplatePermission[i].update_dormant, new { @class = "updateD allD all innerCheck actionD", @data_networktype = 'D', @datalyrId = Model.lstTemplatePermission[i].layer_id, @dataparentclass = "allUpdateDormant allDormant allLayers" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(m => Model.lstTemplatePermission[i].delete_dormant, new { @class = "deleteD allD all innerCheck actionD", @data_networktype = 'D', @datalyrId = Model.lstTemplatePermission[i].layer_id, @dataparentclass = "allDeleteDormant allDormant allLayers" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(m => Model.lstTemplatePermission[i].view_dormant, new { @class = "viewD allD all innerCheck", @data_networktype = 'D', @datalyrId = Model.lstTemplatePermission[i].layer_id, @dataparentclass = "allViewDormant allDormant allLayers" })
+                        </td>
+                    }
+                    </tr>
+
+                    }
+                    <tr class="nilRecord"><td colspan="13">No entity found!</td></tr>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+<div class="clearfix"></div>
+<script>
+    function interchange(obj, fadeSpeed) {
+        if (fadeSpeed == undefined) {
+            fadeSpeed = 0;
+        }
+        var ele = $(obj);
+        if (ele.val() != "") {
+            ele.parent().find("i").fadeOut(fadeSpeed).removeClass("fa-search").fadeIn(fadeSpeed).addClass("fa-close");
+        }
+        else {
+            ele.parent().find("i").addClass("fa-spin").fadeOut(fadeSpeed);
+            setTimeout(function () {
+                ele.parent().find("i").removeClass("fa-close").removeClass("fa-spin").addClass("fa-search").fadeIn(fadeSpeed)
+
+            }, fadeSpeed);
+        }
+    }
+
+    function searchFunction(obj, fadeSpeed) {
+        var recordCount = 0;
+        interchange(obj, fadeSpeed);
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("tblNetworkLayers");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 2; i < tr.length; i++) {
+            //console.log(i);
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    recordCount = recordCount + 1;
+                } else {
+                    tr[i].style.display = "none";
+
+                }
+            }
+        }
+        console.log(recordCount);
+        if (recordCount == 0) {
+            // console.log("No Record Found");
+            $(".nilRecord").show();
+        } else {
+            $(".nilRecord").hide();
+        }
+    }
+
+    $(document).on("click", ".fa-close", function () {
+        $("#searchInput").val("");
+        searchFunction("#searchInput", 800);
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tblNetworkLayers tr').each(function (index, item) {
+             
+            if (index > 0 && $('#tblNetworkLayers tr:eq(' + index + ') td input[type="checkbox"]:checked').length > 0) { $('#tblNetworkLayers tr:eq(' + index + ') td:eq(0) input[type="checkbox"]').prop("checked", true); }
+        });
+        setLayerCheckBox();
+    });
+
+    function setPermissionByNWStatus(clsNmae, obj) {
+        $("." + clsNmae + "[type='checkbox']").prop("checked", $(obj).prop("checked"));
+        setLayerCheckBox();
+    }
+    function setPermissionByLayer(lyrId, obj) {
+        $("[datalyrid=" + lyrId + "]").prop("checked", $(obj).prop("checked"));
+        setLayerCheckBox();
+    }
+    //:not(:first-child)
+    $(document).on('change', '#layerAllActions td input[type=checkbox]', function () {
+         
+        //console.log("Clicked");
+        var networkType = $(this).data("networktype");
+        //if ($(this).hasClass('action'+networkType)) {
+        var $row = $(this).closest('tr');
+        var isActionActive = $row.find(".action" + networkType).is(":checked");
+        var viewchecked = $row.find(".viewaction" + networkType).is(":checked");
+        if (isActionActive != viewchecked) {
+            if (isActionActive) {
+                $row.find(".viewaction" + networkType).prop('checked', isActionActive);
+                //$('.entityname').prop('checked',isActionActive );
+            }
+
+            //$row.find(".viewaction"+networkType).trigger("click");
+            setPermissionByNWStatus('view' + networkType, $('.viewaction' + networkType))
+        }
+
+        //}
+        checkEntity();
+    });
+    function checkEntity() {
+        $('.lyrActions').each(function () {
+
+            var networkType = ['P', 'A', 'D'];
+            var $row = $(this);
+            for (var i = 0; i < networkType.length; i++) {
+
+                var isActionActive = $row.find(".action" + networkType[i]).is(":checked");
+                var viewchecked = $row.find(".view" + networkType[i]).is(":checked");
+                if (isActionActive != viewchecked) {
+                    if (isActionActive) {
+                        $row.find(".view" + networkType[i]).prop('checked', isActionActive);
+                        //$('.entityname').prop('checked',isActionActive );
+                    }
+                }
+            }
+
+
+            if ($(this).find("input:checkbox:checked").not(".entityname").length > 0) {
+                $(this).find(".entityname").prop("checked", true);
+            }
+            else {
+                $(this).find(".entityname").prop("checked", false);
+            }
+
+
+            //var isSelected = $(this).is(":checked");
+            //var parentRow = $(this).parent().parent();
+            //if (isSelected) {
+
+            //    parentRow.find('td:first-child input[type=checkbox]').prop("checked", true);
+            //}
+            //else  {
+            //    parentRow.find('td:first-child input[type=checkbox]').prop("checked", false);
+            //}
+        });
+    }
+    $(document).on('change', '.lyrActions td:not(:first-child) input[type=checkbox]', function () {
+        console.log("Clicked");
+        var parentElementClasses = $(this).attr('dataparentclass').split(' ');
+        var currentElementClasses = $(this).attr('class').split(' ');
+
+        var networkType = $(this).data("networktype");
+        var $row = $(this).closest('tr');
+        var isActionActive = $row.find(".action" + networkType).is(":checked");
+
+        for (var i = 0; i < parentElementClasses.length; i++) {
+            //console.log("Checked::"+$("." + currentElementClasses[i] + "[type=checkbox]:checked").length);
+            //console.log($("." + currentElementClasses[i] + "[type=checkbox]").length);
+            if ($("." + currentElementClasses[i] + "[type=checkbox]:checked").length != $("." + currentElementClasses[i] + "[type=checkbox]").length) {
+                $("." + parentElementClasses[i] + "[type='checkbox']").prop("checked", false);
+            }
+            else {
+                $("." + parentElementClasses[i] + "[type='checkbox']").prop("checked", true);
+            }
+        }
+
+        var parentRow = $(this).parent().parent();
+        if (parentRow.find('td:not(:first-child) input[type=checkbox]:checked').length > 0) {
+            parentRow.find('td:first-child input[type=checkbox]').prop("checked", true);
+        }
+        else if (parentRow.find('td:not(:first-child) input[type=checkbox]:checked').length == 0) {
+            parentRow.find('td:first-child input[type=checkbox]').prop("checked", false);
+        }
+
+        if (!$(this).hasClass('viewP') && (!$row.find(".view" + networkType).is(':checked'))
+            && ($row.find(".add" + networkType).is(':checked')
+                || $row.find(".update" + networkType).is(':checked')
+                || $row.find(".delete" + networkType).is(':checked'))) { $row.find(".view" + networkType).trigger("click"); }
+        // 
+        if (($row.find(".add" + networkType).is(':checked')
+            || $row.find(".update" + networkType).is(':checked')
+            || $row.find(".delete" + networkType).is(':checked'))) { $row.find(".view" + networkType).prop("checked", true); }
+        setLayerCheckBox();
+
+    });
+    function setLayerCheckBox() {
+        var arrNetwork_status = ['P', 'A', 'D'];
+        var arrchkIDs = ['Planned', 'AsBuilt', 'Dormant'];
+        var allChecked = true;
+        for (var i = 0; i < arrNetwork_status.length; i++) {
+            if ($('.add' + arrNetwork_status[i] + ':checked').length == $(".entityname").length) {
+                $('.allAdd' + arrchkIDs[i]).prop("checked", true);
+            }
+            else {
+                $('.allAdd' + arrchkIDs[i]).prop("checked", false);
+            }
+            if ($('.update' + arrNetwork_status[i] + ':checked').length == $(".entityname").length) {
+                $('.allUpdate' + arrchkIDs[i]).prop("checked", true);
+            }
+            else {
+                $('.allUpdate' + arrchkIDs[i]).prop("checked", false);
+            }
+            if ($('.delete' + arrNetwork_status[i] + ':checked').length == $(".entityname").length) {
+                $('.allDelete' + arrchkIDs[i]).prop("checked", true);
+            } else {
+                $('.allDelete' + arrchkIDs[i]).prop("checked", false);
+            }
+            if ($('.view' + arrNetwork_status[i] + ':checked').length == $(".entityname").length) {
+                $('.allView' + arrchkIDs[i]).prop("checked", true);
+            } else {
+                $('.allView' + arrchkIDs[i]).prop("checked", false);
+            }
+            if ($('.allAdd' + arrchkIDs[i]).is(":checked") && $('.allUpdate' + arrchkIDs[i]).is(":checked") && $('.allDelete' + arrchkIDs[i]).is(":checked") && $('.allView' + arrchkIDs[i]).is(":checked")) {
+                $('#CheckAll_' + arrchkIDs[i]).prop("checked", true);
+            }
+            else {
+                $('#CheckAll_' + arrchkIDs[i]).prop("checked", false);
+                if (allChecked) {
+                    allChecked = false;
+                }
+
+            }
+        }
+        $('#CheckAll_Layers').prop("checked", allChecked);
+        checkEntity();
+    }
+</script>

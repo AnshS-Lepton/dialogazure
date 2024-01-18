@@ -1,0 +1,155 @@
+﻿@model Models.WFM.ViewNotification
+<script src="~/Content/js/ListingPage.js"></script>
+<script src="~/Content/js/Listing.js"></script>
+<link href="~/Content/js/Calendar/calendar.css" rel="stylesheet" />
+<script src="~/Content/js/Calendar/calendar.js"></script>
+<script src="~/Content/js/Calendar/calendar-en.js"></script>
+<script src="~/Content/js/Calendar/calendar-setup.js"></script>
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.viewNotificationFilter.pageSize, canSort: true, ajaxUpdateContainerId: "divGvRouteIssuesDetail", ajaxUpdateCallback: "ChkAddClass()");
+    grid.Bind(Model.lstNotificationDetail, autoSortAndPage: false, rowCount: Model.viewNotificationFilter.totalRecord);
+    if (Model.viewNotificationFilter.totalRecord > 0)
+    {
+        grid.PageIndex = Model.viewNotificationFilter.currentPage - 1;
+    }
+
+}
+
+<script>
+    var RL = new ListingPage();
+    var app = new Main();
+    $(document).ready(function () {
+        RL.initApp();
+
+        $('thead tr th').last().addClass('bothorder');
+    });
+
+
+
+    //this.UpdateIssueNoti = function (id, message, isread) {
+    //     
+    //    if (isread == "1") {
+    //        alert(message);
+    //    }
+    //    else {
+    //        app.ajaxreq('main/updateNotification', { id: id }, false, function (resp) {
+    //            if (resp != null && resp != undefined) {
+    //                if (resp) {
+    //                    alert(message);
+    //                }
+    //                else {
+    //                    alert(message);
+    //                }
+    //            }
+
+    //        }, true);
+    //    }
+
+    //}
+</script>
+
+<div id="dvViewRouteContainer">
+
+    @using (Ajax.BeginForm("ViewNotification_New", "Workforce",
+        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvViewRouteContainer" },
+        new { autocomplete = "off", @class = "form-horizontal", @id = "frmAssignJobOrder" }))
+    {
+        <div class="modalNbody">
+
+
+
+            @*@if (Model.lstIssueDetails != null && Model.lstIssueDetails.Count > 0)
+                {
+                    <div class="recordCount d-flex align-items-md-center">
+                        <b class="mr-01">Total Records: @grid.TotalRowCount</b>
+                        <b class="mr-03 ml-auto">Page Size:</b>
+                        <div class="w-10 mr-01">
+                            @Html.DropDownListFor(m => m.vwJobOrderFilter.pageSize, new List<SelectListItem>
+                                {
+                                    new SelectListItem{ Text="5", Value = "5" },
+                                    new SelectListItem{ Text="10", Value = "10" },
+                                    new SelectListItem{ Text="15", Value = "15" },
+                                    new SelectListItem{ Text="20", Value = "20" },
+                                    new SelectListItem{ Text="25", Value = "25" },
+                                }, new { @id = "ddlpagesize", @class = "form-control" })
+                        </div>*@
+            <div id="divGvRouteIssuesDetail">
+                @if (Model.lstNotificationDetail.Count > 0)
+                {
+                    <div class="recordCount mb-01">
+                        <b>Total Records:@grid.TotalRowCount</b>
+                    </div>
+                    <div class="table-responsive">
+                        @grid.GetHtml(tableStyle: "grid",
+                       htmlAttributes: new { id = "divGvRouteIssuesDetail" },
+                   mode: WebGridPagerModes.All,
+
+     columns: grid.Columns(
+
+         grid.Column("id", "Notification Id", format: @<text><span id="user_name">@item.id</span> </text>),
+grid.Column("message", "Notification Message", format: @<text><span id="leave_reason">   @(item.message != null ? item.message.Substring(0, 5) : item.message) </span>
+    <span style="color:red">
+        <a href="#" onclick="app.UpdateIssueNoti('@item.id','@item.message','@item.isread')" class="dropdown-toggle" title="read" style="color:red;">Read Message...</a>
+    </span>
+</text>),
+grid.Column("message", " Notification Message", format: @<text><span id="leave_reason">   @item.message</span> </text>),
+grid.Column("isread", "Status", format: @<text><span id="leave_reason">@(@item.isread == 0 ? "New" : "Old")</span> </text>),
+grid.Column("created_on", "Notification Date", format: @<text><span id="leave_reason">   @item.created_on</span> </text>),
+@*grid.Column("appointment_date", "Appointment Date", format: @<text><span id="leave_reason">   @item.appointment_date</span> </text>),*@
+grid.Column("notification_type", "Notification Type", format: @<text><span id="leave_reason">   @item.notification_type</span> </text>)
+@*grid.Column("manager_id", "Manager Id", format: @<text><span id="leave_reason">   @item.manager_id</span> </text>),
+    grid.Column("user_name", "User Name", format: @<text><span id="leave_reason">   @item.user_name</span> </text>),
+    grid.Column("reporting_manager", "Reporting Manager", format: @<text><span id="leave_reason">   @item.reporting_manager</span> </text>),
+    grid.Column("jo_manager", "Jo Manager", format: @<text><span id="leave_reason">   @item.jo_manager</span> </text>),
+    grid.Column("hpsm_ticketid", "Hpsm Ticketid", format: @<text><span id="leave_reason">   @item.hpsm_ticketid</span> </text>),
+    grid.Column("issue_id", "Issue Id", format: @<text><span id="leave_reason">   @item.issue_id</span> </text>),
+    grid.Column("hpsmid", "Hpsmid", format: @<text><span id="leave_reason">   @item.hpsmid</span> </text>),
+    grid.Column("email_id", "Email Id", format: @<text><span id="leave_reason">   @item.email_id</span> </text>),
+    grid.Column("task_tracking_id", "Task Tracking Id", format: @<text><span id="leave_reason">   @item.task_tracking_id</span> </text>),
+    grid.Column("frt_id", "Frt Id", format: @<text><span id="leave_reason">   @item.frt_id</span> </text>)*@
+)
+)
+                    </div>
+                }
+                else
+                {
+                    <div class="nr-found">
+                        <span>No record found.</span>
+                    </div>
+                }
+                @Html.Hidden("dir", grid.SortDirection)
+                @Html.Hidden("col", grid.SortColumn)
+            </div>
+
+        </div>
+    }
+
+
+    <script type="text/javascript">
+        (function ($) {
+            hideColumnColorRow = function (column) {
+                $('td:nth-child(' + column + '),th:nth-child( ' + column + ')').hide();
+                //$('td:nth-child(' + 5 + '),th:nth-child( ' + 5 + ')').hide();
+                //$('tr').find('td:nth-child(' + 5 + '):contains(0)').parent().css('backgroundColor', 'LightGreen'); // Could be an hexadecimal value as #EE3B3B
+                //$('tr').find('td:nth-child(' + 5 + '):contains(1)').parent().css('backgroundColor', 'Yellow');
+            };
+        })(jQuery);
+
+        $(document).ready(function () {
+            hideColumnColorRow(3);
+        });
+
+
+
+                                    //$("body").on("click", "#divGvViewNotification td", function ()
+                                    //{
+                                    //     
+                                    //    var issueId = $(this).closest("tr").find("td:eq(0)").text();
+                                    //   // alert(issueId);
+                                    //    var message = $(this).closest("tr").find("td:eq(2)").html();
+                                    //    alert(message);
+
+                                    //    sp.UpdateIssueNoti(issueId);
+
+                                    //});
+    </script>

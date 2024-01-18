@@ -1,0 +1,98 @@
+﻿@model Models.CableMaster
+<style>
+    .sp-preview {
+        width: 60%;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="d-fx">
+    @if (Model.lstTubeCore.objTube.Count() != 0)
+    {
+        <div class="leftColor--table">
+            <table id="WebGrid" class="grid">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            @Resources.Resources.SI_ISP_CAB_NET_FRM_013
+                        </th>
+                        <th scope="col">
+                            @Resources.Resources.SI_ISP_CAB_NET_FRM_014
+                        </th>
+                        <th scope="col">
+                            @Resources.Resources.SI_ISP_CAB_NET_FRM_015
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.lstTubeCore.objTube.Count(); i++)
+                    {
+                        <tr>
+                            <td>@Model.lstTubeCore.objTube[i].tube_number @Html.HiddenFor(m => Model.lstTubeCore.objTube[i].tube_number)</td>
+                            <td>@Model.lstTubeCore.objTube[i].tube_color  @Html.HiddenFor(m => Model.lstTubeCore.objTube[i].tube_color)</td>
+                            <td>
+                                @Html.TextBoxFor(m => Model.lstTubeCore.objTube[i].tube_color_code, new { @class = "colorPicker", @style = "display:none;" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    }
+    else
+    {
+        <div class="nr-found"><b>@Resources.Resources.SI_ISP_CAB_NET_FRM_016</b></div>
+    }
+    @if (Model.lstTubeCore.objCore.Count() != 0)
+    {
+        <div class="rightColor--table">
+            <table id="WebGrid1" class="webGrd">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                           @Resources.Resources.SI_ISP_CAB_NET_FRM_017
+                        </th>
+                        <th scope="col">
+                           @Resources.Resources.SI_ISP_CAB_NET_FRM_014
+                        </th>
+                        <th scope="col">
+                            @Resources.Resources.SI_ISP_CAB_NET_FRM_015
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.lstTubeCore.objCore.Count(); i++)
+                    {
+                        <tr>
+                            <td>@Model.lstTubeCore.objCore[i].core_number @Html.HiddenFor(m => Model.lstTubeCore.objCore[i].core_number)</td>
+                            <td>@Model.lstTubeCore.objCore[i].core_color @Html.HiddenFor(m => Model.lstTubeCore.objCore[i].core_color)</td>
+                            <td>
+                                @Html.TextBoxFor(m => Model.lstTubeCore.objCore[i].core_color_code, new { @class = "colorPicker", @style = "display:none;" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="nr-found">
+            <span>@Resources.Resources.SI_ISP_CAB_NET_FRM_016</span>
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        setColorPicker('colorPicker')
+        $('#TubeColor #WebGrid tbody tr').each(function () {
+            var colorCharId = $(this).children().find('.colorPicker').val();
+            $(this).children().find('.sp-preview-inner').css({ "background-color": colorCharId });
+        });
+        $('#TubeColor #WebGrid1 tbody tr').each(function () {
+            var colorCharId = $(this).children().find('.colorPicker').val();
+            $(this).children().find('.sp-preview-inner').css({ "background-color": colorCharId });
+        });
+    });
+</script>

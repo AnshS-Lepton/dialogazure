@@ -1,0 +1,50 @@
+﻿/*Dark blue and light blue theme*/
+:root {
+    --primary-dark: #3535F3; /*primary color - login green*/
+    --secondary-color: #9999FF; /*secondary color - dark green  same on table Header(color) */
+    --secondary-light: #B6B6FC; /*primary color - Login light color*/
+    --primary-border-color: #0606db /*primary color - border */;
+    --background-logo: url(../images/logo-w.png) no-repeat;
+    --success-btn-bg: #9999FF; /* primary or success btn background color*/
+    --success-btn-border: #039fd0; /* primary or success btn border color*/
+    --success-btn-hover: #8585f7; /*success and primary btn hover color*/
+    --success-btn-active: #7272ED; /*success and primary btn active color*/
+    --btn-yellow-bg: #FFDC34;
+    --btn-yellow-border: #E4B834;
+    --dark-bg: #727272;
+    --btn-danger-bg: #FFC700; /*default or danger button background color*/
+    --btn-danger-border: #EEBA00; /*default or danger button border color*/
+    --btn-danger-hover: #F4D043; /*default or danger button hover color*/
+    --btn-danger-active: #e1af00; /*default or danger button active color*/
+    --oth-green-light: #9999FF;
+    --oth-green-dark: #3535F3;
+    --white-color: #FFFFFF; /* color - white */
+    --top-back-image: url(../images/top_bg_blue.png) no-repeat center center; /*Blue background*/
+    --login-gradient: linear-gradient(to right bottom, var(--secondary-color), var(--primary-dark)); /* login background gardient*/
+    --header-gradient: linear-gradient(to bottom, var(--oth-green-light), var(--oth-green-dark));
+    --header-before-gradient: linear-gradient(to right, #9999ff7c, #3535f37f); /* Header before gardient*/
+    --sub-header-gradient: linear-gradient(to bottom, #fdfdfd, #e3e3e3);
+    --grey-gradient: linear-gradient(to bottom, rgba(255, 255, 255, 1), rgba(241, 241, 241, 0.5));
+    --text-color-primary: #565656;
+    --text-color-dark: #000000;
+    --text-color-light: #333333;
+    --grey-bg: #ededed;
+    --light-grey-bg: #F7F7F7;
+    --tableBorder: #d3e3da;
+    --tableHeader: #9999FF; /*table header background color*/
+    --tableOddBg: #f9f9f9; /*table odd row background color*/
+    --tdHoverBg: #161f6d0f; /*table row hover background color*/
+    --tdTextColor: #666666; /* table - td font color*/
+    --thTextColor: #FFFFFF; /* table - header font color*/
+    --pagination-gradient: linear-gradient(to bottom, #9999ff, #3535f3); /*pagination gradient*/
+    --pagination-border: #161f6d;
+    --tabBg: #eff0f2; /* tabs background color*/
+    --right-box-bb: #1258aa; /* right box border bottom*/
+    --nr-found: url(../images/nr-foundBlue.svg) no-repeat center center;
+    --filters: url(../images/filtersBlue.svg) no-repeat center center;
+    --ISP-vertualshft: #9999ff6b;
+    --contArrow: url(../images/Bcontinuos_floor_sign.png) no-repeat center center;
+    --loginCircle: #9999ff;
+    --loginBtn: #3535F3;
+    --loginBtnShadow: #9999ff;
+}

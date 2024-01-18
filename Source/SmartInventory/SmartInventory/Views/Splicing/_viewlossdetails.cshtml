@@ -1,0 +1,95 @@
+﻿@model Models.Admin.LinkBudgetMaster
+
+<!DOCTYPE html>
+<div id="dvLinkBudgetDetail" class="update_panel">
+  
+    <div class="space-pad fa-min-max">
+        <h5 class="mb-15 mt-0">@Html.Raw(string.Format(Resources.Resources.SI_GBL_GBL_NET_FRM_099, Model.wavelength_value)) </h5>
+        <table class="grid">
+            <thead>
+                <tr>
+                    <th >
+                        @Resources.Resources.SI_OSP_GBL_NET_FRM_366
+                    </th>
+                    <th>
+                        @Resources.Resources.SI_OSP_GBL_NET_RPT_123
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        @Resources.Resources.SI_GBL_GBL_NET_FRM_100
+                    </td>
+                    <td>
+                        @Model.splice_loss @SmartInventory.Settings.ApplicationSettings.dBLossUnit
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Resources.Resources.SI_GBL_GBL_NET_FRM_101
+                    </td>
+                    <td>
+                        @Model.cable_loss @SmartInventory.Settings.ApplicationSettings.dBLossUnit/KM
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Resources.Resources.SI_GBL_GBL_NET_FRM_102
+                    </td>
+                    <td>
+                        @Model.patch_cord_loss @SmartInventory.Settings.ApplicationSettings.dBLossUnit/Mtr
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Resources.Resources.SI_GBL_GBL_NET_FRM_103
+                    </td>
+                    <td>
+                        @Model.connector_loss @SmartInventory.Settings.ApplicationSettings.dBLossUnit
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Misc @SmartInventory.Settings.ApplicationSettings.dBLossUnit Loss
+                    </td>
+                    <td>
+                        @Model.misc_db_loss @SmartInventory.Settings.ApplicationSettings.dBLossUnit
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <table class="grid">
+            <thead>
+                <tr>
+                    <th colspan="2">
+                        @Resources.Resources.SI_GBL_GBL_NET_FRM_104
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                       @Resources.Resources.SI_GBL_GBL_NET_FRM_105
+                    </th>
+                    <th>
+                        @Resources.Resources.SI_OSP_GBL_NET_RPT_123
+                    </th>
+                </tr>
+            </thead>
+            <tbody>               
+                @for (int i = 0; i < Model.lstSplitterLoss.Count; i++)
+                {
+                <tr>
+                    <td>
+                        @Model.lstSplitterLoss[i].splitter_ratio
+                    </td>
+                    <td>
+                        @Model.lstSplitterLoss[i].splitter_loss @SmartInventory.Settings.ApplicationSettings.dBLossUnit
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

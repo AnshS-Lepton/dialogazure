@@ -1,0 +1,314 @@
+﻿@model Models.PatchingViewModel
+
+<!DOCTYPE html>
+<div id="dvLeftCable" class="cell">
+    <div class="cableContainer wrapper" style="float: left;">
+        @if (Model.splicingConnections != null)
+        {
+            var parentsList = Model.splicingConnections.Where(m => m.parentsystem_id != m.superparent && m.system_id == Model.filter.SourceEquipmentId).ToList();
+            var distinct = parentsList.GroupBy(x => x.parentsystem_id, (key, group) => group.First()).ToList();
+            var SourceEquipment = Model.splicingConnections.Where(m => m.system_id == Model.filter.SourceEquipmentId && m.entity_type.ToLower() == Models.EntityType.Equipment.ToString().ToLower()).ToList();
+            <div style="display:table-cell;">
+                @{
+                    int count = 0;
+                    foreach (var parent in distinct)
+                    {
+                        <div class="wrapper" style="margin-top:@(count>0?"20px":"");">
+                            <div class="otherEndCores">
+                                <div>
+                                    <div style="float:left;margin-top: 7px;font-size:15px;" class="modelName">@parent.modelname</div>
+                                    <div style="float:left;margin-top: 7px;background:#8080802e;"></div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                @foreach (var item in SourceEquipment.Where(m => m.parentsystem_id == parent.parentsystem_id).Select((value, j) => new { j, value }))
+                                {
+                                    var coreId = "Left_" + Model.filter.SourceEquipmentId + "_" + Models.EntityType.Equipment.ToString().ToUpper() + "_" + item.value.core_port_number;
+
+                                    <div class="leftPorts">
+                                        @if (!Model.filter.isInsideConnectivity && item.value.is_other_end_spliced)
+                                        {
+                                        <a title="View Connections" class="icon-DrawCircle MultiConnectionIcon" onclick="conBuilder.showPrevConnections(@item.value.system_id,'@(item.value.short_network_id+"("+item.value.name+")")','Equipment',@item.value.core_port_number);"></a>
+                                        }
+                                        <div class="dropbox clearfix leftPrevConnection" id="divPrevMultiConnection_@(item.value.system_id+"_"+item.value.core_port_number)" style="background-image:url(../content/images/loading_new.gif);background-position:center;background-repeat:no-repeat;">
+                                            <div id="divConnectionContainer"></div>
+                                        </div>
+                                        <img src="../Content/css/images/t.gif" alt="" style="float:left;height:30px;">
+                                        <div style="float: left;margin-top: 7px;margin-left: 5px;">
+                                            <i class="fa fa-ellipsis-v dropfiles" aria-hidden="true" style="font-size:15px;color:grey;cursor:pointer;"></i>
+
+                                        </div>
+                                        <div class="sourceEqpmtName" title="@(item.value.short_network_id+"("+item.value.name+")")" data-port-id="@coreId">@((item.value.short_network_id.Length + item.value.name.Length) > 15 ? (item.value.short_network_id + "(" + item.value.name + ")").Substring(0, 15) + "..." : (item.value.short_network_id + "(" + item.value.name + ")"))</div>
+                                        <div class="dropbox clearfix" style="margin:30px 15px 0px 0px;margin-right: 0px;left:25px;" id="dvReg_box_@item.value.system_id">
+                                            <span onclick="conBuilder.redirectToCPF(@item.value.system_id,'@item.value.network_id','@item.value.entity_type',@item.value.core_port_number)">CPF</span>
+                                            <span onclick="conBuilder.redirectToCustomerDetails('@item.value.network_id','@item.value.entity_type',@item.value.system_id,@item.value.core_port_number)">Customer Details</span>
+                                            <span id="@("btnUpdatePortStatus_" + Model.filter.SourceEquipmentId + "_" + item.value.core_port_number)" onclick="conBuilder.redirectToUpdateFiber(@item.value.system_id, @item.value.core_port_number, '@item.value.entity_type','@item.value.entity_type')">Update Status</span>
+                                        </div>
+                                        <div class="connectionCount @(item.value.is_multiconnection?"multiConnection":"singleConnection") @(item.value.connectioncount==0?"dvCountdisabled":"")" title="Show Connections" onclick="conBuilder.showConnections(@item.value.system_id,'@(item.value.short_network_id+"("+item.value.name+")")','Equipment',@item.value.core_port_number,this);">
+                                            @item.value.connectioncount
+                                        </div>
+                                        <div class="dropbox clearfix leftMultiConnection" id="divMultiConnection_@(item.value.system_id+"_"+item.value.core_port_number)" style="background-image:url(../content/images/loading_new.gif);background-position:center;background-repeat:no-repeat;">
+                                            <div id="divConnectionContainer"></div>
+                                        </div>
+                                        <div class="@((item.value.port_statusid == 3 || item.value.port_statusid == 4) ? "BlockConnection" : "src") endPint"
+                                             title="@((item.value.port_statusid == 3 || item.value.port_statusid == 4) ? item.value.port_comment : "")"
+                                             style="margin-left:20px;float: left;border-radius: 15px;margin-top: 13px;background-color:@(item.value.core_port_status_color)" id="@coreId"
+                                             data-is-cable-a-end="@item.value.is_cable_a_end"
+                                             data-port-no="@item.value.core_port_number"
+                                             data-system-id="@item.value.system_id"
+                                             data-network-id="@item.value.network_id"
+                                             data-entity-type="@Models.EntityType.Equipment.ToString()"
+                                             data-is-connected-to-same="@((!item.value.is_connected_to_other && item.value.destination_system_id != null && item.value.destination_system_id != 0) ? "True" : "False")"
+                                             data-target-id="@(item.value.destination_entity_type != null ? item.value.destination_system_id + "_" + item.value.destination_entity_type.ToString().ToUpper() + "_" + item.value.destination_port_no : "")"
+                                             data-target-entity-type="@(item.value.destination_entity_type != null ? item.value.destination_entity_type.ToString().ToUpper() : "")"
+                                             data-target-system-id="@item.value.destination_system_id"
+                                             data-target-port-no="@item.value.destination_port_no"
+                                             data-is-customer-connected="@item.value.is_customer_connected"
+                                             data-is-connected="0"
+                                             data-status-color="@item.value.core_port_status_color"
+                                             data-is-multiconnection="@item.value.is_multiconnection"
+                                             data-status-id="@item.value.port_statusid"
+                                             data-entity-sub-type="@item.value.entity_sub_type"></div>
+
+                                    </div>
+                                    <div class="clearfix"></div>
+                                }
+                            </div>
+                        </div>
+                        count = 1;
+                    }
+
+                    var otherList = Model.splicingConnections.Where(m => m.parentsystem_id == m.superparent && m.system_id == Model.filter.SourceEquipmentId).ToList();
+                    if (otherList.Count > 0)
+                    {
+                        <div class="wrapper" style="margin-top:20px;">
+                            <div class="core">
+                                <div class="otherEndCores">
+                                    <div>
+                                        <div style="float:left;margin-top: 7px;font-size:15px;">Other / Ports</div>
+                                        <div style="float:left;margin-top: 7px;background:#8080802e;"></div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    @foreach (var item in otherList.Select((value, j) => new { j, value }))
+                                    {
+                                        var coreId = "Left_" + Model.filter.SourceEquipmentId + "_" + Models.EntityType.Equipment.ToString().ToUpper() + "_" + item.value.core_port_number;
+
+                                        <div class="leftPorts">
+                                            @if (!Model.filter.isInsideConnectivity && item.value.is_other_end_spliced)
+                                            {
+                                            <a title="View Connections" class="icon-DrawCircle MultiConnectionIcon" onclick="conBuilder.showPrevConnections(@item.value.system_id,'@(item.value.short_network_id+"("+item.value.name+")")','Equipment',@item.value.core_port_number);"></a>
+                                            }
+                                            <div class="dropbox clearfix leftPrevConnection" id="divPrevMultiConnection_@(item.value.system_id+"_"+item.value.core_port_number) " style="background-image:url(../content/images/loading_new.gif);background-position:center;background-repeat:no-repeat;">                               
+                                                <div id="divConnectionContainer"></div>
+                                            </div>
+                                            <img src="../Content/css/images/t.gif" alt="" style="float:left;height:30px;">
+                                            <div style="float: left;margin-top: 7px;margin-left: 5px;">
+                                                <i class="fa fa-ellipsis-v dropfiles" aria-hidden="true" style="font-size:15px;color:grey;cursor:pointer;"></i>
+                                            </div>
+                                            <div class="sourceEqpmtName" title="@(item.value.short_network_id+"("+item.value.name+")")" data-port-id="@coreId">@((item.value.short_network_id.Length + item.value.name.Length) > 15 ? (item.value.short_network_id + "(" + item.value.name + ")").Substring(0, 15) + "..." : (item.value.short_network_id + "(" + item.value.name + ")"))</div>
+                                            <div class="dropbox clearfix" style="margin:30px 15px 0px 0px;margin-right: 0px;left:25px;" id="dvReg_box_@item.value.system_id">
+                                                <span onclick="conBuilder.redirectToCPF(@item.value.system_id,'@item.value.network_id','@item.value.entity_type',@item.value.core_port_number)">CPF</span>
+                                                <span onclick="conBuilder.redirectToCustomerDetails('@item.value.network_id','@item.value.entity_type',@item.value.system_id,@item.value.core_port_number)">Customer Details</span>
+                                                <span id="@("btnUpdatePortStatus_" + Model.filter.SourceEquipmentId + "_" + item.value.core_port_number)" onclick="conBuilder.redirectToUpdateFiber(@item.value.system_id, @item.value.core_port_number, '@item.value.entity_type','@item.value.entity_type')">Update Status</span>
+                                            </div>
+                                            <div class="connectionCount @(item.value.is_multiconnection?"multiConnection":"singleConnection") @(item.value.connectioncount==0?"dvCountdisabled":"")" onclick="conBuilder.showConnections(@item.value.system_id,'@(item.value.short_network_id+"("+item.value.name+")")','Equipment',@item.value.core_port_number,this);">
+                                                @item.value.connectioncount
+                                            </div>
+                                            <div class="dropbox clearfix leftMultiConnection" id="divMultiConnection_@(item.value.system_id+"_"+item.value.core_port_number)" style="background-image:url(../content/images/loading_new.gif);background-position:center;background-repeat:no-repeat;">
+                                               <div id="divConnectionContainer"></div>
+                                            </div>
+                                            <div class="@((item.value.port_statusid == 3 || item.value.port_statusid == 4) ? "BlockConnection" : "src") endPint"
+                                                 title="@((item.value.port_statusid==3 || item.value.port_statusid==4)?item.value.port_comment:"")"
+                                                 style="margin-left:20px;float: left;border-radius: 15px;margin-top: 13px;background-color:@(item.value.core_port_status_color)" id="@coreId"
+                                                 data-is-cable-a-end="@item.value.is_cable_a_end"
+                                                 data-port-no="@item.value.core_port_number"
+                                                 data-system-id="@item.value.system_id"
+                                                 data-network-id="@item.value.network_id"
+                                                 data-entity-type="@Models.EntityType.Equipment.ToString()"
+                                                 data-is-connected-to-same="@((!item.value.is_connected_to_other && item.value.destination_system_id != null && item.value.destination_system_id != 0) ? "True" : "False")"
+                                                 data-target-id="@(item.value.destination_entity_type != null ? item.value.destination_system_id + "_" + item.value.destination_entity_type.ToString().ToUpper() + "_" + item.value.destination_port_no : "")"
+                                                 data-target-entity-type="@(item.value.destination_entity_type != null ? item.value.destination_entity_type.ToString().ToUpper() : "")"
+                                                 data-target-system-id="@item.value.destination_system_id"
+                                                 data-target-port-no="@item.value.destination_port_no"
+                                                 data-is-customer-connected="@item.value.is_customer_connected"
+                                                 data-is-connected="0"
+                                                 data-status-color="@item.value.core_port_status_color"
+                                                 data-is-multiconnection="@item.value.is_multiconnection"
+                                                 data-status-id="@item.value.port_statusid"
+                                                 data-entity-sub-type="@item.value.entity_sub_type"></div>
+                                            @*<div class="fiberNumber" style="float: left;text-align: center;background: #80808038;">@(item.value.core_port_number)</div>*@
+
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+                    }
+    </div>
+</div>
+<div class="MidSection"></div>
+@if (!Model.filter.isInsideConnectivity)
+{
+    <div id="dvRightCable" class="cell">
+        <div class="cableContainer wrapper" style="float:right;">
+            @if (Model.splicingConnections != null)
+            {
+                var parentsList = Model.splicingConnections.Where(m => m.parentsystem_id != m.superparent && m.system_id == Model.filter.DestinationEquipmentId).ToList();
+                var distinct = parentsList.GroupBy(x => x.parentsystem_id, (key, group) => group.First()).ToList();
+                var destinationConnection = Model.splicingConnections.Where(m => m.system_id == Model.filter.DestinationEquipmentId && m.entity_type.ToLower() == Models.EntityType.Equipment.ToString().ToLower()).ToList();
+
+                <div style="display:table-cell;float:right;">
+                    @{
+                        foreach (var parent in distinct)
+                        {
+                            int count = 0;
+                            <div class="wrapper" style="margin-top:20px;">
+                                <div class="core">
+                                    <div class="otherEndCores">
+                                        <div class="rightPorts">
+                                            <div style="float:right;margin-top: 7px;font-size:15px;" class="modelName">@parent.modelname</div>
+                                            <div style="float:right;margin-top: 7px;background:#8080802e;"></div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        @foreach (var item in destinationConnection.Where(m => m.parentsystem_id == parent.parentsystem_id).Select((value, j) => new { j, value }))
+                                    {
+                                        var coreId = "Right_" + Model.filter.DestinationEquipmentId + "_" + Models.EntityType.Equipment.ToString().ToUpper() + "_" + item.value.core_port_number;
+                                    <div class="rightPorts">
+                                        @if (!Model.filter.isInsideConnectivity && item.value.is_other_end_spliced)
+                                            {
+                                            <a title="View Connections" class="icon-DrawCircle RightMultiConnectionIcon" onclick="conBuilder.showPrevConnections(@item.value.system_id,'@(item.value.short_network_id+"("+item.value.name+")")','Equipment',@item.value.core_port_number);"></a>
+                                            }
+                                        <div class="dropbox clearfix rightPrevConnection" id="divPrevMultiConnection_@(item.value.system_id+"_"+item.value.core_port_number)" style="background-image:url(../content/images/loading_new.gif);background-position:center;background-repeat:no-repeat;">
+                                            <div id="divConnectionContainer"></div>
+                                        </div>
+                                        <img src="../Content/css/images/t.gif" alt="" style="float:right;height:30px;transform:scaleX(-1);">
+                                        <div style="float: right;margin-top: 7px;margin-left: 5px;">
+                                            <i class="fa fa-ellipsis-v dropfiles" aria-hidden="true" style="font-size:15px;color:grey;cursor:pointer;"></i>
+                                        </div>
+
+                                        <div class="destinationEqpmtName" title="@(item.value.short_network_id + "(" + item.value.name + ")")" data-port-id="@coreId">@((item.value.short_network_id.Length + item.value.name.Length) > 15 ? (item.value.short_network_id + "(" + item.value.name + ")").Substring(0, 15) + "..." : (item.value.short_network_id + "(" + item.value.name + ")"))</div>
+
+                                        <div class="dropbox clearfix" style="margin: 30px 0px 0px 0px;margin-right: 0px;right:25px;" id="dvReg_box_@item.value.system_id">
+                                            <span onclick="conBuilder.redirectToCPF(@item.value.system_id,'@item.value.network_id','@item.value.entity_type',@item.value.core_port_number)">CPF</span>
+                                            <span onclick="conBuilder.redirectToCustomerDetails('@item.value.network_id','@item.value.entity_type',@item.value.system_id,@item.value.core_port_number)">Customer Details</span>
+                                            <span id="@("btnUpdatePortStatus_" + Model.filter.DestinationEquipmentId + "_" + item.value.core_port_number)" onclick="conBuilder.redirectToUpdateFiber(@item.value.system_id, @item.value.core_port_number, '@item.value.entity_type','@item.value.entity_type')">Update Status</span>
+                                        </div>
+                                        <div class="connectionCount @(item.value.is_multiconnection?"multiConnection":"singleConnection") @(item.value.connectioncount==0?"dvCountdisabled":"")" style="float:right" title="Show Connections" onclick="conBuilder.showConnections(@item.value.system_id,'@(item.value.short_network_id+"("+item.value.name+")")','Equipment',@item.value.core_port_number,this);">
+                                            @item.value.connectioncount
+                                        </div>
+                                        <div class="dropbox clearfix rightMultiConnection" id="divMultiConnection_@(item.value.system_id+"_"+item.value.core_port_number)" style="background-image:url(../content/images/loading_new.gif);background-position:center;background-repeat:no-repeat;">
+                                           <div id="divConnectionContainer"></div>
+                                        </div>
+                                        <div id="@coreId"
+                                             class="@((item.value.port_statusid==3 || item.value.port_statusid==4)?"BlockConnection":"trg") endPint"
+                                             title="@((item.value.port_statusid==3 || item.value.port_statusid==4)?item.value.port_comment:"")"
+                                             style="margin-right:20px;float: right;border-radius: 15px;margin-top: 13px;background-color:@(item.value.core_port_status_color)"
+                                             data-is-cable-a-end="@item.value.is_cable_a_end"
+                                             data-port-no="@item.value.core_port_number"
+                                             data-system-id="@item.value.system_id"
+                                             data-network-id="@item.value.network_id"
+                                             data-entity-type="@Models.EntityType.Equipment.ToString()"
+                                             data-is-connected-to-same="@((!item.value.is_connected_to_other && item.value.destination_system_id != null && item.value.destination_system_id != 0) ? "True" : "False")"
+                                             data-target-id="@(item.value.destination_entity_type != null ? item.value.destination_system_id + "_" + item.value.destination_entity_type.ToString().ToUpper() + "_" + item.value.destination_port_no : "")"
+                                             data-target-entity-type="@(item.value.destination_entity_type != null ? item.value.destination_entity_type.ToString().ToUpper() : "")"
+                                             data-target-system-id="@item.value.destination_system_id"
+                                             data-target-port-no="@item.value.destination_port_no"
+                                             data-is-customer-connected="@item.value.is_customer_connected"
+                                             data-is-connected="0"
+                                             data-status-color="@item.value.core_port_status_color"
+                                             data-is-multiconnection="@item.value.is_multiconnection"
+                                             data-status-id="@item.value.port_statusid"
+                                             data-entity-sub-type="@item.value.entity_sub_type"></div>
+                                        @*<div class="clearfix"></div>*@
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    }
+                                    </div>
+                                </div>
+                            </div>
+                            count = 1;
+                        }
+
+                        var otherList = Model.splicingConnections.Where(m => m.parentsystem_id == m.superparent && m.system_id == Model.filter.DestinationEquipmentId).ToList();
+                        if (otherList.Count > 0)
+                        {
+                            <div class="wrapper" style="margin-top:20px;">
+                                <div class="core">
+                                    <div class="otherEndCores" style="float:right;">
+                                        <div class="rightPorts">
+                                            <div style="float:right;margin-top: 7px;font-size:15px;">Other / Ports</div>
+                                            <div style="float:right;margin-top: 7px;background:#8080802e;"></div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        @foreach (var item in otherList.Select((value, j) => new { j, value }))
+                                        {
+                                            var coreId = "Right_" + Model.filter.DestinationEquipmentId + "_" + Models.EntityType.Equipment.ToString().ToUpper() + "_" + item.value.core_port_number;
+                                            <div class="rightPorts">
+                                                @if (!Model.filter.isInsideConnectivity && item.value.is_other_end_spliced)
+                                                {
+                                                    <a title="View Connections" class="icon-DrawCircle RightMultiConnectionIcon" onclick="conBuilder.showPrevConnections(@item.value.system_id,'@(item.value.short_network_id+"("+item.value.name+")")','Equipment',@item.value.core_port_number);"></a>
+                                                }
+                                                <div class="dropbox clearfix rightPrevConnection" id="divPrevMultiConnection_@(item.value.system_id+"_"+item.value.core_port_number)" style="background-image:url(../content/images/loading_new.gif);background-position:center;background-repeat:no-repeat;">
+                                                    <div id="divConnectionContainer"></div>
+                                                </div>
+                                                <img src="../Content/css/images/t.gif" alt="" style="float:right;height:30px;transform:scaleX(-1);">
+                                                <div style="float: right;margin-top: 7px;margin-left: 5px;">
+                                                    <i class="fa fa-ellipsis-v dropfiles" aria-hidden="true" style="font-size:15px;color:grey;cursor:pointer;"></i>
+                                                </div>
+                                                <div class="destinationEqpmtName" title="@(item.value.short_network_id + "(" +item.value.name + ")")" data-port-id="@coreId">@((item.value.short_network_id.Length + item.value.name.Length) > 15 ? (item.value.short_network_id + "(" + item.value.name + ")").Substring(0, 15) + "..." : (item.value.short_network_id + "(" + item.value.name + ")"))</div>
+                                                <div class="dropbox clearfix" style="margin: 30px 0px 0px 0px;margin-right: 0px;right:25px;" id="dvReg_box_@item.value.system_id">
+                                                    <span onclick="conBuilder.redirectToCPF(@item.value.system_id,'@item.value.network_id','@item.value.entity_type',@item.value.core_port_number)">CPF</span>
+                                                    <span onclick="conBuilder.redirectToCustomerDetails('@item.value.network_id','@item.value.entity_type',@item.value.system_id,@item.value.core_port_number)">Customer Details</span>
+                                                    <span id="@("btnUpdatePortStatus_" + Model.filter.DestinationEquipmentId + "_" + item.value.core_port_number)" onclick="conBuilder.redirectToUpdateFiber(@item.value.system_id, @item.value.core_port_number, '@item.value.entity_type','@item.value.entity_type')">Update Status</span>
+                                                </div>
+                                                <div class="connectionCount @(item.value.is_multiconnection?"multiConnection":"singleConnection") @(item.value.connectioncount==0?"dvCountdisabled":"")" style="float:right" title="Show Connections" onclick="conBuilder.showConnections(@item.value.system_id,'@(item.value.short_network_id+"("+item.value.name+")")','Equipment',@item.value.core_port_number,this);">
+                                                    @item.value.connectioncount
+                                                </div>
+                                                <div class="dropbox clearfix rightMultiConnection" id="divMultiConnection_@(item.value.system_id+"_"+item.value.core_port_number)" style="background-image:url(../content/images/loading_new.gif);background-position:center;background-repeat:no-repeat;">
+                                                   <div id="divConnectionContainer"></div>
+                                                </div>
+                                                <div id="@coreId"
+                                                     class="@((item.value.port_statusid == 3 || item.value.port_statusid == 4) ? "BlockConnection" : "trg") endPint"
+                                                     title="@((item.value.port_statusid==3 || item.value.port_statusid==4)?item.value.port_comment:"")"
+                                                     style="margin-right:20px;float: right;border-radius: 15px;margin-top: 13px;background-color:@(item.value.core_port_status_color)"
+                                                     data-is-cable-a-end="@item.value.is_cable_a_end"
+                                                     data-port-no="@item.value.core_port_number"
+                                                     data-system-id="@item.value.system_id"
+                                                     data-network-id="@item.value.network_id"
+                                                     data-entity-type="@Models.EntityType.Equipment.ToString()"
+                                                     data-is-connected-to-same="@((!item.value.is_connected_to_other && item.value.destination_system_id != null && item.value.destination_system_id != 0) ? "True" : "False")"
+                                                     data-target-id="@(item.value.destination_entity_type != null ? item.value.destination_system_id + "_" + item.value.destination_entity_type.ToString().ToUpper() + "_" + item.value.destination_port_no : "")"
+                                                     data-target-entity-type="@(item.value.destination_entity_type != null ? item.value.destination_entity_type.ToString().ToUpper() : "")"
+                                                     data-target-system-id="@item.value.destination_system_id"
+                                                     data-target-port-no="@item.value.destination_port_no"
+                                                     data-is-customer-connected="@item.value.is_customer_connected"
+                                                     data-is-connected="0"
+                                                     data-status-color="@item.value.core_port_status_color"
+                                                     data-is-multiconnection="@item.value.is_multiconnection"
+                                                     data-status-id="@item.value.port_statusid"
+                                                     data-entity-sub-type="@item.value.entity_sub_type"></div>
+                                                @*<div class="clearfix"></div>*@
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                        }
+        </div>
+    </div>
+                        }
+<script type="text/javascript">
+    var AllConnectionData = [];
+    var AllConnectionObjects = [];
+    $(document).ready(function () {
+        $('#dvRightCable .endPint').tooltip({ title: '', html: true, placement: "left" });
+        $('#dvLeftCable .endPint').tooltip({ title: '', html: true, placement: "right" });
+    });
+</script>

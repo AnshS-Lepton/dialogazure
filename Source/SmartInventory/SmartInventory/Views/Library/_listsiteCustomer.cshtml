@@ -1,0 +1,71 @@
+﻿@*@model List<Models.SiteCustomerFilter>*@ 
+@model Models.SiteInfo
+<style>
+    .webgrid th {
+        color: #fff;
+    }
+</style>
+
+@{
+    WebGrid grid = new WebGrid(source: Model.lstData, canSort: false, canPage: false);
+
+}
+@*@Html.HiddenFor(x => x.lmc_type)
+@Html.HiddenFor(x => x.system_id)*@
+<!DOCTYPE html>
+<div class="table-responsive tble_cls" id="dvSiteCustomerGrid" style="min-height:50px; width: 100%; background-color: white;">
+   
+    @if (Model.lstData.Count > 0)
+    {
+        @*<div class="form-group" style="text-align:right;">
+            <div class="col-sm-8 UploadAction"></div>
+            <div class="col-sm-4 icon-Download cptr" onclick="si.SiteInfo.ExportCustomer(@Model.system_id,'@Model.lmc_type');" id="divDownloadDocuments" title="Download Files" style="float:right; text-align:right;margin-right: -13px;"> Export</div>
+        </div>*@
+        <div id="VwSiteCustomerGrid" class="table-responsive tble_cls" style="padding: 10px; padding-top: 0px;"> 
+            <div class="table table-hover webgrid">
+                @grid.GetHtml(tableStyle: "webgrid",
+                 headerStyle: "webGridHeader",
+                 alternatingRowStyle: "alt",
+                htmlAttributes: new { id = "tblSiteCustomerGrid" },
+              mode: WebGridPagerModes.All) 
+            </div>
+        </div>  
+    }
+     
+</div>
+ 
+<script> 
+    $(document).ready(function () {
+        $('#tblSiteCustomerGrid thead tr th a').each(function () {
+            var html = $(this).html(); $(this).parent().attr('data-column-name', html);
+        })
+        $('#tblSiteCustomerGrid tbody tr td').each(function () {
+            var html = $(this).html(); $(this).attr('data-value', html);
+        })
+
+        $('#tblSiteCustomerGrid tbody tr').each(function (index, value) {
+             
+            $('#tblSiteCustomerGrid thead tr th:eq(0)').html(MultilingualKey.SI_OSP_GBL_GBL_GBL_028);
+            var systemId = $('#tblSiteCustomerGrid  tbody tr:eq(' + index + ') td:eq(0)').attr('data-value');
+            var rowAction = '<a href="#" data-value="' + systemId + '"  class="dropdown-toggle deleteIcon" title="'+ MultilingualKey.SI_GBL_GBL_JQ_FRM_056+'">';
+            rowAction = rowAction + '<i class="col-sm-1 icon-Close cptr" style="color: red; font-size: 13px;padding-left: 8px;padding-right: 7px;margin-top: 4px;"> </i></a><a href="#" data-value="' + systemId + '"  class="dropdown-toggle editIcon" title="'+MultilingualKey.SI_GBL_GBL_JQ_FRM_055+'"><i class="fa fa-edit fa-fw m-r-xs" style="color: #1b9461; font-size: 13px;margin-top: 4px;"></i></a>';
+           
+
+            $('#tblSiteCustomerGrid  tbody tr:eq(' + index + ') td:eq(0)').html(rowAction);
+        });
+    });
+
+    $('.editIcon').on("click", function () {
+        var systemId = $(this).attr('data-value');
+        
+        showSiteCustomerEdit(systemId,@Model.system_id,'@Model.lmc_type','@Model.parent_system_id');
+
+    });
+    $('.deleteIcon').on("click", function () {
+        var systemId = $(this).attr('data-value');
+        SiteCustomer.SiteCustomerInfo.deleteSiteCustomer(systemId,@Model.system_id,'@Model.lmc_type');
+
+    });
+    
+</script>
+

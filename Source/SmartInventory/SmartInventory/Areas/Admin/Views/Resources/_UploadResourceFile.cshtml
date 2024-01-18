@@ -1,0 +1,219 @@
+﻿
+@{
+    Layout = null;
+}
+
+<style>
+   
+   
+    .UploadResourcesProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url('~/../../Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+        
+    }
+ 
+
+</style>
+
+<!DOCTYPE html>
+<div id="dvImportResourcesSetting"> 
+    <div id="dvResourcesProgress" class="UploadResourcesProgress"></div>
+    <div class="libDetail">
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                
+                <fieldset class="the-fieldset" style="padding-left: 25%;padding-bottom: 10%;padding-top: 10%;">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <div class="col-md-12 col-sm-12 mrgn_btm">
+                                <input type="file" id="FileResources" accept=".xls,.xlsx"  style="font-size: 13px;height:37px;width: 195px; overflow:hidden" name="datafile" class="form-control"   />
+                            </div>
+                        </div>
+                   
+                        @*<div class="col-md-12 col-sm-12 mrgn_btm">
+                            <input type="file" id="FileResources" accept=".xls,.xlsx" style="font-size: 13px;height:37px;width: 215px;" name="datafile" class="form-control" multiple />
+                        </div>*@
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4 col-sm-4 mrgn_btm">
+                            @Html.ActionLink("Download Res Key Template", "DownloadResourceTemplate", "Resources", new { FileName = "ResourcesTemplate" }, new { @class = "btn btn-gray", @id = "lnkDownloadTemplate",style="background: none; border: 1px solid gray; color: gray; " })
+                        </div>
+                        <div class="col-md-4 col-sm-4 mrgn_btm" style="margin-left:75px">
+                            <input type="button" id="btnUpload1" value="Upload" onclick="UploadFile('FileResources','@Url.Action("UploadResourceFile", "Resources")');" class="btn btn-primary" />
+                        </div>
+                    </div>
+                   
+                   
+                </fieldset>
+               
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    
+</div>
+<div id="divResourcesLogs" style="width:auto">
+    <div class="form-group">
+        <div class="row">
+            <div style="text-align: center;padding: 60px 0 0 125px;">
+                <table>
+                    <tr><td colspan="8" style="text-align:center;"><img style="width:40px;" id="ImgValidation" src="~/Areas/Admin/Content/images/tick_1.gif" /></td></tr>
+                    <tr><td colspan="8" style="color:green;text-align:center;">Success</td></tr>
+                    <tr style="font-size: 14px;">
+                        <td>Total Records	:</td>
+                        <td style="margin-top:5px">@Html.Label("0", new {@style = "margin-top: 10px;", id = "lblTotalLogs" }) | </td>
+                        <td>&nbsp;</td>
+                        <td>Valid :</td>
+                        <td style="margin-top:5px">@Html.Label("0", new { @style = "margin-top: 10px;", id = "lblValidLogs" }) | </td>
+                        <td style="margin-top:5px">&nbsp;</td>
+                        <td>Invalid:</td>
+                        <td style="margin-top:5px">@Html.Label("0", new { @style = "margin-top: 10px;", id = "lblInvalidLogs" })</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div style="text-align: center;padding-top: 20px;font-size: 14px;padding: 10px 0 0 200px;">
+                <u>
+                    <a href="@Url.Action("DownloadResourcesLog", "Resources")" id="btnDownloadLogs" title="Download Logs	">
+                        <i class="fa fa-download" aria-hidden="true" style="color:cornflowerblue;"></i><br />
+                        Download Logs		
+                    </a>
+                </u>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div style="text-align: center;padding: 10px 0 50px 225px;">
+                <input type="button" id="btnDone" value="Done" class="btn btn-primary" onclick="ResetDone()" />
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var iteration = 0;
+    var loadingtext = "Uploading";
+    var timer = null;
+    $(document).ready(function () {
+         
+        $('[data-toggle="tooltip"]').tooltip();
+        $("#divResourcesLogs").hide();
+        $("#dvImportResourcesSetting").show(); 
+       
+       
+        
+    });
+   
+   
+
+    function UploadFile(controlId, postUrl, logUrl) {
+         
+        var PerformAction = "Insert";
+        var formData = new FormData();
+        var totalFiles = document.getElementById(controlId).files.length;
+        if (totalFiles > 0) {
+            if (isValidFileExtn(controlId)) {
+                var file = document.getElementById(controlId).files[0];
+                //var currentDateTime = new Date();
+
+                //file.lastModifiedDate=Datetim
+                formData.append("FileUpload", file);
+                formData.append("PerformAction", PerformAction);
+                //formData.append("Updatedfields", Updatedfields);
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            alert('Please select a file!	');
+            return false;
+        }
+        PostFile(formData, postUrl, logUrl);
+
+    }
+    function PostFile(formdata, posturl, logUrl) {
+        $.ajax({
+            type: "POST",
+            url: posturl,
+            data: formdata,
+            async: true,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function () {
+              
+                $("#dvImportResourcesSetting").disabled = true;
+                $("#dvResourcesProgress").show();
+               
+                 
+            },
+            
+            success: function (Data) {
+                 
+                if (Data.msg.toLowerCase() == "success") {
+                    //download logs..
+                    
+                    $("#dvResourcesProgress").hide();
+                    $("#dvImportResourcesSetting").hide();
+                    $("#divResourcesLogs").show();
+                    $("#lblTotalLogs").html(Data.Total);
+                    $("#lblValidLogs").html(Data.Valid);
+                    $("#lblInvalidLogs").html(Data.Invalid);
+                }
+                else
+                {
+                    alert(Data.strReturn)
+                }
+               
+                $("#dvImportResourcesSetting").disabled = false;
+                $("#dvResourcesProgress").hide();
+                
+                $("#FileResources").val('');
+               
+            },
+            error: function (error) {
+                
+                // alert(error);
+                alert('Selected File has been modified. Please select the file again!	');
+                $("#FileResources").val('');
+                 
+               
+                $("#dvImportResourcesSetting").disabled = false;
+                $("#dvResourcesProgress").hide();
+                
+                $("#FileResources").val('');
+            }
+        });
+    }
+    function isValidFileExtn(controlid) {
+         
+        var ext = $('#' + controlid).val().split('.').pop().toLowerCase();
+        if ($.inArray(ext, ['xls', 'xlsx']) == -1) {
+
+            alert('Please select .xls or .xlsx file only!	');
+            return false;
+        }
+        return true;
+    }
+
+    function ResetDone() {
+        confirm("Logs will not be available after click on Done. Do you want to continue?", function () {
+            $('#closeModalPopup').trigger("click");
+        });
+    }
+   
+    </script>

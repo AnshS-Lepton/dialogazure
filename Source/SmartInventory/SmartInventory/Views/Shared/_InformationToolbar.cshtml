@@ -1,0 +1,255 @@
+﻿@model  List<Models.LayerActionMapping>
+@using Models;
+@using SmartInventory.Settings;
+@{
+    var BufferMaxWidthLimit = ApplicationSettings.BufferMaxWidthLimit;
+
+}
+<style>
+    .infoIcon {
+        float: left;
+        width: 32px;
+        height: 26px;
+        background-color: rgba(224,224,224,0.5);
+        border-radius: 4px;
+        margin-left: 4px;
+        cursor: pointer;
+        font-size: 20px;
+        text-align: center;
+        line-height: 1.6;
+        margin-bottom: 6px;
+    }
+    /*.infoBack {
+    float: right;
+    background: url(/images/split_img.png) no-repeat -75px -171px;
+    cursor: pointer;
+    height: 19px;
+    width: 20px;
+    text-indent: 14px;
+    position: relative;
+    margin-right: -32px;
+    /* margin-top: 2px;
+        }*/
+</style>
+
+
+@*@foreach (var item in Model)
+    {
+        <div class="infoIcon">
+            <a href="#" id="Entity@(item.action_name)" data-action="@(item.action_name)" class="icon-History"  data-entity-title="@(item.action_title)"  title="@item.action_title"></a>
+        </div>
+
+    }*@
+<input type="hidden" id="hdnEntityXMLProcessExport" value="0" />
+<input type="hidden" id="hdnCsaDesignName" value="0" />
+<input type="hidden" id="hdnpEntityType" value="0" />
+<input type="hidden" id="hdnpSystemId" value="0" />
+<input type="hidden" id="hdnspltype" value="" />
+@if (ViewBag.IsBackButtonRequired == true)
+{
+    <a title="@Resources.Resources.SI_OSP_GBL_NET_FRM_251" class="infoBack" onclick="si.HideElementInfo()"></a>
+}
+<!DOCTYPE html>
+@foreach (var item in Model.Where(x => x.parent_action_id == 0 && x.action_name.ToUpper().IndexOf("TEMPLATE") == -1).ToList())
+{
+    @Html.Hidden("LayerEditPermission", Model[0].edit)
+
+
+    @*int index = item.action_name.ToUpper().IndexOf("TEMPLATE");
+        if (index >= 0)
+        {
+            <span id="Entity@(item.action_name)" data-action="@(item.action_name)"
+                  class="@(item.action_name) @(item.is_template_filled ? "infoFilledTemplate" : "infoTemplate")
+            @(item.is_enabled ? "" : "roledisabled")" @(item.is_enabled ? "" : "onclick=disabledItem(event);") data-entity-title="@(item.action_title)" title="@item.action_title">T</span>
+        }
+        else
+        {*@
+
+    <div class="actionDv">
+        @if (ApplicationSettings.DeleteAuthorityPermission)
+        {
+
+            <div data-action-id="@item.id" id="Entity@(item.action_name)" data-action="@(item.action_name)" class="entitydiv @(item.action_name) @(item.is_enabled ? "" : "roledisabled") @(item.action_name.ToUpper() == "PENTROWREPORT" ? "icon-export_report_ROW" : "")" data-entity-title="@(item.action_title)" @(item.is_enabled ? "" : "onclick=disabledItem(event);") title="@item.action_title" style="display:@(item.is_visible ? "block;" : "none;")">
+            </div>
+        }
+
+        else
+        {
+            <div data-action-id="@item.id" id="Entity@(item.action_name)" data-action="@(item.action_name)" class="entitydiv @(item.action_name) @(item.is_enabled ? "" : "roledisabled") @(item.action_name.ToUpper() == "PENTROWREPORT" ? "icon-export_report_ROW" : "")" data-entity-title="@(item.action_title)" @(item.is_enabled ? "" : "onclick=disabledItem(event);") title="@item.action_title" style="display:@(item.is_visible ? "block;" : "none;")">
+            </div>
+        }
+
+        @if (item.action_abbr == "A")
+        {
+            var template = Model.Where(x => x.action_layer_id == item.action_layer_id && x.action_abbr == "T").FirstOrDefault();
+            if (template != null)
+            {
+                <span id="Entity@(template.action_name)" data-action="@(template.action_name)"
+                      class="@(template.action_name) @(template.is_template_filled ? "infoFilledTemplate" : "infoTemplate")
+                @(template.is_enabled ? "" : "roledisabled")" @(template.is_enabled ? "" : "onclick=disabledItem(event);") data-entity-title="@(template.action_title)" title="@template.action_title @(template.is_enabled ? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)">T</span>
+            }
+        }
+
+    </div>
+    @*}*@
+}
+
+
+
+
+@foreach (var parentItem in Model.Where(x => x.is_buffer_needed == false).GroupBy(x => x.parent_action_id).Select(grp => grp.ToList()).ToList())
+{
+
+    var parentActionId = parentItem.Select(x => x.parent_action_id).FirstOrDefault();
+    if (parentActionId != 0)
+    {
+
+        <div class="action_container act-buffer-position" style="display:none" id="entitySec_@parentActionId">
+            <span class="action-pointer">
+                &nbsp;
+            </span>
+            <div class="d-flex flex-wrap">
+                @foreach (var subItem in Model.Where(x => x.parent_action_id == parentActionId).ToList())
+                {
+                    int index = subItem.action_name.ToUpper().IndexOf("TEMPLATE");
+                    if (index >= 0)
+                    {
+                        <span id="Entity@(subItem.action_name)" data-bufferEnabled="@subItem.is_buffer_needed" data-action="@(subItem.action_name)"
+                              class="@(subItem.action_name) @(subItem.is_template_filled ? "infoFilledTemplate" : "infoTemplate")
+                    @(subItem.is_enabled ? "" : "roledisabled") @(subItem.is_buffer_needed ? "buffer-disabled" : "")" @(subItem.is_enabled ? "" : "onclick=disabledItem(event);") data-entity-title="@(subItem.action_title)" title="@subItem.action_title @(subItem.is_enabled ? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)">T</span>
+                    }
+                    else
+                    {
+
+
+                        <div id="Entity@(subItem.action_name)" data-bufferEnabled="@subItem.is_buffer_needed" data-action="@(subItem.action_name)" class="infoIcon--mrgn entitydiv @(subItem.action_name) @(subItem.is_enabled ? "" : "roledisabled") @(subItem.action_name.ToUpper() == "PENTROWREPORT" ? "icon-export_report_ROW" : "")" data-entity-title="@(subItem.action_title) " @(subItem.is_enabled ? "" : "onclick=disabledItem(event);") title="@subItem.action_title @(subItem.is_enabled ? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021) " style="display:@(subItem.is_visible ? "block;" : "none;")">
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
+}
+
+@{
+    var bufferedActions = Model.Where(x => x.is_buffer_needed == true).ToList();
+    if (bufferedActions.Count() > 0)
+    {
+        var groupAction = Model.Where(x => x.is_buffer_needed == true).FirstOrDefault();
+        var parentActionId = groupAction.parent_action_id;
+        <div class="buffer_container bufferClass buffer-position bufferWidth" style="display:none;" id="entitySec_@parentActionId">
+            <span class="action-pointer">
+                &nbsp;
+            </span>
+            <input type="hidden" id="EntityBufferWidth" value="0" />
+            <div class="bufferClass">
+                <input type="hidden" id="ShowSubMenu" value="0" />
+                <input type="hidden" id="BufferSystemId" value="" />
+                <input type="hidden" id="BufferEntityType" value="" />
+                <input type="hidden" id="BufferGeomType" value="" />
+                @*<div id="dvlineHeader" class="LineTemplate_modal-header  popup_bg ui-draggable-handle">
+                        <span type="button" id="closeBufferLineTemplate" data-dismiss="modal" class="icon-close"></span>
+
+                        <h4 class="modal-title"></h4>
+                    </div>*@
+
+                <div class="BufferlibDetail bufferClass">
+                    @*<div class="Tab bufferClass">*@
+                    <div class="bufferClass" id="divBufferLinewidth">
+                        @*<label class="control-label col-md-6">Buffer @Resources.Resources.SI_OSP_ROW_NET_FRM_090<i class="clsMandatory">*</i>:</label>*@
+
+                        <select class="chosen-select  form-control mb-01 inp-sel-ha" data-val="true" id="ddlBufferLinewidth" name="width" onchange="ddlChangeRemoveCss(this.id, 'width'), si.showHideCustomWidth();">
+                            <option value="0">Customize</option>
+                            <option selected="selected" value="0.5">0.5 meter</option>
+                            <option value="1">1 meter</option>
+                            <option value="2">2 meter</option>
+                            <option value="3">3 meter</option>
+                        </select>
+                        <input class="form-control mb-01" data-val="true" id="BufferLineCustomized" name="customized" onkeydown="return ValidateNumberDecimal(this,event,5,2);" type="text" onkeyup="si.ValidateWidth(this)" placeholder="Maximum @BufferMaxWidthLimit Mtr" style="display:none;">
+                    </div>
+                    <div id="custBufferLinediv" class="d-flex mt-1rem">
+                        @*<label class="control-label col-md-6">@Resources.Resources.SI_OSP_ROW_NET_FRM_089:</label>*@
+                        <a class="btn btn-default mr-01" onclick="si.CloseBuffer();" id="btnCancelBuffer">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                        <button type="submit" class="btn btn-primary " id="btnSaveBufferLineTemplate" onclick="si.HighlightEntityOnMapWithBuffer();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_007</button>
+                    </div>
+
+                    @*</div>*@
+                    @*<div class="form-group ModalFooter bufferClass" id="dvBtnAction">
+                            <div class="bufferClass" style="float: right; text-align: right; padding-right: 20px;">
+
+
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+            <div class="mt-1rem">
+                @foreach (var subItem in Model.Where(x => x.is_buffer_needed == true).ToList())
+                {
+                    int index = subItem.action_name.ToUpper().IndexOf("TEMPLATE");
+                    if (index >= 0)
+                    {
+                        <span id="Entity@(subItem.action_name)" data-bufferEnabled="@subItem.is_buffer_needed" data-action="@(subItem.action_name)"
+                              class="@(subItem.action_name) @(subItem.is_template_filled ? "infoFilledTemplate" : "infoTemplate")
+                    @(subItem.is_enabled ? "" : "roledisabled") @(subItem.is_buffer_needed ? "buffer-disabled" : "")" @(subItem.is_enabled ? "" : "onclick=disabledItem(event);") data-entity-title="@(subItem.action_title)" title="@subItem.action_title">T</span>
+                    }
+                    else
+                    {
+                        <div id="Entity@(subItem.action_name)" data-bufferEnabled="@subItem.is_buffer_needed" data-action="@(subItem.action_name)" class="entitydiv @(subItem.action_name) @(subItem.is_enabled ? "" : "roledisabled") @(subItem.action_name.ToUpper() == "PENTROWREPORT" ? "icon-export_report_ROW" : "")" data-entity-title="@(subItem.action_title)" @(subItem.is_enabled ? "" : "onclick=disabledItem(event);") title="@subItem.action_title" style="display:@(subItem.is_visible ? "block;" : "none;")">
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+    }
+
+}
+
+
+
+
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        $('#OSP_tool_bar [title!=""]').tooltip({ title: '', html: true, placement: "top", container: 'body' });
+        si.bufferActionEnabling();
+         
+        $('#ddlBufferLinewidth').trigger("chosen:updated");
+
+        var model = @Html.Raw(Json.Encode(Model));
+        $.each(model, function (val,item) {
+            let actionName = item.action_name;
+            if (actionName == "UploadImage") {
+                $('.hide-li').show();
+            }
+
+        });
+         
+        //setTimeout(function () {
+        //if ($("#hdnspltype").val() == 'SECONDARY') {
+        //    $("#EntityProcessSplitterData").show();
+        //    $("#EntityProcessSplitterData2").show();
+        //}
+        //else {
+        //    $("#EntityProcessSplitterData").hide();
+        //    $("#EntityProcessSplitterData2").hide();
+        //    }
+        //},50)
+    });
+
+    $(document).on("click", function () {
+        var container = $(".action_container");
+        var target = $(event.target);
+        if (!target.is('#EntityAddEntity')) {
+            if (!container.is(event.target) && !container.has(event.target).length) {
+                container.hide();
+                $('#EntityAddEntity').removeClass("active-action");
+            }
+        }
+    });
+
+</script>
+
+
+

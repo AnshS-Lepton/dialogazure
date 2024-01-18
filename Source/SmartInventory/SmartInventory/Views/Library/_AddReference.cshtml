@@ -1,0 +1,163 @@
+﻿@model Models.EntityReference
+<!DOCTYPE html>
+<div id="Addref">
+    @{
+        <fieldset class="the-fieldset">
+            <legend class="the-legend">@Resources.Resources.SI_OSP_HTB_NET_FRM_005</legend>
+            <div>
+                <div class="row referance_Label_Header">
+                    <div class="col-md-4">
+                        <label class="control-label">@Resources.Resources.SI_OSP_HTB_NET_FRM_006</label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="control-label">@Resources.Resources.SI_OSP_HTB_NET_FRM_007</label>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label">@Resources.Resources.SI_OSP_HTB_NET_FRM_008</label>
+                    </div>
+                    <div class="col-md-1">
+                        <span class="referenceRowAdd" id="btnAddReferenceRowA" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_042"></span>
+                    </div>
+                </div>
+                <div id="ReferencePointA">
+                    @{
+                        for (int i = 0; i < Model.listPointAReference.Count; i++)
+                        {
+                            @Html.HiddenFor(m => m.listPointAReference[i].id, new { Name = string.Format("EntityReference.listPointAReference[{0}].id", i) });
+                            @Html.HiddenFor(m => m.listPointAReference[i].created_by, new { Name = string.Format("EntityReference.listPointAReference[{0}].created_by", i) });
+                            @Html.HiddenFor(m => m.listPointAReference[i].system_id, new { Name = string.Format("EntityReference.listPointAReference[{0}].system_id", i) });
+                            @Html.HiddenFor(m => m.listPointAReference[i].entity_type, new { Name = string.Format("EntityReference.listPointAReference[{0}].entity_type", i) });
+                            @Html.HiddenFor(m => m.listPointAReference[i].entry_point, new { Name = string.Format("EntityReference.listPointAReference[{0}].entry_point", i) });
+                            @Html.HiddenFor(m => m.listPointAReference[i].modified_on, new { Name = string.Format("EntityReference.listPointAReference[{0}].modified_on", i) });
+                            @Html.HiddenFor(m => m.listPointAReference[i].modified_by, new { Name = string.Format("EntityReference.listPointAReference[{0}].modified_by", i) });
+                            <div class="row form-group reference_row_PointA">
+
+                                <div class="col-md-4">
+                                    @Html.TextBoxFor(m => m.listPointAReference[i].landmark, new { Name = string.Format("EntityReference.listPointAReference[{0}].landmark", i), @class = "form-control", @onclick = "removeBorder(this)", @maxlength = "200", placeholder = @Resources.Resources.SI_OSP_GBL_NET_FRM_043 })
+                                </div>
+                                <div class="col-md-4">
+                                    @Html.TextBoxFor(m => m.listPointAReference[i].distance, new { Name = string.Format("EntityReference.listPointAReference[{0}].distance", i), @class = "form-control numbers-only", @onclick = "removeBorder(this)", @onkeypress = "return allowNumberwithOneDot(event,'" + string.Format("listPointAReference_{0}__distance", i) + "');", @maxlength = "5", placeholder = @Resources.Resources.SI_OSP_GBL_NET_FRM_044 })
+                                </div>
+                                <div class="col-md-4">
+                                    <select id="ddl_direction" name="@string.Format("EntityReference.listPointAReference[{0}].direction", i)" class="chosen-select form-control" onchange="removeBorder(this)">
+                                        <option value="0">--select--</option>
+                                        @if (Model.listPointAReference.Count > 0)
+                                        {
+                                            foreach (var entityRef in Model.listRefrencedirection)
+                                            {
+                                                var selected = entityRef.dropdown_value == Model.listPointAReference[i].direction ? "selected" : "";
+                                                <option value="@entityRef.dropdown_value" data-planningname="@entityRef.dropdown_key" @selected>@entityRef.dropdown_value</option>
+                                            }
+                                        }
+
+                                    </select>
+                                </div>
+
+
+
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </fieldset>
+
+
+        if (Model.entityLayer.geom_type.ToUpper() == Models.GeometryType.Line.ToString().ToUpper())
+        {
+            <fieldset class="the-fieldset">
+                <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_038</legend>
+
+                <div class="form-group form_referance_Bg">
+                    <div class="row referance_Label_Header">
+                        <div class="col-md-4">
+                            <label class="control-label"> @Resources.Resources.SI_OSP_GBL_NET_FRM_039</label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label"> @Resources.Resources.SI_OSP_GBL_NET_FRM_040</label>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="control-label"> @Resources.Resources.SI_OSP_GBL_NET_FRM_041</label>
+                        </div>
+                        <div class="col-md-1">
+                            <span class="referenceRowAdd" id="btnAddReferenceRowB" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_042"></span>
+                        </div>
+                    </div>
+                    <div id="ReferencePointB">
+                        @{
+
+                            for (int i = 0; i < Model.listPointBReference.Count; i++)
+                            {
+
+                                @Html.HiddenFor(m => m.listPointBReference[i].id, new { Name = string.Format("EntityReference.listPointBReference[{0}].id", i) });
+                                @Html.HiddenFor(m => m.listPointBReference[i].created_by, new { Name = string.Format("EntityReference.listPointBReference[{0}].created_by", i) });
+                                @Html.HiddenFor(m => m.listPointBReference[i].system_id, new { Name = string.Format("EntityReference.listPointBReference[{0}].system_id", i) });
+                                @Html.HiddenFor(m => m.listPointBReference[i].entity_type, new { Name = string.Format("EntityReference.listPointBReference[{0}].entity_type", i) });
+                                @Html.HiddenFor(m => m.listPointBReference[i].entry_point, new { Name = string.Format("EntityReference.listPointBReference[{0}].entry_point", i) });
+                                @Html.HiddenFor(m => m.listPointBReference[i].modified_on, new { Name = string.Format("EntityReference.listPointBReference[{0}].modified_on", i) });
+                                @Html.HiddenFor(m => m.listPointBReference[i].modified_by, new { Name = string.Format("EntityReference.listPointBReference[{0}].modified_by", i) });
+                                <div class="row  mrgn_btm reference_row_PointB">
+                                    <div class="col-md-4">
+                                        @Html.TextBoxFor(m => m.listPointBReference[i].landmark, new { Name = string.Format("EntityReference.listPointBReference[{0}].landmark", i), @class = "form-control", @onclick = "removeBorder(this)", @maxlength = "200", placeholder = @Resources.Resources.SI_OSP_GBL_NET_FRM_043 })
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.TextBoxFor(m => m.listPointBReference[i].distance, new { Name = string.Format("EntityReference.listPointBReference[{0}].distance", i), @class = "form-control numbers-only", @onclick = "removeBorder(this)", @onkeypress = "return allowNumberwithOneDot(event,'" + string.Format("listPointAReference_{0}__distance", i) + "');", @maxlength = "5", placeholder = @Resources.Resources.SI_OSP_GBL_NET_FRM_044 })
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select id="ddl_direction" name="@string.Format("EntityReference.listPointBReference[{0}].direction", i)" class="chosen-select form-control" onchange="removeBorder(this)">
+                                            <option value="0">--select--</option>
+                                            @if (Model.listPointBReference.Count > 0)
+                                            {
+                                                foreach (var entityRef in Model.listRefrencedirection)
+                                                {
+                                                    var selected = entityRef.dropdown_value == Model.listPointBReference[i].direction ? "selected" : "";
+                                                    <option value="@entityRef.dropdown_value" data-planningname="@entityRef.dropdown_key" @selected>@entityRef.dropdown_value</option>
+                                                }
+                                            }
+
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                            }
+
+                        }
+                    </div>
+                </div>
+            </fieldset>
+        }
+    }
+</div>
+<script type="text/javascript">
+
+        $(document).ready(function () {
+            $('.chosen-select').chosen({ width: '100%' });
+            $("input.numbers-only").on("paste", function () {
+
+                var thisvalue = this;
+
+                setTimeout(function () {
+                    var OnlyNumber = new RegExp(/^[0-9]{1,10}$/);
+                    if (!OnlyNumber.test(thisvalue.value)) {
+                        thisvalue.value = "";
+                    }
+                }, 0);
+            });
+            appendDynamicInputs("dvRefrence");
+
+            $("#btnAddReferenceRowA").on("click", function () {
+            var RowIndex = $('#ReferencePointA').children('div').length;
+            AddReferenceRow('PointA', RowIndex, @Model.listPointAReference[0].system_id, @Model.listPointAReference[0].created_by, '@Model.listPointAReference[0].entity_type');
+                appendDynamicInputs("dvRefrence");
+             });
+
+            $("#btnAddReferenceRowB").on("click", function () {
+                 var RowIndex = $('#ReferencePointB').children('div').length
+            AddReferenceRow('PointB', RowIndex, @Model.listPointAReference[0].system_id, @Model.listPointAReference[0].created_by, '@Model.listPointAReference[0].entity_type');
+                appendDynamicInputs("dvRefrence");
+            });
+
+
+        });
+</script>

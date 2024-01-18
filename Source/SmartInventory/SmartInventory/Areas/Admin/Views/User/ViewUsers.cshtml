@@ -1,0 +1,237 @@
+﻿@using SmartInventory.Settings;
+@model Models.ViewUserModel
+@using Utility
+
+<script type="text/javascript" src="https://rawgit.com/Bttstrp/bootstrap-switch/master/dist/js/bootstrap-switch.js"></script>
+
+<!DOCTYPE html>
+<script>
+    $(document).ready(function () {
+        debugger;
+        updateNumberstoFormatedNumber();
+        addDefaultSortingIcons("tblUserDetail");
+        onGridHeaderClick('tblUserDetail');
+        $($('#tblUserDetail tr:first th')).addClass('gridHeaderStyle');
+
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#tblUserDetail thead tr th:eq(0)').removeClass('bothorder');
+    });
+    $("#btnExport").on("click", function () {
+
+        window.location = appRoot + 'Home/Export_Dashboard_Data';
+    })
+    function EditUserStatus(id, event, e) {
+
+        e.preventDefault();
+        var item_id = '#Edit_' + id;
+        var msg = event.checked == true ? "Are you sure you want to Activate this user?" : "Are you sure you want to de-activate this user?";
+
+        var csts = $(item_id).is(":checked");
+        showConfirm(msg, function () {
+
+            ajaxReq('User/EditUserStatus', { user_id: id, status: csts }, true, function (resp) {
+
+                if (resp.status == "OK") {
+
+                    alert(resp.message, 'Success', 'success');
+                    setTimeout(function () {
+
+                        $("#frmViewUsers").submit();
+                    }, 1000);
+                    return $(item_id).is(":checked") == true ? $(item_id).prop('checked', false) : $(item_id).prop('checked', true);
+                }
+                else
+                    alert(resp.message);
+            }, true, true);
+        }, function () {
+            if (event.checked) {
+                $(item_id).prop('checked', true);
+            }
+            else {
+                $(item_id).prop('checked', false);
+            }
+
+        });
+
+    }
+
+    function ViewUserReport() {
+        window.location = appRoot + 'User/DownloadViewUserDetail';
+    }
+
+    function UploadUser() {
+        alert("pankaj");
+    }
+    $('th a, tfoot a').on("click", function () {
+        $('#frmViewUsers').attr('action', $(this).attr('href')).submit();
+        return false;
+    });
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+</script>
+<style>
+    .gridHeaderStyle {
+        white-space: nowrap;
+    }
+</style>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div id="dvViewUsers">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                View Users
+            </h4>
+        </div>
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewUsers", ajaxUpdateCallback: "onGridHeaderClick('tblUserDetail')");
+            grid.Bind(Model.lstUsers, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+            if (Model.objGridAttributes.totalRecord > 0)
+            {
+                if ((Model.objGridAttributes.searchBy != "name" && Model.objGridAttributes.searchBy != "user_email"))
+                {
+                    grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+                }
+
+            }
+        }
+        <div class="pad_left">
+            @using (Html.BeginForm("ViewUsers", "User", FormMethod.Post, new { autocomplete = "off", @id = "frmViewUsers" }))
+            {
+
+                <div class="grid-filters filter-sec">
+                    <div class="d-flex">
+                        <label class="control-label pr-1">
+                            Status :
+                        </label>
+                        <div class="--input-width">
+
+                            @Html.DropDownListFor(m => m.objGridAttributes.is_active, new List<SelectListItem>
+                     {
+                        new SelectListItem{ Text="Active", Value = "true" },
+                        new SelectListItem{ Text="InActive", Value = "false" }
+                     }, new { @id = "ddlStatus", @tabindex = "2", @title = "Status", @class = "chosen-select form-control" })
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <label class="control-label pr-1">
+                            Application Access :
+                        </label>
+                        <div class="--input-width">
+
+                            @Html.DropDownListFor(m => m.objGridAttributes.application_access, new List<SelectListItem>
+                     {
+                       new SelectListItem{ Text="-Select-", Value = "" },
+                        new SelectListItem{ Text="Web", Value = "WEB" },
+                        new SelectListItem{ Text="Mobile", Value = "MOBILE" },
+                        new SelectListItem{ Text="Both", Value = "BOTH" }
+                     }, new { @id = "ddlApplication", @tabindex = "2", @title = "Application Access", @class = "chosen-select form-control" })
+                        </div>
+                    </div>
+
+
+                    <div class="d-flex">
+                        <label class="control-label pr-1">Search By : </label>
+                        <div class="--input-width">
+                            @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select form-control" })
+                        </div>
+
+                    </div>
+                    <div class="d-flex">
+                        <label class="control-label pr-1">
+                            Search Text :
+                        </label>
+                        <div class="--input-width">
+                            @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                        </div>
+                    </div>
+                    <div class="d-flex --gap03" id="dvBtnAction">
+                        <button class="btn btn-primary" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                        @if (@grid.TotalRowCount > 0)
+                        {
+                            <input type="button" id="btnViewUserExport" value="Export" class="btn btn-primary" onclick="ViewUserReport()" />
+                        }
+                        else
+                        {
+                            <input type="button" id="btnViwUserExport" value="Export" disabled="disabled" class="btn btn-primary" />
+                        }
+                        <a href="@Url.Action("ViewUsers")" id="btnReset" class="btn btn-default" title="Reset">Reset</a>
+
+                    </div>
+                </div>
+                if (Model.lstUsers.Count > 0)
+                {
+                    <div id="divUserDetail">
+                        <div class="d-flex mb-01">
+                            <div class="recordCount"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+                            @*<botton id="btnExport" class="btn btn-warning ml-3"><i class="right"></i> Export City Wise Report</botton>*@
+                            <input type="button" id="btnLogoutAllUsers" value="Logged Out All Users" class="btn btn-default ml-auto" onclick="LogoutAllMobileUsers()" />
+                            <span class="right"></span>
+                        </div>
+
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+                                htmlAttributes: new { id = "tblUserDetail" },
+                                mode: WebGridPagerModes.All,
+                                columns: grid.Columns(
+                                           grid.Column("", "Action", format:@<text>
+                                                    @if (Model.loginId_UserId != item.user_id)
+                                                    {
+                                                        <a href="@Url.Action("AddUser", "User", new { id = @item.user_id })" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                                        <a href="javascript:OpenUserHistory(@item.user_id);"> <i class="fa fa-history action_icon fa-fw m-r-xs" title="User History"></i></a>
+                                                        <label class="switch" title="Activate/De-Activate User">
+                                                            <input id='Edit_@item.user_id' @(item.is_active == true ? "checked" : "") type="checkbox" class="chk-valid" onclick="EditUserStatus('@item.user_id',this,event)">
+                                                            <span class="slider round"></span>
+                                                        </label>
+                                                        <label class="switch" title="Logout Mobile Device">
+                                                            <input id='Logout_@item.user_id' @(item.history_id != 0 ? "checked" : "") type="checkbox" class="chk-valid" onclick="app.LogoutUser('@item.user_id','@item.application_access',this,event)">
+                                                            <span class="slider round"></span>
+                                                        </label>
+
+                                                    }
+
+
+                                                    <a href="javascript:void(0);" style="display:none;" onclick="DeleteUserDetail(@item.user_id);" title="Delete"> <i class="fa fa-fw fa-trash"></i></a>
+                                        </text>, canSort: false
+),
+grid.Column(header: "S.No.", format: @<text>@item.S_No</text>, canSort: false),
+grid.Column("user_name", "User Name", format: @<text>@item.user_name</text> , canSort: true),
+grid.Column("Name", "Name", format: @<text>@item.name</text>, canSort: true),
+grid.Column("user_email", "Email", format: @<text>@item.user_email</text>, canSort: true),
+grid.Column("role_name", "Role Name", format: @<text>@item.role_name</text>, canSort: true),
+grid.Column("reporting_manager", "Reporting Manager", format: @<text>@item.reporting_manager</text>, canSort: true),
+grid.Column("mobile_number", "Mobile No.", format: @<text>@item.mobile_number</text>, canSort: true),
+grid.Column("application_access", "Application Access", format: @<text>@item.application_access.Substring(0, 1).ToUpper()@item.application_access.Substring(1).ToLower()</text>, canSort: true),
+grid.Column("user_type", "User Type", format: @<text>@item.user_type</text>, canSort: true),
+grid.Column("is_active", "Status", format: @<text>@(item.is_active == true ? "Active" : "InActive")</text>, canSort: false),
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>, canSort: true),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>, canSort: true),
+grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>, canSort: true),
+grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>, canSort: true)
+))
+
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+                            @Html.HiddenFor(m => m.objGridAttributes.searchBy)
+                            @Html.HiddenFor(m => m.objGridAttributes.searchText)
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No User Found.
+                    </div>
+                }
+
+            }
+        </div>
+    </div>
+</div>
+

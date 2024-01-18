@@ -1,0 +1,67 @@
+﻿
+@model Models.MicrowaveLinkViewModel
+<fieldset class="the-fieldset">
+    <legend class="the-legend">Feeder Information</legend>
+    <div class="form-group col-md-12">
+        <div class="col-md-6">
+            <input type="radio" id="male" name="gender" value="male">
+            <label for="male">Standard</label> &nbsp;&nbsp;&nbsp;
+            <input type="radio" id="male" name="gender" value="male">
+            <label for="male">With Diversity</label>
+        </div>
+        <div class="col-md-6">
+            <input type="radio" id="male" name="gender" value="male">
+            <label for="male">Standard</label> &nbsp;&nbsp;&nbsp;
+            <input type="radio" id="male" name="gender" value="male">
+            <label for="male">With Diversity</label>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2"></label>
+            <label class="control-label col-sm-5">Primary Feeder</label>
+            <label class="control-label col-sm-5">Primary Feeder</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">Feeder:<i class="clsMandatory">*</i>:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwavelinkFeederSystemA.feeder_name, new { @class = "form-control", @readonly = true })
+        </div>
+        <label class="control-label col-sm-2" for="txtParentType">Feeder:<i class="clsMandatory">*</i>:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwavelinkFeederSystemB.feeder_name, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">Loss(dB/100m):</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwavelinkFeederSystemA.loss, new { @class = "form-control", @readonly = true })
+        </div>
+        <label class="control-label col-sm-2" for="txtParentType">Loss(dB/100m):</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwavelinkFeederSystemB.loss, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">Additional Loss(dB):</label>
+        <div class="col-sm-2">
+            <label>Tx</label>
+            @Html.TextBoxFor(m => m.microwavelinkFeederSystemA.loss_tx, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-2">
+            <label>Rx</label>
+            @Html.TextBoxFor(m => m.microwavelinkFeederSystemB.loss_rx, new { @class = "form-control"})
+        </div>
+        <label class="control-label col-sm-2" for="txtParentType">Additional Loss:</label>
+        <div class="col-sm-2">
+            <label>Tx</label>
+            @Html.TextBoxFor(m => m.microwavelinkFeederSystemA.loss_tx, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-2">
+            <label>Rx</label>
+            @Html.TextBoxFor(m => m.microwavelinkFeederSystemB.loss_rx, new { @class = "form-control" })
+        </div>
+    </div>
+
+  
+</fieldset>

@@ -1,0 +1,131 @@
+﻿@model Models.Admin.DynamicTheme
+@Html.HiddenFor(m =>m.theme_name , new { @id = "mythemeid" })
+<link href="~/Content/css/DynamicForms/dynamicforms.css" rel="stylesheet" />
+<link href="~/Content/css/DynamicForms/dynamicscontrols.css" rel="stylesheet" />
+<link href="~/Content/css/DynamicForms/DeletePopupStyle.css" rel="stylesheet" />
+<link href="~/Content/css/DynamicForms/noty-3.1.4.css" rel="stylesheet" />
+<script src="~/Content/js/DynamicForms/noty.min-3.1.4.js"></script>
+
+
+<style>
+    #noty_layout__topRight {
+        top: 64px;
+    }
+</style>
+<div id="dvdynamictheme" class="themeWrapper" data-new-gr-c-s-check-loaded="14.1014.0" data-gr-ext-installed="">
+    <div id="lightningjs-usabilla_live" style="display: none;"><div></div></div>
+    <div id="container" class="themeOuter">
+        @*<div class="fChild">
+                <label class="mr-2"> Select Theme:</label>
+                <div class="col-md-4">
+                    @Html.DropDownListFor(m => m.theme_id, new SelectList(Model.themes.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "---select----", new { @id = "myid", @class = "form-control" })
+                </div>
+            </div>*@
+        <div class="title fullWidth">
+            <h4>Choose Theme</h4>
+        </div>
+        <div class="themeSection">
+            <div class="themeThumb">
+                <label>
+                    <div id="dvgreentheme" class="themeThumb--box">
+                        <input type="radio" id="radioGreen" name="nature" value="nature1">
+                        <img src="~/Areas/Admin/Content/images/green.jpg" id="greenthm" class="img-responsive">
+                        <span class="themeThumb--title">
+                            Green Theme
+                        </span>
+                    </div>
+                </label>
+
+                <div id="dvbluetheme" class="themeThumb--box">
+                    <label>
+                        <input type="radio" id="radioBlue" name="nature" value="nature2">
+                        <img src="~/Areas/Admin/Content/images/blue.jpg" id="bluethm" class="img-responsive" />
+                        <span class="themeThumb--title">
+                            Blue Theme
+                        </span>
+                    </label>
+                </div>
+                <div id="dvorangetheme" class="themeThumb--box">
+                    <label>
+                        <input type="radio" id="radioOrange" name="nature" value="nature3">
+                        <img src="~/Areas/Admin/Content/images/orange.jpg" id="orangethm" class="img-responsive" />
+                        <span class="themeThumb--title">
+                            Orange Theme
+                        </span>
+                    </label>
+                </div>
+                <div id="dvpurpletheme" class="themeThumb--box">
+                    <label>
+                        <input type="radio" id="radioPurple" name="nature" value="nature3">
+                        <img src="~/Areas/Admin/Content/images/red.jpg" id="purplethm" class="img-responsive" />
+                        <span class="themeThumb--title">
+                            Purple Theme
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="footerModal d-flex mt-1rem">
+            <button class="a_btn btn-danger ml-auto mr-01">Cancel</button>
+            <button type="button" class="a_btn btn-primary" id="btnSubmit54">Apply</button>
+        </div>
+    </div>
+</div>
+<script src="Scripts/jquery.validate.min.js"></script>
+<script src="Scripts/jquery-1.10.2.min.js"></script>
+<script>
+  
+    function changeTheme() {
+        debugger;
+        let chkGreen = "0";
+        let chkBlue = "0";
+        let chkOrange = "0";
+        let chkPurple = "0";
+        let layerName = '';
+        let _isActive = false;
+        
+        
+        if ($('#radioGreen').is(':checked'))
+        {
+            layerName = "Green";
+            _isActive = true;
+            
+        }
+
+        ajaxReq('Miscellaneous/SaveTheme', { LayerName: layerName, isActive: _isActive }, false, function (resp) {
+
+        });
+        if ($('#radioBlue').is(':checked')) {
+            layerName = "Blue";
+            _isActive = true;
+
+        }
+
+        ajaxReq('Miscellaneous/SaveTheme', { LayerName: layerName, isActive: _isActive }, false, function (resp) {
+
+        });
+        if ($('#radioPurple').is(':checked')) {
+            layerName = "Purple";
+            _isActive = true;
+
+        }
+
+        ajaxReq('Miscellaneous/SaveTheme', { LayerName: layerName, isActive: _isActive }, false, function (resp) {
+
+        });
+        if ($('#radioOrange').is(':checked')) {
+            layerName = "Red";
+            _isActive = true;
+
+        }
+
+        ajaxReq('Miscellaneous/SaveTheme', { LayerName: layerName, isActive: _isActive }, false, function (resp) {
+
+        });
+    }
+    $("#btnSubmit54").click(function () {
+
+        changeTheme();
+
+    });
+</script>

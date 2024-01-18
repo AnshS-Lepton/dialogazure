@@ -1,0 +1,332 @@
+﻿@model Models.ViewSurveyAssignmentModel
+@using Utility;
+
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objFilterAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewSurveyAssignment", ajaxUpdateCallback: "onGridHeaderClick('tblSurveyAreaAssignment')");
+    grid.Bind(Model.lstSurveyAssignment, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+    if (Model.objFilterAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objFilterAttributes.currentPage - 1;
+    }
+}
+<!DOCTYPE html>
+<div>
+
+    @using (Ajax.BeginForm("SurveyAssignment", "SurveyArea", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        //OnBegin = "return ValidateFilterDate('" +  + "','" + Model.objFilterAttributes.searchTo.ToString() + "');"
+    },
+                new { id = "frmSearchSurvey", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.objFilterAttributes.role_id)
+        <div class="libTabContent1 space-pad">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                    <div class="form-group row">
+
+                        <label class="control-label col-sm-2" for="status">@Resources.Resources.SI_OSP_GBL_NET_FRM_104:</label>
+                        <div class="col-sm-4">
+                            @if (Model.objFilterAttributes.role_id == 3)
+                            {
+                                @Html.DropDownListFor(m => m.objFilterAttributes.dd_surveyStatus, new SelectList(Model.SurveyStatus.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text", "Assigned"), new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.objFilterAttributes.dd_surveyStatus, new SelectList(Model.SurveyStatus.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text", "New"), new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                            }
+                        </div>
+                        <label class="control-label col-sm-2" for="txtDateTo">@Resources.Resources.SI_OSP_GBL_NET_FRM_105:</label>
+                        <div class="col-sm-4">
+                            @if (Model.objFilterAttributes.role_id == 3)
+                            {
+                                @Html.DropDownListFor(m => m.objFilterAttributes.dd_user, new SelectList(Model.lstSurveyUser.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text", Model.objFilterAttributes.userid), new { @class = "form-control clsReadOnly", @style = "padding:0;", @readonly = true })
+                            }
+                            else
+                            {
+                                // @Html.DropDownListFor(m => m.objFilterAttributes.dd_user, new SelectList(Model.lstSurveyUser.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text", 0), new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                <select id="objFilterAttributes_dd_user" name="@Html.NameFor(m => m.objFilterAttributes.dd_user)" class="chosen-select col-sm-12">
+
+                                    @foreach (var attribute in Model.lstSurveyUser.GroupBy(x => x.manager_name))
+                                    {
+                                        <optgroup value="@attribute.Select(x=>x.manager_id)" label="@attribute.Key">
+                                            @foreach (var user in attribute)
+                                            {
+                                                var selected = user.user_id == Convert.ToString(Model.objFilterAttributes.dd_user) ? "selected" : "";
+                                                <option value="@user.user_id" @selected>@user.user_name</option>
+                                            }
+                                        </optgroup>
+                                    }
+                                </select>
+
+                            }
+
+                        </div>
+
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="txtDatefrom">@Resources.Resources.SI_OSP_GBL_NET_FRM_096:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objFilterAttributes.searchFrom, new { @id = "txtDateFrom", @title = "Date From", @tabindex = "4", @class = "input-sm form-control", @readonly = true })
+                            <img id="imgFromDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                        <label class="control-label col-sm-2" for="txtDateTo">@Resources.Resources.SI_OSP_GBL_NET_FRM_097:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objFilterAttributes.searchTo, new { @id = "txtDateTo", @title = "Date To", @tabindex = "4", @class = "input-sm form-control", @readonly = true })
+                            <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="Search by">@Resources.Resources.SI_OSP_GBL_NET_FRM_100:</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.objFilterAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_FRM_101:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objFilterAttributes.searchText, new { @id = "txtSearchText", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @maxlength = 50, @onkeypress = "fnOnKeyPress(event)" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ModalFooter d-flex" id="dvBtnAction">
+            <button type="submit" class="btn btn-default ml-auto" id="btnSurveyClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>
+            @if (@grid.TotalRowCount > 0)
+            {
+                <input type="button" id="btnExport" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-success ml-10" />
+            }
+            else
+            {
+                <input type="button" id="btnExport" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" disabled="disabled" class="btn btn-primary ml-10" />
+            }
+
+
+            <input type="hidden" id="SurveyAreaSystemId" value="" />
+            <button type="submit" class="btn btn-primary  ml-10" id="btnSearchSurveyArea">@Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+
+        </div>
+
+
+        if (Model.lstSurveyAssignment.Count > 0)
+        {
+            <div id="dvViewSurveyAssignment" class="space-pad">
+
+                <div class="mb-15"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@grid.TotalRowCount</b></div>
+                <div class="table-responsive">
+                    @grid.GetHtml(tableStyle: "grid",
+                            htmlAttributes: new { id = "tblSurveyAreaAssignment" },
+
+                            mode: WebGridPagerModes.All,
+                            columns: grid.Columns(
+                            grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_059, format:
+                                        @<text>
+                                            <div class="d-flex">
+                                                <a href="#" onclick="showarea('@item.system_id');$(popup.DE.MinimizeModel).trigger('click');" class="dropdown-toggle i-icons-style icon-fs" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036">
+                                                    <i class="fa fa-globe fa-fw m-r-xs"></i>
+                                                </a>
+                                                @if (Model.objFilterAttributes.role_id == 2)
+                                                 {
+                                                    <a href="#" onclick="updateSurveyAttr('@item.system_id')" class="dropdown-toggle i-icons-style icon-fs" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_003">
+                                                        <i class="fa fa-edit fa-fw m-r-xs"></i>
+                                                    </a>
+                                                 }
+
+                                                @if (@item.surveyarea_status == "Assigned" || @item.surveyarea_status == "New")
+                                                 {
+                                                     if (Model.objFilterAttributes.role_id == 2)
+                                                     {
+                                                        <a href="#" onclick="btnShowSurveyAssignment(this,'@item.system_id','@item.due_date','@item.surveyarea_name','@item.network_id')" class="dropdown-toggle i-icons-style icon-fs" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_004">
+                                                            <i class="fa fa-address-book-o fa-fw m-r-xs"></i>
+                                                        </a>
+                                                     }
+                                                 }
+
+                                                @if (@item.surveyarea_status == "Completed")
+                                                 {
+                                                     if (Model.objFilterAttributes.role_id == 2)
+                                                     {
+                                                        <a href="#" onclick="freezeSurveyArea('@item.system_id','Assigned')" class="dropdown-toggle i-icons-style icon-fs" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_005">
+                                                            <i class="fa fa-lock" aria-hidden="true"></i>
+                                                        </a>
+                                                     }
+                                                 }
+                                                 else
+                                                 {
+                                                     if (@item.total_building > 0)
+                                                     {
+                                                         if (Model.objFilterAttributes.role_id == 2)
+                                                         {
+                                                             if (@item.total_building == @item.completed)
+                                                             {
+                                                                <a href="#" onclick="freezeSurveyArea('@item.system_id','Completed')" class="dropdown-toggle i-icons-style icon-fs" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_006">
+                                                                    <i class="fa fa-unlock" aria-hidden="true"></i>
+                                                                </a>
+                                                             }
+                                                         }
+                                                     }
+
+                                                 }
+                                            </div>
+
+                                        </text>),
+                    grid.Column("network_id", Resources.Resources.SI_OSP_GBL_NET_RPT_007, format: @<text>@item.network_id </text>),
+grid.Column("surveyarea_name", Resources.Resources.SI_OSP_BUL_NET_RPT_018, format: @<text>@item.surveyarea_name</text>),
+@*grid.Column("total_building", "Total Building", format: @<text> @item.total_building </text>),*@
+
+grid.Column("surveyarea_status", Resources.Resources.SI_OSP_SVA_NET_RPT_001, format: @<text>@item.surveyarea_status</text>),
+grid.Column("remarks", Resources.Resources.SI_OSP_GBL_GBL_GBL_006, format: @<text> @item.remarks</text>),
+grid.Column("total_assigned_user", Resources.Resources.SI_OSP_GBL_NET_RPT_010, format: @<text>@item.total_assigned_user</text>),
+grid.Column("total_building", Resources.Resources.SI_OSP_GBL_NET_RPT_009, format: (item) =>
+{
+if (item.total_building == 0)
+{
+
+return Html.Raw(string.Format("<text>{0}</text>", item.total_building));
+}
+else
+{
+return Html.Raw(string.Format("<a  href=\"#\"  style=\"color: #0a0909\" onclick=\"showSurveyTrackBuilding({0}, {1},{2})\">{3}</a>", item.created_by, 0, item.system_id, item.total_building));
+}
+}),
+
+
+
+grid.Column("completed", Resources.Resources.SI_OSP_GBL_NET_FRM_183, format: @<text> @item.completed</text>),
+
+// grid.Column("user_name", "Assigned by", format: @<text> @item.user_name </text>),
+
+
+grid.Column("user_name", Resources.Resources.SI_OSP_GBL_GBL_GBL_056, format: @<text>@item.user_name</text>),
+grid.Column("created_on", Resources.Resources.SI_OSP_GBL_GBL_GBL_055, format: @<text> @(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString())) </text>),
+grid.Column("due_date", Resources.Resources.SI_OSP_GBL_GBL_GBL_019, format: @<text> @(item.due_date == null ? item.due_date : MiscHelper.FormatDate(item.due_date.ToString())) </text>)))
+
+                    @Html.Hidden("dir", grid.SortDirection)
+                    @Html.Hidden("col", grid.SortColumn)
+
+
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="nr-found">
+                <span> @Resources.Resources.SI_OSP_GBL_NET_RPT_013</span>
+            </div>
+        }
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+
+
+
+        //si.setSurveyDateTimeCalendar("txtDateFrom", "imgFromDate", "1", false);
+        //si.setSurveyDateTimeCalendar("txtDateTo", "imgToDate", "1", false);
+        si.setDateTimeCalendar_Survey("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+
+
+        $('tfoot a').on("click", function () {
+            $('form').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+
+        //Post form on page header click..
+        $('th a').on("click", function () {
+            $('form').attr('action', $(this).attr('href')).submit();
+
+            return false;
+        });
+        $('.chosen-select').chosen({ width: '100%' });
+
+        $("#btnExport").on("click", function () {
+
+            // SurveyAssignmentExport();
+            SurveyAssignmentReport();
+        });
+
+        $("#btnSearchSurveyArea").on("click", function () {
+
+            var frmdate = $("#txtDateFrom").val();
+            var todate = $("#txtDateTo").val();
+            var chkValid = false;
+            chkValid = ValidateFilterDate(frmdate, todate);
+            if (chkValid) {
+                return true;
+            }
+            else {
+                var msg = frmdate == '' ? MultilingualKey.SI_OSP_GBL_JQ_FRM_150 : MultilingualKey.SI_GBL_GBL_JQ_FRM_025;
+                alert(msg + " " + MultilingualKey.SI_GBL_GBL_JQ_FRM_026);
+                return false;
+            }
+        });
+
+
+        $("#btnSurveyClear").on("click", function () {
+
+            if ($("#objFilterAttributes_role_id").val() != '3') {
+
+                $("#txtDateFrom").val("");
+                $("#txtDateTo").val(""); //
+                $("#objFilterAttributes_dd_surveyStatus").val("New").trigger("chosen:updated");
+                $("#objFilterAttributes_dd_user").val("0").trigger("chosen:updated");
+                $("#objFilterAttributes_searchBy").val("Name").trigger("chosen:updated");
+                $("#txtSearchText").val("");
+
+
+
+            }
+            else {
+                $("#txtDateFrom").val("");
+                $("#txtDateTo").val(""); //
+                $("#objFilterAttributes_dd_surveyStatus").val("Assigned").trigger("chosen:updated");
+
+                $("#objFilterAttributes_searchBy").val("Name").trigger("chosen:updated");
+                $("#txtSearchText").val("");
+            }
+            $("btnSearchSurveyArea").trigger("click");
+        });
+
+    });
+    function updateSurveyAttr(system_id) {
+        // SurveyAssignmentExport();
+        showSurveyEdit(system_id);
+    }
+    function showarea(systemID) {
+
+        zoomSearchedElement1("Polygon", 'SurveyArea', systemID)
+    }
+    function btnShowSurveyAssignment(obj, systemid, duedate, surveyareaName, networkcode) {
+         
+        $("#SurveyAreaSystemId").val(systemid);
+
+        if ($("#objFilterAttributes_dd_user option").length > 1) {
+            btnShowSurveyAssin(obj, systemid, duedate, surveyareaName, networkcode);
+        }
+        else {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_002);
+        }
+    }
+
+
+    function showSurveyTrackBuilding(user_id, loginID, surveyID) {
+
+        showtrackBuilding(user_id, loginID, surveyID);
+    }
+    function freezeSurveyArea(systemid, surveyStatus) {
+        FreezeArea(systemid, surveyStatus);
+    }
+
+
+    $(document).ready(function () {
+        addDefaultSortingIcons("tblSurveyAreaAssignment");
+        onGridHeaderClick('tblSurveyAreaAssignment')
+    });
+
+
+
+
+</script>

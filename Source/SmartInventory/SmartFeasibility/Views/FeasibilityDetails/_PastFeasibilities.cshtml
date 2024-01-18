@@ -1,0 +1,352 @@
+﻿@model Models.Feasibility.PastFeasibilityViewModel
+@using Utility
+
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: false, ajaxUpdateContainerId: "tblPastFeas", ajaxUpdateCallback: "onGridHeaderClick('WebGrid')", canPage: true);
+    grid.Bind(Model.lstPastFeasibility, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+    if (Model.objGridAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+    }
+}
+
+<!DOCTYPE html>
+
+<div class="bulkFeasContainer" id="dvMain">
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#divList">@Resources.Resources.SF_GBL_GBL_NET_FRM_049</a></li>
+            <li class="ui-state-disabled"><a href="#divDetails">@Resources.Resources.SF_GBL_GBL_NET_FRM_051</a></li>
+        </ul>
+        @using (Ajax.BeginForm("pastFeasibilities", "FeasibilityDetails", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvMain", LoadingElementId = "dvProgress", OnBegin = "return Validform();" },
+                                 new { id = "frmHistoryList", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+           // @Html.HiddenFor(m => m.FromDate, "hdn_from_date")
+           // @Html.HiddenFor(m => m.ToDate, "hdn_to_date")
+
+            <div id="divList">
+                <div class="row">
+                    <div class="col-md-3 dflex">
+                        <label class="control-label mr05">@Resources.Resources.SF_GBL_GBL_NET_FRM_034 : </label>
+                        @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control searchPastFeas", @onChange = "clearSearchText()", @id = "ddlSearchby" })
+                    </div> 
+                        <div class="col-sm-2">
+                            @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @title = Resources.Resources.SF_GBL_GBL_NET_FRM_035, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SF_GBL_GBL_NET_FRM_035, @id = "txtSearchtext" })
+                        </div>
+                       <div class="col-md-3"></div>
+                        <div class="col-sm-2 pl0">
+                            @Html.TextBoxFor(m => m.ToDate, null, new { @title = "Date To", @tabindex = "4", @class = "input-sm form-control", @readonly = true, @Placeholder = "Date To", @id= "toDate" })
+                            <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                        <div class="col-sm-2 pl0">
+                            @Html.TextBoxFor(m => m.FromDate, null, new { @title = "Date From", @tabindex = "4", @class = "input-sm form-control", @readonly = true, @Placeholder = "Date From", @id = "fromDate" })
+                            <img id="imgFromDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                        
+                            
+                 </div> 
+                <div class="row">
+                    <div class="div_totalRecord col-sm-4 mt15">@Resources.Resources.SF_GBL_GBL_NET_FRM_026:&nbsp;<span>@grid.TotalRowCount</span></div>
+                    <div class="col-sm-8 mt10 mb10 dfButtons">
+                        <input type="button" id="btnReset" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" class="btn btn-primary"  onclick="ResetFormValues()" />
+
+                        @if (grid.TotalRowCount > 0)
+                        {
+                            <input type="button" id="btnExport" value="@Resources.Resources.SF_GBL_GBL_NET_RPT_001" class="btn btn-primary" onclick="sf.ExportPastFeasibilityRecord('@Model.objGridAttributes.searchBy', '@Model.objGridAttributes.searchText');" />
+                            <input type="button" id="btnExportKML" value="@Resources.Resources.SF_OSP_GBL_NET_RPT_001" class="btn btn-primary" onclick="sf.ExportMergedKML('@Model.objGridAttributes.searchBy', '@Model.objGridAttributes.searchText');"  />
+                        }
+                        else
+                        {
+                            <input type="button" id="btnExport" disabled title="@Resources.Resources.SF_OSP_GBL_NET_RPT_002" value="@Resources.Resources.SF_GBL_GBL_NET_RPT_001" class="btn btn-primary"  />
+                            <input type="button" id="btnExportKML" disabled title="@Resources.Resources.SF_OSP_GBL_NET_RPT_002" value="@Resources.Resources.SF_OSP_GBL_NET_RPT_001" class="btn btn-primary" />
+                        }
+
+                        <button class="btn btn-primary" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5"  type="submit">@Resources.Resources.SF_GBL_GBL_GBL_GNL_006</button>
+
+                    </div>
+                </div> 
+                <div class="toverflow">
+                    @* <table id="tblPastFeas" class="display compact cell-border" border="1" width="100%"></table>*@
+                    @grid.GetHtml(tableStyle: "webgrid",
+                    headerStyle: "webGridHeader",
+                    alternatingRowStyle: "alt",
+                    htmlAttributes: new { @id = "tblPastFeas", @class = "table table-responsive" },
+                    columns: grid.Columns(
+                    grid.Column("", header: null, format: @<text>
+                   
+
+
+                    <input type="radio" class='form-check-input rdbPastFeas' name='rdbRowRadios' value="@item.history_id" onclick="feasibilityHistory.bindRadioEvent(this);"/></text>),
+                  // grid.Column("history_id", "History ID", format: @<text>@item.history_id</text>),
+                  grid.Column("history_display_id", @Resources.Resources.SF_GBL_GBL_NET_FRM_092, format: @<text>@item.history_display_id</text>),
+                  grid.Column("feasibility_name", @Resources.Resources.SF_GBL_GBL_NET_FRM_012, format: @<text>@HttpUtility.HtmlDecode(item.feasibility_name).Replace("\t", "") </text>),
+                  grid.Column("customer_name", @Resources.Resources.SF_GBL_GBL_NET_FRM_010, format: @<text>@HttpUtility.HtmlDecode(item.customer_name).Replace("\t", "")</text>),
+                  grid.Column("customer_id", @Resources.Resources.SF_GBL_GBL_NET_FRM_011, format: @<text>@HttpUtility.HtmlDecode(item.customer_id).Replace("\t", "")</text>),
+                  grid.Column("start_point_name", @Resources.Resources.SF_GBL_GBL_NET_FRM_068, format: @<text>@HttpUtility.HtmlDecode(item.start_point_name)</text>),
+                  grid.Column("start_lat_lng", @Resources.Resources.SF_GBL_GBL_NET_FRM_052, format: @<text>@item.start_lat_lng</text>),
+                  grid.Column("end_point_name", @Resources.Resources.SF_GBL_GBL_NET_FRM_070, format: @<text>@HttpUtility.HtmlDecode(item.end_point_name)</text>),
+                  grid.Column("end_lat_lng", @Resources.Resources.SF_GBL_GBL_NET_FRM_053, format: @<text>@item.end_lat_lng</text>),
+                  grid.Column("inside_p", @Resources.Resources.SF_GBL_GBL_GBL_GBL_027, format: @<text>@item.inside_p</text>),
+                  grid.Column("inside_a", @Resources.Resources.SF_GBL_GBL_NET_FRM_093, format: @<text>@item.inside_a</text>),
+                  grid.Column("outside_a_end", @Resources.Resources.SF_GBL_GBL_NET_FRM_094, format: @<text>@item.outside_a_end</text>),
+                  grid.Column("outside_b_end", @Resources.Resources.SF_GBL_GBL_NET_FRM_095, format: @<text>@item.outside_b_end</text>),
+                  grid.Column("lmc_a", @Resources.Resources.SF_GBL_GBL_NET_FRM_096, format: @<text>@item.lmc_a</text>),
+                  grid.Column("lmc_b", @Resources.Resources.SF_GBL_GBL_NET_FRM_097, format: @<text>@item.lmc_b</text>),
+
+                  grid.Column("buffer_radius_a", @Resources.Resources.SF_GBL_GBL_NET_GBL_001, format: @<text>@item.buffer_radius_a</text>),
+                  grid.Column("buffer_radius_b", @Resources.Resources.SF_GBL_GBL_NET_GBL_002, format: @<text>@item.buffer_radius_b</text>),
+                  grid.Column("created_on", @Resources.Resources.SF_GBL_GBL_JQ_FRM_009, format: @<text>@item.created_on</text>)
+
+   )
+)
+                </div>
+                @*<table id="tblPastFeas" class="display compact cell-border" border="1" width="100%"></table>*@
+            </div>
+        }
+            <div id="divDetails">
+                <form class="form-inline">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_historyID" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_092:</label>
+                                <input type="text" class="form-control col-md-5" id="_historyID" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_feasibilityName" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_012:</label>
+                                <input type="text" class="form-control col-md-5" id="_feasibilityName" disabled="disabled">               
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_customerID" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_011:</label>
+                                <input type="text" class="form-control col-md-5" id="_customerID" disabled="disabled">                                
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_customerName" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_010:</label>
+                                <input type="text" class="form-control col-md-5" id="_customerName" disabled="disabled">                                
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_startPointName" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_068:</label>
+                                <input type="text" class="form-control col-md-5" id="_startPointName" disabled="disabled">                                
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_endPointName" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_070:</label>
+                                <input type="text" class="form-control col-md-5" id="_endPointName" disabled="disabled">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_startLocation" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_052:</label>
+                                <input type="text" class="form-control col-md-5" id="_startLocation" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_endLocation" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_053:</label>
+                                <input type="text" class="form-control col-md-5" id="_endLocation" disabled="disabled">
+                            </div>
+                        </div>
+
+                            </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_inside_P_Length" class="col-md-6">@Resources.Resources.SF_GBL_GBL_GBL_GBL_027:</label>
+                                <input type="text" class="form-control col-md-4" id="_inside_P_Length" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_inside_A_Length" class="col-md-6">@Resources.Resources.SF_GBL_GBL_GBL_GBL_027:</label>
+                                <input type="text" class="form-control col-md-4" id="_inside_A_Length" disabled="disabled">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_outside_A_Length" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_094:</label>
+                                <input type="text" class="form-control col-md-5" id="_outside_A_Length" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_outside_B_Length" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_095:</label>
+                                <input type="text" class="form-control col-md-5" id="_outside_B_Length" disabled="disabled">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_lmcA" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_096:</label>
+                                <input type="text" class="form-control col-md-5" id="_lmcA" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_lmcB" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_097:</label>
+                                <input type="text" class="form-control col-md-5" id="_lmcB" disabled="disabled">
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">                      
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_bufferRadA" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_GBL_001:</label>
+                                <input type="text" class="form-control col-md-5" id="_bufferRadA" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_bufferRadB" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_GBL_002:</label>
+                                <input type="text" class="form-control col-md-5" id="_bufferRadB" disabled="disabled">
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_requiredCores" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_016:</label>
+                                <input type="text" class="form-control col-md-5" id="_requiredCores" disabled="disabled">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_totalLength" class="col-md-6">@Resources.Resources.SF_GBL_GBL_NET_FRM_089:</label>
+                                <input type="text" class="form-control col-md-4" id="_totalLength" disabled="disabled">
+                            </div>
+                        </div>
+                        
+                        @*<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="_insideLength" class="col-md-4">@Resources.Resources.SF_GBL_GBL_NET_FRM_054:</label>
+                                <input type="text" class="form-control col-md-4" id="_insideLength" disabled="disabled">
+                    </div>
+                        </div>*@
+                    </div>
+
+                   
+
+                </form>
+
+                <div class="historyActions">
+                    <div class="row">
+                        <div class="col-sm-12 dfButtons">
+                            <button type="button" class="btn btn-primary" id="btnDisplayFeas">@Resources.Resources.SF_GBL_GBL_NET_FRM_058</button>
+                            <button type="button" class="btn btn-primary" id="btnComputeAgain">@Resources.Resources.SF_GBL_GBL_NET_FRM_059</button>
+
+                            <div class="dropdown ml10">
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                    @Resources.Resources.SF_GBL_GBL_NET_FRM_060
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a onclick="sf.dowloadFeasibilityReport('BOM', true)">BOM Report</a></li>
+                                    <li><a onclick="sf.dowloadFeasibilityReport('PDF', true)">PDF Report</a></li>
+                                    <li><a onclick="sf.dowloadFeasibilityReport('XLS', true)">Excel Report</a></li>
+                                    <li><a onclick="sf.dowloadFeasibilityReport('KML', true)">KML</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       
+        </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+       sf.setDateTimeCalendar_ExportEntities("fromDate", "toDate", "imgFromDate", "imgToDate", false);
+    });
+    @*$("#tblPastFeas tfoot tr td").each(function (i, col) {
+        $(col).children().each(function (i, a) {
+            var href = $(a).attr("href");
+            var pageUrl = href + "&searchBy=" + '@Model.objGridAttributes.searchBy' + "&searchText=" + '@Model.objGridAttributes.searchText' + '&FromDate=' + $("#fromDate").val() + '&ToDate=' + $("#toDate").val();
+            // alert(pageUrl);
+
+            $(a).attr("href", pageUrl);
+        })
+
+
+    });*@
+
+    $('#tblPastFeas tfoot a').on("click", function () {
+        $('#frmHistoryList').attr('action', $(this).attr('href')).submit();
+        return false;
+    });
+
+    function ResetFormValues()
+    {
+        $("#txtSearchtext").val('');
+        $("#fromDate").val('');
+        $("#toDate").val('');
+        $("#ddlSearchby").val('');
+        $("#frmHistoryList").submit();
+    }
+    function clearSearchText()
+    {
+        $("#txtSearchtext").val('');
+    }
+    function Validform()
+    {
+        if ($("#fromDate").val() == "" && $("#toDate").val() != "")
+        {
+            alert("Please fill From Date");
+            return false;
+        }
+        if ($("#fromDate").val() != "" && $("#toDate").val() == "") {
+            alert("Please fill To Date");
+            return false;
+        }
+        if ($("#ddlSearchby").val() == "" && $("#txtSearchtext").val() != "")
+        {
+            alert("Please select Search By");
+            return false;
+        }
+        if ($("#ddlSearchby").val() != "" && $("#txtSearchtext").val() == "") {
+            alert("Please select Search text");
+            return false;
+        }
+        return true;
+    }
+    if (sf) {
+        sf.pastFeasibilities = JSON.parse('@Html.Raw(Json.Encode(Model.lstPastFeasibility))'.replace("	 ",""));
+
+        var feasibilityHistory = new FeasibilityHistory();
+        feasibilityHistory.init();
+        $($("#tabs ul li")[1]).attr("style", "display:none;");
+        // $($("#tabs ul li")[1]).attr('disabled', true).addClass('ui-state-disabled');
+        // feasibilityHistory.bindRadioEvent();
+    }
+</script>

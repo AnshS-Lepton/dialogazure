@@ -1,0 +1,443 @@
+﻿@model Models.ViewSurveyBuildingModel
+@using Utility;
+
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objbuildingFilterAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "objViewSurveyBuilding",
+        ajaxUpdateCallback: "addDefaultSortingIcons(tblSurveyBuilding)");
+    grid.Bind(Model.lstSurveyBuilding, autoSortAndPage: false, rowCount: Model.objbuildingFilterAttributes.totalRecord);
+    if (Model.objbuildingFilterAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objbuildingFilterAttributes.currentPage - 1;
+    }
+}
+<style>
+    #frmShowSurveyBuilding .webgrid th input[id="cbSelectAll"] {
+        float: left;
+        margin: 0px;
+        margin-top: 3px;
+        margin-right: 1px;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="libDetail">
+    @using (Ajax.BeginForm("SurveyBuilding", "SurveyArea", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+
+
+    },
+                                                new { id = "frmShowSurveyBuilding", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        <div class="libTabContent1 space-pad">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="status">@Resources.Resources.SI_OSP_GBL_NET_FRM_098:</label>
+                        <div class="col-sm-4">
+                            @Html.HiddenFor(m => m.objbuildingFilterAttributes.roleid)
+                            @Html.DropDownListFor(m => m.objbuildingFilterAttributes.dd_BuildingStatus, new SelectList(Model.BuildingStatus.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "drpBldStatus", @onchange = "ddlChangeRemoveCss(this.id, 'drpBldStatus');" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtDateTo">@Resources.Resources.SI_OSP_GBL_NET_FRM_099:</label>
+                        <div class="col-sm-4">
+                            @if (Model.objbuildingFilterAttributes.roleid == 3)
+                            {
+                                @Html.DropDownListFor(m => m.objbuildingFilterAttributes.dd_user, new SelectList(Model.lstSurveyUser.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text"), new { @class = "form-control clsReadOnly", @style = "padding:0;", @readonly = true })
+
+                            }
+                            else
+                            {
+                                // @Html.DropDownListFor(m => m.objbuildingFilterAttributes.dd_user, new SelectList(Model.lstSurveyUser.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+
+                                <select id="objbuildingFilterAttributes_dd_user" name="@Html.NameFor(m => m.objbuildingFilterAttributes.dd_user)" class="chosen-select col-sm-12">
+
+                                    @foreach (var attribute in Model.lstSurveyUser.GroupBy(x => x.manager_name))
+                                    {
+                                        //var selected = attribute.user_id == Model.objbuildingFilterAttributes.dd_user ? "selected" : "";
+                                        <optgroup value="@attribute.Select(x=>x.manager_id)" label="@attribute.Key">
+                                            @foreach (var user in attribute)
+                                            {
+                                                var selected = user.user_id == Convert.ToString(Model.objbuildingFilterAttributes.dd_user) ? "selected" : "";
+                                                <option value="@user.user_id" @selected>@user.user_name</option>
+                                            }
+                                        </optgroup>
+                                    }
+                                </select>
+                            }
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="txtDatefrom">@Resources.Resources.SI_OSP_GBL_NET_FRM_096:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objbuildingFilterAttributes.searchFrom, new { @id = "txtDateFrom", @title = "Date From", @tabindex = "4", @class = "input-sm form-control", @readonly = true })
+                            <img id="imgFromDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                        <label class="control-label col-sm-2" for="txtDateTo">@Resources.Resources.SI_OSP_GBL_NET_FRM_097:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objbuildingFilterAttributes.searchTo, new { @id = "txtDateTo", @title = "Date To", @tabindex = "4", @class = "input-sm form-control", @readonly = true })
+                            <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+
+                    </div>
+                    <div class="form-group  row">
+
+                        <label class="control-label col-sm-2" for="Search by">@Resources.Resources.SI_OSP_GBL_NET_FRM_100:</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.objbuildingFilterAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_FRM_101:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objbuildingFilterAttributes.searchText, new { @id = "txtSearchText", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @maxlength = 50, @onkeypress = "fnOnKeyPress(event)" })
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ModalFooter d-flex" id="dvBtnAction">
+            <button type="submit" class="btn btn-success ml-auto" id="btnSurveyBuilding">@Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+            @*<a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancelAssignRoute">Reset</a>*@
+
+            @if (@grid.TotalRowCount > 0)
+            {
+                <input type="button" id="btnExportBuilding" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-success ml-10" />
+                @*if (Model.objbuildingFilterAttributes.roleid == 2)
+                    {
+                        if (Model.objbuildingFilterAttributes.dd_BuildingStatus == "Surveyed")
+                        {
+                            <input type="button" id="btnBulkUpdate" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_102" class="btn btn-primary" style="float:left" />
+                            <input type="button" id="btnBulkReject" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_103" class="btn btn-primary" style="float:left; margin-left:5px;" />
+                        }
+                        else
+                        {
+                            <input type="button" id="btnBulkUpdate" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_102" class="btn btn-primary" disabled="disabled" style="float:left" />
+                            <input type="button" id="btnBulkReject" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_103" class="btn btn-primary" disabled="disabled" style="float:left; margin-left:5px;" />
+                        }
+
+                    }
+                    else
+                    {
+                        <input type="button" id="btnBulkUpdate" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_102" class="btn btn-primary" disabled="disabled" style="float:left" />
+                        <input type="button" id="btnBulkReject" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_103" class="btn btn-primary" disabled="disabled" style="float:left; margin-left:5px;" />
+                    }*@
+
+                if (((List<string>)Session["ApplicableModuleList"]).Contains("ARP") && (Model.objbuildingFilterAttributes.dd_BuildingStatus == "Surveyed"))
+                {
+                    <input type="button" id="btnBulkUpdate" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_102" class="btn btn-success ml-10" />
+                    <input type="button" id="btnBulkReject" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_103" class="btn btn-success ml-10" />
+                }
+                else
+                {
+                    <input type="button" id="btnBulkUpdate" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_102" class="btn btn-success dvdisabled ml-10" disabled="disabled" />
+                    <input type="button" id="btnBulkReject" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_103" class="btn btn-success dvdisabled ml-10" disabled="disabled" />
+                }
+
+            }
+            else
+            {
+                <input type="button" id="btnExportBuilding" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" disabled="disabled" class="btn btn-primary ml-10" />
+                <input type="button" id="btnBulkUpdate" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_102" class="btn btn-primary ml-10" disabled="disabled" />
+                <input type="button" id="btnBulkReject" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_103" class="btn btn-primary ml-10" disabled="disabled" />
+            }
+            <button type="submit" class="btn btn-default ml-10" id="btnBuildingSurveyClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>
+        </div>
+
+        if (Model.lstSurveyBuilding.Count > 0)
+        {
+            <div id="objViewSurveyBuilding">
+                <div class="space-pad">
+                    <div class="mb-15"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:@grid.TotalRowCount</b></div>
+                    <div class="table-responsive">
+                        @grid.GetHtml(tableStyle: "grid",
+                                htmlAttributes: new { id = "tblSurveyBuilding" },
+                                mode: WebGridPagerModes.All,
+                                columns: grid.Columns(
+
+                        grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_059, format:
+                                    @<text>
+                                        <div class="d-flex">
+                                            <a href="#" onclick="showarea('@item.surveyarea_id');$(popup.DE.MinimizeModel).trigger('click');" class="dropdown-toggle i-icons-style icon-fs" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_081">
+                                                <i class="fa fa-globe fa-fw m-r-xs"></i>
+                                            </a>
+                                            <a href="#" onclick="showBuilding('@item.building_id','@item.building_status');$(popup.DE.MinimizeModel).trigger('click');" class="dropdown-toggle i-icons-style icon-fs" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_082">
+                                                <i class="fa fa-building fa-fw m-r-xs"></i>
+                                            </a>
+                                            <a href="#" onclick="updateBuildingAttr('@item.building_id','@item.building_status')" class="dropdown-toggle i-icons-style icon-fs" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_023">
+                                                <i class="fa fa-history fa-fw m-r-xs"></i>
+                                            </a>
+                                        </div>
+                                    </text>),
+                 grid.Column(
+                           format: @<text> <input type="checkbox" value="@item.building_id" name="ids" class="chkSurvey mr-03" /> </text>,
+header: "{checkall}"
+),
+
+grid.Column("building_code", Resources.Resources.SI_OSP_GBL_GBL_GBL_060, format: @<text>@item.building_code</text>),
+grid.Column("building_name", Resources.Resources.SI_OSP_BUL_NET_FRM_011, format: @<text>@item.building_name</text>),
+grid.Column("building_no", Resources.Resources.SI_OSP_GBL_NET_RPT_045, format: @<text>@item.building_no</text>),
+grid.Column("latitude", Resources.Resources.SI_OSP_GBL_GBL_GBL_011, format: @<text>@item.latitude</text>),
+grid.Column("longitude", Resources.Resources.SI_OSP_GBL_GBL_GBL_012, format: @<text>@item.longitude</text>),
+grid.Column("address", Resources.Resources.SI_OSP_GBL_NET_RPT_046, format: @<text>@item.address</text>),
+grid.Column("building_status", Resources.Resources.SI_OSP_GBL_NET_RPT_047, format: @<text>@item.building_status</text>),
+
+
+grid.Column("business_pass", Resources.Resources.SI_OSP_GBL_NET_RPT_051, format: @<text>@item.business_pass</text>),
+grid.Column("home_pass", Resources.Resources.SI_OSP_GBL_GBL_GBL_083, format: @<text>@item.home_pass</text>),
+
+grid.Column("tenancy", Resources.Resources.SI_OSP_GBL_GBL_GBL_084, format: @<text> @item.tenancy  </text>),
+grid.Column("category", Resources.Resources.SI_OSP_GBL_NET_GBL_003, format: @<text> @item.category  </text>),
+grid.Column("remarks", Resources.Resources.SI_OSP_GBL_GBL_GBL_006, format: @<text> @item.remarks</text>),
+grid.Column("surveyarea_name", Resources.Resources.SI_OSP_BUL_NET_RPT_018, format: @<text>@item.surveyarea_name</text>),
+grid.Column("surveyarea_code", Resources.Resources.SI_OSP_GBL_NET_RPT_007, format: @<text>@item.surveyarea_code</text>),
+grid.Column("user_name", Resources.Resources.SI_OSP_GBL_NET_RPT_049, format: @<text> @item.user_name  </text>),
+grid.Column("created_on", Resources.Resources.SI_OSP_GBL_NET_RPT_050, format: @<text> @(item.created_on == null ? item.created_on : MiscHelper.FormatDate(item.created_on.ToString())) </text>)
+
+
+))
+
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="nr-found">
+                <span> @Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+            </div>
+        }
+
+
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+
+
+        // callFormValidator("frmShowSurveyBuilding");
+        //si.setSurveyDateTimeCalendar("txtDateFrom", "imgFromDate", "1", false);
+        //si.setSurveyDateTimeCalendar("txtDateTo", "imgToDate", "1", false);
+        si.setDateTimeCalendar_Survey("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+
+
+
+        $('tfoot a').on("click", function () {
+            $('form').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+
+        //Post form on page header click..
+        $('th a').on("click", function () {
+            $('form').attr('action', $(this).attr('href')).submit();
+
+            return false;
+        });
+        $('.chosen-select').chosen({ width: '100%' });
+
+        if ($("#objbuildingFilterAttributes_roleid").val() != '3') {
+            if ($('#drpBldStatus :selected').text() == "Surveyed") {
+                $('#tblSurveyBuilding tr td:nth-child(1),#tblSurveyBuilding tr th:nth-child(1)').show();
+                showBulkApproved();
+            }
+            else {
+                $('#tblSurveyBuilding tr td:nth-child(2),#tblSurveyBuilding tr th:nth-child(2)').hide();
+            }
+
+        }
+        else {
+            $('#tblSurveyBuilding tr td:nth-child(2),#tblSurveyBuilding tr th:nth-child(2)').hide();
+        }
+
+        $("#btnExportBuilding").on("click", function () {
+            SurveyBuildingReport();
+        });
+        $("#btnSurveyBuilding").on("click", function () {
+             
+            var frmdate = $("#txtDateFrom").val();
+            var todate = $("#txtDateTo").val();
+            var chkValid = false;
+            chkValid = ValidateFilterDate(frmdate, todate);
+            if (chkValid) {
+                return true;
+            }
+            else {
+                var msg = frmdate == '' ? MultilingualKey.SI_OSP_GBL_JQ_FRM_150 : MultilingualKey.SI_GBL_GBL_JQ_FRM_025;
+                alert(msg + " " + MultilingualKey.SI_GBL_GBL_JQ_FRM_026);
+                return false;
+            }
+        });
+
+        $("#btnBulkUpdate").on("click", function () {
+            var chkArray = [];
+
+            /* look for all checkboes that have a class 'chkSurvey' attached to it and check if it was checked */
+            $(".chkSurvey:checked").each(function () {
+                chkArray.push($(this).val());
+            });
+
+            /* we join the array separated by the comma */
+            var selectedID;
+            selectedID = chkArray.join(',');
+
+            if (selectedID.length > 0) {
+                si.openBulkApproveCommentbox();
+            }
+            else {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_003);
+            }
+
+        });
+        $("#btnBulkReject").on("click", function () {
+            var chkArray = [];
+
+            /* look for all checkboes that have a class 'chkSurvey' attached to it and check if it was checked */
+            $(".chkSurvey:checked").each(function () {
+                chkArray.push($(this).val());
+            });
+
+            /* we join the array separated by the comma */
+            var selectedID;
+            selectedID = chkArray.join(',');
+
+            if (selectedID.length > 0) {
+                si.openBulkRejectCommentbox();
+            }
+            else {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_003);
+            }
+
+            //getcheckedvalue("Resurveyed");
+        });
+        $("#btnBuildingSurveyClear").on("click", function () {
+
+            if ($("#objbuildingFilterAttributes_roleid").val() != 3) {
+
+                $("#txtDateFrom").val("");
+                $("#txtDateTo").val(""); //
+                $("#drpBldStatus").val("Surveyed").trigger("chosen:updated");
+                $("#objbuildingFilterAttributes_dd_user").val("0").trigger("chosen:updated");
+                $("#objbuildingFilterAttributes_searchBy").val("Building Name").trigger("chosen:updated");
+                $("#txtSearchText").val("");
+
+            }
+            else {
+                $("#txtDateFrom").val("");
+                $("#txtDateTo").val(""); //
+                $("#drpBldStatus").val("Surveyed").trigger("chosen:updated");
+                $("#objbuildingFilterAttributes_searchBy").val("Building Name").trigger("chosen:updated");
+                $("#txtSearchText").val("");
+            }
+            $("btnSurveyBuilding").trigger("click");
+        });
+        $('#cbSelectAll').parent().removeClass('bothorder');
+
+        var isAllowed ='@(((List<string>)Session["ApplicableModuleList"]).Contains("ARP"))';
+        if (isAllowed == 'False') {
+            $("#tblSurveyBuilding :input[type=checkbox]").prop("disabled", true);
+        }
+    });
+    function showBulkApproved() {
+
+        // 1st replace first column header text with checkbox
+        $("#tblSurveyBuilding th").each(function () {
+            if ($.trim($(this).text().toString().toLowerCase()) === "{checkall}") {
+                $(this).text('');
+                $("<input/>", { type: "checkbox", id: "cbSelectAll", value: "" }).appendTo($(this));
+                $(this).append("<span>" + MultilingualKey.SI_OSP_GBL_GBL_GBL_037 + "</span>");
+            }
+        });
+
+        //2nd click event for header checkbox for select /deselect all
+        $("#cbSelectAll").on("click", function () {
+            var ischecked = this.checked;
+            $('#tblSurveyBuilding').find("input:checkbox").each(function () {
+                this.checked = ischecked;
+            });
+        });
+        //3rd click event for checkbox of each row
+        $("input[name='ids']").on("click", function () {
+            var totalRows = $("#tblSurveyBuilding td :checkbox").length;
+            var checked = $("#tblSurveyBuilding td :checkbox:checked").length;
+
+            if (checked == totalRows) {
+                $("#tblSurveyBuilding").find("input:checkbox").each(function () {
+                    this.checked = true;
+                });
+            }
+            else {
+                $("#cbSelectAll").removeAttr("checked");
+            }
+        });
+
+        // bulk update hide/show
+        $('#drpBldStatus').chosen().change(function (event) {
+            var dID = $(this).val();
+            var role_id = $('#objbuildingFilterAttributes_roleid').val();
+
+            if (role_id = 2) {
+                if (dID = 'Surveyed') {
+                    $('#btnBulkUpdate').show();
+                }
+                else
+                    $('#btnBulkUpdate').hide();
+            }
+            else if (role_id = 3) {
+                $('#btnBulkUpdate').hide();
+            }
+
+
+        });
+
+    }
+
+    function showarea(systemID) {
+
+        zoomSearchedElement1("Polygon", 'SurveyArea', systemID)
+    }
+    function showBuilding(systemID, status) {
+        var geomType = '';
+        if (status != 'Approved') {
+            geomType = 'Point';
+        }
+        else {
+            geomType = 'Polygon';
+        }
+        zoomSearchedElement1(geomType, 'Building', systemID)
+    }
+    //function updateBuildingAttr(building_id, status) {
+    //    var geomType = '';
+    //    if (status != 'Approved') {
+    //        geomType = 'Point';
+    //    }
+    //    else {
+    //        geomType = 'Polygon';
+    //    }
+    //    showBldEdit(building_id, geomType);
+    //}
+
+    function updateBuildingAttr(building_id, status) {
+        showBldComments(building_id);
+    }
+
+
+    $(document).ready(function () {
+        addDefaultSortingIcons('tblSurveyBuilding');
+        onGridHeaderClick('tblSurveyBuilding');
+        $('#cbSelectAll').parent().removeClass('bothorder');
+    });
+
+
+
+
+
+</script>

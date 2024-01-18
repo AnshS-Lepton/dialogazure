@@ -1,0 +1,25 @@
+﻿@model Models.MapLayout
+
+<input type="hidden" id="hdnLayoutMapZoomLevel" value="@Model.mapCurrentZoom" />
+<input type="hidden" id="hdnLayoutCenterLatLong" value="@Model.mapCenterLatLong" />
+<div>
+    <input type="button" class="btn btn-success ml-10" onclick="si.Entityreport.EntityExportReport(null, null, null, this);" id="btnExportReport" style="margin:10px;" value="@Resources.Resources.SI_OSP_GBL_GBL_GBL_043">
+    @*export report*@
+    <input type="button" class="btn btn-success ml-10" onclick="si.BOMBOQReport.BOMBOQShowModel(this);" id="btnBOMBOQReport" style="margin:10px;" value="@Resources.Resources.SI_OSP_GBL_JQ_RPT_004">
+    @*BOM/BOQ*@
+    <input type="button" class="btn btn-success ml-10" onclick=si.printExportLog(); id="btnPrintMap" style="margin:10px;" value="@Resources.Resources.SI_OSP_GBL_JQ_FRM_101">
+    @*Print map*@
+</div>
+<div class="module-content" id="map_layout" style="height:100%;">
+</div>
+
+<script>
+    $(document).ready(() => {
+
+        let DefaultMapZoomLevel = parseInt($('#hdnLayoutMapZoomLevel').val());
+        let CountryCenterlatLong = $('#hdnLayoutCenterLatLong').val().split(',');
+
+        si.mapLayout.renderMapLayout(DefaultMapZoomLevel, CountryCenterlatLong);
+    });
+</script>
+

@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<div class="libDetail">
+
+    <div class="libTabContent">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <label class="lblHdGroupLibraryTp">@Resources.Resources.SI_OSP_GBL_NET_RPT_128:</label>
+            <div class="tab-pane active" id="divTP1">
+                <table id="tblGroupLibraryTp" class="grid mt-1rem" data-duct-Id="0">
+                    <thead>
+                        <tr>
+                            <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_RPT_126</th>
+
+                            <th scope="col">
+                                @Resources.Resources.SI_OSP_GBL_GBL_GBL_160
+                            </th>
+                            <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody">
+                    </tbody>
+                </table>
+                <div class="dvNoglTerminatePoint d-flex"><b>@Resources.Resources.SI_OSP_GBL_NET_RPT_130</b></div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex ModalFooter" id="dvBtnAction">
+        <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancelTP" onclick="si.GLLine.clearGLTPRelatedObjects();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        <button type="submit" class="btn btn-primary ml-1" onclick="si.GLLine.CreateGLLineEntity()" id="btnCreateGLLineForm">@Resources.Resources.SI_OSP_GBL_NET_FRM_404</button>
+        <button type="submit" class="btn btn-primary ml-1" onclick="si.GLLine.AddNewTerminationPointRow()" id="btnAddNewLine">Add</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+
+        $('.chosen-select').chosen({ width: '100%' });
+    });
+
+</script>

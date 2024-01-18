@@ -1,0 +1,27 @@
+﻿@model IList<Models.BuildingRfSStatus>
+@using Utility;
+@{
+    WebGrid webGrid = new WebGrid(source: Model, canSort: false);
+}
+<div style="min-height:260px; width: 100%; background-color: white;">
+    @if(Model.Count() >0){<div class="RefreshContent" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_401" onclick="si.GetRFS_StatusList('@Model.FirstOrDefault().building_id',true);">&nbsp;  </div>}
+   
+    @*<div class="refreshMap" title="Refresh Map">
+        </div>*@
+    <div id="rfs_StatusList">
+        @if (Model.Count != 0)
+        {
+
+            @webGrid.GetHtml(
+                 htmlAttributes: new { @id = "WebGrid", @class = "webGrd" },
+        columns: webGrid.Columns( webGrid.Column("rfs_Status", Resources.Resources.SI_OSP_BUL_NET_FRM_024),
+        webGrid.Column("", Resources.Resources.SI_OSP_BUL_NET_FRM_025, format: @<text> @(item.rfs_date == null ? item.rfs_date : MiscHelper.FormatDate(item.rfs_date.ToString())) </text>)
+       ))
+        }
+        else
+        {
+            <div style="text-align:center; margin-top:50px;"><b>@Resources.Resources.SI_OSP_GBL_NET_FRM_402</b></div>
+        }
+    </div>
+ 
+</div>

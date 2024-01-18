@@ -1,0 +1,358 @@
+﻿@model Models.BOMViewModel
+@using SmartInventory.Settings;
+<style>
+    .chosen-container ul.chosen-results li.highlighted {
+        background: #31bd72;
+        background-image: none;
+        font-weight: bold;
+    }
+</style>
+<!DOCTYPE html>
+<div id="dvBomReport" class="libDetail">
+    <div class="libTabContent" style="overflow:visible;">
+        <div class="tab-content">
+            @using (Ajax.BeginForm("ShowBOMReport", "Report",
+                new AjaxOptions { HttpMethod = "POST", LoadingElementId = "dvProgress",
+                    UpdateTargetId = Model.childModel == "CHILD" ? "dvChildModalBody" : "dvModalBody", },
+            new { id = "frmBOMReport", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+            {
+                @Html.HiddenFor(m => m.objBomInput.geom);
+                @Html.HiddenFor(m => m.objBomInput.geomType);
+                @Html.HiddenFor(m => m.objBomInput.buff_Radius);
+                @Html.HiddenFor(m => m.objBomInput.isAssociatedEntityBomBoq);
+                @Html.HiddenFor(m => m.objBomInput.systemId); 
+                @Html.HiddenFor(m => m.objBomInput.entityType);
+                @Html.HiddenFor(m => m.childModel);
+
+                if (string.IsNullOrWhiteSpace(Model.objBomInput.geom) && !Model.objBomInput.isAssociatedEntityBomBoq)
+                {
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_065 :</label>
+                        <div class="col-sm-10">
+                            @Html.DropDownListFor(m => m.objBomInput.regionId, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select form-control", @onchange = "si.onChangeRegion();", @id = "ddlRegions" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_FRM_066 :</label>
+                        <div class="col-sm-10">
+                            @Html.DropDownListFor(m => m.objBomInput.provinceId, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select form-control", @id = "ddlProvinces" })
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_065 :</label>
+                        <div class="col-sm-10">
+                            @Html.DropDownListFor(m => m.objBomInput.regionId, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select form-control", @onchange = "si.onChangeRegion();", @id = "ddlRegions", @disabled = "disabled" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_FRM_066 :</label>
+                        <div class="col-sm-10">
+                            @Html.DropDownListFor(m => m.objBomInput.provinceId, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select form-control", @id = "ddlProvinces", @disabled = "disabled" })
+                        </div>
+                    </div>
+                }
+                <div class="form-group ModalFooter" id="dvBtnAction">
+                    <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_067 :</label>
+                    <div class="col-sm-2">
+                        @*@Html.DropDownListFor(m => m.objBomInput.network_status, new List<SelectListItem>
+        { new SelectListItem { Text = "--All--", Value = "",Selected=true},
+            new SelectListItem { Text = "Planned", Value = "P"},
+          new SelectListItem { Text = "As-Built", Value = "A"},
+          new SelectListItem { Text = "Dormant", Value = "D"},
+          }, new { @class = "chosen-select", @id = "ddlNetworkStatus" })*@
+                        @Html.DropDownListFor(m => m.objBomInput.network_status, new SelectList(Model.lstNetworkStatus.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlNetworkStatus" })
+
+                    </div>
+                    <div class="col-sm-8" style="float: right; text-align: right;">
+                        <button type="submit" class="btn btn-primary" id="btnShowReportData">@Resources.Resources.SI_OSP_GBL_NET_FRM_112</button>
+                        @if (Model.lstBomReport.Count > 0)
+                        {
+                            <input type="button" class="btn btn-primary" id="btnBom" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_124" />
+                            <input type="button" class="btn btn-primary" id="btnBoq" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_125" />
+                            <input type="button" class="btn btn-primary" id="btnExportToExcel" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_126" />
+                        }
+                        else
+                        {
+                            <input type="submit" class="btn btn-primary" disabled id="btnBom" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_124" />
+                            <input type="button" class="btn btn-primary" disabled id="btnBoq" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_125" />
+                            <input type="button" class="btn btn-primary" disabled id="btnExportToExcel" value="@Resources.Resources.SI_OSP_GBL_NET_FRM_126" />
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        <div id="Grid" style="border: none;">
+            <div class="tab-pane active" id="divBom" style="max-height: 290px; overflow: auto;">
+                @if (Model.lstBomReport.Count > 0)
+                {
+                    <table id="tblBomLst" class="webgrid" cellpadding="0" cellspacing="0" style="text-align: center;">
+                        <thead style="color:white;">
+                            <tr class="webgridHeader">
+                                <th rowspan="2">
+                                    @Resources.Resources.SI_OSP_GBL_NET_GBL_008
+                                </th>
+                                <th rowspan="2">
+                                    @Resources.Resources.SI_OSP_GBL_NET_RPT_015
+                                </th>
+                                @*<th rowspan="2">
+                                    Item Code
+                                </th>
+                                <th rowspan="2">
+                                    Vendor Name
+                                </th>*@
+                                <th rowspan="2">
+                                    @*@Html.Raw(Resources.Resources.SI_OSP_GBL_NET_RPT_014)*@ 
+                                    @Html.Raw(String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_014, ApplicationSettings.Currency))
+                                </th>
+                                <th rowspan="2">
+                                    @Resources.Resources.SI_OSP_GBL_NET_RPT_017 @string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016,ApplicationSettings.Currency)
+                                </th>
+                                @if (string.IsNullOrWhiteSpace(Model.objBomInput.network_status) || Model.objBomInput.network_status.ToUpper() == "P")
+                                {
+                                    <th colspan="5">
+                                        Planned
+                                    </th>
+                                }
+                                @if (string.IsNullOrWhiteSpace(Model.objBomInput.network_status) || Model.objBomInput.network_status.ToUpper() == "A")
+                                {
+                                    <th colspan="5">
+                                        As-Built
+                                    </th>
+                                }
+                                @if (string.IsNullOrWhiteSpace(Model.objBomInput.network_status) || Model.objBomInput.network_status.ToUpper() == "D")
+                                {
+                                    <th colspan="5">
+                                        Dormant
+                                    </th>
+                                }
+                                @*<th rowspan="2">Action</th>*@
+                            </tr>
+                            <tr class="webgridHeader">
+                                @if (string.IsNullOrWhiteSpace(Model.objBomInput.network_status) || Model.objBomInput.network_status.ToUpper() == "P")
+                                {
+                                    <th>@Resources.Resources.SI_OSP_GBL_NET_GBL_226</th>
+                                    <th>@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_085,ApplicationSettings.Currency)</th>
+                                    <th>@string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_022,ApplicationSettings.Currency)</th>
+                                    <th>@Resources.Resources.SI_OSP_GBL_NET_RPT_023</th>
+                                    <th>@Resources.Resources.SI_OSP_GBL_NET_RPT_024</th>
+                                }
+                                @if (string.IsNullOrWhiteSpace(Model.objBomInput.network_status) || Model.objBomInput.network_status.ToUpper() == "A")
+                                {
+                                    <th>@Resources.Resources.SI_OSP_GBL_NET_RPT_021</th>
+                                    <th>@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_085, ApplicationSettings.Currency)</th>
+                                    <th>@string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_022,ApplicationSettings.Currency)</th>
+                                    <th>@Resources.Resources.SI_OSP_GBL_NET_RPT_023</th>
+                                    <th>@Resources.Resources.SI_OSP_GBL_NET_RPT_024</th>
+                                }
+                                @if (string.IsNullOrWhiteSpace(Model.objBomInput.network_status) || Model.objBomInput.network_status.ToUpper() == "D")
+                                {
+                                    <th>@Resources.Resources.SI_OSP_GBL_NET_RPT_021</th>
+                                    <th>@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_085, ApplicationSettings.Currency)</th>
+                                    <th>@string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_022,ApplicationSettings.Currency)</th>
+                                    <th>@Resources.Resources.SI_OSP_GBL_NET_RPT_023</th>
+                                    <th>@Resources.Resources.SI_OSP_GBL_NET_RPT_024</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var objBom in Model.lstBomReport)
+                            {
+                                <tr class="@(objBom.is_header == true ? "bomGridEntity" : "bomGridSubEntity")">
+                                    <td style="text-align:left;">
+                                        @if (objBom.is_header)
+                                        {
+                                            <span style="margin-left: 6%;"> @objBom.entity_type </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="margin-left: 15%;"> @objBom.entity_sub_type </span>
+                                        }
+
+                                    </td>
+                                    <td style="text-align:left;">
+                                        @objBom.specification
+                                    </td>
+                                    @*<td style="text-align:left;">
+                                        @objBom.item_code
+                                    </td>
+                                    <td style="text-align:left;">
+                                        @objBom.name
+                                    </td>*@
+                                    <td>
+                                        @(objBom.is_header == true ? "" : objBom.cost_per_unit.ToString())
+                                    </td>
+                                    <td>
+                                        @(objBom.is_header == true ? "" : objBom.service_cost_per_unit.ToString())
+                                    </td>
+                                    @if (string.IsNullOrWhiteSpace(Model.objBomInput.network_status) || Model.objBomInput.network_status.ToUpper() == "P")
+                                    {
+                                        <td>
+                                            @objBom.total_planned_count
+                                        </td>
+                                        <td>
+                                            @objBom.total_planned_cost
+                                        </td>
+                                        <td>
+                                            @objBom.total_planned_service_cost
+                                        </td>
+                                        <td>
+                                            @(objBom.geom_type.ToUpper() == "LINE" ? objBom.total_planned_calc_length.ToString() : "NA")
+                                        </td>
+                                        <td>
+                                            @(objBom.geom_type.ToUpper() == "LINE" ? objBom.total_planned_gis_length.ToString() : "NA")
+                                        </td>
+                                    }
+                                    @if (string.IsNullOrWhiteSpace(Model.objBomInput.network_status) || Model.objBomInput.network_status.ToUpper() == "A")
+                                    {
+
+                                        <td>
+                                            @objBom.total_asbuilt_count
+                                        </td>
+                                        <td>
+                                            @objBom.total_asbuilt_cost
+                                        </td>
+                                        <td>
+                                            @objBom.total_asbuilt_service_cost
+                                        </td>
+                                        <td>
+                                            @(objBom.geom_type.ToUpper() == "LINE" ? objBom.total_asbuilt_calc_length.ToString() : "NA")
+                                        </td>
+                                        <td>
+                                            @(objBom.geom_type.ToUpper() == "LINE" ? objBom.total_asbuilt_gis_length.ToString() : "NA")
+                                        </td>
+                                    }
+                                    @if (string.IsNullOrWhiteSpace(Model.objBomInput.network_status) || Model.objBomInput.network_status.ToUpper() == "D")
+                                    {
+                                        <td>
+                                            @objBom.total_dormant_count
+                                        </td>
+                                        <td>
+                                            @objBom.total_dormant_cost
+                                        </td>
+                                        <td>
+                                            @objBom.total_dormant_service_cost
+                                        </td>
+                                        <td>
+                                            @(objBom.geom_type.ToUpper() == "LINE" ? objBom.total_dormant_calc_length.ToString() : "NA")
+                                        </td>
+                                        <td>
+                                            @(objBom.geom_type.ToUpper() == "LINE" ? objBom.total_dormant_gis_length.ToString() : "NA")
+                                        </td>
+                                    }
+                                    @*<td>
+                                            @if ((objBom.is_header) && (objBom.total_planned_count > 0 || objBom.total_asbuilt_count > 0 || objBom.total_dormant_count > 0))
+                                            {
+                                            <span class="exportBomToExcel" id="btnExcelExport" title="Export To Excel" onclick="ExportEntityDetailInExcel('@objBom.entity_type')">
+                                            </span>
+                                            }
+                                        </td>*@
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr class="bomFooter">
+                                <td>
+                                    @Resources.Resources.SI_OSP_GBL_GBL_GBL_041
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                @if (string.IsNullOrWhiteSpace(Model.objBomInput.network_status) || Model.objBomInput.network_status.ToUpper() == "P")
+                                {
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_planned_count)
+                                    </td>
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_planned_cost)
+                                    </td>
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_planned_service_cost)
+                                    </td>
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_planned_calc_length)
+                                    </td>
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_planned_gis_length)
+                                    </td>
+                                }
+                                @if (string.IsNullOrWhiteSpace(Model.objBomInput.network_status) || Model.objBomInput.network_status.ToUpper() == "A")
+                                {
+
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_asbuilt_count)
+                                    </td>
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_asbuilt_cost)
+                                    </td>
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_asbuilt_service_cost)
+                                    </td>
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_asbuilt_calc_length)
+                                    </td>
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_asbuilt_gis_length)
+                                    </td>
+                                }
+                                @if (string.IsNullOrWhiteSpace(Model.objBomInput.network_status) || Model.objBomInput.network_status.ToUpper() == "D")
+                                {
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_dormant_count)
+                                    </td>
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_dormant_cost)
+                                    </td>
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_dormant_service_cost)
+                                    </td>
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_dormant_calc_length)
+                                    </td>
+                                    <td>
+                                        @Model.lstBomReport.Where(p => p.is_header == true).Sum(m => m.total_dormant_gis_length)
+                                    </td>
+                                }
+                                @*<td></td>*@
+                            </tr>
+                        </tfoot>
+                    </table>
+                }
+                else
+                {
+                    <span style="text-align: center; height: 100px; display: block; font-size:14px;padding-top: 50px;" id="dvNoBulkEntityFound">@Resources.Resources.SI_OSP_GBL_GBL_GBL_051</span>
+                }
+            </div>
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#dvBomReport .chosen-select').chosen({ placeholder_text_multiple: '--All--', width: '100%' });
+
+        var selectedProvinces = '@Model.objBomInput.SelectedProvinceIds';
+        $("#ddlProvinces").val(selectedProvinces.split(',')).trigger("chosen:updated");
+
+        var selectedRegions = '@Model.objBomInput.SelectedRegionIds.Replace("'","")';
+        $("#ddlRegions").val(selectedRegions.split(',')).trigger("chosen:updated");
+
+
+        $("#btnBom").on("click", function () {
+            var type = "BOM"
+            window.location = appRoot + 'Report/ExportBOMBOQReport?type=' + type;
+        });
+
+        $("#btnBoq").on("click", function () {
+            var type = "BOQ"
+            window.location = appRoot + 'Report/ExportBOMBOQReport?type=' + type;
+        });
+
+        $("#btnExportToExcel").on("click", function () {
+            window.location = appRoot + 'Report/ExportBOMWithDetailInExcel/';
+        });
+    });
+</script>

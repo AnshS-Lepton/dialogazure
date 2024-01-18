@@ -1,0 +1,118 @@
+﻿@model Models.ViewLayerIcon
+@using Utility
+@using SmartInventory.Settings;
+<link href="~/Areas/Admin/Content/css/spectrum.css" rel="stylesheet" />
+<script src="~/Areas/Admin/Content/js/spectrum.js"></script>
+@*<style>
+          .tble_cls table tbody tr td svg{
+        width:50px!important;
+        height:50px!important;
+    }
+
+    </style>*@
+@{
+   
+}
+
+<!DOCTYPE html>
+<div id="dvViewlayerIcon">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                View Layer Icons
+            </h4>
+        </div>
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewlayerIcon", ajaxUpdateCallback: "onGridHeaderClick('tbllayerIcon')");
+            grid.Bind(Model.listLayerIcon, autoSortAndPage: false, rowCount: Model.totalRecord);
+            if (Model.totalRecord > 0)
+            {
+                grid.PageIndex = Model.currentPage - 1;
+            }
+
+        }
+        <div class="pad_left">
+            @using (Html.BeginForm("LayerIconMapping", "Miscellaneous", FormMethod.Post, new { autocomplete = "off", @id = "frmViewlayericon" }))
+            {
+
+
+                <div class="form-inline filter-sec">
+                    <div class="form-group wtd_set">
+                        <label class="control-label col-sm-4">Search By : </label>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.searchBy, new List<SelectListItem>
+                     {
+                       new SelectListItem{ Text="Search By", Value = "" },
+                       new SelectListItem{ Text="Layer Name", Value = "layer_title" },
+                       new SelectListItem{ Text="Network Status", Value = "network_status" },
+                     }, new { @id = "ddlSearchBy", @tabindex = "2", @title = "Search By", @class = "chosen-select form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group wtd_set">
+                        <label class="control-label col-sm-4">
+                            Search Text :
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(m => m.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                        </div>
+                    </div>
+                    <div class="wtd_set" id="dvBtnAction">
+                        <div class="col-md-8">
+                            <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+
+                            <a href="@Url.Action("LayerIconMapping")" class="btn btn-default mr-05" title="Reset">Reset</a>
+                            <span>
+                                <input type="button" id="btnAddNew" onclick="AddNewlayerIcon(0);" value="Upload" class="btn btn-primary" />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                if (Model.listLayerIcon.Count > 0)
+                {
+                    <div id="divUserDetail">
+                        <div class="recordCount mb-01"><b>Total Records:@grid.TotalRowCount</b></div>
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+                                htmlAttributes: new { id = "tbllayerIcon" },
+                                mode: WebGridPagerModes.All,
+                                columns: grid.Columns(
+        @*grid.Column("", "Action", format:@<text>
+                    <a href="#" onclick="AddNewISPModelImage(@item.id);" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                    <a href="javascript:void(0);" onclick="DeleteISPModelImageById(@item.id);" title="Delete"> <i class="fa fa-fw fa-trash" style="font-size: 13px; color: #f50000;"></i></a>
+
+        </text>, canSort: false),*@
+grid.Column("layer_title", "Layer Name", format: @<text>@item.layer_title</text>, canSort: true),
+grid.Column("category", "Category", format: (item) => Html.Raw(item.category), canSort: true),
+grid.Column("subcategory", "Sub Category", format: (item) => Html.Raw(item.subcategory), canSort: true),
+grid.Column("icon_name", "Icon Name", format: (item) => Html.Raw(item.icon_name), canSort: true),
+grid.Column("network_status", "Network Status", format: (item) => Html.Raw(item.network_status), canSort: true),
+grid.Column("status", "Is Active", format: @<text>@(item.status == true ? "Yes" : "No")</text>, canSort: true),
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>, canSort: true),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>, canSort: true),
+grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>, canSort: true),
+grid.Column("modified_on", "Modified On", format: @<text>@(item.modified_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>, canSort: true)
+))
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Records Found.
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        addDefaultSortingIcons("tbllayerIcon");
+    });
+    function ViewISPModelImageReport() {
+        window.location = appRoot + 'Miscellaneous/DownloadViewISPModelImage';
+    }
+</script>

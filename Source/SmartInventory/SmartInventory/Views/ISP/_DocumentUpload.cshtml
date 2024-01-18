@@ -1,0 +1,148 @@
+﻿@model List<Models.DocumentResult>
+@{
+    var EntyLst = ((List<Models.DocumentResult>)@Model).Where(m => m.categorytype.ToLower() == "entity").ToList();
+    var SpecifnLst = ((List<Models.DocumentResult>)@Model).Where(m => m.categorytype.ToLower() == "specification").ToList();
+}
+@if (Model != null && Model.Count > 0)
+{
+    string sysHref = "/Main/DownloadFilesAll?system_Id=" + @Model[0].EntitySystemId + "&entity_type=" + @Model[0].EntityType + "&DocumentType=Document";
+    <div class="space-pad">
+        <div class="UploadAction">
+            <div id="divDocumentUpload" class="d-flex jc-sb">
+                @*<input type="checkbox" class="checkbox-custom doc_parentcheck" id="checkAlldoc"><b>
+                        <label for="checkAlldoc" class="checkbox-custom-label" style="font-weight: 500;"> Select All</label>
+                    </b>*@
+
+                <label class="icon-Upload cptr">
+                    <input type="file" name="DocUpload" id="DocUpload">
+                    <span>@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008</span>
+                </label>
+                <a href="@sysHref"> @Resources.Resources.SI_GBL_GBL_JQ_FRM_038 </a>
+                <span>Total Count: @Model.Count()</span>
+            </div>
+            @*<div class="col-sm-1 icon-Download cptr" id="divDownloadDocuments" title="@Resources.Resources.SI_ISP_GBL_GBL_GBL_038"></div>
+                <div class="col-sm-1 icon-Delete cptr" style="color:red;"  id="divDeleteDocuments" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002"></div>*@
+
+        </div>
+
+        <div class="ImagesContainer" id="ulDocumentUpload">
+            @if (EntyLst.Count > 0)
+            {
+                <div class="div-upload-seprator">Entity Document</div>
+            }
+            @foreach (var item in EntyLst)
+            {
+                <div class="docs-main-div">
+                    @*<div class="img-div" style="width: 10%;">
+                            <div class="UploadedImageBox" title="@item.Id">
+                                <div class="ImageSelectDiv">
+                                    <input id="chk_doc_@item.Id" name="chk_doc_@item.Id" data-system-id="@item.Id" data-image-location="@item.FileLocation" data-image-name="@item.FileName" class="checkbox-custom doc_childcheck" type="checkbox" style="width: 0px;">
+                                    <b style="height: 0px; float: left;margin-left: 2px;margin-top: 11px;">
+                                        <label for="chk_doc_@item.Id" class="checkbox-custom-label"></label>
+                                    </b>
+                                </div>
+                            </div>
+                        </div>*@
+                    <div class="content-div">
+                        <div class="doc-lists">
+                            <div class="contentlbl"> @item.OrgFileName  (@item.file_size)</div>
+                        </div>
+                        <div class="doc-lists">
+                            <div class="contentlbl">Uploaded By:<span class="fw-bold"> @item.UploadedBy</span></div>
+                        </div>
+                        <div class="doc-lists">
+                            <div class="contentlbl">Uploaded On:<span class="fw-bold"> @item.created_on</span></div>
+                        </div>
+                    </div>
+                    <div class="d-fx">
+                        <div class="icons mr-01" id="divDownloaddocs" title="@Resources.Resources.SI_ISP_GBL_GBL_GBL_038">
+                            <a href="javascript:void(0)" att_entitytype="@item.EntityType" onclick="DownloadImgDocs('@item.Id','@item.categorytype');">
+                                <i class="icon-Download"></i>
+                            </a>
+                        </div>
+                        <div class="icons" id="divDeleteImg" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002">
+                            <a href="javascript:void(0)" class="deleteRKDocs" att_entitytype="@item.EntityType" onclick="deleteImgDocs('@item.Id', isp.getAttachmentFiles)">
+                                <i class="icon-Delete"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            }
+            @if (SpecifnLst.Count > 0)
+            {
+                <div class="div-upload-seprator">Specification Document</div>
+            }
+            @foreach (var item in SpecifnLst)
+            {
+                <div class="docs-main-div">
+                    @*<div class="img-div" style="width: 10%;">
+                            <div class="UploadedImageBox" title="@item.Id">
+                                <div class="ImageSelectDiv">
+                                    <input id="chk_doc_@item.Id" name="chk_doc_@item.Id" data-system-id="@item.Id" data-image-location="@item.FileLocation" data-image-name="@item.FileName" class="checkbox-custom doc_childcheck" type="checkbox" style="width: 0px;">
+                                    <b style="height: 0px; float: left;margin-left: 2px;margin-top: 11px;">
+                                        <label for="chk_doc_@item.Id" class="checkbox-custom-label"></label>
+                                    </b>
+                                </div>
+                            </div>
+                        </div>*@
+                    <div class="content-div">
+                        <div class="doc-lists">
+                            <div class="contentlbl"> @item.OrgFileName  (@item.file_size)</div>
+                        </div>
+                        <div class="doc-lists">
+                            <div class="contentlbl">Uploaded By: @item.UploadedBy</div>
+                        </div>
+                        <div class="doc-lists">
+                            <div class="contentlbl">Uploaded On: @item.created_on</div>
+                        </div>
+                    </div>
+                    <div class="icons" id="divDownloaddocs" title="@Resources.Resources.SI_ISP_GBL_GBL_GBL_038">
+                        <a href="javascript:void(0)" att_entitytype="@item.EntityType" onclick="DownloadImgDocs('@item.Id','@item.categorytype');">
+                            <i class="icon-Download"></i>
+                        </a>
+                    </div>
+                    @*<div class="col-sm-1 pull-right icons" id="divDeleteImg" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002">
+                            <a href="javascript:void(0)" onclick="isp.deleteImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DeleteEntityImages', '@item.Id', isp.getAttachmentFiles);">
+                                <i class="icon-Delete" style="color:red;"></i>
+                            </a>
+                        </div>*@
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="UploadBody">
+        <div class="col-sm-12 UploadDivlabel Marginbottom">
+            <img src="~/Content/images/DocumntEmptyState.svg" class="Marginbottom" />
+        </div>
+        <div class="col-sm-12 UploadDivlabel" id="divDocumentUpload">
+            <label class="btn btn-warning">
+                <input type="file" name="DocUpload" id="DocUpload" class="btn btn-gray-img">@Resources.Resources.SI_ISP_GBL_GBL_GBL_037
+            </label>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $('.UploadAction [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+        $('#divDocument [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+
+        $(".doc_parentcheck").on("click", function () {
+            CheckUnCheckAll('doc_parentcheck', false, 'doc_childcheck', false);
+        })
+        $(".doc_childcheck").on("click", function () {
+            CheckUnCheckAllOnSingle('doc_parentcheck', false, 'doc_childcheck', false);
+        });
+    });
+    function DownloadImgDocs(systemid, Location) {
+        isp.downloadImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DownloadFiles', systemid, Location, "");
+    }
+    function deleteImgDocs(systemid, RefreshFn) {
+        isp.deleteImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DeleteEntityImages', systemid, RefreshFn, '', 'Document');
+
+    }
+</script>

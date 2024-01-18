@@ -1,0 +1,211 @@
+﻿@model Models.Admin.ProjectMaster
+           @{
+               Model.network_stage = "P";
+               
+           }
+<!DOCTYPE html>
+
+      <div id="dvPageMessage">
+        @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+
+    </div>
+
+    <div id="dvInfoProject" class="update_panel">
+
+        <div id="" class="title">
+            <h4>@Resources.Resources.SI_ISP_GBL_GBL_GBL_016</h4>
+        </div>
+
+    @using (Ajax.BeginForm("SaveProject", "Project", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvInfoProject"
+    },
+
+new { id = "frmInfoProject", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal pad_left" }))
+    {
+        @Html.HiddenFor(m => m.system_id, new { id = "hdnsystem_Id" }) ;
+        @Html.HiddenFor(m => m.created_by, new { id = "hdncreatedBy_Id" });
+        <div id="divParentForm">
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+     
+          <div class="form-group" style="width: 100%; height: 33px;display:none;">
+                <div class="row">
+                    <div class=" col-md-3">
+                        <label class=" control-label">
+                            Network Stage:
+                        </label>
+                    </div>
+                    <div class=" col-md-6">
+
+                        @Html.DropDownListFor(m => m.network_stage, new SelectList(Model.lstNetworkstage.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select form-control", @id = "ddl_Netowrkstage_Parent", @onchange = "onChangeNetworkStage();" })
+
+                    </div>
+                </div>
+
+            </div>
+        
+        
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class=" control-label">
+                        Project Code:
+                    </label>
+                </div>
+                <div class="col-md-6">
+                    @Html.DropDownListFor(m => m.project_code, new SelectList(Model.lstBindProject.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddl_ProjectCode_Parent",@onchange = "onChangeProjectCode();"})
+                    
+                </div>
+
+                <div id="dvProject" class="col-md-3">
+                    <a href="javascript:OpenProjectModel(isNeworUpdate='new');"><i class="fa fa-plus-square" style="font-size:18px;" id="dvproject_addicon"></i></a>
+                    
+                    <a href="javascript:OpenProjectModel(isNeworUpdate='edit');" class="auto" title="Edit"> <i class="fa fa-pencil" style="font-size:18px; margin-left:15px" id="dvproject_editicon"></i></a>    
+
+                    <a href="javascript:DeleteProjectCode();"> <i class="fa fa-fw fa-trash" style=" font-size: 13px; color: #f50000; font-size:18px; margin-left:15px" id="dvproject_deleteicon"></i></a>     
+
+                </div>
+
+                
+
+
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-3">
+                    <label class=" control-label">
+                        Planing Code:
+                    </label>
+                </div>
+                <div class=" col-md-6">
+                    @Html.DropDownListFor(m => m.planing_code, new SelectList(Model.lstBindPlanning.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddl_PlanningCode_Parent",@onchange = "onChangePlanningCode();" })
+
+                </div>
+                <div id="dvPlanning" class="col-md-3">
+                    <a href="javascript:OpenPlanningModel(isNeworUpdate='new');"><i class="fa fa-plus-square" style="font-size:20px;" id="dvplanning_addicon"></i></a>
+
+                    <a href="javascript:OpenPlanningModel(isNeworUpdate='edit');" class="auto" title="Edit"> <i class="fa fa-pencil" style="font-size:20px; margin-left:15px" id="dvplanning_editicon"></i></a>    
+
+                    <a href="javascript:DeletePlanningCode();" onclick=""> <i class="fa fa-fw fa-trash" style=" font-size: 13px; color: #f50000; font-size: 20px; margin-left: 15px" id="dvplanning_deleteicon"></i></a>     
+
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-3">
+                    <label class=" control-label">
+                        Workorder Code:
+                    </label>
+                </div>
+                <div class=" col-md-6">
+                    
+                     @Html.DropDownListFor(m => m.workorder_code, new SelectList(Model.lstBindWorkorder.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddl_WorkorderCode_Parent", @onchange = "onChangeWorkorderCode();" })
+                    
+                </div>
+                <div id="dvWorkorder" class="col-md-3">
+                    <a href="javascript:OpenWorkorderModel(isNeworUpdate='new');"><i class="fa fa-plus-square" style="font-size:20px;" id="dvworkorder_addicon"></i></a>
+
+                    <a href="javascript:OpenWorkorderModel(isNeworUpdate='edit');" class="auto" title="Edit"> <i class="fa fa-pencil" style="font-size:20px; margin-left:15px" id="dvworkorder_editicon"></i></a>    
+
+                    <a href="javascript:DeleteWorkorderCode();" onclick=""> <i class="fa fa-fw fa-trash" style=" font-size: 13px; color: #f50000; font-size: 20px; margin-left: 15px" id="dvworkorder_deleteicon"></i></a>     
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-3">
+                    <label class=" control-label">
+                        Purpose Code:
+                    </label>
+                </div>
+                <div class=" col-md-6">
+                    @Html.DropDownListFor(m => m.purpose_code, new SelectList(Model.lstBindPurpose.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddl_PurposeCode_Parent" })
+                  
+                </div>
+                <div id="dvPurpose" class="col-md-3" >
+                    <a href="javascript:OpenPurposeModel(isNeworUpdate='new');"><i class="fa fa-plus-square" style="font-size:24px;" id="dvpurpose_addicon"></i></a>
+
+                    <a href="javascript:OpenPurposeModel(isNeworUpdate='edit');" class="auto" title="Edit"> <i class="fa fa-pencil" style="font-size:20px; margin-left:15px" id="dvpurpose_editicon"></i></a>    
+
+                    <a href="javascript:DeletePurposeCode();" onclick=""> <i class="fa fa-fw fa-trash" style="color: #f50000; font-size: 20px; margin-left: 15px" id="dvpurpose_deleteicon"></i></a>     
+                </div>
+            </div>
+
+        </div>
+        
+
+        <div class="form-group" id="dvBtnAction">
+            <div class="row">
+                <div class=" col-md-3"> </div>
+                <div class=" col-md-7  text-right">
+                    <input type="submit" class="btn btn-primary" name="btnaction" id="btnSubmit" value="Save" style="display:none;" />
+                    
+                    <a href="@Url.Action("AddProject", "Project")" class="btn btn-default" title="Reset" style="display:none;" id="btnReset">Reset</a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+         </div>
+    }
+
+
+
+
+
+ 
+
+    <script type="text/javascript">
+
+        $('#dvproject_addicon,#dvplanning_addicon, #dvworkorder_addicon, #dvpurpose_addicon').tooltip({ title: 'Add', html: false, placement: "right" });
+
+        $('#dvproject_editicon, #dvplanning_editicon, #dvworkorder_editicon, #dvpurpose_editicon').tooltip({ title: 'Edit', html: false, placement: "right" });
+
+        $('#dvproject_deleteicon, #dvplanning_deleteicon,#dvworkorder_deleteicon, #dvpurpose_deleteicon').tooltip({ title: 'Delete', html: false, placement: "right" });
+
+
+
+        if ('@Model.system_id' != 0) {
+            btnSubmit.value = "Update";
+        }
+
+        $('#divParentForm .chosen-select').chosen({ width: '100%' });
+        $(document).ready(function () {
+            onChangeNetworkStage();
+        });
+
+       
+    </script>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+   
+
+

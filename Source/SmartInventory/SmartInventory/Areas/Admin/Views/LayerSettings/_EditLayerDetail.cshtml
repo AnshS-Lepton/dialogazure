@@ -1,0 +1,161 @@
+﻿@model List<Models.LayerDetailsColumn>
+
+@using Utility
+
+<style>
+    .checkmark {
+        background-color: #eee !important;
+    }
+</style>
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model[0].pageMsg);}
+</div>
+<div id="divLayerDetail" class="update_panel">
+    <div class="title">
+        <h4>Edit Layer Detail</h4>
+    </div>
+    <div class="--pad-15">
+        @using (Html.BeginForm("SaveLayerDetail", "LayerSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmInfoLayerSetting", enctype = "multipart/form-data", @class = "form-horizontal" }))
+        {
+            for (int i = 0; i < Model.Count(); i++)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <label class="control-label">
+                                @Model[i].column_display_name:
+                            </label>
+                        </div>
+
+                        <div class="col-sm-7">
+                            @Html.Hidden(string.Concat("lstLayerDetailsColumn[", i, "].", "layer_id"), @Model[i].layer_id)
+                            @Html.Hidden(string.Concat("lstLayerDetailsColumn[", i, "].", "column_name"), @Model[i].column_name)
+                            @Html.Hidden(string.Concat("lstLayerDetailsColumn[", i, "].", "is_edit_allowed"), @Model[i].is_edit_allowed)
+                            @Html.Hidden(string.Concat("lstLayerDetailsColumn[", i, "].", "data_type"), @Model[i].data_type)
+                            @if (Model[i].data_type.ToUpper() == "BOOLEAN")
+                            {
+                                @Html.CheckBox(string.Concat("lstLayerDetailsColumn[", i, "].", "column_value"), (Model[i].column_value.ToUpper() == "TRUE") ? true : false, @Model[i].is_edit_allowed == true ? (object)new { @class = "form-control input-sm", @style = "margin-left: -46%;", @dataType = @Model[i].data_type, @onchange = "fnSetValue(this);" } :
+                                (object)new { @class = "form-control input-sm", @style = "margin-left: -46%;", @onclick = "return false", @onchange = "fnSetValue(this);" });
+                            }
+                            else
+                            {
+                                if (Model[i].data_type.ToUpper() == "CHARACTER")
+                                {
+                                    @Html.TextBox(string.Concat("lstLayerDetailsColumn[", i, "].", "column_value"), @Model[i].column_value,
+                                       @Model[i].is_edit_allowed == true ? (object)new { @class = "form-control input-sm", @maxlength = Model[i].maxLength, @dataType = @Model[i].data_type, @dataMinValue = @Model[i].min_value, @dataMaxValue = @Model[i].max_value, @onblur = "ValidateValue(this.id);" } :
+                                        (object)new { @class = "form-control input-sm", @readonly = "readonly" });
+                                }
+                                else
+                                {
+                                    var onKeyPressFunction = Model[i].data_type.ToUpper() == "INTEGER" ? "return isNumber(event)" : (Model[i].data_type.ToUpper() == "DOUBLE" ? "return allowNumberwithOneDot(event,this)" : "");
+
+                                    @Html.TextBox(string.Concat("lstLayerDetailsColumn[", i, "].", "column_value"), @Model[i].column_value,
+                                            @Model[i].is_edit_allowed == true ? (object)new { @class = "form-control input-sm", @dataType = @Model[i].data_type, @dataMinValue = @Model[i].min_value, @dataMaxValue = @Model[i].max_value, @onkeypress = @onKeyPressFunction, @onblur = "ValidateValue(this.id);" } :
+                                             (object)new { @class = "form-control input-sm", @readonly = "readonly" });
+                                    if (Model[i].data_type.ToUpper() == "INTEGER")
+                                    {
+                                        <div>
+                                            <label class="control-label"> Min Value:</label> @Model[i].min_value&nbsp;<label class="control-label"> Max Value:</label> @Model[i].max_value
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+
+                    </div>
+
+
+                </div>
+            }
+            <div class="form-group" id="dvBtnAction">
+                <div class="d-flex">
+                    @*<input type="submit" class="btn btn-primary" name="btnaction" id="btnSubmit" value="Save" />*@
+                    <a href="@Url.Action("AddLayerDetailSettings", new { layer_id = @Model[0].layer_id})" class="btn btn-default ml-auto mr-05" title="Reset">Reset</a>
+                    <button type="submit" class="btn btn-primary" id="btnsavelayer">Save</button>
+                </div>
+            </div>
+
+        }
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        callFormValidator("frmInfoLayerSetting");
+    });
+    function fnSetValue(obj) {
+         
+        if (obj != undefined) {
+            //$("#hdnBoolenType").val($(obj).is(':Checked') == true ? true : false);
+
+        }
+    }
+    function ValidateValue(elementId) {
+         
+        var curObj = $('#' + elementId)
+        if (curObj.length > 0) {
+            var value = curObj.val();
+            var dataType = curObj.attr('dataType');
+            var minValue = curObj.attr('dataMinValue');
+            var maxValue = curObj.attr('dataMaxValue');
+            if (dataType != undefined) {
+                //common condition to validate blank..
+                if (value == 'undefined' || value == null || value == "") {
+                    $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                    return false;
+                }
+                if (dataType.toUpperCase() == "INTEGER" || dataType.toUpperCase() == "DOUBLE") {
+                    // validation for min max range
+                    if (parseInt(value) < parseInt(minValue)) {
+                        alert("Value should be greter than or equal to Min Value!");
+                        $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                        return;
+                    }
+                    else if (parseInt(value) > parseInt(maxValue)) {
+                        alert("Value should be less than or equal to Max Value!");
+                        $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                        return;
+                    }
+                    else {
+                        $('#' + elementId).addClass('valid').removeClass('input-validation-error');
+                        return true;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    function maxlength(elementId) {
+         
+        var curObj = $('#' + elementId)
+        if (curObj.length > 0) {
+            var value = curObj.val();
+            var dataType = curObj.attr('dataType');
+            var minValue = curObj.attr('dataMinValue');
+            var maxValue = curObj.attr('dataMaxValue');
+            if (dataType != undefined) {
+                //common condition to validate blank..
+
+                if (dataType.toUpperCase() == "INTEGER" || dataType.toUpperCase() == "DOUBLE") {
+                    return maxValue.length();
+                }
+                else if (dataType.toUpperCase() == "CHARACTER" || dataType.toUpperCase() == "STRING") {
+                    return "50";
+                }
+                else {
+                    return "20";
+                }
+            }
+        }
+        return true;
+    }
+
+
+</script>
+
+
+
+
+

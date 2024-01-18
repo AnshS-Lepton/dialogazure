@@ -1,0 +1,50 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<div class="bulkFeasContainer">
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-6 pr0">
+                <input type='file' id='FeasFileUpload' accept=".xls,.xlsx" class='input-ghost fileInput'>
+                <div class="input-group input-file">
+                    <input type="text" class="form-control fileInput inp-height" placeholder='@Resources.Resources.SF_GBL_GBL_NET_FRM_047' />
+                    <span class="input-group-btn">
+                        <button class="btn btn-default btn-choose inp-height" type="button">@Resources.Resources.SF_GBL_GBL_NET_FRM_050</button>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <input type="button" id="UploadForFtth" class="btn btn-primary" value="@Resources.Resources.SF_GBL_GBL_NET_FRM__082" />
+                <input type="button" id="downloadTemplateForftth" class="btn btn-default ml10" value="@Resources.Resources.SF_GBL_GBL_NET_FRM_048" />
+                @*<input type="button" id="downloadKMZFile" class="btn btn-primary" value="Download Merged KML" onclick="bulkFeasibility.DownloadMergeKMLFile()"/>*@
+                <div class="dropdown2">
+                    <button class="btn btn-primary dropdown-toggle" id="downloadMergedFiles" type="button" data-toggle="dropdown">
+                        Download Reports
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu l-auto">
+                        <li><a style="cursor:pointer" onclick="bulkFeasibility.DownloadMergeKMLFileForFtth()">Merged KML</a></li>
+                        <li><a style="cursor:pointer" onclick="bulkFeasibility.DownloadMergeExcelFTTH()">Merged Excel</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="divInputs">
+        <table id="tblInputs" class="display compact cell-border" width="100%"></table>
+    </div>
+
+</div>
+
+<script>
+    var bulkFeasibility = new BulkFeasibility();
+    bulkFeasibility.init();
+    var feasibilityHistory = new FeasibilityHistory();
+    bulkFeasibility.EnableKMZbutton();
+
+</script>

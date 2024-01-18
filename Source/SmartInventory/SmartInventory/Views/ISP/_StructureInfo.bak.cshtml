@@ -1,0 +1,273 @@
+﻿@model Models.ISP.ISPViewModel
+@{
+    var lstleftShafts = Model.ShaftList.Where(m => m.isLeftShaft == true).ToList();
+    var lstRightShafts = Model.ShaftList.Where(m => m.isLeftShaft == false).ToList();
+    var shaftcount = Model.ShaftList != null ? Model.ShaftList.Count() : 0;
+    var floorCssClass = "col-md-" + (12 - shaftcount);
+}
+<script src="~/Content/js/Splice/Js-Plumb-1.4.1.min.js"></script>
+<script src="~/Content/js/ISPSplice.js"></script>
+
+<style>
+    .marker {
+        fill: white;
+        stroke: rgb(255, 136, 0);
+        cursor: pointer;
+    }
+
+    .vmarker {
+        fill: #fff;
+        stroke: blue;
+        opacity: 0.5;
+        cursor: pointer;
+    }
+
+
+
+    /*.ShaftOut {
+        width: 120px;
+        display: inline-block;
+    }
+         #dvFloors {
+        width: 700px;
+        display: inline-block;
+    }
+        .ISPViewContainer {
+        width: 70%;
+        margin: 0 auto;
+        margin-top: 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        border: solid 5px #31bd72;
+        position: inherit;
+    }
+    .StructureInfo {
+        padding: 15px;
+        border:none;
+    }*/
+    .ISPViewContainer {
+        overflow: scroll;
+        overflow-y: hidden;
+        position: relative;
+        border: 2px solid #31bd72;
+    }
+</style>
+
+@Html.HiddenFor(m => m.totalOSPCable)
+@Html.HiddenFor(m => m.total_unit)
+<div class="form-group  StructureTitle" style="width:1150px; margin:0 auto;">
+    @Model.StructureName [@Model.StructureCode]
+</div>
+<div class="row ISPViewContainer">
+
+    <div class="row StructureInfo">
+        <div id="svgContainer">
+
+        </div>
+        <div id="buffersvgContainer">
+
+        </div>
+        <div id="pointervgContainer">
+
+        </div>
+        <div id="divMarker">
+
+        </div>
+        <div id="divLeftShaft">
+            @foreach (var item in lstleftShafts)
+            {
+                var shaftCss = string.Empty;
+                {
+                    if (item.isVirtualShaft == true) { shaftCss = "VirtualShaft"; }
+                    //else if (item.withriser == true) { shaftCss = "withRiser"; }
+                    else { shaftCss = "Normalshaft"; }
+                }
+
+                <div style="width:90px; float:left;">
+                    <div class="row">
+                        <div class="ShaftOut shaftTitle " uid="@item.entityname" style="float:left;">
+                            <span class="highlighter_shaft"></span>
+                            <div class="ShaftIn @(shaftCss)" id="SHAFT_@item.systemid" style="width:80px;">
+                                @foreach (var Floor in Model.FloorList.Select((value, i) => new { i, value }))
+                                {
+                                    var value = Floor.value;
+                                    var index = Floor.i;
+
+                                    <div class="FloorBox" id="shaft_@(item.systemid+"_floor_"+value.systemid)">
+                                        @foreach (var Element in Model.StructureElements.Where(m => m.floor_id == Floor.value.systemid && m.shaft_id == item.systemid))
+                                        {
+                                            Model.parentElementInfo = Element;
+                                            @Html.Partial("_Element", Model)
+                                        }
+
+
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        @* class="@floorCssClass" style="margin-top:22px;float:left;"*@
+
+        <div id="dvFloors" class="@floorCssClass" style="margin-top: 22px;float: left;width:700px;">
+            @foreach (var item in Model.FloorList)
+            {
+                <div id="FLOOR_@item.systemid" class="row FloorBox" uid="@item.entityname" floorid="@item.systemid" style="" target="Room_1" width="@item.width" height="@item.height" length="@item.length" data-total-unit="@item.no_of_units">
+                    <div id="dvEnable">
+                        <span class="input_ico" onclick="isp.updateFloorInfo(this);" id="FloorName_@item.systemid" floorid="@item.systemid">@item.entityname <span class="glyphicon-pencil"></span></span>
+                        <span class="highlighter"></span>
+                    </div>
+                    @if (Model.StructureElements.Count > 0)
+                    {
+                        foreach (var Element in Model.StructureElements.Where(m => m.shaft_id == 0 && m.floor_id == item.systemid))
+                        {
+                            Model.parentElementInfo = Element;
+                            @Html.Partial("_Element", Model)
+                        }
+                    }
+                </div>
+            }
+        </div>
+        <div id="divRightShaft">
+            @foreach (var item in lstRightShafts)
+            {
+                var shaftCss = string.Empty;
+                {
+                    if (item.isVirtualShaft == true) { shaftCss = "VirtualShaft"; }
+                    //else if (item.withriser == true) { shaftCss = "withRiser"; }
+                    else { shaftCss = "Normalshaft"; }
+                }
+                @*class="col-md-1"*@
+                <div style="width:90px; float:left;">
+                    <div class="row">
+                        <div class="ShaftOut shaftTitle" uid="@item.entityname" style="float:left;">
+                            <span class="highlighter_shaft"></span>
+                            <div class="ShaftIn @(shaftCss)" id="SHAFT_@item.systemid" style="width:80px;">
+                                @foreach (var Floor in Model.FloorList.Select((value, i) => new { i, value }))
+                                {
+                                    var value = Floor.value;
+                                    var index = Floor.i;
+                                    <div class="FloorBox" id="SHAFT_@(item.systemid+" _floor_"+value.systemid)">
+                                        @foreach (var Element in Model.StructureElements.Where(m => m.floor_id == Floor.value.systemid && m.shaft_id == item.systemid))
+                                        {
+                                            Model.parentElementInfo = Element;
+                                            @Html.Partial("_Element", Model)
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </div>
+        @if (Model.totalOSPCable > 0)
+            {
+            <div id="ospCableEndPoint" style="width: 100px !important; float:left; background: #3bc175; height: 34px; margin: auto 0px; margin-left: 50% !important; color: #fff; padding: 10px; text-align: center; ">OSP Cable</div>
+
+        }
+    </div>
+</div>
+<script>
+    var isp2 = new ISPMain();
+    @{
+     if (Model.StructureElements.Count > 0)
+     {
+         var distinctRecord2 = Model.StructureElements.Where(m=>m.is_isp_splicer==true).Select(m => new { entity_type = m.entity_type }).Distinct().ToList();
+         foreach (var item in distinctRecord2)
+         {
+             <text>
+                isp2.SplicerEntity.push({ entityType: '@item.entity_type.ToUpper()' });
+            </text>
+         }
+     }
+ }
+
+
+    $(document).ready(function () {
+        $('.StructureInfo').css('width', (800 + (parseInt('@shaftcount') * 90)));
+        var prevScrolvalue = 0;
+        $('#divISPView .e_B,#divISPView .e_B_rooms').tooltip({ title: 'Add', html: false, placement: "bottom" });
+        isp.refreshParentElementddl();
+        isp.showRightPop();
+        isp.RefreshShaftHeight();
+        drawStructureCables('@Model.StructureId');
+        //$("#divISPView").scroll(function () {
+        //    jsPlumb.repaintEverything();
+        //});
+        // Setup isScrolling variable
+        var isScrolling;
+        $('#divISPView').scroll(function (evt) {
+            var scrollTop = $(this).scrollTop();
+            var scrollLeft = $('.ISPViewContainer').scrollLeft();
+
+            $.each($('#divMarker svg'), function (index, item) {
+                var curTop = $(this).attr('data-svg-marker-top');
+                var curLeft = $(this).attr('data-svg-marker-left');
+                var prevScroll = $(this).attr('data-svg-prev-scroll');
+                var prevLeftScroll = $(this).attr('data-svg-prev-hscroll');
+                $(this).css('top', (curTop - (scrollTop - prevScroll)));
+                //$(this).css('top', curTop-scrollTop);
+                $(this).css('left', (curLeft - (scrollLeft - prevLeftScroll)));
+            });
+
+
+            // Clear our timeout throughout the scroll
+            window.clearTimeout(isScrolling);
+            isScrolling = setTimeout(function () {
+                //$(this).attr('data-svg-marker-top', (curTop - scrollTop))
+                $.each($('#divMarker svg'), function (index, item) {
+                    var curTop = $(this).attr('data-svg-marker-top');
+                    var prevScroll = $(this).attr('data-svg-prev-scroll');
+                    var prevLeftScroll = $(this).attr('data-svg-prev-hscroll');
+                    var curLeft = $(this).attr('data-svg-marker-left');
+                    $(this).attr('data-svg-marker-top', curTop - (scrollTop - prevScroll));
+                    $(this).attr('data-svg-marker-left', curLeft - (scrollLeft - prevLeftScroll));
+                    $(this).attr('data-svg-prev-scroll', scrollTop);
+                    $(this).attr('data-svg-prev-hscroll', scrollLeft);
+                    isp.prevScroll = scrollTop;
+
+                });
+            }, 100);
+        });
+
+
+        $('.ISPViewContainer').scroll(function (evt) {
+            var scrollTop = $('#divISPView').scrollTop();
+            var scrollLeft = $(this).scrollLeft();
+
+            $.each($('#divMarker svg'), function (index, item) {
+                var curTop = $(this).attr('data-svg-marker-top');
+                var curLeft = $(this).attr('data-svg-marker-left');
+                var prevScroll = $(this).attr('data-svg-prev-scroll');
+                var prevLeftScroll = $(this).attr('data-svg-prev-hscroll');
+                $(this).css('top', (curTop - (scrollTop - prevScroll)));
+                //$(this).css('top', curTop-scrollTop);
+                $(this).css('left', (curLeft - (scrollLeft - prevLeftScroll)));
+            });
+
+
+            // Clear our timeout throughout the scroll
+            window.clearTimeout(isScrolling);
+            isScrolling = setTimeout(function () {
+                //$(this).attr('data-svg-marker-top', (curTop - scrollTop))
+                $.each($('#divMarker svg'), function (index, item) {
+                    var curTop = $(this).attr('data-svg-marker-top');
+                    var prevScroll = $(this).attr('data-svg-prev-scroll');
+                    var prevLeftScroll = $(this).attr('data-svg-prev-hscroll');
+                    var curLeft = $(this).attr('data-svg-marker-left');
+                    $(this).attr('data-svg-marker-top', curTop - (scrollTop - prevScroll));
+                    $(this).attr('data-svg-marker-left', curLeft - (scrollLeft - prevLeftScroll));
+                    $(this).attr('data-svg-prev-scroll', scrollTop);
+                    $(this).attr('data-svg-prev-hscroll', scrollLeft);
+                    isp.prevScroll = scrollTop;
+
+                });
+            }, 100);
+        });
+
+    });
+</script>

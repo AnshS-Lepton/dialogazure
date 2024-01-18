@@ -1,0 +1,134 @@
+﻿@model Models.Admin.ModelCableColorSettings
+
+<link href="~/Areas/Admin/Content/css/spectrum.css" rel="stylesheet" />
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<script src="~/Areas/Admin/Content/js/spectrum.js"></script>
+
+<!DOCTYPE html>
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+
+<div id="dvInfoSetting" class="update_panel fullWidth">
+    <div class="title">
+        <h4>Tube/Core Color Settings</h4>
+    </div>
+
+    @using (Html.BeginForm("SaveCableCoreColorSettings", "OSPSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmCoreSetting", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+        int counter = 0;
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-1">
+                    <label class="control-label">
+                        Type:
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    @Html.DropDownListFor(m => m.type, new List<SelectListItem>
+                     {
+                        new SelectListItem{ Text="Tube", Value = "Tube" },
+                        new SelectListItem{ Text="Core", Value = "Core" }
+                     }, "Select Type", new { @class = "chosen-select col-sm-12", @onchange = "fnChangeType();", @id = "ddlType" })
+                </div>
+                <div class="d-flex ml-05" id="dvBtnAction" style="display:@(!string.IsNullOrEmpty(Model.type)?"block":"none")">
+                    <span class="btn btn-success ml-auto mr-05" id="btnAddNewCore" title="Add New Row">Add</span>
+                    <input type="submit" class="btn btn-primary" name="btnaction" id="btnSubmit" style="display:@((!string.IsNullOrEmpty(Model.type))?"inline-block":"none")" value="Save" />
+                </div>
+            </div>
+        </div>
+        <div style="display:@(Model.lstCableColor.Count>0?"block":"none")" id="divCableTubeColor">
+            <div class="recordCount mb-01">
+                <b>
+                    Total Records: @Model.lstCableColor.Count()
+                </b>
+            </div>
+            <div class="table-responsive table_over">
+                <table id="tblCableTubeColor" class="grid" cellpadding="0" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>@(Model.type + " Number") </th>
+                            <th>Color Character</th>
+                            <th>Color</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.lstCableColor != null)
+                        {
+                            for (int i = 0; i < Model.lstCableColor.Count; i++)
+                            {
+                                counter++;
+                                <tr isnewrecord="0">
+                                    <td>
+                                        <p style="color:black;">@counter</p>
+                                        @Html.HiddenFor(m => Model.lstCableColor[i].color_id)
+                                    </td>
+                                    <td>
+                                        @Html.TextBoxFor(m => Model.lstCableColor[i].color_character, new { @maxlength = "50", Style = "width:30%;", @class = "color_character", @ColorCharid = string.Concat("colorChar", counter) })
+                                    </td>
+                                    <td>
+                                        <span>
+                                            @Html.TextBoxFor(m => Model.lstCableColor[i].color_code, new { @maxlength = "25", Style = "width:100% ;", @name = "color2", @class = "full col-md-10" })
+                                            @*<i class="fa fa-paint-brush"></i>*@
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @*<a href="javascript:void(0);" class="TubeColorRowDelete" onclick="TubeColorRowDelete(@Model.lstCableColor[i].color_id);" title="Delete"> <i class="fa fa-fw fa-trash" style=" font-size: 13px; color: #f50000;"></i></a>*@
+                                        <span class="TubeColorRowDelete" title="Delete" style="">x</span>
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+
+        <div class="clearfix"></div>
+    }
+</div>
+
+<script>
+
+                $(document).ready(function () {
+                    $('.chosen-select').chosen({ width: '100%' });
+                    $('#tblCableTubeColor tbody tr').each(function () {
+                        var colorCharId = $(this).children().find('.full').val();
+                        $(this).children().find('.sp-preview-inner').css({ "background-color": colorCharId });
+                    });
+
+                    $("#btnSubmit").on("click", function (event) {
+                        var rowCount = $(app.DE.tblCableInfoTable + ' tbody tr').length;
+                        if (rowCount == 0) {
+                            alert('Please add color first!');
+                            return false;
+                        }
+                        $('#tblCableTubeColor tbody tr ').each(function () {
+
+                            var ColorCharValue = $.trim($(this).children().find('.color_character').val());
+
+                            if (ColorCharValue == "") {
+                                $(this).children().find('.color_character').css({ "border-color": "red", "border": "2px solid red" });
+                                alert("can not save Blank Color Character!");
+                                event.preventDefault();
+                                return false;
+                            }
+                        });
+                    });
+                });
+                $(function () {
+                     
+                    if ('@(Model.lstCableColor.Count)' == 0) {
+                        $('#tblCableTubeColor').hide();
+                    }
+                    else {
+                        $('#tblCableTubeColor').show();
+
+                    }
+                });
+</script>

@@ -1,0 +1,69 @@
+﻿@model Models.itemMaster
+@using Models;
+@Html.HiddenFor(m => m.entityType)
+@Html.HiddenFor(m => m.audit_item_master_id, new { id = "audit_item_master_id" })
+@{
+    var specification = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.specification.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var vendor = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.vendor.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+}
+<!DOCTYPE html>
+<div id="dvMainSpecification"  class="form-group row @((specification != null && specification.is_readonly == true && Model.entityType==EntityType.Splitter.ToString())?"dvdisabled":"")">
+
+    <label class="control-label col-sm-2" for="ddlSpecification">@Resources.Resources.SI_OSP_GBL_NET_FRM_012<i class="clsMandatory">*</i>:</label>
+    <div class="col-md-4">
+        <select id="specification" name="@Html.NameFor(m => m.specification)" required="required" class="chosen-select col-sm-12" onchange="ddlChangeRemoveCss(this.id, 'Specification');">
+            <option value="">-Select-</option>
+            @foreach (var attribute in Model.lstSpecification.Select(x => new { Value = x.value, Text = x.key, Type = x.type }))
+            {
+                <option value="@attribute.Text" data-type="@attribute.Type" @(Model.specification == attribute.Value ? "selected" : "")>@attribute.Value</option>
+            }
+        </select>
+    </div>
+
+    <label class="control-label col-sm-2" for="ddlSpecification">@Resources.Resources.SI_OSP_GBL_NET_FRM_013<i class="clsMandatory">*</i>:</label>
+    <div class="col-md-4">
+        @Html.DropDownListFor(m => m.vendor_id, new SelectList(Model.lstVendor.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "Select Vendor", new { @class = "chosen-select form-control", @id = "ddlVendor", @onchange = "ddlChangeRemoveCss(this.id, 'Vendor');" })
+    </div>
+</div>
+
+<div class="form-group row">
+
+
+    <label class="control-label col-sm-2" for="txtItemCode">@Resources.Resources.SI_OSP_GBL_NET_FRM_014<i class="clsMandatory">*</i>:</label>
+    <div class="col-md-4">
+        @Html.TextBoxFor(m => m.item_code, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtItemCode" })
+
+    </div>
+    <label class="control-label col-sm-2" for="txtCategory">@Resources.Resources.SI_OSP_GBL_NET_GBL_003:</label>
+    <div class="col-md-4">
+        @Html.TextBoxFor(m => m.category, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtCategory" })
+
+    </div>
+
+</div>
+<div class="form-group row">
+
+    <label class="control-label col-sm-2" for="txtSubCategory1">@Resources.Resources.SI_OSP_GBL_NET_FRM_015:</label>
+    <div class="col-md-4">
+        @Html.TextBoxFor(m => m.subcategory1, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtSubCategory1" })
+
+    </div>
+    <label class="control-label col-sm-2" for="txtSubCategory2">@Resources.Resources.SI_OSP_GBL_NET_FRM_016:</label>
+    <div class="col-md-4">
+        @Html.TextBoxFor(m => m.subcategory2, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtSubCategory2" })
+    </div>
+</div>
+@if (Model.entityType != Models.EntityType.BDB.ToString() && Model.entityType != Models.EntityType.ADB.ToString()
+    && Model.entityType != Models.EntityType.CDB.ToString() && Model.entityType != Models.EntityType.ONT.ToString()
+    && Model.entityType != Models.EntityType.SpliceClosure.ToString() && Model.entityType != Models.EntityType.Cable.ToString()
+    && Model.entityType != Models.EntityType.FDB.ToString() && Model.entityType != Models.EntityType.HTB.ToString() && Model.entityType != Models.EntityType.Splitter.ToString())
+{
+    <div class="form-group row">
+        <label class="control-label col-sm-2" for="txtSubCategory3">@Resources.Resources.SI_OSP_GBL_NET_FRM_017:</label>
+        <div class="col-md-4">
+            @Html.TextBoxFor(m => m.subcategory3, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtSubCategory3" })
+        </div>
+
+    </div>
+}
+@Html.Partial("~/Views/ItemTemplate/_EntitySubCategory.cshtml", Model)

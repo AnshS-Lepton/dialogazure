@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" name="INV_Maintenance" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://192.168.28.20/CICT_INV/Service1.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://192.168.28.20/CICT_INV/Service1.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://192.168.28.20/CICT_INV/Service1.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/CICT_INV_Maintenance" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="I_ERP_Service_CreateInvIssue_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateInvIssue" />
+  </wsdl:message>
+  <wsdl:message name="I_ERP_Service_CreateInvIssue_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateInvIssueResponse" />
+  </wsdl:message>
+  <wsdl:message name="I_ERP_Service_CreateInvIssue_StringFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/" name="detail" element="q1:string" />
+  </wsdl:message>
+  <wsdl:message name="I_ERP_Service_CreateInvReturn_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateInvReturn" />
+  </wsdl:message>
+  <wsdl:message name="I_ERP_Service_CreateInvReturn_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateInvReturnResponse" />
+  </wsdl:message>
+  <wsdl:message name="I_ERP_Service_CreateInvReturn_StringFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/" name="detail" element="q2:string" />
+  </wsdl:message>
+  <wsdl:portType name="I_ERP_Service">
+    <wsdl:operation name="CreateInvIssue">
+      <wsdl:input wsaw:Action="http://tempuri.org/I_ERP_Service/CreateInvIssue" message="tns:I_ERP_Service_CreateInvIssue_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/I_ERP_Service/CreateInvIssueResponse" message="tns:I_ERP_Service_CreateInvIssue_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/I_ERP_Service/CreateInvIssueStringFault" name="StringFault" message="tns:I_ERP_Service_CreateInvIssue_StringFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateInvReturn">
+      <wsdl:input wsaw:Action="http://tempuri.org/I_ERP_Service/CreateInvReturn" message="tns:I_ERP_Service_CreateInvReturn_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/I_ERP_Service/CreateInvReturnResponse" message="tns:I_ERP_Service_CreateInvReturn_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/I_ERP_Service/CreateInvReturnStringFault" name="StringFault" message="tns:I_ERP_Service_CreateInvReturn_StringFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_I_ERP_Service" type="tns:I_ERP_Service">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CreateInvIssue">
+      <soap:operation soapAction="http://tempuri.org/I_ERP_Service/CreateInvIssue" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="StringFault">
+        <soap:fault use="literal" name="StringFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="CreateInvReturn">
+      <soap:operation soapAction="http://tempuri.org/I_ERP_Service/CreateInvReturn" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="StringFault">
+        <soap:fault use="literal" name="StringFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="INV_Maintenance">
+    <wsdl:port name="BasicHttpBinding_I_ERP_Service" binding="tns:BasicHttpBinding_I_ERP_Service">
+      <soap:address location="http://192.168.28.20/CICT_INV/Service1.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

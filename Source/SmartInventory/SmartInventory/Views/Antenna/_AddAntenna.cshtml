@@ -1,0 +1,536 @@
+﻿@model Models.AntennaMaster
+@using Models;
+@using SmartInventory.Settings;
+
+
+@helper ItemSpecification()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
+}
+@helper ProjectSpecifications()
+{
+    { Html.RenderPartial("~/Views/Library/_ProjectSpecification.cshtml", (IProjectSpecification)Model); }
+}
+@helper OwnershipInfo()
+{
+    { Html.RenderPartial("~/Views/Library/_OwnershipInfo.cshtml", (IOwnershipInfo)Model); }
+}
+@helper pageMessage()
+{
+    {
+        Html.RenderPartial("_PageMessage", Model.objPM);
+    }
+}
+@helper Reference()
+{
+    { Html.RenderPartial("~/Views/Library/_Reference.cshtml", (IReference)Model); }
+}
+@helper GeographicDetails()
+{
+    { Html.RenderPartial("~/Views/Library/_GeographicDetails.cshtml", (IGeographicDetails)Model); }
+}
+@helper AdditionalFields()
+{
+    { Html.RenderPartial("~/Views/Library/_AdditionalFields.cshtml", (IAdditionalFields)Model); }
+}
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Antenna.ToString().ToUpper()).FirstOrDefault() : null;
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Antenna.ToString());
+
+}
+
+<style>
+    #owershipinfo .col-sm-2 {
+        width: 25% !important;
+    }
+
+    #owershipinfo .col-sm-4 {
+        width: 25% !important;
+    }
+
+    #owershipinfo {
+        margin-bottom: auto;
+    }
+
+    .change-message {
+        display: none;
+    }
+
+    .whiteSpace {
+        white-space: nowrap;
+    }
+</style>
+
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SaveAntenna", "Antenna", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        LoadingElementId = "dvProgress",
+        UpdateTargetId = "dvModalBody",
+        OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.Antenna.ToString() + "');"
+    },
+                        new { id = "frmAddAntenna", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.entityType)
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.geom)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.networkIdType)
+        @Html.HiddenFor(m => m.network_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.pSystemId)
+        @Html.HiddenFor(m => m.pEntityType)
+        @Html.HiddenFor(m => m.vsat_id)
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="libTabs">
+            <div class="scrollmenu">
+                <div><span class="spanSide go-left" id="spnRightMenu" style="display:none;"><i class="fa fa-angle-left" aria-hidden="true"></i></span></div>
+                <div class="scrollerhide overflow-hidden">
+                    <ul class="nav nav-tabs tabs-left" id="navTabs">
+
+                        <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                        <li><a href="#ItemSpecf" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_006</a></li>
+
+                        @if (layerDetail != null && layerDetail.is_reference_allowed)
+                        {
+                            <li><a href="#dvRefrence" onclick="si.getEntityReference('@Model.system_id','@EntityType.Antenna.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a></li>
+                        }
+                        @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_vsat_enabled)
+                        {
+                            <li><a href="#VSATAntennaDetails" id="VSAT_Antenna_Details" onclick="si.GetVSATAntenna('@Model.vsat_id');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_510</a></li>
+                        }
+                        @if (Model.system_id > 0 && layerDetail != null)
+                        {
+                            <li><a href="#Reference" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                        }
+                    </ul>
+                </div>
+                <div id="divRightMenu" style="display:none;">
+                    <span class="spanSide go-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                    <span class="spanSide" id="dropdown" style="border-left: 1px solid #b9b7b7;     margin-left: -4px;"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                    <div class="arrowDropUp"></div>
+                    <div class="dropMenu">
+                        <div class="alltabs">@Resources.Resources.SI_OSP_CAB_NET_FRM_014</div>
+                        <ul>
+
+                            <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                            <li><a href="#ItemSpecf" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_006</a></li>
+
+                            @if (layerDetail != null && layerDetail.is_reference_allowed)
+                            {
+                                <li><a href="#dvRefrence" onclick="si.getEntityReference('@Model.system_id','@EntityType.Antenna.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a></li>
+                            }
+                            @if (Model.system_id > 0 && layerDetail != null)
+                            {
+                                <li><a href="#Reference" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="TabContent--max-over">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_121 </legend>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="txtSplitterCode">
+                                @Resources.Resources.SI_OSP_GBL_GBL_GBL_001
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }
+                                :
+                            </label>
+                            <div class="col-md-9">
+                                <div id="txtMaskedNetworkId"></div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="txtSplitterName">
+                                @Resources.Resources.SI_OSP_GBL_NET_FRM_059
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }:
+                            </label>
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(m => m.network_name, new { @class = "form-control", @id = "txtNetworkName", @maxlength = "50" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="txtLatitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_011<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @id = "txtLatitude", @readonly = true })
+                            </div>
+                            <label class="control-label col-md-3" for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_012<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @id = "txtLongitude", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="txtParentID">@Resources.Resources.SI_OSP_GBL_GBL_FRM_122 :<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control", @id = "txtParentID", @readonly = true })
+                            </div>
+                            <label class="control-label col-md-3" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_GBL_005 :<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.parent_entity_type, new { @class = "form-control", @id = "txtParentType", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="form-group" id="owershipinfo">
+                            @OwnershipInfo()
+                        </div>
+                        <div>@AdditionalFields()</div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="txtAcquireFrom">@Resources.Resources.SI_OSP_GBL_GBL_GBL_168:<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(m => m.antenna_type, new SelectList(Model.lstAntennaType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlAntennaType" })
+                            </div>
+                            <label class="control-label col-md-3" for="txtAddress">@Resources.Resources.SI_OSP_GBL_NET_FRM_508 :</label>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(m => m.antenna_sub_type, new SelectList(Model.lstSubAntennaType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlSubAntennaType" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="txtheight">@Resources.Resources.SI_OSP_GBL_GBL_GBL_121 :</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.mechanical_tilt, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,6,2);" })
+                            </div>
+                            <label class="control-label col-md-3" for="txtAzimuth">@Resources.Resources.SI_OSP_GBL_GBL_FRM_123 :</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.electrical_tilt, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,6,2);", @onchange = "fnSetAzimuthValue()", @id = "txtAzimuth" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+
+                            <label class="control-label col-md-3" for="txttotaltilt">@Resources.Resources.SI_OSP_GBL_GBL_GBL_189:</label>
+
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.total_tilt, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,6,2);" })
+                            </div>
+                            <label class="control-label col-md-3" for="txtheight">@Resources.Resources.SI_OSP_GBL_GBL_GBL_195 :</label>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(m => m.antenna_operator, new SelectList(Model.lstAntennaOperator.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlAntennaOperator" })
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="txtAcquireFrom">@Resources.Resources.SI_OSP_GBL_JQ_FRM_164:</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.minimum_frequency, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,6,2);" })
+                            </div>
+                            <label class="control-label col-md-3" for="txtAddress">@Resources.Resources.SI_OSP_GBL_GBL_FRM_124 :</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.maximum_frequency, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,6,2);" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="txtAcquireFrom">@Resources.Resources.SI_OSP_GBL_NET_FRM_494:</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.diameter_in_meter, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,3,2);" })
+                            </div>
+                            <label class="control-label col-md-3" for="txtAddress">@Resources.Resources.SI_OSP_GBL_GBL_FRM_223 (@ApplicationSettings.dBLossUnit) :</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.maximum_gain, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="control-label col-md-3" for="txtBoresight">Boresight Gain (degree) :<i class="clsMandatory">*</i>:</label>
+
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.boresight_gain, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                            </div>
+                            <label class="control-label col-md-3" for="txtPolarPattern">
+                                @Resources.Resources.SI_OSP_GBL_GBL_FRM_128:<i class="clsMandatory">*</i>:
+                            </label>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(m => m.user_cross_polor_pattern, new SelectList(Model.lstUsePattern.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlUsePattern" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="txtModelNumber">Model Number:<i class="clsMandatory"></i>:</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.model_number, new { @class = "form-control", @id = "txtModelNumber" })
+                            </div>
+                            <label class="control-label col-md-3" for="txtManufacturerName">Manufacturer Name:<i class="clsMandatory"></i>:</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.manufacturer_name, new { @class = "form-control", @id = "txtManufacturerName" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="txtModelNumber">Polarization:<i class="clsMandatory"></i>:</label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.polarization, new { @class = "form-control", @id = "txtPolarization" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="control-label col-sm-1" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006</label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.remarks, new { @class = "form-control ", @style = "width:88.6%; margin-left: 140px;", @maxlength = "100" })
+
+                            </div>
+                        </div>
+
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_125</legend>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="txtVerticalMaxGain">@Resources.Resources.SI_OSP_GBL_GBL_FRM_223 (@ApplicationSettings.dBLossUnit) :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.co_polor_vertical_maximum_gain, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                                <label class="control-label col-md-3" for="txtVerticalFB">@Resources.Resources.SI_OSP_GBL_NET_GBL_194 (@ApplicationSettings.dBLossUnit) :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.co_polor_vertical_fb, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="txtVerticalBW">
+                                    @Resources.Resources.SI_OSP_GBL_NET_FRM_509
+                                </label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.co_polor_vertical_bw, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                                <label class="control-label col-md-3" for="txtVerticalBoresight">@Resources.Resources.SI_GBL_GBL_GBL_FRM_043 :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.co_polor_vertical_boresight, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_130</legend>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="txtCrossVerticalMaxGain">@Resources.Resources.SI_OSP_GBL_GBL_FRM_223  (@ApplicationSettings.dBLossUnit) :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.cross_polor_vertical_maximum_gain, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                                <label class="control-label col-md-3" for="txtCrossVerticalFB">@Resources.Resources.SI_OSP_GBL_NET_GBL_194 (@ApplicationSettings.dBLossUnit) :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.cross_polor_vertical_fb, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="txtCrossVerticalBW">@Resources.Resources.SI_OSP_GBL_NET_FRM_509	 :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.cross_polor_vertical_bw, new { @class = "form-control", @id = "txtCrossVerticalBW", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                                <label class="control-label col-md-3" for="txtCrossVerticalBoresight">@Resources.Resources.SI_GBL_GBL_GBL_FRM_043 :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.cross_polor_vertical_boresight, new { @class = "form-control", @id = "txtCrossVerticalBoresight", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_GBL_195</legend>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="txtHorizontalMaxGain">@Resources.Resources.SI_OSP_GBL_GBL_FRM_223 (@ApplicationSettings.dBLossUnit) :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.co_polor_horizontal_maximum_gain, new { @class = "form-control", @id = "txtHorizontalMaxGain", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                                <label class="control-label col-md-3" for="txtHorizontalFB">@Resources.Resources.SI_OSP_GBL_NET_GBL_194 (@ApplicationSettings.dBLossUnit) :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.co_polor_horizontal_fb, new { @class = "form-control", @id = "txtHorizontalFB", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="txtHorizontalBW">@Resources.Resources.SI_OSP_GBL_NET_FRM_509	 :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.co_polor_horizontal_bw, new { @class = "form-control", @id = "txtHorizontalBW", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                                <label class="control-label col-md-3" for="txtHorizontalBoresight">@Resources.Resources.SI_GBL_GBL_GBL_FRM_043 :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.co_polor_horizontal_boresight, new { @class = "form-control", @id = "txtHorizontalBoresight", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_GBL_196</legend>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="txtCrossHorizontalMaxGain">@Resources.Resources.SI_OSP_GBL_GBL_FRM_223 (@ApplicationSettings.dBLossUnit) :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.cross_polor_horizontal_maximum_gain, new { @class = "form-control", @id = "txtCrossHorizontalMaxGain", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                                <label class="control-label col-md-3" for="txtCrossHorizontalFB">@Resources.Resources.SI_OSP_GBL_NET_GBL_194 (@ApplicationSettings.dBLossUnit) :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.cross_polor_horizontal_fb, new { @class = "form-control", @id = "txtCrossHorizontalFB", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="txtCrossHorizontalBW">@Resources.Resources.SI_OSP_GBL_NET_FRM_509	 :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.cross_polor_horizontal_bw, new { @class = "form-control", @id = "txtCrossHorizontalBW", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                                <label class="control-label col-md-3" for="txtCrossHorizontalBoresight">@Resources.Resources.SI_GBL_GBL_GBL_FRM_043 :<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.cross_polor_horizontal_boresight, new { @class = "form-control", @id = "txtCrossHorizontalBoresight", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
+                                </div>
+                            </div>
+
+
+                        </fieldset>
+
+                    </fieldset>
+                    @if (Model.lstUserModule.Contains("PROJ"))
+                    {
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_001</legend>
+                            @ProjectSpecifications()
+                        </fieldset>
+                    }
+                        <div>
+                            @GeographicDetails()
+                        </div>
+                    </div>
+                <div class="tab-pane" id="VSATAntennaDetails">
+                </div>
+                @*<div id="dvRefrence" class="tab-pane" style="min-height: 260px;"></div>*@
+                <div class="tab-pane" id="ItemSpecf">
+                    @ItemSpecification()
+                </div>
+                <div class="tab-pane" id="Reference">
+                    @Reference()
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            @if (Model.system_id > 0)
+            {
+                <div class="ModelFooterInfo">
+                    <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_014:</label>
+                    <label class="model-label-info">@(Model.network_status != null ? Utility.MiscHelper.GetNetworkStatus(Model.network_status.ToUpper()) : string.Empty)</label>
+                    <label for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_007:</label>
+                    <label class="model-label-info" title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
+                </div>
+            }
+            <div class="ml-auto">
+                @if (Model.system_id > 0)
+                {
+                    <button type="button" onclick="formPost();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnUpdateItemTemplate" disabled="disabled" onclick="return fnSetAzimuthValue();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                }
+                else
+                {
+                    <button type="button" onclick="formPost();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnSaveItemTemplate" disabled="disabled" onclick="return fnSetAzimuthValue();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                }
+                <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+
+                var inputs = [];
+
+    $(document).ready(function () {
+
+
+        callFormValidator("frmAddAntenna");
+        $('.chosen-select').chosen({ width: '100%' });
+        $('#specification').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindVendor(dID);
+        });
+        $('#ddlVendor').chosen().change(function (event) {
+            var specfi = $("#specification option:selected").val(); //
+            var vandorid = $(this).val();
+            var entitytype = $('#entityType').val();
+            bindCateSubcat(entitytype, specfi, vandorid);
+        });
+        $('#ddlType').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindBrand(dID);
+        });
+        $('#ddlBrand').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindModel(dID);
+        });
+        EnableDisableUpdateButton("frmAddAntenna", @Model.system_id > 0 ? "btnUpdateItemTemplate" : "btnSaveItemTemplate");
+
+        //APPLY INPUT MASK ON NETWORK ID..
+        getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
+        $("#frmAddAntenna").on("submit", function () {
+            $("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
+            si.upperCaseNetWorkId();
+            if (!entityReferencevalidation())
+                return false;
+        });
+        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+
+        setTimeout(function(){
+            setDivInitData();
+        },300);
+
+        $(document).on('change input', '#frmAddAntenna :input', function(){
+            setTimeout(function(){
+                validateDivDataforChange();
+            },300);
+        });
+    });
+
+    function fnSetAzimuthValue() {
+        setTimeout(function () { fnSetAzimuthValue(); }, 1);
+        var AzimuthVal = $("#txtAzimuth").val();
+        var MinAzimuthVal = @ApplicationSettings.Minazimuth;
+        var MaxAzimuthVal = @ApplicationSettings.Maxazimuth;
+
+        if (parseInt(AzimuthVal) < parseInt(MinAzimuthVal)) {
+            $('#txtAzimuth').addClass('input-validation-error').removeClass('valid');
+            return false;
+        }
+        if (parseInt(AzimuthVal) > parseInt(MaxAzimuthVal)) {
+            $('#txtAzimuth').addClass('input-validation-error').removeClass('valid');
+            return false;
+        }
+        else {
+            $('#txtAzimuth').removeClass('input-validation-error').addClass('valid');
+        }
+    }
+    function formPost() {
+         
+        if ($('#txtbomsubcategory').val() == '') {
+            $('#txtbomsubcategory').next().addClass('input-validation-error');
+            return false;
+        }
+
+        else {
+            $("#frmAddAntenna").submit();
+        }
+    }
+
+</script>
+<style>
+               #VSATAntennaDetails{
+                    background-image: url('@Url.Content("~/content/images/loading_new.gif")');
+                    background-position: center;
+                    background-repeat: no-repeat;
+                }
+</style>

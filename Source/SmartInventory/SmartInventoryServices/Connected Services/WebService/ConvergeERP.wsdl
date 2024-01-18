@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap12enc="http://www.w3.org/2003/05/soap-encoding" xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:plink="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:tns="https://zato.io/ns/20130518" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsa="http://schemas.xmlsoap.org/ws/2003/03/addressing" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xop="http://www.w3.org/2004/08/xop/include" xmlns:soap12env="http://www.w3.org/2003/05/soap-envelope" xmlns:soap11env="http://schemas.xmlsoap.org/soap/envelope/" name="ConvergeERP" targetNamespace="https://zato.io/ns/20130518" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="https://zato.io/ns/20130518">
+      <xs:simpleType name="InventoryItem_ItemCodeType">
+        <xs:restriction base="xs:string">
+          <xs:maxLength value="20" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="Error_messageType">
+        <xs:restriction base="xs:string">
+          <xs:maxLength value="1024" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="CreateInvRequest_WHCodeType">
+        <xs:restriction base="xs:string">
+          <xs:maxLength value="20" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="InventoryItem_UOMType">
+        <xs:restriction base="xs:string">
+          <xs:maxLength value="20" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="CreateInvRequest_TranNoType">
+        <xs:restriction base="xs:string">
+          <xs:maxLength value="20" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="Error_codeType">
+        <xs:restriction base="xs:string">
+          <xs:maxLength value="20" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="InventoryItem_SerialType">
+        <xs:restriction base="xs:string">
+          <xs:maxLength value="50" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="Error">
+        <xs:sequence>
+          <xs:element name="code" type="tns:Error_codeType" />
+          <xs:element name="message" type="tns:Error_messageType" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="InventoryItem">
+        <xs:sequence>
+          <xs:element name="ItemCode" type="tns:InventoryItem_ItemCodeType" />
+          <xs:element name="Serial" type="tns:InventoryItem_SerialType" />
+          <xs:element name="UOM" type="tns:InventoryItem_UOMType" />
+          <xs:element name="Quantity" type="xs:double" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="InventoryItemArray">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="InventoryItem" nillable="true" type="tns:InventoryItem" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ErrorArray">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Error" nillable="true" type="tns:Error" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CreateInvRequest">
+        <xs:sequence>
+          <xs:element name="TranNo" type="tns:CreateInvRequest_TranNoType" />
+          <xs:element name="WHCode" type="tns:CreateInvRequest_WHCodeType" />
+          <xs:element minOccurs="0" name="Dtl" nillable="true" type="tns:InventoryItemArray" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Response">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="errors" nillable="true" type="tns:ErrorArray" />
+          <xs:element minOccurs="0" name="out" nillable="true" type="xs:anyType" />
+          <xs:element name="success" type="xs:boolean" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createInvIssue">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="request" nillable="true" type="tns:CreateInvRequest" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createInvIssueResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="createInvIssueResult" nillable="true" type="tns:Response" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createInvReturn">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="request" nillable="true" type="tns:CreateInvRequest" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createInvReturnResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="createInvReturnResult" nillable="true" type="tns:Response" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Error" type="tns:Error" />
+      <xs:element name="InventoryItem" type="tns:InventoryItem" />
+      <xs:element name="InventoryItemArray" type="tns:InventoryItemArray" />
+      <xs:element name="ErrorArray" type="tns:ErrorArray" />
+      <xs:element name="CreateInvRequest" type="tns:CreateInvRequest" />
+      <xs:element name="Response" type="tns:Response" />
+      <xs:element name="createInvIssue" type="tns:createInvIssue" />
+      <xs:element name="createInvIssueResponse" type="tns:createInvIssueResponse" />
+      <xs:element name="createInvReturn" type="tns:createInvReturn" />
+      <xs:element name="createInvReturnResponse" type="tns:createInvReturnResponse" />
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="createInvReturn">
+    <wsdl:part name="createInvReturn" element="tns:createInvReturn" />
+  </wsdl:message>
+  <wsdl:message name="createInvReturnResponse">
+    <wsdl:part name="createInvReturnResponse" element="tns:createInvReturnResponse" />
+  </wsdl:message>
+  <wsdl:message name="createInvIssue">
+    <wsdl:part name="createInvIssue" element="tns:createInvIssue" />
+  </wsdl:message>
+  <wsdl:message name="createInvIssueResponse">
+    <wsdl:part name="createInvIssueResponse" element="tns:createInvIssueResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ConvergeERP">
+    <wsdl:operation name="createInvReturn" parameterOrder="createInvReturn">
+      <wsdl:input name="createInvReturn" message="tns:createInvReturn" />
+      <wsdl:output name="createInvReturnResponse" message="tns:createInvReturnResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="createInvIssue" parameterOrder="createInvIssue">
+      <wsdl:input name="createInvIssue" message="tns:createInvIssue" />
+      <wsdl:output name="createInvIssueResponse" message="tns:createInvIssueResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ConvergeERP" type="tns:ConvergeERP">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="createInvReturn">
+      <soap:operation soapAction="createInvReturn" style="document" />
+      <wsdl:input name="createInvReturn">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="createInvReturnResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createInvIssue">
+      <soap:operation soapAction="createInvIssue" style="document" />
+      <wsdl:input name="createInvIssue">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="createInvIssueResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ConvergeERPService">
+    <wsdl:port name="ConvergeERP" binding="tns:ConvergeERP">
+      <soap:address location="http://192.180.10.25:11223/v1/converge/erp_wsdl" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

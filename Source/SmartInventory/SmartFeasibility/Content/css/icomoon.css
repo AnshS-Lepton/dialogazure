@@ -1,0 +1,141 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?xnpq38');
+  src:  url('fonts/icomoon.eot?xnpq38#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?xnpq38') format('truetype'),
+    url('fonts/icomoon.woff?xnpq38') format('woff'),
+    url('fonts/icomoon.svg?xnpq38#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-Room:before {
+  content: "\e900";
+}
+.icon-BDB:before {
+  content: "\e921";
+}
+.icon-S1:before {
+  content: "\e922";
+}
+.icon-S2:before {
+  content: "\e923";
+}
+.icon-Trench:before {
+  content: "\e901";
+}
+.icon-UnderGroundCable:before {
+  content: "\e902";
+}
+.icon-ADB:before {
+  content: "\e903";
+}
+.icon-Area:before {
+  content: "\e904";
+}
+.icon-CDB:before {
+  content: "\e905";
+}
+.icon-Duct:before {
+  content: "\e906";
+}
+.icon-Manhole:before {
+  content: "\e907";
+}
+.icon-MPOD:before {
+  content: "\e908";
+}
+.icon-OverheadCable:before {
+  content: "\e909";
+}
+.icon-POD:before {
+  content: "\e90a";
+}
+.icon-Pole:before {
+  content: "\e90b";
+}
+.icon-Splice-Closure:before {
+  content: "\e90c";
+}
+.icon-SubArea:before {
+  content: "\e90d";
+}
+.icon-SurveyArea:before {
+  content: "\e90e";
+}
+.icon-Tree:before {
+  content: "\e90f";
+}
+.icon-sql:before {
+  content: "\e910";
+}
+.icon-ToggleBaseMap:before {
+  content: "\e911";
+}
+.icon-zoom-on-map:before {
+  content: "\e912";
+}
+.icon-BuildingSurvey:before {
+  content: "\e913";
+}
+.icon-delete:before {
+  content: "\e914";
+}
+.icon-edit:before {
+  content: "\e915";
+}
+.icon-ExportLogsReports:before {
+  content: "\e916";
+}
+.icon-information:before {
+  content: "\e917";
+}
+.icon-layer:before {
+  content: "\e918";
+}
+.icon-NE_Library:before {
+  content: "\e919";
+}
+.icon-NetworkElementDetail:before {
+  content: "\e91a";
+}
+.icon-overide:before {
+  content: "\e91b";
+}
+.icon-refrash_layer:before {
+  content: "\e91c";
+}
+.icon-refresh:before {
+  content: "\e91d";
+}
+.icon-search:before {
+  content: "\e91e";
+}
+.icon-HTB:before {
+  content: "\e91f";
+ 
+}
+.icon-FDB:before {
+  content: "\e920";
+}
+
+
+
+
+
+

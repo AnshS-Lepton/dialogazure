@@ -1,0 +1,105 @@
+﻿@model Models.ModelExternalDataDetails
+@Scripts.Render("~/bundles/ExternalDataUploader/Scripts")
+@Styles.Render("~/bundles/NetworkPlanning/css")
+<style>
+    
+   
+    /*.ExternalData_Loader {
+        position: absolute;
+        width: 100%;
+        display: none;
+        height: calc(100% - 96px);
+        opacity: 0.4;
+        background-color: white;
+        background-image: url(Content/images/loading_new.gif);
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    #dvNoMoreRecord {
+        text-align: center;
+        font-size: 14px;
+        height: 20px;
+    }*/
+
+
+   
+</style>
+
+<!DOCTYPE html>
+<div class="sidenetworkDatabar" id="divExternalData">
+    @using (Ajax.BeginForm("getExternalData", "FileUpload", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divExternalData", LoadingElementId = "dvexternalDataLoader" },
+                                                        new { id = "frmGetExtnlData", enctype = "multipart/form-data", autocomplete = "off" }))
+    {
+        @Html.HiddenFor(m => m.objExternalDataFilter.currentPage, new { id = "hdnCurrentPage" })
+        @Html.HiddenFor(m => m.objExternalDataFilter.sort, new { id = "hdnSortType" })
+        @Html.HiddenFor(m => m.objExternalDataFilter.orderBy, new { id = "hdnSortDir" })
+        <header>
+            <span class="glyphicon glyphicon-menu-right sidectrlright" id="closeExternalData"></span>
+            <h3>@Resources.Resources.SI_GBL_GBL_GBL_GBL_118 (@Model.objExternalDataFilter.totalRecord) </h3>
+            <span id="closeExtnlData" class="kmlClose">×</span>
+        </header>
+        <div class="prowindowExtnlData">
+            <div class="d-flex mb01">
+                <a href="#" onclick="@(Model.lstUserModule.Contains("EDV-UPLD")?"si.ImportExternalData();":"")" 
+                   class="@(Model.lstUserModule.Contains("EDV-UPLD")?"icon-upload ext-icon ext-icon-bg":"icon-upload ext-icon ext-icon-bg roledisabled")"
+                   title="@Resources.Resources.SI_OSP_GBL_NET_FRM_314 @(Model.lstUserModule.Contains("EDV-UPLD")?"":Resources.Resources.GBL_GBL_GBL_GBL_GBL_021) "> 
+                <span class="ml-05">@Resources.Resources.SI_OSP_GBL_NET_FRM_314 </span></a>
+                <div class="pos-rel ml-auto d-flex">
+                    <i class="icon-ascending clsExtnlDataPopup ext-icon ext-icon-Ybg" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_491"></i>
+                    <div class="dropwindowExtnlData dropD-top dropD-right">
+                        <div class="radio">
+                            <label><input type="radio" name="rdbExtnlDataValue" id="rdbDate" value="edf.created_on" onclick="extnldata.SortFileData(false);"><span>@Resources.Resources.SI_OSP_GBL_GBL_GBL_027</span></label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="rdbExtnlDataValue" id="rdbName" value="edf.display_filename" onclick="extnldata.SortFileData(false);"><span>@Resources.Resources.SI_ISP_UNT_NET_FRM_002</span></label>
+                        </div>
+                        <hr>
+                        <i class="glyphicon glyphicon-indent-left" onclick="extnldata.SortFileData(true);"></i> <label onclick="extnldata.SortFileData(true);">@Resources.Resources.SI_GBL_GBL_GBL_GBL_119</label>
+                    </div>
+                    <i class="icon-multiselect_on ext-icon ext-icon-Ybg ml-10" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_266" data-toggle="tooltip" id="MultiSelect"> </i>
+                </div>
+            </div>
+            <div class="d-flex">
+                @Html.TextBoxFor(m => m.objExternalDataFilter.searchText, new { @id = "txtSearchTextExtnlData", @placeholder = Resources.Resources.SI_GBL_GBL_GBL_GBL_120, @style = "height:28px", @class = "input-sm form-control", @maxlength = "50" })
+                <button type="submit" class="btn btn-success ml-10">@Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+            </div>
+        </div>
+            <div id="divExtnlDataloader" class="ExterDatabody exterpos pos-rel">
+                <div id="dvexternalDataLoader" class="ExternalData_Loader"></div>
+                <div id="rowdata" class="ExtnlDatabodytype">
+
+                    @if (Model.lstFileDetails.Count > 0)
+                    {
+                        Html.RenderPartial("_ViewExternalDataList", Model.lstFileDetails);
+                    }
+                    else
+                    {
+                        <div class="nr-found">
+                           <span> @Resources.Resources.SF_GBL_GBL_NET_FRM_037</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        
+    }
+</div>
+<script type="text/javascript">
+    var extnldata = new ExternalDataUploader();
+    $(document).ready(function () {
+        extnldata.initApp();
+        $("input[id='rdbDate']").prop("checked", true);
+        $(document).off("click", ".clsExtnlDataPopup").on('click', '.clsExtnlDataPopup', function () {
+            $(this).siblings('.dropwindowExtnlData').slideToggle();
+        });
+        $(document).off("click", ".clsexrnlpopup").on('click', '.clsexrnlpopup', function () {
+            $(this).siblings('.drop_window').slideToggle();
+        });
+        $('#MultiSelect').on('click', function () {
+            $(this).toggleClass('MultiSelect').toggleClass('ActiveMultiSelect');
+            $('.ActiveMultiSelect').attr('title', ($(".ActiveMultiSelect").length > 0 ? MultilingualKey.SI_OSP_GBL_GBL_GBL_267 : MultilingualKey.SI_OSP_GBL_GBL_GBL_266));
+            extnldata.HideAllExternalFilesFromMap();
+        });
+
+    });
+</script>

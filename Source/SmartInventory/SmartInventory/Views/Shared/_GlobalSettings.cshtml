@@ -1,0 +1,63 @@
+﻿@using SmartInventory.Settings;
+@{
+    string mapServerUrl = ApplicationSettings.isMapServerURLVirtual ? string.Concat(Request.Url.GetLeftPart(UriPartial.Authority), ApplicationSettings.MapServerURL) : ApplicationSettings.MapServerURL;
+
+}
+<input type="hidden" id="hdnMapServerURL" value="@mapServerUrl" />
+<input type="hidden" id="hdnMapDirPath" value="@ApplicationSettings.MapDirPath" />
+<input type="hidden" id="hdnMultiCloneLimit" value="@ApplicationSettings.MaxMultiCloneLimit" />
+<input type="hidden" id="hdnMaxFileUploadSizeLimit" value="@ApplicationSettings.MaxFileUploadSizeLimit" />
+<input type="hidden" id="hdnAssociateEntityBuffer" value="@ApplicationSettings.AssociateEntityBuffer" />
+<input type="hidden" id="hdnIsTerminationPointEnable" value="@Convert.ToString(ApplicationSettings.isterminationpointenable)" />
+<input type="hidden" id="hdnApplicationName" value="@ApplicationSettings.ApplicationName" />
+<input type="hidden" id="hdnROWMaxWidthLimit" value="@ApplicationSettings.rowMaxWidthLimit" />
+<input type="hidden" id="hdnCountryCenterLatLong" value="@ApplicationSettings.CountryCenterLatLong" />
+<input type="hidden" id="hdnIsDirectionServiceEnable" value="@Convert.ToString(ApplicationSettings.IsDirectionServiceEnable)" />
+<input type="hidden" id="hdnExportReportMaxRecord" value="@ApplicationSettings.ExportReportMaxRecord" />
+<input type="hidden" id="hdnRegProvExpMaxRecord" value="@ApplicationSettings.RegProvExpMaxRecord" />
+<input type="hidden" id="hdnRegProvMaxUploadRecords" value="@ApplicationSettings.RegProvMaxUploadRecords" />
+<input type="hidden" id="hdnExternalDataMaxFileSize" value="@ApplicationSettings.ExternalDataMaxFileSize" />
+<input type="hidden" id="hdnmaxExternalDataViewOption" value="@ApplicationSettings.maxExternalDataViewOption" />
+<input type="hidden" id="hdnFiberLinkBulkKMLExportLimit" value="@ApplicationSettings.FiberLinkBulkKMLExportLimit" />
+<input type="hidden" id="hdnMapRegionProvinceLimit" value="@ApplicationSettings.MapRegionProvinceLimit" />
+<input type="hidden" id="hdnlBaseMaxWidthLimit" value="@ApplicationSettings.lBaseMaxWidthLimit" />
+<input type="hidden" id="hdnBufferMaxWidthLimit" value="@ApplicationSettings.BufferMaxWidthLimit" />
+<input type="hidden" id="hdnMaxPagePrintCount" value="@ApplicationSettings.MaxPagePrintCount" />
+<input type="hidden" id="hdnDefaultMapZoomLevel" value="@ApplicationSettings.DefaultMapZoomLevel" />
+<input type="hidden" id="hdnLayerOpacity" value="@ApplicationSettings.layerOpacity" />
+<input type="hidden" id="hdnIsMapScaleDynamic" value="@Convert.ToString(ApplicationSettings.IsMapScaleDynamic)" />
+<input type="hidden" id="hdnTrayRowCount" value="@ApplicationSettings.TrayRowCount" />
+<input type="hidden" id="hdnNEDefaultBuffer" value="@ApplicationSettings.NEDefaultBuffer" />
+<input type="hidden" id="hdnMaxOffsetEntityAlongDirection" value="@ApplicationSettings.MaxOffsetEntityAlongDirection" />
+<input type="hidden" id="hdnMaxOffsetNetworkPlanning" value="@ApplicationSettings.MaxOffsetNetworkPlanning" />
+<input type="hidden" id="hdnInfoToolZoom" value="@ApplicationSettings.InfoToolZoom" />
+<input type="hidden" id="hdnFTPServiceURL" value="@ApplicationSettings.FTPServiceURL" />
+<input type="hidden" id="hdnisExistingNetworkVisible" value="@Convert.ToString(ApplicationSettings.isExistingNetworkVisible)" />
+<input type="hidden" id="SapPath" value="@Convert.ToString(ApplicationSettings.SAPPath)" />
+<input type="hidden" id="rowCount" value="@Convert.ToString(ApplicationSettings.NeXmlS2MaxLimit)" />
+<input type="hidden" id="hdn_isnasenabled" value="@Convert.ToString(ApplicationSettings.IsNASEnabled)" />
+<input type="hidden" id="hdnTransmediaBuffer" value="@ApplicationSettings.TransmediaBuffer" />
+<input type="hidden" id="hdnMinBarcodeLength" value="@ApplicationSettings.MinBarcodeLength" />
+<input type="hidden" id="hdnMaxBarcodeLength" value="@ApplicationSettings.MaxBarcodeLength" />
+<input type="hidden" id="hdnBarcodeRegx" value="@ApplicationSettings.BarcodeRegx" />
+<input type="hidden" id="hdnBarcodeHint" value="@ApplicationSettings.BarcodeHint" />
+<input type="hidden" id="hdnBarcodevariants" value="@ApplicationSettings.Barcodevariants" />
+<input type="hidden" id="hdnMinMeterReading" value="@ApplicationSettings.MinMeterReading" />
+<input type="hidden" id="hdnMaxMeterReading" value="@ApplicationSettings.MaxMeterReading" />
+<input type="hidden" id="hdnnohomepassmaxlength" value="@ApplicationSettings.NoHomePassMaxLength" />
+
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<input type="hidden" id="hdnIsWMSLayerLoadingEnabled" value="@Convert.ToString(@ApplicationSettings.IsWMSLayerLoadingEnabled)" />
+<input type="hidden" id="hdnIsTraceEnabled" value="@Convert.ToString(@ApplicationSettings.IsTraceEnabled)" />
+
+
+
+
+
+
+
+
+
+
+
+

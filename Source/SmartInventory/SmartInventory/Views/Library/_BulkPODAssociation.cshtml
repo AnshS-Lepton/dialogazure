@@ -1,0 +1,31 @@
+﻿@model Models.PODAssociation
+@using Models;
+@using SmartInventory.Settings;
+
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
+}
+
+@helper PodAssociation()
+{
+    { Html.RenderPartial("~/Views/Library/POD_Association.cshtml", (PODAssociation)Model); }
+}
+<!DOCTYPE html>
+<div id="PODAssoctn" class="form-horizontal">
+    <div class="TabContent--max-over">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="GISInfo">
+                @PodAssociation()
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="d-flex ModalFooter" id="dvBtnAction">
+        <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancelBulkPodAssctn">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        <button type="submit" class="btn btn-primary" id="btnSaveBulkPodAssctn">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+        <input type="hidden" id="hidentity_sub_type" value="@Model.entity_sub_type" />
+    </div>
+</div>

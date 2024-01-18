@@ -1,0 +1,283 @@
+﻿
+@model Models.Admin.vwLayerColumnSettings
+<style>
+    .noMove, .noMove:hover {
+        cursor: not-allowed;
+        background-color: #ffcfcf !important;
+    }
+
+    .Move {
+        cursor: move;
+        background-color: white;
+    }
+
+    #tblInfoSettingColumnsInfo tr:hover:not(.noMove) {
+        color: white !important;
+       
+    }
+
+    .field-validation-error {
+        bottom: auto;
+        right: 49px;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div id="dvInfoColumnSettings" class="update_panel fullWidth pose-rel">
+    <div class="title">
+        <h4>Info Settings</h4>
+    </div>
+    @using (Html.BeginForm("SaveInfoSettings", "OSPSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmInfoColumnSettings", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="control-label">
+                        Entity Type:
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), "Select Entity Type", new { @class = "chosen-select col-sm-12", @onchange = "InfoLayerChange();", @id = "lstLayers" })
+                </div>
+            </div>
+        </div>
+        if (Model.layer_id > 0)
+        {
+            <div class="d-flex mb-01">
+                <span><b>Total Columns: @Model.lstLayerColumns.Count</b></span>
+                <span class="ml-auto"><b>Note:</b> Drag drop rows to reorder columns. </span>
+            </div>
+            <div class="table-responsive tble_cls">
+
+                <table id="tblInfoSettingColumnsInfo" class="grid">
+                    <thead>
+                        <tr>
+                            <th>@Html.CheckBox("chkSelectAll", false) <label style="margin:0px;"> All</label></th>
+                            <th>Column Name</th>
+                            <th>Display Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.lstLayerColumns.Count; i++)
+                        {
+                            <tr class="@(Model.lstLayerColumns[i].is_required == true?"noMove":"Move")">
+                                <td>
+                                    @if (Model.lstLayerColumns[i].is_required == true)
+                                    {
+                                        @Html.CheckBoxFor(m => Model.lstLayerColumns[i].is_active, new { @onclick = "return false", @style = " opacity: 0.5;" })
+                                    }
+                                    else
+                                    {
+                                        @Html.CheckBoxFor(m => Model.lstLayerColumns[i].is_active, new { @class = "attr" })
+                                    }
+
+                                    @Html.HiddenFor(m => Model.lstLayerColumns[i].id)
+                                    @Html.HiddenFor(m => Model.lstLayerColumns[i].column_sequence)
+
+                                </td>
+                                <td>
+                                    @Model.lstLayerColumns[i].column_name
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => Model.lstLayerColumns[i].display_name, new { @class = "form-control displayName", @maxlength = "50", Style = " width:90%;" })
+                                    @Html.ValidationMessageFor(m => Model.lstLayerColumns[i].display_name)
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex mt-01" id="dvBtnAction">
+                <a href="@Url.Action("InfoSettings", "OSPSettings", new { id = 0 })" class="btn btn-default ml-auto mr-05" title="Reset">Reset</a>
+                <input type="submit" class="btn btn-primary" name="btnaction" id="btnSubmit" value="Save" />
+
+            </div>
+        }
+        <div class="clearfix"></div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $(".displayName").on('keypress', function (event) {
+            var regex = new RegExp("^[a-zA-Z0-9_()\\-\\s/]$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        })
+        $('.chosen-select').chosen({ width: '100%' });
+        checkHeaderCheckbox();
+        $('#chkSelectAll').on("click", function () {
+            {
+                $("#tblInfoSettingColumnsInfo tbody input[type=checkbox].attr").prop("checked", $(this).prop("checked"));
+            }
+        });
+        $('.attr').on("click", function () {
+            {
+                checkHeaderCheckbox();
+            }
+        });
+
+        $("#tblInfoSettingColumnsInfo  tbody").sortable({
+            items: "tr:not(.noMove)",
+            update: function () {
+                var index = 1;
+                $('#tblInfoSettingColumnsInfo  tbody input:hidden[name$="column_sequence"]').each(function () {
+                    $(this).attr("value", index);
+                    //console.log($(this).attr("id"));
+                    //console.log($(this).attr("value"));
+                    index++;
+                });
+            }
+        });
+    });
+    function checkHeaderCheckbox() {
+        var totalAttr = $("#tblInfoSettingColumnsInfo tbody input[type=checkbox]").length;
+        var totalSelected = $("#tblInfoSettingColumnsInfo tbody input[type=checkbox]:checked").length;
+        $('#chkSelectAll').prop("checked", totalAttr == totalSelected ? true : false);
+    }
+    function InfoLayerChange() {
+        var _layername = $('#lstLayers option:selected').text();
+        var _layerId = $('#lstLayers option:selected').val();
+        if (_layerId != undefined && _layerId != 0) {
+            window.open(appRoot + '/OSPSettings/InfoSettings/' + _layerId, "_self");
+        }
+        else {
+            window.open(appRoot + '/OSPSettings/InfoSettings', "_self");
+        }
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*@model Models.Admin.InfoSetting
+
+    <div class="col-lg-12" id="dvPageMessage">
+        @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+    </div>
+    <div id="dvInfoSetting" class="update_panel">
+        <div class="title">
+            <h4><span class="icon16 icomoon-icon-bars"></span><span>Info Settings</span></h4>
+        </div>
+        @using (Html.BeginForm("SaveInfoSettings", "OSPSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmInfoSetting", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+        {
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">
+                            Entity type:
+                        </label>
+                    </div>
+                    <div class=" col-md-8">
+                        @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_name.ToString() }), "Value", "Text"), "Select Entity Type", new { @class = "chosen-select col-sm-12", @onchange = "InfoLayerChange();", @id = "lstLayers" })
+                    </div>
+                </div>
+            </div>
+            if (Model.layer_id > 0)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <div class=" col-md-4">
+                            <label class=" control-label" style="float:left;"> Info Attributes:</label>
+                        </div>
+                        <div class="col-md-8" id="Categories">
+                            <ul class="clsAttributes">
+
+                                <li class="clsSelectAll">@Html.CheckBox("chkSelectAll", false) <label>Select All</label></li>
+                                @for (int i = 0; i < Model.lstInfoAttributes.Count; i++)
+                                {
+                                    <li>
+                                        @if (Model.lstInfoAttributes[i].column_name.ToUpper() == "NETWORK_ID")
+                                        {
+                                            @Html.CheckBoxFor(m => Model.lstInfoAttributes[i].is_selected, new { @onclick = "return false", @style = " opacity: 0.5;" })
+                                        }
+                                        else
+                                        {
+                                            @Html.CheckBoxFor(m => Model.lstInfoAttributes[i].is_selected, new { @class = "attr" })
+                                        }
+                                        <label>
+                                            @if (Model.lstInfoAttributes[i].column_name == "modified_by_user")
+                                            {
+                                                <span>modified_by</span>
+                                            }
+                                            else if (Model.lstInfoAttributes[i].column_name == "created_by_user")
+                                            {
+                                                <span>created_by</span>
+                                            }
+                                            else
+                                            {
+                                                @Model.lstInfoAttributes[i].column_name
+                                            }
+                                        </label>
+
+                                    </li>
+                                    @Html.HiddenFor(m => Model.lstInfoAttributes[i].column_name)
+                                }
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" id="dvBtnAction">
+                    <div class="row">
+                        <div class=" col-md-4"> </div>
+                        <div class=" col-md-8  text-right">
+                            <input type="submit" class="btn btn-primary" onclick="return IsValid();" name="btnaction" id="btnSubmit" value="Save" />
+                            <a href="@Url.Action("InfoSettings", "OSPSettings", new { id = 0 })" class="btn btn-default" title="Reset">Reset</a>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="clearfix"></div>
+        }
+    </div>
+    <script>
+        $(document).ready(function () {
+
+            $('.chosen-select').chosen({ width: '100%' });
+            $('#chkSelectAll').on("click", function () {
+                {
+                    $(".clsAttributes li input[type=checkbox].attr").prop("checked", $(this).prop("checked"));
+                }
+            });
+            $('.attr').on("click", function () {
+                {
+                    var totalAttr = $(".clsAttributes li input[type=checkbox]:not(#chkSelectAll)").length;
+                    var totalSelected = $(".clsAttributes li input[type=checkbox]:not(#chkSelectAll):checked").length;
+                    $('#chkSelectAll').prop("checked", totalAttr == totalSelected ? true : false);
+                }
+            });
+        });
+    </script>*@

@@ -1,0 +1,162 @@
+﻿@model Models.EmailSettingsVM
+<div class="col-lg-12" id="dvPageMessage">
+
+@{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+    
+</div>
+
+<!DOCTYPE html>
+<div id="dvUserDetail" class="update_panel">
+    <div id="" class="title">
+        <h4><span class="icon16 icomoon-icon-bars"></span><span>Email Settings</span></h4>
+    </div>
+    @using (Html.BeginForm("SaveEmailSettings", "Miscellaneous", FormMethod.Post, new { autocomplete = "off", @id = "frmUserInfo", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+        @Html.HiddenFor(m => m.lstEmailSettingsModel.id)
+        @Html.ValidationSummary(true)
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-4">
+                    <label class=" control-label">
+                        SMTP Host<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class=" col-md-7">
+                    @Html.TextBoxFor(model => model.lstEmailSettingsModel.smtp_host, new { @class = "form-control", @maxlength = "50", @placeholder = "Enter SMTP Host" })
+                    @Html.ValidationMessageFor(model => model.lstEmailSettingsModel.smtp_host)
+                </div>
+                <div class=" col-md-4">
+
+                </div>
+                <div class=" col-md-7">
+                    <a href="http://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol" target="_blank">Know more about SMTP</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-4">
+                    <label class=" control-label">
+                        SMTP Post<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class=" col-md-7">
+                    @Html.TextBoxFor(model => model.lstEmailSettingsModel.port, new { @class = "form-control", @maxlength = "4", @placeholder = "Enter SMTP Port", @id = "txtfullname" })
+                    @Html.ValidationMessageFor(model => model.lstEmailSettingsModel.port)
+                </div>
+                <div class=" col-md-4">
+
+                </div>
+                <div class=" col-md-7">
+                    <a href="https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol" target="_blank">Know more about SMTP Port</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-4">
+                    <label class=" control-label">
+                        Email Address<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class=" col-md-7">
+                    @Html.TextBoxFor(model => model.lstEmailSettingsModel.email_address, new { @class = "form-control", @maxlength = "50", @placeholder = "Enter Email " })
+                    @Html.ValidationMessageFor(model => model.lstEmailSettingsModel.email_address)
+                </div>
+                <div class=" col-md-4">
+                    
+                </div>
+                <div class=" col-md-7">
+                    <a href="https://en.wikipedia.org/wiki/Email" target="_blank">Know more about Email Address</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-4">
+                    <label class=" control-label">
+                        Password<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class=" col-md-7">
+                    @Html.TextBoxFor(model => model.lstEmailSettingsModel.email_password, new { id = "showpassword",type="password", @class = "form-control", @maxlength = "20", @placeholder = "Enter Password" })
+                    @Html.ValidationMessageFor(model => model.lstEmailSettingsModel.email_password)
+                    <img src="~/Content/images/eye.jpg" width="30px" height="30px" style="position: absolute;right: 15px; top: 1px;" onmouseover="mouseoverPass();" onmouseout="mouseoutPass();" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group" id="dvBtnAction">
+            <div class="row">
+                <div class=" col-md-4"> </div>
+                <div class=" col-md-7  text-right">
+                    @if(Model.lstEmailSettingsModel == null)
+                    {
+                        <input type="submit" class="btn btn-primary" name="btnaction" id="btnSubmit" value="Save" />
+                    }
+                    else
+                    {
+                        <input type="submit" class="btn btn-primary" name="btnaction" id="btnSubmit" value="Update" />
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    }
+</div>
+<script>
+    function mouseoverPass(obj) {
+        var obj = document.getElementById('showpassword');
+        obj.type = "text";
+    }
+    function mouseoutPass(obj) {
+        var obj = document.getElementById('showpassword');
+        obj.type = "password";
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

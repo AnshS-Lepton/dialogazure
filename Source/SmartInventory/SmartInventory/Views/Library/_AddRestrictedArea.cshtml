@@ -1,0 +1,251 @@
+﻿@model Models.RestrictedArea
+@using Models;
+@using SmartInventory.Settings;
+@using System.Text;
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+@helper Reference()
+{
+    { Html.RenderPartial("~/Views/Library/_Reference.cshtml", (IReference)Model); }
+}
+@helper GeographicDetails()
+{
+    { Html.RenderPartial("~/Views/Library/_GeographicDetails.cshtml", (IGeographicDetails)Model); }
+}
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.RestrictedArea.ToString().ToUpper()).FirstOrDefault() : null;
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], NetworkStatus.P.ToString(), EntityType.RestrictedArea.ToString());
+}
+<!DOCTYPE html>
+<div class="libDetail">
+    @using (Ajax.BeginForm("SaveRestrictedArea", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnFailure = "si.handleError",
+        OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.RestrictedArea.ToString() + "');"
+    },
+        new { id = "frmAddRestrictedArea", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.geom)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.networkIdType)
+        @Html.HiddenFor(m => m.network_id)
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+        @Html.HiddenFor(m => m.network_status, new { Value = Model.network_status == null ? "P" : Model.network_status })
+
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="libTabs">
+            <div class="scrollmenu">
+                <div><span class="spanSide go-left" id="spnRightMenu" style="display:none;"><i class="fa fa-angle-left" aria-hidden="true"></i></span></div>
+                <div id="SpliceClosureScroll" class="scrollerhide overflow-hidden">
+                    <ul class="nav nav-tabs tabs-left" id="ulAreaTabs">
+                        <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 </a></li>
+                        @if (Model.system_id > 0 && layerDetail != null)
+                        {
+                            <li><a href="#Reference" data-toggle="tab">Qualification Area</a></li>
+                        }
+                    </ul>
+                </div>
+                <div id="divRightMenu" style="display:none;">
+                    <span class="spanSide go-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                    <span class="spanSide" id="dropdown" style="border-left: 1px solid #b9b7b7;margin-left: -4px;"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                    <div class="arrowDropUp"></div>
+                    <div class="dropMenu">
+                        <div class="alltabs">@Resources.Resources.SI_OSP_CAB_NET_FRM_014</div>
+                        <ul>
+                            <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 </a></li>
+                            @if (Model.system_id > 0 && layerDetail != null)
+                            {
+                                <li><a href="#Reference" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_052</legend>
+
+                        <div class="form-group">
+
+                        <label class="control-label col-sm-4" for="txtAreaCode">
+                        @Resources.Resources.SI_OSP_GBL_GBL_GBL_001
+
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }
+                                :
+                            </label>
+                            <div class="col-sm-8">
+                                <div id="txtMaskedNetworkId"></div>
+
+                            </div>
+                        </div>
+
+                        <div id="txtMasked"></div>
+
+                        @*<div class="form-group">
+                                <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_004<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_005<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(m => m.parent_entity_type, new { @class = "form-control clsReadOnly", @readonly = true })
+                                </div>
+
+                            </div>*@
+                        <div class="form-group" style="display:none;">
+                            <label class="control-label col-sm-4" for="txtAreaName"> System ID<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(m => m.system_id, new { @class = "form-control", @maxlength = "50", @readonly = true })
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="ddAreaRFS">Qualification Type<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-8">
+                                @Html.DropDownListFor(m => m.qualification_type, new SelectList(Model.lstQualificationType.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @id = "rfsType", @style = "padding:0;" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="txtAreaName"> Qualification Area Name<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(m => m.restricted_area_name, new { @class = "form-control", @maxlength = "50" })
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="ddCategory">@Resources.Resources.SI_ISP_CAB_NET_FRM_008:</label>
+                            <div class="col-sm-8">
+                                @Html.DropDownListFor(m => m.category, new SelectList(Model.lstcategoryRFS.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @id = "rfsType", @style = "padding:0;" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="ddSubCategory">@Resources.Resources.SI_ISP_GBL_GBL_GBL_026:</label>
+                            <div class="col-sm-8">
+                                @Html.DropDownListFor(m => m.sub_category, new SelectList(Model.lstsubcategoryRFS.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @id = "rfsType", @style = "padding:0;" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="ddAreaRFS">Is Network Creation Allowed</label>
+                            <div class="col-sm-8">
+                                @Html.CheckBoxFor(m => m.is_network_creation_allowed, new { @style = "padding:0;" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="ddAreaRFS">Is Feasibility Allowed</label>
+                            <div class="col-sm-8">
+                                @Html.CheckBoxFor(m => m.is_feasibility_allowed, new { @style = "padding:0;" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                            <div class="col-sm-8">
+                                @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @maxlength = "1000" })
+                            </div>
+                        </div>
+                    </fieldset>
+
+                </div>
+                <div class="tab-pane" id="Reference" style="min-height: 260px;">
+                    @Reference()
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group ModalFooter" id="dvBtnAction">
+            @if (Model.system_id > 0)
+            {
+                <div class="col-md-6 col-sm-6 ModelFooterInfo">
+                    <label class="control-label model-label-info">@(Model.network_status != null ? Utility.MiscHelper.GetNetworkStatus(Model.network_status.ToUpper()) : string.Empty)</label>
+
+                    <label class="control-label" for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_007:</label>
+                    <label class="control-label model-label-info" title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
+                </div>
+            }
+            <div class="col-md-6 col-sm-6 ModalFooterControll">
+                @if (Model.system_id > 0)
+                {
+                    <button type="submit" class="btn btn-primary @(editPermission == true ? "" : "dvdisabled")" id="btnUpdateRestrictedArea" disabled="disabled">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-primary @(editPermission == true ? "" : "dvdisabled")" id="btnSaveRestrictedArea" disabled="disabled">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                }
+                <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    }
+</div>
+
+<script charset="utf-8">
+        var inputs = [];
+        $(document).ready(function () {
+            callFormValidator("frmAddRestrictedArea");
+            $('.chosen-select').chosen({ width: '100%' });
+
+
+            EnableDisableUpdateButton("frmAddRestrictedArea", @Model.system_id > 0 ? "btnUpdateRestrictedArea" : "btnSaveRestrictedArea");
+           
+            //APPLY INPUT MASK ON NETWORK ID..
+            @{
+                var netID = Model.network_id;
+
+            }
+            getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
+
+            // IN AJAX.BEGINFORM , ON ONBEGIN EVENT WE CAN NOT SET VALUE TO CONTROL AS FORM DATA IS ALREADY SERIALIZED BEFORE CALLING ONBEGIN
+            // TO ACHIVE THE SAME (CHANGE FIELD VALUE) WE USED THE FORM ON SUBMIT METHOD
+            $("#frmAddRestrictedArea").on("submit", function () {
+                si.upperCaseNetWorkId();
+            });
+            //$('#ModalPopUp .modal-dialog').width(440);
+            $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+
+
+        });
+
+        //$("btnSaveArea,#btnUpdateArea").on("click", function(){
+        //    if ($('#rfsType').val()=="C-RFS") {
+        //        showConfirm(MultilingualKey.SI_OSP_AR_JQ_FRM_001, function () {
+        //            $('#frmAddArea').submit();
+        //        });
+        //        return false;
+        //    }
+        //});   
+    $("#ulAreaTabs li a").on("click", function () {
+        var url = $(this).attr('href');
+        if (url == '#Reference') {
+            $("#ModalPopUp .modal-md").animate({ 'width': url == '#Reference' ? '750px' : '600px' });
+            $('div#dvBtnAction').show();
+
+        }
+        else {
+            $("#ModalPopUp .modal-md").animate({ 'width': '600px' });
+            $('div#dvBtnAction').show();
+            $(".dropMenu").hide();
+        }
+    });
+
+</script>

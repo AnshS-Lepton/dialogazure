@@ -1,0 +1,100 @@
+﻿@{
+    Layout = null;
+}
+@using Models;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>Error</title>
+    <link rel="stylesheet" href="~/Content/css/main.css" />
+    <link rel="stylesheet" href="~/Content/css/color_stylesheet.css" />
+    <style type="text/css">
+        .forSa {
+            display: none !important;
+        }
+
+        .contactAdd {
+            min-height: 70vh;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 4px 12px;
+            margin-bottom: 0;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .btn-success {
+            color: #fff;
+            background-color: var(--success-btn-bg);
+            border-color: var(--success-btn-border);
+        }
+       
+        .hideHeader {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="header" class="errorHeader">
+        <div id="logo">
+            @SmartInventory.Settings.ApplicationSettings.ApplicationName
+        </div>
+    </div>
+    <div id="content" class="contactAdd d-flex justify-cont-center">
+        <div class="contactAdd--Outer d-flex justify-cont-center">
+            <img src="~/Content/images/warning.svg" class="erroImg-size" />
+            <h3 class="contactAdd--box"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_109</h3>
+            <div class="justify-cont-center d-flex">
+                @if (Session["userDetail"] != null)
+                {
+                    <a class="btn btn-success" href="@Url.Action("Index", "Login")">@Resources.Resources.SI_OSP_GBL_GBL_GBL_108</a>
+                }
+                @*<a class="btn btn-default" href="@Url.Action("Logout", "Login")">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_011</a>*@
+            </div>
+        </div>
+    </div>
+    @*<div class="footer">
+        </div>
+        <div class="bottom-title">
+
+        </div>*@
+
+    @*@Styles.Render("~/css")*@
+    @*<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>*@
+    <script>
+        $(document).ready(function () {
+            var resizErroBox = function () {
+                if ($(".errorHeader").width() < 800) {
+                    $(".errorHeader").addClass("hideHeader");
+                } else {
+                    $(".errorHeader").removeClass("hideHeader");
+                }
+            };
+            resizErroBox();
+            $(window).resize(function () {
+                resizErroBox();
+            });
+        })
+    </script>
+</body>
+</html>

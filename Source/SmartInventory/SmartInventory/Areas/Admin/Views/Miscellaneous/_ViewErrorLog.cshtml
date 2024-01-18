@@ -1,0 +1,162 @@
+﻿@model Models.ViewErrorLogFilter
+@using Utility
+<link href="~/Areas/Admin/Content/css/spectrum.css" rel="stylesheet" />
+<script src="~/Areas/Admin/Content/js/spectrum.js"></script>
+<style>
+    .assign-calen {
+        position: absolute;
+        float: right;
+        top: 3px;
+        /* margin-right: 5px; */
+        cursor: pointer;
+        /* margin-right: 0px; */
+        right: 19px;
+    }
+      div.calendar {
+        width: 275px;
+    }
+    .nav {
+  display:table-cell!important;
+ 
+}
+
+</style>
+
+<!DOCTYPE html>
+<div id="dvViewWebErrorLog">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                <span class="icon16 icomoon-icon-bars"></span><span>Web Error Log</span>
+            </h4>
+
+        </div>
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewWebErrorLog", ajaxUpdateCallback: "onGridHeaderClick('tblErrorLog')");
+            grid.Bind(Model.listErrorLog, autoSortAndPage: false, rowCount: Model.totalRecord);
+            if (Model.totalRecord > 0)
+            {
+                grid.PageIndex = Model.currentPage - 1;
+            }
+        }
+
+
+        @using (Html.BeginForm("ViewErrorLog", "Miscellaneous", FormMethod.Post, new { autocomplete = "off", @id = "frmViewWebErrorLog" }))
+        {   
+            <div class="pad_left-bn">
+                <div class="form-inline filter-sec resourceGap">
+                    <div class="form-group">
+                        @Html.DropDownListFor(m => m.customDate, new List<SelectListItem>{
+                                new SelectListItem { Text = "Select", Value = "0"},
+                                new SelectListItem { Text = "Custom", Value = "1"},
+                                new SelectListItem { Text = "Today", Value = "2"},
+                                new SelectListItem { Text = "Previous Day", Value = "3"},
+                                new SelectListItem { Text = "Last 7 Days", Value = "4"},
+                                new SelectListItem { Text = "Last 30 Day", Value = "5"},
+                                new SelectListItem { Text = "Last 3 Months", Value = "6"},
+                                new SelectListItem { Text = "Last 6 Months", Value = "7"},
+                              new SelectListItem { Text = "Last 1 Year", Value = "8"},
+                            }, new { @class = "chosen-select form-control", @onchange = "onChangeCustomDate();", @id = "customedate" })
+                    </div>
+
+                    <div class="form-group pose-rel">
+                        @Html.TextBoxFor(m => m.fromDate, "{0:dd-MMM-yyyy}", new { @id = "txtDateFrom", @title = "Date From", @class = "input-sm form-control", @placeholder = "Date From", @readonly = true, @style = "height:26px;" })
+                        <img id="imgFromDate" class="assign-calen" style="margin-right:-10px;margin-top:5px;" src="~/Content/images/calendar.png" />
+
+                    </div>
+                    <div class="form-group pose-rel">
+                        @Html.TextBoxFor(m => m.toDate, "{0:dd-MMM-yyyy}", new { @id = "txtDateTo", @title = "Date To", @placeholder = "Date To", @class = "input-sm form-control", @readonly = true, @style = "height:26px;" })
+                        <img id="imgToDate" class="assign-calen" style="margin-right:-10px;margin-top:5px;" src="~/Content/images/calendar.png" />
+
+                    </div>
+
+                    <div class="form-group">
+                        @Html.DropDownListFor(m => m.searchBy, new List<SelectListItem>
+                 {
+                   new SelectListItem{ Text="Search By", Value = "" },
+                    new SelectListItem{ Text="Controller Name", Value = "controller_name" },
+                    new SelectListItem{ Text="Action Name", Value = "action_name" },
+                     new SelectListItem{ Text="Error Message", Value = "err_message" },
+                       new SelectListItem{ Text="Error Label", Value = "err_label" },
+                        new SelectListItem{ Text="Error Type", Value = "err_type" },
+                         new SelectListItem{ Text="Error Description", Value = "err_description" },
+                          new SelectListItem{ Text="Stack Trace", Value = "stack_trace" },
+
+                 }, new { @id = "ddlSearchBy", @tabindex = "2", @title = "Search By", @class = "chosen-select form-control" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.TextBoxFor(m => m.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+
+                    </div>
+
+                    <div class="form-group wtd_set">
+                        <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+
+                        @if (@grid.TotalRowCount > 0)
+                        {
+                            <input type="button" id="btnViewUserExport" value="Export" class="btn btn-primary mr-05" onclick="VieWebErrorLogReport()" /> }
+                        else
+                        {
+                            <input type="button" id="btnExport" value="Export" disabled="disabled" class="btn btn-primary mr-05" />
+                        }
+
+                        <a href="@Url.Action("ViewErrorLog")" class="btn btn-default" title="Reset">Reset</a>
+                    </div>
+                </div>
+            </div>
+            if (Model.listErrorLog.Count > 0)
+            {
+                <div id="divUserDetail" class="pad_left-tn">
+                    <div class="recordCount mb-01"><b>Total Records:@grid.TotalRowCount</b></div>
+                    <div class="table-responsive tble_cls">
+                        @grid.GetHtml(tableStyle: "grid",
+                         headerStyle: "webGridHeader",
+                            alternatingRowStyle: "alt",
+                            htmlAttributes: new { id = "tblErrorLog" },
+                            mode: WebGridPagerModes.All,
+                            columns: grid.Columns(
+                                grid.Column("", "Action", format:@<text> <a href="javascript:void(0);" onclick=ReadMore(@item.id) style="color:blue;">Read More</a></text>, canSort: false ),
+                                grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>, canSort: true),
+                                grid.Column("user_name", "User Name", format: @<text>@item.user_name</text>, canSort: true),
+                                grid.Column("client_ip", "Client IP", format: @<text>@item.client_ip</text>, canSort: true),
+                                grid.Column("server_ip", "Server IP", format: @<text>@item.server_ip</text>, canSort: true),
+                                grid.Column("browser_name", "Browser Name", format: @<text>@item.browser_name</text>, canSort: true),
+                                grid.Column("browser_version", "Browser Version", format: @<text>@item.browser_version</text>, canSort: true),
+                                grid.Column("status_code", "Status Code", format: @<text>@item.status_code</text>, canSort: true),
+                                grid.Column("controller_name", "Controller Name", format: @<text>@item.controller_name</text>, canSort: true),
+                                grid.Column("action_name", "Action Name", format: @<text>@item.action_name</text>, canSort: true),
+                                grid.Column("err_message", "Error Message", format: @<text> <span>@item.err_message.PadRight(30).Substring(0, 30)... </span> </text>),
+                                grid.Column("err_label", "Error Label", format: @<text><span>@item.err_label.PadRight(30).Substring(0, 30)... </span> </text>),
+                                grid.Column("err_type", "Error Type", format: @<text>@item.err_type</text>, canSort: true),
+                                grid.Column("err_description", "Error Description", format: @<text><span>@item.err_description.PadRight(30).Substring(0, 30)...</span> </text>),
+                                grid.Column("stack_trace", "Stack Trace", format: @<text> <span>@item.stack_trace.PadRight(30).Substring(0, 30)...</span>  </text>)
+                           ))
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div style="text-align: center; margin-top: 30px;">
+                    No Error Logs Found.
+                </div>
+            }
+        }
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+         
+        addDefaultSortingIcons("tblErrorLog");
+        setDateTimeCalendar("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+        if ($( "#customedate option:selected" ).text() != "Custom"){
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+    });
+    function VieWebErrorLogReport() {
+        window.location = appRoot + 'Miscellaneous/DownloadErrorLogs';
+    }
+</script>

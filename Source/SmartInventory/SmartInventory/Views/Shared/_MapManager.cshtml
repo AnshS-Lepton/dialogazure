@@ -1,0 +1,112 @@
+﻿<script type="text/javascript" language="javascript">
+    @model IEnumerable<Models.BusinessLayer>
+
+
+
+    //$(document).ready(function () {
+    //    $("#add-ons li .close").on("click", function () {
+    //        var obj = $(this).prev();
+
+    //        var productX = $(obj).offset().left;
+    //        var productY = $(obj).offset().top;
+
+    //        var basketX = $('.trash').offset().left;
+    //        var basketY = $('.trash').offset().top;
+
+    //        var gotoX = basketX - productX + 6;
+    //        var gotoY = basketY - productY + 7;
+
+    //        var newImageWidth = $(obj).width() / 4;
+    //        var newImageHeight = $(obj).height() / 4;
+
+    //        $(obj).clone().prependTo($(obj).parent()).css({ 'position': 'absolute' }).animate({ opacity: 0.4 }, 100).animate({ opacity: 1, marginLeft: gotoX, marginTop: gotoY, width: newImageWidth, height: newImageHeight }, 1200, function () {
+    //            $(this).remove();
+    //           // parent.playSound('Delete');
+    //            si.removeAddonLyr(obj.attr('title'));
+    //        });
+    //    });
+    //});
+    $(document).ready(function () {
+         
+        console.log('si.map', si.mapTypeId);
+        $('#' + si.mapTypeId).addClass('activeMap');
+    });
+    function removeCheckBox() {
+         
+        var label = document.querySelectorAll(".removeCheck");
+        label.forEach(r => r.classList.remove("activeMap"));
+        $('#' + si.mapTypeId).addClass('activeMap');
+    }
+</script>
+<style>
+    /*body { font: 12px Segoe UI,sans-serif; text-shodow: 0 1px 1px #CCCCCC; }*/
+</style>
+
+<div class="popPad">
+    <div class="map_heading">
+        @Resources.Resources.SI_OSP_GBL_NET_FRM_024
+    </div>
+    <div class="themeThumb">
+        <label onclick="si.setMapType('roadmap'); removeCheckBox();" id="roadmap" class="removeCheck">
+            <input type="radio" name="nature" value="1">
+            <img src="Content/images/mapManager/roadmap.png" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_121" />
+        </label>
+        <label onclick="si.setMapType('satellite'); removeCheckBox();" id="satellite" class="removeCheck">
+            <input type="radio" name="nature" value="2">
+            <img src="Content/images/mapManager/satellite.png" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_048" />
+        </label>
+        <label onclick="si.setMapType('hybrid'); removeCheckBox();" id="hybrid" class="removeCheck">
+            <input type="radio" name="nature" value="3">
+            <img src="Content/images/mapManager/hybrid.png" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_122" />
+        </label>
+        <label onclick="si.setMapType('terrain'); removeCheckBox();" id="terrain" class="removeCheck">
+            <input type="radio" name="nature" value="4">
+            <img src="Content/images/mapManager/terrain.png" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_123" />
+        </label>
+        @if (SmartInventory.Settings.ApplicationSettings.IsOpenStreetMapEnabled)
+        {
+            <label onclick="si.setMapType('openstreetmap'); removeCheckBox();" id="openstreetmap" class="removeCheck">
+                <input type="radio" name="nature" value="5">
+                <img src="Content/images/mapManager/osm.png" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_124" />
+
+            </label>
+        }
+        @if (SmartInventory.Settings.ApplicationSettings.isbuisnesslayer)
+        {
+            foreach (var objLayer in Model.Where(x => x.is_active == true && x.isbaselayer == true))
+            {
+                <label onclick="si.setMapType('renderUserBaseLayers'); removeCheckBox();" id="renderUserBaseLayers" class="removeCheck">
+                    <input type="radio" name="nature" value="6">
+                    <img src="@objLayer.imagepath"
+                         title="@objLayer.display_layer_name"
+                         style="border-radius: 8px; height: 60px;"
+                         id="img_wms_@objLayer.id"
+                         data-layer-type="@objLayer.layer_type"
+                         data-url="@objLayer.base_url"
+                         data-layer="@objLayer.layer_name"
+                         data-displayName="@objLayer.display_layer_name"
+                         data-key="@objLayer.authentication_key"
+                         data-style="@objLayer.style"
+                         data-TileMatrixSet="@objLayer.tilematrixset"
+                         data-mapfilepath="@objLayer.map_file_path" />
+                </label>
+            }
+        }
+
+    </div>
+    <div class="map_heading mt-02">
+        @Resources.Resources.SI_OSP_GBL_NET_FRM_023
+    </div>
+    <div id="add-ons" class="themeThumb">
+        <label>
+            <input type="radio" name="nature" value="6">
+            <img src="Content/images/mapManager/traffic.png" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_125" onclick="si.showMapLyr('Traffic'); removeCheckBox();" id="Traffic" class="removeCheck"/>
+            <a title="" href="#" class="close"></a>
+        </label>
+        <label>
+            <input type="radio" name="nature" value="7">
+            <img src="Content/images/mapManager/no-map.png" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_029" onclick="si.toggleWhiteMap('No Map'); removeCheckBox();" id="coordinate" class="removeCheck"/>
+            <a title="" href="#" class="close"></a>
+        </label>
+    </div>
+</div>

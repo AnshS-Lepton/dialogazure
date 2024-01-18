@@ -1,0 +1,329 @@
+﻿#list {
+    border-radius: 10px;
+    display: block;
+    margin-left: 10px !important;
+    text-align: center;
+    box-shadow: 0 8px 6px -6px black;
+    position: absolute;
+    z-index: 99999;
+    width: 700px !important;
+}
+
+    #list:hover {
+        box-shadow: 0 0 10px #3399FF;
+    }
+
+.cablePort {
+    position: static;
+    margin-top: 40px;
+    /* margin-left: 80px !important; */
+    /* margin-left: 175px !important; */
+    /* border-radius: 20px; */
+    /* border: 5px #00ba8a solid; */
+    height: 440px;
+    width: 40px;
+    background-image: -ms-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);
+    background-image: -moz-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);
+    background-image: -o-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);
+    /* background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFFFF), color-stop(1, #DBDBDB)); */
+    /* background-image: -webkit-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%); */
+    /* background-image: linear-gradient(to bottom, #FFFFFF 0%, #DBDBDB 100%); */
+    /* box-shadow: 0 3px 4px rgba(0, 0, 0, 0.4); */
+}
+
+.sc {
+    position: static;
+    margin-top: 40px;
+    margin-left: 275px !important;
+    border-radius: 20px;
+    border: 5px #00ba8a solid;
+    height: 440px;
+    width: 150px;
+    background-image: -ms-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);
+    background-image: -moz-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);
+    background-image: -o-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFFFF), color-stop(1, #DBDBDB));
+    background-image: -webkit-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);
+    background-image: linear-gradient(to bottom, #FFFFFF 0%, #DBDBDB 100%);
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.4);
+}
+
+
+.fiber {
+    width: 10px;
+    height: 3px;    
+    background-color: gray;
+    margin-top: 8px;
+    opacity: 0.6;
+    cursor: pointer;
+}
+.cableCore {
+ width: 15px !important;
+    height: 4px  !important;
+}
+    .fiber:hover {
+        opacity: 1;
+        background-color: maroon;
+    }
+
+.innerbndl {
+    width: 4px;
+    height: auto;
+    position: static;
+    /*margin-top: 10px;*/
+}
+
+.leftCableSection {
+    float: left;
+    width: 250px; /* border: solid 1px gray;*/
+}
+
+.section {
+    width: 8px; /* border: solid 1px gray;*/
+}
+
+.Leftcable {
+    width: 25px;
+    float: left;
+    background-color: gray;
+    height: 3px;
+}
+
+.tube {
+    width: 5px;
+    float: left;
+    background-color: gray;
+    height: 3px;
+    position: static;
+}
+/*.fiber { width: 5px; float: left; background-color: gray; height: 3px; margin-top: 12px; position: static; }*/
+.rightCableSection {
+    width: 225px; /* border: solid 1px gray; */
+    /*margin-top:-210px;*/
+    float: right;
+}
+
+.DeviceView {
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 10px;
+    border: 3px #00ba8a solid;
+    height: auto;
+    max-width: 500px;
+    min-width: 400px;
+    background-image: -ms-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);
+    background-image: -moz-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);
+    background-image: -o-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFFFF), color-stop(1, #DBDBDB));
+    background-image: -webkit-linear-gradient(top, #FFFFFF 0%, #DBDBDB 100%);
+    background-image: linear-gradient(to bottom, #FFFFFF 0%, #DBDBDB 100%);
+    padding-top: 9px;
+    padding-bottom: 15px;
+    /* box-shadow: 0 3px 4px rgba(0, 0, 0, 0.4); */
+}
+
+.DeviceBox {
+    width: calc(100% - 300px);
+    border: 3px #00ba8a solid;
+    border-radius: 10px;
+    height: auto;
+    width: 100%;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.trg {
+    margin-left: 20px;
+}
+
+.inputPort {
+    margin-left: -10px;
+}
+
+.outPutPort {
+    margin-right: -11px;
+}
+
+.MidSection {
+    width: calc(100% - 454px);
+    float: left;
+    height: auto;
+    /*margin-left:10%;*/
+    /*.history{ background:url("../images/split_img.png") no-repeat scroll -57px -5px transparent}*/
+}
+
+.blabel {
+    color: white;
+    height: 15px;
+    left: 70px;
+    position: absolute;
+    width: 650px;
+    z-index: 9999;
+    text-align: center;
+    font: 12px Segoe UI,sans-serif;
+}
+
+.clabel {
+    color: gold;
+    float: right;
+    position: absolute;
+    right: 6px;
+    text-align: right;
+    top: 36px;
+    width: 125px;
+}
+
+.RightCable {
+    width: 25px;
+    float: right;
+    background-color: gray;
+    height: 3px;
+}
+
+lspan {
+    cursor: pointer;
+}
+
+    lspan:hover {
+        color: gold;
+    }
+
+.cust {
+    border: 0px solid #346789;
+    border-radius: 0.3em;
+    opacity: 0.8;
+    background-color: white;
+    color: blue;
+    padding: 0.1em;
+    font-size: 0.75em;
+    cursor: pointer;
+}
+
+    .cust:hover {
+        color: purple;
+    }
+
+#ModalPopUp .modal-dialog {
+    margin: 30px auto !important;
+    top: 0px;
+    left: 0px;
+}
+
+.LeftH {
+    float: left;
+    border: 1px solid #1ba263;
+    width: 225px;
+    height: 100%;
+}
+
+    .LeftH .headerText {
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        background: #aae2d4;
+        padding: 4px;
+        text-align: center;
+    }
+
+.RightH {
+    float: right;
+    border: 1px solid #1ba263;
+    width: 225px;
+    height: 100%;
+}
+
+    .RightH .headerText {
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        background: #aae2d4;
+        padding: 4px;
+        text-align: center;
+    }
+
+.MidH {
+    float: left;
+    margin-left: 2px;
+    margin-right: 2px;
+    border: 1px solid #1ba263;
+    width: calc(100% - 454px);
+    height: 100%;
+}
+
+    .MidH .headerText {
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        background: #aae2d4;
+        padding: 4px;
+        text-align: center;
+    }
+
+.Heading {
+    width: 100%;
+    height: 55px;
+    text-decoration: none;
+    padding-top: 11px;
+    background: #c1f5ea;
+    border-bottom: 1px solid gray;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.form-control {
+    height: 30px;
+}
+
+.trg4 {
+    margin-left: 20px;
+}
+
+.alert {
+    padding: 20px;
+}
+
+.SpltrName {
+    text-align: center;
+    text-transform: uppercase;
+    /* margin-bottom: 5px; */
+    background: #7becd5;
+    color: black;
+    position: absolute;
+    margin-top: 3px;
+    margin-left: 3px;
+    border-radius: 8px 8px 0px 0px;
+    width: 214px;
+    padding: 2px;
+    border: 1px #00ba8a solid;
+    border-width: 0px 0px 1px 0px;
+}
+.ExportConnections {
+    background: url(../images/split_img.png) no-repeat;
+    float: right;
+    background-position: -147px -122px;   
+    width: 30px;
+    height: 29px;
+}
+.UnspliceConnections {
+    background: url(../images/split_img.png) no-repeat;
+    float: right;
+    background-position: -41px -426px;   
+    width: 30px;
+    height: 25px;
+}
+.SwapConnections {
+    background: url(../images/split_img.png) no-repeat;
+    float: right;
+    background-position: -143px -426px;   
+    width: 30px;
+    height: 29px;
+}
+.blueColor {
+    background-color:blue !important;
+}
+.redColor {
+background-color:red;
+}
+.greenColor {
+background-color:#1b9461;
+}

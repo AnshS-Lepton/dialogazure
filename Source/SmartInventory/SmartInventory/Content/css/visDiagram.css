@@ -1,0 +1,356 @@
+﻿@import '../../Content/css/color_stylesheet.css';
+
+html {
+    height: 100%;
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--oth-green-dark);
+    font: 12px Segoe UI,sans-serif;
+    color: #333;
+}
+
+#header {
+    background: var(--top-back-image);
+    background-size: cover;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    position: relative;
+}
+    #header:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 40px;
+        width: 100%;
+        /*background-image: linear-gradient(to right, #00800054, #27ae60ad);*/ /*Green background*/
+        /*background-image: linear-gradient(to right, #fa6589b5, #fa6589b5);*/ /**/ /*Red background*/
+        background-image: var(--header-before-gradient); /*Blue background*/
+        /*background-image: linear-gradient(to right, #3d4a6029, #3d4b6140);*/ /**/ /*Dark Blue with Dark Orange background*/
+        z-index: 1;
+    }
+
+.pagetitle {
+    float: left;
+    width: 40%;
+    font-size: 17px;
+    color: #827f7f;
+    font-weight: 500;
+}
+
+    .pagetitle h2 {
+        font-weight: 500 !important;
+        margin-bottom: 10px;
+        margin-top: 13px;
+    }
+
+#logo {
+    /*background: url(../images/logo.png) no-repeat;*/
+    text-indent: -9999px;
+    width: 217px;
+    position:relative;
+    z-index:2;
+}
+.visContainer
+{
+ background: white;
+    height: calc(100% - 61px);
+    min-width: 500px;
+    width: 100%;
+}
+
+.mainContainer {
+    background: white;
+    height: calc(100% - 45px);
+    min-width: 500px;
+    overflow: auto;
+    padding-left: 3%;
+    padding-right: 3%;
+    width: 94%;
+}
+
+.contentHeader {
+    width: 100%;
+    height: 60px;
+}
+
+.contentFooter {
+    width: calc(100% - 5px);
+    min-height: 40px;
+    height: auto;
+    border: 1px solid #dfdfdf;
+    padding-left: 5px;
+    border-top-width: 0px;
+    padding-bottom: 5px;
+
+}
+.contentFooter:after{
+    content:'';
+         display:block;
+         clear: both;
+}
+.legand1:after
+{
+    content:'';
+         display:block;
+         clear: both;
+}
+
+.visDiagram {
+    width: 100%;
+    height:calc(100% - 67px);
+    background-color: #f9f9f9;
+    border: 1px solid #dfdfdf;
+    overflow: hidden;
+}
+
+#mynetwork {
+    margin: 0 auto !important;
+}
+
+.bottom_txt {
+    text-align: center;
+    padding-top: 4px;
+}
+.midContent {
+    float: left;
+    width: 40%;
+    font-size: 15px;
+    padding-top: 23px;
+}
+
+.StreamActions {
+    float: left;
+    width: 40%;
+    font-size: 15px;
+    padding-top: 23px;
+}
+
+.exportActions {
+    float: left;
+    width: 20%;
+    padding-top: 17px;
+    text-align: right;
+}
+
+.Download {
+    border: 1px solid #31bd72;
+    background:var(--success-btn-bg);
+    color: white;
+    display: inline-block;
+    padding: 4px 12px;
+    margin-bottom: 0;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.Download:hover {
+    background-color:var(--success-btn-hover);
+   
+}
+
+.legand1 {
+    width: 49%;
+    float: left;
+    height: auto;
+    border: 1px solid #BDBDBD;
+    margin: 6px 6px 0px 0px;
+}
+
+.Legend1Heading, .Legend2Heading {
+    background: var(--primary-dark);
+    font-size: 11px;
+    color: var(--white-color);
+    padding: 5px;
+    font-weight: bold;
+    width: calc(100% - 10px);
+}
+
+.legend1IconContainer {
+    padding: 5px;
+}
+
+.legend1Icon {
+    float: left;
+    width: 170px;
+}
+.legend1Icon:after{
+    content:'';
+         display:block;
+         clear: both;
+}
+
+    .legend1Icon img {
+       height: 18px;
+    width: 18px;
+    }
+
+    .legend1Icon span {
+          bottom: 4px;
+    position: relative;
+    font-size: 12px;
+    padding-left: 4px;
+    }
+
+.upStream,.downStream{
+    display:none;
+}
+.legand2 {
+    width: 49%;
+     float: left;
+    height: auto;
+    border: 1px solid #BDBDBD;
+    margin: 6px 6px 0px 0px;
+}
+/* {
+       background: #BDBDBD;
+    font-size: 11px;
+    padding: 5px;
+    font-weight: bold;
+    width: calc(100% - 10px);
+}*/
+
+.legend2IconContainer {
+    padding: 5px;
+}
+.legend2Icon {
+    float: left;
+    width: 170px;
+}
+  .legend2Icon div {
+       height: 18px;
+    width: 30px;
+    }
+.legend2Icon:after{
+    content:'';
+         display:block;
+         clear: both;
+}
+  .legend2Icon span {
+          bottom: 27px;
+    position: relative;
+    font-size: 12px;
+    padding-left: 35px;
+    }
+.FiberFlow {
+    width: 370px;
+    float: left;
+    height: 150px;
+    border: 1px solid #BDBDBD;
+    margin: 6px 6px 0px 0px;
+}
+
+    .FiberFlow table .Leg {
+        background: #BDBDBD;
+        font-size: 10px;
+        padding: 5px;
+        font-weight: 600;
+    }
+
+    .FiberFlow table tr td {
+        padding: 1%;
+        font-size: 8px;
+    }
+
+.EA598_Standard {
+    width: 160px;
+    float: left;
+    height: 150px;
+    border: 1px solid #BDBDBD;
+    margin: 6px 6px 0px 0px;
+}
+
+    .EA598_Standard table .Leg {
+        background: #BDBDBD;
+        font-size: 10px;
+        padding: 5px;
+        font-weight: 600;
+    }
+
+    .EA598_Standard table tr td {
+        padding: 2%;
+        font-size: 8px;
+    }
+
+.Custom_Radio_Buttons {
+    width: 120px;
+    display: inline-block;
+    height: 25px;
+}
+.Custom_Check_Box{
+     width: 180px;
+    display: inline-block;
+    height: 25px;
+}
+.checkmark {
+    top: 10px;
+}
+
+spam.spn {
+    position: relative;
+    bottom: 1px;
+}
+
+.visFooter {
+    height: 30px;
+    padding: 2px 3px 1px 10px;
+    color: #333;
+    border-top: 1px solid #395385;
+    background: #f1f2f4;
+}
+/* width */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+    /*box-shadow: inset 0 0 5px grey;
+    border-radius: 10px;*/
+    background: #efefef;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #c9d0d8;
+    /*border-radius: 10px;*/
+}
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #c2c7cc;
+    }
+
+
+    .ViewReportProgress {
+    display: none;
+    width: 100%;
+    height: calc(100% - 10px);
+    position: absolute;
+    margin-top: -10px;
+    z-index: 6;
+    margin-left: -11px;
+}
+
+    .ViewReportProgress .progressBody {
+        width: 97%;
+        height:100%;
+        background: white;
+        background-image: url(../images/loading_new.gif);
+        background-position: center;
+        opacity: 0.6;
+        background-repeat: no-repeat;
+
+    }

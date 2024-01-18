@@ -1,0 +1,359 @@
+﻿@model Models.LandBaseMaster
+@using Utility
+@using SmartInventory.Settings;
+<link href="~/Areas/Admin/Content/css/spectrum.css" rel="stylesheet" />
+<link href="~/Areas/Admin/Content/css/admin.css" rel="stylesheet" />
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<script src="~/Areas/Admin/Content/js/spectrum.js"></script>
+
+
+<div id="divAddLandbaseLayer" class="update_panel fullWidth">
+    <div id="dvPageMessage">
+        @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+    </div>
+    <div class="title">
+        <h4>
+            @(Model.id > 0 ? "Update LandBase Layer" : "Add LandBase Layer")
+        </h4>
+    </div>
+    <div>
+        <div id="dvLBLDetail">
+
+            @*@using (Html.BeginForm("SaveLayer", "LandbaseSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmLBLInfo",
+                    enctype = "multipart/form-data", @class = "form-horizontal", UpdateTargetId = "divAddLandbaseLayer"
+
+                }))
+                {*@
+            @using (Ajax.BeginForm("SaveLayer", "LandbaseSettings", new AjaxOptions
+            {
+                OnSuccess = "fnSuccess",
+                HttpMethod = "POST"
+            },
+                  new { id = "frmLBLInfo", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal", UpdateTargetId = "divAddLandbaseLaye" }))
+            {
+                @Html.HiddenFor(m => m.id, new { @id = "hdn_id" });
+                @Html.ValidationSummary(true)
+                <input type="hidden" id="hdnMaxLandbaseFileUploadSizeLimit" value="@ApplicationSettings.MaxLandbaseFileUploadSizeLimit" />
+                <input type="hidden" id="hdnFTPServiceURL" value="@ApplicationSettings.FTPServiceURL" />
+                <div>
+                    <!-- your steps content here -->
+                    <div id="LBLdetails" class="content">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="control-label">
+                                        Layer Name<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(model => model.layer_name, new { @class = "form-control", @maxlength = "25", @minlength = "3", @tabindex = "1", @placeholder = "Enter Layer Name", @onblur = "return checkIsDuplicate_layer_name();" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="control-label">
+                                        Geom Type<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.DropDownListFor(m => m.geom_type, new List<SelectListItem>
+                 {
+new SelectListItem{ Text="--Select--", Value = "" },
+                    new SelectListItem{ Text="Line", Value = "Line" },
+                    new SelectListItem{ Text="Point", Value = "Point" },
+                    new SelectListItem{ Text="Polygon", Value = "Polygon" }
+                 }, new { @id = "ddlgeom_type", @tabindex = "2", @title = "Geom Type", @class = "chosen-select form-control", @onchange = "showHideEnableCenterline()" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="control-label">
+                                        Layer Abbreviation<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(model => model.layer_abbr, new { @class = "form-control", @maxlength = "4", @tabindex = "3", @placeholder = "Enter Layer abbreviation", @onkeyup = "InputToUpper(this);", @onblur = "return checkIsDuplicate_layer_abbrAvailable();" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="control-label">
+                                        Map Abbreviation<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(model => model.map_abbr, new { @class = "form-control", @maxlength = "4", @tabindex = "4", @placeholder = "Enter Map Abbreviation", @onkeyup = "InputToUpper(this);", @onblur = "return checkIsDuplicate_map_abbrAvailable();" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="control-label">
+                                        Map Border Color<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(m => m.map_border_color, new { @maxlength = "25", Style = "width:100% ;", @tabindex = "5", @name = "color2", @class = "full col-md-10", @id = "txtmap_border_color" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="control-label">
+                                        Map Sequence<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(model => model.map_seq, new { @class = "form-control", @maxlength = "3", @tabindex = "6", @onkeypress = "return allowOnlyNumber(event);", @minlength = "1", @placeholder = "Enter Map Sequence" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="control-label">
+                                        Map Border Thickness (Pixel)<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(model => model.map_border_thickness, new { @class = "form-control", @tabindex = "7", @maxlength = "2", @onkeypress = "return allowOnlyNumber(event);", @minlength = "1", @placeholder = "Enter Map Border Thickness" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="control-label">
+                                        Map Background Color<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(m => m.map_bg_color, new { @maxlength = "25", Style = "width:100% ;", @tabindex = "8", @name = "color2", @class = "full col-md-10", @id = "txtColorCode" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="control-label">
+                                        Map Background Opacity (%)<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(model => model.map_bg_opacity, new { @class = "form-control", @onblur = "return checkOpacityValue();", @tabindex = "9", @maxlength = "3", @onkeypress = "return allowOnlyNumber(event);", @minlength = "1", @placeholder = "Enter Map Background Opacity" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="control-label">
+                                        Network Id Type<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.DropDownListFor(m => m.network_id_type, new List<SelectListItem>
+                 {
+new SelectListItem{ Text="--Select--", Value = "" },
+                    new SelectListItem{ Text="Automatic", Value = "A" },
+                    new SelectListItem{ Text="Manual", Value = "M" }
+                 }, new { @id = "ddlnetwork_id_type", @tabindex = "10", @title = "Network Id Type", @class = "chosen-select form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="control-label">
+                                        Network Code Seperator<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.DropDownListFor(m => m.network_code_seperator, new List<SelectListItem>
+                 {
+new SelectListItem{ Text="--Select--", Value = "" },
+                    new SelectListItem{ Text="-", Value = "-" },
+                    new SelectListItem{ Text="/", Value = "/" },
+
+                 }, new { @id = "ddlnetwork_code_seperator", @tabindex = "11", @title = "Network Code Seperator", @class = "chosen-select form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div id="DisplyIconOnGeomPoint">
+                            <div class="form-group row">
+                                <label class="control-label col-md-6" for="RdIconType">Icon Type:</label>
+                                <div class="col-md-6">
+                                    <div class="radio whiteSpace d-flex a-item">
+                                        <label class="mr-10 d-flex a-item"><input type="radio" class="mr-05" name="rdbIconType" id="rdb_DisplayMarker" value="false" checked onclick="DisplayIcon()"><span>Display Marker</span></label>
+                                        <label class="mr-10 d-flex a-item"><input type="radio" class="mr-05" name="rdbIconType" id="rdb_DisplayIcon" value="true" onclick="DisplayIcon()"><span>Display Icon</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="UploadAction row form-group" id="divDisplayIcon">
+                                <div class="col-md-6">
+                                    &nbsp;
+                                </div>
+                                <div class="col-md-6 d-flex flex-dir" id="divDocumentUpload">
+                                    <div class="d-flex a-item mb-1">
+                                        <input class="hidafter" id="DocUpload" type="file" accept=".jpg,.png,.jpeg" name="DocUpload" value="Choose SVG">
+                                        @if (!string.IsNullOrEmpty(Model.icon_path))
+                                        {
+                                            <div style="font-size:15px; display: inline-block;color:@Model.map_bg_color;"></div>
+                                            <img src=@(Model.icon_path.Replace("icons","")) alt="" class="img-wth ml-10" id="uploadedImage">
+                                        }
+                                        @Html.HiddenFor(m => Model.icon_path, new { id = "hdnIconPath" })
+
+                                    </div>
+                                    <span class="font-span">Note: * Only jpg,png,jpeg file are allowed!</span>
+                                    <span class="font-span" style="margin-left: 27px;"> * Maximum @ApplicationSettings.MaxLandbaseFileUploadSizeLimit KB file size allowed!</span>
+                                    <div id="divDocumentUpload">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom:0px;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="control-label">
+                                        Is Active?
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+
+                                    @Html.CheckBoxFor(m => m.is_active, new { @class = "chk", @tabindex = "12", @onchange = "return CheckDataExistAgainstLandBaseLayer();" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0px;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label id="lblis_center_line_enable" class="control-label">
+                                        Is center line enable?
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.CheckBoxFor(m => m.is_center_line_enable, new { @class = "chk", @tabindex = "13" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex jc-flex-end" id="dvBtnAction">
+
+                            @* <input type="button" class="btn btn-primary saveBtn" name="btnaction" id="btnSubmit" value="@(Model.id > 0 ? "Update" : "Save")" />*@
+                            @if (Model.id > 0)
+                            {
+                                <input type="button" class="btn btn-primary mr-05" onclick="return LandBaseSettings.upload();" id="btnSaveAccessories" value="Update" />
+                            }
+                            else
+                            {
+                                <input type="button" class="btn btn-primary mr-05" onclick="return LandBaseSettings.upload();" id="btnSaveAccessories" value="Save" />
+                            }
+
+                            @if (Model.id > 0)
+                            {
+                                <a href="@Url.Action("ViewLayers", "LandbaseSettings")" class="btn btn-default mr-05" title="Back">Back</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("AddLayer", "LandbaseSettings", new { id ="" })" class="btn btn-default" title="Reset">Reset</a>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+
+            }
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+         
+
+        if ('@Model.is_icon_display_enabled' == 'True') {
+            $("input[id='rdb_DisplayIcon']").prop("checked", true);
+            $('#divDisplayIcon').removeClass('divDisabled', '');
+            }
+            else {
+            $("input[id='rdb_DisplayMarker']").prop("checked", true);
+            $('#divDisplayIcon').addClass('divDisabled', 'divDisabled');
+        }
+
+        if (@Model.id> 0 && '@Model.geom_type' != 'Point') {
+            $('#DisplyIconOnGeomPoint').css('display', 'none');
+        }
+
+        if (@Model.id > 0)
+        {
+            // $('#divDisplayIcon').addClass('divDisabled', 'divDisabled');
+            //$('#layer_name').attr("disabled", "disabled").trigger("chosen:updated");
+            $('#ddlgeom_type').attr("disabled", "disabled").trigger("chosen:updated");
+            $('#layer_abbr').attr("disabled", "disabled").trigger("chosen:updated");
+            $('#map_abbr').attr("disabled", "disabled").trigger("chosen:updated");
+            $('#ddlnetwork_code_seperator').attr("disabled", "disabled").trigger("chosen:updated");
+        }
+        else
+        {
+            $('#layer_name').prop("disabled", false);
+            $('#ddlgeom_type').prop("disabled", false);
+            $('#layer_abbr').prop("disabled", false);
+            $('#map_abbr').prop("disabled", false);
+            $('#ddlnetwork_code_seperator').prop("disabled", false);
+        }
+
+        showHideEnableCenterline();
+
+    });
+
+    //$('#btnSubmit').click(function () {
+    //    if ($('#layer_name').css("border-color") === "rgb(255, 0, 0)") {
+    //        return false;
+    //    }
+    //    else if ($('#layer_abbr').css("border-color") === "rgb(255, 0, 0)") {
+    //        return false;
+    //    }
+    //    else  if ($('#map_abbr').css("border-color") === "rgb(255, 0, 0)") {
+    //        return false;
+    //    }
+    //    else
+    //    {
+    //        $("#frmLBLInfo").submit();
+    //        return true;
+    //    }
+
+    //});
+
+
+    function fnSuccess(obj){
+         
+        if (obj.pageMsg.status != "OK") {
+            alert(obj.pageMsg.message);
+        }
+        else {
+            alert(obj.pageMsg.message);
+            window.location = appRoot + 'LandbaseSettings/ViewLayers';
+        }
+    }
+
+    function DisplayIcon() {
+         
+        if ($("input[name='rdbIconType']:checked").val() == "true") {
+            $('#divDisplayIcon').removeClass('divDisabled', '')
+        }
+        else {
+            $('#divDisplayIcon').addClass('divDisabled', 'divDisabled')
+            $('#DocUpload')[0].value = ''
+        }
+    }
+</script>
+
+

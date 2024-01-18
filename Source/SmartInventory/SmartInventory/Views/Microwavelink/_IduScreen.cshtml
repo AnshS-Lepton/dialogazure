@@ -1,0 +1,112 @@
+﻿
+@model Models.MicrowaveLinkMaster
+<style>
+   
+    .row-outer {
+        display: flex;
+        align-items: center;
+    }
+        .row-outer:not(:last-child) {
+            margin-bottom: 1rem;
+        }
+
+        .row-outer .control-label {
+            display: flex;
+            flex: 0 0 24%;
+            padding-top: 0;
+            margin-right: 0.5rem;
+        }
+
+        .row-outer .md-2 {
+            display: flex;
+            flex: 0 0 22.5%;
+        }
+
+            .row-outer .md-2:not(:last-child) {
+                margin-right: 1.5rem;
+            }
+    
+</style>
+
+
+
+
+<fieldset class="the-fieldset" id="idu">
+
+    <legend class="the-legend">IDU Info</legend>
+    <div class="row-outer">
+        <label class="control-label">Manufacturer Name :</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.manufacturer_name, new { @id = "txtManufacturerName", @class = "form-control" })
+        </div>
+        <label class="control-label">Model Number :</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.model_number, new { id = "txtModelNumber", @class = "form-control" })
+        </div>
+
+    </div>
+
+    <div class="row-outer">
+        <label class="control-label">License Number :</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.license_number, new { id = "txtLicenseNumber", @class = "form-control", @maxlength = "100" })
+        </div>
+        <label class="control-label">Transmit Power(@SmartInventory.Settings.ApplicationSettings.IduTransmitPower) :</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.idu_transmit_power, new { id = "txtIduTransmitPower", @class = "form-control", @maxlength = "5" })
+        </div>
+    </div>
+    <div class="row-outer">
+
+        <label class="control-label">Modulation :</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.modulation, new { id = "txtModulation", @class = "form-control" })
+        </div>
+        <label class="control-label">Transmitted Frequency(@SmartInventory.Settings.ApplicationSettings.IduTransmittedFrequency) :</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.idu_transmitted_frequency, new { id = "txtIduTransmitFrequency", @class = "form-control", @maxlength = "5" })
+        </div>
+    </div>
+    <div class="row-outer">
+
+        <label class="control-label">Received Frequency(@SmartInventory.Settings.ApplicationSettings.IduReceivedFrequency) :</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.idu_received_frequency, new { id = "txtIduReceivedFrequency", @class = "form-control", @maxlength = "5" })
+        </div>
+        <label class="control-label">Bandwidth (@SmartInventory.Settings.ApplicationSettings.IduBandwidth):</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.bandwidth, new { id = "txtBandwidth", @class = "form-control", @maxlength = "5" })
+        </div>
+    </div>
+    <div class="row-outer">
+
+        <label class="control-label">Polarization(Vert./Horiz.) :</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.polarization, new { id = "txtPolarization", @class = "form-control", @maxlength = "100" })
+        </div>
+    </div>
+</fieldset>
+<fieldset class="the-fieldset">
+    <legend class="the-legend">NMS Login Info</legend>
+
+    <div class="row-outer">
+        <label class="control-label">NMS IP :</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.nms_ip, new { @id = "txtNmsIp", @class = "form-control" })
+        </div>
+        <label class="control-label">User Name :</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.user_name, new { @id = "txtUserName", @class = "form-control" })
+        </div>
+
+    </div>
+    <div class="row-outer">
+        <label class="control-label">Password :</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.password, new { id = "txtLicenseNumber", @class = "form-control" })
+        </div>
+
+    </div>
+</fieldset>
+
+

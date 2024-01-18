@@ -1,0 +1,229 @@
+﻿@model Models.NELoopDetails
+@using Models;
+@using SmartInventory.Settings;
+
+
+@helper pageMessage()
+{
+    {
+        Html.RenderPartial("_PageMessage", Model.objPM);
+    }
+
+}
+@helper GeographicDetails()
+{
+    { Html.RenderPartial("~/Views/Library/_GeographicDetails.cshtml", (IGeographicDetails)Model); }
+}
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Loop.ToString().ToUpper()).FirstOrDefault() : null;
+    var lstInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name.ToLower() == Models.EntityType.Cable.ToString().ToLower()).ToList();
+    var startEndReading = lstInputSettings.Count > 0 ? lstInputSettings.Where(m => m.form_feature_name.ToLower() == Models.formFeatureName.start_end_reading.ToString() && m.form_feature_type.ToLower() == Models.formFeatureType.feature.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Loop.ToString());
+}
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SaveLoop", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        LoadingElementId = "dvProgress",
+        UpdateTargetId = "dvModalBody"
+
+    },
+                                                             new { id = "frmAddLoop", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.parent_network_id)
+        @Html.HiddenFor(m => m.network_id)
+        @Html.HiddenFor(m => m.geom)
+        @Html.HiddenFor(m => m.networkIdType)
+        @Html.HiddenFor(m => m.province_name)
+        @Html.HiddenFor(m => m.region_name)
+        @Html.HiddenFor(m => m.latitude)
+        @Html.HiddenFor(m => m.longitude)
+        @Html.HiddenFor(m => m.associated_entity_type)
+        @Html.HiddenFor(m => m.associated_system_id)
+        @Html.HiddenFor(m => m.sequence_id)
+        @Html.HiddenFor(m => m.cable_system_id)
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+        @Html.HiddenFor(m => m.associated_network_id, new { id = "hdnAssNtwkId" })
+
+
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="TabContent--max-over">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_CAB_NET_FRM_018</legend>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-4" for="txtNearByCable">@Resources.Resources.SI_OSP_GBL_NET_FRM_464<i class="clsMandatory">*</i></label>
+                        <div class="col-md-8 col-sm-8 mrgn_btm ">
+                            @Html.DropDownListFor(m => m.cable_id, new SelectList(Model.lstLoopMangment.Select(x => new { Value = x.cable_system_id, Text = x.cable_id }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "txtCableId", @onchange = "OnChangeCableId();" })
+                            <span>@Resources.Resources.SI_OSP_ONT_NET_FRM_005  @ApplicationSettings.LoopBuffer @Resources.Resources.SI_OSP_GBL_GBL_GBL_034</span>
+                        </div>
+                    </div>
+                    <div id="changeCableId" style="display:none;">
+
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txtCblName">@Resources.Resources.SI_ISP_CAB_NET_FRM_002<i class="clsMandatory">*</i>:</label>
+                            <label class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.cable_name, new { @class = "form-control", @id = "txtcablename", @readonly = true })
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txtCblCalcLength">@Resources.Resources.SI_GBL_GBL_NET_FRM_220<i class="clsMandatory">*</i></label>
+                            <label class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.cable_calculated_length, new { @class = "form-control", @id = "txtcableCalLngth", @readonly = true })
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txttotalloopcount">@Resources.Resources.SI_OSP_GBL_NET_FRM_471<i class="clsMandatory">*</i>:</label>
+                            <label class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.total_loop_count, new { @class = "form-control", @id = "txttotal_loop_count", @readonly = true })
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txttotallooplength">@Resources.Resources.SI_OSP_GBL_NET_FRM_472<i class="clsMandatory">*</i></label>
+                            <label class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.total_loop_length, new { @class = "form-control", @id = "txttotal_loop_length", @readonly = true })
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txtAvailbleCalLngth" title="(Cable Length- Cable Existing Loop Length)">@Resources.Resources.SI_OSP_GBL_NET_FRM_473<i class="clsMandatory">*</i>:</label>
+                            <label class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.available_calculated_length, new { @class = "form-control", @id = "txtAvailbleCalLngth", @readonly = true })
+                            </label>
+                        </div>
+
+                    </div>
+                </fieldset>
+                <fieldset class="the-fieldset" id="OnselectOfCable" style="display:none;">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_CAB_NET_FRM_004</legend>
+                    @if (startEndReading != null)
+                    {
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txtStrtReading">@Resources.Resources.SI_OSP_MPOD_NET_RPT_003<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.start_reading, new { @class = "form-control enableControl", @id = "txtStrtRdng", @onkeyup = "calculateLoopLength();", @onkeypress = "return ValidateNumberDecimal(this,event,8,2);" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txtEndReading">@Resources.Resources.SI_OSP_MPOD_NET_RPT_004<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.end_reading, new { @class = "form-control allownumeric_value enableControl", @id = "txtEndReading", @onkeyup = "calculateLoopLength();", @onkeypress = "return ValidateNumberDecimal(this,event,8,2);" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txtlooplength">@Resources.Resources.SI_OSP_CAB_NET_GBL_001<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.loop_length, new { @class = "form-control allownumeric_value enableControl clsReadOnly", @readonly = true, @maxlength = "10", @id = "txt_loop_length" })
+                            </div>
+                        </div>
+
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txtlooplength">@Resources.Resources.SI_OSP_CAB_NET_GBL_001<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.loop_length, new { @class = "form-control allownumeric_value enableControl ", @maxlength = "10", @id = "txt_loop_length" })
+                            </div>
+                        </div>
+                    }
+                </fieldset>
+                <div id="ShowGeoDetailOnselectOfCable" style="display:none;">@GeographicDetails()</div>
+
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <div class="ml-auto">
+                <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCancelLoop">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                @if (Model.system_id > 0)
+                {
+                    <button type="button" onclick="SaveLoop();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnUpdateLoop">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                }
+                else
+                {
+                    <button type="button" onclick="SaveLoop();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnSaveLoop">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                }
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($("#txtCableId").val() != "") {
+            $("#txtCableId").prop("disabled", "disabled");
+            OnChangeCableId();
+        }
+        $('.chosen-select').chosen({ width: '100%' });
+    });
+
+    calculateLoopLength = function () {
+        if ($("#txtCableId").val() != "" && $("#txtCableId").val() != undefined) {
+            var startReading = parseFloat($("#txtStrtRdng").val());
+            var endReading = parseFloat($("#txtEndReading").val());
+            var length = Math.abs(endReading - startReading);
+            if (length > 0) {
+                $("#txt_loop_length").val(Math.round(length * 100) / 100);
+            } else {
+                $("#txt_loop_length").val(0);
+            }
+        }
+        else {
+            alert(MultilingualKey.SI_OSP_GBL_NET_FRM_461);
+            $("#txtStrtRdng").val("");
+            $("#txtEndReading").val("");
+            $("#txt_loop_length").val("");
+        }
+    }
+
+    function OnChangeCableId() {
+        if ($("#txtCableId").val() != "") {
+            var cable_id = $("#txtCableId").val();
+            $("#changeCableId").show();
+            $("#OnselectOfCable").show();
+            $("#ShowGeoDetailOnselectOfCable").show();
+            ajaxReq('Library/GetCableNameAndLengthForLoop', { CableId: cable_id }, true, function (resp) {
+                if (resp.system_id > 0) {
+                    $("#txtcablename").val(resp.cable_name);
+                    $("#txtcableCalLngth").val(resp.cable_calculated_length.toFixed(2));
+                    $("#txttotal_loop_count").val(resp.total_loop_count);
+                    $("#txtAvailbleCalLngth").val((resp.cable_calculated_length - resp.total_loop_length).toFixed(2));
+                    $("#txttotal_loop_length").val(resp.total_loop_length.toFixed(2));
+                    $("#hdnAssNtwkId").val(resp.network_id);
+                }
+            }, false, false);
+
+        }
+        else {
+            $("#changeCableId").hide();
+            $("#OnselectOfCable").hide();
+            $("#ShowGeoDetailOnselectOfCable").hide();
+        }
+    }
+
+    function SaveLoop() {
+        if ($('#txtCableId').val() == "" || $('#txtCableId').val() == undefined || $('#txtCableId').val() == null) {
+            alert(MultilingualKey.SI_OSP_GBL_NET_FRM_461);
+            return false;
+        }
+        else if ($('#txt_loop_length').val() == 0) {
+            alert(MultilingualKey.SI_OSP_GBL_NET_FRM_462);
+            return false;
+        }
+        else if (parseFloat($('#txt_loop_length').val()) > parseFloat($('#txtAvailbleCalLngth').val())) {
+            alert(MultilingualKey.SI_OSP_GBL_NET_FRM_463);
+            return false;
+        }
+        else {
+            $("#frmAddLoop").submit();
+        }
+
+    }
+
+</script>

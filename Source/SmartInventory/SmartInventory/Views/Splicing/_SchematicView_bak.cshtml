@@ -1,0 +1,130 @@
+﻿@model Models.ViewOSPCPFModel
+@using Utility;
+@Scripts.Render("~/bundles/endToEndSchematic/Scripts")
+<style>
+    #pageSize_chosen {
+        width: 55px !important;
+    }
+
+        #pageSize_chosen .chosen-single {
+            height: 28px;
+        }
+
+    .divErrorMessage {
+        text-align: center;
+        font-weight: bold;
+        margin: 19%;
+        color: Red;
+        font-size: medium;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="libDetail form-horizontal" id="frmCPF">
+    @Html.HiddenFor(m => m.objFilterAttributes.entity_type)
+    @Html.HiddenFor(m => m.objFilterAttributes.entityid)
+    @Html.HiddenFor(m => m.objFilterAttributes.port_no)
+    @Html.HiddenFor(m => m.entity_geomid)
+    <div id="test" class="libTabContent" style="overflow:visible;">
+        <!-- Tab panes -->
+
+        <div class="tab-content">
+            <div class="tab-pane active">
+                <div class="form-group">
+                    <label class="control-label col-sm-4" for="txtEquipment_id">Cable/Equipment ID<i class="clsMandatory">*</i>:</label>
+                    <div class="col-sm-8">
+                        @Html.TextBoxFor(m => m.equipment_id, new { @class = "form-control", @maxlength = 100, autocomplete = "off" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-4" for="ddlport">Core/Port<i class="clsMandatory">*</i>:</label>
+                    <div class="col-sm-8">
+                        <select id="ddlCore" name="ddlCore" class="chosen-select col-sm-12" style="padding:0;" onchange="splicing.ddlcpfCore(this);" placeholder="sdf">
+                            <option value="0">--Select--</option>
+                            @foreach (var item in Model.lstEquipementCore)
+                            {
+                                <option value=@item.port_value @string.Format((Model.objFilterAttributes.port_no == @item.port_value) ? "selected" : "")>@item.port_text </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group ModalFooter" id="dvBtnAction">
+        <div class="col-sm-8">
+            <div class="form-group noprint">
+                <a onclick="SaveSchematicDiagram('png', 'dvSchematicViewContainer');" class="btn btn-primary"><i class="fa fa fa-camera"></i> Save as Image</a>
+                <a onclick="SaveSchematicDiagram('pdf', 'dvSchematicViewContainer');" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i> Save as PDF</a>
+                @Html.DropDownList("pageSize", new List<SelectListItem>
+                {
+                    new SelectListItem{ Text="A4", Value = "A4" },
+                    new SelectListItem{ Text="A3", Value = "A3" },
+                    new SelectListItem{ Text="A2", Value = "A2" },
+                     new SelectListItem{ Text="A1", Value = "A1" },
+                      new SelectListItem{ Text="A0", Value = "A0" },
+                 }, new { @class = "chosen-select col-sm-4", @style = "width: 55px !important;" })
+
+            </div>
+        </div>
+        <div class="col-sm-4" style="float: right; text-align: right; padding-right: 25px;">
+            <button type="button" class="btn btn-primary" id="btnView">View</button>
+            <button type="submit" class="btn btn-default" onclick="Clear()" id="btncpfClear">Clear</button>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div style="width: 880px; height: 330px; overflow:  hidden; border: 1px solid gray; margin: 10px;">
+        <div id="dvSchematicViewContainer">
+         </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.noPrint').hide();
+        osp.initApp();
+        $('.chosen-select').chosen({ width: '100%', disable_search_threshold: '5' });
+    });
+
+    $('#btnView').on("click", function () {
+        if ($('#equipment_id').val() != "" && $('#ddlCore').val() != 0) {
+            $('.overlay').remove();
+            equipmentId = $('#equipment_id').val();
+            var entityType = $('#objFilterAttributes_entity_type').val();
+            var systemId = $('#objFilterAttributes_entityid').val();
+            portNo = $('#objFilterAttributes_port_no').val();
+            PdfPortNo = $("#ddlCore option:selected").text();
+            $('#dvSchematicViewContainer p').remove();
+
+            ajaxReq('Splicing/GetEquipmentDetails', { network_id: equipmentId, entity_type: entityType, system_id: systemId, port_no: portNo }, true, function (resp) {
+                if (resp.status == "OK") {
+                     
+                    var JsonData = JSON.stringify(resp.result);
+                    SchematicView(JsonData, "#dvSchematicViewContainer", 875, 320);
+                    $('.noPrint').show();
+                    $('#dvSchematicViewContainer').removeClass('divErrorMessage');
+                }
+                else {
+                    $('#dvSchematicViewContainer').addClass('divErrorMessage');
+                    $('#dvSchematicViewContainer').append(resp.message);
+                }
+
+            }, true, false);
+        }
+        else if (equipmentId == "") {
+            alert("Enter Equipment Id!");
+        }
+        else {
+            alert("Please select Core/Port!");
+        }
+    });
+
+    function Clear() {
+        $('.overlay').remove();
+        $('.noPrint').hide();
+        $('#ddlCore').html('').trigger("chosen:updated");
+        $('#ddlCore').html('<option value="0">--Select--</option>').trigger("chosen:updated");
+    };
+</script>

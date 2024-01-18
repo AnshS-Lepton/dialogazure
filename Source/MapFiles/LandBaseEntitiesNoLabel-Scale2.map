@@ -1,0 +1,231 @@
+  # Map file created from QGIS project file C:/Program Files (x86)/Quantum GIS Wroclaw/qqq.qgs
+# Edit this file to customize for your map interface
+# (Created with PyQgis MapServer Export plugin)
+MAP
+	SYMBOLSET "symbols\\symbols.sym"
+	CONFIG "PROJ_LIB" "conf"
+	NAME "QGIS-MAP"
+	FONTSET "fonts/fonts.list"
+	# Map image size  
+	SIZE 100 100
+	UNITS meters
+  
+	#EXTENT 72.504366 18.900959 73.403214 19.320367
+	PROJECTION
+		'proj=longlat'
+		'datum=WGS84'
+		'no_defs'
+	END
+
+	# Background color for the map canvas -- change as desired
+	IMAGECOLOR 255 255 255
+	IMAGEQUALITY 95
+	IMAGETYPE png
+
+	OUTPUTFORMAT
+		NAME png
+		DRIVER 'GD/PNG'
+		MIMETYPE 'image/png'
+		IMAGEMODE RGBA
+		EXTENSION 'png'
+	END
+
+	# Legend
+	LEGEND
+		IMAGECOLOR 255 255 255
+		STATUS ON
+		KEYSIZE 25 15
+		LABEL
+		  TYPE BITMAP	  
+		  SIZE MEDIUM
+		  COLOR 0 0 89
+		END		
+	END
+  
+	SYMBOL
+		NAME "circlef"
+		TYPE ellipse
+		FILLED true
+		POINTS 
+			1 1
+		END
+	END	
+	SYMBOL
+		NAME "arrow-end"
+		TYPE vector
+		FILLED false
+		POINTS
+			0  10
+			10  5
+			0 0
+		END
+		#ANCHORPOINT 1 0.5
+	END 
+
+
+	# Web interface definition. Only the template parameter
+	# is required to display a map. See MapServer documentation
+	WEB
+		# Set IMAGEPATH to the path where MapServer should
+		# write its output.
+		IMAGEPATH '/tmp/'
+
+		# Set IMAGEURL to the url that points to IMAGEPATH
+		# as defined in your web server configuration
+		IMAGEURL '/tmp/'
+	# WMS server settings
+	METADATA
+		'ows_title'           'QGIS-MAP'
+		'tile_map_edge_buffer' '15'
+		#'ows_onlineresource'  ''
+		'ows_srs'             'EPSG:4326 EPSG:900913' 
+		'ows_enable_request'   '*'
+		'wms_allow_getmap_without_styles' 'true'
+		
+	END
+
+	#Scale range at which web interface will operate
+	# Template and header/footer settings
+	# Only the template parameter is required to display a map. See MapServer documentation
+	TEMPLATE 'fooOnlyForWMSGetFeatureInfo'
+	END
+
+	#SYMBOL
+	 	#NAME "rail"
+	 	# TYPE PIXMAP		
+	  	#IMAGE "icons/railway.png"		
+	#END	 
+	# ================ LAND BASE (POINT) ========================================================== 	
+	LAYER
+		NAME 'LBPOINT'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_landbase_point_map USING UNIQUE id USING srid=4326'	
+		FILTER (%provinceFilter% AND (%LBPointFilter% ))
+		
+		VALIDATION		
+			'provinceFilter'   '.*'
+            'LBPointFilter'   '.*'	 	
+		END 
+		METADATA
+			'ows_title' 'LBPOINT'
+		END
+		STATUS OFF
+		GROUP 'Network'	
+		#TRANSPARENCY 30			
+		CLASS
+			NAME 'LBPOINT' 
+			STYLE
+				SYMBOL [icon_path]
+                                   
+                                   SIZE 20                             
+                                   COLOR [map_bg_color]
+								   OPACITY [map_bg_opacity]
+								   WIDTH [map_border_thickness]
+									OUTLINECOLOR [map_border_color] 
+			END			
+		END 		
+	END	
+
+#======================================LAND BASE(POLYGON)======================================================
+
+	LAYER
+		NAME 'LBPOLY'
+		TYPE POLYGON
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo		
+		INCLUDE "datashare.inc"
+		DATA 'sp_geometry FROM vw_att_details_landbase_polygon_map  USING UNIQUE id USING srid=4326'	
+		FILTER (%provinceFilter% AND (%LBPolyFilter% ))
+		
+		VALIDATION		
+			'provinceFilter'   '.*'	
+            'LBPolyFilter'   '.*'	 	
+		END  
+		METADATA
+			'ows_title' 'LBPOLY'
+		END
+		STATUS OFF
+		GROUP 'Network'
+		#TRANSPARENCY 30
+		CLASS
+			NAME 'LBPOLY' 						
+			STYLE
+				 WIDTH [map_border_thickness]
+				 OUTLINECOLOR [map_border_color] 
+			END	
+			STYLE 
+				 COLOR [map_bg_color]
+				 OPACITY [map_bg_opacity]
+			END				
+		END		
+	END
+#======================================LAND BASE(LINE)======================================================
+	
+	LAYER
+		NAME 'LBLINE'
+		TYPE LINE
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo		
+		INCLUDE "datashare.inc"
+		DATA 'sp_geometry FROM vw_att_details_landbase_line_map USING UNIQUE id USING srid=4326'	
+	    FILTER (%provinceFilter% AND (%LBLineFilter% ))
+		
+		VALIDATION		
+			'provinceFilter'   '.*'	
+            'LBLineFilter'   '.*' 	
+		END  
+		METADATA
+			'ows_title' 'LBLINE'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		#TRANSPARENCY 30	
+		CLASS
+			NAME 'LBLINE' 						
+			STYLE
+				 WIDTH [map_border_thickness]
+				 OUTLINECOLOR [map_border_color] 				 
+			END
+			STYLE 
+				 COLOR [map_bg_color]
+				 OPACITY [map_bg_opacity]				 
+			END
+            			
+		END          			       
+	END 
+	#==========================================ROAD=======
+	LAYER
+		NAME 'LBBuffer'
+		TYPE POLYGON
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo		
+		INCLUDE "datashare.inc"
+		DATA 'buffer_geom FROM vw_att_details_landbase_line_map  USING UNIQUE id USING srid=4326'	
+		FILTER (%provinceFilter% AND (%LBBufferFilter% ))
+		
+		VALIDATION		
+			'provinceFilter'   '.*'	
+            'LBBufferFilter'   '.*'	 	
+		END  
+		METADATA
+			'ows_title' 'LBBuffer'
+		END
+		STATUS OFF
+		GROUP 'Network'
+		#TRANSPARENCY 30
+		CLASS
+			NAME 'LBBuffer' 						
+			STYLE
+				 WIDTH [map_border_thickness]
+				 OUTLINECOLOR [map_border_color] 
+			END	
+			STYLE 
+				 COLOR [map_bg_color]
+				 OPACITY [map_bg_opacity]
+			END				
+		END		
+	END
+END

@@ -1,0 +1,39 @@
+﻿@model Models.FiberCutDetails
+@Html.HiddenFor(m => m.last_tp_lat, new { id = "hdnLastTPLat" })
+@Html.HiddenFor(m => m.last_tp_long, new { id = "hdnLastTPLong" })
+@Html.HiddenFor(m => m.last_tp_name, new { id = "hdnLastTPType" })
+@Html.HiddenFor(m => m.fault_lat, new { id = "hdnFaultLat" })
+@Html.HiddenFor(m => m.fault_long, new { id = "hdnFaultLong" })
+@Html.HiddenFor(m => m.faulty_fiber_geom, new { id = "hdnFaultyFiberGeom" })
+@Html.HiddenFor(m=>m.faulty_cable_id,new { id="hdnFaultyFiberId"})
+<fieldset class="the-fieldset">
+    <legend class="the-legend">Fiber Cut Details</legend>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-2" style="float: right;"><button type="button" class="btn btn-primary dvdisabled" id="btnViewOnMap">View On Map</button></div>
+            <div class="col-md-2" style="float: right;">
+                @*<button type="button" class="btn btn-primary dropfiles dvdisabled" id="btnFiberExport">
+                    Export <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                </button>*@
+                <div class="dropbox" style="display: none;">
+                    <span>Excel</span>
+                    <span>KML</span>
+                    <span>Shape</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="table-responsive tble_cls">
+            <div class="table table-hover webgrid">
+                <table id="tblEntityInfo" class="webgrid" style="width:100%;">
+                    <tr class="info_table_tr"><td width="105">Cut Location(lat/long)</td><td>:</td><td>@(Model.fault_lat == null ? "NA" : Model.fault_lat + "/" + Model.fault_long)</td></tr>
+                    <tr class="info_table_tr2"><td width="105">Physical Distance</td><td>:</td><td>@(Model.physical_distance == 0 ? "NA" : Convert.ToString(Model.physical_distance)) Meter</td></tr>
+                    <tr class="info_table_tr"><td width="105">Dist. From Last Termination Point</td><td>:</td><td>@(Model.last_tp_distance == 0 ? "NA" : Convert.ToString(Model.last_tp_distance)) Meter</td></tr>
+                    <tr class="info_table_tr2"><td width="105">Last Termination Point Type</td><td>:</td><td>@(Model.last_tp_type == null ? "NA" : Model.last_tp_type)</td></tr>
+                    <tr class="info_table_tr"><td width="105">Last Termination Point Network Id</td><td>:</td><td>@(Model.last_tp_network_id == null ? "NA" : Model.last_tp_network_id)</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</fieldset>

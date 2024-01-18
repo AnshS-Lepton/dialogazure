@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+	<Mapping id="0">
+		<DbColName>Region_Name</DbColName>
+		<TemplateColName>Region</TemplateColName>
+	</Mapping>
+  <Mapping id="1">
+    <DbColName>Province_Name</DbColName>
+    <TemplateColName>Province</TemplateColName>
+  </Mapping>
+	<Mapping id="2">
+		<DbColName>Province_Abbreviation</DbColName>
+		<TemplateColName>Prov_Abbr</TemplateColName>
+	</Mapping>
+	<Mapping id="3">
+	<DbColName>Country_Name</DbColName>
+	<TemplateColName>Country</TemplateColName>
+</Mapping>
+</Mappings>

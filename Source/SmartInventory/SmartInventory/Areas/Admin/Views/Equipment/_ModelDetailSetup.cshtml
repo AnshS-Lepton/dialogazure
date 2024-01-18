@@ -1,0 +1,106 @@
+﻿@model Models.Admin.ISPModelInfo
+@using Models;
+@helper ItemSpecification()
+{
+{ Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model.model_template); }
+}
+
+<!DOCTYPE html>
+<ul class="nav nav-tabs">
+    <li><a id="anchorModelDetails" data-toggle="tab" href="#ModelDetails" class="active show">Model Details</a></li>
+    <li><a id="anchorSpecification" class="otherMenu specificationTab" data-toggle="tab" href="#SpecificationContext">Specifications</a></li>
+</ul>
+<div class="tab-content">
+    <div id="ModelDetails" class="tab-pane fade in active show">
+        <form class="form-inline" action="post">
+            <div class="form-group" style="width:100%;">
+                <label class="control-label col-md-2" for="">Model<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4">
+                    @*<input class="form-control" type="text" id="" name=""/>*@
+                    @Html.TextBoxFor(m => m.model_master_name, new { @class = "form-control", @id = "txtModelMasterName",@readonly=true })
+                    @Html.HiddenFor(m => m.model_id, new { @class = "form-control", @id = "txtModelId" })
+                </div>
+
+                <label class="control-label col-md-2" for="">Type<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4">
+                    @*<input class="form-control" type="text" id="" name="" />*@
+                    @Html.TextBoxFor(m => m.model_type_master_name, new { @class = "form-control", @id = "txtModelTypeMasterName", @readonly = true })
+                    @Html.HiddenFor(m => m.model_type_id, new { @class = "form-control", @id = "txtModelTypeId" })
+                  
+                    <input type="hidden" id="txtEntityType" value="@Model.entity_type"/>
+                </div>
+            </div>
+
+            <div class="form-group" style="width:100%;">
+                <label class="control-label col-md-2" for="">Name<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4">
+
+                    @Html.TextBoxFor(m => m.model_name, new { @class = "form-control", @id = "txtModelName", @maxlength = "50" })
+
+                </div>
+
+                <label class="control-label col-md-2" for="">Status<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4">
+
+                    @Html.DropDownListFor(m => m.status_id, new SelectList(Model.lstModelStatus.Select(x => new { Value = x.id, Text = x.name }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "selectStatus"})
+                </div>
+            </div>
+
+
+
+            <div class="form-group" style="width:100%;">
+                <label class="control-label col-md-2" for="">Length (mm)<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(m => m.height, new { @class = "form-control", @id = "txtModelHeight", @readonly = true })
+                </div>
+
+                <label class="control-label col-md-2" for="">Width (mm)<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(m => m.width, new { @class = "form-control", @id = "txtModelWidth", @readonly = true })
+                </div>
+            </div>
+            <div class="form-group" style="width:100%;" hidden >
+                <label class="control-label col-md-2" for="">Depth (mm)<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(m => m.depth, new { @class = "form-control", @id = "txtModelDepth", @readonly = true })
+                </div>
+            </div>
+            <div class="form-group unit_panel" style="width:100%;" >
+                <label class="control-label col-md-2" for="">Unit<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(m => m.unit_size, new { @class = "form-control", @id = "txtModelUnit", @readonly = true })
+                </div>
+               
+            </div>
+
+            <div id="multiConnectionContainer" class="form-group" style="width:100%;display:none;">
+                
+                <div class="col-md-2">
+                    <div class="bottom_txt" style="" title="Is multiple connection">
+
+                        <label class="" style="float:right">
+                            @Html.CheckBoxFor(m=>m.is_multi_connection, new { @id = "chkIsMultiConnection" })
+                            <span class="slider round"></span>
+                        </label>
+
+                    </div>
+                     
+                </div>
+                <div class="col-md-10" >
+                    <label class="control-label" style="float:left">Is multiple connection</label>
+                </div>
+                
+
+            </div>
+        </form>
+    </div>
+
+    <div id="SpecificationContext" class="tab-pane fade">
+
+        <div class="form-group" style="width:100%;">
+
+            @ItemSpecification()
+            @Html.HiddenFor(m => m.item_template_id, new { @id="itemTemplateId" })
+        </div>
+    </div>
+</div>

@@ -1,0 +1,267 @@
+﻿<style>
+
+    /*jquery popup css*/
+
+    .ui-dialog {
+        padding: 0;
+    }
+
+        .ui-dialog .ui-dialog-content {
+            padding: 1.3rem;
+        }
+
+    .ui-widget.ui-widget-content {
+        border: none;
+        box-shadow: 0 14px 15px rgb(0 0 0 / 20%);
+    }
+
+    .ui-dialog .ui-dialog-titlebar-close {
+        right: 0.6rem;
+    }
+
+    .ui-widget-header {
+        background: #007bff;
+        color: #FFFFFF;
+        border: none;
+    }
+
+    .ui-widget-overlay {
+        background: #000000;
+    }
+
+    .ui-dialog .ui-dialog-content {
+        background: #FFFFFF;
+    }
+
+    .ui-dialog .ui-dialog-buttonpane {
+        margin-top: 0.3rem;
+    }
+
+    .ui-widget-content {
+        background: #ebebeb;
+        border-top: none;
+    }
+
+    .ui-dialog .ui-dialog-buttonpane button:first-child {
+        margin: 0 0.4rem 0 0;
+        border: none;
+        padding: 0.2rem 0.8rem;
+        color: #FFFFFF;
+        background: #007bff;
+        border-radius: 4px;
+        transition: 0.3s;
+    }
+
+    .ui-dialog .ui-dialog-buttonpane button:nth-child(2) {
+        margin: 0;
+        border: none;
+        padding: 0.2rem 0.8rem;
+        color: #FFFFFF;
+        background: #dc1515;
+        border-radius: 4px;
+        transition: 0.3s;
+    }
+
+    .ui-dialog .ui-dialog-buttonpane button:hover {
+        background: #333333;
+    }
+
+    .ui-dialog .ui-dialog-titlebar-close {
+        outline: none;
+        background: none;
+        cursor: pointer;
+        border: none;
+    }
+
+        .ui-dialog .ui-dialog-titlebar-close:after {
+            content: 'X';
+            color: #FFFFFF;
+            font-size: 1rem;
+        }
+
+
+    ui-dialog .ui-dialog-buttonpane button:focus {
+        outline: none;
+    }
+
+    .ui-dialog .ui-dialog-title, .ui-dialog .ui-dialog-content {
+        font-size: 1rem;
+    }
+
+    /*jquery popup css*/
+</style>
+
+<div class="update_panel fullWidth">
+    <div class="title">
+        <h4>
+            Download Backup files
+        </h4>
+    </div>
+    <div class="downloadOuter">
+
+        <div class="leftBox">
+            <div class="dBtn">
+                <img src="~/Areas/Admin/Content/images/appDownload.svg" class="imgSubmit" />
+                <input id="appdnld" type="submit" class="dbuttons" value="Generate Application Backup" />
+            </div>
+            <a href='#' id="AppbckupDownload" class="anBtn" style="visibility:hidden" onclick="myfunction('App_download')">Click To Download Application Backup</a>
+            <div style="visibility:hidden" id="App_progress" class="progress">
+                <div class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar"
+                     aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                    In Process ,Please Wait.....
+                </div>
+            </div>
+        </div>
+        <div class="rightBox">
+            <div class="dBtn">
+                <img src="~/Areas/Admin/Content/images/databaseDownload.svg" class="imgSubmit" />
+                <input id="DBfile" type="submit" class="dbuttons" value="Generate Database Backup" />
+            </div>
+            <a href='#' id="DBbckupDownload" class="anBtn" style="visibility:hidden" onclick="myfunction('DB_Download')">Click To Download Database Backup</a>
+            <div style="visibility:hidden" id="DB_progress" class="progress">
+                <div class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar"
+                     aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                    In Process ,Please Wait.....
+                </div>
+            </div>
+        </div>
+        <div id="confirm" title="Confirm?">
+            Do You Want To Download Attachment?
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            downldstaus();
+            if ($('#App_progress').css('visibility') === 'visible') { setInterval("downldstaus()", 10000); } 
+         
+        });
+    $('#DBfile').on("click", function (e) {
+        $('#DBbckupDownload').css('visibility', 'hidden');
+            $("#DBfile").addClass('dbuttonD').removeClass('dbuttons');
+           $("#DBfile").attr('disabled', 'off');
+            $('#DB_progress').css('visibility', 'visible');
+            ajaxreq("DBDownload");
+        });
+    $('#appdnld').on("click", function (e) {
+        $('#AppbckupDownload').css('visibility', 'hidden');
+            e.preventDefault();
+                $("#confirm").dialog("open");
+            });
+            $("#confirm").dialog({
+                autoOpen: false,
+                resizable: false,
+                modal: true,
+                buttons: {
+                    "Yes": function () {
+                        $("#appdnld").addClass('dbuttonD').removeClass('dbuttons');
+                      $("#appdnld").attr('disabled', 'off');
+                        $('#App_progress').css('visibility', 'visible');
+                        var filetypeval = "AppDownloadwithatt";
+                        ajaxreq(filetypeval);
+                        $(this).dialog("close");
+
+                    },
+                    "No": function () {
+                        $("#appdnld").addClass('dbuttonD').removeClass('dbuttons');
+                        $("#appdnld").attr('disabled', 'off');
+                        $('#App_progress').css('visibility', 'visible');
+                        var filetypeval = "AppDownloadwithoutatt";
+                        ajaxreq(filetypeval);
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        function ajaxreq(filetypeval)
+        {
+            $.ajax({
+                type: "POST",
+                url: "Downloadbckfile/DownloadFiles",
+                data: '{FileType: "' + filetypeval + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function ()
+                {
+                    downldstaus()
+                }
+
+            });
+
+        }
+        function downldstaus() {
+            $.ajax({
+                type: "POST",
+                url: "Downloadbckfile/DwnldStatus",
+                data: '{}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    //alert("failure");
+                },
+                error: function (response) {
+                   // alert("error");
+                }
+            });
+            function OnSuccess(response) {
+  
+                var ShareInfoLength = response.lst.length;
+                for (var i = 0; i < ShareInfoLength; i++) {
+                    var filetype = (response.lst[i].file_type);
+                    var status = (response.lst[i].status);
+                    if ((filetype == "App File without attachment" || filetype == "App File with attachment") && status == "Started") {
+                        $("#appdnld").addClass('dbuttonD').removeClass('dbuttons');
+                        ("#appdnld").attr('disabled', 'off');
+                        $('#App_progress').css('visibility', 'visible');
+                        $('#AppbckupDownload').css('visibility', 'hidden');
+                       
+                    }
+                    else if (filetype == "DB File" && status == "Started") {
+                        $('#DBbckupDownload').css('visibility', 'hidden');
+                        $("#DBfile").attr("disabled", "off");
+                        $("#DBfile").addClass('dbuttonD').removeClass('dbuttons');
+                        $('#DB_progress').css('visibility', 'visible');
+
+                    }
+                    else if ((filetype == "App File without attachment" || filetype == "App File with attachment") && status == "Completed") {
+                        $("#appdnld").addClass('dbuttons').removeClass('dbuttonD');
+                        $("#appdnld").attr("disabled", false);
+                        $('#App_progress').css('visibility', 'hidden');
+                        $('#AppbckupDownload').css('visibility', 'visible');
+                    }
+
+                    else if (filetype == "DB File" && status == "Completed")
+                    {
+                        $("#DBfile").addClass('dbuttons').removeClass('dbuttonD');
+                        $("#DBfile").attr("disabled", false);
+                        $('#DB_progress').css('visibility', 'hidden');
+                        $('#DBbckupDownload').css('visibility', 'visible');
+                    }
+                    else if ((filetype == "App File without attachment" || filetype == "App File with attachment") && status == "Error")
+                    {
+                        $("#appdnld").addClass('dbuttons').removeClass('dbuttonD');
+                        $("#appdnld").attr("disabled", false);
+                        $('#App_progress').css('visibility', 'hidden');
+                        $('#AppbckupDownload').css('visibility', 'hidden');
+
+                    }
+                    else if (filetype == "DB File" && status == "Error")
+                    {
+                        $("#DBfile").addClass('dbuttons').removeClass('dbuttonD');
+                        $("#DBfile").attr("disabled", false);
+                        $('#DB_progress').css('visibility', 'hidden');
+                        $('#DBbckupDownload').css('visibility', 'hidden');
+
+                    }
+                }
+            }
+        }
+        function myfunction(filetype) {
+            location.href = '@Url.Action("DownloadDBFiles", "Downloadbckfile")?filetype=' + filetype
+        }
+</script>
+
+
+

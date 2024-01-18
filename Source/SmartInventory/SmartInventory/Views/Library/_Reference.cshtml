@@ -1,0 +1,49 @@
+﻿@model Models.IReference
+
+<!DOCTYPE html>
+<fieldset class="the-fieldset">
+    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_537 </legend>
+    <div class="form-group row">
+        <label class="control-label col-sm-4" for="txtOriginFrom">@Resources.Resources.SI_OSP_GBL_NET_FRM_538</label>
+        <div class="col-md-8 col-sm-8">
+            @Html.TextBoxFor(m => m.origin_from, new { id = "txtOriginFrom", @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-4 col-sm-4" for="txtOriginRefId">@Resources.Resources.SI_OSP_GBL_NET_FRM_539</label>
+        <div class="col-md-8 col-sm-8 ">
+            @Html.TextBoxFor(m => m.origin_ref_id, new { id = "txtOriginRefId", @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-4 col-sm-4" for="txtOriginRefCode">@Resources.Resources.SI_OSP_GBL_NET_FRM_540</label>
+        <div class="col-md-8 col-sm-8">
+            @Html.TextBoxFor(m => m.origin_ref_code, new { id = "txtOriginRefCode", @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-md-4 col-sm-4" for="txtOriginRefDesc">@Resources.Resources.SI_OSP_GBL_NET_FRM_541</label>
+        <div class="col-md-8 col-sm-8">
+            @Html.TextBoxFor(m => m.origin_ref_description, new { id = "txtOriginRefDesc", @class = "form-control", @readonly = true })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-sm-4" for="txtReqRefId">@Resources.Resources.SI_OSP_GBL_NET_FRM_542</label>
+        <div class="col-md-8 col-sm-8">
+            @Html.TextBoxFor(m => m.request_ref_id, new { id = "txtReqRefId", @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-sm-4" for="txtrequstedById">@Resources.Resources.SI_OSP_GBL_NET_FRM_384</label>
+        <div class="col-md-8 col-sm-8">
+            @Html.TextBoxFor(m => m.requested_by, new { id = "txtrequstedById", @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="control-label col-sm-4" for="txtReqApprvById">@Resources.Resources.SI_OSP_GBL_NET_FRM_543</label>
+        <div class="col-md-8 col-sm-8">
+            @Html.TextBoxFor(m => m.request_approved_by, new { id = "txtReqApprvById", @class = "form-control" })
+        </div>
+    </div>
+</fieldset>
+

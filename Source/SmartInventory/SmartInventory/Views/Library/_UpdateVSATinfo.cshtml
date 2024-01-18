@@ -1,0 +1,296 @@
+﻿@model Models.BuildingMaster
+@using Models;
+@using SmartInventory.Settings;
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.pageMsg); }
+}
+@{
+    var objUser = (User)Session["userDetail"];
+}
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Building.ToString().ToUpper()).FirstOrDefault() : null;
+
+}
+<div class="libDetail">
+    <div class="tab-content">
+        <div class="tab-pane active" id="GISInfo">
+            <fieldset class="the-fieldset attach">
+                <legend class="the-legend">Station Information</legend>
+                <div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtNetworkId">Station ID :</label>
+                        <div class="col-sm-45">
+                            <div id="txtNetworkId">
+                                @Html.TextBoxFor(m => m.objVSATDetails.network_id, new { @class = "form-control clsReadOnly", @readonly = true,@id= "txtNetworkId" })
+                            </div>
+                        </div>
+                        <label class="control-label col-sm-2" for="txtsitename"> Site Name<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.site_name, new { @class = "form-control",@id= "txtsitename" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtRegionName">Station Region :</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.region_name, new { @class = "form-control clsReadOnly", @readonly = true })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtProvinceName">Station Province:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.province_name, new { @class = "form-control clsReadOnly", @readonly = true })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtLatitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_011:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.latitude, new { @class = "form-control clsReadOnly", @readonly = true })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_012:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.longitude, new { @class = "form-control clsReadOnly", @readonly = true })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtAddress">@Resources.Resources.SI_OSP_GBL_GBL_GBL_008:</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.objVSATDetails.address, new { @class = "form-control", @style = "width:96.6%;", @maxlength = "200",@id= "txtAddress" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="ddlCategory">@Resources.Resources.SI_OSP_BUL_NET_FRM_017<span class="clsMandatory">*</span>:</label>
+                        <div class="col-sm-45">
+                            @Html.DropDownListFor(m => m.objVSATDetails.category, new SelectList(Model.objVSATDetails.VSATCategory.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Category", new { @class = "chosen-select form-control", @style = "padding:0;", @onchange = "si.ddlMappedAntennaType(this.value);",@id= "ddlCategory" })
+                        </div>
+                        <label class="control-label col-sm-2" for="ddBuildingCategory">
+                            Antenna Type
+                            <span class="clsMandatory">*</span>:
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.DropDownListFor(m => m.objVSATDetails.antenna_type, new SelectList(Model.objVSATDetails.VSATAntennaType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Antenna Type", new { @class = "chosen-select form-control", @style = "padding:0;", @id = "ddl_antenna_type" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label col-sm-2" for="ddBuildingSubCategory">
+                            Service Type<i class="clsMandatory">*</i>:
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.DropDownListFor(m => m.objVSATDetails.service_type, new SelectList(Model.objVSATDetails.VSATServiceType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Service Type", new { @class = "chosen-select form-control", @style = "padding:0;", @id = "ddl_Service_type" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtNoOfTowers">
+                            Service ID
+                            <span class="clsMandatory">*</span>:
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.service_id, new { @class = "form-control", @maxlength = "10" })
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="the-fieldset attach">
+                <legend class="the-legend">Transmission Detail</legend>
+                <div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtBusinessPass">
+                            Transmission System
+                            <span class="clsMandatory">*</span>:
+                        </label>
+                        <div class="col-sm-45">
+
+                            @Html.DropDownListFor(m => m.objVSATDetails.transmission_type, new SelectList(Model.objVSATDetails.VSATTransmissionType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Transmission Type", new { @class = "chosen-select form-control", @style = "padding:0;", @id = "ddl_transmission_type", @onchange = "si.ddlTransmissionType(this.value);" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtHomePass">
+                            Forward Link
+                        </label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.objVSATDetails.forward_link, new SelectList(Model.objVSATDetails.VSATForwardLink.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Forward Link", new { @class = "chosen-select form-control", @style = "padding:0;", @id = "ddl_Forward_Link" })
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtPODName">
+                            Return Link
+                            :
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.DropDownListFor(m => m.objVSATDetails.return_link, new SelectList(Model.objVSATDetails.VSATReturnLink.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Return Link", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddl_Return_Link" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtPODCode">
+                            UpLink Carrier
+                            :
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.uplink_carrier, new { @class = "form-control numbers-only", @maxlength = "50", @onkeypress = "return si.allowOnlyNumber(event);" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label col-sm-2" for="ddlRFSStatus">
+                            DownLink Carrier
+                            :
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.downlink_carrier, new { @class = "form-control numbers-only", @maxlength = "50", @onkeypress = "return si.allowOnlyNumber(event);" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtRFSDate">
+                            UpLink DataRate
+                            :
+                        </label>
+                        <div class="col-sm-45" style="height:24px;">
+                            @Html.TextBoxFor(m => m.objVSATDetails.uplink_datarate, new { @class = "form-control numbers-only", @maxlength = "50", @onkeypress = "return si.allowOnlyNumber(event);" })
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtRFSDate">
+                            DownLink DataRate
+                            :
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.downlink_datarate, new { @class = "form-control numbers-only", @maxlength = "50", @onkeypress = "return si.allowOnlyNumber(event);" })
+                        </div>
+
+                        <label class="control-label col-sm-2" for="txtBuildingAddress">
+                            Carrier Bandwidth
+                            :
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.carrier_bandwidth, new { @class = "form-control numbers-only", @maxlength = "50", @onkeypress = "return si.allowOnlyNumber(event);" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="ddlMedia">
+                            Modulation Technique
+                            :
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.modulation_technique, new { @class = "form-control", @maxlength = "50" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtBuildingHeight">
+                            Document Type
+                            :
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.document_type, new { @class = "form-control", @maxlength = "50" })
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="the-fieldset attach">
+                <legend class="the-legend">@Html.CheckBoxFor(m => m.objVSATDetails.is_agreement_signed_one,new { @id = "chk_is_signed_one"  }) Is Agreement 1 Signed</legend>
+                <div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="ddlMedia">
+                            Agreemented By Name
+                            <i class="clsMandatory Mandatory_one" hidden="hidden">*</i>:
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.agreemented_by_name_one, new { @class = "form-control clsReadOnly", @readonly = true, @maxlength = "50",@id= "txtagreemented_name_one" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtBuildingHeight">
+                            Agreemented By Position
+                            <i class="clsMandatory Mandatory_one" hidden="hidden">*</i>:
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.agreemented_by_position_one, new { @class = "form-control clsReadOnly", @readonly = true, @maxlength = "50",@id= "txtagreemented_position_one" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="ddlMedia">
+                            Company Name
+                            <i class="clsMandatory Mandatory_one" hidden="hidden">*</i> :
+                        </label>
+                        <div class="col-sm-10">
+                            @*@Html.TextBoxFor(m => m.objVSATDetails.company_name_one, new { @class = "form-control clsReadOnly", @readonly = true, @maxlength = "50",@id= "txtcompany_name_one" })*@
+                            @Html.TextBoxFor(m => m.objVSATDetails.company_name_one, new { @class = "form-control clsReadOnly", @readonly = true, @maxlength = "50", @id = "txtcompany_name_two" })
+                        </div>
+
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="the-fieldset attach">
+                <legend class="the-legend"> @Html.CheckBoxFor(m => m.objVSATDetails.is_agreement_signed_two, new { @id = "chk_is_signed_two" }) Is Agreement 2 Signed</legend>
+                <div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="ddlMedia">
+                            Agreemented By Name
+                            <i class="clsMandatory Mandatory_two" hidden="hidden">*</i>:
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.agreemented_by_name_two, new { @class = "form-control clsReadOnly", @readonly = true, @maxlength = "50",@id= "txtagreemented_name_two" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtBuildingHeight">
+                            Agreemented By Position
+                            <i class="clsMandatory Mandatory_two" hidden="hidden" >*</i>:
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATDetails.agreemented_by_position_two, new { @class = "form-control clsReadOnly", @readonly = true, @maxlength = "50" ,@id= "txtagreemented_position_two" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtBuildingAddress">
+                            CompanyName
+                            <i class="clsMandatory Mandatory_two" hidden="hidden">*</i>:
+                        </label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.objVSATDetails.company_name_two, new { @class = "form-control clsReadOnly", @readonly = true, @maxlength = "50",@id= "txtcompany_name_two" })
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <script type="text/javascript">
+    var inputs = [];
+        $(document).ready(function () {
+            callFormValidator("frmBuildingEntity");
+           
+        });
+        $("#btnSaveBuilding, #btnUpdatebuilding").click(function () {
+            if (!(si.isFormValid())) { return false; }
+        });
+        $("#chk_is_signed_one").click(function () {
+            debugger
+            if ($("#chk_is_signed_one").is(":checked")) {
+                $("#txtagreemented_name_one").prop('readonly', false);
+                $("#txtagreemented_position_one").prop('readonly', false);
+                $("#txtcompany_name_one").prop('readonly', false)
+                $(".Mandatory_one").show();
+                
+            }
+            else {
+                $("#txtagreemented_name_one").prop('readonly', true);
+                $("#txtagreemented_position_one").prop('readonly', true);
+                $("#txtcompany_name_one").prop('readonly', true)
+                $(".Mandatory_one").hide();
+            }
+
+        });
+        $("#chk_is_signed_two").click(function () {
+            debugger
+            if ($("#chk_is_signed_two").is(":checked")) {
+                $("#txtagreemented_name_two").prop('readonly', false);
+                $("#txtagreemented_position_two").prop('readonly', false);
+                $("#txtcompany_name_two").prop('readonly', false)
+                $(".Mandatory_two").show();
+            }
+            else {
+                $("#txtagreemented_name_two").prop('readonly', true);
+                $("#txtagreemented_position_two").prop('readonly', true);
+                $("#txtcompany_name_two").prop('readonly', true)
+                $(".Mandatory_two").hide();
+            }
+
+        });
+        </script>
+</div>
+
+

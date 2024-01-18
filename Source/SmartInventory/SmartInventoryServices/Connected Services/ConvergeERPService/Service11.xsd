@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://192.168.28.20/CICT_INV/Service1.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/CICT_INV_Maintenance" />
+  <xs:element name="CreateInvIssue">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="1" name="TranNo" nillable="true" type="xs:string" />
+        <xs:element minOccurs="1" name="Bundle" nillable="true" type="xs:string" />
+        <xs:element minOccurs="1" name="Technology" nillable="true" type="xs:string" />
+        <xs:element minOccurs="1" name="Location" nillable="true" type="xs:string" />
+        <xs:element minOccurs="1" name="WHCode" nillable="true" type="xs:string" />
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/CICT_INV_Maintenance" minOccurs="1" name="Dtl" nillable="true" type="q1:ArrayOfInvIssueDtl" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateInvIssueResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="CreateInvIssueResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateInvReturn">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="1" name="TranNo" nillable="true" type="xs:string" />
+        <xs:element minOccurs="1" name="WHCode" nillable="true" type="xs:string" />
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/CICT_INV_Maintenance" minOccurs="1" name="Dtl" nillable="true" type="q2:ArrayOfInvReturn" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateInvReturnResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="CreateInvReturnResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Schema name="entities" id="entities">
+	<SimpleField name="Layer" type="string"></SimpleField>
+	<SimpleField name="SubClasses" type="string"></SimpleField>
+	<SimpleField name="ExtendedEntity" type="string"></SimpleField>
+	<SimpleField name="Linetype" type="string"></SimpleField>
+	<SimpleField name="EntityHandle" type="string"></SimpleField>
+	<SimpleField name="Text" type="string"></SimpleField>
+</Schema>
+<Folder><name>entities</name>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#entities">
+		<SimpleData name="Layer">0</SimpleData>
+		<SimpleData name="SubClasses">AcDbEntity:AcDbPoint</SimpleData>
+		<SimpleData name="EntityHandle">20000</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>88.387091,22.526288,0</coordinates></Point>
+  </Placemark>
+</Folder>
+</Document></kml>

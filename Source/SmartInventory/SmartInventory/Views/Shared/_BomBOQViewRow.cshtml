@@ -1,0 +1,98 @@
+﻿@model dynamic
+@{
+    var grpitem = (Models.BomBoqInfo)ViewData["itemList"];
+    var BomStatus = ViewData["status"].ToString();
+
+    var id = @grpitem.hierarchy_level == 1 ? @grpitem.entity_class : @grpitem.hierarchy_level == 2 ? (@grpitem.entity_class + "@@" + @grpitem.entity_sub_class) : (@grpitem.entity_class + "@@" + @grpitem.entity_sub_class + "@@" + @grpitem.item_code);
+    var item_row_identity = (@grpitem.item_code ?? "") + "_" + @grpitem.id.ToString();
+}
+
+<tr item_row_identity="@item_row_identity" group_name="@grpitem.entity_class" sub_group_name="@grpitem.entity_sub_class" class="collapsible" level='@string.Concat("level-",@grpitem.hierarchy_level)' id='@id'>
+    <td class="thTd01" title="@grpitem.fsa_id">@grpitem.fsa_id </td>
+    <td class="thTd02" title="@grpitem.fsa_name">@grpitem.fsa_name</td>
+    <td class="thTd04" title="@grpitem.entity_class">
+        @if (grpitem.hierarchy_level == 1)
+        {
+            <span class="plus-minus">&#43;</span>
+            @grpitem.entity_class
+        }
+    </td>
+    <td class="thTd03" title="@grpitem.entity_sub_class">
+
+        @if (grpitem.hierarchy_level == 2)
+        {
+            <span class="plus-minus">&#43;</span>
+            @grpitem.entity_sub_class
+        }
+    </td>
+    <td class="thTd05" title="@grpitem.specification">@grpitem.specification</td>
+    <td class="thTd15"> <span class='@(grpitem.hierarchy_level == 3 ? "" : "hide_element")'> @grpitem.item_code</span></td>
+    <td class="thTd17" title="@grpitem.sub_category_1">@grpitem.sub_category_1</td>
+    <td class="thTd18" title="@grpitem.sub_category_2">@grpitem.sub_category_2</td>
+    <td class="thTd14" title="@grpitem.gis_uom">@grpitem.gis_uom</td>
+    <td class="thTd19" title="@grpitem.uom_sap">@grpitem.uom_sap</td>
+    <td class="thTd06">@grpitem.gis_qty</td>
+    <td class="thTd07" title="@grpitem.overhead_percentage">@grpitem.overhead_percentage</td>
+    @if (!BomStatus.Equals("temp", StringComparison.OrdinalIgnoreCase))
+    {
+        <td class="thTd08" title="">
+            @if (grpitem.is_design_qty_editable)
+            {
+                @Html.TextBox(@grpitem.item_code + "_" + @grpitem.id + "_" + "design_qty", @grpitem.design_qty, new { @min = 0, @max = 99999, @type = "number", @Maxlength = 5, @onpaste = "return false", @onkeypress = "return allowOnlyNumber(event, this);", @oninput = "return CalculateTotal('" + @grpitem.item_code + "_" + @grpitem.id + "', this);", @onkeyup = "return CalculateTotal('" + @grpitem.item_code + "_" + @grpitem.id + "', this);", @dataismaster = "Y", @field_name = "design_qty", @dataid = @grpitem.id, @dataitemcode = @grpitem.item_code, @class = "form-control " + ((@grpitem.is_non_design_item == true && @grpitem.hierarchy_level == 2) || @grpitem.hierarchy_level == 3 ? "" : "hide_element"), @Id = @grpitem.item_code + "_" + @grpitem.id + "_" + "design_qty", @ParentGroup = @grpitem.item_code, @IsDependentCalculation = grpitem.is_dependent_calculation })
+            }
+            else
+            {
+                @Html.TextBox(@grpitem.item_code + "_" + @grpitem.id + "_" + "design_qty", @grpitem.design_qty, new { @min = 0, @max = 99999, @type = "number", @disabled = true, @Maxlength = 5, @onkeypress = "return allowOnlyNumber(event, this);", @oninput = "return CalculateTotal('" + @grpitem.item_code + "_" + @grpitem.id + "', this);", @onkeyup = "return CalculateTotal('" + @grpitem.item_code + "_" + @grpitem.id + "', this);", @dataismaster = "Y", @field_name = "design_qty", @dataid = @grpitem.id, @dataitemcode = @grpitem.item_code, @class = "form-control " + ((@grpitem.is_non_design_item == true && @grpitem.hierarchy_level == 2) || @grpitem.hierarchy_level == 3 ? "" : "hide_element"), @Id = @grpitem.item_code + "_" + @grpitem.id + "_" + "design_qty", @ParentGroup = @grpitem.item_code, @IsDependentCalculation = grpitem.is_dependent_calculation })
+            }
+            <span id='@(grpitem.item_code + "_" + grpitem.id + "_" + "design_qty_span")' class='@((@grpitem.is_non_design_item == true && @grpitem.hierarchy_level == 2) || @grpitem.hierarchy_level == 3 ? "hide_element" : "")'>@grpitem.design_qty</span>
+        </td>
+        <td class="thTd09" title="">
+            <div class="d-flex">
+                @Html.TextBox(@grpitem.item_code + "_" + @grpitem.id + "_" + "additional_qty", @grpitem.additional_qty, new { @min = 0, @max = 99999, @type = "number", @Maxlength = 5, @onpaste = "return false", onkeypress = "return allowOnlyNumber(event, this);", @oninput = "return CalculateTotal('" + @grpitem.item_code + "_" + @grpitem.id + "',this);", @onkeyup = "return CalculateTotal('" + @grpitem.item_code + "_" + @grpitem.id + "',this);", @dataismaster = "Y", @field_name = "additional_qty", @dataid = @grpitem.id, @dataitemcode = @grpitem.item_code, @class = "form-control " + (@grpitem.hierarchy_level == 3 ? "" : "hide_element"), @Id = @grpitem.item_code + "_" + @grpitem.id + "_" + "additional_qty", @ParentGroup = @grpitem.item_code })
+                <span id='@(grpitem.item_code + "_" + grpitem.id + "_" + "additional_qty_span")' class='@(grpitem.hierarchy_level == 3 ? "hide_element" : "")'>@grpitem.additional_qty</span>
+                @if (!BomStatus.Equals("temp", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (grpitem.hierarchy_level == 2)
+                    {
+
+                        <input type="button" IsDependentCalculation="@grpitem.is_dependent_calculation.ToString()" style="font-size: 12px;" value="Save" class="btn btn-success ml-auto" onclick="saveBomBOQItem(this)" />
+                        @*<span class="icon-Save" title="Save"  IsDependentCalculation="@grpitem.is_dependent_calculation.ToString()" onclick="saveBomBOQItem(this)"></span>*@
+
+
+                    }
+                }
+            </div>
+        </td>
+        <td class="thTd10">
+            @Html.TextBox(@grpitem.additional_non_design_material_qty + "_" + @grpitem.id + "_" + "additional_non_design_material_qty", @grpitem.additional_non_design_material_qty, new { @min = 0, @type = "number", @onpaste = "return false", @Maxlength = 5, @onkeypress = "return allowOnlyNumber(event);", @onkeyup = "return CalculateTotal('" + @grpitem.item_code + "_" + @grpitem.id + "',this);", @dataismaster = "Y", @field_name = "additional_non_design_material_qty", @dataid = @grpitem.id, @dataitemcode = @grpitem.item_code, @class = "form-control " + (@grpitem.is_non_design_item == true && grpitem.is_master == false ? "" : "hide_element"), @Id = @grpitem.item_code + "_" + @grpitem.id + "_" + "additional_non_design_material_qty", @ParentGroup = @grpitem.item_code })
+            <span id='@(grpitem.item_code + "_" + grpitem.id + "_" + "additional_non_design_material_qty_span")' class='@(grpitem.is_non_design_item == true && grpitem.is_master == false ? "hide_element" : "")'>@grpitem.additional_non_design_material_qty</span>
+        </td>
+        <td class="thTd11">
+            <span id='@(grpitem.item_code + "_" + grpitem.id + "_" + "final_qty")' field_name="final_qty">@grpitem.final_qty.ToString("0.00")</span>
+        </td>
+    }
+    else
+    {
+        <td class="thTd08">@grpitem.design_qty</td>
+
+    }
+    <td class="thTd12">
+        @if (grpitem.hierarchy_level == 3)
+        {
+            <span id='@(grpitem.item_code + "_" + grpitem.id + "_" + "cost_per_unit")' field_name="cost_per_unit">@grpitem.cost_per_unit.ToString("0.00")</span>
+        }
+    </td>
+    <td class="thTd16">
+        <span class='@(grpitem.hierarchy_level == 3 ? "" : "hide_element")'> @grpitem.pts_code</span>
+    </td>
+    <td class="thTd20">@grpitem.revision</td>
+    @if (!BomStatus.Equals("temp", StringComparison.OrdinalIgnoreCase))
+    {
+        <td class="thTd00" title="" align="center">
+            @if (grpitem.hierarchy_level == 2)
+            {
+                <input type="button" IsDependentCalculation="@grpitem.is_dependent_calculation.ToString()" value="Save" class="btn btn-success" onclick="saveBomBOQItem(this)" />
+            }
+        </td>
+    }
+</tr>

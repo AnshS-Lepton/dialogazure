@@ -1,0 +1,143 @@
+﻿@model Models.Admin.ConstructionOhLogicMaster
+
+@using Utility
+
+
+<!DOCTYPE html>
+<div id="dvViewUsers">
+    <div class="update_panel fullWidth">
+        <div class="popupOver pad-EB">
+
+            <fieldset class="expField">
+                <legend class="expLegend">Variables</legend>
+                <div class="expChips d-flex">
+                    <input type="hidden" id="column_name" value="@ViewBag.column_name">
+                    <input type="hidden" id="fsa_id" value="@ViewBag.fsa_id">
+                    <input type="hidden" id="oh_expression_json" value="@ViewBag.oh_expression_json">
+                    @for (int i = 0; i < Model.constructionohlogicmasterlist.Count; i++)
+                    {
+                        <div class="chips" onclick="pushToExpressionStack('@Model.constructionohlogicmasterlist[i].column_name', 'variable', '@Model.constructionohlogicmasterlist[i].label')" value="@Model.constructionohlogicmasterlist[i].column_name">@Model.constructionohlogicmasterlist[i].label</div>
+                    }
+                </div>
+            </fieldset>
+            <div class="d-fx --gap15 mb-01">
+                <fieldset class="expField chipsField mb-0">
+                    <legend class="expLegend">Operators</legend>
+                    <div class="d-flex mb-01">
+                        <div class="expChips d-flex">
+                            <div class="operators" onclick="pushToExpressionStack('+','operator','+')">+</div>
+                            <div class="operators" onclick="pushToExpressionStack('-','operator','-')">-</div>
+                            <div class="operators" onclick="pushToExpressionStack('*','operator','*')">*</div>
+                            <div class="operators" onclick="pushToExpressionStack('/','operator','/')">/</div>
+                            <div class="operators" onclick="pushToExpressionStack('%','operator','%')">%</div>
+                            <div class="operators" onclick="pushToExpressionStack('(','operator','(')">(</div>
+                            <div class="operators" onclick="pushToExpressionStack(')','operator',')')">)</div>
+                        </div>
+                    </div>
+
+                </fieldset>
+                <fieldset class="expField chipsField">
+                    <legend class="expLegend">Numeric Value</legend>
+                    <div class="d-flex">
+                        <input id="txtNumericInput" type="number" placeholder="Enter Numeric Value" min="0" max="100" onkeydown="exp_length_limit(this);" onkeyup="exp_length_limit(this);" class="form-control" />
+
+                        <button id="btnNumericInput" text="validate" class="btn btn-primary ml-01">Submit</button>
+                    </div>
+                </fieldset>
+            </div>
+            <fieldset class="expField fieldPad">
+                <legend class="expLegend">Expression</legend>
+                <div id="dvExpression" class="expChips d-flex chipsSpace"></div>
+
+                <div class="d-flex jc-flex-end mt-01 --gap-05">
+                    <button text="cancel" class="btn btn-primary" onclick="handleBackspace()"><span class="icon-Left_Arrow"></span></button>
+                    <button text="cancel" class="btn btn-danger" onclick="closebom()">Cancel</button>
+                    <button text="clear" class="btn btn-warning" onclick="clearbom()">Clear</button>
+                    <button text="validate" class="btn btn-primary" onclick="validateExpression()">Validate</button>
+                    <button text="ok" class="btn btn-primary" id="btnSavebom" disabled>OK</button>
+                </div>
+
+            </fieldset>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(() => {
+
+        $('#btnNumericInput').click(() => {
+            let numValue = $('#txtNumericInput').val();
+            if (numValue && numValue.length && parseFloat(numValue) >= 0 && parseFloat(numValue) <= 100) {
+                pushToExpressionStack(numValue, 'numeric', numValue);
+                $('#txtNumericInput').val('');
+            }
+            else {
+                alert('Enter a valid numeric value between 0 and 100.');
+            }
+        });
+
+        $("#btnSavebom").click(function () {
+
+            if (!isValidExp()) {
+                $("#btnSavebom").prop("disabled", true);
+                alert('Invalid Expression!');
+                return false;
+            }
+
+            var fsa_id = $("#fsa_id").val();
+            var column_name = $("#column_name").val();
+
+            let dto = {
+                DisplayFormula: display_expression,
+                FSAId: fsa_id,
+                OhLogic: expression,
+                ColumnName: column_name,
+                OhExpressionJson: JSON.stringify(expression_stack)
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("savebomlogic", "AdvancedSettings")',
+                data: JSON.stringify(dto),
+
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (response.Message) {
+                        alert("Saved successfully!");
+                    } else {
+                        alert("Something went wrong!", 'Error', 'error');
+                    }
+
+                    $("#id_" + response.id).val(response.formula);
+                    $("#closeModalPopup").trigger('click');
+                },
+                error: function () {
+
+                    alert("Error while inserting data", 'Error', 'error');
+                }
+            });
+            return false;
+
+
+        });
+
+        let hdn_json = $('#oh_expression_json').val();
+        if (hdn_json) {
+            let oh_expression_json = JSON.parse(hdn_json);
+            if (oh_expression_json && oh_expression_json.length) {
+                expression_stack = oh_expression_json;
+                generateExpression();
+            }
+            else {
+                resetExpressionData();
+            }
+        }
+        else {
+            resetExpressionData();
+        }
+
+    });
+</script>

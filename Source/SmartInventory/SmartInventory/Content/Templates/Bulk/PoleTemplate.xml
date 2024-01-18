@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+	<Mapping id="1">
+		<DbColName>network_id</DbColName>
+		<TemplateColName>Network_ID</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="2">
+		<DbColName>pole_name</DbColName>
+		<TemplateColName>Pole_Name</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="3">
+		<DbColName>latitude</DbColName>
+		<TemplateColName>Latitude</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>float8</UdtName>
+		<CharacterMaxLength>0</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="4">
+		<DbColName>longitude</DbColName>
+		<TemplateColName>Longitude</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>float8</UdtName>
+		<CharacterMaxLength>0</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="5">
+		<DbColName>address</DbColName>
+		<TemplateColName>Address</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>200</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="6">
+		<DbColName>pole_no</DbColName>
+		<TemplateColName>Pole_No</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>50</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="7">
+		<DbColName>pole_height</DbColName>
+		<TemplateColName>Pole_Height</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>20</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="6">
+		<DbColName>specification</DbColName>
+		<TemplateColName>Specification</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+		<IsDropDown>true</IsDropDown>
+	</Mapping>
+	<Mapping id="7">
+		<DbColName>vendor</DbColName>
+		<TemplateColName>Vendor</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+		<IsDropDown>true</IsDropDown>
+	</Mapping>
+	<Mapping id="10">
+		<DbColName>pole_type</DbColName>
+		<TemplateColName>Pole_Type</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>50</CharacterMaxLength>
+		<IsDropDown>true</IsDropDown>
+	</Mapping>
+	<Mapping id="9">
+		<DbColName>parent_id</DbColName>
+		<TemplateColName>Parent_Network_ID</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="10">
+		<DbColName>parent_entity_type</DbColName>
+		<TemplateColName>Parent_Entity_Type</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+</Mappings>

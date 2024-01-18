@@ -1,0 +1,128 @@
+﻿@model Models.SendOPTDeliveryOption
+@using SmartInventory.Settings;
+@{
+    ViewBag.Title = "Index";
+    var isClientNameRequired = (!string.IsNullOrEmpty(ApplicationSettings.ClientName) && ApplicationSettings.isClientNameRequiredOnLoginPage) ? true : false;
+}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<link href="~/Content/css/color_stylesheet.css" rel="stylesheet" />
+<link href="~/Content/css/JioType.css" rel="stylesheet" />
+@Styles.Render("~/Logincss")
+@Scripts.Render("~/bundles/LoginScripts")
+<script type="text/javascript">
+    var appRoot = window.location.origin+'@Url.Content("~")';
+</script>
+<!DOCTYPE html>
+<div class="Header">
+    <div class="container">
+        <div class="d-flex">
+            <div class="ml-auto d-flex" style="display:none">
+                <div class="resources">
+                    @*@if ((ApplicationSettings.isMultilingual) == true)
+                    {
+                        @Html.DropDownList("ddlResource", new SelectList(ViewBag.langlist, "dropdown_value", "dropdown_key", ViewBag.cultureInfo), new { @class = "form-control col-sm-12 dropdown", @onchange = "changeLang();", @id = "ddlResource" })
+                    }*@
+                </div>
+                <a href="#" class="queryIcon">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 0C8.82441 0 6.69767 0.645139 4.88873 1.85383C3.07979 3.06253 1.66989 4.78049 0.83733 6.79048C0.00476612 8.80047 -0.213071 11.0122 0.211367 13.146C0.635804 15.2798 1.68345 17.2398 3.22183 18.7782C4.76021 20.3165 6.72022 21.3642 8.85401 21.7886C10.9878 22.2131 13.1995 21.9952 15.2095 21.1627C17.2195 20.3301 18.9375 18.9202 20.1462 17.1113C21.3549 15.3023 22 13.1756 22 11C22 9.55546 21.7155 8.12506 21.1627 6.79048C20.6099 5.4559 19.7996 4.24327 18.7782 3.22182C17.7567 2.20038 16.5441 1.39013 15.2095 0.837325C13.8749 0.284523 12.4445 0 11 0V0ZM11 17.6C10.7824 17.6 10.5698 17.5355 10.3889 17.4146C10.208 17.2937 10.067 17.1219 9.98374 16.9209C9.90048 16.7199 9.8787 16.4988 9.92114 16.2854C9.96358 16.072 10.0683 15.876 10.2222 15.7222C10.376 15.5683 10.572 15.4636 10.7854 15.4211C10.9988 15.3787 11.22 15.4005 11.421 15.4837C11.622 15.567 11.7937 15.708 11.9146 15.8889C12.0355 16.0698 12.1 16.2824 12.1 16.5C12.1 16.7917 11.9841 17.0715 11.7778 17.2778C11.5715 17.4841 11.2917 17.6 11 17.6ZM12.1 11.924V13.2C12.1 13.4917 11.9841 13.7715 11.7778 13.9778C11.5715 14.1841 11.2917 14.3 11 14.3C10.7083 14.3 10.4285 14.1841 10.2222 13.9778C10.0159 13.7715 9.9 13.4917 9.9 13.2V11C9.9 10.7083 10.0159 10.4285 10.2222 10.2222C10.4285 10.0159 10.7083 9.9 11 9.9C11.3263 9.9 11.6454 9.80323 11.9167 9.62192C12.188 9.44062 12.3995 9.18292 12.5244 8.88142C12.6493 8.57993 12.682 8.24817 12.6183 7.9281C12.5546 7.60803 12.3975 7.31403 12.1667 7.08327C11.936 6.85251 11.642 6.69537 11.3219 6.6317C11.0018 6.56804 10.6701 6.60071 10.3686 6.7256C10.0671 6.85048 9.80938 7.06197 9.62808 7.33331C9.44677 7.60465 9.35 7.92366 9.35 8.25C9.35 8.54174 9.23411 8.82152 9.02782 9.02781C8.82153 9.2341 8.54174 9.35 8.25 9.35C7.95827 9.35 7.67848 9.2341 7.47219 9.02781C7.2659 8.82152 7.15 8.54174 7.15 8.25C7.14713 7.53533 7.34323 6.83397 7.71636 6.22443C8.08948 5.61489 8.62491 5.12125 9.26268 4.79875C9.90046 4.47626 10.6154 4.33765 11.3275 4.39845C12.0396 4.45925 12.7207 4.71705 13.2946 5.14299C13.8684 5.56893 14.3124 6.1462 14.5768 6.81017C14.8412 7.47414 14.9156 8.19859 14.7916 8.90243C14.6676 9.60627 14.3502 10.2617 13.8748 10.7953C13.3994 11.329 12.7849 11.7198 12.1 11.924V11.924Z" fill="white" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="loginBody">
+        <div class="roudBox"></div>
+        <div class="loginLeft">
+            <img src="~/Content/images/SILoginPageFront.png" />
+        </div>
+        <div class="loginRight">
+            @using (Html.BeginForm("ProcessOTP", "Login", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { name = "frmOTPdeliveryOption", id = "frmOTPdeliveryOption", autocomplete = "off", @class = "formaddon" }))
+            {
+
+                @*<div class="logo" style="padding-top:@(isClientNameRequired?"55px":"112px")">
+                    @if (!string.IsNullOrEmpty(ApplicationSettings.ClientLogoImageBytesForWeb))
+                    {
+                        <img src="@ApplicationSettings.ClientLogoImageBytesForWeb" />
+                    }
+                    @if (isClientNameRequired)
+                    {
+                        <div class="applicationName">@ApplicationSettings.ClientName</div>
+                    }
+                    <div> @ApplicationSettings.ApplicationName</div>
+                </div>*@
+
+            <div class="login_area">
+                <h1 class="item-flex-start">
+                    Login to
+                    <span class="d-flex mt-05">
+                        @if (!string.IsNullOrEmpty(ApplicationSettings.ClientLogoImageBytesForWeb))
+                        {
+                            <img src="@ApplicationSettings.ClientLogoImageBytesForWeb" />
+                        }
+                    </span>
+                </h1>
+                <img src="~/Content/images/otp.png" class="opt-img" />
+                <div class="otp--radio">
+                    <h3>Select OTP delivery method</h3>
+                    <div class="d-flex mb-02 otpButton mt-01" style="display:none;">
+                        @Html.RadioButton("otptype", "email") Email Address: @Model.mask_user_email
+                    </div>
+                    <div class="d-flex otpButton mb-02">
+                        @Html.RadioButton("otptype", "mobile",true) Mobile Phone: @Model.mask_mobile_number
+
+                    </div>
+                </div>
+                <div class="error">
+                    @if (!string.IsNullOrEmpty(Model.message))
+                    {
+                        @Html.DisplayFor(m => m.message)
+                    }
+                </div>
+                <div class="fieldsBox mt-auto mb-0">
+                    <button class="btn btn-success signin" name="button" value="SendOTP" id="btnGo">Continue</button>
+                </div>
+                    <div class="fieldsBox error">
+                        @Html.ValidationMessage("Error")
+                    </div>
+                </div>
+                }
+            </div>
+    </div>
+</div>
+<div class="footer">
+    <div class="container">
+        <div class="d-flex">
+            <p>@ApplicationSettings.CopyRightText</p>
+
+            <ul class="footer--links ml-auto d-flex">
+                <li><a href="#">Regulatory</a></li>
+                <li><a href="#">Policies</a></li>
+                <li><a href="#">Terms & Conditions</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    <script src="~/Scripts/jquery-3.6.0.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+             
+            //$('#btnGo').trigger("click");
+        });
+            //function changeLang() {
+            //    jQuery.ajax({
+            //        url:  appRoot + "/Multilingual/Change",  //Your Url return State List for that Country
+            //        data: { "lang": jQuery('#ddlResource :selected').val() },
+            //        success: function (data) {
+            //            window.location.reload();
+            //        }
+            //    })
+            //}
+
+
+    </script>

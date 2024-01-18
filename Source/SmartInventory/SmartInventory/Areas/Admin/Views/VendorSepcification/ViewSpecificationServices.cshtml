@@ -1,0 +1,185 @@
+﻿@model Models.Admin.ViewSpecificationServiceDetailsList
+@using Utility
+@using SmartInventory.Settings;
+
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div id="dViewSpecificationServices" style="white-space: nowrap;">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                View Specification Services
+            </h4>
+
+        </div>
+
+        @{
+            var objUser = (Models.User)Session["userDetail"];
+            WebGrid grid = new WebGrid(rowsPerPage: Model.viewSpecificationServiceDetail.pageSize, canSort: true, ajaxUpdateContainerId: "dViewSpecificationServices", ajaxUpdateCallback: "onGridHeaderClick('tblSpecificationServiceDetail')");
+            grid.Bind(Model.DetailSpecificationServiceList, autoSortAndPage: false, rowCount: Model.viewSpecificationServiceDetail.totalRecord);
+            if (Model.viewSpecificationServiceDetail.totalRecord > 0)
+            {
+                grid.PageIndex = Model.viewSpecificationServiceDetail.currentPage - 1;
+            }
+        }
+
+        <div class="pad_left">
+
+            @using (Html.BeginForm("ViewSpecificationServices", "VendorSepcification", FormMethod.Post, new { autocomplete = "off", @id = "frmViewSpecificationService" }))
+            {
+                <section>
+                    @*<input type="hidden" id="hdnMaxFileUploadSizeLimit" value="" />*@
+                    <div class="form-inline filter-sec ">
+
+
+                        <div class="form-group wtd_set">
+
+                            <label class="control-label col-sm-4">
+                                Status :
+                            </label>
+
+                            <div class="col-md-8">
+
+
+                                @Html.DropDownListFor(m => m.viewSpecificationServiceDetail.is_active, new List<SelectListItem>
+                         {
+                            new SelectListItem{ Text="Active", Value = "true"},
+                            new SelectListItem{ Text="InActive", Value = "false"}
+                         }, new { @id = "ddlStatus", @tabindex = "2", @title = "Status", @class = "chosen-select form-control" })
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="form-group wtd_set">
+
+                            <label class="control-label col-sm-4">
+                                Search By :
+                            </label>
+
+                            <div class="col-md-8">
+
+                                @Html.DropDownListFor(m => m.viewSpecificationServiceDetail.searchBy, new SelectList(Model.lstBindSearchByServices.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select form-control" })
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group wtd_set">
+
+
+                            <label class="control-label col-sm-4">
+                                Search Text:
+                            </label>
+
+                            <div class="col-md-8">
+
+                                @Html.TextBoxFor(m => m.viewSpecificationServiceDetail.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+
+
+                            </div>
+
+                        </div>
+                        <div class="d-flex --gap-05 ml-05" id="dvBtnAction">
+                            <button class="btn btn-primary right" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                            @*@if (@grid.TotalRowCount > 0)
+                            {
+                                <input type="button" id="btnExport" value="Export" class="btn btn-primary" />
+                            }
+                            else
+                            {
+                                <input type="button" id="btnExport" value="Export" disabled="disabled" class="btn btn-primary" />
+                            }*@
+                            <a href="@Url.Action("ViewSpecificationServices")" class="btn btn-default" title="Reset">Reset</a>
+                            <a href="@Url.Action("AddSpecificationService", "VendorSepcification",new { id=0})" class="btn btn-default" title="Add">Add</a>
+                        </div>
+                    </div>
+
+                    @if (Model.DetailSpecificationServiceList.Count > 0)
+                    {
+
+                        <div id="divSpecificationServiceDetail">
+                            <div class="recordCount mb-01"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+
+                            <div class="table-responsive tble_cls">
+                                @grid.GetHtml(tableStyle: "grid",
+                htmlAttributes: new { id = "tblSpecificationServiceDetail" },
+                mode: WebGridPagerModes.All,
+                columns: grid.Columns(
+
+            grid.Column("", "Action", format:
+                                                                                        @<text>
+                                                                                            @*@{
+
+                                                                        <a href="javascript:OpenUploadImageDocumentModel(@item.id);" title="Upload Image/Document"> <i class="fa fa-upload action_icon fa-fw m-r-xs"></i></a>
+
+                                                                    }
+
+                                                                    <a href="javascript:OpenVendorSpecificationModel(@item.id,'@item.entity_type');" title="History"><i class="fa fa-history action_icon fa-fw m-r-xs" id="dvVendorSpecfhstry_addicon"></i></a>*@
+                                                                                            <a href="@Url.Action("AddSpecificationService", "VendorSepcification", new { id = @item.id })" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                                                                            <a href="javascript:void(0);" onclick="DeleteSpecificationService(@item.id);" title="Close"> <i class="fa fa-fw fa-trash" style="font-size: 13px; color: #f50000;"></i></a>
+
+                                                                                        </text>),
+grid.Column("entity_type", "Entity Type", format: @<text>@item.entity_type</text>),
+grid.Column("specification", "Specification", format: @<text>@item.specification</text>),
+grid.Column("code", "Item Code", format: @<text>@item.code</text>),
+grid.Column("service_name", "Service Name", format: @<text>@item.service_name</text>),
+grid.Column("service_cost", string.Format("Service Cost Per Unit/meter({0})", ApplicationSettings.Currency), format: @<text>@item.service_cost</text>),
+grid.Column("is_active", "Status", format: @<text>@(item.is_active == true ? "Active" : "InActive")</text>)
+
+))
+                                @Html.Hidden("dir", grid.SortDirection)
+                                @Html.Hidden("col", grid.SortColumn)
+
+
+                            </div>
+
+                        </div>
+
+                    }
+                    else
+                    {
+                        <div style="text-align: center; margin-top: 30px;">
+                            No Records Found.
+                        </div>
+                    }
+
+                </section>
+
+
+            }
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+            updateNumberstoFormatedNumber();
+            addDefaultSortingIcons("tblSpecificationServiceDetail");
+        });
+        $("#btnExport").on("click", function () {
+            Report();
+        });
+
+        function Report() {
+            window.location = appRoot + 'VendorSepcification/DownloadVendorSpecificationDetail';
+        }
+        $('th a, tfoot a').on("click", function () {
+            $('#frmViewSpecificationService').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        function updateNumberstoFormatedNumber() {
+            $('span[data]').each(function (index) {
+                // Get the value of the data-target attribute for each element
+                var targetValue = $(this).data('data');
+
+                // Do whatever you want with the element or its data
+                $(this).text(getFormattedNumber($(this).text().trim()));
+            });
+        }
+    </script>
+
+</div>

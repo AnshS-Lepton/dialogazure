@@ -1,0 +1,55 @@
+﻿@model Models.ISP.EntityInformationDetail
+<script src="~/Content/js/equipment-html2canvas.js"></script>
+<div id="divinfoBack" class="infoBackAction"><a href="#" class="infoBack" onclick="isp.HideEntityInformationDetail()"></a> </div>
+<div class="leftPanelHeader">@Model.entity_title @Resources.Resources.SI_ISP_GBL_GBL_GBL_007</div>
+<style>
+    .ullibraryEntity > li.active {
+        padding: 0px;
+    }
+</style>
+<!DOCTYPE html>
+<div class="infoRow">
+    @foreach (var item in Model.listLayerAction)
+    {
+        <div style="display:@(item.is_visible?"block":"none")">
+            <a href="#" id="Entity@(item.action_name)" class="d-flex icon-@(item.action_name.Contains("Export") && !item.action_name.Contains("ExportSplicing") ? "Export": item.action_name) @(item.is_enabled?"":"roledisabled")" @(item.is_enabled ? "" : "onclick=disabledItem(event);") data-system-id="@(Model!=null ?Model.system_id:0)" data-entity-type="@(Model!=null ?Model.entity_name:string.Empty)" data-entity-title="@(item.action_title)" data-geom-type="@(Model!=null ?Model.geom_type:string.Empty)" data-network-status="@(Model!=null ?Model.network_status:string.Empty)" title="@item.action_title"></a>
+        </div>
+    }
+</div>
+<ul class="ullibraryEntity" style="margin-top: 10px; padding-left:5px">
+    <li id="liDetail" class="active"><a href="#divDetail" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_007</a></li>
+    <li id="liImage" data-system-id="@(Model!=null ?Model.system_id:0)" data-entity-type="@(Model!=null ?Model.entity_name:string.Empty)"><a href="#divImage" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_NET_FRM_044</a></li>
+    <li id="liDocument" data-system-id="@(Model!=null ?Model.system_id:0)" data-entity-type="@(Model!=null ?Model.entity_name:string.Empty)"><a href="#divDocument" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_NET_FRM_045</a></li>
+    <li id="liRefLink" data-system-id="@(Model!=null ?Model.system_id:0)" data-entity-type="@(Model!=null ?Model.entity_name:string.Empty)"><a href="#divRefLink" data-toggle="tab">Ref. Link</a></li>
+</ul>
+<div class="panel-body p-0">
+    <div class="tab-content">
+        <div id="divDetail" class="tab-pane y-scroll active infoMinHeight">
+            <table>
+                @foreach (var item in Model.EntityKeyValues)
+                {
+                    <tr class="@(item.is_updated==true?"UpdatedRecord":"")">
+                        <td class="infoDetail-left-td" valign="top">@item.display_column_name</td>
+                        <td class="info-td-colon" valign="top">:</td>
+                        <td valign="top">@item.updated_value</td>
+                    </tr>
+                }
+            </table>
+            <div id="divInfoNoRecordFound" class="nr-found">
+                <span>@Resources.Resources.SI_ISP_GBL_GBL_GBL_001</span>
+            </div>
+        </div>
+        <div id="divImage" class="tab-pane y-scroll"></div>
+        <div id="divDocument" class="tab-pane y-scroll"></div>
+        <div id="divRefLink" class="tab-pane y-scroll">
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#dvEntityInformationDetail [title!=""]').tooltip({ title: '', html: true, placement: "top", container: 'body' });
+    })
+</script>
+
+
+

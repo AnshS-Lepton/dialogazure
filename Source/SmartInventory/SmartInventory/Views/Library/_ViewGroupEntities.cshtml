@@ -1,0 +1,125 @@
+﻿@model List<Models.GroupLibraryDetails>
+@using SmartInventory.Settings;
+@{
+    Layout = null;
+}
+<style>
+
+    .tblgroupdata {
+        overflow-y: scroll;
+        width: 100%;
+    }
+
+        .tblgroupdata .tdSubheading {
+            font-size: 13px;
+            line-height: 27px;
+            background: #f1f4f7;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tblgroupdata .tdheading {
+            font-size: 14px;
+            line-height: 30px;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tblgroupdata .content {
+            font-size: 12px;
+            line-height: 25px;
+        }
+
+    .entitydetail {
+        border: 1px solid #ddd;
+        width: 100%;
+    }
+
+        .entitydetail tr td {
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .entitydetail .leftBorder {
+            background-color: rgba(80, 193, 250, 0.5);
+            width: 10px;
+        }
+    .Associated {
+        background-color: #ffb399;
+    }
+
+    .child {
+        background-color: #d1ecef;
+    }
+    .other {
+        background-color: #EFF0F2;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="viewGInt-height of-auto space-pad">
+    <div class="form-group d-flex mb-15">
+        <div class="d-flex ml-auto">
+            <div class="viewG-colors viewG-colors--red mr-05"></div>
+            <b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_182</b>
+        </div>
+        <div class="d-flex ml-10">
+            <div class="viewG-colors viewG-colors--blue mr-05"></div>
+            <b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_183</b>
+        </div>
+    </div>
+    <table class="tblgroupdata">
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <td>
+                        <table class="entitydetail">
+                            <tr><td class="tdheading @(item.is_child_entity == true ?"child":"" ) @(item.is_associated_entity == true? "Associated":"" )@(item.parent_id == 0? "other":"" )"><b>@item.layer_title (@item.specification)</b></td></tr>
+                            <tr>
+                                <td class="content"><b>Item Code:</b> @item.item_code</td>
+                            </tr>
+                            <tr>
+                                <td class="content"><b>Vendor:</b> @item.vendor_name</td>
+                            </tr>
+                            @if (item.accessories_data != null && item.accessories_data.Count > 0)
+                            {
+                                <tr>
+                                    <td>
+                                        @foreach (var access in item.accessories_data)
+                                        {
+                                            <table style="width: 100%;">
+                                                <tr>
+                                                    <td class="leftBorder"></td>
+                                                    <td class="tdSubheading"><b>Accessories</b></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="leftBorder"></td>
+                                                    <td class="content"><b>@access.accessories_name (@access.specification)</b> <span style="padding-left:20px;"><b>Qty: @access.quantity</b></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="leftBorder"></td>
+                                                    <td class="content"><b>Item Code:</b> @access.item_code</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="leftBorder"></td>
+                                                    <td class="content"><b>Vendor:</b> @access.vendor_name</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="leftBorder"></td>
+                                                    <td class="content"><b>Remarks:</b>@access.remarks</td>
+                                                </tr>
+
+                                            </table>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

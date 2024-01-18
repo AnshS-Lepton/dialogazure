@@ -1,0 +1,195 @@
+﻿@model Models.ViewLongRunningQueries
+@using Utility
+
+<link href="~/Areas/Admin/Content/css/spectrum.css" rel="stylesheet" />
+<script src="~/Areas/Admin/Content/js/spectrum.js"></script>
+
+<style>
+    .assign-calen {
+        position: absolute;
+        float: right;
+        top: 3px;
+        /* margin-right: 5px; */
+        cursor: pointer;
+        /* margin-right: 0px; */
+        right: 19px;
+    }
+
+    div.calendar {
+        width: 275px;
+    }
+
+    .nav {
+        display: table-cell !important;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="dvLongRunningQueries">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                Long Running Queries
+            </h4>
+
+        </div>
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "dvLongRunningQueries", ajaxUpdateCallback: "onGridHeaderClick('tblLongRunningQueries')");
+            grid.Bind(Model.listLongRunningQueries, autoSortAndPage: false, rowCount: Model.totalRecord);
+            if (Model.totalRecord > 0)
+            {
+                grid.PageIndex = Model.currentPage - 1;
+            }
+        }
+
+        @using (Html.BeginForm("ViewLongRunningQueries", "LongRunningQueries", FormMethod.Post, new { autocomplete = "off", @id = "frmLongRunningQueries" }))
+        {
+            <div class="pad_left-bn">
+                <div class="form-inline filter-sec resourceGap">
+                    <div class="form-group" style="display:none;">
+                        @Html.DropDownListFor(m => m.customDate, new List<SelectListItem>{
+                                new SelectListItem { Text = "Select", Value = "0"},
+                                new SelectListItem { Text = "Custom", Value = "1"},
+                                new SelectListItem { Text = "Today", Value = "2"},
+                                new SelectListItem { Text = "Previous Day", Value = "3"},
+                                new SelectListItem { Text = "Last 7 Days", Value = "4"},
+                                new SelectListItem { Text = "Last 30 Day", Value = "5"},
+                                new SelectListItem { Text = "Last 3 Months", Value = "6"},
+                                new SelectListItem { Text = "Last 6 Months", Value = "7"},
+                              new SelectListItem { Text = "Last 1 Year", Value = "8"},
+                            }, new { @class = "chosen-select form-control", @onchange = "onChangeCustomDate();", @id = "customedate" })
+
+                    </div>
+
+                    <div class="form-group pose-rel" style="display:none;">
+                        @Html.TextBoxFor(m => m.fromDate, "{0:dd-MMM-yyyy}", new { @id = "txtDateFrom", @title = "Date From", @class = "input-sm form-control", @placeholder = "Date From", @readonly = true, @style = "height:26px;" })
+                        <img id="imgFromDate" class="assign-calen" style="margin-right:-10px;margin-top:5px;" src="~/Content/images/calendar.png" />
+
+                    </div>
+
+                    <div class="form-group pose-rel" style="display:none;">
+                        @Html.TextBoxFor(m => m.toDate, "{0:dd-MMM-yyyy}", new { @id = "txtDateTo", @title = "Date To", @placeholder = "Date To", @class = "input-sm form-control", @readonly = true, @style = "height:26px;" })
+                        <img id="imgToDate" class="assign-calen" style="margin-right:-10px;margin-top:5px;" src="~/Content/images/calendar.png" />
+
+                    </div>
+
+                    <div class="form-group wtd_set">
+                        @Html.DropDownListFor(m => m.searchBy, new List<SelectListItem>
+                 {
+                   new SelectListItem{ Text="Search By", Value = "" },
+                   new SelectListItem{ Text="PID", Value = "pid" },
+                    new SelectListItem{ Text="Running Time", Value = "runningtime" }
+                 }, new { @id = "ddlSearchBy", @onchange = "onChangeSearchBy();", @tabindex = "2", @title = "Search By", @class = "chosen-select form-control" })
+
+                    </div>
+                    <div class="form-group" id="divRunningTime" >
+                        @Html.DropDownListFor(m => m.runningTime, new List<SelectListItem>{
+                                new SelectListItem { Text = "Select", Value = "2"},
+                                new SelectListItem { Text = "3 Minutes", Value = "3"},
+                                new SelectListItem { Text = "5 Minutes", Value = "5"},
+                                new SelectListItem { Text = "10 Minutes", Value = "10"},
+                                new SelectListItem { Text = "15 Minutes", Value = "15"},
+                            }, new { @class = "chosen-select form-control", @id = "selectRunningTime",@disabled="disabled"})
+
+                    </div>
+
+                    <div class="form-group wtd_set">
+                        @Html.TextBoxFor(m => m.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "8", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100,@disabled="disabled" })
+                    </div>
+
+                    <div class="form-group wtd_set">
+                        <button type="submit" class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5">Search</button>
+                        <a href="@Url.Action("ViewLongRunningQueries")" class="btn btn-default" title="Reset">Reset</a>&nbsp;&nbsp;
+                        <a href="@Url.Action("ViewLongRunningQueries")"><i class="fa rp-iconSize fa-refresh" style="color: #888; opacity: 0.6; pointer-events: none; cursor: pointer; "></i></a>
+
+                    </div>&nbsp;&nbsp;&nbsp;
+
+
+                    <div class="form-group wtd_set pull-right">
+                        <input type="text" id="terminatepid" name="terminatepid" style="width:50%;" class="form-control" placeholder="Enter Pid" /> &nbsp;
+                        <button class="btn btn-primary" id="terminatepidbutton" name="terminatepidbutton" onclick="terminateQuery();" type="button">Terminate Query</button>
+
+                    </div>
+                </div>
+            </div>
+
+            if (Model.listLongRunningQueries.Count > 0)
+            {
+
+                <div id="divLongRunningQueries" class="pad_left-tn">
+                    
+                    <div class="recordCount mb-01"><b>Total Records:@grid.TotalRowCount</b></div>
+                    <div class="table-responsive tble_cls">
+                        @grid.GetHtml(tableStyle: "grid",
+                            htmlAttributes: new { id = "tblLongRunningQueries" },
+                            mode: WebGridPagerModes.All,
+                            columns: grid.Columns(
+                                grid.Column("", "Action", format:@<text><a href="javascript:void(0);" onclick=ReadMoreLongRunningQueries(@item.pid) style="color:blue;">Read More</a></text>, canSort: false),
+                                grid.Column("pid", "PID", format: @<text>@item.pid</text>, canSort: true),
+                                grid.Column("runningtime", "Running Time", format: @<text>@item.runningtime</text>, canSort: true),
+                                grid.Column("query", "Query", format: @<text>@item.query.PadRight(70).Substring(0, 70)</text>, canSort: true),
+                                grid.Column("state", "State", format: @<text>@item.state</text>, canSort: true)
+                                  ))
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div style="text-align: center; margin-top: 30px;">
+                    No Long Running Queries Data Found.
+                </div>
+            }
+        }
+    </div>
+</div>
+
+
+<script>
+                $(document).ready(function () {
+                    addDefaultSortingIcons("tblLongRunningQueries");
+                    setDateTimeCalendar("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+                    if ($("#customedate option:selected").text() != "Custom") {
+                        $('#imgFromDate').hide();
+                        $('#imgToDate').hide();
+                    }
+                });
+
+    function terminateQuery() {
+        var id = $('#terminatepid').val();
+        if (id == "" || id == undefined || id == null) {
+            alert("Please Enter Pid First");
+            return false
+        }
+        confirm("Are you sure you want to terminate this query with Pid :" + id +" ?", function () {
+            ajaxReq('LongRunningQueries/TerminatequeryByPid', { id: id }, false, function (resp) {
+                if (resp.status == "OK") {
+                    $("#frmLongRunningQueries").submit();
+                }
+                else
+                    alert(resp.message);
+            }, true, true);
+        });
+
+    }
+
+    function onChangeSearchBy() {
+        var SearchByValue = $('#ddlSearchBy').val();
+        if (SearchByValue == 'pid') {
+            $('#txtSearchText').removeAttr('disabled');
+            $('#selectRunningTime').attr('disabled', 'disabled');
+            $('#selectRunningTime').val('');
+        }
+        else if (SearchByValue != 'pid') {
+            $('#selectRunningTime').removeAttr('disabled');
+            $('#txtSearchText').attr('disabled', 'disabled');
+            $('#txtSearchText').val('');
+
+        }
+    }
+
+ 
+</script>
+
+

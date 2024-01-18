@@ -1,0 +1,144 @@
+﻿@model Models.NetworkTicketFilter
+@using Models;
+<style>
+    .webgrid th, .webgrid td {
+        border: 1px solid #333333;
+        padding: 3px;
+        padding-right: 17px;
+        text-align: center;
+    }
+
+    .modal-content2 {
+        position: relative;
+        background-color: #fff;
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+        border: 1px solid #999;
+        border: 1px solid rgba(0, 0, 0, .2);
+        border-radius: 6px;
+        outline: 0;
+        -webkit-box-shadow: 0 3px 9px rgb(0 0 0 / 50%);
+        box-shadow: 0 3px 9px rgb(0 0 0 / 50%);
+    }
+
+    #dvverify {
+        position: absolute;
+        z-index: 9;
+        background-color: #f1f1f1;
+        border: 1px solid #d3d3d3;
+    }
+
+    #tblNWEntityDetails p {
+        margin: 0px;
+    }
+
+    .SearchIco1 {
+        position: absolute;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.25);
+        margin: 12px 0px 0px 145px;
+    }
+</style>
+
+
+
+
+
+<div class="tab-pane fade in active show" id="verify">
+    <div class="container-fluid BdrSet" style="max-height: 370px;overflow: auto;">
+        <div class="row padRow">
+            <div class="form-group">
+                <div>
+                    <label class="control-label col-md-8 col-sm-8" style="padding-top: 15px;padding-bottom: 6px;">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                    <div class="col-md-10 col-sm-10 mrgn_btm">
+
+                        <input type="text" id="txtRemarks" class="form-control" maxlength="500" placeholder="@Resources.Resources.SI_OSP_BUL_NET_FRM_022" id="txtcomment" max="100" />
+                        <input type="hidden" id="hdnTicketId" value='@Model.objNetworkTicket.ticket_id'>
+                        <input type="hidden" id="hdnEntityTypeSystemId" value="@Model.objNetworkTicket.system_id~@Model.objNetworkTicket.entity_type">
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+
+    <div class="form-group ModalFooter" id="dvnetworkcommentFooter" style="border-top: 1px solid #bdbcbc;">
+        <div class="col-md-6 col-sm-6 ModalFooterControll">
+            <button type="button" id="btnverifyEntities" class="btn btn-primary" onclick="verifyEntities();">
+                @Resources.Resources.SI_OSP_GBL_GBL_GBL_154
+            </button>
+            <button type="button" class="btn btn-default" id="verifybtnCancle" onclick="btnCancle()">
+                @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006
+            </button>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+
+
+<script>
+
+
+
+
+    function btnCancle()
+    {
+        $('#closeModalPopup').click();
+    };
+
+    function verifyEntities() {
+        debugger;
+        var p_remarks = $("#txtRemarks").val();
+
+      if (p_remarks != "") {
+            $("#txtRemarks").css('border-color', '');
+            validateEntitiest();
+        }
+        else {
+            $("#txtRemarks").css('border-color', 'red');
+
+        }
+    };
+    function validateEntitiest() {
+        debugger;
+
+        var p_remarks = $("#txtRemarks").val();
+        var p_entity_ids_types=  $("#hdnEntityTypeSystemId").val();
+        var p_ticket_id = $("#hdnTicketId").val();
+
+
+          showConfirm($.validator.format(MultilingualKey.SI_OSP_BUL_JQ_RPT_001, type), function () {
+                ajaxReq('NetworkTicket/VerifyEntities', { ticket_id: p_ticket_id, entity_ids_types: p_entity_ids_types, remarks: p_remarks,status:_status }, true, function (resp) {
+                    debugger;
+                    if (resp.status == "OK") {
+                        alert(resp.message);
+                        $('#closeModalPopup').click();
+                        $("#txtRemarks").val("");
+                       
+                    }
+
+                    else {
+                        alert(resp.message);
+                    }
+                }, false, false);
+            });
+
+
+
+    }
+    function showHideOtherCommentBox() {
+        if ($('input[id="radioRejectComment"]:checked').val() == "Other") {
+            $('#txtcommentother').attr('readonly', false);
+        }
+        else {
+            $('#txtcommentother').attr('readonly', true);
+            $('#txtcommentother').css('border-color', '');
+        }
+    }
+
+    function removecss() {
+        $('#txtcommentother').css('border-color', '');
+    }
+</script>

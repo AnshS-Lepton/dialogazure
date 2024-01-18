@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{358C3B20-620D-4656-A6FB-8AA3C0296639}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GIS_Convertor</RootNamespace>
+    <AssemblyName>GIS_Convertor</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.11.24.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.11.24\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpKml.Core, Version=5.1.3.0, Culture=neutral, PublicKeyToken=9bb853c026a5c0ac, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpKml.Core.5.1.3\lib\net45\SharpKml.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Convertor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Release\" />
+    <Folder Include="upload\geojson\" />
+    <Folder Include="upload\kml\" />
+    <Folder Include="upload\kmz\" />
+    <Folder Include="upload\shape\" />
+    <Folder Include="upload\tab\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\GIS_Convertor.dll" />
+    <Content Include="bin\Debug\GIS_Convertor.pdb" />
+    <Content Include="bin\Debug\HtmlAgilityPack.dll" />
+    <Content Include="bin\Debug\HtmlAgilityPack.pdb" />
+    <Content Include="bin\Debug\HtmlAgilityPack.xml" />
+    <Content Include="bin\Debug\SharpKml.Core.dll" />
+    <Content Include="bin\Debug\SharpKml.Core.xml" />
+    <Content Include="ogr2ogr_convertor\iconv.dll" />
+    <Content Include="ogr2ogr_convertor\libCGAL.dll" />
+    <Content Include="ogr2ogr_convertor\libCGAL_Core.dll" />
+    <Content Include="ogr2ogr_convertor\libCGAL_ImageIO.dll" />
+    <Content Include="ogr2ogr_convertor\libcharset-1.dll" />
+    <Content Include="ogr2ogr_convertor\libcurl-4.dll" />
+    <Content Include="ogr2ogr_convertor\libcurl.dll" />
+    <Content Include="ogr2ogr_convertor\libeay32.dll" />
+    <Content Include="ogr2ogr_convertor\libexpat-1.dll" />
+    <Content Include="ogr2ogr_convertor\libfreexl-1.dll" />
+    <Content Include="ogr2ogr_convertor\libgcc_s_seh-1.dll" />
+    <Content Include="ogr2ogr_convertor\libgdal-1.dll" />
+    <Content Include="ogr2ogr_convertor\libgdal-20.dll" />
+    <Content Include="ogr2ogr_convertor\libgeos.dll" />
+    <Content Include="ogr2ogr_convertor\libgeos_c.dll" />
+    <Content Include="ogr2ogr_convertor\libiconv-2.dll" />
+    <Content Include="ogr2ogr_convertor\libintl-8.dll" />
+    <Content Include="ogr2ogr_convertor\libopenjp2.dll" />
+    <Content Include="ogr2ogr_convertor\libpcre-1.dll" />
+    <Content Include="ogr2ogr_convertor\libpq.dll" />
+    <Content Include="ogr2ogr_convertor\libproj-0.dll" />
+    <Content Include="ogr2ogr_convertor\libproj-9.dll" />
+    <Content Include="ogr2ogr_convertor\libSFCGAL.dll" />
+    <Content Include="ogr2ogr_convertor\libsqlite3-0.dll" />
+    <Content Include="ogr2ogr_convertor\libstdc++-6.dll" />
+    <Content Include="ogr2ogr_convertor\libxml2-2.dll" />
+    <Content Include="ogr2ogr_convertor\libxml2.dll" />
+    <Content Include="ogr2ogr_convertor\libxslt.dll" />
+    <Content Include="ogr2ogr_convertor\ogr2ogr.exe" />
+    <Content Include="ogr2ogr_convertor\pgsql2shp.exe" />
+    <Content Include="ogr2ogr_convertor\ssleay32.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

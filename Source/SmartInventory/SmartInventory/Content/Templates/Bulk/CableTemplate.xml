@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+  <Mapping id="1">
+    <DbColName>network_id</DbColName>
+    <TemplateColName>Network_ID</TemplateColName>
+    <IsMandatory>true</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>200</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="2">
+    <DbColName>cable_name</DbColName>
+    <TemplateColName>Cable_Name</TemplateColName>
+    <IsMandatory>true</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>1000</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="3">
+    <DbColName>start_point</DbColName>
+    <TemplateColName>Start_Point</TemplateColName>
+    <IsMandatory>true</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>1000</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="4">
+    <DbColName>end_point</DbColName>
+    <TemplateColName>End_Point</TemplateColName>
+    <IsMandatory>true</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>1000</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="5">
+    <DbColName>start_point_type</DbColName>
+    <TemplateColName>Start_Point_Type</TemplateColName>
+    <IsMandatory>true</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>1000</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="6">
+    <DbColName>end_point_type</DbColName>
+    <TemplateColName>End_Point_Type</TemplateColName>
+    <IsMandatory>true</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>1000</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="7">
+    <DbColName>no_of_tube</DbColName>
+    <TemplateColName>No_Of_Tube</TemplateColName>
+    <IsMandatory>true</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>int4</UdtName>
+    <CharacterMaxLength>0</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="8">
+    <DbColName>core_per_tube</DbColName>
+    <TemplateColName>Core_Per_Tube</TemplateColName>
+    <IsMandatory>true</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>int4</UdtName>
+    <CharacterMaxLength>0</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="9">
+    <DbColName>calc_length</DbColName>
+    <TemplateColName>Calculated_Length</TemplateColName>
+    <IsMandatory>false</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>float8</UdtName>
+    <CharacterMaxLength>0</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="10">
+    <DbColName>cable_type</DbColName>
+    <TemplateColName>Cable_Type</TemplateColName>
+    <IsMandatory>false</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>50</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="11">
+    <DbColName>specification</DbColName>
+    <TemplateColName>Specification</TemplateColName>
+    <IsMandatory>true</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>100</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="12">
+    <DbColName>vendor</DbColName>
+    <TemplateColName>Vendor</TemplateColName>
+    <IsMandatory>true</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>100</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="13">
+    <DbColName>pin_code</DbColName>
+    <TemplateColName>Pin_Code</TemplateColName>
+    <IsMandatory>false</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>100</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="14">
+    <DbColName>remarks</DbColName>
+    <TemplateColName>Remarks</TemplateColName>
+    <IsMandatory>false</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>1000</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="15">
+    <DbColName>cable_category</DbColName>
+    <TemplateColName>Cable_Category</TemplateColName>
+    <IsMandatory>false</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>200</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="16">
+    <DbColName>loop_count</DbColName>
+    <TemplateColName>Loop_Count</TemplateColName>
+    <IsMandatory>false</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>int4</UdtName>
+    <CharacterMaxLength>0</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="17">
+    <DbColName>loop_length</DbColName>
+    <TemplateColName>Loop_Length</TemplateColName>
+    <IsMandatory>false</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>int4</UdtName>
+    <CharacterMaxLength>0</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="18">
+    <DbColName>sub_category</DbColName>
+    <TemplateColName>Sub_Category</TemplateColName>
+    <IsMandatory>false</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>200</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="19">
+    <DbColName>cable_category</DbColName>
+    <TemplateColName>Cable_Category</TemplateColName>
+    <IsMandatory>false</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>200</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="20">
+    <DbColName>route_id</DbColName>
+    <TemplateColName>Route_Id</TemplateColName>
+    <IsMandatory>false</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>200</CharacterMaxLength>
+  </Mapping>
+  <Mapping id="21">
+    <DbColName>fiber_count</DbColName>
+    <TemplateColName>Fiber_Count</TemplateColName>
+    <IsMandatory>false</IsMandatory>
+    <IsNullable>YES</IsNullable>
+    <UdtName>varchar</UdtName>
+    <CharacterMaxLength>200</CharacterMaxLength>
+  </Mapping>
+</Mappings>
+

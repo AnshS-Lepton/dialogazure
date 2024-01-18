@@ -1,0 +1,440 @@
+﻿
+
+@model Models.FSAlockedDetailsVM
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.viewLockedDetails.pageSize, canSort: true, ajaxUpdateContainerId: "divFSAlockedDetails", ajaxUpdateCallback: "onGridHeaderClick('tblFSAlockedDetails')");
+    grid.Bind(Model.lockedFSADetailList, autoSortAndPage: false, rowCount: Model.viewLockedDetails.totalRecord);
+    if (Model.viewLockedDetails.totalRecord > 0)
+    {
+        grid.PageIndex = Model.viewLockedDetails.currentPage - 1;
+    }
+
+}
+
+<style>
+    .padRow {
+        padding: 5px;
+        margin: 0px;
+    }
+
+    .divPads {
+        padding: 3px;
+    }
+
+    .padRow .divPads {
+        display: flex;
+    }
+
+    .modal-body .FilterDiv .padRow .divPads {
+        display: inline-block;
+    }
+
+    .nav-tabs {
+        border-bottom: 1px solid #ddd;
+    }
+
+
+    .SearchIco {
+        position: absolute;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.25);
+        margin: 8px 0px 0px 125px;
+    }
+
+    .WrapText {
+        width: 120px;
+        overflow: hidden;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .tooltip-inner {
+        color: black;
+        background-color: white;
+        word-wrap: break-word;
+        text-align: left;
+        white-space: pre-line;
+    }
+
+    .EntitydetailsProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url('Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .gridHeaderStyle {
+        white-space: nowrap;
+    }
+
+    .modal-open .modal {
+        background-color: rgba(0,0,0,0) !important;
+    }
+
+    #dvModelid {
+        position: absolute;
+        z-index: 9;
+    }
+
+    .disabled {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+
+    .selectBox {
+        border: 1px solid #dfdfdf;
+        padding: 0.4rem 0.6rem;
+        margin-left: 0.5rem;
+        width: 130px;
+    }
+
+    .d-flex {
+        display: flex;
+        align-items: center;
+    }
+
+    .expBtn {
+        border: none;
+        border-radius: 3px;
+        padding: 7px 10px;
+        background-color: #00b109;
+        color: #ffffff;
+        font-size: 14px;
+        cursor: pointer;
+        margin-left: auto;
+    }
+
+    .ml-auto {
+        margin-left: auto;
+    }
+
+    .mt-01 {
+        margin-top: 1rem;
+    }
+
+    .mb-01 {
+        margin-bottom: 1rem;
+    }
+
+    .headerBox {
+        background-color: var(--primary-dark) !important;
+        font-weight: 600 !important;
+    }
+
+    .headerBoxLeft {
+        flex: 50%;
+        text-align: center;
+        border-right: 1px solid #dfdfdf;
+    }
+
+    .pad-06 {
+        padding: 0.6rem 0;
+    }
+
+    .wrapper {
+        width: 100%;
+        margin: 0 auto;
+        overflow: auto;
+    }
+
+    .THheader {
+        background-color: #004050;
+        color: #ffffff;
+    }
+
+    .rowColum {
+        background-color: #ffffff;
+        color: #6b6b6b;
+    }
+
+    .col {
+        padding: 0.4rem 0.6rem;
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .alignItem {
+        align-items: center;
+    }
+
+    .whiteSpace {
+        white-space: nowrap;
+    }
+
+    .borRigBot {
+        border-right: 1px solid #e2e2e2;
+        border-bottom: 1px solid #e2e2e2;
+    }
+
+    .grid {
+        border-collapse: collapse;
+        white-space: nowrap;
+    }
+
+    .padRow {
+        padding: 5px;
+        margin: 0px;
+    }
+
+    .divPads {
+        padding: 3px;
+    }
+
+    .padRow .divPads {
+        display: flex;
+    }
+
+    .modal-body .FilterDiv .padRow .divPads {
+        display: inline-block;
+    }
+
+    .nav-tabs {
+        border-bottom: 1px solid #ddd;
+    }
+
+
+    .SearchIco {
+        position: absolute;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.25);
+        margin: 8px 0px 0px 125px;
+    }
+
+    .WrapText {
+        width: 120px;
+        overflow: hidden;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .tooltip-inner {
+        color: black;
+        background-color: white;
+        word-wrap: break-word;
+        text-align: left;
+        white-space: pre-line;
+    }
+
+    .EntitydetailsProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url('Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+
+    .calendar {
+        position: absolute;
+        display: block;
+        left: 650px !important;
+        top: 65px !important;
+    }
+
+    .gridHeaderStyle {
+        white-space: nowrap;
+    }
+
+    .modal-open .modal {
+        background-color: rgba(0,0,0,0) !important;
+    }
+
+    #dvModelid {
+        position: absolute;
+        z-index: 9;
+    }
+
+    .disabled {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+    .transpBorder {
+        border: 1px solid transparent !important;
+        visibility: hidden;
+    }
+
+    .editColumn {
+        text-align: center;
+        font-weight: 600 !important;
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .grid .linkbtn {
+        text-decoration: underline;
+        color: var(--primary-dark);
+        transition: 0.3s;
+        display: inline-block;
+        cursor: pointer;
+        padding: 0;
+    }
+
+        .grid .linkbtn:hover {
+            text-decoration: none;
+        }
+
+    .construcHeader {
+        display: grid;
+        grid-template-columns: 35% 35% 8% 8% 10%;
+    }
+    .hand-cursor {
+        cursor: pointer;
+    }
+</style>
+
+<div class="tab-content" id="dViewFSAlockedDetails">
+    <div id="FSAlockedDetails" class="tab-pane fade in active show">
+        @using (Ajax.BeginForm("FSAlocked", "BOMBOQ", new AjaxOptions
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "dViewFSAlockedDetails",
+            LoadingElementId = "dvViewFSAlockedDetails",
+        },
+                    new { id = "frmViewFSAlockedDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+            <div class="space-pad construcHeader --gap10">
+                <div class="d-flex --gap10">
+                    <label class="white-space">Search By:</label>
+                    @Html.DropDownListFor(m => m.viewLockedDetails.searchBy, new SelectList(Model.lstBindSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "Search By", new { @class = "chosen-select", @id = "ddlsearchBy" })
+
+                </div>
+                <div class="d-flex --gap10">
+                    <label class="white-space">Search Text:</label>
+                    @Html.TextBoxFor(m => m.viewLockedDetails.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100 })
+
+                </div>
+
+                <button type="submit" class="btn btn-success" id="btnGetFSALockedDetail"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                <button type="button" class="btn btn-default" id="btnResetSearchFilter"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+                <div class="@(Model.lockedFSADetailList.Count > 0 ? "" : "dvdisabled")">
+                    <button type="button" class="exp--btn white-space" id="btnExportlockFSADetail" value="Export"><span class="fa fa-download ml-3"></span> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+                </div>
+
+            </div>
+
+            if (Model.lockedFSADetailList.Count > 0)
+            {
+                <div id="divFSAlockedDetails" class="tablePad--tn">
+                    <div class="mb-01 d-flex">
+                        Total Records:  <span class="fw-bold"> @grid.TotalRowCount </span>
+                        @*<div class="ml-auto">
+                                Last Updated Design Value on <span class="fw-bold">@Model.modified_on</span>
+                            </div>*@
+                    </div>
+
+                    <div class="table-responsive">
+                        @grid.GetHtml(tableStyle: "grid tableWFont",
+
+                        htmlAttributes: new { id = "tblFSAlockedDetails" },
+                        mode: WebGridPagerModes.All,
+                        columns: grid.Columns(
+                            grid.Column("", "Action", format:
+                                    @<text>
+                                        <a id="btnAction" class="hand-cursor">
+                                            <i class="icon-FSA_unlock" id="iconEdit" title="Unlock" onclick="UnlockFSA(@item.fsa_system_id);" tabindex="5"></i>
+                                        </a>
+
+                                    </text>),
+grid.Column("region_name", "State", format: @<text>@item.state</text>, canSort: true),
+grid.Column("province_name", "JC", format: @<text>@item.jc</text>, canSort: true),
+grid.Column("cityname", "Town Name", format: @<text>@item.town_name</text>, canSort: true),
+grid.Column("city_code", "Town Code", format: @<text>@item.town_code</text>, canSort: true),
+grid.Column("gis_design_id", "FSA ID", format: @<text>@item.fsa_id</text>, canSort: true),
+grid.Column("modified_on", "Locked On", format: @<text>@item.modified_on</text>, canSort: true),
+grid.Column("user_name", "Locked By", format: @<text>@item.modified_by</text>, canSort: true)
+
+))
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-sm-4 hidden-xs">
+                            </div>
+                            <div class="col-sm-4 text-center">
+                                <small class="text-muted inline m-t-sm m-b-sm">
+                                    @if (Model.lockedFSADetailList.Count() > 0)
+                                    {
+                                        @:Showing @((grid.RowsPerPage) * (grid.PageIndex) + 1) to @((grid.RowsPerPage) * (grid.PageIndex) + grid.Rows.Count) of @Model.viewLockedDetails.totalRecord items
+                                    }
+                                </small>
+                            </div>
+
+                        </div>
+                    </footer>
+                </div>
+            }
+            else
+            {
+                <div class="nr-found">
+                    <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('th a, tfoot a').on("click", function () {
+            $('#frmViewFSAlockedDetails').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        addDefaultSortingIcons("tblFSAlockedDetails");
+        onGridHeaderClick('tblFSAlockedDetails');
+    });
+
+    $('.chosen-select').chosen({ width: '100%', });
+
+    $("#btnGetFSALockedDetail").on("click", function () {
+        if ($('#ddlsearchBy').val() == '' && $('#txtSearchText').val() != '') {
+            $('#ddlsearchBy').focus();
+            alert('Please select search by !');
+            return false;
+        }
+        else {
+            if ($('#txtSearchText').val() == '' && $('#ddlsearchBy').val() != '') {
+                $('#txtSearchText').focus();
+                alert('Please enter search by value !');
+                return false;
+            }
+        }
+    });
+    function UnlockFSA(id) {
+        showConfirm('Are you sure,you want to unlock the FSA for S2 addition,splicing change and Addition of Survey Ticket !', function () {
+            ajaxReq('bomboq/UnlockFSA', { 'id': id }, false, function (resp) {
+                alert("FSA has been unlock Successfully.")
+                $('#frmViewFSAlockedDetails').submit();
+            });
+        });
+    };
+    $("#btnExportlockFSADetail").on("click", function () {
+        window.location = appRoot + 'BOMBOQ/ExportlockedFSADetail';
+    });
+    $("#btnResetSearchFilter").on("click", function () {
+        $('#txtSearchText').val('');
+        $('#ddlsearchBy').val('').trigger("chosen:updated");
+    });
+
+</script>
+
+

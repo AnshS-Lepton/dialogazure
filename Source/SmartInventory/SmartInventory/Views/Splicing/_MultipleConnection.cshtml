@@ -1,0 +1,127 @@
+﻿@model Models.viewMultipleConnections
+@using Models;
+@{
+    var allParents = Model.connectionsList.GroupBy(g => new { g.destination_network_id,g.rack_network_id }).Select(x=>new MultipleConnections { destination_network_id=x.Key.destination_network_id,rack_network_id=x.Key.rack_network_id }).ToList();
+}
+<style>
+.webgrid {
+    width: 100%;
+}
+ .webgrid th, .webgrid td {
+     /* padding-left: 53px; */
+     border: none !important;
+     border: 1px solid rgb(51, 51, 51);
+     padding: 5px 5px 0px 15px;
+ }
+.patchAction {
+    display: none;
+}
+tr:hover > td > .patchAction {
+    display: inline-block;
+}
+</style>
+
+<!DOCTYPE html>
+<div class="libTabContent" id="divMultipleConnection">
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active">
+            <div class="modal-header" style="background: none;border-radius: 0;border-bottom: 1px solid #80808029 !important;padding-left: 0px;">
+                <label class="control-label model-label-info" style="font-weight: bold;">@Model.source_network_id</label>
+                <btn type="button" id="btnCloseMultiConnection" onclick="$('#divSpliceWindow .dropbox').hide(); $('.divNetworkCode .dropbox').hide(); $('.outConnectionGrid').hide();" class="icon-close" style="cursor:pointer;text-align: right;width: 25px;float: right;color: black;" title="Close"></btn>
+            </div>
+            @if (Model.connectionsList.Count > 0)
+            {
+                <div class="form-group">
+                    <ul>
+                        @foreach (var parent in allParents)
+                        {
+                            <li style="list-style:none;margin-left:-40px;">
+                                <table class="webgrid" style="margin:0px;width:100%;">
+                                    <tbody>
+                                        @if (Model.isOutConnection)
+                                        {
+                                            <tr><div style="font-weight: bold;margin-top: 5px;">@parent.rack_network_id : @parent.destination_network_id</div></tr>
+                                        }
+                                        else
+                                        {
+                                            <tr><div style="font-weight: bold;margin-top: 5px;">@parent.destination_network_id</div></tr>
+                                        }
+
+                                        @{
+                                            foreach (var item in Model.connectionsList.Where(m => m.destination_network_id == parent.destination_network_id).ToList())
+                                            {
+                                                <tr>
+                                                    <td><div style="font-weight: bold;float:left">@item.port_name :</div><div style="float:left;"> @item.port_network_id</div></td>
+
+                                                    @if (!Model.isPreviousConnection && !Model.isOutConnection)
+                                                    {
+                                                        <td style="text-align: right;">
+                                                            <div class="patchAction">
+                                                                @if (Model.portType == Models.InOutPortType.O.ToString())
+                            {
+                                                                    <a href="javascript:void(0);" onclick="conBuilder.showPatchCord(@item.patch_cord_id);" title="@item.patch_network_id"><i class="icon-PATCHCORD" style="font-size: 13px; color: gray;"></i></a>
+                                                                }
+                                                                <a href="javascript:void(0);" onclick="conBuilder.deleteMultiConnection(@Model.source_system_id,'@Model.source_network_id','@Model.source_entity_type',@Model.source_port_no,@item.destination_system_id,'@item.destination_network_id','Equipment',@item.destination_port_no,@item.connection_id);" title="Delete"> <i class="fa fa-fw fa-trash" style="font-size: 13px; color: gray;"></i></a>
+                                                            </div>
+                                                        </td>
+                                                    }
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </li>
+                                            }
+                    </ul>
+                    @*<table class="webgrid" style="margin:0px;width:100%;">
+                            <tbody>
+                                <tr class="alt">
+                                    @if (Model.isOutConnection)
+                                    {
+                                    <th>Rack</th>
+                                    }
+                                    <th>Equipment</th>
+                                    <th>Port</th>
+                                    @if (!Model.isPreviousConnection && !Model.isOutConnection)
+                                    {
+                                    <th>Action</th>
+                                    }
+                                </tr>
+                                @foreach (var item in Model.connectionsList)
+                                {
+                                    <tr class="alt" id="tr_@(item.destination_system_id+"_"+item.destination_port_no)">
+                                        @if (Model.isOutConnection)
+                                        {
+                                            <td>@item.rack_network_id</td>
+                                        }
+                                        <td>
+                                            @item.destination_network_id
+                                        </td>
+                                        <td>
+                                            @item.port_network_id
+                                        </td>
+                                        @if (!Model.isPreviousConnection && !Model.isOutConnection)
+                                        {
+
+                                            <td style="text-align:center;">
+                                                @if (Model.portType == Models.InOutPortType.O.ToString())
+                                                {
+                                                    <a href="javascript:void(0);" onclick="conBuilder.showPatchCord(@item.patch_cord_id);" title="@item.patch_network_id"> <i class="icon-PATCHCORD" style="font-size: 13px; color: gray;"></i></a>
+                                                }
+                                                <a href="javascript:void(0);" onclick="conBuilder.deleteMultiConnection(@Model.source_system_id,'@Model.source_network_id','@Model.source_entity_type',@Model.source_port_no,@item.destination_system_id,'@item.destination_network_id','Equipment',@item.destination_port_no,@item.connection_id);" title="Delete"> <i class="fa fa-fw fa-trash" style="font-size: 13px; color: gray;"></i></a>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>*@
+                </div>
+                                            }
+                                            else
+                                            {
+                                                <div style="text-align: center;">Connection does not exist!</div>
+                                            }
+        </div>
+    </div>
+</div>

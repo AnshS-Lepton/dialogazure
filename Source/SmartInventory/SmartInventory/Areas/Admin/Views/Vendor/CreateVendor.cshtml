@@ -1,0 +1,177 @@
+﻿@model Models.Admin.CreateVendor
+
+<!DOCTYPE html>
+
+
+<div id="dvPageMessage">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+
+</div>
+
+<div id="dvInfoVendor" class="update_panel">
+
+    <div id="" class="title">
+        <h4>Create Vendor</h4>
+    </div>
+
+    @using (Html.BeginForm("SaveVendor", "Vendor", FormMethod.Post, new { autocomplete = "off", @id = "frmInfoVendor", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+        @Html.HiddenFor(m => m.id, new { id = "hdn_Id" });
+
+        <div class="form-group">
+            <div class="row">
+                <div class=" col-md-4">
+                    <label class=" control-label">
+                        Vendor Name<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class=" col-md-8">
+                    @Html.TextBoxFor(model => model.name, new { @class = "form-control", @maxlength = "50", @placeholder = "Enter Name", @id = "txtvendorname" })
+
+                </div>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Vendor Type<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.DropDownListFor(model => model.type, new List<SelectListItem>
+                                {
+                                        new SelectListItem { Text = "Own", Value = "Own"},
+                                        new SelectListItem { Text = "Third Party", Value = "Third Party"},
+                                }, "-Select-", new { @class = "chosen-select", @id = "SelectedVendorType" })
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class=" control-label">
+                        Vendor Address<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class=" col-md-8">
+                    @Html.TextBoxFor(model => model.address, new { @class = "form-control", @maxlength = "100", @placeholder = "Enter Address" })
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class=" control-label">
+                        Vendor Contact<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.contact, new { @class = "form-control", @maxlength = "10", @placeholder = "Enter Contact" })
+                    @Html.ValidationMessageFor(model => model.contact)
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class=" control-label">
+                        Vendor Email Id<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class=" col-md-8">
+                    @Html.TextBoxFor(model => model.email_id, new { @class = "form-control", @maxlength = "50", @placeholder = "Enter email id" })
+                    @Html.ValidationMessageFor(model => model.email_id)
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class=" control-label">
+                        Remarks:
+                    </label>
+                </div>
+                <div class=" col-md-8">
+                    @Html.TextAreaFor(model => model.remarks, new { @class = "form-control", @maxlength = "100", @placeholder = "Enter Remarks", @style = "resize:none;" })
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <label class="control-label">
+                    Is Active:
+                </label>
+            </div>
+            <div class="col-md-8">
+                @Html.CheckBoxFor(model => model.is_active, new { @class = "chk" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4 form-group" style="display:none">
+
+                    @Html.TextBoxFor(m => m.created_by, new { @class = "form-control", placeholder = "Created By" })
+
+                </div>
+            </div>
+
+        </div>
+        <div class="d-flex" id="dvBtnAction">
+            <a href="@Url.Action("CreateVendor","Vendor")" class="btn btn-default ml-auto mr-05" title="Reset">Reset</a>
+            <input type="submit" class="btn btn-primary" name="btnaction" id="btnSubmit" value="Save" />
+        </div>
+
+    }
+
+    <script type="text/javascript">
+
+        //$("#txtvendorname").keypress(function (event) {
+        //    var inputValue = event.which;
+        //    // allow letters and whitespaces only.
+        //    if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0)) {
+        //        event.preventDefault();
+        //    }
+        //});
+
+        $('.chosen-select').chosen({ width: '100%' });
+
+        if ('@Model.id' != 0) {
+            btnSubmit.value = "Update";
+        }
+
+        $(document).ready(() => {
+
+            $("#btnSubmit").click(() => {
+                $("#SelectedVendorType_chosen").removeClass("highlight_chosen_select");
+                if ($("#SelectedVendorType").val() == '') {
+                    $("#SelectedVendorType_chosen").addClass("highlight_chosen_select");
+                    if ($('#frmInfoVendor').valid() != false) {
+                        return false;
+                    }
+
+                }
+            });
+
+        });
+    </script>
+
+
+</div>

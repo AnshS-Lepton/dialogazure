@@ -1,0 +1,174 @@
+﻿
+@model Models.ViewEntityDropdownMasterSettings
+@using Utility
+@using SmartInventory.Settings;
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div id="dvViewDropdownMaster">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                Dropdown Master
+            </h4>
+        </div>
+        @{
+
+            WebGrid grid = new WebGrid(rowsPerPage: Model.objdrpFilter.pageSize,
+                canSort: true, ajaxUpdateContainerId: "dvViewDropdownMaster",
+                ajaxUpdateCallback: "onGridHeaderClick('tblEntityDropDownGrid')");
+            grid.Bind(Model.lstViewDropdownMasterSetting, autoSortAndPage: false,
+                rowCount: Model.objdrpFilter.totalRecord);
+            if (Model.objdrpFilter.totalRecord > 0)
+            {
+                grid.PageIndex = Model.objdrpFilter.currentPage - 1;
+            }
+        }
+        <div class="pad_left">
+            @using (Html.BeginForm("DropdownMaster", "Miscellaneous", FormMethod.Post, new { autocomplete = "off", @id = "frmViewDropdownMaster" }))
+            {
+                <div class="form-inline filter-sec">
+                    <div class="form-group wtd_set mr-05">
+                        <label class="control-label mr-03">Entity Name:</label>
+                        <div class="--input-width">
+                            @Html.DropDownListFor(m => m.layer_id,
+                           new SelectList(Model.lstLayers.Select(x => new
+                           {
+                               Value = x.layer_id.ToString(),
+                               Text = x.layer_title.ToString()
+                           }), "Value", "Text"), "-Select-",
+                           new { @class = "chosen-select col-sm-12", @onchange = "BindDrptypeByLayerId();", @id = "lstLayers" })
+                        </div>
+                    </div>
+
+                    <div class="form-group wtd_set mr-05">
+                        <label class="control-label mr-03">Dropdown Type:</label>
+                        <div class="--input-width">
+
+                            @Html.DropDownListFor(m => m.dropdown_type,
+                                                             new SelectList(Model.lstDropdownTypes.Select(x => new
+                                                             {
+                                                                 Value = x.dropdown_type.ToString(),
+                                                                 Text = x.dropdown_type.ToString()
+                                                             }), "Value", "Text"),
+                                                                    "-Select-"
+                                                                    , new { @class = "chosen-select col-sm-12", @id = "fieldNameDropDown" })
+
+
+                            @*<select id="fieldNameDropDown" class="chosen-select col-sm-12">
+                                    <option value="Select">Select</option>
+                                </select>*@
+                        </div>
+                    </div>
+                    <div class="--grid-inner  mr-05">
+                        <label class="control-label">Value</label>
+                        <div>
+                            @Html.TextBoxFor(m => m.Value, new { @class = "form-control displayName", id = "txtValue" })
+                        </div>
+                    </div>
+
+                    <div class="d-flex" id="dvBtnAction">
+                        <div class="d-flex --gap-05">
+                            <button class="btn btn-primary" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" type="submit">Search</button>
+                            @if (@grid.TotalRowCount > 0)
+                            {
+                                <input type="button" id="btnExportDropdownMaster" value="Export" class="btn btn-primary" />
+                            }
+                            else
+                            {
+                                <input type="button" id="btnExportDropdownMaster" value="Export" disabled="disabled" class="btn btn-primary" />
+                            }
+                            <a href="@Url.Action("DropdownMaster")" class="btn btn-default" title="Reset">Reset</a>
+
+                            <span>
+                                <input type="button" id="btnAddNew" onclick="AddDropdownMaster(0);" value="Add New" class="btn btn-primary" />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                @*</div>*@
+
+
+                if (Model.lstViewDropdownMasterSetting.Count > 0)
+                {
+                    <div id="divEntityDropDownGridBind">
+                        <div class="recordCount mb-01"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+
+                        <div class="table-responsive tble_over">
+
+                            @grid.GetHtml(tableStyle: "grid",
+                                            htmlAttributes: new { id = "tblEntityDropDownGrid" },
+                                            mode: WebGridPagerModes.All,
+                                            columns: grid.Columns(
+                                                    grid.Column("is_action_allowed", "Action", format:@<text>@if (item.is_action_allowed == true)
+                                                         {
+                                                        <a href="javascript:void(0);" onclick="AddNewDropdownMaster(@item.id,'@item.layer_name','@item.dropdown_type','@item.dropdown_value');" title="Edit">
+                                                            <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i>
+                                                        </a>
+                                                        <a href="javascript:void(0);" onclick="DeleteDropdownMaster(@item.id,'@item.layer_name','@item.dropdown_type','@item.dropdown_value');" title="Delete">
+                                                            <i class="fa fa-fw fa-trash" style="font-size: 13px; color: #f50000;"></i>
+                                                        </a>
+                                                 }
+                                                    </text>, canSort: false
+          ),
+          grid.Column("layer_name", "Entity Name", format: @<text>@item.layer_name</text>, canSort: true),
+grid.Column("dropdown_type", "Dropdown Type", format: @<text>@item.dropdown_type</text>, canSort: true),
+grid.Column("dropdown_value", "Value", format: @<text>@item.dropdown_value</text>, canSort: true),
+grid.Column("dropdown_status", "Status", format: @<text> @(item.dropdown_status ? "Active" : "InActive")</text>, canSort: false),
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>, canSort: true),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>, canSort: true),
+grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>, canSort: true),
+grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>, canSort: true)
+))
+
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+                            @Html.HiddenFor(m => m.dropdown_type)
+                            @Html.HiddenFor(m => m.layer_id)
+                            @Html.HiddenFor(m => m.Value)
+
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center;">
+                        No Records Found.
+                    </div>
+                }
+            }
+        </div>
+        <script>
+            $(document).ready(function () {
+                updateNumberstoFormatedNumber();
+                $('.chosen-select').chosen({ placeholder_text_single: '-Select-', width: '100%' });
+                // add sorting on grid..
+                addDefaultSortingIcons("tblEntityDropDownGrid");
+                //download utalization as excel format
+                $("#btnExportDropdownMaster").on("click", function () {
+                    window.location = appRoot + 'Miscellaneous/ExportDropdownMasterDetails';
+
+                });
+            });
+
+                                                //$('#frmViewDropdownMaster').on('submit', function(e) {
+                                                //    if(!$('[id="lstLayers"]').valid()) {
+                                                //        e.preventDefault();
+                                                //        return false;
+                                                //    }
+                                                //    else{
+                                                //        return true;
+                                                //    }
+                                               // });
+            function updateNumberstoFormatedNumber() {
+                $('span[data]').each(function (index) {
+                    // Get the value of the data-target attribute for each element
+                    var targetValue = $(this).data('data');
+
+                    // Do whatever you want with the element or its data
+                    $(this).text(getFormattedNumber($(this).text().trim()));
+                });
+            }
+        </script>
+    </div>
+</div>

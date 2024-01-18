@@ -1,0 +1,180 @@
+﻿@model Models.LayerIconMapping
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+
+    .UploadModelProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url('~/../../../Areas/Admin/Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="divAddNewModelImage">
+    <div id="dvModelProgress" class="UploadModelProgress"></div>
+    @using (Ajax.BeginForm("UploadLayerIcon", "Miscellaneous",
+                                        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddNewModelImage", OnSuccess = "OnSuccess", },
+                                        new { id = "frmAddModelImage", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id, new { @id = "hdnid" });
+        @*@Html.HiddenFor(m => m.image_data, new { @id = "hdnimage_data" });*@
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Entity Name<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstlayerDetails.Select(x => new { Value = x.layer_id, Text = x.layer_title }), "Value", "Text"), "--select--", new { @class = "chosen-select form-control", @id = "ddlLayerName", @onchange = "onChangeEntityName()" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-sm-4">Network Status : </label>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.network_status, new List<SelectListItem>
+                 {
+                   new SelectListItem{ Text="--Search--", Value = "" },
+                   new SelectListItem{ Text="Planned", Value = "P" },
+                   new SelectListItem{ Text="AsBuild", Value = "A" },
+                   new SelectListItem{ Text="Dorment", Value = "D" },
+                 }, new { @id = "ddlnetworkStatus", @tabindex = "2", @title = "Network Status", @class = "chosen-select form-control" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Category:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.category, new SelectList(Model.lstDropdown_master.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--select--", new { @class = "chosen-select form-control", @id = "ddlCategory" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+
+                    <div class="control-label col-md-4">Entity Icon<i class="clsMandatory">*</i>:</div>
+                    <div>
+                        @if (Model.id > 0)
+                        {
+                            <div>@Html.Raw(Model.icon_name)</div>
+                        }
+                        else
+                        {
+                            <div class="col-md-12 UploadAction">
+                                <div class="col-md-10 col-sm-6" id="divDocumentUpload" style="display:flex; text-decoration:underline;">
+                                    <input class="hidafter" id="DocUpload" type="file" accept=".jpg,.png,.jpeg" name="DocUpload" value="Choose SVG">
+                                </div>
+                                <label class="control-label col-md-12" style="margin-top: -15px;margin-bottom: -15px;">Note:Only jpg,png,jpeg file are allowed</label>
+                                <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+
+
+                <div class="row form-group" id="dvisVirtual" >
+                    <div class="col-md-4">
+                        <label class="control-label">
+                            Is Virtual:
+                        </label>
+                    </div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.is_virtual, new { @class = "form-control", @id = "chkisvirtual" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Is Active:</div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.status, new { Style = "width:100% ;", @id = "chkis_LayerIconStatus" })
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group" id="dvBtnAction">
+            <div class="row form-group EUTFooter">
+                <div class="col-md-3"> </div>
+                <div class="col-md-9 text-right" style="padding-right: 20px;">
+                    @if (Model.id > 0)
+                    {
+                        <input type="button" class="btn btn-primary" onclick="return LayerIcon.upload();" id="btnSaveAccessories" value="Update" />
+                    }
+                    else
+                    {
+                        <input type="button" class="btn btn-primary" onclick="return LayerIcon.upload();" id="btnSaveAccessories" value="Save" />
+                    }
+                    <button type="button" class="btn btn-default" id="btnCancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+      $(document).ready(function () {
+        $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+        if ('@Model.id' != 0) {
+            $('#ddlLayerName').next().addClass('.EUTSetting chosen-disabled');
+            $('#ddlnetworkStatus').next().addClass('.EUTSetting chosen-disabled');
+           
+          }
+          $("#dvisVirtual").hide();
+      });
+    function IsValid() {
+         
+        if ($('#ddlLayerName').val() == "") {
+            
+            $('#ddlLayerName').next().addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddlLayerName').next().removeClass("errorClass");
+        }
+    };
+
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+    $("#btnCancel").on("click", function () {
+        $("#closeModalPopup").trigger("click");
+
+    });
+    function onChangeEntityName() {
+         
+        var layername = $('#ddlLayerName :selected').text();
+        if (layername.toUpperCase() == 'SPLICE CLOSURE' || layername.toUpperCase() == 'MANHOLE') { $("#dvisVirtual").show(); }
+        else { $("#dvisVirtual").hide();}
+           
+        $('#ddlCategory').empty();
+        $('#ddlCategory').append($("<option></option>").val('').html('--select--'));
+        //= $('#ddlLayerName').val();
+        var layer_id = $('#ddlLayerName').val();
+        ajaxReq('Miscellaneous/BindDropDown_byLayer_id', { layer_id: layer_id }, false, function (resp) {
+             
+            if (resp.Data.length > 0) {
+                // $('#ddl_db_column_naem').append($("<option></option>").val('').html('--select--'));
+
+
+                $.each(resp.Data, function (data, value) {
+                   // $('#txtSequence').val(value.sequence);
+                    //var data_type = value.data_type;
+                    $('#ddlCategory').append($("<option d></option>").val(value.dropdown_value).html(value.dropdown_key));
+                });
+            }
+            else {
+                $('#ddlCategory').empty();
+                $('#ddlCategory').append($("<option></option>").val('').html('--select--'));
+
+            }
+            $('#ddlCategory').trigger("chosen:updated");
+        }, true, true);
+    }
+</script>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/CICT_INV_Maintenance" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/CICT_INV_Maintenance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ArrayOfInvIssueDtl">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="InvIssueDtl" nillable="true" type="tns:InvIssueDtl" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfInvIssueDtl" nillable="true" type="tns:ArrayOfInvIssueDtl" />
+  <xs:complexType name="InvIssueDtl">
+    <xs:sequence>
+      <xs:element name="ItemCode" nillable="true" type="xs:string" />
+      <xs:element name="Quantity" type="xs:double" />
+      <xs:element name="Serial" nillable="true" type="xs:string" />
+      <xs:element name="UOM" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="InvIssueDtl" nillable="true" type="tns:InvIssueDtl" />
+  <xs:complexType name="ArrayOfInvReturn">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="InvReturn" nillable="true" type="tns:InvReturn" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfInvReturn" nillable="true" type="tns:ArrayOfInvReturn" />
+  <xs:complexType name="InvReturn">
+    <xs:sequence>
+      <xs:element name="ItemCode" nillable="true" type="xs:string" />
+      <xs:element name="Quantity" type="xs:double" />
+      <xs:element name="Serial" nillable="true" type="xs:string" />
+      <xs:element name="UOM" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="InvReturn" nillable="true" type="tns:InvReturn" />
+</xs:schema>

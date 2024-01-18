@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+	<Mapping id="0">
+		<DbColName>required_language</DbColName>
+		<TemplateColName>Required Language</TemplateColName>
+	</Mapping>
+	<Mapping id="1">
+		<DbColName>key</DbColName>
+		<TemplateColName>Key</TemplateColName>
+	</Mapping>
+	<Mapping id="2">
+	<DbColName>value</DbColName>
+    <TemplateColName>Value</TemplateColName>
+</Mapping>
+  <Mapping id="3">
+    <DbColName>required_value</DbColName>
+    <TemplateColName>Required Value</TemplateColName>
+  </Mapping>
+  <Mapping id="4">
+    <DbColName>purpose</DbColName>
+    <TemplateColName>Purpose</TemplateColName>
+  </Mapping>
+</Mappings>

@@ -1,0 +1,361 @@
+﻿@model Models.AddNewEntityUtilization
+@using Utility
+
+
+<!DOCTYPE html>
+<div id="divAddNewUtilizationSettings">
+    <div id="dvPageMessage">
+        @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+    </div>
+    @using (Ajax.BeginForm("SaveEntityUtilization", "Miscellaneous",
+                new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddNewUtilizationSettings" },
+                new { id = "frmAddUtilizationSetting", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.system_id)
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Region<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select", @onchange = "BindProvinceByRegion();", @id = "ddlRegions" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Province<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.province_id, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select", @id = "ddlProvinces" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Network Status<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.network_status, new List<SelectListItem>
+                                {
+                                        new SelectListItem { Text = "Planned", Value = "P"},
+                                        new SelectListItem { Text = "As-Built", Value = "A"},
+                                }, "--Select--", new { @class = "chosen-select", @id = "SelectedNetworkStatus" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Entity Type<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select", @id = "ddlLayers" })
+                    </div>
+                </div>
+                <div id="OtherEntities">
+
+                    <div class="row form-group">
+                        <div class="row col-md-4">
+                            <label class="control-label" for="txtRange">Range: &nbsp;Low</label>
+                        </div>
+                        <div class="row col-md-8" style="padding: 0px;">
+                            <div class="row col-md-6">
+                                <label class="control-label col-md-4" for="txtRange">From</label>
+                                <div class="col-md-2 rangeSignClass">=</div>
+                                <div class="col-md-6" style="margin-top:5px;">
+                                    @Html.TextBoxFor(m => m.utilization_range_low_from, new { @id = "txtLowRangeFrom", @value = "", @title = "Low Range From", @class = "input-sm form-control", @maxlength = "2", @onkeypress = "return isNumber(event)", @readonly = true })
+                                </div>
+                            </div>
+                            <div class="row col-md-6">
+                                <label class="control-label col-md-4" for="txtRange">To</label>
+                                <div class="col-md-2 rangeSignClass">>=</div>
+                                <div class="col-md-6" style="margin-top:5px;">
+                                    @Html.TextBoxFor(m => m.utilization_range_low_to, new { @id = "txtLowRangeTo", @title = "Low Range To", @class = "input-sm form-control", @onkeypress = "return isNumber(event)", @maxlength = "2", @onblur = "return validateTextboxLowTo(this.id);" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="row col-md-4">
+                            <label class="control-label" style="padding-left: 50px;" for="txtRange"> &nbsp;Moderate</label>
+                        </div>
+                        <div class="row col-md-8" style="padding: 0px;">
+                            <div class="row col-md-6">
+                                <label class="control-label col-md-4" for="txtRange">From</label>
+                                <div class="col-md-2 rangeSignClass"><</div>
+                                <div class="col-md-6" style="margin-top:5px;">
+                                    @Html.TextBoxFor(m => m.utilization_range_moderate_from, new { @id = "txtModerateRangeFrom", @title = "Moderate Range From", @class = "input-sm form-control", @maxlength = "2", @onkeypress = "return isNumber(event)", @readonly = true })
+                                </div>
+                            </div>
+                            <div class="row col-md-6">
+                                <label class="control-label col-md-4" for="txtRange">To</label>
+                                <div class="col-md-2 rangeSignClass">>=</div>
+                                <div class="col-md-6" style="margin-top:5px;">
+                                    @Html.TextBoxFor(m => m.utilization_range_moderate_to, new { @id = "txtModerateRangeTo", @title = "Moderate Range To", @class = "input-sm form-control", @maxlength = "2", @onkeypress = "return isNumber(event)", @onblur = "return validateTextboxModerateTo(this.id);" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="row col-md-4">
+                            <label class="control-label" style="padding-left: 50px;" for="txtRange"> &nbsp;High</label>
+                        </div>
+                        <div class="row col-md-8" style="padding: 0px;">
+                            <div class="row col-md-6">
+                                <label class="control-label col-md-4" for="txtRange">From</label>
+                                <div class="col-md-2 rangeSignClass"><</div>
+                                <div class="col-md-6" style="margin-top:5px;">
+                                    @Html.TextBoxFor(m => m.utilization_range_high_from, new { @id = "txtHighRangeFrom", @title = "High Range From", @class = "input-sm form-control", @maxlength = "2", @onkeypress = "return isNumber(event)", @readonly = true })
+                                </div>
+                            </div>
+                            <div class="row col-md-6">
+                                <label class="control-label col-md-4" for="txtRange">To</label>
+                                <div class="col-md-2 rangeSignClass">>=</div>
+                                <div class="col-md-6" style="margin-top:5px;">
+                                    @Html.TextBoxFor(m => m.utilization_range_high_to, new { @id = "txtHighRangeTo", @title = "High Range To", @maxlength = "3", @class = "input-sm form-control", @onkeypress = "return isNumber(event)", @onblur = "return validateTextboxHighTo(this.id);" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="row col-md-4">
+                            <label class="control-label" style="padding-left: 50px;" for="txtRange"> &nbsp;Over</label>
+                        </div>
+                        <div class="row col-md-8" style="padding: 0px;">
+                            <div class="row col-md-6">
+                                <label class="control-label col-md-4" for="txtRange">From</label>
+                                <div class="col-md-2 rangeSignClass"><</div>
+                                <div class="col-md-6" style="margin-top:5px;">
+                                    @Html.TextBoxFor(m => m.utilization_range_over_from, new { @id = "txtOverRangeFrom", @title = "Over Range From", @maxlength = "3", @class = "input-sm form-control", @onkeypress = "return isNumber(event)", @readonly = true })
+                                </div>
+                            </div>
+                            <div class="row col-md-6">
+                                <label class="control-label col-md-4" for="txtRange">To</label>
+                                <div class="col-md-2 rangeSignClass">>=</div>
+                                <div class="col-md-6" style="margin-top:5px;">
+                                    @Html.TextBoxFor(m => m.utilization_range_over_to, new { @id = "txtOverRangeTo", @title = "Over Range To", @maxlength = "3", @class = "input-sm form-control", @onkeypress = "return isNumber(event)", @onblur = "return validateTextboxOverTo(this.id);" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="ForDuctUtilizationReportSettings">
+                    <div class="d-flex a-item no-wrap">
+                        <div class="a-flex">
+                            <label class="control-label" for="txtRange">Utilization Case-1:</label>
+                        </div>
+                        <div class="a-flex d-flex a-item">
+                            <label class="control-label mr-5 mb-0">No of</label>
+                            @Html.DropDownListFor(m => m.entity_to_be_utilized, new SelectList(Model.lstUtilizationReportLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select", @id = "ddlLayers" })
+                        </div>
+
+                        <div class="a-flex d-flex a-item">
+                            <label class="control-label mb-0">* Utilization % </label>
+                            @Html.TextBoxFor(m => m.entity_utilization_percentage, new { @class = "form-control inp-field ml-5", @onkeydown = "return ValidateNumberDecimal(this,event,3);" })
+                        </div>
+                    </div>
+                    <div class="d-flex a-item">
+                        <div class="a-flex">
+                            <label class="control-label mb-0" for="txtRange">Utilization Case-2:</label>
+                        </div>
+                        <div class="d-flex a-item">
+                            (Total no of placed cables in duct/Capacity of duct)* 100
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ModalFooter" id="dvBtnAction">
+            <button type="button" class="btn btn-danger ml-auto mr-05" id="btnClearUtlization">Reset</button>
+            <input type="submit" class="btn btn-primary" id="btnSaveUtilization" value="Save" />
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#ForDuctUtilizationReportSettings').hide();
+        $('#OtherEntities').show();
+        $("#txtLowRangeFrom").val(0);
+        //to disable cut copy & paste
+        $('#txtLowRangeFrom').on("cut copy paste", function (e) {e.preventDefault();});
+        $('#txtLowRangeTo').on("cut copy paste", function (e) {e.preventDefault();});
+        $('#txtModerateRangeFrom').on("cut copy paste", function (e) {e.preventDefault();});
+        $('#txtModerateRangeTo').on("cut copy paste", function (e) {e.preventDefault();});
+        $('#txtHighRangeFrom').on("cut copy paste", function (e) {e.preventDefault();});
+        $('#txtHighRangeTo').on("cut copy paste", function (e) {e.preventDefault();});
+        $('#txtOverRangeFrom').on("cut copy paste", function (e) {e.preventDefault();});
+        $('#txtOverRangeTo').on("cut copy paste", function (e) { e.preventDefault(); });
+        //To disable right click
+        $('#txtLowRangeFrom').bind("contextmenu", function (e) { e.preventDefault(); });
+        $('#txtLowRangeTo').bind("contextmenu", function (e) { e.preventDefault(); });
+        $('#txtModerateRangeFrom').bind("contextmenu", function (e) { e.preventDefault(); });
+        $('#txtModerateRangeTo').bind("contextmenu", function (e) { e.preventDefault(); });
+        $('#txtHighRangeFrom').bind("contextmenu", function (e) { e.preventDefault(); });
+        $('#txtHighRangeTo').bind("contextmenu", function (e) { e.preventDefault(); });
+        $('#txtOverRangeFrom').bind("contextmenu", function (e) { e.preventDefault(); });
+        $('#txtOverRangeTo').bind("contextmenu", function (e) { e.preventDefault(); });
+        // apply choosen style
+        $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+
+        //close form in case of success (add/Edit).
+        if ('@Model.pageMsg.status' == "OK") {
+            $('#closeModalPopup').trigger("click");
+        }
+        //validate all dropdowns for blank selection
+        $('.EUTSetting select').on('change', function () {
+            return validateDropdown(this.id);
+        });
+        // refresh grid data on close of add/edit form
+        $('#closeModalPopup').on('click', function () {
+            window.location.reload();
+        });
+
+        $("#txtLowRangeTo").keyup(function () {
+            $("#txtModerateRangeFrom").val($(this).val());
+        });
+        $("#txtModerateRangeTo").keyup(function () {
+            $("#txtHighRangeFrom").val($(this).val());
+        });
+        $("#txtHighRangeTo").keyup(function () {
+            $("#txtOverRangeFrom").val($(this).val());
+        });
+        // edit utilization
+        if ('@Model.system_id' != 0) {
+            btnSaveUtilization.value = "Update";
+            $('#OtherEntities').hide();
+            $('#btnSaveUtilization').prop('disabled', true);
+            $(':input[type="button"]').prop('disabled', true);
+            $('#ddlRegions').next().addClass('.EUTSetting chosen-disabled');
+            $('#ddlProvinces').next().addClass('.EUTSetting chosen-disabled');
+            $('#SelectedNetworkStatus').next().addClass('.EUTSetting chosen-disabled');
+            $('#ddlLayers').next().addClass('.EUTSetting chosen-disabled');
+        }
+        $("#btnSaveUtilization").on("click", function (e) {
+            if (!validateDropdown('ddlRegions')) { e.preventDefault(); return false; }
+            if (!validateDropdown('ddlProvinces')) { e.preventDefault(); return false; }
+            if (!validateDropdown('SelectedNetworkStatus')) { e.preventDefault(); return false; }
+            if (!validateDropdown('ddlLayers')) { e.preventDefault(); return false; }
+            if ($('#ddlLayers :selected').text().toUpperCase() != "DUCT") {
+                if (!validateTextboxLowTo('txtLowRangeTo')) { e.preventDefault(); return false; }
+                //if (!validateTextboxLowFrom('txtLowRangeFrom')) { e.preventDefault(); return false; }
+                //if (!validateTextboxModerateFrom('txtModerateRangeFrom')) { e.preventDefault(); return false; }
+                if (!validateTextboxModerateTo('txtModerateRangeTo')) { e.preventDefault(); return false; }
+                //if (!validateTextboxHighFrom('txtHighRangeFrom')) { e.preventDefault(); return false; }
+                if (!validateTextboxHighTo('txtHighRangeTo')) { e.preventDefault(); return false; }
+                //if (!validateTextboxOverFrom('txtOverRangeFrom')) { e.preventDefault(); return false; }
+                if (!validateTextboxOverTo('txtOverRangeTo')) { e.preventDefault(); return false; }
+            }
+            return true;
+        });
+        $('#btnClearUtlization').on("click", function () {
+
+            $('#ddlLayers').val(0).trigger("chosen:updated");
+            $('#SelectedNetworkStatus').val(0).trigger("chosen:updated");
+            $('#ddlRegions').val(0).trigger("chosen:updated");
+            $('#ddlProvinces').val(0).trigger("chosen:updated");
+            $("#txtLowRangeFrom").val(0);
+            $("#txtLowRangeTo").val('');
+            $("#txtModerateRangeFrom").val('');
+            $("#txtModerateRangeTo").val('');
+            $("#txtHighRangeFrom").val('');
+            $("#txtHighRangeTo").val('');
+            $("#txtOverRangeFrom").val('');
+            $("#txtOverRangeTo").val('');
+            $("#txtLowRangeTo,#txtModerateRangeTo,#txtHighRangeTo,#txtOverRangeTo").addClass('valid').removeClass('input-validation-error');
+            $('.chosen-container').addClass('valid').removeClass('input-validation-error');
+        });
+    });
+    function validateTextboxLowTo(elementId) {
+        if ($('#' + elementId).length >= 0) {
+            var value = $('#' + elementId).val();
+            var value1 = $("#txtLowRangeFrom").val();
+            if (value == 'undefined' || value == null || value == "" || parseFloat(value) == 0.0) {
+                $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                return false;
+            }
+            else if (parseInt(value) < parseInt(value1)) {
+                alert("LowToRange should be greater than LowFromRange !");
+                $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                return;
+            }
+            else {
+                $('#' + elementId).addClass('valid').removeClass('input-validation-error');
+                return true;
+            }
+        }
+        return true;
+    }
+
+    function validateTextboxModerateTo(elementId) {
+        if ($('#' + elementId).length >= 0) {
+            var value = $('#' + elementId).val();
+            var value1 = $("#txtModerateRangeFrom").val();
+
+            if (value == 'undefined' || value == null || value == "" || parseFloat(value) == 0.0) {
+                $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                return false;
+            }
+            else if (parseInt(value) < parseInt(value1)) {
+                alert("ModerateToRange should be Greater or equal to ModerateFromRange !");
+                $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                return;
+            }
+            else {
+                $('#' + elementId).addClass('valid').removeClass('input-validation-error');
+                return true;
+            }
+        }
+        return true;
+    }
+
+    function validateTextboxHighTo(elementId) {
+
+        if ($('#' + elementId).length >= 0) {
+            var value = $('#' + elementId).val();
+            var value1 = $("#txtHighRangeFrom").val();
+
+            if (value == 'undefined' || value == null || value == "" || parseFloat(value) == 0.0) {
+                $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                return false;
+            }
+            else if (parseInt(value) < parseInt(value1)) {
+                alert("HighToRange should be Greater or equal to HighFromRange !");
+                $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                return;
+            }
+            else {
+                $('#' + elementId).addClass('valid').removeClass('input-validation-error');
+                return true;
+            }
+        }
+        return true;
+    }
+
+    function validateTextboxOverTo(elementId) {
+
+        if ($('#' + elementId).length >= 0) {
+            var value = $('#' + elementId).val();
+            var value1 = $("#txtOverRangeFrom").val();
+
+            if (value == 'undefined' || value == null || value == "" || parseFloat(value) == 0.0) {
+                $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                return false;
+            }
+            else if (parseInt(value) < parseInt(value1)) {
+                alert("OverToRange should be Greater or equal to OverFromRange !");
+                $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                return;
+            }
+            else {
+                $('#' + elementId).addClass('valid').removeClass('input-validation-error');
+                return true;
+            }
+        }
+        return true;
+    }
+
+    $("#ddlLayers").on("change", function () {
+         
+        if ($('#ddlLayers :selected').text().toUpperCase() == "DUCT") {
+            $('#ForDuctUtilizationReportSettings').show();
+            $('#OtherEntities').hide();
+        }
+        else {
+            $('#ForDuctUtilizationReportSettings').hide();
+            $('#OtherEntities').show();
+        }
+    });
+
+</script>

@@ -1,0 +1,134 @@
+﻿@model Models.Admin.ISPModelRule
+@using System.Linq
+@using Utility
+
+<!DOCTYPE html>
+<div id="dvViewRuleDetails" style="width:100%;padding:16px;white-space:nowrap;font-size:14px">
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objOptionsRule.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewRuleDetails", ajaxUpdateCallback: "onGridHeaderClick('tblViewRuleDetails')");
+        grid.Bind(Model.lstModelRule, autoSortAndPage: false, rowCount: Model.objOptionsRule.totalRecord);
+        if (Model.objOptionsRule.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objOptionsRule.currentPage - 1;
+        }
+    }
+
+    @using (Html.BeginForm("CreateRule", "Equipment", FormMethod.Post, new { autocomplete = "off", @id = "frmViewRuleDetails" }))
+    {
+        <section>
+
+            @if (Model.lstModelRule.Count > 0)
+            {
+                <div id="divViewRuleDetails">
+
+
+                    <div class="recordCount">
+                        <b>Total Records:@grid.TotalRowCount</b>
+
+
+                        <div style="padding-right:0px;float:right;cursor:pointer;">
+                          
+
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                        <td><label style="margin-bottom: -0.5rem !important;">Search By:&nbsp;&nbsp;</label></td></td>
+                                        <td>
+                                            
+                                            @Html.DropDownListFor(m => m.objOptionsRule.searchBy, new List<SelectListItem>
+                                    {
+                                       new SelectListItem{ Text="Parent Model", Value = "parent_model"},
+                                       new SelectListItem{ Text="Child Model", Value = "child_model"},
+                                       new SelectListItem{ Text="Parent Type", Value = "parent_model_type"},
+                                       new SelectListItem{ Text="Child Type", Value = "child_model_type"}
+                                    }, new { @id = "ddlSearchBy", @tabindex = "1", @title = "Search By", @class = "chosen-select form-control" })
+                                        </td>
+                                        <td><label style="margin-bottom: -0.5rem !important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Search Text:&nbsp;&nbsp;</label></td>
+                                        <td>@Html.TextBoxFor(m => m.objOptionsRule.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "2", @class = "input-sm form-control", @placeholder = "Search Text", @maxlength = 100 })</td>
+                                        <td>
+                                            &nbsp;&nbsp;<input type="button" id="btnSearch" tabindex="3" onclick="SearchRuleDetails()" value="Search" class="btn btn-primary">
+                                        </td>
+                                        <td style="width:40px;"></td>
+                                        <td>
+                                            @*<a id="iconEditRule" onclick="EditRule()"><i class="icon-Edit" title="Edit"></i> </a>*@
+                                            <i class="icon-Delete" onclick="DeleteRule()" id="btnDeleteRule" title="Delete"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                         
+                        </div>
+
+                        @Html.HiddenFor(m => m.id, new { @id = "hdRuleID" })
+                    </div>
+                    
+                    <div class="table-responsive tble_cls">
+                        @{
+                            var gridColumns = new List<WebGridColumn>();
+                            gridColumns.Add(grid.Column("", "Action", canSort: false, format:
+                                @<text>
+
+                                    <div>
+                                        <label class="Custombtn"><input class="chk" name="@item.id" type="checkbox" value="true" /><span class="Custombtncheck"></span></label>
+                                    </div>
+                                </text>));
+
+                            gridColumns.Add(grid.Column("parent_model", "Parent Model", format: @<text>@item.parent_model</text>));
+                            gridColumns.Add(grid.Column("parent_model_type", "Parent type", format: @<text>@item.parent_model_type</text>));
+                            gridColumns.Add(grid.Column("child_model", "Child Model", format: @<text>@item.child_model</text>));
+                            gridColumns.Add(grid.Column("child_model_type", "Child Type", format: @<text>@item.child_model_type</text>));
+                            //gridColumns.Add(grid.Column("is_active", "Active", format: @<text>@item.is_active</text>));
+                            //gridColumns.Add(grid.Column("created_by", "Created by", format: @<text>@item.created_by</text>));
+                            //gridColumns.Add(grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>));
+                            //gridColumns.Add(grid.Column("modified_by", "Modified by", format: @<text>@item.modified_by</text>));
+                            //gridColumns.Add(grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>));
+                            
+
+
+}
+                        @grid.GetHtml(tableStyle: "grid",
+                                            htmlAttributes: new { id = "tblViewRuleDetails" },
+                                            mode: WebGridPagerModes.All,
+                                            columns: grid.Columns(gridColumns.ToArray()))
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+
+
+                    </div>
+
+                </div>
+                            }
+                            else
+                            {
+                                <div style="text-align: center; margin-top: 30px;">
+                                    No Records Found.
+                                </div>
+                            }
+
+        </section>
+                            }
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            addDefaultSortingIcons("tblViewRuleDetails");
+        });
+
+        $(function () {
+            $('#tblViewRuleDetails a').on("click", function () {
+                //var value = $('#hdRuleID').val();
+                $(this).attr('href', function () {
+                    return this.href +=   encodeURIComponent(value);
+                });
+            });
+        });
+      
+
+        
+
+    </script>
+
+</div>
+
+

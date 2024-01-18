@@ -1,0 +1,200 @@
+﻿@model IList<Models.IspPortInfo>
+
+@{
+    WebGrid webGrid = new WebGrid(source: Model, canSort: false, canPage: false);
+}
+<style>
+    .WrapText {
+        width: 140px;
+        overflow: hidden;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .padRow {
+        padding: 5px;
+        margin: 0px;
+    }
+
+    .divPads {
+        padding: 3px;
+    }
+
+    .padRow .divPads {
+        display: flex;
+    }
+
+    .modal-body .FilterDiv .padRow .divPads {
+        display: inline-block;
+    }
+
+
+    .Assign {
+        float: left;
+        width: 21%;
+        color: #fff;
+        font-size: 12px;
+        padding: 4px;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 4px;
+        margin-right: 3px;
+    }
+</style>
+@if (Model.Count != 0)
+{
+    <div class="row padRow">
+        <div class="col-md-8 divPads" style="padding-top: 0px!important;">
+            @if (Model[0].ViewPortStatusCount.Count > 0)
+            {
+                foreach (var item in Model[0].ViewPortStatusCount)
+                {
+               
+                <div class="Assign">
+                    <div style="color:black;width: 90px;">
+                        <label><b>@item.PortStatus (@item.StatusCount)</b></label>
+                    </div>
+                </div>
+                }
+            }
+        </div>
+        <div class="col-md-4">
+            <input type="hidden" id="hdnCoreNumbers" />
+            <img id="imgExport" src="~/Content/images/excel.gif" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_061" alt="Export" class="fr-img"
+                 onclick="ExportPortDetails();" />
+            <button type="button" class="btn btn-primary" style="float: right;margin-bottom: 10px;" id="btnUpdtCorStats" onclick="UpdateCorePortStatus()">@Resources.Resources.SI_GBL_GBL_GBL_GBL_133</button>
+        </div>
+    </div>
+   
+    @webGrid.GetHtml(
+            htmlAttributes: new { @id = "WebGrid", @class = "grid" },
+    columns: webGrid.Columns(
+        webGrid.Column(null, "", format: @<text>
+                <input type="checkbox" name="chkRow" class="grdCoreChk" value="@(item.input_output != "Input" ? item.port_number : (item.port_number * -1))" /> @*<a href="#" onclick="PortHistory('@item.system_id');" data-toggle="tab">View history</a>*@</text>),
+
+webGrid.Column("port_number", Resources.Resources.SI_OSP_GBL_NET_FRM_026),
+//webGrid.Column("port_name", "Port Name"),
+webGrid.Column("port_type", Resources.Resources.SI_OSP_GBL_NET_FRM_027),
+webGrid.Column("input_output", Resources.Resources.SI_OSP_GBL_NET_FRM_028),
+webGrid.Column("port_status", Resources.Resources.SI_OSP_GBL_NET_FRM_029, format: @<text><span id="@("PortStatus_"+(item.input_output != "Input" ? item.port_number : (item.port_number * -1)))">@item.port_status</span></text>),
+//webGrid.Column("comment", Resources.Resources.SI_OSP_GBL_NET_FRM_312),
+webGrid.Column("", Resources.Resources.SI_OSP_GBL_NET_FRM_312,
+format: @<text>
+            <p id="@("PortComments_"+(item.input_output != "Input" ? item.port_number : (item.port_number * -1)))" data-toggle="tooltip" title="@item.comment" class="WrapText">@item.comment</p>
+</text>),
+webGrid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format:@<text>
+        @if (item.port_status == "Connected")
+                     {
+            <a href="#" onclick="splicing.redirectToCustomerDetails(null,'@item.parent_network_id','@item.parent_entity_type','@item.parent_system_id','@item.port_number',false);" id="btnConnectedCustomerDetails"><i class="icon-CUSTOMER" title="Customer Detail" style="margin-left: 15px;color:red;"></i></a>
+                     }
+                     else
+                     {
+                     }
+
+</text>)))
+}
+else
+{
+    <div class="nr-found">
+        <span> No Customer Found!</span>
+    </div>
+}
+
+<script>
+
+    if(@Model.Count > 0)
+    {
+        function UpdateCorePortStatus()
+        {
+            var coreNumbers = $("#hdnCoreNumbers").val();
+            var coreStatus = $('#PortStatus_' + coreNumbers).html();
+            var coreComment = $('#PortComments_' + coreNumbers).html();
+            if(coreNumbers != "")
+            {
+                 
+                splicing.redirectToUpdateFiber('@Model[0].parent_system_id', coreNumbers, '@Model[0].parent_entity_type.ToString()', '@Convert.ToString(Model[0].type)', true, 0, coreComment, coreStatus)
+            }
+            else
+            {
+                alert(MultilingualKey.SI_GBL_GBL_JQ_FRM_009);
+            }
+        }
+
+        function PortHistory(system_id){
+
+            splicing.viewPortHistory(system_id)
+        }
+    }
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        //Create the CheckBox element.
+        var chkHeader = $("<input type = checkbox id = 'chkHeader' style='float:left;' />");
+
+        //Append it to the First cell of Header Row.
+        $("#WebGrid th:first-child").append(chkHeader);
+
+        //Assign Click event handler to the Header Row CheckBox.
+        chkHeader.on("click", function () {
+             
+            if ($(this).is(":checked")) {
+                //If the Header Row CheckBox is checked, check all Row CheckBoxes.
+                $("#WebGrid td input[type=checkBox]").prop("checked",true);
+            } else {
+                //If the Header Row CheckBox is NOT checked, uncheck all Row CheckBoxes.
+                $("#WebGrid td input[type=checkBox]").removeAttr("checked");
+            }
+            ManageHeaderCheckBox();
+        });
+
+        //Assign Click event handler to each Row CheckBox.
+        $("#WebGrid input[name=chkRow]").on("click", function () {
+            UpdateHeaderRowCheckBox(chkHeader);
+        });
+
+        //Retain selection of Row CheckBoxes.
+        var selected = "@TempData["Message"]".split(',');
+        for (var i in selected) {
+            $("#WebGrid input[value='" + selected[i] + "']").attr("checked", "checked");
+        }
+        //Retain selection of Header Row CheckBox.
+        UpdateHeaderRowCheckBox(chkHeader);
+    });
+
+    function UpdateHeaderRowCheckBox(chkHeader) {
+         
+        if ($("#WebGrid td input[type=checkBox]:checked").length == $("#WebGrid td input[type=checkBox]").length) {
+            //If all the Row CheckBoxes are checked, check the Header Row CheckBox.
+            chkHeader.attr("checked", "checked");
+        } else {
+            //Even if one of the Row CheckBoxes is NOT checked, uncheck the Header Row CheckBox.
+            chkHeader.removeAttr("checked");
+        }
+        ManageHeaderCheckBox();
+    }
+    $(".grdCoreChk").on("click", function () {
+        $(".grdCoreChk").prop("checked", false);
+        $(this).prop("checked", true);
+        $("#hdnCoreNumbers").val($(this).val());
+    });
+    function ManageHeaderCheckBox() {
+        //for sum of footer
+         
+        var corenumbers = "";
+        $("#WebGrid input[type=checkbox]:not('#chkHeader')").each(function () {
+            var row = $(this).closest('tr');
+            var checkstatus = $(this).is(":checked")
+            if (row.find(".grdCoreChk")[0] != undefined) {
+                if (!isNaN(row.find(".grdCoreChk")[0].value) && row.find(".grdCoreChk")[0].value.length != 0 && checkstatus == true) {
+                    corenumbers = corenumbers == "" ? row.find(".grdCoreChk")[0].value : corenumbers + "," + row.find(".grdCoreChk")[0].value;
+                }
+            }
+        })
+        $("#hdnCoreNumbers").val(corenumbers);
+        //alert($("#hdnCoreNumbers").val());
+    }
+    function ExportPortDetails() {
+         
+        window.location = appRoot + 'Library/DownloadPortReport?systemID=' + '@Model[0].parent_system_id'+'&entity_type=@Model[0].parent_entity_type';
+    }
+</script>

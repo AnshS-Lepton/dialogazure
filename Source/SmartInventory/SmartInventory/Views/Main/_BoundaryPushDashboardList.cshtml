@@ -1,0 +1,463 @@
+﻿@model Models.BoundaryPushFilter
+@using Utility
+@using SmartInventory.Settings
+
+<!DOCTYPE html>
+
+@{
+    WebGrid grid = new WebGrid(canPage: false, canSort: true, ajaxUpdateContainerId: "divpushBoundaryDetails", ajaxUpdateCallback: "onGridHeaderClick('tblgisboundarypushDetails');show_BulkApproved;GridColor();");
+    grid.Bind(Model.pushboundaryDetailList, autoSortAndPage: false, rowCount: Model.viewBoundaryPush.totalRecord);
+}
+
+<style>
+    .padRow {
+        padding: 5px;
+        margin: 0px;
+    }
+
+    .nav-tabs {
+        border-bottom: 1px solid #ddd;
+    }
+
+
+    .SearchIco {
+        position: absolute;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.25);
+        margin: 8px 0px 0px 125px;
+    }
+
+    .tooltip-inner {
+        color: black;
+        background-color: white;
+        word-wrap: break-word;
+        text-align: left;
+        white-space: pre-line;
+    }
+
+    .EntitydetailsProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url('Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .gridHeaderStyle {
+        white-space: nowrap;
+    }
+
+    .modal-open .modal {
+        background-color: rgba(0,0,0,0) !important;
+    }
+
+    #dvModelid {
+        position: absolute;
+        z-index: 9;
+    }
+
+    .disabled {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+
+    .selectBox {
+        border: 1px solid #dfdfdf;
+        padding: 0.4rem 0.6rem;
+        margin-left: 0.5rem;
+        width: 130px;
+    }
+
+    .d-flex {
+        display: flex;
+        align-items: center;
+    }
+
+    .completed-row {
+        background-color: green;
+        color: white; /* Change the background color to your desired color */
+    }
+
+    .completed-row1 {
+        background-color: white;
+        /* Change the background color to your desired color */
+    }
+
+
+    .expBtn {
+        border: none;
+        border-radius: 3px;
+        padding: 7px 10px;
+        background-color: #00b109;
+        color: #ffffff;
+        font-size: 14px;
+        cursor: pointer;
+        margin-left: auto;
+    }
+
+    .ml-auto {
+        margin-left: auto;
+    }
+
+    .mt-01 {
+        margin-top: 1rem;
+    }
+
+    .mb-01 {
+        margin-bottom: 1rem;
+    }
+
+    .headerBox {
+        background-color: var(--primary-dark) !important;
+        font-weight: 600 !important;
+    }
+
+    .headerBoxLeft {
+        flex: 50%;
+        text-align: center;
+        border-right: 1px solid #dfdfdf;
+    }
+
+    .pad-06 {
+        padding: 0.6rem 0;
+    }
+
+    .wrapper {
+        width: 100%;
+        margin: 0 auto;
+        overflow: auto;
+    }
+
+    .THheader {
+        background-color: #004050;
+        color: #ffffff;
+    }
+
+    .rowColum {
+        background-color: #ffffff;
+        color: #6b6b6b;
+    }
+
+    .col {
+        padding: 0.4rem 0.6rem;
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .alignItem {
+        align-items: center;
+    }
+
+    .whiteSpace {
+        white-space: nowrap;
+    }
+
+    .borRigBot {
+        border-right: 1px solid #e2e2e2;
+        border-bottom: 1px solid #e2e2e2;
+    }
+
+    .grid {
+        border-collapse: collapse;
+        white-space: nowrap;
+    }
+
+    .padRow {
+        padding: 5px;
+        margin: 0px;
+    }
+
+    /*.divPads {
+        padding: 3px;
+    }
+
+    .padRow .divPads {
+        display: flex;
+    }
+
+    .modal-body .FilterDiv .padRow .divPads {
+        display: inline-block;
+    }*/
+
+    .nav-tabs {
+        border-bottom: 1px solid #ddd;
+    }
+
+
+    .SearchIco {
+        position: absolute;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.25);
+        margin: 8px 0px 0px 125px;
+    }
+
+    .WrapText {
+        width: 400px;
+        overflow: hidden;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-bottom:0;
+    }
+
+    .tooltip-inner {
+        color: black;
+        background-color: white;
+        word-wrap: break-word;
+        text-align: left;
+        white-space: pre-line;
+    }
+
+    .EntitydetailsProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url('Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+
+    .calendar {
+        position: absolute;
+        display: block;
+        left: 650px !important;
+        top: 65px !important;
+    }
+
+    .gridHeaderStyle {
+        white-space: nowrap;
+    }
+
+    .modal-open .modal {
+        background-color: rgba(0,0,0,0) !important;
+    }
+
+    #dvModelid {
+        position: absolute;
+        z-index: 9;
+    }
+
+    .disabled {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+    .transpBorder {
+        border: 1px solid transparent !important;
+        visibility: hidden;
+    }
+
+    .editColumn {
+        text-align: center;
+        font-weight: 600 !important;
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .grid .linkbtn {
+        text-decoration: underline;
+        color: var(--primary-dark);
+        transition: 0.3s;
+        display: inline-block;
+        cursor: pointer;
+        padding: 0;
+    }
+
+        .grid .linkbtn:hover {
+            text-decoration: none;
+        }
+
+    .msg-mb-mt {
+        margin-top: -9px !important;
+        margin-bottom: 5px !important
+    }
+
+    .msgPad {
+        padding-top: 0.55rem !important;
+        padding-bottom: 0.7rem !important;
+    }
+
+    .msg-bradius {
+        border-radius: 4px 0 0 4px !important;
+    }
+
+    .cancelBtn-Msg {
+        background-color: #e9a400;
+        border-radius: 0 4px 4px 0 !important;
+        color: #FFFFFF !important;
+    }
+
+    .tblWidth {
+        width: 1300px !important;
+    }
+
+        .tblWidth thead th:nth-child(5) {
+            width: 400px;
+        }
+</style>
+
+<div id="divpushBoundaryDetails" class="tablePad--tn">
+
+    <div class="fa-min-max">
+        @grid.GetHtml(tableStyle: "stickyTh tblWidth",
+
+        htmlAttributes: new { id = "tblgisboundarypushDetails" },
+
+        mode: WebGridPagerModes.All,
+        columns: grid.Columns(
+
+
+        grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>
+
+                <input type="checkbox" id="chk_@item.system_id" value="@item.system_id,@item.entity_type,@item.gis_design_id,@item.gis_object_id,@item.user_name,@item.request_time,@item.status,@item.message"
+                       name="ids" class="chkSurvey mr-03" />
+                <i class="fa fa-globe fa-fw m-r-xs i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="entityShowOnMap(@item.system_id,'@item.entity_type','Polygon')"></i>
+                <img src="~/Content/images/pushToGis.svg" class="cur-poiner" style="width:18px;" name="_BtnSinglePush" title="Push To GIS" onclick="si.PushToGis.ResetPushData('@item.system_id','@item.entity_type')" />
+        </text>, canSort: false),
+
+grid.Column("entity_title", "Boundary Type", format: @<text>@item.entity_title</text>, canSort: true),
+grid.Column("gis_design_id", "Boundary Design ID", format: @<text>@item.gis_design_id</text>, canSort: true),
+grid.Column("status", "Status", format: @<text><lable class="clsTSts">@item.status</lable></text>, canSort: true),
+grid.Column("message", "GIS Message", format: (item) => Html.Raw("<p data-toggle='tooltip' class='WrapText' title='" + item.message + "'>" + (string.IsNullOrEmpty(Convert.ToString(item.message)) ? "" : item.message) + "</p>")),
+grid.Column("gis_object_id", "GIS Object ID", format: @<text>@item.gis_object_id</text>, canSort: true),
+
+grid.Column("user_name", "Last Pushed By", format: @<text>@item.user_name</text>, canSort: true),
+grid.Column("request_time", "Last Pushed On", format: @<text>@(item.request_time == null ? item.request_time : MiscHelper.FormatDateTime(item.request_time.ToString()))</text>, canSort: true)
+))
+
+        @Html.Hidden("dir", grid.SortDirection)
+        @Html.Hidden("col", grid.SortColumn)
+
+    </div>
+</div>
+
+<script>
+    var IsActionEnabledboundarypush = false;
+    var intervalId;
+    clearInterval(intervalId);
+    completmessage = function (system_id, entity_type) {
+        clearInterval(intervalId);
+        if (intervalId) {
+            clearInterval(intervalId);
+        }
+        if (!IsActionEnabledboundarypush) {
+            intervalId = setInterval(function () { RefreshMessageByAjax(system_id, entity_type); }, 10000);
+        }
+
+    }
+    var checkedValue = [];
+    var psystemId = $('#psystemid').val();
+    var pentityType = $('#pentitytype').val();
+
+    $("#btnCancel").on("click", function () {
+
+        $("#dvBackgroundMessage").hide();
+        $("#btnCancel").hide();
+        //$("#closeModalPopup").trigger("click");
+        clearInterval(intervalId);
+    });
+
+
+    $("#btnBoundarypushdetails").on("click", function () {
+
+        window.location = appRoot + 'Main/ExportBoundaryGetDataToList';
+        $('#dvBackgroundMessage').text(resp.process_message);
+        $("#dvBackgroundMessage").show();
+        $("#btnCancel").hide();
+        completmessage(resp.system_id, resp.entity_type);
+    });
+    $(document).ready(function () {
+        $("#btnBoundaryPushDetail").prop("disabled", true);
+        addDefaultSortingIcons("tblgisboundarypushDetails");
+        onGridHeaderClick('tblgisboundarypushDetails');
+        GridColor();
+        show_BulkApproved();
+        var $checkboxes = $('#tblgisboundarypushDetails td input[type="checkbox"]');
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    function show_BulkApproved() {
+
+        // 1st replace first column header text with checkbox
+        $("#tblgisboundarypushDetails th").each(function () {
+            if ($.trim($(this).text().toString().toLowerCase()) === "action") {
+                /*$(this).text('');*/
+                $(this).removeAttr("class");
+                $("<input/>", { type: "checkbox", id: "cbSelectAll", value: "" }).prependTo($(this));
+
+            }
+        });
+
+
+    }
+    var inputElements = document.getElementsByClassName('chkSurvey mr-03');
+    $('.chosen-select').chosen({ width: '100%', });
+
+    function entityShowOnMap(systemID, eType, gType) {
+        si.ShowEntityOnMap(systemID, eType, gType);
+        $('#ModalPopUp .minmizeModel>i').trigger("click");
+    }
+    function GridColor() {
+
+        $("#tblgisboundarypushDetails tbody tr").each(function (index) {
+            var statusText = $(this).children('td:nth-child(4)').text().trim();
+            if (statusText.toUpperCase() == "SUCCESS") {
+                $(this).children('td').css("background-color", "#ffddcc");
+            }
+            else {
+                $(this).children('td').css("background-color", "#FFFFFF");
+            }
+
+        });
+    }
+    $(document).ready(function () {    
+        var $checkboxes = $('#tblgisboundarypushDetails td input[type="checkbox"]');
+        $('[data-toggle="tooltip"]').tooltip();
+        $checkboxes.change(function () {
+            $("#btnBoundaryPushDetail").prop("disabled", false);
+            var ischecked = this.checked;
+            this.checked = ischecked;
+            var countCheckedCheckboxes = $checkboxes.filter(':checked').length;
+            $('#count-checked-checkboxes').text(countCheckedCheckboxes);
+            $('#Count_Chkboxes').text(countCheckedCheckboxes);
+            if (ischecked == false)
+                $("#cbSelectAll").prop("checked", false);
+            if (countCheckedCheckboxes == 0)
+                $("#btnBoundaryPushDetail").prop("disabled", true);
+            if (countCheckedCheckboxes == @Model.viewBoundaryPush.totalRecord)
+                $("#cbSelectAll").prop("checked", true);
+            
+        });
+    });
+    $("#cbSelectAll").on("click", function () {
+        var ischecked = this.checked;
+        var countCheckedCheckboxes = 0;
+        $('#tblgisboundarypushDetails').find("input:checkbox").each(function () {
+            $("#btnBoundaryPushDetail").prop("disabled", false);
+            this.checked = ischecked;
+            var $checkboxes = $('#tblgisboundarypushDetails td input[type="checkbox"]');
+            countCheckedCheckboxes = $checkboxes.filter(':checked').length;
+            $('#count-checked-checkboxes').text(countCheckedCheckboxes);
+            $('#Count_Chkboxes').text(countCheckedCheckboxes);
+        });
+
+        if (ischecked == false) {
+            $("#btnBoundaryPushDetail").prop("disabled", true);
+        }
+    });
+</script>

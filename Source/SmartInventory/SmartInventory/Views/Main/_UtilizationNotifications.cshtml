@@ -1,0 +1,323 @@
+﻿@model Models.EntityNotificationsVM
+@using SmartInventory.Settings;
+<style>
+    .bookmark {
+        float: left;
+        margin: 1px 5px 0px 0px;
+        font-size: 14px !important;
+        color: #fff;
+        -webkit-text-stroke: 1px black;
+    }
+
+    .bookmarkActive {
+        float: left;
+        margin: 1px 5px 0px 0px;
+        font-size: 14px !important;
+        color: #5b95fb;
+    }
+
+    .prowindow input {
+        margin-top: 5px;
+        float: left;
+    }
+
+    .prowindow .glyphicon-option-horizontal {
+        background-color: #e0e0e0;
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+
+
+    .dropwindow {
+        display: none;
+        width: 120px;
+        position: absolute;
+        height: auto;
+        background-color: #fff;
+        box-shadow: 0px 2px 5px #ccc;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        right: 8px;
+        cursor: pointer;
+        z-index: 9;
+    }
+
+        .dropwindow ul {
+            list-style: none;
+            font-size: 12px;
+            font-weight: normal;
+            margin: 0px;
+            padding: 0px;
+        }
+
+            .dropwindow ul li {
+                padding: 6px;
+            }
+
+                .dropwindow ul li:hover {
+                    padding: 6px;
+                    background-color: #e2f5eb;
+                }
+
+    /*.chosen-container-single .chosen-single {
+        height: 35px;
+        padding: 5px;
+    }*/
+
+    .chosen-container-single .chosen-single div b {
+        background: url(images/chosen-sprite.png) no-repeat 0px 6px;
+    }
+
+    .notiCommentLoader {
+        /*background-color: white;*/
+        background-image: url('Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 15px;
+    }
+
+    .NotificationLoader {
+        position: absolute;
+        width: 100%;
+        display: none;
+        height: calc(100% - 96px);
+        opacity: 0.4;
+        background-color: white;
+        background-image: url(Content/images/loading_new.gif);
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    #Notificationdata {
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 100%;
+        height: calc(100% - 104px);
+    }
+
+    #dvNoMoreRecord {
+        text-align: center;
+        font-size: 13px;
+        background: #efefef;
+        font-weight: 600;
+    }
+
+    .grayColor {
+        color: #a9a7a7 !important;
+    }
+
+    .graybackground {
+        background-color: #edeaea !important;
+    }
+
+    .commentsCount {
+        font-weight: normal;
+        font-style: normal;
+        color: gray;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="dvNotifcationContainer" class="sidenotibar">
+    @using (Ajax.BeginForm("GetUtilizationNotifications", "Main", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvNotifcationContainer", LoadingElementId = "dvNotificationLoader" },
+                new { id = "frmGetUtilizationNotifications", enctype = "multipart/form-data", autocomplete = "off" }))
+    {
+        @Html.HiddenFor(m => m.objEntityNotiFilter.currentPage, new { id = "hdnCurrentPage" })
+    <header>
+        <h3 class="utilH2">
+            @Resources.Resources.SI_OSP_GBL_NET_FRM_215 (@Model.objEntityNotiFilter.totalRecord)
+        </h3>
+        <h5>
+            @Resources.Resources.SI_OSP_GBL_NET_FRM_350  @ApplicationSettings.maxNotificationDurationInMonth <label>@Resources.Resources.SI_OSP_GBL_NET_FRM_351.</label>
+        </h5>
+        <span id="closeUtilNotification" class="kmlClose">×</span>
+    </header>
+        <h4><i class="glyphicon glyphicon-chevron-down " id="filterdown"></i> @Resources.Resources.SI_OSP_GBL_NET_FRM_151</h4>
+        <div class="filterwindow">
+            <form>
+                <div class="form-group">
+                    @Html.DropDownListFor(m => m.objEntityNotiFilter.searchBy, new SelectList(Model.lstUtilLayers.Select(x => new { Value = x.layer_name.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), Resources.Resources.SI_OSP_GBL_NET_GBL_015, new { @class = "chosen-select utilfilter", @id = "ddlLayers" })
+                </div>
+                <div class="form-group">
+                    @Html.TextBoxFor(m => m.objEntityNotiFilter.searchText, new { @id = "txtSearchTextNoti", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @class = "input-sm form-control utilfilter", @maxlength = "50" })
+                </div>
+                <div class="form-group wtd_set mb0" id="dvBtnAction">
+                    <button type="button" class="btn btn-default" id="btnClearUtlizationNoti">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+                    <button type="submit" class="btn btn-primary pull-right">@Resources.Resources.SI_OSP_GBL_NET_FRM_112</button>
+                </div>
+            </form>
+        </div>
+        <div id="Notificationdata">
+            <div id="dvNotificationLoader" class="NotificationLoader"></div>
+            @if (Model.lstViewEntityNotifications.Count > 0)
+            {
+                Html.RenderPartial("_UtilizationNotificationData", Model.lstViewEntityNotifications);
+            }
+            else
+            {
+                <div class="nr-found">
+                    <span> @Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+                </div>
+            }
+        </div>
+    }
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // apply choosen style
+            $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+            $("#closeUtilNotification").on("click", function () {
+                $("#dvUtilNotification").hide();
+            });
+
+            $("#filterdown").on('click', function () {
+                $(".filterwindow").slideToggle('slow', function () {
+                    var notificationDivHeight = $('.filterwindow').css('display') == 'block' ? 'calc(100% - 243px)' : 'calc(100% - 96px)';
+                    $('#Notificationdata').css('height', notificationDivHeight);
+                });
+                $(this).toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            });
+            $(document).off("click", ".clsEntitydown").on('click', '.clsEntitydown', function () {
+                 
+                var objProWindowE1 = $(this).parent().siblings('.prowindowE1');
+                var _notificationId = $(this).attr("data-notifcationId");
+                $(objProWindowE1).slideToggle('slow', function () {
+                    if (objProWindowE1.css('display') == 'block') {
+                        var objCommentDiv = objProWindowE1.find('.clsNotiComment');
+                        objCommentDiv.addClass('notiCommentLoader');
+                        var res = ajaxReq('Main/getEntityNotificationComment', { notificationId: _notificationId }, true, function (data) {
+                            objCommentDiv.html(data);
+                            $('.sidenotibar [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+                            objCommentDiv.removeClass('notiCommentLoader');
+                        }, false, false);
+                    }
+                });
+                $(this).toggleClass('glyphicon-chevron-down').toggleClass('glyphicon-chevron-up');
+            });
+            $(document).off("click", ".clsutilpopup").on('click', '.clsutilpopup', function () {
+                $('.dropwindow').hide();
+                $(this).siblings('.dropwindow').slideToggle();
+            });
+
+            $('#btnClearUtlizationNoti').on('click', function () {
+                $('#ddlLayers').val('').trigger("chosen:updated");
+                $("#txtSearchTextNoti").val('');
+                $("#frmGetUtilizationNotifications").submit();
+            });
+            $('.sidenotibar [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+        });
+        $('#Notificationdata').scroll(function () {
+            if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+                var currentPage = parseInt($("#hdnCurrentPage").val());
+                var searchby = $("#ddlLayers").val();
+                var searchtext = $("#txtSearchTextNoti").val();
+                currentPage = currentPage + 1;
+                $(".NotificationLoader").show();
+                ajaxReq('Main/GetUtilizationNotificationData', { page: currentPage, searchBy: searchby, searchText: searchtext }, true, function (resp) {
+                    if (resp.trim() != "") {
+                        $("#Notificationdata").append(resp);
+                        $("#hdnCurrentPage").val(currentPage);
+                        $("#dvNoMoreRecord").remove();
+                        $('.sidenotibar [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+                    }
+                    else {
+                        if ($("#dvNoMoreRecord").length == 0) {
+                            $("#Notificationdata").append('<div id="dvNoMoreRecord" class="prowindow">' + MultilingualKey.SI_OSP_GBL_JQ_FRM_129 + '</div>');
+                        }
+                    }
+                    $(".NotificationLoader").hide();
+                }, false, false);
+            }
+        });
+        function OpenCPFFromNotification(_systemId, _entityType, _networkId) {
+            var res = ajaxReq('Splicing/GetEquipmentSearchResult', { SearchText: $.trim(_networkId) }, true, function (data) {
+                var record = data.filter(function (m) { return m.network_id == $.trim(_networkId); });
+                pageTitleText = 'Connection Path Finder';
+                modalClass = 'modal-xxl';
+                popup.LoadModalDialog('PARENT', 'splicing/ConnectionPathFinder', { equipment_id: record[0].display_name, objFilterAttributes: { entity_type: _entityType, entityid: _systemId, port_no: '' }, isControllEnable: true }, pageTitleText, modalClass);
+            }, true, false);
+        }
+
+
+        function UpdateNotificationCloseStatus(_notificationId) {
+            validateTextboxAddComment('txtAddComment_' + _notificationId);
+            var _commentText = $('#txtAddComment_' + _notificationId).val();
+            if (_commentText != '') {
+                $('#btnCloseIssue_' + _notificationId).attr("disabled", true);
+                var res = ajaxReq('Main/UpdateNotificationCloseStatus', { commentText: _commentText, notificationId: _notificationId }, true, function (resp) {
+                    if (resp.closeStatus) {
+                        var _networkId = $('#btnCloseIssue_' + _notificationId).attr('data-network-id');
+                        confirm($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_134, _networkId), function () {
+                            blockNotification(_notificationId, _commentText);
+                        }, function () { resetCommentAction(_notificationId); alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_131); });
+                    }
+                    else {
+                        alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_133);
+                    }
+                    $('#btnCloseIssue_' + _notificationId).attr("disabled", true);
+                }, true, false);
+            }
+        }
+
+        function updateCommentsCount(_id) {
+            var objCommentCount = $("#lblTotalComments_" + _id);
+            objCommentCount.text(parseInt(objCommentCount.text()) + 1);
+            objCommentCount.parent().show();
+        }
+        function appendComment(data) {
+            $("#NotiComment_" + data.notification_id).append('<div class="NotifComment"><span class="fontID" style="font-size:13px;">' + data.created_by_text + '&nbsp;&nbsp;'
+                + '<i><label class="control-label model-label-info">0 sec ago </label></i>'
+                + '<span class="fontID" style="font-weight: normal;margin-top: 5px;">' + data.comment_text + '</span></div>');
+
+        }
+        function SaveEntityNotificationComment(_notificationId) {
+            validateTextboxAddComment('txtAddComment_' + _notificationId);
+            var _commentText = $('#txtAddComment_' + _notificationId).val();
+            if (_commentText != '') {
+                $('#btnPost_' + _notificationId).attr("disabled", true);
+                var res = ajaxReq('Main/SaveEntityNotificationComment', { commentText: _commentText, notificationId: _notificationId }, true, function (data) {
+                    if (data.comment_id > 0) {
+                        $('#txtAddComment_' + _notificationId).val('');
+                        updateCommentsCount(_notificationId);
+                        appendComment(data);
+                        alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_132);
+
+                    }
+                    else {
+                        alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_133);
+                    }
+                    $('#btnPost_' + _notificationId).attr("disabled", true);
+                }, true, false);
+            }
+        }
+        function validateTextboxAddComment(elementId) {
+            if ($('#' + elementId).length >= 0) {
+                var value = $('#' + elementId).val();
+                if (value == 'undefined' || value == null || value == "") {
+                    $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                    return false;
+                }
+                else {
+                    $('#' + elementId).addClass('valid').removeClass('input-validation-error');
+                    return true;
+                }
+            }
+            return true;
+        }
+        function resetCommentAction(_notificationId) {
+            $("#spnCommentAction_" + _notificationId).html('<i class="glyphicon glyphicon-exclamation-sign"></i> Issue Closed').addClass("importantcolor");
+            $('#txtAddComment_' + _notificationId).val('').hide();
+            $('#dvNotiDetail_' + _notificationId).addClass('graybackground');
+            $('#spnNotiText_' + _notificationId).removeClass('importantcolor').addClass('grayColor');
+            updateCommentsCount(_notificationId);
+            appendComment(resp.data);
+        }
+        function blockNotification(_notificationId, _commentText) {
+            var _systemId = $('#btnCloseIssue_' + _notificationId).attr('data-system-id');
+            var _entityType = $('#btnCloseIssue_' + _notificationId).attr('data-entity-type');
+            ajaxReq('Main/BlockNotification', { systemId: _systemId, entityType: _entityType, status: false, remarks: _commentText }, true, function (resp) {
+                if (resp.id > 0) { alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_130); }
+                resetCommentAction(_notificationId);
+            }, false, false);
+        }
+    </script>
+</div>

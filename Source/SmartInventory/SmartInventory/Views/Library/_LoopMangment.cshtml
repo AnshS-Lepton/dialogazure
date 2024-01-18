@@ -1,0 +1,229 @@
+﻿@model List<Models.NELoopDetails>
+@using SmartInventory.Settings;
+@{
+    var lstInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name.ToLower() == Models.EntityType.Cable.ToString().ToLower()).ToList();
+    var startEndReading = lstInputSettings.Count > 0 ? lstInputSettings.Where(m => m.form_feature_name.ToLower() == Models.formFeatureName.start_end_reading.ToString() && m.form_feature_type.ToLower() == Models.formFeatureType.feature.ToString() && m.is_active == true).FirstOrDefault() : null;
+}
+<!DOCTYPE html>
+<div class="form-group">
+    <div class="tab-content">
+        @*Loop Managment*@
+        <fieldset class="the-fieldset">
+            <legend class="the-legend">@Resources.Resources.SI_OSP_CAB_NET_FRM_004 (@Resources.Resources.SI_OSP_ONT_NET_FRM_005  @ApplicationSettings.LoopBuffer @Resources.Resources.SI_OSP_GBL_GBL_GBL_034)</legend>
+
+            @if (Model.Count > 0)
+            {
+
+                <div class="d-flex mb-15">
+                    <span class="loopC--box loopC--box-exi mr-05"></span>
+                    <b>@Resources.Resources.SI_OSP_MPOD_NET_FRM_004</b>
+                    <span class="loopC--box loopC--box-no ml-10 mr-05"></span>
+                    <b> @Resources.Resources.SI_OSP_MPOD_NET_FRM_005</b>
+                </div>
+            }
+
+
+            <div id="Grid" style="border:none;">
+                <div class="tab-pane active" id="divLoopDetail" style="max-height: 350px; overflow: auto;">
+
+                    @if (Model.Count > 0)
+                    {
+
+                        <table id="tblLoopDetail" class="grid" cellpadding="0" cellspacing="0">
+
+                            <thead>
+                                <tr class="webgridHeader">
+                                    <th>@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+                                    @if (startEndReading != null)
+                                    {
+                                        <th>@Resources.Resources.SI_OSP_MPOD_NET_RPT_003</th>
+                                        <th>@Resources.Resources.SI_OSP_MPOD_NET_RPT_004</th>
+                                    }
+                                    <th>
+                                        @Resources.Resources.SI_OSP_MPOD_NET_RPT_005
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_MPOD_NET_RPT_002
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_ISP_CAB_NET_FRM_002
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_GBL_GBL_NET_FRM_220
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_CAB_NET_RPT_028
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_GBL_NET_FRM_474
+
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_GBL_NET_FRM_475
+                                    </th>
+
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @for (int i = 0; i < Model.Count; i++)
+                                {
+
+                                    <tr style="@(Model[i].loop_length > 0 ? "Background-color:#b5d1ff":"Background-color: #fcdaba")" class="displayRows">
+                                        <td>
+
+                                            @if (@Model[i].loop_length > 0)
+                                            {
+                                                <a href="javascript:void(0);" onclick="si.DeleteLoopDetail(@Model[i].system_id);" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002"> <i class="fa fa-times fa-fw"></i></a>
+                                                @*if (startEndReading == null)
+                                            {
+                                                <a href="javascript:void(0);" class="auto edit_loop_length" title="Edit"><i class="fa fa-pencil action_icon fa-fw m-r-xs" style="color: #428600;"></i></a>
+                                            }*@
+
+                                            }
+                                            <a href="#" onclick="si.ShowEntityOnMap('@Model[i].cable_system_id','Cable','Line');$(popup.DE.MinimizeModel).click();" class="dropdown-toggle" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036"><i class="fa fa-globe fa-fw m-r-xs"></i></a>
+
+
+                                        </td>
+                                        @if (startEndReading != null)
+                                        {
+                                            <td>
+
+                                                @Html.TextBox("lstLoopMangment[" + i + "].start_reading", @Model[i].start_reading, new { id = "lstLoopMangment_" + i + "_start_reading", @class = "form-control  enableControl", @onblur = "si.calculateLoopLength(" + i + ", " + @Model[i].available_calculated_length + ");", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
+
+                                            </td>
+                                            <td>
+
+                                                @Html.TextBox("lstLoopMangment[" + i + "].end_reading", @Model[i].end_reading, new { id = "lstLoopMangment_" + i + "_end_reading", @class = "form-control allownumeric_value enableControl", @onblur = "si.calculateLoopLength(" + i + ", " + @Model[i].available_calculated_length + ")", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
+
+                                            </td>
+                                        }
+                                        <td>
+                                            @if (startEndReading != null)
+                                            {
+                                                @Html.TextBox("lstLoopMangment[" + i + "].loop_length", @Model[i].loop_length, new { @class = "form-control allownumeric_value enableControl clsReadOnly", @readonly = true, @maxlength = "10", @id = "txt_loop_length", @style = "background-color: lightgrey !important;" })
+                                            }
+                                            else
+                                            {
+                                                @Html.TextBox("lstLoopMangment[" + i + "].loop_length", @Model[i].loop_length, new { @class = "form-control allownumeric_value enableControl ", @maxlength = "10", @id = "txt_loop_length" })
+                                            }
+
+                                        </td>
+                                        <td>
+                                            @Model[i].cable_id
+                                        </td>
+                                        <td>
+                                            @Model[i].cable_name
+                                        </td>
+                                        <td>
+                                            @Model[i].cable_calculated_length
+                                        </td>
+                                        <td>
+                                            @Model[i].total_loop_count
+                                        </td>
+                                        <td>
+                                            @Model[i].total_loop_length
+                                        </td>
+                                        <td>
+                                            @Model[i].available_calculated_length
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+
+                                        @Html.Hidden("lstLoopMangment[" + i + "].cable_id", @Model[i].cable_id)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].cable_system_id", @Model[i].cable_system_id)
+
+                                        @Html.Hidden("lstLoopMangment[" + i + "].associated_system_id", @Model[i].associated_system_id)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].associated_network_id", @Model[i].associated_network_id)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].system_id", @Model[i].system_id)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].associated_entity_type", @Model[i].associated_entity_type)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].created_on", @Model[i].created_on)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].created_by", @Model[i].created_by)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].network_status", @Model[i].network_status)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].network_id", @Model[i].network_id)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].region_id", @Model[i].region_id)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].province_id", @Model[i].province_id)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].sequence_id", @Model[i].sequence_id)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].parent_network_id", @Model[i].parent_network_id)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].parent_entity_type", @Model[i].parent_entity_type)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].modified_by", @Model[i].modified_by)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].modified_on", @Model[i].modified_on)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].latitude", @Model[i].latitude)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].longitude", @Model[i].longitude)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].total_loop_length", @Model[i].total_loop_length)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].total_loop_count", @Model[i].total_loop_count)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].cable_calculated_length", @Model[i].cable_calculated_length)
+                                        @Html.Hidden("lstLoopMangment[" + i + "].available_calculated_length", @Model[i].available_calculated_length)
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div>@Resources.Resources.SI_OSP_MPOD_NET_RPT_006 .</div>
+                    }
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+
+    <script>
+
+
+
+        $('.edit_loop_length').on('click', function () {
+
+
+            var selectedRow = $(this).parent();
+
+            disabledControls = selectedRow.closest('tr').find('.enableControl');
+            selectedRow.closest('tr').find('#txt_loop_length').removeAttr("style");
+
+            disabledControls.removeAttr('readonly');
+
+        });
+
+
+
+
+        // allow only numeric value in loop length
+        $(".allownumeric_value").on("keypress keyup blur", function (event) {
+
+            var DotLength = $(this).val().indexOf('.');
+
+            if (event.which == 46) {
+                if (DotLength >= 0)
+                    return false;
+                else
+                    return true;
+            }
+            if ((event.which < 48 || event.which > 57)) {
+                event.preventDefault();
+            }
+            if ((this.value.length == 0 && event.which == 48)) {
+                return false;
+            }
+
+        });
+
+        $(".allownumeric_value").on("paste", function () {
+            var thisvalue = this;
+
+            setTimeout(function () {
+                var OnlyNumber = new RegExp(/^(\d*\.)?\d+$/);
+                 
+                if (!OnlyNumber.test(thisvalue.value)) {
+                    thisvalue.value = "";
+                }
+            }, 0);
+        });
+
+        appendDynamicInputs("LoopMangment");
+
+    </script>
+
+
+</div>

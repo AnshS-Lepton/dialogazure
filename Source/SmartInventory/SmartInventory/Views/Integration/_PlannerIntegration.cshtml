@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Models.DisplayPlan>
+@Styles.Render("~/bundles/NetworkPlanning/css")
+<div id="divPlannerIntegration" class="sidenetworkDatabar">
+    <header>
+        <h3>
+            @Resources.Resources.SI_GBL_GBL_GBL_FRM_013
+            <i class="fa fa-refresh reloadPlans ml-10" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_405"  aria-hidden="true"></i>
+            <span id="closePlannerIntegration" class="kmlClose">×</span>
+        </h3>
+    </header>
+    
+        <div class="tablePad-bn">
+            <input type="text" class="form-control KMLSrch" id="planSearchKey" placeholder="@Resources.Resources.SI_OSP_GBL_GBL_FRM_008">
+        </div>
+    
+    <div class="plans">
+        @Html.Partial("_PlansList", Model);
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $(document).on('click', '.divRowlst .dvRow', function (e) {
+            $('.divRowlst .dvRow').parent().css('background-color', 'unset');
+            $(this).parent().css('background-color', 'lightgreen');
+        });
+
+        $('#closePlannerIntegration').on("click", function () {
+            $("#dvPlannerIntegration").hide('slide', { direction: 'up' }, 500);
+        });
+
+        $('#planSearchKey').on('input', function () {
+            var searchtext = $('#planSearchKey').val();
+            $("#rowdata .row").each(function () {
+                if ($('h4', $(this)).text().toLowerCase().indexOf(searchtext.toLowerCase()) > -1) {
+                    $(this).show();
+                }
+                else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        reloadPlans = function () {
+            ajaxReq('Integration/GetAllPlans', {}, true, function (resp) {
+                $('.plans').html(resp);
+
+            }, false, true, true);
+        }
+
+        $('.reloadPlans').on("click", function () {
+            reloadPlans();
+        });
+    });
+</script>

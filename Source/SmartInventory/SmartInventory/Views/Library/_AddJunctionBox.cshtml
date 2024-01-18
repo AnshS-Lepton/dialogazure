@@ -1,0 +1,50 @@
+﻿@model Models.IJunctionBoxMaster
+
+<div>
+    @if (Model.lstJunctionBoxInfo.Count > 0)
+{
+    <span class="ExportConduitNJBox" id="btnExportJunctionBox" title="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" onclick="si.exportJunctionBox()"></span>
+}
+    <span class="floorRowAdd" id="btnAddJunctionBoxRow" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_042">
+    </span>
+
+    <table id="tblJunctionboxLstInfo" class="floorLstInfo" cellpadding="0" cellspacing="0" style="font-size:smaller;    text-align: center;">
+
+        <thead>
+            <tr>
+                <th>@Resources.Resources.SI_OSP_STR_NET_FRM_015</th>                
+                <th>@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @for (int i = 0; i < Model.lstJunctionBoxInfo.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Html.TextBoxFor(m => Model.lstJunctionBoxInfo[i].box_name, new { @maxlength = "20", Style = " width:90%;" })
+                    </td>
+                    <td>
+                        @Html.HiddenFor(m => Model.lstJunctionBoxInfo[i].system_id)
+                        <span class="junctionBoxRowDelete" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" style="">x</span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</div>
+<script>
+    $(function () {
+        if ('@Model.lstJunctionBoxInfo.Count' == 0) {
+            $('#tblJunctionboxLstInfo').hide();
+        }
+        else {
+            $('#tblJunctionboxLstInfo').show();
+        }
+    });
+</script>
+
+
+

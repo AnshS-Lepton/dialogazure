@@ -1,0 +1,33 @@
+﻿@model Models.ProjectSpecificView
+@using Models;
+
+
+@helper ProjectSpecifications()
+{
+    { Html.RenderPartial("~/Views/Library/_ProjectSpecification.cshtml", (IProjectSpecification)Model); }
+}
+<!DOCTYPE html>
+<div id="frmBulkPrjSpecific" class="form-horizontal">
+    <div class="libDetail">
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+
+                    @*@if (Model.lstUserModule.Contains("PROJ"))
+                    {*@
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_001</legend>
+                            @ProjectSpecifications()
+                        </fieldset>
+                    @*}*@
+                </div>
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancelBulkProjSpec">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            <button type="submit" class="btn btn-primary" id="btnSaveBulkProjSpec">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            <input type="hidden" id="hidentity_sub_type" value="@Model.entity_sub_type" />
+        </div>
+    </div>
+</div>

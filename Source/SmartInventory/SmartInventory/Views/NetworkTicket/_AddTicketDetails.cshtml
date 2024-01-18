@@ -1,0 +1,324 @@
+﻿@model Models.NetworkTicket
+@helper pageMessage()
+{
+{ Html.RenderPartial("_PageMessage", Model.pageMsg); }
+
+}
+<style>
+    .required > .chosen-single {
+        border: 1px solid red;
+    }
+</style>
+
+<!DOCTYPE html>
+@using (Ajax.BeginForm("SaveNetworkTicket", "NetworkTicket", new AjaxOptions
+{
+    OnSuccess = "OnSuccess",
+    HttpMethod = "POST"
+},
+                                    new { id = "frmAddTicket", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    <div id="dvNetworkTicket" class="libDetail">
+        <div id="CreateTicket" class="tab-pane fade in active show">
+                <div class="space-pad">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_GBL_151</legend>
+                        <div class="form-group row">
+                           
+                             <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_133 <i class="clsMandatory">*</i>:</label>
+                            @Html.HiddenFor(m => m.ticket_id, new { @id = "hdnTicketId" })
+                            <div class="col-md-4 @(Model.ticket_id > 0? "dvdisabled" : "")" id="dvTicketType">
+                                @*//@Html.HiddenFor(m => m.ticket_type_id, new { @id = "hdntkttypid" })*@
+                                    @Html.DropDownListFor(x => x.ticket_type_id, new SelectList(Model.lstTicketTypeMaster.Select(x => new { Value = x.id, Text = x.ticket_type }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control validation", @id = "ddlTicketTypes" })
+                            </div>
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_134 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4" id="dvReferenceType">
+                                @Html.DropDownListFor(x => x.reference_type, new SelectList(Model.lstReferenceType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlRefType" })
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_031 :</label>
+                            <div class="col-md-4" id="dvRefTicketId">
+                                @Html.TextBoxFor(m => m.reference_ticket_id, new { @id = "txtRefTicketId", @title = Resources.Resources.SI_OSP_GBL_GBL_FRM_031, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_FRM_031, maxlength = 50 })
+                            </div>
+                            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_GBL_152:</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(x => x.reference_description, new { @id = "txtRemarks", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_006, @tabindex = "4", @class = "input-sm form-control", @placeholder = @Resources.Resources.SI_OSP_GBL_GBL_GBL_006, maxlength = 500 })
+                            </div>
+
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_GBL_155</legend>
+                        @if (string.IsNullOrEmpty(Model.geom) && Model.ticket_id == 0)
+                        {
+                            <div class="form-group row">
+                                <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_065 :</label>
+                                <div class="col-md-4">
+                                    @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId, Text = x.regionName }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @onchange = "si.onChangeRegions();", @id = "ddlRegion" })
+                                </div>
+                                <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_066 <i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-4">
+                                    @Html.DropDownListFor(m => m.province_id, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlProvince" })
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            @Html.HiddenFor(m => m.region_id, new { @id = "hdnregionid" })
+                            @Html.HiddenFor(m => m.province_id, new { @id = "hdnprovinceid" })
+                            @Html.HiddenFor(m => m.geom, new { @id = "hdngeom" })
+                            <div class="form-group row">
+                                <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_065 :</label>
+                                <div class="col-md-4">
+                                    @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId, Text = x.regionName }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @onchange = "si.onChangeRegions();", @id = "ddlRegion", @disabled = "disabled" })
+                                </div>
+                                <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_066 <i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-4">
+                                    @Html.DropDownListFor(m => m.province_id, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlProvince", @disabled = "disabled" })
+                                </div>
+                            </div>
+                        }
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_GBL_153 :</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(m => m.network_id, new { @id = "txtNetworkTicketID", @title = Resources.Resources.SI_OSP_GBL_NET_GBL_153, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_GBL_153, maxlength = 50, @readonly = true })
+                            </div>
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_ISP_UNT_NET_FRM_002 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(m => m.name, new { @id = "txtName", @title = Resources.Resources.SI_ISP_UNT_NET_FRM_002, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_ISP_UNT_NET_FRM_002, maxlength = 50 })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_369 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @Html.DropDownListFor(x => x.assigned_to, new SelectList(Model.lstUserName.Select(x => new { Value = x.user_id, Text = x.user_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlassignedto" })
+
+                            </div>
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_141 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @if (Model.ticket_id > 0)
+                                {
+                                    @Html.TextBoxFor(m => m.target_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY" })
+                                 }
+                                  else
+                                {
+                                  @Html.TextBoxFor(m => m.target_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @Value = @DateTime.Now.ToString("dd-MMM-yyyy") })
+                                }
+                                <img id="img_permit_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;" />
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_GBL_154 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @Html.DropDownListFor(m => m.for_network_type, new List<SelectListItem>
+                               { new SelectListItem { Text = "As-Built", Value = "A"},
+                                new SelectListItem { Text = "Planned", Value = "P"},
+
+                                }, "-Select-", new { @class = "chosen-select form-control validation", @id = "ddlNetworkType" })
+
+                            </div>
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(x => x.remarks, new { @id = "txtremarks", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_006, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_006, maxlength = 500, @resize = "none" })
+                            </div>
+                        </div>
+                        @if (Model.lstUserModule.Contains("PAT"))
+                        {
+                        <div class="form-group row">
+                            @if (Model.lstUserModule.Contains("PROJ"))
+                            {
+                                <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_074 :</label>
+                                 <div class="col-md-4">
+                                     @Html.TextBoxFor(x => x.project_code, new { @id = "txtproject_code", @title =Resources.Resources.SI_OSP_GBL_GBL_GBL_074, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_074, maxlength = 50, @resize = "none" })
+                                 </div>
+                            }
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_436:</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(x => x.account_code, new { @id = "txtaccount_code", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_436, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_436, maxlength = 50, @resize = "none" })
+                            </div>
+                        </div>
+                        }
+                    </fieldset>
+                </div>
+        </div>
+        <div class="ModalFooter d-flex">
+            @if (Model.ticket_id > 0)
+            {
+                <button type="button" id="btnCancle" class="btn btn-default ml-auto" onclick="OnChildCancle();"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</button>
+                <button type="submit" id="btnUpdateTicket" class="btn btn-success ml-10" onclick="return isFormValid()"                       
+                    @foreach (var item in Model.lstTicketTypeMaster)
+                    {
+                        if (item.id == Model.ticket_type_id)
+                        {
+                            if (item.is_edit == true && Model.ticket_type_roleid_match == Model.user_role_id)
+                            {
+                            }
+                            else
+                            {
+                                {@:disabled="disabled" title="Unothorize Access"
+                                }
+                            }
+                        }
+                    }
+                    @{ if (Model.ticket_status_id != 4)
+                        { @: disabled="disabled"
+                        } }>
+                    @Resources.Resources.GBL_GBL_GBL_GBL_GBL_003
+                </button>
+
+              }
+            else
+            {
+                <button type="button" id="btnCancle" class="btn btn-warning ml-auto" onclick="OnCancle();"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</button><button type="submit" id="btnCreateTicket" class="btn btn-success ml-10"  onclick="return isFormValid()"
+                   @if (Model.lstTicketTypeMaster.Count>0)
+                   {
+                       foreach (var item in Model.lstTicketTypeMaster)
+                       {
+                           if (item.is_create == true && Model.ticket_type_roleid_match == Model.user_role_id)
+                           {
+
+                           }
+                           else
+                           {
+                               {@:disabled="disabled" title="Unauthorized Access"
+                                   }
+                               }
+                           
+                       }
+                   }
+                   else {
+                       {@:disabled="disabled" title="Unauthorized Access"
+                               }
+                   }                                  
+                   > @Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+        </div>
+    </div>
+    }
+<script>
+    $(document).ready(function () {
+
+        callFormValidator("frmAddTicket");
+        $("#ddlRegion").attr('data-placeholder', "-Select-").trigger("chosen:updated");
+        $("#ddlProvince").attr('data-placeholder', "-Select-").trigger("chosen:updated");
+        var selectedProvinces = '@Model.objNetwork_Ticketinput.SelectedProvinceIds';
+        $("#ddlProvince").val(selectedProvinces.split(',')).trigger("chosen:updated");
+        var selectedRegions = '@Model.objNetwork_Ticketinput.SelectedRegionIds.Replace("'", "")';
+        $("#ddlRegion").val(selectedRegions.split(',')).trigger("chosen:updated");
+        si.Networkticket.setDateTimeCalendar('target_date', 'img_permit_date', '', true);
+        $('.chosen-select').chosen({ width: '100%', });
+        $('#hdnprovinceid').val(selectedProvinces);
+        $('#hdnregionid').val(selectedRegions);
+        if(@Model.ticket_id > 0)
+        {
+            $("#txtName").toggleClass("input-validation-error");
+        };
+
+        if("@Model.pageMsg.status"=="FAILED")
+        {
+            $("#closeModalPopup").trigger("click");
+            alert("@Html.Raw(Model.pageMsg.message)");
+            return false;
+        }
+    });
+
+    //function cancle(){
+    //    $("#closeModalPopup").trigger("click");
+    //    $(".icon-close").trigger("click");
+    //};
+    function OnSuccess(data) {
+
+        if (data.pageMsg.status == "Save") {
+            $("#closeModalPopup").trigger("click");
+        }
+        if (data.pageMsg.status == "Update") {
+            if ('@Model.source' == "")
+                $("#closeChildPopup").trigger("click");
+            else
+                $("#closeModalPopup").trigger("click");
+            $("#btnTicketData").trigger("click");
+        }
+        alert(data.pageMsg.message, 'Success', MultilingualKey.GBL_GBL_GBL_JQ_GBL_001);
+        si.clearDraggableLibrary();
+        if ('@Model.geom' != "" && $('.region .checkbox-custom').is(':checked'))
+            $(si.DE.lyrRefresh).trigger("click");
+    }
+    function OnCancle() {
+
+        $("#closeModalPopup").trigger("click");
+    }
+    function OnChildCancle() {
+
+        if ('@Model.source' == "")
+            $("#closeChildPopup").trigger("click");
+        else
+            $("#closeModalPopup").trigger("click");
+    }
+    function isFormValid() {
+        if ($("#ddlRefType").val() != "GIS"&& $("#ddlRefType").val() != "" && $("#txtRefTicketId").val() == "") {
+            $('#txtRefTicketId').css('border-color', 'red');
+            return false;
+        } else {
+            $('#txtRefTicketId').css('border-color', '');
+        }
+        if ($("#ddlRegion").val() != "" && $("#ddlProvince").val() == "") {
+            $('#ddlProvince_chosen').addClass('required');
+            return false;
+        }
+        else {
+            $('#ddlProvince_chosen').removeClass('required');
+        }
+
+        //S2 Trace feature ON/OFF Key
+        var IsTraceEnabled = $('#hdnIsTraceEnabled').val();
+        if (IsTraceEnabled == "True") {
+            //Below code for check ticket creation permission via FSA and PSA
+            var entityType = '@Model.entityType';
+            var systemID = '@Model.SystemID';
+            var ticketType = $("#ddlTicketTypes :selected").text();
+            if (ticketType == "Survey" && systemID != "" && entityType != "") {
+                var msg = getCreateTicketPermissionByGeom(ticketType, entityType, systemID);
+                if (msg != '') {
+                    alert(msg);
+                    return false;
+                }
+            }
+            else if (ticketType == "Construction" && systemID != "" && entityType != "") {
+                var msg = getCreateTicketPermissionByGeom(ticketType, entityType, systemID);
+                if (msg != '') {
+                    alert(msg);
+                    return false;
+                }
+            }
+        }
+    }
+
+    //Below function for check ticket creation permission via FSA and PSA
+    function getCreateTicketPermissionByGeom(ticketType, entityType, systemID) {
+        var msg = '';
+        ajaxReq('NetworkTicket/GetCreateTicketPermissionByGeom', { ticketType: ticketType, entityType: entityType, systemID: systemID }, false, function (resp) {
+            if (resp.status == "FAILED") {
+                msg = resp.message;
+            } 
+            }, true, true);
+        return msg; 
+    }
+    function btnReset() {
+
+        $("#frmAddTicket")[0].reset();
+        $('#ddlTicketTypes').val('').trigger("chosen:updated");
+        $('#ddlRefType').val('').trigger("chosen:updated");
+        if ($('#hdngeom').val() == '' || $('#hdngeom').val() == null) {
+            $('#ddlRegion').val('').trigger("chosen:updated");
+            $('#ddlProvince').val('').trigger("chosen:updated");
+        };
+        $('#ddlNetworkType').val('').trigger("chosen:updated");
+        $('#ddlassignedto').val('').trigger("chosen:updated");
+    }
+</script>
+
+

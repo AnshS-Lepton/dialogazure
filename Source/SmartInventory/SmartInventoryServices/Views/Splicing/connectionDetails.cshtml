@@ -1,0 +1,14 @@
+﻿@{var userModuleList = (List<string>)Session["ApplicableModuleList"];}
+
+<div class="rel_pop animated rotateIn" id="div_1" style="position: fixed;">
+    <span class="fa fa-caret-left pointer"></span>
+    <button type="button" id="btnCloseSplicingInfo" style="position: absolute;top: -4px;right: 4px;font-size: 18px;" class="close">×</button>
+    <div class="span_box_menu dvSplitElement" id="btnConnectionPath" title="@Resources.Resources.SI_OSP_CAB_NET_FRM_059" style="padding: 6px 0px 6px 0px;">@Resources.Resources.SI_OSP_GBL_NET_FRM_368</div>
+    <div class="span_box_menu dvSplitElement" id="btnConnectedCustomerDetails" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_414" style="padding: 6px 0px 6px 0px;">@Resources.Resources.SI_OSP_GBL_GBL_FRM_015</div>
+    <div class="span_box_menu dvSplitElement" id="btncoreportupdate" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_150" style="padding: 6px 0px 6px 0px;">@Resources.Resources.SI_OSP_GBL_NET_FRM_418</div>
+    <div class="span_box_menu dvSplitElement" id="btnPatchCordEdit" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_003" style="display:none; padding: 6px 0px 6px 0px;">@Resources.Resources.SI_GBL_GBL_GBL_GBL_003</div>
+    @*@if (userModuleList.Contains("FLK"))
+        {
+            <div class="span_box_menu dvSplitElement" id="btnConnectedlinkInfo" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_419" style="padding: 6px 0px 6px 0px;">@Resources.Resources.SI_OSP_GBL_NET_FRM_419</div>
+        }*@
+</div>

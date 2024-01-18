@@ -1,0 +1,170 @@
+﻿@{
+    Layout = null;
+}
+@model Models.Feasibility.FeasibilityDetailsViewModel
+<!DOCTYPE html>
+<div id="dvModalBody" class="modal-body pa20">
+    <div class="libDetail">
+        <div id="dvPageMsg"></div>
+        <div class="libTabs">
+            <ul class="nav nav-tabs tabs-left">
+                <li class="active"><a href="#GISInfo" data-toggle="tab">Feasibility History</a></li>
+                <li class=""><a href="#ItemSpecf" data-toggle="tab">Feasibility History Details</a></li>
+            </ul>
+        </div>
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active tab-bg" id="GISInfo">
+                    <table class="table table-responsive" id="FeasibilityHistory">
+                        <thead style="background-color:#ccc;">
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>Feasibility Name/ID</td>
+                                <td>Total Length(Existing + LMC)</td>
+                                <td>Existing Length(P)</td>
+                                <td>Existing Length(A)</td>
+                                <td>New Calculated Outside Length</td>
+                                <td>LMC Length (Point A)</td>
+                                <td>LMC Length (Point B)</td>
+                                <td>start-lat</td>
+                                <td>start-lng</td>
+                                <td>end-lat</td>
+                                <td>end-lng</td>
+                                <td>Action</td>
+                            </tr>
+                        </thead>
+                        <tbody style="background-color:#fff;">
+                            @{int i = 0;}
+                            @foreach (var Items in Model.lstFeasibilityDetails)
+                            {
+                                <tr>
+                                    <td><input type="radio" id="rdbtn_@Items.feasibility_id" name="rdbtn" checked="@Items.isSelected" onclick="sf.fillFeasibilityDetails('@Items.totalLength', '@Items.ExistingLength_A', '@Items.ExistingLength_P', '@Items.NewOutside_A_Length', '@Items.NewOutside_B_Length', '@Items.lmc_A_End_Path', '@Items.lmc_B_End_Path', @Items.feasibility_id, false)" /></td>
+                                    <td>@Items.feasibilityName</td>
+                                    <td>@Items.totalLength</td>
+                                    <td>@Items.ExistingLength_P</td>
+                                    <td>@Items.ExistingLength_A</td>
+                                    <td>@Items.NewOutside_A_Length</td>
+                                    <td>@Items.lmc_A_End_Path</td>
+                                    <td>@Items.lmc_B_End_Path</td>
+                                    <td>@Items.start_lat</td>
+                                    <td>@Items.start_lng</td>
+                                    <td>@Items.end_lat</td>
+                                    <td>@Items.end_lng</td>
+                                    @{int j = 0;}
+                                    @foreach (var objGeom in Model.lstFeasibilityGeometry)
+                                    {
+                                        @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].isSelected, new { id = "objGeometryIsSelected_" + i + j })
+                                        @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].cable_geometry, new { id = "objGeometryCable_geometry_" + i + j })
+                                        @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].path_type, new { id = "objGeometryPath_Type_" + i + j })
+                                        @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].cable_length, new { id = "objGeometryCable_Length_" + i + j })
+                                        j++;
+                                    }
+                                    <td>
+                                        <span class="downloadFeasStatus" data-type="BOM" title="Download BOM Report"><i class="fa fa-file-excel-o fa-lg" aria-hidden="true" onclick="sf.downloadHistoryReport($(event.target.parentElement).data('type'))/*sf.dowloadFeasibilityReport($(event.target.parentElement).data('type'));*/"></i></span>&nbsp;&nbsp;
+                                        <span class="downloadFeasStatus" data-type="XLS" title="Download Feasibility Report"><i class="fa fa-file-excel-o fa-lg" aria-hidden="true" onclick="sf.downloadHistoryReport($(event.target.parentElement).data('type'));"></i></span>&nbsp;&nbsp;
+                                        <span class="downloadFeasStatus" data-type="PDF" title="Download PDF"><i class="fa fa-file-pdf-o fa-lg" aria-hidden="true" onclick="sf.downloadHistoryReport($(event.target.parentElement).data('type'));"></i></span>&nbsp;&nbsp;
+                                        <span class="downloadFeasStatus" data-type="KML" title="Download KML"><i class="fa fa-map fa-lg" aria-hidden="true" onclick="sf.downloadHistoryReport($(event.target.parentElement).data('type'));"></i></span>&nbsp;&nbsp;
+                                        <span title="Run Feasibility Again"><i class="fa fa-file-excel-o fa-lg" aria-hidden="true" onclick='sf.ComputeOldFeasibilityAgain()'></i></span>&nbsp;&nbsp;
+                                        <span title="Show Feasibility On Map"><i class="fa fa-file-excel-o fa-lg" aria-hidden="true" onclick="sf.ShowfeasibilityOnMap('@Items.CableGeom')"></i></span>&nbsp;&nbsp;
+
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="ItemSpecf">
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="">Feasibility Name/ID<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityModel.feasibility_name, new { @class = "form-control", @id = "feasibility_id", @readOnly = "true" })
+                        </div>
+                        <label class="control-label col-md-2" for="">Customer Name<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityModel.customer_name, new { @class = "form-control", @id = "customer_name", @readOnly = "true" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="">Customer ID<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityModel.customer_id, new { @class = "form-control", @id = "customer_id", @readOnly = "true" })
+                        </div>
+                        <label class="control-label col-md-2" for="">Cores Required<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityModel.cores_required, new { @class = "form-control", @id = "cores_free", @readOnly = "true" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="">Start Lat-Lng<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityModel.start_lat_lng, new { @class = "form-control", @id = "start_lat", @readOnly = "true" })
+                        </div>
+                        <label class="control-label col-md-2" for="">End Lat-Lng<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityModel.end_lat_lng, new { @class = "form-control", @id = "end_lat", @readOnly = "true" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="">Total Length(Existing + LMC)<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityDetails.totalLength, new { @class = "form-control", @id = "totalLength", @readOnly = "true" })
+                        </div>
+                        <label class="control-label col-md-2" for="">Inside Planned Length<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityDetails.ExistingLength_P, new { @class = "form-control", @id = "ExistingLength_P", @readOnly = "true" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="">Inside AsBuilt Length<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityDetails.ExistingLength_A, new { @class = "form-control", @id = "ExistingLength_A", @readOnly = "true" })
+                        </div>
+                        <label class="control-label col-md-2" for="">Outside Length<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityDetails.NewOutside_A_Length, new { @class = "form-control", @id = "NewOutside_A_Length", @readOnly = "true" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-6"></div>
+                        <label class="control-label col-md-2" for="">Outside Length<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityDetails.NewOutside_B_Length, new { @class = "form-control", @id = "NewOutside_B_Length", @readOnly = "true" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="">LMC Length (Point A )<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityDetails.lmc_A_End_Path, new { @class = "form-control", @id = "lmc_A_End_Path", @readOnly = "true" })
+                        </div>
+                        <label class="control-label col-md-2" for="">LMC Length (Point B )<i class="clsMandatory">*</i> :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.objFeasibilityDetails.lmc_B_End_Path, new { @class = "form-control", @id = "lmc_B_End_Path", @readOnly = "true" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="cableType">Cable Type</label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(m => m.objFeasibilityModel.cable_type_id, new SelectList(Model.lstCableTypes, "cable_type_id", "display_name"), "-- Cable Type --", new { @id = "cableType_id", @class = "form-control", @readOnly = "true" })
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        @*<div class="form-group ModalFooter" style="border-top: 1px solid #ccc; padding-top: 10px;">
+                <div class="col-md-6 ModelFooterInfo">
+                    <label class="control-label">Status:</label>
+                    <label class="control-label model-label-info">Planned</label>
+                    @*<label class="control-label">Created On:</label>
+                </div>
+                <div class="col-md-6" style="float: right; text-align: right; padding-right: 25px;display:none;" id="feasibilitybtnDv">
+                    <button type="button" class="btn btn-default">Back</button>
+                    <button type="submit" class="btn btn-primary" id="btnfeasibilitySubmit">Save</button>
+                </div>
+            </div>
+            <div class="clearfix"></div>*@
+    </div>
+
+</div>

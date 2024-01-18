@@ -1,0 +1,127 @@
+﻿
+@model Models.ViewBulkSurveyBuildingModel
+@using Utility;
+
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objFilterAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "objViewSurveyBuilding");
+    grid.Bind(Model.lstBulkSurveyBuilding, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+    if (Model.objFilterAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objFilterAttributes.currentPage - 1;
+    }
+}
+
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SurveyUpdateBuilding", "SurveyArea", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        OnBegin = ""
+
+    },
+new { id = "frmUpdateBulkBuilding", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        <div class="TabContent--max-over">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="txtDateTo">@Resources.Resources.SI_OSP_GBL_NET_GBL_081:</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.objFilterAttributes.dd_city, new SelectList(Model.lstCity.Select(x => new { Value = x.province_id.ToString(), Text = x.province_name.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "drpCity", @onchange = "ddlChangeRemoveCss(this.id, 'drpCity');" })
+
+                        </div>
+                        <label class="control-label col-sm-2" for="ddlArea">@Resources.Resources.SI_ISP_UNT_NET_FRM_007:</label>
+                        <div class="col-sm-4">
+
+                            @Html.DropDownListFor(m => m.objFilterAttributes.dd_area, new SelectList(Model.lstArea.Select(x => new { Value = x.area_id.ToString(), Text = x.area_name.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlArea" })
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="Search by">@Resources.Resources.SI_OSP_GBL_NET_FRM_100:</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.objFilterAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12" })
+
+
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_FRM_101:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objFilterAttributes.searchText, new { @id = "txtSearchText", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ModalFooter d-flex" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-defaultml-auto" data-dismiss="modal" id="btnCancelAssignRoute">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</a>
+            <button type="submit" class="btn btn-success ml-10" id="btnSaveItemTemplate">@Resources.Resources.SF_GBL_GBL_GBL_GNL_006</button>
+        </div>
+      
+
+        if (Model.lstBulkSurveyBuilding.Count > 0)
+        {
+            <div id="objViewSurveyBuilding">
+                <div class="recordCount"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:@grid.TotalRowCount</b></div>
+                <div class="table-responsive tble_cls">
+                    @grid.GetHtml(tableStyle: "grid",
+                                htmlAttributes: new { id = "tblBulkBuilding" },
+                                mode: WebGridPagerModes.All,
+                                columns: grid.Columns(
+                                  grid.Column("surveyarea_name", Resources.Resources.SI_OSP_AR_NET_FRM_007, format: @<text>@item.surveyarea_name</text>),
+grid.Column("building_code", Resources.Resources.SI_OSP_GBL_GBL_GBL_060, format: @<text>@item.building_code</text>),
+grid.Column("building_name", Resources.Resources.SI_OSP_BUL_NET_FRM_011, format: @<text>@item.building_name</text>),
+grid.Column("address", Resources.Resources.SI_OSP_GBL_GBL_GBL_008, format: @<text>@item.address</text>),
+grid.Column("area", Resources.Resources.SI_OSP_GBL_GBL_GBL_013, format: @<text> @item.area  </text>),
+grid.Column("created_on", Resources.Resources.SI_OSP_GBL_GBL_GBL_007, format: @<text> @(item.created_on == null ? item.created_on : MiscHelper.FormatDate(item.created_on.ToString())) </text>),
+grid.Column("business_pass", Resources.Resources.SI_OSP_BUL_NET_FRM_018, format: @<text>@item.business_pass</text>),
+grid.Column("home_pass", Resources.Resources.SI_OSP_GBL_GBL_GBL_083, format: @<text>@item.home_pass</text>),
+grid.Column("building_type", Resources.Resources.SI_OSP_BUL_NET_RPT_003, format: @<text>@item.building_type</text>),
+grid.Column("category", Resources.Resources.SI_OSP_GBL_NET_GBL_003, format: @<text> @item.category  </text>),
+grid.Column("tenancy", Resources.Resources.SI_OSP_GBL_GBL_GBL_084, format: @<text> @item.tenancy  </text>),
+grid.Column("rfs_status", Resources.Resources.SI_OSP_BUL_NET_HIS_008, format: @<text> @item.rfs_status  </text>),
+grid.Column("rfs_date", Resources.Resources.SI_OSP_BUL_GBL_FRM_001, format: @<text> @(item.rfs_date == null ? item.rfs_date : MiscHelper.FormatDate(item.rfs_date.ToString())) </text>),
+grid.Column("media", Resources.Resources.SI_OSP_BUL_NET_FRM_020, format: @<text> @item.media  </text>),
+grid.Column("remarks", Resources.Resources.SI_OSP_GBL_GBL_GBL_006, format: @<text> @item.remarks</text>)
+))
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="nr-found">
+                <span> @Resources.Resources.SI_OSP_GBL_NET_RPT_013</span>
+            </div>
+        }
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('tfoot a').on("click", function () {
+            $('form').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+
+        //Post form on page header click..
+        $('th a').on("click", function () {
+            $('form').attr('action', $(this).attr('href')).submit();
+
+            return false;
+        });
+        $('.chosen-select').chosen({ width: '100%' });
+
+        $('#drpCity').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindAreaDD(dID);
+            //  si.bindArea(dID);
+        });
+    });
+
+
+</script>

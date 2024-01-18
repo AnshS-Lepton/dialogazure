@@ -1,0 +1,82 @@
+﻿@model Models.PITTemplateMaster
+@using Models;
+<script>
+    //Set color of template icon as green in NE library
+    if ('@Model.id' > 0) {
+        $(".clsTemplateIcon[data-lyrname='PIT']").css('background-color', '#9999FF');
+    }
+</script>
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+
+<!DOCTYPE html>
+<div class="libDetail">
+
+    @using (Ajax.BeginForm("SavePITTemplate", "ItemTemplate", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnFailure = "si.handleError",
+        OnBegin = "return validate();"
+
+    },
+            new { id = "frmItemTemplate", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id)
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_OSP_ROW_NET_FRM_109</legend>
+                        <div class="form-group">
+                            <label class="control-label col-md-6" for="txtLatitude">@Resources.Resources.SI_OSP_ROW_NET_FRM_110<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-6">
+                                @Html.TextBoxFor(m => m.radius, new { @class = "form-control", @id = "txtPITRadius", @maxlength = "4", @onkeypress = "return allowNumberwithOneDot(event,'txtPITRadius');" })
+                            </div>
+
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+
+            @if (Model.id > 0)
+            {
+                <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+           callFormValidator("frmItemTemplate");
+           $('#id').val('@Model.id');
+        if ($('#txtPITRadius').val() == 0)
+        {
+            $('#txtPITRadius').val(null);
+        }
+    });
+    function validate() {
+        var maxLimit = parseInt($('#hdnROWMaxWidthLimit').val());
+        if (parseFloat($('#txtPITRadius').val()) > (maxLimit/2)) {
+            $('#txtPITRadius').addClass('NotValid');
+            alert($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_127, maxLimit));
+            return false;
+        }
+        return true;
+    }
+</script>
+

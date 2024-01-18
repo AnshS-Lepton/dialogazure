@@ -1,0 +1,561 @@
+﻿@model Models.TicketMaster
+@using Models;
+@helper pageMessage()
+{
+{ Html.RenderPartial("_PageMessage", Model.pageMsg); }
+
+}
+
+<!DOCTYPE html>
+@using (Ajax.BeginForm("SaveTicket", "TicketManager", new AjaxOptions
+{
+    OnSuccess = "SaveTicket",
+    HttpMethod = "POST"
+},
+                              new { id = "frmAddTicket", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.ticket_id)
+    // @Html.HiddenFor(m => m.customer_name)
+    <div id="CreateTicket" class="tab-pane fade in active show">
+        <div class="space-pad BdrSet">
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_132</legend>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_133 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(x => x.ticket_type_id, new SelectList(Model.lstTicketTypeMaster.Select(x => new { Value = x.id, Text = x.ticket_type }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlTicketType", @onchange = "ChangeTicketType();" })
+                        </div>
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_134 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(x => x.reference_type, new SelectList(Model.lstReferenceType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlRefType" })
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                            <label class="control-label col-sm-2">Reference Type <i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @Html.DropDownListFor(x => x.reference_type, new SelectList(Model.lstReferenceType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlRefType" ,@onchange="ddlReftypeChange();"})
+                                </div>
+                            <label class="control-label col-sm-2">Reference Ticket No.</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(x => x.reference_ticket_id, new { @class = "form-control", @maxlength = "200" })
+                            </div>
+                        </div>*@
+                    @*<div class="form-group">
+                            <label class="control-label col-sm-2">Ticket Description</label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(x => x.ticket_description, new { @class = "form-control", @maxlength = "200" })
+                            </div>
+                        </div>*@
+                </fieldset>
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_135</legend>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2 " for="entities">@Resources.Resources.SI_OSP_CUS_NET_FRM_001 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-4">
+                            <div class="CanIDico">
+                                @if (Model.IsCustomerExist)
+                                {
+                                    <i class="icon-map-view" id="iconCustomerMapp" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036"></i>
+                                    <i class="icon-View-details" id="iconCustomerdetails" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_137" style="display:none !important"></i>
+                                    <img src="~/Content/images/tick_1.gif" class="GifImg" id="ImgCross" />
+                                }
+                                else if (Model.ticket_id > 0)
+                                {
+                                    <i class="icon-map-view" id="iconCustomerMapp" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" style="display:none" onclick="showCustomer('@Model.can_id')"></i>
+                                    <i class="icon-View-details" id="iconCustomerdetails" style="display:none" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_137"></i>
+                                    <img src="~/Content/images/cross.gif" class="GifImg" id="ImgCross" />
+                                }
+                                @if (Model.ticket_id == 0)
+                                {
+                                    <i class="icon-map-view" id="iconCustomerMapp" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" style="display:none" onclick="showCustomer('@Model.can_id')"></i>
+                                    <i class="icon-View-details" id="iconCustomerdetails" style="display:none" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_137"></i>
+                                    <img src="~/Content/images/cross.gif" class="GifImg" id="ImgCross" style="display:none" />
+                                }
+
+                                @*<i class="icon-map-view" id="iconCustomerMapp" style="display:none" onclick="showCustomer('@Model.can_id')"></i> <i class="icon-View-details" id="iconCustomerdetails" style="display:none"></i>*@
+                            </div>
+                            @Html.TextBoxFor(x => x.can_id, new { @class = "form-control numbers-only", @onkeypress = "return si.allowOnlyNumber(event);", @minlength = "6", @maxlength = "7", @id = "txtCanId", @onblur = "getCustomer()", @onchange = "copyPasteNumberOnly();" })
+                            @Html.ValidationMessageFor(model => model.can_id)
+                        </div>
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_138 <i class="clsMandatory">*</i>:</label>
+                        @if (Model.ticket_id > 0)
+                        {
+
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(x => x.customer_name, new { @class = "form-control", @readonly = true })
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(x => x.customer_name, new { @class = "form-control" })
+                            </div>}
+
+                    </div>
+                    @*<div class="form-group">
+
+                            <label class="control-label col-sm-2">Contact no.  :</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(x => x.contact_no, new { @class = "form-control", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "10" })
+                            </div>
+                        <label class="control-label col-sm-2" for="entities">Pincode   :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(x => x.pin_code, new { @class = "form-control", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "6", @minlength = "6", autocomplete = "new-password" })
+                            @Html.ValidationMessageFor(model => model.pin_code)
+                        </div>
+                        </div>*@
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_GBL_008 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(x => x.address, new { @class = "form-control", @maxlength = "200" })
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_139</legend>
+
+                    <div class="form-group row" id="dvBuildDetails">
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_140<i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-4">
+                            <div class="CanIDico">
+                                @if (Model.IsBuildingExist)
+                                {
+                                    <i class="icon-map-view" id="iconBldMapp" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036"></i>
+                                    <i class="icon-View-details" id="iconBldDetails" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_137" style="display:none !important"></i>
+                                    <img src="~/Content/images/tick_1.gif" class="GifImg" id="ImgBldCross" />
+                                }
+                                else if (Model.ticket_id > 0)
+                                {
+                                    <i class="icon-map-view" id="iconBldMapp" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" style="display:none"></i>
+                                    <i class="icon-View-details" id="iconBldDetails" style="display:none" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_137"></i>
+                                    <img src="~/Content/images/cross.gif" class="GifImg" id="ImgBldCross" />
+                                }
+                                @if (Model.ticket_id == 0)
+                                {
+                                    <i class="icon-map-view" id="iconBldMapp" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" style="display:none"></i>
+                                    <i class="icon-View-details" id="iconBldDetails" style="display:none" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_137"></i>
+                                    <img src="~/Content/images/cross.gif" class="GifImg" id="ImgBldCross" style="display:none" />
+                                }
+                                @*<img src="~/Content/images/cross.gif" class="GifImg" id="ImgBldCross" />
+                                    <i class="icon-map-view" id="iconBldMapp" style="display:none"></i> <i class="icon-View-details" id="iconBldDetails" style="display:none"></i>*@
+                            </div>
+                            @if (Model.ticket_type_id == 3)
+                            {
+                                @Html.TextBoxFor(x => x.building_code, new { @class = "form-control remove-White-Space", @maxlength = "50", @id = "txtBuildingCode", @onblur = "getBuilding();", @style = "text-transform:uppercase", @readonly = true })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(x => x.building_code, new { @class = "form-control remove-White-Space", @maxlength = "50", @id = "txtBuildingCode", @onblur = "getBuilding();", @style = "text-transform:uppercase" })
+                            }
+
+                        </div>
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_142 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(x => x.bld_rfs_type, new { @class = "form-control", @readonly = true, @style = "width: 254px" })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_105  <i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(x => x.assigned_to, new SelectList(Model.lstUserName.Select(x => new { Value = x.user_id, Text = x.user_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlAssignedTo" })
+
+                        </div>
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_141 <i class="clsMandatory">*</i>:</label>
+
+                        <div class="col-sm-45" style="height:24px;">
+                            @Html.TextBoxFor(m => m.target_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @style = "background:#fff;width: 254px" })
+                            <img id="imgTargetDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                    </div>
+                </fieldset>
+        </div>
+        <div class="ModalFooter d-flex">
+            @if (Model.ticket_status == "Assigned" || string.IsNullOrWhiteSpace(Model.ticket_status))
+            {
+                <button type="button" id="btnclear" class="btn btn-default ml-auto"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+
+                if (Model.ticket_id > 0)
+                {
+                    <button type="submit" id="btnCreateTicket" class="btn btn-success ml-10" onclick="return createUpdateTicket(true);"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                }
+                else
+                {
+                    <button type="button" id="btnCreateTicket" class="btn btn-success ml-10" onclick="return createUpdateTicket(true);"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_038</button>
+                }
+            }
+        </div>
+    </div>
+}
+<script type='text/javascript'>
+    $(document).ready(function () {
+        callFormValidator("frmAddTicket");
+        // si.setDateTimeCalendar("target_date", "imgTargetDate", true, false);
+        si.setSurveyDateTimeCalendar("target_date", "imgTargetDate", "0", false);
+        $('.chosen-select').chosen({ width: '100%', });
+        $("#btnclear").on("click", function () {
+            showConfirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_104, function () {
+                si.resetTicket();
+            });
+        });
+
+    });
+
+    function getCustomer() {
+        var canId = $('#txtCanId').val();
+        if (canId.length > 0) {
+            ajaxReq('TicketManager/GetCustomerByCanId', { networkId: canId, }, true, function (resp) {
+                 
+                if (resp.network_id != null) {
+                    $('#ImgCross').attr('src', 'Content/images/tick_1.gif');
+                    $('#ImgCross').show();
+                    $("#iconCustomerMapp").show();
+                    //$("#iconCustomerdetails").show();
+                    $("#iconCustomerdetails").hide();
+                    $('#customer_name').val(resp.customer_name);
+                    //  $('#pin_code').val(resp.pin_code);
+                    $('#address').val(resp.address);
+                    $("#customer_name").attr("readonly", true);
+                    $('#customer_name').prop('readonly', true);
+                    if ($('#ddlTicketType option:selected').val() == 3) {
+                        // $('#bld_rfs_type').val(resp.rfs_status);
+                        $('#txtBuildingCode').val(resp.buildcode);
+                        $('#txtBuildingCode').prop('readonly', true);
+                        getBuilding();
+                    }
+
+                }
+                else {
+                    $('#ImgCross').attr('src', 'Content/images/cross.gif');
+                    // $('#ImgTick').attr('src', 'Content/images/cross.gif');
+                    $('#ImgCross').show();
+                    $("#iconCustomerMapp").hide();
+                    $("#iconCustomerdetails").hide();
+                    $('#customer_name').val(resp.customer_name);
+                    //  $('#pin_code').val(resp.pin_code);
+                    $('#address').val(resp.address);
+                    $("#customer_name").attr("readonly", false);
+                    $('#customer_name').prop('readonly', false);
+                }
+
+            }, false, false)
+
+            //  -----
+            //ajaxReq('TicketManager/GetTicketDetailByCanId', { networkId: canId, }, true, function (resp) {
+            //     
+            //    if (resp.ticket_id >0 && resp.ticket_status != 'Completed') {
+            //        alert('Ticket for this customer already in either Assigned or InProgress state!');
+            //         $('#customer_name').val('');
+            //    }
+            //    else {
+            //        ajaxReq('TicketManager/GetCustomerByCanId', { networkId: canId, }, true, function (resp) {
+            //             
+            //            if (resp.network_id != null) {
+            //                $('#ImgCross').attr('src', 'Content/images/tick_1.gif');
+            //                $('#ImgCross').show();
+            //                $("#iconCustomerMapp").show();
+            //                //$("#iconCustomerdetails").show();
+            //                $("#iconCustomerdetails").hide();
+            //                $('#customer_name').val(resp.customer_name);
+            //                //  $('#pin_code').val(resp.pin_code);
+            //                $('#address').val(resp.address);
+            //                $("#customer_name").attr("readonly", true);
+            //                $('#customer_name').prop('readonly', true);
+            //                if ($('#ddlTicketType option:selected').val() == 3) {
+            //                    // $('#bld_rfs_type').val(resp.rfs_status);
+            //                    $('#txtBuildingCode').val(resp.buildcode);
+            //                    $('#txtBuildingCode').prop('readonly', true);
+            //                    getBuilding();
+            //                }
+
+            //            }
+            //            else {
+            //                $('#ImgCross').attr('src', 'Content/images/cross.gif');
+            //                // $('#ImgTick').attr('src', 'Content/images/cross.gif');
+            //                $('#ImgCross').show();
+            //                $("#iconCustomerMapp").hide();
+            //                $("#iconCustomerdetails").hide();
+            //                $('#customer_name').val(resp.customer_name);
+            //                //  $('#pin_code').val(resp.pin_code);
+            //                $('#address').val(resp.address);
+            //                $("#customer_name").attr("readonly", false);
+            //                $('#customer_name').prop('readonly', false);
+            //            }
+
+            //        }, false, false)
+            //    }
+
+            //}, false, false)
+        }
+        else {
+             
+            $("#iconCustomerMapp").hide();
+            $("#iconCustomerdetails").hide();
+            $('#ImgCross').hide();
+        }
+    }
+
+    function getBuilding() {
+         
+
+
+        var buildingCode = $('#txtBuildingCode').val();
+        if (buildingCode.length > 0) {
+
+            ajaxReq('TicketManager/GetBuildingByCode', { networkId: buildingCode, }, true, function (resp) {
+                if (resp.network_id != null) {
+                    $('#ImgBldCross').attr('src', 'Content/images/tick_1.gif');
+                    $("#iconBldMapp").show();
+                    //$("#iconBldDetails").show();
+                    $("#iconBldDetails").hide();
+                    $('#ImgBldCross').show();
+                    $('#bld_rfs_type').val(resp.rfs_status);
+
+                }
+                else {
+                    $('#ImgBldCross').attr('src', 'Content/images/cross.gif');
+                    $('#ImgBldCross').show();
+                    $("#iconBldMapp").hide();
+                    $("#iconBldDetails").hide();
+                    $('#bld_rfs_type').val(resp.rfs_status);
+                }
+            }, false, false)
+        }
+        else {
+
+            $("#iconBldMapp").hide();
+            $("#iconBldDetails").hide();
+            $('#ImgBldCross').hide();
+        }
+    }
+
+    function SaveTicket(objTicketMaster) {
+         
+        if (objTicketMaster.pageMsg.status != "OK") {
+            alert(objTicketMaster.pageMsg.message);
+        }
+        else {
+            alert(objTicketMaster.pageMsg.message);
+            si.resetTicket();
+            $('#frmIndexTicket').submit();
+        }
+    }
+
+    function validateRFSType(objTicketMaster) {
+        if (objTicketMaster.pageMsg.status != "OK") {
+            alert(objTicketMaster.pageMsg.message);
+        }
+    }
+
+    $('#iconCustomerMapp').on("click", function () {
+        var canId = $('#txtCanId').val();
+        ajaxReq('TicketManager/GetCustomerByCanId', { networkId: canId, }, true, function (resp) {
+            if (resp.network_id != null) {
+                $(popup.DE.MinimizeModel).trigger("click");
+                zoomSearchedElement1("Point", 'Customer', resp.system_id)
+            }
+
+        }, false, false)
+
+    });
+
+    $('#iconBldMapp').on("click", function () {
+        var buildingCode = $('#txtBuildingCode').val();
+        ajaxReq('TicketManager/GetBuildingByCode', { networkId: buildingCode, }, true, function (resp) {
+            if (resp.network_id != null) {
+                 
+                $(popup.DE.MinimizeModel).trigger("click");
+                zoomSearchedElement1("Polygon", 'Building', resp.system_id)
+            }
+        }, false, false)
+
+    });
+
+    $('#iconBldDetails').on("click", function () {
+        var buildingCode = $('#txtBuildingCode').val();
+        ajaxReq('TicketManager/GetBuildingByCode', { networkId: buildingCode, }, true, function (resp) {
+            if (resp.network_id != null) {
+                 
+                popup.LoadModalDialog('CHILD', 'Library/AddBuilding', { systemId: resp.system_id, entityType: "Building", geomType: resp.geomType, networkStatus: resp.network_status }, "Building", 'modal-lg');
+                //popup.LoadModalDialog('CHILD', 'Library/AddPatchCord', { systemId: event.data.systemId }, titleText, modelClass);
+            }
+        }, false, false)
+
+    });
+
+    $('#iconCustomerdetails').on("click", function () {
+        var canId = $('#txtCanId').val();
+        ajaxReq('TicketManager/GetCustomerByCanId', { networkId: canId, }, true, function (resp) {
+            if (resp.network_id != null) {
+                popup.LoadModalDialog('CHILD', 'Library/AddCustomer', _data = { systemId: resp.system_id, entityType: "Customer", geomType: "Point", childModel: "dvChildModalBody" }, "Customer", 'modal-lg');
+            }
+
+        }, false, false)
+
+    });
+
+    function createUpdateTicket(IsNewTicket) {
+         
+
+        if ($('#ddlTicketType').val() == "") {
+            $('#ddlTicketType_chosen').addClass('notvalid');
+            return false;
+        }
+        else {
+            $('#ddlTicketType_chosen').removeClass('notvalid');
+        }
+
+        if ($('#ddlRefType').val() == "") {
+            $('#ddlRefType_chosen').addClass('notvalid');;
+            return false;
+        }
+        else {
+            $('#ddlRefType_chosen').removeClass('notvalid');
+        }
+
+
+        if ($('#txtCanId').val().trim() == "") {
+            $('#txtCanId').addClass('notvalid');
+            return false;
+        } else {
+            $('#txtCanId').removeClass('notvalid');
+        }
+
+        if ($('#customer_name').val().trim() == "") {
+            $('#customer_name').addClass('notvalid');
+            return false;
+        } else {
+            $('#customer_name').removeClass('notvalid');
+        }
+
+        if ($('#address').val().trim() == "") {
+            $('#address').addClass('notvalid');
+            return false;
+        } else {
+            $('#address').removeClass('notvalid');
+        }
+
+        if ($('#txtBuildingCode').val().trim() == "") {
+            $('#txtBuildingCode').addClass('notvalid');
+            return false;
+        } else {
+            $('#txtBuildingCode').removeClass('notvalid');
+        }
+
+        if ($('#ddlAssignedTo').val().trim() == "") {
+            $('#ddlAssignedTo').next().addClass('input-validation-error');
+            return false;
+        }
+        else {
+            $('#ddlAssignedTo').next().removeClass('input-validation-error');
+        } 
+
+        if (($('#ddlTicketType option:selected').text() != "--Select--") && ($('#ddlTicketType option:selected').text() != "New Connection") && $("#iconCustomerMapp").is(":hidden")) {
+            alert("Customer does not exist for " + $('#ddlTicketType option:selected').text() + " Request!");
+            return false;
+        }
+
+        if (($('#ddlTicketType option:selected').text() == "New Connection") && $("#iconCustomerMapp").is(":visible")) {
+            alert("CAN ID already exist for " + $('#ddlTicketType option:selected').text() + " Request!");
+            return false;
+        }
+
+        //if (($('#bld_rfs_type').val() != "A-RFS") && ($('#bld_rfs_type').val() != "B-RFS") && ($('#bld_rfs_type').val() != "C-RFS")) {
+        //    alert("Building RFS type should be A-RFS, B-RFS or C-RFS !");
+        //    return false;
+        //}
+
+        if ($('#ddlRefType').val() == "") {
+            $("#ddlRefType_chosen").addClass('notvalid');
+            return false;
+        }
+        else {
+            $('#ddlRefType_chosen').removeClass('notvalid');
+        }
+
+        if (IsNewTicket) {
+            validateTicket();
+        } 
+    }
+
+    //$('#btnCreateTicket').on("click", function () {
+    // 
+    //if (($('#ddlTicketType option:selected').text() != "--Select--") && ($('#ddlTicketType option:selected').text() != "New Connection") && $("#iconCustomerMapp").is(":hidden")) {
+    //    alert("Customer does not exist for " + $('#ddlTicketType option:selected').text() + " Request!");
+    //    return false;
+    //}
+
+    //if (($('#ddlTicketType option:selected').text() == "New Connection") && $("#iconCustomerMapp").is(":visible")) {
+    //    alert("CAN ID already exist for " + $('#ddlTicketType option:selected').text() + " Request!");
+    //    return false;
+    //}
+    ////if (($('#bld_rfs_type').val() != "A-RFS") && ($('#bld_rfs_type').val() != "B-RFS") && ($('#bld_rfs_type').val() != "C-RFS")) {
+    ////    alert("Building RFS type should be A-RFS, B-RFS or C-RFS !");
+    ////    return false;
+    ////}
+
+    //validateTicket();
+    // });
+
+    $("input.numbers-only").on("paste", function () {
+        var thisvalue = this;
+         
+        setTimeout(function () {
+            var OnlyNumber = new RegExp(/^[0-9]{1,10}$/);
+             
+            if (!OnlyNumber.test(thisvalue.value.trim())) {
+                thisvalue.value = "";
+            }
+            else {
+                thisvalue.value = thisvalue.value.trim();
+            }
+
+        }, 0);
+    });
+
+
+    $('.remove-white-space').on("paste", function () {
+        var thisvalue = this;
+         
+        setTimeout(function () {
+            thisvalue.value = thisvalue.value.trim();
+        }, 0);
+    });
+
+    function ChangeTicketType() {
+        $('#address').val('').trigger("chosen:updated");
+        $('#ddlRefType').val('').trigger("chosen:updated");
+        $('#txtCanId').val('').trigger("chosen:updated");
+        $('#customer_name').val('').trigger("chosen:updated");
+        $('#txtBuildingCode').val('').trigger("chosen:updated");
+        $('#bld_rfs_type').val('').trigger("chosen:updated");
+        $('#ddlAssignedTo').val('').trigger("chosen:updated");
+        $("#iconCustomerMapp").hide();
+        $("#iconCustomerdetails").hide();
+        $("#iconBldMapp").hide();
+        $("#iconBldDetails").hide();
+        $('#ImgBldCross').hide();
+        $('#ImgCross').hide();
+        $('#txtBuildingCode').prop('readonly', false)
+    }
+
+    function validateTicket() {
+        var canId = $('#txtCanId').val();
+
+        if (canId.length > 0) {
+            ajaxReq('TicketManager/GetTicketDetailByCanId', { networkId: canId, }, true, function (resp) {
+                 
+                if (resp.ticket_id > 0 && resp.ticket_status != 'Completed') {
+                    alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_031);
+                    return false;
+                }
+                else {
+                    $('#frmAddTicket').submit();
+                }
+            }, false, false)
+        }
+    }
+</script>
+
+
+

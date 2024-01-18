@@ -1,0 +1,149 @@
+﻿@model Models.ViewUser_TimeSheet
+<link href="~/Content/css/UserTimeSheet.css" rel="stylesheet" />
+<script src="~/Content/js/UserTimeSheet.js"></script>
+<link href="~/Content/js/Calendar/calendar.css" rel="stylesheet" />
+<script src="~/Content/js/Calendar/calendar.js"></script>
+<script src="~/Content/js/Calendar/calendar-en.js"></script>
+<script src="~/Content/js/Calendar/calendar-setup.js"></script>
+<script src="~/Content/js/Listing.js"></script>
+<script src="~/Content/js/Main.js"></script>
+<script src="~/Content/js/ListingPage.js"></script>
+
+<script>
+
+    /*var AR = new UserTimeSheet();*/
+    var sp = new Main();
+
+    var RL = new ListingPage();
+    //$(function () {
+
+
+    //     
+    //     Enable validator on the form..
+    //     $.validator.unobtrusive.parse("#frmUserTimeSheet");
+    //     //select2 js for drop-down list
+    //    $("#dvAssignRouteContainer .chosen-select").select2();
+    //     $("#dvUserTimeSheetContainer .chosen-select").select2("destroy").select2({});
+    //    initialize assign route js file
+    //      ar.initapp();
+    //     ar.fnconpostchange();
+    //    $('#dvUserTimeSheetContainer select').select2({ width: '100%' });
+    sp.setDateTimeCalendar_Survey("txtStartDate", "txtEndDate", "imgFromDate", "imgToDate", true);
+    //    $(".spTimePicker").find('.select2-container').hide();
+    //    $(".spTimePicker").children('select').removeClass('select2-offscreen');
+    //    $(document).ready(function () {
+
+    //        $('.working_days').on("click", function () {
+    //            var text = "";
+    //            $('.working_days:checked').each(function () {
+    //                text += $(this).val() + ',';
+    //            });
+
+    //            text = text.substring(0, text.length - 1);
+    //            $('#working_days').val(text);
+
+    //        });
+
+
+    //    });
+    //});
+</script>
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.viewUserTimeSheetFilter.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewUserTimeSheetContainer", ajaxUpdateCallback: "onGridHeaderClick('tblGvUserTimeSheetDetail');");
+    grid.Bind(Model.lstUserTimeSheetDetails, autoSortAndPage: false, rowCount: Model.viewUserTimeSheetFilter.totalRecord);
+    if (Model.viewUserTimeSheetFilter.totalRecord > 0)
+    {
+        grid.PageIndex = Model.viewUserTimeSheetFilter.currentPage - 1;
+    }
+
+}
+<div id="dvViewUserTimeSheetContainer">
+    @*<ul class="nav nav-tabs ViewLink">
+
+            @if (userModuleList.Contains("VLK"))
+            {
+                <li class="active"><a data-toggle="tab" href="#ViewLink" class="active show">@Resources.Resources.SI_OSP_GBL_NET_FRM_423</a></li>
+
+            }
+            @if (userModuleList.Contains("CLK"))
+            {
+                <li id="liAddFiberLink" class="@(Model.objFiberLink.user_role_id!=1?"":"dvdisabled")" style="@(Model.objFiberLink.user_role_id!=1?"": "pointer-events: none;opacity: 0.4;")"><a data-toggle="tab" href="#CreateFiberLink">@Resources.Resources.SI_OSP_GBL_NET_FRM_424</a></li>
+            }
+        </ul>*@
+
+
+    @using (Ajax.BeginForm("ViewUserTimeSheetDetails", "RosterManagement", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvViewUserTimeSheetContainer" },
+        new { id = "frmUserTimeSheetDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+    <div class="modalNbody">
+        <div class="form-group row">
+            <label class="control-label col-sm-2" for="txtStartDate">Search:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.viewUserTimeSheetFilter.searchText, new { @class = "form-control", @placeholder = "UserName" })
+            </div>
+
+
+                <label class="control-label col-sm-2">Duration:</label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(m => m.viewUserTimeSheetFilter.duration, new List<SelectListItem>
+                                                                                {
+                                                                                   new SelectListItem{ Text="Custom", Value = "1" },
+                                                                                   new SelectListItem{ Text="Today", Value = "2" },
+                                                                                   new SelectListItem{ Text="Previous Day", Value = "3" },
+                                                                                   new SelectListItem{ Text="Last 7 Days", Value = "4" },
+                                                                                   new SelectListItem{ Text="Last 30 Days", Value = "5" },
+                                                                                }, new { @id = "ddlduration", @class = "form-control", @onchange = "RL.SetDate()" })
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="txtStartDate">From:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.viewUserTimeSheetFilter.fromDate, new { @class = "form-control  clsReadOnly", placeholder = "MM-DD-YYYY", @id = "txtStartDate", @readonly = true })
+                    <img id="imgFromDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                </div>
+                <label class="control-label col-sm-2" for="txtEndDate">To:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.viewUserTimeSheetFilter.toDate, new { @class = "form-control  clsReadOnly", placeholder = "MM-DD-YYYY", @id = "txtEndDate", @readonly = true })
+                    <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex ModalFooter">
+            <button type="submit" id="btnUserTimeSheet" class="btn btn-primary ml-auto">Search</button>
+
+        </div>
+        <div id="dvModalBody" class="tablBody">
+            @if (Model.lstUserTimeSheetDetails.Count > 0)
+            {
+                <div class="mb-15"><b>Total Records:@grid.TotalRowCount</b></div>
+                <div class="table-responsive">
+                    @grid.GetHtml(tableStyle: "grid",
+                              htmlAttributes: new { id = "tblGvUserTimeSheetDetail" },
+                              mode: WebGridPagerModes.All,
+
+                columns: grid.Columns(
+                    grid.Column("user_name", "User Name", format: @<text><span id="user_name">   @item.user_name</span> </text>),
+grid.Column("start_date", "Start Date", format: @<text><span id="start_date"> @item.start_date</span> </text>),
+grid.Column("end_date", "End Date", format: @<text><span id="end_date"> @item.end_date</span> </text>),
+grid.Column("start_time", "Start Time", format: @<text><span id="start_time"> @item.start_time</span> </text>),
+grid.Column("end_time", "End Time", format: @<text><span id="end_time"> @item.end_time</span> </text>),
+grid.Column("working_days_name", "Working Days", format: @<text><span id="wroking_days"> @item.working_days_name</span> </text>),
+grid.Column("active_status", "Staus", format: @<text><span id="status"> @item.active_status</span> </text>),
+grid.Column("", "Action", format:
+                                        @<text>
+                                            <a href="javascript:void(0);" onclick="sp.EditUserTimeSheet('@item.user_timesheet_id','@item.user_timesheet_id');" class="dropdown-toggle" title="Edit User Timesheet"> Edit</a>
+                                            @*<a href="javascript:void(0);" onclick="sp.ViewPlannedRoute('@item.user_timesheet_id','@item.user_timesheet_id');" class="dropdown-toggle" title="View User Timesheet"> <i class="fa fa-eye" style=" font-size:13px;color:blue;"></i></a>*@
+                                            <a href="javascript:void(0);" onclick="sp.DeleteUserTimeSheet('@item.user_timesheet_id');" class="dropdown-toggle" title="Delete User Timesheet"> Delete</a>
+
+                                            @*@Html.ActionLink("Delete", "DeleteUserTimeSheet", new { user_timesheet_id = item.user_timesheet_id })*@
+                                            @*@Html.ActionLink("Edit", "EditUserTimeSheet", new { user_timesheet_id = item.user_timesheet_id })*@
+                                        </text>)
+)
+)
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,22 @@
+﻿@model List<Models.ISP.DisplayEntityInformation>
+<!DOCTYPE html>
+<div id="dvEntityInformation" class="infodiv">
+    <div class="leftPanelHeader">@Resources.Resources.SI_ISP_GBL_NET_FRM_005</div>
+    <div class="panel-body addBg">
+        <div class="tab-content">
+            <div id="divEntityInfo" class="tab-pane y-scroll active">
+                <table class="table">
+                    @foreach (var item in Model)
+                    {
+                        <tr class="cptr entityInfoList" data-system-id="@item.system_id" onclick="isp.ShowEntityInformationDetail('@item.system_id','@item.entity_name','@item.entity_title','@item.geom_type','true','@item.network_status')">
+                            <td style="width:97px">@item.entity_title</td>
+                            <td class="info-td-colon">:</td>
+                            <td>@item.network_id</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,56 @@
+﻿@model Models.ManageResources
+
+
+<div class="--pad-15">
+    <div class="row">
+        <div class="col-lg-2">
+            <label class="control-label">
+                Language
+            </label>
+        </div>
+        <div class="col-lg-5">
+
+
+            @Html.DropDownListFor(m => m.ResourceLangugeList, new SelectList(Model.ResourceLangugeList.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "Select", new { @class = "chosen-select form-control", @id = "ddlResource" })
+        </div>
+        <div class="col-lg-5">
+            <input type="submit" value="Submit" id="btnSubmit" class="btn btn-primary mr-05" />
+            <input type="button" value="Cancel" id="btncancel" class="btn btn-dark" />
+        </div>
+    </div>
+</div>
+    
+
+<script type="text/javascript">
+    $('#btnSubmit').on("click", function () {
+        var Resourcevalue = $("#ddlResource :selected").val();
+        if(Resourcevalue=="")
+        {
+            alert("Please Select Language.")
+            return false;
+        }
+        else
+        {
+                showConfirm("Are you sure you want to Add New Languge?", function () {
+                    ajaxReq('Resources/GenerateResource', { newculture: Resourcevalue }, true, function (resp) {
+                        if (resp.Data.status == "OK") {
+                            alert(resp.Data.message, 'Success', 'success');
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000)
+                        }
+
+                        else
+                            alert(Data.resp.message);
+                    }, true, true);
+                });
+        }
+    })
+
+
+    $('#btncancel').on("click", function () {
+        $("#closeModalPopup").trigger("click");
+
+    });
+   
+</script>

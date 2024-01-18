@@ -1,0 +1,71 @@
+﻿@model List<Models.layerDetail>
+
+<style>
+    .slider-range .ui-slider-handle {
+        background: url('/Areas/Admin/Content/images/handle.png') no-repeat;
+        outline: none;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="dvZoomSetting" class="update_panel">
+
+    <div class="title">
+        <h4><span class="icon16 icomoon-icon-bars"></span><span>Zoom Setting</span></h4>
+    </div>
+    @using (Html.BeginForm("SaveLayerZoom", "OSPSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmZoomInfo", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+        for (int i = 0; i < Model.Count; i++)
+        {
+
+            <div class="row pad_left">
+                <div class="col-md-2">@Model[i].layer_name</div>
+                <div class="col-md-10">
+                    <div class="slider-range" data-minval=@Model[i].minzoomlevel data-maxval=@Model[i].maxzoomlevel></div>
+
+                    <div class="row">
+                        @Html.HiddenFor(m => @Model[i].layer_id)
+                        @Html.HiddenFor(m => @Model[i].network_id_type)
+                        @Html.HiddenFor(m => @Model[i].layer_name)
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(m => Model[i].minzoomlevel, new { @class = "minsel span6 uniform-input text col-md-3 pl-0", @style = "background:rgba(0,0,0,0);border:0; color:#ED7A53; font-weight:bold; box-shadow:none;", @autocomplete = "off", @readonly = "readonly" })
+
+                        </div>
+                        <div class="col-md-6" style="text-align: right">
+                            @Html.TextBoxFor(m => Model[i].maxzoomlevel, new { @class = "maxsel span6 uniform-input text col-md-3 pr-0", @style = "background:rgba(0,0,0,0);border:0; color:#ED7A53; font-weight:bold; box-shadow:none;margin-bottom: 5px; text-align: right;" })
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        }
+        @*<input type="text"  class="col-1 ml-0" />*@
+        <div class="form-group pad_left" id="dvBtnAction">
+            <div class="row">
+                <div class=" col-md-3"> </div>
+                <div class=" col-md-9  text-right">
+                    <input type="submit" class="btn btn-primary" name="btnaction" id="btnSubmit" value="Save">
+                    <a href="/Admin/OSPSettings/Zoom" class="btn btn-default" title="Reset">Reset</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    $(function () {
+        $(".slider-range").slider({
+            range: true,
+            min: 4,
+            max: 21,
+            create: function (event, ui) {
+                $(this).slider('option', 'values', [$(this).attr("data-minval"), $(this).attr("data-maxval")]);
+            },
+            slide: function (event, ui) {
+                $($(this).siblings().children().find('.minsel')).val(ui.values[0]);
+                $($(this).siblings().children().find('.maxsel')).val(ui.values[1]);
+            }
+        });
+    });
+</script>

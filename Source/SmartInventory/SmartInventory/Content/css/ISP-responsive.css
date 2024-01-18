@@ -1,0 +1,99 @@
+﻿@media only screen and (max-width:1366px) {
+    .ISPHeader {
+        height: 40px;
+    }
+
+   /* .SILogo {
+        margin-top: 10px;
+        margin-left: 10px;
+        font-size: 18px;
+    }
+
+    .userName {
+        padding-top: 5px;
+        font-size: 18px;
+    }
+
+   /* .userLogoParent {
+        margin-top: 2px;
+        width: 200px;
+        height: 37px;
+        float: right;
+        margin-right: 12px;
+    }*/
+
+    .userImg {
+        width: 30px;
+        height: 30px;
+    }
+
+.userIMgbdr {
+    width: 24px;
+    height: 24px;
+    }
+
+   /* .userNameLetter {
+        font-size: 18px;
+        margin-left: 177px;
+        margin-top: 5px;
+    }*/
+
+    .divNetworkCode {
+        height: 35px;
+        padding: 8px;
+        font-size: 16px;
+    }
+
+    .leftPanelHeader {
+        font-size: 16px;
+    }
+
+    .leftPanel {
+        width: 268px;
+        height: calc(100% - 75px);
+    }
+
+    .ullibraryEntity > li > a {
+    font-size:14px;
+    }
+    .seprator {
+        margin-top: 30px;
+    }
+
+    .infodiv {
+    width: 262px;
+    float: left;
+    margin-top: 20px;
+}
+
+.table-scroll {
+    /*position: relative;
+    width: 100%;
+    overflow: hidden;
+    overflow-y: auto;*/
+         max-height: calc(100vh - 113px);
+}
+
+.infodiv {
+    width: 267px;
+    float: left;
+    margin-top: 20px;
+}
+
+    .networkLayer-entity-count {
+    min-width: 20px;
+    }
+
+    .mainlyr [class^="icon-"] {
+    font-size:13px;
+    }
+}
+
+@media all and (max-width:2000px) and (min-width: 1920px) {
+    .leftPanel {
+    width: 300px;
+    }
+    .infodiv {width: 330px;
+    
+    }
+}

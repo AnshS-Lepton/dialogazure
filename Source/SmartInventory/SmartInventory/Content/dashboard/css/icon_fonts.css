@@ -1,0 +1,113 @@
+@font-face {
+  font-family: 'icomoon';
+
+  src:  url('fonts/icomoon.eot?jqmotc');
+  src:  url('fonts/icomoon.eot?jqmotc#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?jqmotc') format('truetype'),
+    url('fonts/icomoon.woff?jqmotc') format('woff'),
+    url('fonts/icomoon.svg?jqmotc#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-Use_icon:before {
+  content: "\e900";
+}
+.icon-User_icon_circle:before {
+  content: "\e901";
+}
+.icon-Add_view:before {
+  content: "\e902";
+}
+.icon-Add_Workspace:before {
+  content: "\e903";
+}
+.icon-Close:before {
+  content: "\e904";
+}
+.icon-Dashboard:before {
+  content: "\e905";
+}
+.icon-Delete:before {
+  content: "\e906";
+}
+.icon-Drop_down:before {
+  content: "\e907";
+}
+.icon-Drop_Up:before {
+  content: "\e908";
+}
+.icon-Edit:before {
+  content: "\e909";
+}
+.icon-Equipment_Builder:before {
+  content: "\e90a";
+}
+.icon-Hide_Menu:before {
+  content: "\e90b";
+}
+.icon-Hide_Side_Nave:before {
+  content: "\e90c";
+}
+.icon-Left_Arrow:before {
+  content: "\e90d";
+}
+.icon-lock:before {
+  content: "\e90e";
+}
+.icon-Logout:before {
+  content: "\e90f";
+}
+.icon-Manage_Region:before {
+  content: "\e910";
+}
+.icon-Minimize:before {
+  content: "\e911";
+}
+.icon-Open_Menu:before {
+  content: "\e912";
+}
+.icon-Projects:before {
+  content: "\e913";
+}
+.icon-Search:before {
+  content: "\e914";
+}
+.icon-settings:before {
+  content: "\e915";
+}
+.icon-Unhide_Side_Nave:before {
+  content: "\e916";
+}
+.icon-Users:before {
+  content: "\e917";
+}
+.icon-Vendor:before {
+  content: "\e918";
+}
+.icon-Vendor_Specification:before {
+  content: "\e919";
+}
+.icon-view_report:before {
+    content: "\e91a";
+}
+
+.icon-report:before {
+    content: "\e91b";
+}

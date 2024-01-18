@@ -1,0 +1,80 @@
+﻿@model Models.ISP.FloorInfo
+@using Models;
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+
+} @pageMessage()
+
+@{ var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Floor.ToString()); }
+
+<!DOCTYPE html>
+<div class="panel-body">
+    @using (Ajax.BeginForm("UpdateFloorInfo", "ISP", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnBegin = "isp.structureActions.floor.validate",
+        OnSuccess = "isp.structureActions.floor.success"
+    }, new { id = "frmFloorInfo" }))
+    {
+        @Html.HiddenFor(m => m.system_id, new { id = "hdnFloorId" })
+
+        <fieldset class="the-fieldset">
+            <legend class="the-legend"></legend>
+            <div class="row form-group">
+
+                <div class="col-md-4"><label class="control-label">@Resources.Resources.SI_ISP_GBL_GBL_GBL_009<i class="clsMandatory">*</i></label></div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.floor_name, new { @class = "form-control", @maxlength = "30", @autocomplete = "off" })
+                    @Html.ValidationMessageFor(m => m.floor_name)
+                </div>
+            </div>
+            <div class="row form-group">
+
+                <div class="col-md-4"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_005<i class="clsMandatory">*</i></label></div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.height, new { @class = "form-control", id = "txtFloorHeight", @maxlength = "5", @autocomplete = "off", @onkeypress = "return allowNumberwithOneDot(event,'txtFloorHeight');" })
+                    @Html.ValidationMessageFor(m => m.height)
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-4"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_004<i class="clsMandatory">*</i></label></div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.width, new { @class = "form-control", id = "txtFloorWidth", @maxlength = "5", @autocomplete = "off", @onkeypress = "return allowNumberwithOneDot(event,'txtFloorWidth');" })
+                    @Html.ValidationMessageFor(m => m.width)
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-4"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_006<i class="clsMandatory">*</i></label></div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.length, new { @class = "form-control", id = "txtFloorLength", @maxlength = "5", @autocomplete = "off", @onkeypress = "return allowNumberwithOneDot(event,'txtFloorLength');" })
+                    @Html.ValidationMessageFor(m => m.length)
+                </div>
+
+            </div>
+            <div class="row form-group">
+                <div class="col-md-4"><label class="control-label">@Resources.Resources.SI_ISP_GBL_GBL_GBL_030<i class="clsMandatory">*</i></label></div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.no_of_units, new { @class = "form-control", id = "no_of_units", @maxlength = "5", @autocomplete = "off", @onkeypress = "return allowOnlyNumber(event);", @onkeyup = "return isp.isUnitValid(" + Model.system_id + ",this);" })
+                    @Html.ValidationMessageFor(m => m.no_of_units)
+                </div>
+
+            </div>
+        </fieldset>
+        <div class="ModalFooter">
+            <a href="javascript:void(0);" class="btn btn-warning ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            <input type="submit" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003" />
+        </div>
+    }
+</div>
+<script type="text/javascript" language=javascript>
+    $.validator.unobtrusive.parse(document);
+
+    $(document).ready(function () {
+        notAllowZero('#txtFloorHeight,#txtFloorWidth,#txtFloorLength,#no_of_units');
+    })
+
+
+</script>

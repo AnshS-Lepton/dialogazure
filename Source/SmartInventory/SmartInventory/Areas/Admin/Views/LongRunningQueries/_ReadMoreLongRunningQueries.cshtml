@@ -1,0 +1,40 @@
+﻿@model Models.ViewLongRunningQueries
+
+<!DOCTYPE html>
+<div class="libDetail">
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="popTableBox">
+                <table class="grid main-table" id="tblSummaryLongRunningQueries">
+                    <thead>
+                        <tr>
+                            <th class="noWhiteSpace">Field Name</th>
+                            <th class="noWhiteSpace wordBreak">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Pid</td>
+                            <td>@Model.objLongRunningQueriesMore.pid</td>
+                        </tr>
+                        <tr>
+                            <td>running Time</td>
+                            <td>@Model.objLongRunningQueriesMore.runningtime</td>
+                        </tr>
+                        <tr>
+                            <td class="aligTop">Query</td>
+                            <td>@Model.objLongRunningQueriesMore.query</td>
+                        </tr>
+                        <tr>
+                            <td class="aligTop">Query</td>
+                            <td>@Model.objLongRunningQueriesMore.query_start</td>
+                        </tr>
+                        <tr>
+                            <td>State</td>
+                            <td>@Model.objLongRunningQueriesMore.state</td>
+                        </tr>
+                    </tbody>
+                </table>
+        </div>
+    </div>
+</div>

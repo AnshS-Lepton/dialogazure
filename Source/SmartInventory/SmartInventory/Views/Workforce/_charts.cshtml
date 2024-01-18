@@ -1,0 +1,329 @@
+﻿@model Models.WFM.chartsjson
+<!DOCTYPE html>
+<html class="no-js" lang="en-US">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title></title>
+    <!-- style and script resources -->
+    <link href="~/Content/css/chartist.min.css" rel="stylesheet" />
+    <link href="~/Content/css/chart.css" rel="stylesheet" />
+    <link href="~/Content/js/Calendar/calendar.css" rel="stylesheet" />
+    <style>
+        div.calendar {
+            top: 45px !important;
+        }
+    </style>
+</head>
+
+<body class="body__bg">
+    @using (Ajax.BeginForm(Model.Chartsfilter.action_name, "Workforce", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChartsContainer" }, new { autocomplete = "off", @class = "form-horizontal", @id = "frmViewChart" }))
+    {
+        <header class="header d-flex">
+            <img src="~/Content/images/logo.svg" title="Converge" alt="logo" />
+
+            <div class="select__date ml-auto">
+                <label class="select__label">From</label>
+                @Html.TextBoxFor(m => m.Chartsfilter.fromDate, new { @class = "form-control  clsReadOnly", placeholder = "DD-MMM-YYYY", @id = "txtStartDate", @readonly = true })
+                <img id="imgFromDate" class="assign-calen" src="~/Content/images/calendarW.png" />
+            </div>
+            <div class="select__date mr-01">
+                <label class="select__label">To</label>
+                @Html.TextBoxFor(m => m.Chartsfilter.toDate, new { @class = "form-control  clsReadOnly", placeholder = "DD-MMM-YYYY", @id = "txtEndDate", @readonly = true })
+                <img id="imgToDate" class="assign-calen" src="~/Content/images/calendarW.png" />
+            </div>
+            <button type="submit" id="btnSearchChart" class="btn switch__btn btn-primary">Search</button>
+            <div class="userDetail ml-01">@Model.Chartsfilter.user_name</div>
+            <div class="filtersBox">
+                <div class="filterDrop jc-flex-end">
+                    <label>Ticket Source</label>
+                    @Html.DropDownListFor(m => m.Chartsfilter.ticketsource, new List<SelectListItem> { new SelectListItem { Text = "SLI", Value = "SLI" }, new SelectListItem { Text = "SLR", Value = "SLR" } }, new { @id = "ddlcharttype", @class = "form-control" })
+                    <label>Status</label>
+                    @Html.DropDownListFor(m => m.Chartsfilter.DboardStatus, new SelectList(Model.lststatus.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_value }), "Value", "Text"), "All", new { @id = "ddlcharttype", @class = "form-control" })
+                    <label>Services</label>
+                    @Html.DropDownListFor(m => m.Chartsfilter.DboardService, new SelectList(Model.lstServiceType.Select(x => new { Value = x.service_facility_name, Text = x.service_facility_name }), "Value", "Text"), "All", new { @id = "ddlcharttype", @class = "form-control" })
+                    <label>JO Type</label>
+                    @Html.DropDownListFor(m => m.Chartsfilter.DboardOrderType, new SelectList(Model.lstJoType.Select(x => new { Value = x.jo_code, Text = x.jo_name }), "Value", "Text"), "All", new { @id = "ddlcharttype", @class = "form-control" })
+                    @if (Model.Chartsfilter.role_name == "Regional Head")
+
+                    {
+                        <label>JO Manager</label>
+                        @Html.DropDownListFor(m => m.Chartsfilter.jomanagerId, new SelectList(Model.lstJoManager.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name }), "Value", "Text"), "All", new { @id = "ddl_UserJoList", @class = "form-control" })
+                    }
+                </div>
+            </div>
+        </header>
+        <div id="dvChartsContainer">
+            <div class="container">
+                <div class="widgets__col">
+                    <div class="widgets__col--columns">
+                        <div class="d-flex hpad">
+                            <div class="widgets__col--head">Job Order Status<span>(JO)</span></div>
+                            @*<div class="otherDropD ml-auto d-flex">
+                            <select>
+                                <option>Pie Chart</option>
+                            </select>
+                        </div>*@
+                        </div>
+                        <div class="widgets__col--body pieChart">
+                            <div class="ct-chart5 ct-perfect-fourth"></div>
+                        </div>
+                    </div>
+                    <div class="widgets__col--columns">
+                        <div class="d-flex hpad">
+                            <div class="widgets__col--head">Services</div>
+                        </div>
+                        <div class="widgets__col--body">
+                            <div class="ct-chart4 ct-perfect-fourth"></div>
+                        </div>
+                    </div>
+                    <div class="widgets__col--columns">
+                        <div class="d-flex hpad">
+                            <div class="widgets__col--head">Assigned To</div>
+                            <div class="otherDropD ml-auto d-flex">
+                                @Html.DropDownListFor(m => m.Chartsfilter.JoAssignedTo, new List<SelectListItem> { new SelectListItem { Text = "FE", Value = "FE" }, new SelectListItem { Text = "Dispatcher", Value = "DISPATCHER" } }, new { @id = "ddlassignto", @class = "form-control", @onchange = "this.form.submit()" })
+                            </div>
+                        </div>
+                        <div class="widgets__col--body pieChart">
+                            <div class="ct-chart3 ct-perfect-fourth"></div>
+                        </div>
+                    </div>
+                    <div class="widgets__col--columns">
+                        <div class="d-flex hpad">
+                            <div class="widgets__col--head">Order Type</div>
+                        </div>
+                        <div class="widgets__col--body">
+                            <div class="ct-chart2 ct-perfect-fourth"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="widgets__colBig mt-02">
+                    <div class="widgets__col--columns">
+                        <div class="d-flex hpad">
+                            <div class="widgets__col--head">Area Wise <span>(JO)</span></div>
+                            <div class="otherDropD ml-auto d-flex">
+                                @if (Model.Chartsfilter.role_name == "JO Manager"||Model.Chartsfilter.role_name== "Regional Head")
+                                {
+                                    @Html.DropDownListFor(m => m.Chartsfilter.region_name, new SelectList(Model.lstregion_name.Select(x => new { Value = x, Text = x }), "Value", "Text"), new { @id = "ddl_RegionList", @class = "form-control", @onchange = "GetProvinceListByRegion()" });
+                                }
+                                @Html.DropDownListFor(m => m.Chartsfilter.province_name, new SelectList(Model.lstprovince_name.Select(x => new { Value = x, Text = x }), "Value", "Text"), new { @id = "ddl_ProvinceList", @class = "form-control", @onchange = "this.form.submit()" });
+                            </div>
+                        </div>
+                        <div class="widgets__col--body">
+                            <div class="ct-chart1  ct-perfect--sixth"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                var appRoot = '@Url.Content("~")';
+                var baseUrl = '@Request.Url.GetLeftPart(UriPartial.Authority)';
+                var app = this;
+            </script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+            <script src="" async defer></script>
+            <script src="~/Content/js/chartist.min.js"></script>
+            <script src="~/Content/js/chartist-plugin-legend.js"></script>
+            <script src="~/Content/js/chartist-bar-labels.js"></script>
+            <script>
+                var citywisechartdata = { labels:@Html.Raw(Json.Encode(Model.citywisechartdata.labels)), series: [@Html.Raw(Json.Encode(Model.citywisechartdata.series))] };
+        @*var statewisechartdata = { labels:@Html.Raw(Json.Encode(Model.statewisechartdata.labels)), series: [@Html.Raw(Json.Encode(Model.statewisechartdata.series))] };*@
+                var issuedesc = { labels:@Html.Raw(Json.Encode(Model.issue_description.labels)), series: [@Html.Raw(Json.Encode(Model.issue_description.series))] };
+                var assigntofrtchartdata = { labels:@Html.Raw(Json.Encode(Model.assgintofrtchartdata.labels)), series:@Html.Raw(Json.Encode(Model.assgintofrtchartdata.series)) };
+                var jofacilitychartdata = { labels:@Html.Raw(Json.Encode(Model.jofacility.labels)), series: [@Html.Raw(Json.Encode(Model.jofacility.series))] };
+                var jostatuschartdata = { labels:@Html.Raw(Json.Encode(Model.jostatus.labels)), series:@Html.Raw(Json.Encode(Model.jostatus.series)) };
+
+                var optionshorizontal = {
+                    seriesBarDistance: 10,
+                    reverseData: true,
+                    horizontalBars: true,
+                    axisY: {
+                        offset: 50,
+                        onlyInteger: true
+                    }
+                };
+                var OptionsPie = {
+                    showLabel: false,
+                    height: 200,
+                    weidth: 200,
+                    plugins: [
+                        Chartist.plugins.legend()
+                    ]
+                }
+                var OptionsDounut = {
+                    donut: true,
+                    donutWidth: 50,
+                    startAngle: 270,
+                    donutSolid: true,
+                    height: 200,
+                    weidth: 200,
+                    @*total: @Model.assgintofrtchartdata.sum,*@
+                    showLabel: false,
+                    plugins: [
+                        Chartist.plugins.legend()
+                    ]
+                };
+                var optionsbar = {
+                    height: 280,
+                    axisY: {
+                        onlyInteger: true
+                    },
+                    plugins: [
+                        Chartist.plugins.ctBarLabels()
+                    ]
+                };
+                var optionsLine = {
+                    width: 300,
+                    height: 200,
+                    lineSmooth: Chartist.Interpolation.cardinal({
+                        tension: 0.2,
+                        divisor: 2
+                    })
+                };
+    // Create a new line chart object where as first parameter we pass in a selector
+    // that is resolving to our chart container element. The Second parameter
+        // is the actual data object.
+                new Chartist.Bar('.ct-chart1', citywisechartdata, optionsbar);
+                new Chartist.Bar('.ct-chart2', issuedesc, optionsbar);
+                new Chartist.Pie('.ct-chart3', assigntofrtchartdata, OptionsDounut);
+                new Chartist.Bar('.ct-chart4', jofacilitychartdata, optionsbar);
+                new Chartist.Pie('.ct-chart5', jostatuschartdata, OptionsPie);
+            </script>
+        </div>
+    }
+    @*@Scripts.Render("~/bundles/Scripts")*@
+    <script src="~/Content/js/InputMask/dx.all.min.js"></script>
+    <script src="~/Content/js/Utility.js"></script>
+    <script src="~/Content/js/ListingPage.js"></script>
+    <script src="~/Content/js/Listing.js"></script>
+    <script src="~/Content/js/Calendar/calendar.js"></script>
+    <script src="~/Content/js/Calendar/calendar-en.js"></script>
+    <script src="~/Content/js/Calendar/calendar-setup.js"></script>
+    <script>
+
+        GetProvinceListByRegion = function () {
+            $('#ddl_ProvinceList').empty();
+            var region_name = $('#ddl_RegionList').val();
+            if (region_name == "") {
+
+                return;
+            }
+            ajaxReq('Workforce/BindProvinceListByRegion', { regionname: region_name }, false, function (resp) {
+                if (resp.Data.length > 0) {
+                    $.each(resp.Data, function () {
+                        $('#ddl_ProvinceList').append($("<option></option>").val(this).html(this));
+                    });
+                    GetRequestonProvincechange();
+                }
+            });
+        };
+        GetRequestonProvincechange = function () {
+             
+            var province_name = $('#ddl_ProvinceList').val();
+            if (province_name == "") {
+                return;
+            }
+            else {
+                document.getElementById("frmViewChart").submit();
+            }
+        };
+        setDateTimeCalendar = function (startdateid, startdateimgid, enddateid, enddateimgid, isBackDateAllowed, isFutureDateAllowed) {
+             
+            Calendar.setup({
+                inputField: startdateid,   // id of the input field
+                button: startdateimgid,
+                ifFormat: "%d-%b-%Y",       // format of the input field datetime format %d-%b-%Y %I:%M %p
+                showsTime: false,
+                timeFormat: "12",
+                weekNumbers: false,
+                //onUpdate: function () {
+                //    app.ROW.setWindow();
+                //},
+                disableFunc: function (date) {
+                    var endDateValue = document.getElementById(enddateid).value;
+                    var enddt = DateFormatter(endDateValue);
+                    enddt = new Date(enddt);
+                    if (date.getTime() > enddt.getTime()) {
+                        return true;
+                    }
+                    if (isBackDateAllowed) {
+                        var now = new Date();
+                        now.setDate(now.getDate());
+                        if (date.getTime() > now.getTime()) {
+                            return true;
+                        }
+                    }
+                    if (!isFutureDateAllowed) {
+                        var now = new Date();
+                        now.setDate(now.getDate());
+                        //now.setMonth(now.getMonth()+2);
+                        if (date.getTime() > now.getTime()) {
+                            return true;
+                        }
+                    }
+                }
+            });
+            Calendar.setup({
+                inputField: enddateid,
+                button: enddateimgid,
+                ifFormat: "%d-%b-%Y",
+                showsTime: false,
+                timeFormat: "12",
+                weekNumbers: false,
+                align: "Br",
+                //onUpdate: function () {
+                //    app.ROW.setWindow();
+                //},
+                disableFunc: function (date) {
+                    var startDateValue = document.getElementById(startdateid).value;
+                    var startdt = DateFormatter(startDateValue);
+                    startdt = new Date(startdt);
+                    if (date.getTime() < startdt.getTime()) {
+                        return true;
+                    }
+                    if (isBackDateAllowed) {
+                        var now = new Date();
+                        now.setDate(now.getDate());
+                        if (date.getTime() > now.getTime()) {
+                            return true;
+                        }
+                    }
+                    if (!isFutureDateAllowed) {
+                        var now = new Date();
+                        now.setDate(now.getDate());
+                        if (date.getTime() > now.getTime()) {
+                            return true;
+                        }
+                    }
+                }
+            });
+        };
+        //setDateTimeCalendar = function (startdateid, startdateimgid) {
+        //    var isBackDateAllowed = true;
+        //    Calendar.setup({
+        //        inputField: startdateid,   // id of the input field
+        //        button: startdateimgid,
+        //        ifFormat: "%d-%b-%Y",       // format of the input field datetime format %d-%b-%Y %I:%M %p
+        //        showsTime: false,
+        //        timeFormat: "12",
+        //        weekNumbers: false,
+        //        align: "Bc",
+        //        //onUpdate: catcalc,
+        //        disableFunc: function (date) {
+        //            if (isBackDateAllowed) {
+        //                var now = new Date();
+        //                now.setDate(now.getDate());
+        //                if (date.getTime() > now.getTime()) {
+        //                    return true;
+        //                }
+        //            }
+        //        }
+        //    });
+        //};
+        //setDateTimeCalendar("txtStartDate", "txtStartDate", "imgFromDate", "imgToDate", true);
+        //setDateTimeCalendar("txtEndDate", "txtEndDate", "imgFromDate", "imgToDate", true);
+        setDateTimeCalendar("txtStartDate", "txtStartDate", "txtEndDate", "txtEndDate", true, false);
+    </script>
+</body>
+</html>

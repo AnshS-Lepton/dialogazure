@@ -1,0 +1,40 @@
+﻿@model IList<Models.StructureMaster>
+
+@{
+    WebGrid webGrid = new WebGrid(source: Model, canSort: false,canPage:false);
+}
+
+<!DOCTYPE html>
+<div style="min-height:260px; width: 100%; background-color: white; margin-left: -8px;">
+
+    @if (Model.Count != 0)
+    {
+         <div style="width:100%; padding-top:10px">
+
+             <div style="float:left">
+                 <label style="padding-bottom: 6px;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:</b> @Model.Count </label><label style="padding-bottom: 6px;padding-left: 10px;"><b>@Resources.Resources.SI_OSP_STR_NET_RPT_004:</b> @Model.Sum(x => x.home_pass) </label><label style="padding-bottom: 6px;padding-left: 10px;"><b>@Resources.Resources.SI_OSP_STR_NET_FRM_050:</b> @Model.Sum(x => x.no_of_flat)</label><label style="padding-bottom: 6px;padding-left: 10px;"><b>@Resources.Resources.SI_OSP_STR_NET_RPT_005:</b> @Model.Sum(x => x.business_pass)</label>
+             </div>
+             <div class="icon-Download cptr" title="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" style="float:right" onclick="si.ExportChildEntityByParentCode('@Model.FirstOrDefault().building_id','@Model.FirstOrDefault().parent_network_id','Building','Structure');"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010  &nbsp; </div>
+
+         </div>
+            
+             @webGrid.GetHtml(
+            htmlAttributes: new { @id = "WebGrid", @class = "grid"},
+        columns: webGrid.Columns(
+
+                             webGrid.Column("network_id", Resources.Resources.SI_OSP_STR_NET_FRM_004),
+                             webGrid.Column("", Resources.Resources.SI_OSP_STR_NET_FRM_005, format:@<text><span style="white-space: normal; word-break:break-all">@item.structure_name</span></text>),
+                             webGrid.Column("no_of_floor", Resources.Resources.SI_OSP_STR_NET_RPT_006),
+                             webGrid.Column("no_of_flat", Resources.Resources.SI_OSP_STR_NET_RPT_007),
+                             webGrid.Column("no_of_shaft", Resources.Resources.SI_OSP_STR_NET_RPT_008),
+                             webGrid.Column("business_pass", Resources.Resources.SI_OSP_STR_NET_FRM_009),
+                             webGrid.Column("home_pass", Resources.Resources.SI_OSP_BUL_NET_FRM_019),
+                             webGrid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format:@<text> <a href="#" class="dropdown-toggle" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="si.showStructureOnMap(@item.system_id);"><i class="fa fa-globe fa-fw m-r-xs"></i></a></text>)))
+}
+else
+{
+    <div class="nr-found">
+         <span>@Resources.Resources.SI_OSP_STR_NET_RPT_009</span>
+    </div>
+}
+</div> 

@@ -1,0 +1,222 @@
+﻿<style>
+    .table-scroll {
+        position: relative;
+        width: 100%;
+        z-index: 1;
+        margin: auto;
+        overflow: auto;
+        height: 380px;
+    }
+
+        .table-scroll table {
+            width: 100%;
+            margin: auto;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+    .table-wrap {
+        position: relative;
+    }
+
+    .table-scroll th,
+    .table-scroll td {
+        padding: 5px 10px;
+        background: #fff;
+        vertical-align: top;
+    }
+
+    .table-scroll thead th {
+       /* background: #00ba8a;*/
+        color: #fff;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+    }
+    /* safari and ios need the tfoot itself to be position:sticky also */
+    .table-scroll tfoot,
+    .table-scroll tfoot th,
+    .table-scroll tfoot td {
+        position: -webkit-sticky;
+        position: sticky;
+        bottom: 0;
+        z-index: 4;
+    }
+
+    .rptFooter {
+        margin: 0;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border: 1px solid #dcdada;
+        background: rgb(244,244,244);
+    }
+
+    #tblSummaryAll > tfoot > tr > th {
+        padding: 3px;
+    }
+
+    .calendar {
+        top: 225px !important;
+        left: 500px !important;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="exportReportHeader">
+    <ul id="ulRptBomboqTabs" class="tab">
+        <li id="liBomboqFilter" detailDivID="divFilter" class="tablinks activerpt" onclick="SwitchReportTabs(this,'ulRptBomboqTabs',false)"><i>1</i>@Resources.Resources.SI_OSP_GBL_NET_FRM_063</li>
+        <li id="liBomboqSummary" detailDivID="divSummary" class="tablinks"><i>2</i>@Resources.Resources.SI_OSP_GBL_NET_FRM_064</li>
+    </ul>
+</div>
+
+<div>
+
+        <div class="EEReport" id="divFilter">
+            @{Html.RenderPartial("_BomBoqFilter");}
+        </div>
+
+        <div class="EEReport Summary" id="divSummary">
+
+            <div id="dvReportProgress" class="ExportReportProgress"></div>
+
+            <div class="divSummary-loaddata"></div>
+        </div>
+
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#ulRptBomboqTabs li[id=liBomboqFilter]').on("click", function () {
+            AutoSet_ModelWidth(this, 1, '');
+        })
+
+        $('#ulRptBomboqTabs li[id=liBomboqSummary]').on("click", function () {
+            AutoSet_ModelWidth(this, 2, '');
+           SwitchReportTabs(this,'ulRptBomboqTabs',false)
+        })
+    });
+    function AutoSet_ModelWidth(th, IntWidth, showDivButtonId) {
+        $("#dvReportProgress").show();
+        if (IntWidth == 2) {
+            $('#ModalPopUp .modal-dialog').removeClass('modal-md-new', 500);
+            $('#ModalPopUp .modal-dialog').addClass('modal-xl', 500);
+        }
+        else {
+            $('#ModalPopUp .modal-dialog').removeClass('modal-xl', 500);
+            $('#ModalPopUp .modal-dialog').addClass('modal-md-new', 500);
+        }
+        if (showDivButtonId != undefined && showDivButtonId != null && showDivButtonId != "") {
+            $('div#' + showDivButtonId + '').show();
+        }
+
+       // var dataForm = $('form#frmBOMBOQFilterData').serialize();
+       // $("#ddlRegions").attr("disabled", false);
+       // $("#ddlProvinces").attr("disabled", false);
+        var dataForm2 = $('form#frmBOMBOQFilterData').serializeArray();
+        $('.divSummary-loaddata').html('');
+        if ($(th).attr("id") == "liBomboqSummary") {
+            $('.divSummary-loaddata').load(
+                appRoot+"BOMBOQ/BomBoqSummary",
+               // dataForm,
+                JSON.parse(JSON.stringify(dataForm2)),
+                function (data, status, jqXGR) {
+                    $("#dvReportProgress").hide();
+                }
+            );
+        }
+    }
+
+    function GetMiscdBloss(ddlval) {
+        $.ajax({
+            url: appRoot+ 'BOMBOQ/GetMiscdBLoss',
+            type: 'post',
+            dataType: 'json',
+            data: { wavelength_id: ddlval},
+            success: function (data) {
+                if (data.Data != null) {
+                    $('[id$=txt_Miscdbloss]').val(data.Data);
+                }
+            }
+        });
+    }
+
+    function SwitchReportTabs(th, ParentULID, IsAnchorTag) {
+        $('[id$=' + ParentULID + '] li').each(function () {
+            var ddivid = $(this).attr('detailDivID');
+            $('[id$=' + ddivid + ']').hide();
+        });
+        $('[id$=' + ParentULID + '] > li').removeClass("activerpt");
+        if (IsAnchorTag) {
+            var divid = $(th).parent('li').attr('detailDivID')
+            $('[id$=' + divid + ']').show();
+            $(th).parent('li').addClass("activerpt");
+        }
+        else {
+            $(th).addClass("activerpt");
+            var divid = $(th).attr('detailDivID');
+            $('[id$=' + divid + ']').show();
+        }
+
+    }
+
+     function ExportBomBoqDetail(purpose) {
+
+        var entityids = "";
+        var chkAll = document.getElementById("checkallentity");
+        if (chkAll.checked == true) {
+            entityids = '@Model.objReportFilters.SelectedLayerIds';
+        }
+        else {
+            //Fetch all rows of the Table.
+            var rows = $("#tblSummaryAll input[type=checkbox]:not('#checkallentity'):checked"); //document.getElementById("tblSummaryAll").rows;
+            //Execute loop on all rows excluding the Header row.
+            for (var i = 0; i < rows.length; i++) {
+                //if (rows[i].getElementsByTagName("INPUT")[0].checked) {
+                entityids += entityids != "" ? ("," + rows[i].id) : rows[i].id;
+                //}
+            }
+        }
+
+
+            $("#dvReportProgress1").show();
+            $('#dvReportProgress1').css('display', 'block');
+            setCookie('downloadStarted', 0, 3600); //Expiration could be anything... As long as we reset the value
+            setTimeout(checkDownloadCookie, 1000); //Initiate the loop to check the cookie.
+            si.ExportEntityReportNew(purpose, entityids);
+            //$("#dvReportProgress").hide();
+            $("#divSummary .dropfiles").trigger("click");
+        }
+
+    var downloadTimeout;
+    var checkDownloadCookie = function () {
+        //console.log(getCookie("downloadStarted"));
+        if (getCookie("downloadStarted") == 1) {
+            //console.log(getCookie("downloadStarted") + "RT");
+            setCookie("downloadStarted", false, 100); //Expiration could be anything... As long as we reset the value
+            $('#dvReportProgress1').hide();
+        } else {
+            downloadTimeout = setTimeout(checkDownloadCookie, 1000); //Re-run this function in 1 second.
+        }
+    }
+    var setCookie = function (name, value, expiracy) {
+        var exdate = new Date();
+        exdate.setTime(exdate.getTime() + expiracy * 1000);
+        var c_value = escape(value) + ((expiracy == null) ? "" : "; expires=" + exdate.toUTCString());
+        document.cookie = name + "=" + c_value + '; path=/';
+    };
+
+    var getCookie = function (name) {
+        var i, x, y, ARRcookies = document.cookie.split(";");
+        for (i = 0; i < ARRcookies.length; i++) {
+            x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+            y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+            x = x.replace(/^\s+|\s+$/g, "");
+            if (x == name) {
+                return y ? decodeURI(unescape(y.replace(/\+/g, ' '))) : y; //;//unescape(decodeURI(y));
+            }
+        }
+    };
+
+
+</script>

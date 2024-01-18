@@ -1,0 +1,900 @@
+﻿@using Models;
+@model Models.User
+@using SmartInventory.Settings;
+@Html.HiddenFor(m => m.pageMsg.status, new { id = "submit_status" })
+
+@{var objUser = (User)Session["userDetail"];
+    bool ispanprmvendorvisible = true;
+    }
+
+<style>
+    #divAdminModule {
+        /*max-height: calc(93vh - 310px);*/
+        /*max-height:300px;*/
+        overflow: auto;
+        /*overflow: hidden;*/
+    }
+
+    #divWebModule {
+        /*max-height: calc(93vh - 310px);*/
+        /*max-height:300px;*/
+        overflow: auto;
+        /*overflow: hidden;*/
+    }
+
+    #divMobileModule {
+        /*max-height: calc(93vh - 310px);*/
+        /*max-height:300px;*/
+        overflow: auto;
+        /*overflow: hidden;*/
+        /*width: 300px;*/
+        /*margin-left: -44px;*/
+    }
+
+    .mobile-unit {
+        padding: 0px 0px 0px 8px !important;
+    }
+
+    #partionTable thead {
+        position: fixed;
+        background: #2c8d96 !important;
+        color: #fff;
+        z-index: 4;
+    }
+
+    /*#partionTable tbody {
+        height: 350px !important;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        width: 110%;
+    }*/
+
+    #dvUserDetail .chosen-container-single .chosen-single {
+        height: 28px;
+    }
+
+    #ddl_UserRole_chosen {
+        width: 82% !important;
+    }
+
+    .ViewRolebtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        width: 17%;
+    }
+
+    .Nextbtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        float: right;
+    }
+
+    .Previousbtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        margin-right: 20px;
+    }
+
+    .saveBtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+    }
+
+    #dvUserDetail .form-group {
+        margin-bottom: 5px;
+    }
+
+    .clsUserContainer {
+        border: 2px solid #dee2e6;
+        margin: 0 auto;
+        border-top: 0px;
+    }
+
+    #dvUserDetail {
+      padding:15px;
+    }
+
+    .checkStep {
+        display: none;
+        height: 30px;
+        width: 29px;
+    }
+
+  
+
+    .clsStepsContainer {
+        padding: 1rem 0.5rem 0;
+        border:none;
+        box-shadow:none;
+    }
+
+    .clsUserContainer .content {
+        height: auto;
+    }
+
+    .successImg {
+        margin-top: 150px;
+        min-height: 300px;
+        width: 100%;
+        top: 40%;
+        text-align: center;
+        position: relative;
+    }
+
+    .mainModule li {
+        background: none !important;
+        padding: 0px 0pt 0px 0px !important;
+    }
+
+    .mainModule input[type="checkbox"] {
+        position: absolute !important;
+    }
+
+    #partionTable td {
+        /*width: 55%;*/
+        word-wrap: break-word;
+        vertical-align: top;
+    }
+
+    #partionTable span {
+        display: block;
+        width: 166px;
+        word-wrap: break-word;
+        white-space: normal;
+    }
+
+    .d--flex {
+        display: flex;
+    }
+
+    .Admin-section, .Web-section, .Mobile-section {
+        flex: 0 0 28.533333%;
+    }
+
+    .boxes--minh {
+        height: 265px;
+        overflow-y: auto !important;
+        margin-right: 10px;
+    }
+
+    .boxes--minh {
+        height: 265px;
+        overflow-y: auto;
+        margin-right: 10px;
+    }
+    .uppercase {
+        text-transform: uppercase;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="dvPageMessage" style="@(Model.IsSubmit == true ? "display:none;" : "display: block;")">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+    @{
+        var prms_id = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.prms_id.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+     }
+</div>
+<div class="title">
+    <h4>
+        <span class="icon16 icomoon-icon-bars"></span><span>@(Model.user_id > 0 ? "Update User" : "Add User")</span>
+    </h4>
+</div>
+
+<div class="clsUserContainer">
+    <div id="dvUserDetail">
+
+        @using (Html.BeginForm("SaveUser", "User", FormMethod.Post, new { autocomplete = "off", @id = "frmUserInfo", enctype = "multipart/form-data", @class = "form-horizontal" }))
+        {
+            @Html.HiddenFor(m => m.user_id)
+            @Html.ValidationSummary(true)
+
+            if (Model.IsUserinLimit)
+            {
+                <div class="bs-stepper">
+                    <div class="bs-stepper-header" role="tablist" style="height: 35px;">
+                        <!-- your steps here -->
+                        <div class="step" data-target="#userdetails">
+                            <button type="button" class="step-trigger" role="tab">
+                                <img src="@Url.Content("~/Areas/Admin/Content/images/check_new.png")" id="chkImg_userdetails" class="checkStep" />
+                                <span class="bs-stepper-circle userdetails_circle">1</span>
+                                <span class="bs-stepper-label">User Details</span>
+                            </button>
+                        </div>
+                        <div class="line"></div>
+                        <div class="step" data-target="#modulerights-part">
+                            <button type="button" class="step-trigger" role="tab">
+                                <img src="@Url.Content("~/Areas/Admin/Content/images/check_new.png")" id="chkImg_modulerights" class="checkStep" />
+                                <span class="bs-stepper-circle modulerights_circle">2</span>
+                                <span class="bs-stepper-label">Module Rights</span>
+                            </button>
+                        </div>
+                        <div class="line"></div>
+                        <div class="step" data-target="#workarea-part">
+                            <button type="button" class="step-trigger" role="tab">
+                                <img src="@Url.Content("~/Areas/Admin/Content/images/check_new.png")" id="chkImg_workarea" class="checkStep" />
+                                <span class="bs-stepper-circle workarea_circle">3</span>
+                                <span class="bs-stepper-label">Work Area Details</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="update_panel clsStepsContainer fullWidth">
+                        <!-- your steps content here -->
+                        <div id="userdetails" class="content">
+                            <div id="UserDetails_data" style="@(Model.IsSubmit == true ? "display:none;" : "display: block;")">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                User Name<i class="clsMandatory">*</i>:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.user_name, new { @class = "form-control", @maxlength = "50", @placeholder = "Enter User Name", @onkeypress = "return validateSpecialChars(event,'_.-');" })
+                                            <img style="width:21px;" class="GifImg" id="ImgUsername" />
+                                            @* @Html.ValidationMessageFor(model => model.user_name)*@
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Full Name<i class="clsMandatory">*</i>:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.name, new { @class = "form-control", autocomplete = "do-not-show-ac", @maxlength = "50", @placeholder = "Enter Full Name", @id = "txtfullname" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Email Id<i class="clsMandatory">*</i>:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.user_email, new {@class = "form-control", autocomplete = "do-not-show-ac", @maxlength = "50", @placeholder = "Enter Email Id" })
+                                            @*@Html.ValidationMessageFor(model => model.user_email)*@
+                                            <img style="width:21px;" class="GifImg" id="ImgUserEmail" />
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (string.IsNullOrEmpty(ApplicationSettings.ADFSEndPoint))
+                                {
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="control-label">
+                                                    Password<i class="clsMandatory">*</i>:
+                                                </label>
+                                            </div>
+                                            <div class="col-md-7">
+                                                <div class="password">
+                                                    @*@Html.ValidationMessageFor(model => model.password)*@
+                                                    @Html.TextBoxFor(model => model.password, new { @class = "form-control", @minlength = "8", @maxlength = "20", @placeholder = "Enter Password", @title = "1 lower and 1 upper case letter. 1 number and 1 special character. Minimum 8 character long!" })
+                                                    <img style="width:21px;" class="GifImg" id="ImgPwd" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Mobile Number<i class="clsMandatory">*</i>:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.mobile_number, new {@class = "form-control", autocomplete = "do-not-show-ac",  @onkeypress = "return allowOnlyNumber(event);",  @placeholder = "Enter Mobile Number", @minlength = "9", @maxlength = "15", @title = "Mobile Number should be Minimum 9 & Miximum 15 character long!" })
+                                            @* @Html.ValidationMessageFor(model => model.password)*@
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                User Role<i class="clsMandatory">*</i>:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.DropDownListFor(m => m.role_id, new SelectList(Model.lstRole.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddl_UserRole", @onchange = "onChangeUserRole();updateModuleList();", @required = true })
+                                            @Html.HiddenFor(m => m.role_id)
+                                            <button class="btn btn-primary ViewRolebtn" type="button" onclick="return ViewRolePermissionPopup(this);">View</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="divReportingManager" class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Reporting Manager<i class="clsMandatory">*</i>:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @if (Model.is_multi_manager_allowed)
+                                            {
+                                                @Html.DropDownListFor(m => m.manager_id, new SelectList(Model.lstRM.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @multiple = "multiple", @id = "ddl_UserReportingManager", @onchange = "onChangeRMId();", @required = true })
+                                                @*@Html.ValidationMessageFor(m => m.manager_id)*@
+                                            }
+                                            else
+                                            {
+                                                @Html.DropDownListFor(m => m.manager_id, new SelectList(Model.lstRM.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @id = "ddl_UserReportingManager", @onchange = "onChangeRMId();", @required = true })
+                                            }
+                                            @Html.HiddenFor(m => m.multi_manager_ids)
+                                            @Html.HiddenFor(m => m.is_multi_manager_allowed)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="divApplicationAccess" class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Application Access<i class="clsMandatory">*</i>:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+
+                                            @Html.DropDownListFor(m => m.application_access, new List<SelectListItem>
+                 {
+new SelectListItem{ Text="-Select-", Value = "" },
+                    new SelectListItem{ Text="Web", Value = "WEB" },
+                    new SelectListItem{ Text="Mobile", Value = "MOBILE" },
+                    new SelectListItem{ Text="Both", Value = "BOTH" }
+                 }, new { @id = "ddlApplication", @tabindex = "2", @title = "Application Access", @class = "chosen-select form-control", @onchange = "onChangeApllicationAccess()" })
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="divcompanyname" class="form-group" style="display:none;">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Company Name:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.company_name, new { @class = "form-control", @maxlength = "100", @placeholder = "Enter Company Name" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="divwarehousecode" class="form-group" style="display:none">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Warehouse Code:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @*@Html.TextBoxFor(model => model.warehouse_code, new { @class = "form-control", @maxlength = "100", @placeholder = "Enter Warehouse Code" })*@
+                                            @Html.DropDownListFor(m => m.warehouse_code, new SelectList(Model.lstWarehouseCode.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", multiple = "multiple", @id = "ddl_WarehouseCode", @onchange = "onChangeWarehouseCode()" })
+                                            @Html.HiddenFor(m => m.multi_warhouse_code)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="divcapacity" class="form-group" style="display:none;">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Capacity:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.capacity, new { @class = "form-control", @maxlength = "10", @onkeypress = "return allowOnlyNumber(event);", @placeholder = "Enter Capacity" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="divusertype" class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                User Type<i class="clsMandatory">*</i>:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+
+                                            @*@Html.DropDownListFor(m => m.user_type, new List<SelectListItem>
+                                            {
+                                                new SelectListItem{ Text="-Select-", Value = "" },
+                                               new SelectListItem{ Text="Jio", Value = "own",Selected = true },
+                                               new SelectListItem{ Text="Partner", Value = "partner" },
+                                              }, new { @id = "ddluser_type", @tabindex = "2", @title = "User Type", @class = "chosen-select form-control" })*@
+                                            @Html.DropDownListFor(m => m.user_type, new SelectList(Model.lstUserType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddluser_type" })
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="divpan" class="form-group" style="@(ispanprmvendorvisible? Html.Raw("display:block") : Html.Raw("display:none"))">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                PAN:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.pan, new { @class = "form-control uppercase", @maxlength = "10", @minlength = "10", @placeholder = "Enter PAN" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="divprmsid" class="form-group" style="@(ispanprmvendorvisible? Html.Raw("display:block") : Html.Raw("display:none"))">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                PRMS Id:
+                                            </label>
+                                        </div>
+                                        @*<div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.prms_id, new { @class = "form-control ", style = "background-color:#e9ecef;", @readonly = "readonly" })
+                                        </div>*@
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.prms_id,
+                                            SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                            {
+                                                @class = "form-control",
+                                                @placeholder = "Enter PRMS ID",
+                                            }, (prms_id != null) ? (prms_id.is_readonly == true) ? new { @readonly = "readonly" } : null : null))
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="divvendorid" class="form-group" style="@(ispanprmvendorvisible? Html.Raw("display:block") : Html.Raw("display:none"))">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Vendor Id:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.vendor_id, new { @class = "form-control", disabled = "disabled", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+                                </div>
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="control-label">
+                                                    Is Admin Rights Allowed?
+                                                </label>
+                                            </div>
+                                            <div class="col-md-7">
+                                                @Html.CheckBoxFor(m => m.is_admin_rights_enabled, new { @class = "chk", id = "isadminrghts", @onclick = "isAdminChecked()" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Is Active?
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.CheckBoxFor(m => m.is_active, new { @class = "chk" })
+                                            <button class="btn btn-primary Nextbtn">Next ></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="display:none">
+                                    <div class="row">
+                                        <div class="col-md-4 form-group">
+                                            @Html.TextBoxFor(m => m.created_by, new { @class = "form-control", placeholder = "Created By" })
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (string.IsNullOrEmpty(ApplicationSettings.ADFSEndPoint))
+                                {
+                                    <div class="row">
+                                        <div class="col-md-11">
+                                            <p style="background-color:#cce6ff;color:#0044cc;padding:4px;white-space: initial;font-size: 12px;">
+                                                <b style="color:#0044cc;">Password Rules:</b>
+                                                1 lower and 1 upper case letter.1 number and 1 special character (@@,#,$,%,&). Minimum length 8 characters.
+                                            </p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <div id="SubmitDiv" style="margin-top: 150px;min-height: 300px;width:100%;top:40%;text-align:center;position:relative;@(Model.IsSubmit == true ? "display: block;" : "display:none;")">
+                                <img src="@Url.Content("~/Areas/Admin/Content/images/check.png")" id="chkImg_workarea" style="height:32px;width:32px;margin:auto;@ViewBag.showSubmitDiv" />
+                                <div id="Success-Msg" style="color:green"><b>Success</b></div>
+                                <div id="Success-Msg"><b>@Model.pageMsg.message</b></div>
+                            </div>
+                        </div>
+                        <div id="modulerights-part" class="content">
+                            <div id="module-data" style="@(Model.IsSubmit == true ? "display:none;" : "display: block;")">
+                                <div class="all-section">
+                                    <label>
+                                        <input type="checkbox" name="AllLayers" id="CheckAll_Module" class="allModule" onclick="CheckByClass('allModule',this)" /><b>Select All</b>
+                                    </label>
+                                    @*<div class="col-md-4"><span class="btn btn-primary collapseAll">Collapse All</span></div>
+                                    <div class="col-md-4"><span class="btn btn-primary expandAll">Expand All</span></div>*@
+                                </div>
+                                <div>
+                                    <div id="partionTable">
+                                        @Html.Partial("_ModuleList", Model.lstUserModule)
+                                    </div>
+                                </div>
+                                <div id="ServiceFacilityJobOrder">
+                                    @*@Html.Partial("_ServiceFacilityJobOrderList", Model.lstViewServiceFacilityJobOrder)*@
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label style="color:red; display:none;" id="errModule"><b>* Aleast one module right should be given!</b></label>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="dvBtnAction">
+                                    <div class="row">
+                                        <div class="col-md-4"> </div>
+                                        <div class="col-md-7">
+                                            <button class="btn btn-primary Previousbtn">Previous</button>
+                                            <button class="btn btn-primary Nextbtn" style="float:none">Next ></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="workarea-part" class="content">
+                            <div id="workarea-data" style="@(Model.IsSubmit == true ? "display:none;" : "display: block;")">
+
+                                <div id="divregion" class="form-group" style="min-height: 250px;">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                @Resources.Resources.SI_ADM_GBL_NET_FRM_001<i class="clsMandatory">*</i>:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.DropDownList("ddlCountry", new SelectList(Model.lstCountry.Select(x => new { Value = x.Value.ToString(), Text = x.Text }), "Value", "Text"), new { @class = "chosen-select form-control", multiple = "multiple", @id = "ddlCountry" })
+                                            @Html.HiddenFor(m => m.selectedCountry)
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                @Resources.Resources.SI_ADM_GBL_NET_FRM_002<i class="clsMandatory">*</i>:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @*@Html.DropDownList("ddlregion", new SelectList(Model.lstRegion.Select(x => new { Value = x.Value.ToString(), Text = x.Text }), "Value", "Text"), new { @class = "chosen-select form-control", multiple = "multiple", @id = "ddlregion" })*@
+                                            @Html.DropDownList("ddlregion", new SelectList(string.Empty, "Value", "Text"), new { @class = "chosen-select form-control", multiple = "multiple", @id = "ddlregion" })
+                                            @Html.HiddenFor(m => m.selectedRegion)
+                                        </div>
+                                    </div>
+                                    <div class="row" style="height:10px;"></div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                @Resources.Resources.SI_ADM_GBL_NET_FRM_003<i class="clsMandatory">*</i>:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.DropDownList("ddlState", new SelectList(string.Empty, "Value", "Text"), new { @class = "chosen-select form-control", multiple = "multiple", @id = "ddlState" })
+                                            @Html.HiddenFor(m => m.selectedProvinces)
+                                        </div>
+                                    </div>
+                                    <div class="row" style="height:10px;"></div>
+                                    @if (Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["isWFMUser"]) == true)
+                                    {
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="control-label">
+                                                    @Resources.Resources.SI_ADM_GBL_NET_FRM_004<i class="clsMandatory">*</i>:
+                                                </label>
+                                            </div>
+                                            <div class="col-md-7">
+                                                @*@Html.DropDownList("ddlMunicipal", new SelectList(Model.lstCountry.Select(x => new { Value = x.Value.ToString(), Text = x.Text }), "Value", "Text"), new { @class = "chosen-select form-control", multiple = "multiple", @id = "ddlmunicipal" })*@
+                                                @Html.DropDownList("ddlSubDistrict", new SelectList(string.Empty, "Value", "Text"), new { @class = "chosen-select form-control", multiple = "multiple", @id = "ddlSubDistrict" })
+                                                @Html.HiddenFor(m => m.selectedSubDistrict)
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="control-label">
+                                                    @Resources.Resources.SI_ADM_GBL_NET_FRM_005<i class="clsMandatory">*</i>:
+                                                </label>
+                                            </div>
+                                            <div class="col-md-7">
+                                                @Html.DropDownList("ddlBlock", new SelectList(string.Empty, "Value", "Text"), new { @class = "chosen-select form-control", multiple = "multiple" })
+                                                @Html.HiddenFor(m => m.selectedBlock)
+                                            </div>
+                                        </div>
+                                    }
+
+                                </div>
+
+                                <div class="form-group" id="dvBtnAction">
+                                    <div class="row">
+                                        <div class="col-md-4"> </div>
+                                        <div class="col-md-7 text-right">
+                                            <button class="btn btn-primary Previousbtn">Previous</button>
+                                            <input type="button" class="btn btn-primary saveBtn" name="btnaction" id="btnSubmit" value="@(Model.user_id > 0 ? "Update" : "Save")" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+                <input type="hidden" id="webMax" value="@ApplicationConfig.AppConfig.WebUserMaxLimit" />
+                <input type="hidden" id="mobileMax" value="@ApplicationConfig.AppConfig.MobileUserMaxLimit" />
+                <input type="hidden" id="isWFMUser" value="@(System.Configuration.ConfigurationManager.AppSettings["isWFMUser"])" />
+
+                <input type="hidden" id="ismutimanagar" value="@(Convert.ToString(Model.is_multi_manager_allowed))" />
+
+            }
+            else
+            {
+                <div id="content" class="w3 bs-stepper" style="height: calc(100% - 78px); position: relative; overflow: hidden; background: white; margin-top: 7px; text-align:center;">
+                    <h3 style=" margin-top: 100px; color: red;"> The limit to add more users has been reached!</h3>
+                    <h4 style="color: red;"> User Limits(Web: @ApplicationConfig.AppConfig.WebUserMaxLimit, Mobile: @ApplicationConfig.AppConfig.MobileUserMaxLimit)</h4>
+                </div>
+            }
+
+
+        }
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+                $(".mainModule").treeview({
+                    collapsed: false,
+                    animated: "medium",
+                    persist: "location"
+                });
+                $("div").removeClass("expandable-hitarea");
+                displayApplicationModule();
+            });
+
+            function validateSpecialChars(event, spChar) {
+                var regex = new RegExp("^[A-Za-z0-9" + spChar + "]*$");
+                var key = String.fromCharCode(event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            }
+
+
+            //$(".collapseAll").on("click", function(){
+            //    $(".mainlyr").treeview({
+            //        collapsed: true,
+            //        animated: "medium",
+            //        persist: "location"
+            //    });
+            //});
+
+            //$(".expandAll").on("click", function () {
+            //    $(".mainlyr").treeview({
+            //        collapsed: false,
+            //        animated: "medium",
+            //        persist: "location"
+            //    });
+            //});
+           
+
+            $(document).on('change', '#layerAllActions td input[type=checkbox]', function () {
+                //console.log("Clicked");
+                var networkType = $(this).data("networktype");
+                if ($(this).hasClass('action' + networkType)) {
+                    var $row = $(this).closest('tr');
+                    var isActionActive = $row.find(".action" + networkType).is(":checked");
+                    var viewchecked = $row.find(".viewaction" + networkType).is(":checked");
+                    if (isActionActive != viewchecked) {
+                        $row.find(".viewaction" + networkType).prop('checked', isActionActive);
+                        //$row.find(".viewaction"+networkType).trigger("click");
+                        setPermissionByNWStatus('view' + networkType, $('.viewaction' + networkType))
+                    }
+
+                }
+            });
+
+        </script>
+       
+        @*var preSelectedStates = null;
+            var preSelectedCities = null;
+            //var userId = $('#user_id').val();
+            var stepper = new Stepper(document.querySelector('.bs-stepper'));
+
+
+            $(document).ready(function () {
+                //var stepper = new Stepper(document.querySelector('.bs-stepper'));
+                $('.chosen-select').chosen({ placeholder_text_multiple: 'All', width: '100%' });
+                $(".Nextbtn").on("click", function (e) {
+                    if (!CheckUserRole()) { e.preventDefault(); return true; }
+                    else if (!CheckReportingManager()) { e.preventDefault(); return true; }
+                    if(!passwordRegex($('#password').val())){ e.preventDefault(); return true; }
+
+                    if(!CheckModule())  { e.preventDefault(); return true; }
+
+                    if ($("#frmUserInfo").valid())
+                    {
+                        if($("#userdetails").hasClass('active'))
+                        {
+                            $("#chkImg_userdetails").css("display", "block");
+                            $(".userdetails_circle").css("display", "none");
+                        }
+                        if($("#modulerights-part").hasClass('active'))
+                        {
+                            $("#chkImg_modulerights").css("display", "block");
+                            $(".modulerights_circle").css("display", "none");
+                        }
+                        stepper.next();
+                        return false;
+                    }
+                });
+                $(".Previousbtn").on("click", function (e) {
+                    if ($("#frmUserInfo").valid()) {
+                        stepper.previous();
+                        if($("#userdetails").hasClass('active'))
+                        {
+                            $("#chkImg_userdetails").css("display", "none");
+                            $(".userdetails_circle").css("display", "block");
+                        }
+                        if($("#modulerights-part").hasClass('active'))
+                        {
+                            $("#chkImg_modulerights").css("display", "none");
+                            $(".modulerights_circle").css("display", "block");
+                        }
+                        return false;
+                    }
+                });
+                if($("#submit_status").val() == "OK")
+                {
+                    $("#chkImg_userdetails").css("display", "block");
+                    $(".userdetails_circle").css("display", "none");
+                    $("#chkImg_modulerights").css("display", "block");
+                    $(".modulerights_circle").css("display", "none");
+                    $("#chkImg_workarea").css("display", "block");
+                    $(".workarea_circle").css("display", "none");
+                    $("#modulerights-part-trigger").attr("disabled", true);
+                }
+                stepper = new Stepper($('.bs-stepper')[0])
+                $('.chosen-select').chosen({ width: '100%' });
+                if ($("#user_id").val() != 0) {
+                    btnSubmit.value = "Update";
+                }
+                if ($("#role_id").val() != 0) {
+                    $('#divReportingManager').show();
+                }
+                var SelectedRegionIds = $("#selectedRegion").val();
+                if (SelectedRegionIds != "") {
+                    $("#ddlregion").val(SelectedRegionIds.split(',')).trigger("chosen:updated");
+                    preSelectedStates = $("#selectedProvinces").val();
+                    getStates();
+                }
+                // fillPermissionArea();
+
+                $("#ddlregion").change(function () {
+                    preSelectedStates = $("#ddlState").val() != null ? $("#ddlState").chosen().val().join(",") : null;
+
+                    getStates();
+                    return false;
+                });
+                $("#btnSubmit").on("click", function (e) {
+                     
+                    // if (!CheckRegion()) { e.preventDefault(); return; }
+                    // if (!CheckState()) { e.preventDefault(); return; }
+                    if($("#workarea-part").hasClass('active'))
+                    {
+                        $("#chkImg_workarea").css("display", "block");
+                        $(".workarea_circle").css("display", "none");
+                    }
+                    if ($("#ddlregion").val() == null) {
+                        confirm("You have selected all regions & provinces for this user. Do you want to continue?", function(){
+                            $('#selectedRegion').val(null);
+                            $('#selectedProvinces').val(null);
+                            $("#frmUserInfo").submit();
+                        });
+                    }
+                    else if($("#ddlregion").val()!=null && $("#ddlState").val()==null)
+                    {
+                        $('#selectedRegion').val($("#ddlregion").val().join(","));
+                        $('#selectedProvinces').val(null);
+                        $("#frmUserInfo").submit();
+                    }
+                    else if($("#ddlregion").val()!=null && $("#ddlState").val()!=null)
+                    {
+                        $('#selectedRegion').val($("#ddlregion").val().join(","));
+                        $('#selectedProvinces').val($("#ddlState").val().join(","));
+                        $("#frmUserInfo").submit();
+                    }
+                });
+            });
+
+            $("#ddl_UserRole").change(function () {
+                CheckUserRole();
+            });
+
+            $("#ddl_UserReportingManager").change(function () {
+                CheckReportingManager();
+            });
+
+            function CheckUserRole() {
+                if ($("#ddl_UserRole").val() == null || $("#ddl_UserRole").val() == "") {
+                    $('#ddl_UserRole_chosen').css({ "border": "1px solid red", "border-radius": "0.25rem" });
+                    return false;
+                }
+                else {
+                    $('#ddl_UserRole_chosen').css({ "border": "1px solid #ced4da", "border-radius": "0.25rem" });
+                    return true;
+                }
+            };
+
+            function CheckReportingManager() {
+                if ($("#ddl_UserReportingManager").val() == null || $("#ddl_UserReportingManager").val() == "") {
+                    $('#ddl_UserReportingManager_chosen').css({ "border": "1px solid red", "border-radius": "0.25rem" });
+                    return false;
+
+                } else {
+                    $('#ddl_UserReportingManager_chosen').css({ "border": "1px solid #ced4da", "border-radius": "0.25rem" });
+                    return true;
+                }
+            };
+
+            function CheckModule()
+            {
+                if($(".chkModule").is(":checked") == false && $("#modulerights-part").hasClass('active'))
+                {
+                    $("#errModule").show();
+                    return false;
+                }
+                setAllCheckBox();
+                $("#errModule").hide();
+                return true;
+
+            }
+            $('#password').on('keyup', function () {
+                passwordRegex($('#password').val());
+            });
+
+            function getStates() {
+
+                var selectedRegions;
+                var selectedcount = 0;
+                if ($("#ddlregion").chosen().val() != null) {
+                    selectedRegions = "" + $("#ddlregion").chosen().val().join(",") + "";
+                    selectedcount = $("#ddlregion").chosen().val().length;
+                }
+
+                $("#ddlState").empty();
+                if (selectedcount > 0) {
+                    ajaxReq('User/GetProvinceByRegionid', { regionid: selectedRegions }, true, function (states) {
+                        $.each(states, function (i, state) {
+                            $("#ddlState").append('<option value="' + state.provinceId + '">' + state.provinceName + '</option>');
+                        });
+                        if (preSelectedStates != null) {
+
+                            $("#ddlState").val(preSelectedStates.split(',')).trigger("chosen:updated");
+                        }
+                        else
+                            $("#ddlState").trigger("chosen:updated");
+                    }, true, true);
+                }
+                else {
+                    $("#ddlState").trigger("chosen:updated");
+                }
+
+            }
+            function CheckByClass(clsNmae, obj) {
+                $("." + clsNmae + "[type='checkbox']").prop("checked", $(obj).prop("checked"));
+                setAllCheckBox();
+            }
+            function setAllCheckBox(){
+                $('#CheckAll_Module').prop("checked", $('.chkModule').length==$('.chkModule:checked').length);
+                $('#CheckAll_Web').prop("checked", $('#divWebModule > .chkModule').length==$('#divWebModule > .chkModule:checked').length);
+                $('#CheckAll_Mobile').prop("checked", $('#divMobileModule > .chkModule').length==$('#divMobileModule > .chkModule:checked').length);
+            }
+
+        </script>*@
+    </div>
+</div>

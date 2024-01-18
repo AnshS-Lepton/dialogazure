@@ -1,0 +1,50 @@
+﻿<div class="libDetail">
+    <div class="libTabContent">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            @*<div id="dvTPCableType"><label class="lblSavedWorkSpaces">Cable Type : </label>
+                   <select id="ddlTPCableType" onchange="si.ChangeTPCableType(this);" style="width:40%;">
+                        <option value="">Select Cable Type</option>
+                        <option value="Overhead">Overhead</option>
+                        <option value="Underground">Underground</option>
+                    </select>
+                </div>*@
+            <label class="fw-bold mb-15">@Resources.Resources.SI_OSP_GBL_NET_RPT_128:</label>
+            <div class="tab-pane active tp-overflow" id="divTP">
+                <table id="tblTerminationPoint" class="grid" data-duct-Id="0">
+                    <thead>
+                        <tr>
+                            <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_RPT_126</th>
+                            <th scope="col">
+                                @Resources.Resources.SI_OSP_GBL_GBL_GBL_160
+                            </th>
+                            <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+                        </tr>
+                    </thead>
+                    <tbody style="text-align: center;">
+                    </tbody>
+                </table>
+                <div class="nr-found nr-height-24" id="dvNoTerminatePoint">
+                    <span>@Resources.Resources.SI_OSP_GBL_NET_RPT_130</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ModalFooter d-flex" id="dvBtnAction">
+        <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancelTP" onclick="si.clearTPRelatedObjects();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        <button type="submit" class="btn btn-success ml-10" id="btnCreateLineForm">@Resources.Resources.SI_OSP_GBL_NET_FRM_404</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('.chosen-select').chosen({ width: '100%' });
+    });
+    //$(document).ready(function () {
+    //    $("table#tblTerminationPoint").on("click", function () {
+    //        //$(this).parents("tr").remove();
+    //        $(this).parents('tr').first().remove();
+    //    });
+    //});
+</script>

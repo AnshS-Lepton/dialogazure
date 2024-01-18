@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+	<Mapping id="1">
+		<DbColName>network_id</DbColName>
+		<TemplateColName>network_id</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="2">
+		<DbColName>trench_name</DbColName>
+		<TemplateColName>Trench_Name</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>500</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="3">
+		<DbColName>start_point</DbColName>
+		<TemplateColName>Start_Point</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>1000</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="4">
+		<DbColName>end_point</DbColName>
+		<TemplateColName>End_Point</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>1000</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="5">
+		<DbColName>trench_length</DbColName>
+		<TemplateColName>Trench_Length</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>float8</UdtName>
+		<CharacterMaxLength>0</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="6">
+		<DbColName>trench_width</DbColName>
+		<TemplateColName>Trench_Width</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>float8</UdtName>
+		<CharacterMaxLength>0</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="7">
+		<DbColName>trench_height</DbColName>
+		<TemplateColName>Trench_Height</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>float8</UdtName>
+		<CharacterMaxLength>0</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="8">
+		<DbColName>trench_type</DbColName>
+		<TemplateColName>Trench_Type</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>200</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="9">
+		<DbColName>no_of_ducts</DbColName>
+		<TemplateColName>No_of_ducts</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>50</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="10">
+		<DbColName>pin_code</DbColName>
+		<TemplateColName>Pin_Code</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="11">
+		<DbColName>specification</DbColName>
+		<TemplateColName>Specification</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="12">
+		<DbColName>vendor</DbColName>
+		<TemplateColName>Vendor</TemplateColName>
+		<IsMandatory>true</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="13">
+		<DbColName>remarks</DbColName>
+		<TemplateColName>Remarks</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>1000</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="14">
+		<DbColName>mcgm_ward</DbColName>
+		<TemplateColName>Mcgm_Ward</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="15">
+		<DbColName>strata_type</DbColName>
+		<TemplateColName>Strata_Type</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>varchar</UdtName>
+		<CharacterMaxLength>100</CharacterMaxLength>
+	</Mapping>
+	<Mapping id="16">
+		<DbColName>manufacture_year</DbColName>
+		<TemplateColName>Manufacture_Year</TemplateColName>
+		<IsMandatory>false</IsMandatory>
+		<IsNullable>YES</IsNullable>
+		<UdtName>timestamp</UdtName>
+		<CharacterMaxLength>0</CharacterMaxLength>
+	</Mapping>
+</Mappings>
+

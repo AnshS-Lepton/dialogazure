@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+	<Mapping id="0">
+		<DbColName>actual_command_name</DbColName>
+		<TemplateColName>Command Name</TemplateColName>
+	</Mapping>
+	<Mapping id="1">
+		<DbColName>command_pronounce</DbColName>
+		<TemplateColName>Command Pronounce</TemplateColName>
+	</Mapping>
+</Mappings>

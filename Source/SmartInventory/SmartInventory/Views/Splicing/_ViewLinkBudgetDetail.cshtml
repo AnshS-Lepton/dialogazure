@@ -1,0 +1,106 @@
+﻿@model List<Models.ViewLinkBudgetDataDetail>
+@using Utility;
+@{
+
+    WebGrid grid = new WebGrid(source: Model, canSort: false, canPage: false);
+}
+
+<!DOCTYPE html>
+<div style="width:99%">
+
+
+    @if (Model.Count() != 0)
+{
+    <input type="hidden" id="hdnLastTransmitPower" value="@Model[Model.Count - 1].transmit_power" />
+    <input type="hidden" id="hdnTotalLoss" value="@Model.Sum(m => m.loss_value)" />
+        <div id="dvViewOpticalLinkBudgetDetails">
+            <div class="recordCount"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@grid.TotalRowCount</b></div>
+            <div class="table-responsive tble_cls" style="max-height: 190px;">
+
+                @grid.GetHtml(tableStyle: "webgrid",
+                         headerStyle: "webGridHeader",
+                            alternatingRowStyle: "alt",
+                            htmlAttributes: new { id = "tblOpticalLinkBudgetDetails" },
+
+                            mode: WebGridPagerModes.All,
+                            columns: grid.Columns(
+                            grid.Column("receiving_power", string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_028, SmartInventory.Settings.ApplicationSettings.dBPowerUnit), format: @<text>@item.receiving_power</text>),
+                            grid.Column("source_display_name", Resources.Resources.SI_OSP_ONT_NET_RPT_018, format: @<text>@item.source_display_name </text>),
+                            grid.Column("source_entity_type", Resources.Resources.SI_OSP_ONT_NET_RPT_017, format: @<text>@item.source_entity_type </text>),
+                         grid.Column("source_port_no", Resources.Resources.SI_OSP_ONT_NET_RPT_019, format: (item) =>
+                           {
+                               if (item.is_source_virtual == false)
+                               {
+                                   if (item.source_entity_type.ToUpper() != "CABLE" && item.source_entity_type.ToUpper() != "CUSTOMER")
+                                   {
+                                       if (item.source_port_no.ToString().Substring(0, 1) == "-")
+                                       {
+
+                                           return Html.Raw(string.Format("<text>{0}</text>", item.source_port_no.ToString().Replace("-", "") + " IN"));
+                                       }
+                                       else
+                                       {
+                                           return Html.Raw(string.Format("<text>{0}</text>", item.source_port_no.ToString() + " OUT"));
+                                       }
+                                   }
+                                   else
+                                   {
+                                       return Html.Raw(string.Format("<text>{0}</text>", item.source_port_no.ToString()));
+                                   }
+                               }
+                               else
+                               {
+                                   return "";
+                               }
+
+                           }),
+                            grid.Column("destination_display_name", Resources.Resources.SI_OSP_ONT_NET_RPT_020, format: @<text>@item.destination_display_name </text>),
+                           grid.Column("destination_entity_type", Resources.Resources.SI_OSP_ONT_NET_RPT_021, format: @<text>@item.destination_entity_type</text>),
+                           grid.Column("destination_port_no", Resources.Resources.SI_OSP_ONT_NET_RPT_022, format: (item) =>
+                           {
+                               if (item.is_destination_virtual == false)
+                               {
+                                   if (item.destination_entity_type.ToUpper() != "CABLE" && item.destination_entity_type.ToUpper() != "CUSTOMER")
+                                   {
+                                       if (item.destination_port_no.ToString().Substring(0, 1) == "-")
+                                       {
+
+                                           return Html.Raw(string.Format("<text>{0}</text>", item.destination_port_no.ToString().Replace("-", "") + " IN"));
+                                       }
+                                       else
+                                       {
+                                           return Html.Raw(string.Format("<text>{0}</text>", item.destination_port_no.ToString() + " OUT"));
+                                       }
+                                   }
+                                   else
+                                   {
+                                       return Html.Raw(string.Format("<text>{0}</text>", item.destination_port_no.ToString()));
+                                   }
+                               }
+                               else
+                               {
+                                   return Html.Raw(string.Format("<text>{0}</text>", ""));
+                               }
+                           }),
+                            grid.Column("loss_type",Resources.Resources.SI_OSP_GBL_NET_FRM_366, format: @<text>@item.loss_type</text>),
+                            grid.Column("loss_value",string.Format(Resources.Resources.SI_OSP_GBL_NET_FRM_367, SmartInventory.Settings.ApplicationSettings.dBLossUnit), format: @<text>@item.loss_value</text>),
+                            grid.Column("transmit_power",string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_026, SmartInventory.Settings.ApplicationSettings.dBPowerUnit), format: @<text>@item.transmit_power</text>)
+
+))
+
+            </div>
+
+
+
+
+
+        </div>
+    }
+    else
+    {
+        <div style="text-align:center; margin-top:50px;"><b>@Resources.Resources.SI_OSP_GBL_NET_RPT_125</b></div>
+    }
+
+
+
+</div>

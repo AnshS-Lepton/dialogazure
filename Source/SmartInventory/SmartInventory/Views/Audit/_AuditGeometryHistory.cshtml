@@ -1,0 +1,144 @@
+﻿@model Models.ViewAuditMasterModel
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objFilterAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "historyGeometryRecord", ajaxUpdateCallback: "onGridHeaderClick('tblAuditGeometryHistory')");
+    grid.Bind(Model.lstGeometryData, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+    if (Model.objFilterAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objFilterAttributes.currentPage - 1;
+    }
+}
+<!DOCTYPE html>
+<div class="tab-content" id="dvChildModalBody">
+    <div id="dvEntitydetailsProgress" class="EntitydetailsProgress"></div>
+
+    <div class="space-pad viewReport">
+        @using (Ajax.BeginForm("GetGeometryHistory", "Audit", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "dvProgress" },
+         new { id = "frmAuditGeomHistory", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+            @Html.HiddenFor(m => m.systemId);
+            @Html.HiddenFor(m => m.eType);
+            
+                if (Model.lstGeometryData.Count > 0)
+                {
+                    <div class="d-flex mb-15" id="dvBtnAction">
+                        <div class="div_totalRecord">
+                            <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@grid.TotalRowCount</span></b>
+                        </div>
+                        <div class="ml-auto pos-rel">
+                            @if (@grid.TotalRowCount > 0)
+                            {
+                                <button type="button" class="btn btn-default @(Model.lstGeometryData.Count==0?"btnNotAllowed":"")" id="btnAuditGeometry" style="margin-top: -4px;">
+                                    @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010
+                                    <i class="fa fa-chevron-down" aria-hidden="false"></i>
+                                </button>
+                                <div class="exportOptions">
+                                    <span onclick="ExportAuditGeometry('EXCEL')">@Resources.Resources.SI_GBL_GBL_NET_FRM_042</span>
+                                    <span onclick="ExportAuditGeometry('KML')">@Resources.Resources.SI_OSP_GBL_NET_GBL_007</span>
+                                    <span onclick="ExportAuditGeometry('SHAPE')">@Resources.Resources.SI_GBL_GBL_GBL_GBL_111</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    @*<div class="form-group row" id="dvBtnAction" style="padding:10px 0px;margin:0px;">
+                        <div class="div_totalRecord col-sm-9" style="float: left;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@grid.TotalRowCount</span></b></div>
+                        <div class="col-sm-3" style="float: right; cursor:pointer;margin-right: 10px;">
+
+
+                        </div>
+                    </div>*@
+
+                    <div id="objViewAuditHistory">
+
+                        @if (Model.lstGeometryData.Count > 0)
+                        {
+                            <div id="historyGeometryRecord">
+                                <div class="table-responsive">
+                                    @grid.GetHtml(tableStyle: "grid",
+                                        alternatingRowStyle: "alt",
+                                     htmlAttributes: new { id = "tblAuditGeometryHistory" },
+                                        mode: WebGridPagerModes.All)
+                                    @*@Html.Hidden("dir", grid.SortDirection)
+                                    @Html.Hidden("col", grid.SortColumn)*@
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                }
+                else
+                {
+                    <div class="nr-found">
+                        <span>@Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+                    </div>
+                }
+            
+
+        }
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('th a, tfoot a').on("click", function () {
+            $('#frmAuditGeomHistory').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        addDefaultSortingIcons("tblAuditGeometryHistory");
+        onGridHeaderClick('tblTicketManagerGrid');
+
+        changeColor('tblAuditGeometryHistory');
+
+        $('#btnAuditGeometry').on("click", function () {
+            $(".exportOptions").slideToggle();
+            $('#btnAuditGeometry>i').toggleClass('fa-chevron-down').toggleClass('fa-chevron-up');
+        });
+        // this function for change color for updated records
+        ActionColumn();
+        //Format numbers with comma
+        UpdateFormattedNumber('tblAuditGeometryHistory', false, ["Network ID"]);
+    });
+    function ExportAuditGeometry(purpose) {
+        ExportAuditGeomHistory(purpose);
+        $(".exportOptions").slideToggle();
+        $('#btnAuditGeometry>i').addClass('fa-chevron-down').removeClass('fa-chevron-up');
+    }
+    function ExportAuditGeomHistory(_fileType) {
+        window.location = appRoot + 'Audit/DownloadAuditGeometryHistory?fileType=' + _fileType;
+    }
+    function ActionColumn() {
+        $('#tblAuditGeometryHistory tbody tr td').each(function () {
+            var html = $(this).html();
+            $(this).attr('data-value', html);
+        })
+        $('#tblAuditGeometryHistory thead tr th:eq(0)').remove();
+        $('#tblAuditGeometryHistory thead tr th:eq(0)').remove();
+        $('#tblAuditGeometryHistory thead tr th:eq(0)').remove();
+        $('#tblAuditGeometryHistory thead tr th:eq(0)').html('<p style="min-width: 80px;margin: 4px;">' + MultilingualKey.SI_OSP_GBL_GBL_GBL_059).removeClass("bothorder");
+
+        $('#tblAuditGeometryHistory tbody tr').each(function (index, value) {
+             
+            var systemId = $('#tblAuditGeometryHistory tbody tr:eq(' + index + ') td:eq(0)').attr('data-value');
+            var layer_name = $('#tblAuditGeometryHistory tbody tr:eq(' + index + ') td:eq(1)').attr('data-value');
+            var geom_type = $('#tblAuditGeometryHistory tbody tr:eq(' + index + ') td:eq(2)').attr('data-value');
+            var audit_id = $('#tblAuditGeometryHistory tbody tr:eq(' + index + ') td:eq(3)').attr('data-value');
+            //$('#tblAuditGeometryHistory thead tr th:eq(0)').remove();
+            // $('#tblAuditGeometryHistory thead tr th:eq(0)').remove();
+
+             
+
+            var rowAction = '<i class="fa fa-globe fa-fw m-r-xs i-icons-style i-icons-ptpb" id="iconShowlinkOnMapp" title="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '" style="padding-left: 10px "onclick="entityShowOnMap(' + "'" + audit_id + "'" + ',' + "'" + geom_type + "'" + ')" ></i></a>';
+            $('#tblAuditGeometryHistory tbody tr:eq(' + index + ') td:eq(0)').remove();
+            $('#tblAuditGeometryHistory tbody tr:eq(' + index + ') td:eq(0)').remove();
+            $('#tblAuditGeometryHistory tbody tr:eq(' + index + ') td:eq(0)').remove();
+            $('#tblAuditGeometryHistory tbody tr:eq(' + index + ') td:eq(0)').html(rowAction);
+
+
+        });
+    }
+    function entityShowOnMap(gType, audit_id) {
+         
+        si.ShowEntityOnMapbyGeom(audit_id, gType);
+        $('#ModalPopUp .minmizeModel>i').trigger("click");
+        $('#ModalPopUp .minmizeModel>i').trigger("click");
+        $('#ModalPopUp .minmizeModel>i').trigger("click");
+    }
+</script>

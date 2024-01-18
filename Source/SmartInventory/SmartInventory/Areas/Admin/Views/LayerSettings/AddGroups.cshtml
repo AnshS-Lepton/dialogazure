@@ -1,0 +1,149 @@
+﻿@model Models.Admin.LayerGroupMaster
+
+<!DOCTYPE html>
+<div id="dvPageMessage">
+    @{
+        Html.RenderPartial("_PageMessage", Model.pageMsg);
+    }
+</div>
+@{
+    Layout = null;
+}
+@using (Ajax.BeginForm("SaveLayerGroupDetails", "LayerSettings",
+                                                new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddLayerGroups", OnSuccess = "OnSuccess", },
+                                                new { id = "frmAddLayerGroups", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.group_id);
+    @Html.HiddenFor(m => m.created_by);
+    @Html.HiddenFor(m => m.created_on);
+    //@Html.HiddenFor(m => m.status);
+
+    <div class="--pad-15">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Group Name<i class="clsMandatory">*</i>:</label>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.group_name, new { @id = "txtGroupNameText", @class = "form-control", @maxlength = "40", @placeholder = "Enter Group Name" })
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Group Description<i class="clsMandatory">*</i>:</label>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.group_description, new { @id = "txtGroupDescription", @class = "form-control", @maxlength = "100", @placeholder = "Enter Group Description" })
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Status</label>
+                </div>
+                <div class="col-md-8">
+                    @if (Model.chk_GrpStatus == 1)
+                    {
+                        @Html.CheckBoxFor(m => m.status, new { @class = "chk", @checked = "checked" })
+                    }
+
+                    else
+                    {
+                        @Html.CheckBoxFor(m => m.status, new { @class = "chk", @checked = "checked", @disabled = "disabled" })
+                        <label>Note: You can't change Status as some layers are already mapped with this Group!</label>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ModalFooter" id="dvBtnAction">
+        <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+        @if (Model.group_id > 0)
+        {
+            <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveLyrGrp" value="Update" />
+        }
+        else
+        {
+            <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveLyrGrp" value="Save" />
+        }
+    </div>
+}
+<script type="text/javascript">
+        $(document).ready(function () {
+            if ('@Model.group_id' != 0) {
+                btnSaveLyrGrp.value = "Update";
+            }
+        });
+    function IsValid() {
+         
+        if ($('#ddlGroupName').val() == "" && $('#ddlGroupDesc').val() == "") {
+            $('#ddlGroupName').addClass('errorClass');
+            $('#ddlGroupDesc').addClass('errorClass');
+            alert("Mandatory fields are required");
+            return false;
+        }
+        else {
+            $('#ddlGroupName').removeClass("errorClass");
+            $('#ddlGroupDesc').removeClass("errorClass");
+        }
+        //pk
+        if ($('#txtGroupNameText').val() == "") {
+            $('#txtGroupNameText').addClass('errorClass');
+            alert("Group name is mandatory");
+            return false;
+        }
+        else {
+            $('#txtGroupNameText').removeClass("errorClass");
+        }
+        if ($('#txtGroupDescription ').val() == "") {
+            $('#txtGroupDescription').addClass('errorClass');
+            alert("Group Description is mandatory");
+            return false;
+        }
+        else {
+            $('#txtGroupDescription').removeClass("errorClass");
+        }
+        //pk end
+
+        if ($('#ddlGroupName').val() == "") {
+            $('#ddlGroupName').addClass('errorClass');
+            alert("Group name is mandatory");
+            return false;
+        }
+        else {
+            $('#ddlGroupName').removeClass("errorClass");
+        }
+        if ($('#ddlGroupDesc ').val() == "") {
+            $('#ddlGroupDesc').addClass('errorClass');
+            alert("Group Description is mandatory");
+            return false;
+        }
+        else {
+            $('#ddlGroupDesc').removeClass("errorClass");
+        }
+    };
+        $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+
+        function OnSuccess(data) {
+             
+            if (data.status == "OK") {
+                $("#closeModalPopup").trigger("click");
+                setTimeout(function () {
+                    window.location = appRoot + 'LayerSettings/ViewGroups';
+                }, 3000);
+                alert(data.message, 'Success', 'success');
+            }
+            else {
+                alert(data.message, 'Failed', 'Failed');
+            }
+        }
+        $("#btnCancel").on("click", function () {
+            $("#closeModalPopup").trigger("click");
+        });
+</script>
+
+
+

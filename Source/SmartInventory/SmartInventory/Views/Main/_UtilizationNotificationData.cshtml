@@ -1,0 +1,50 @@
+﻿@model List<Models.ViewEntityNotifications>
+@foreach (var item in Model)
+{
+    <div class="prowindow @(item.is_closed==true?"graybackground":"")" id="dvNotiDetail_@item.notification_id">
+        <span>
+            @item.layer_title
+            <i class="commentsCount" style="display:@(item.comments_count>0?"":"none")"><label id="lblTotalComments_@item.notification_id">@item.comments_count</label> @Resources.Resources.SI_OSP_GBL_NET_FRM_348</i>
+            <i class="glyphicon glyphicon-chevron-down clsEntitydown" data-notifcationId="@item.notification_id" id="Entitydown"></i>
+            <i class="glyphicon glyphicon-option-horizontal pull-right clsutilpopup" id="UtilPopup"></i>
+            <div class="dropwindow">
+                <ul>
+                    <li onclick="si.ShowDetailFromInfo({ systemId: @item.entity_system_id, entityType: '@item.entity_type', geomType:'@item.geom_type', networkStatus: '@item.entity_network_status' })">@Resources.Resources.SI_OSP_GBL_NET_FRM_218</li>
+                    @if (!string.IsNullOrEmpty(item.cable_type) && item.cable_type != "ISP")
+                    {
+                    <li onclick="si.ShowEntityOnMap(@item.entity_system_id, '@item.entity_type', '@item.geom_type');">@Resources.Resources.SI_OSP_GBL_NET_FRM_219</li>
+                    }
+                    @if (item.is_logicalview_enabled)
+                    {
+                        <li onclick="si.logicalView(@item.entity_system_id, '@item.entity_type');">@Resources.Resources.SI_OSP_GBL_NET_FRM_220</li>
+                    }
+                    @if (!item.is_virtual_port_allowed)
+                    {
+                        <li onclick="OpenCPFFromNotification(@item.entity_system_id, '@item.entity_type','@item.entity_network_id');">@Resources.Resources.SI_OSP_GBL_NET_FRM_346</li>
+                    }
+                </ul>
+            </div>
+        </span>
+        <span class="fontID mt05 mb01"> @item.entity_network_id <i class="pull-right"><label class="control-label float-right"title="@(@item.created_on != null ? Utility.MiscHelper.FormatDateTime(@item.created_on.ToString()) : string.Empty)">@(@item.created_on != null ? Utility.MiscHelper.TimeAgo(@item.created_on.ToString()) : string.Empty)</label> </i></span>
+        <span id="spnNotiText_@item.notification_id" class="fontID @(item.is_closed==true?"grayColor":"importantcolor")">@item.notification_text<i class="pull-right">@item.entity_used_ports/@item.entity_total_ports</i></span>
+        <div class="prowindowE1" style="display:none">
+            <div id="NotiComment_@item.notification_id" class="clsNotiComment">
+            </div>
+            @if (!item.is_closed)
+            {
+                <input type="text" class="form-control" data-notifcationId="@item.notification_id" id="txtAddComment_@item.notification_id" maxlength="200" onkeyup="return validateTextboxAddComment(this.id);" placeholder="@Resources.Resources.SI_OSP_GBL_NET_FRM_225" />
+                <span class="fontID" id="spnCommentAction_@item.notification_id">
+                    <a href="javascript:void(0);" id="btnCloseIssue_@item.notification_id" data-system-id="@item.entity_system_id" data-entity-type="@item.entity_type" data-network-id="@item.entity_network_id" onclick="UpdateNotificationCloseStatus(@item.notification_id);">@Resources.Resources.SI_OSP_GBL_NET_FRM_347</a>
+                    <a href="javascript:void(0);" id="btnPost_@item.notification_id" class="pull-right" onclick="SaveEntityNotificationComment(@item.notification_id);">@Resources.Resources.SI_OSP_GBL_NET_FRM_223</a>
+                </span>
+            }
+            else
+            {
+                <span class="fontID importantcolor" id="spnCommentAction_@item.notification_id">
+                    <i class="glyphicon glyphicon-exclamation-sign"></i> @Resources.Resources.SI_OSP_GBL_NET_FRM_349
+                </span>
+            }
+        </div>
+    </div>
+}
+

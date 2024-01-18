@@ -1,0 +1,53 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+<div class="popPadd" id="Templatepopup">
+    <div class="form-group">
+        <div class="row">
+            <div class=" col-md-5">
+                <label class=" control-label">
+                    Template Name<i class="clsMandatory">*</i>:
+                </label>
+            </div>
+            <div class=" col-md-7">
+                <input type="text" id="templatename" class="form-control" required="required">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="d-flex ModalFooter" id="dvBtnAction">
+    <input type="submit" class="btn btn-primary ml-auto allBtn" name="btnaction" id="btnvalidateTemplate" value="Save" />
+</div>
+<script type="text/javascript">
+
+    var validTemplateName = true;
+    $("#btnvalidateTemplate").click(function () {
+
+        let source = $("#templatename").val();
+        if ($("#templatename").val().trim().length == 0) {
+            pageMessageFromhtml('Template name is required.');
+            return false;
+        }
+        if (validTemplateName) {
+            $('#divloader').removeClass("dNone");
+            $.ajax({
+                type: 'POST',
+                url: '/KPI/ValidateTemplate',
+                data: { source: source },
+                success:
+                    function (data) {
+                        if (data.status == "OK") {
+                            fnSaveTemplate();
+                            BindTemplate();
+                            $('#divloader').addClass("dNone");
+                        }
+                        else
+                            pageMessageFromhtml(data.message);
+                        $('#templatename').val('');
+                        $('#divloader').addClass("dNone");
+                    }
+            });
+        }
+    });
+</script>
+

@@ -1,0 +1,214 @@
+﻿
+@media (max-width:764px) {
+    .menuicons {
+display:block;
+}
+
+    .w3 {
+        width: 100%;
+        min-width: 100%;
+        height: 100%;
+    }
+
+    #header {
+        min-width: 100%;
+        background-size: auto;
+    }
+
+    .userSpecific {
+        width: auto;
+    }
+
+
+    #logo {
+        background: url(../images/logo.png) no-repeat;
+        background-size: auto;
+        float: left;
+        text-indent: -9999px;
+        width: 217px;
+        height: 100%;
+        margin: 10px 0 0 10px;
+        width: 35%;
+        background-size: 100%;
+    }
+
+    .account {
+        width: 40%;
+        min-width: initial;
+    }
+
+
+    #layerSection {
+        width: 70%;
+    }
+
+    .iconBar {
+        width: 100%;
+    }
+
+    .layer_left {
+        height: 100%;
+        width: 250px !important;
+        display: none;
+    }
+
+    .bottom-title {
+        height: auto;
+        float: left;
+        padding: 0px;
+        width: 100%;
+    }
+
+    .layer_icons_rep {
+        position: absolute;
+        right: 6px;
+        z-index: 11;
+        background-color: rgba(255, 255, 255, 0.8);
+        width: 35px;
+        padding: 3px;
+        height: 100%;
+        margin-top: 8%;
+        border-left: 1px solid #395385;
+    }
+
+    .iconBar {
+        display: none;
+    }
+
+        .iconBar .techSep {
+            display: none;
+        }
+
+        .iconBar div:hover {
+            margin-bottom: 5px;
+        }
+
+        .iconBar div {
+            margin-bottom: 5px;
+        }
+
+    #subicons {
+        width: 30%;
+        float: right;
+    }
+
+    .menuicons {
+        float: right;
+        height: 25px;
+        width: 25px;
+        cursor: pointer;
+        background: url(../images/split_img.png) no-repeat -327px -32px;
+    }
+
+    #ModalPopUp .modal-dialog {
+        left: 0% !important;
+        /*top: 30% !important;*/
+    }
+
+    .srchMain {
+        width: 100%;
+        right: inherit;
+    }
+
+    .tungi {
+        display: none;
+    }
+
+    .search_data_txtbox {
+        width: 86%;
+        margin: 0px;
+    }
+
+    .search_data_txtbox_input {
+        width: 80%;
+    }
+
+    #imgscrhtypes {
+        margin: -19px 3px 0 0;
+        position: relative;
+    }
+
+    .search_data_txtbox_sub {
+        margin: 2px 51px 0 0;
+    }
+
+    .Ftr-inline {
+        width: 100%;
+        float: left;
+        font-size: 10px;
+        padding: 3px;
+        text-align: center;
+    }
+
+    .Ftr-left {
+width: 100%;
+        float: right;
+        font-size: 10px;
+        padding: 3px;
+        text-align: center;
+    }
+
+    .bottom_txt {
+        min-width: inherit;
+    }
+
+    .dis-hiden {
+        display: none;
+    }
+
+    .col-mr-1 {
+        width: 47%;
+    }
+
+    .col-mr-2 {
+        width: 22%;
+    }
+
+    .legendDiv {
+        width: 29%;
+        padding-left: 2px;
+    }
+
+    #progressbar {
+    width: 100% !important;
+    height: auto !important;
+    z-index: 90000;
+    position: absolute;
+    top: 40%;
+    left: 0pt !important;
+}
+
+    .SurveyToolbar {
+margin-right: 41px;
+float: right;
+right: 0px;
+border-radius: 0px;
+margin-top: 232px;
+top: 0px;
+height:auto !important;
+width:33px !important;
+    }
+
+    .WirelineToolbar {
+margin-right: 41px;
+float: right;
+right: 0px !important;
+border-radius: 0px;
+margin-top: 193px;
+top: 0px;
+height: auto !important;
+width: 33px !important;
+    }
+
+    .modal-content {
+    overflow:auto;
+    }
+
+.KmlDiv{width: 300px;top: 81px; z-index:12;}
+
+    .NELibrary .libItems {
+    width: 195px; top:80px; 
+    }
+
+    .NELibrary{z-index:12;}
+}

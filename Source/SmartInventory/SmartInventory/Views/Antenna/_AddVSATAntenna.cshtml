@@ -1,0 +1,183 @@
+﻿@model Models.AntennaMaster
+@using Models;
+@using SmartInventory.Settings;
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.pageMsg); }
+}
+@{
+    var objUser = (User)Session["userDetail"];
+}
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Building.ToString().ToUpper()).FirstOrDefault() : null;
+
+}
+<style>
+    select {
+        visibility: visible !important;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="libDetail">
+    <div class="tab-content" style="background-color: white;">
+        <div class="tab-pane active" id="VSATantenna">
+            <fieldset class="the-fieldset attach">
+                <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_511</legend>
+                <div>
+                    @Html.HiddenFor(x => x.objVSATAntenna.is_vsat_updated)
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="ddl_satellite_type">@Resources.Resources.SI_OSP_GBL_NET_GBL_179<span class="clsMandatory">*</span>:</label>
+                        <div class="col-sm-45">
+                            @Html.DropDownListFor(m => m.objVSATAntenna.satellite_type, new SelectList(Model.objVSATAntenna.VSATSetellite.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Satellite Type",
+                            SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                            {
+                                @class = "chosen-select form-control",
+                                @style = "padding:0;",
+                            }, new { @id = "ddl_satellite_type", @required = true }))
+
+                        </div>
+                        <label class="control-label col-sm-2" for="ddl_transponder_type">
+                            @Resources.Resources.SI_OSP_GBL_GBL_FRM_225
+                            <span class="clsMandatory">*</span>:
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.DropDownListFor(m => m.objVSATAntenna.transponder_type, new SelectList(Model.objVSATAntenna.VSATTranspond.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Transponder Type",
+         SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+         {
+             @class = "chosen-select form-control",
+             @style = "padding:0;",
+         }, new { @id = "ddl_transponder_type", @required = true }))
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtlook_angle_deg">@Resources.Resources.SI_OSP_GBL_NET_FRM_512<span class="clsMandatory">*</span> :</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATAntenna.look_angle_deg,
+         SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+         {
+             @class = "form-control",
+         }, new { @maxlength = "10", @id = "txtlook_angle_deg", @required = true, @onkeypress = "return ValidateNumberDecimal(this,event,8,2);" }))
+                        </div>
+                        <label class="control-label col-sm-2" for="txtelevation_deg"> @Resources.Resources.SI_OSP_GBL_GBL_FRM_226<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATAntenna.elevation_deg,
+          SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+          {
+              @class = "form-control",
+          }, new { @maxlength = "10", @id = "txtelevation_deg", @required = true,@onkeypress = "return ValidateNumberDecimal(this,event,8,2);" }))
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtDateFrom">@Html.Raw(Resources.Resources.SI_OSP_GBL_NET_GBL_200)<span class="clsMandatory">*</span> :</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATAntenna.operational_from_date_bs, "{0:dd-MMM-yyyy}",
+        SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+        {
+            @class = "input-sm form-control",
+        }, new { @id = "txtDateFrom", @title = "Date From", @placeholder = "DD-MMM-YYYY", @readonly = true, @required = true }))
+                            <img id="imgFromDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                        <label class="control-label col-sm-2" for="txtToFrom">@Html.Raw(Resources.Resources.SI_OSP_GBL_NET_GBL_201)<span class="clsMandatory">*</span>:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATAntenna.operational_to_date_bs, "{0:dd-MMM-yyyy}",
+         SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+         {
+             @class = "input-sm form-control",
+         }, new { @id = "txtToFrom", @title = "Date To", @placeholder = "DD-MMM-YYYY", @readonly = true, @required = true }))
+                            <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtradiomodel">@Resources.Resources.SI_OSP_GBL_NET_GBL_170<span class="clsMandatory">*</span>:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATAntenna.radio_model,
+          SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+          {
+              @class = "form-control",
+          }, new { @maxlength = "100", @id = "txtradiomodel", @required = true }))
+                        </div>
+                        <label class="control-label col-sm-2" for="ddlStatus">
+                            @Resources.Resources.SI_OSP_GBL_NET_GBL_160
+                            <span class="clsMandatory">*</span>:
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.DropDownListFor(m => m.objVSATAntenna.status, new List<SelectListItem>
+                             {
+                              new SelectListItem{ Text="--Select--", Value = ""},
+                                new SelectListItem{ Text="Active", Value = "Active"},
+                                new SelectListItem{ Text="In-Active", Value = "In-Active"  }
+                             }, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                             {
+                                 @class = "chosen-select form-control",
+                                 @style = "padding:0;",
+                             }, new { @id = "ddlStatus", @tabindex = "2", @title = "Status", @required = true }))
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="lblorientation">@Resources.Resources.SI_OSP_GBL_NET_RPT_133<span class="clsMandatory">*</span>:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATAntenna.orientation,
+        SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+        {
+            @class = "form-control",
+        }, new { @maxlength = "100", @id = "lblorientation", @required = true }))
+                        </div>
+                        <label class="control-label col-sm-2" for="txtBuildingAddress">@Resources.Resources.SI_OSP_GBL_GBL_FRM_227<span class="clsMandatory">*</span>:</label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATAntenna.purpose,
+         SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+         {
+             @class = "form-control",
+         }, new { @maxlength = "100", @id = "txtpurpose", @required = true }))
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="the-fieldset attach">
+                <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_GBL_197</legend>
+                <div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="ddl_satellite_type">
+                            @Resources.Resources.SI_OSP_GBL_NET_FRM_502
+                            :
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.DropDownListFor(m => m.objVSATAntenna.rf_band_type, new SelectList(Model.objVSATAntenna.VSATSetellite.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "Select Satellite Type", new { @class = "chosen-select form-control", @style = "padding:0;", @id = "ddl_satellite_type" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtRFSDate">
+                            @Resources.Resources.SI_OSP_GBL_NET_GBL_198
+                            :
+                        </label>
+                        <div class="col-sm-45" style="height:24px;">
+                            @Html.TextBoxFor(m => m.objVSATAntenna.uplink_ghz, new { @class = "form-control numbers-only", @maxlength = "4", @onkeypress = "return si.allowOnlyNumber(event);", @id = "txtuplink_ghz" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtdownlink_ghz">
+                            @Resources.Resources.SI_OSP_GBL_NET_GBL_199
+                            :
+                        </label>
+                        <div class="col-sm-45">
+                            @Html.TextBoxFor(m => m.objVSATAntenna.downlink_ghz, new { @class = "form-control numbers-only", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "4", @id = "txtdownlink_ghz" })
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var inputs = [];
+    $(document).ready(function () {
+         
+        $('.chosen-select').chosen({ width: '100%', });
+        callFormValidator("frmAddAntenna");
+        si.setDateTimeCalendar_VSAT("txtDateFrom", "txtToFrom", "imgFromDate", "imgToDate", false);
+    });
+    $("#btnSaveItemTemplate, #btnUpdateItemTemplate").on("click", function () {
+        if (!(si.isFormValid())) { return false; }
+    });
+</script>

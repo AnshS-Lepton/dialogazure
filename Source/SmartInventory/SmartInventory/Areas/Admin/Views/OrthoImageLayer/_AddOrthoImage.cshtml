@@ -1,0 +1,109 @@
+﻿@model Models.Admin.OrthoImageMasterModel
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="divAddNewOrthoImage">
+    @using (Ajax.BeginForm("SaveOrthoImage", "OrthoImageLayer",
+                                        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddNewOrthoImage", OnSuccess = "OnSuccess", },
+                                        new { id = "frmAddOrthoImage", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.system_id);
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Image Name<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.image_name, new { @class = "form-control onchang", @maxlength = "50", @placeholder = "Image Name", @id = "txtImageName" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Image Extension<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.image_extension, new { @class = "form-control onchang", @maxlength = "50", @placeholder = "Image Extension", @id = "txtImageExtension", @value = "tif", @readonly = true })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Display Name<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.display_name, new { @class = "form-control", @maxlength = "50", @placeholder = "Display Name", @id = "txtdisplayname" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Status:</div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.is_active, new { Style = "width:100% ;", @id = "chkis_active" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ModalFooter" id="dvBtnAction">
+            <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+
+            @if (Model.system_id > 0)
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveOrthoImage" value="Update" />
+            }
+            else
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveOrthoImage" value="Save" />
+            }
+        </div>
+    }
+</div>
+<script>
+    function IsValid() {
+         
+        if ($('#txtImageName').val() == "") {
+            $('#txtImageName').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txtImageName').removeClass("errorClass");
+        }
+
+        if ($('#txtImageExtension').val() == "") {
+            $('#txtImageExtension').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txtImageExtension').removeClass("errorClass");
+        }
+
+        if ($('#txtdisplayname').val() == "") {
+            $('#txtdisplayname').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txtdisplayname').removeClass("errorClass");
+        }
+
+    };
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+
+    function OnSuccess(data) {
+         
+        if (data.pageMsg.status == "Save") {
+            $("#closeModalPopup").trigger("click");
+        }
+        if (data.pageMsg.status == "Update") {
+
+            $("#closeModalPopup").trigger("click");
+        }
+        alert(data.pageMsg.message, 'Success', 'success');
+        setTimeout(function () {
+            window.location = appRoot + 'OrthoImageLayer/ViewOrthoImage';
+        }, 3000);
+
+    }
+    $("#btnCancel").on("click", function () {
+        $("#closeModalPopup").trigger("click");
+    });
+</script>

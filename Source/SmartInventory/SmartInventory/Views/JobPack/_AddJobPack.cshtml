@@ -1,0 +1,343 @@
+﻿@model Models.JobPackMaster
+@using Models;
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+
+}
+<style>
+    .custom-file-input::-webkit-file-upload-button {
+        visibility: hidden;
+    }
+
+    .custom-file-input::before {
+        content: 'Select file';
+        display: inline-block;
+        background: linear-gradient(top, #f9f9f9, #e3e3e3);
+        border: 1px solid #999;
+        border-radius: 3px;
+        padding: 5px 8px;
+        outline: none;
+        white-space: nowrap;
+        -webkit-user-select: none;
+        cursor: pointer;
+        text-shadow: 1px 1px #fff;
+        font-weight: 700;
+        font-size: 10pt;
+    }
+
+    .custom-file-input:hover::before {
+        border-color: black;
+    }
+
+    .custom-file-input:active::before {
+        background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+    }
+</style>
+<!DOCTYPE html>
+<div class="libDetail">
+    @using (Ajax.BeginForm("SaveJobPack", "JobPack", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = (Model.isParentModelType == true ? "dvModalBody" : "dvChildModalBody"),
+        LoadingElementId = "dvProgress",
+    },
+            new { id = "frmAddJobPack", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        @Html.HiddenFor(m => m.system_id)
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="libTabs">
+            <ul class="nav nav-tabs tabs-left">
+
+                <li class="active"><a href="#JobPackInfo" data-toggle="tab">Job Information</a></li>
+                <li><a href="#StagesInfo" data-toggle="tab">Stages Information</a></li>
+                @if (Model.system_id > 0)
+                {
+                    <li class="building-status-lbl">Status : @Model.status</li>
+                }
+            </ul>
+        </div>
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="JobPackInfo">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">Job Detail</legend>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Job Type<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.job_type, new { @class = "form-control", @style = "width: 96.6%;", @maxlength = "200" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Job Description<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-10">
+                                @Html.TextAreaFor(m => m.job_description, new { @class = "form-control", @style = "width: 96.6%;", @maxlength = "200" })
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">General Detail</legend>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">NIMS No.<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.nims_no, new { @class = "form-control", @maxlength = "150" })
+                            </div>
+                            <label class="control-label col-sm-2">NGWFMT <br />Project ID<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.ngwfmt_project_id, new { @class = "form-control", @maxlength = "150" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Node(s) 1:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.node1, new { @class = "form-control", @maxlength = "150" })
+                            </div>
+                            <label class="control-label col-sm-2">Node(s) 2:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.node2, new { @class = "form-control", @maxlength = "150" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">GRID REF:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.grid_ref, new { @class = "form-control", @maxlength = "150" })
+                            </div>
+                            <label class="control-label col-sm-2">Highway Authority <br />/ USRN:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.highway_authority, new { @class = "form-control", @maxlength = "150" })
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">Location Detail</legend>
+                        @if (Model.system_id == 0)
+                        {
+                            <a href="#" style="float: right;text-decoration: underline; position: relative; width: 100%;  text-align: right;  margin-right: 32px;color: blue;" onclick="ChooseLocationFromMap()">Choose Location on Map</a>
+                        }
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Manual Address<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.manual_address, new { @class = "form-control", @style = "width: 96.6%;", @onkeyup = "geoCodeJobAddress();", @maxlength = "500" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Latitude<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @readonly = true })
+                            </div>
+                            <label class="control-label col-sm-2">Longitude<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">GIS Address<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.gis_address, new { @class = "form-control", @style = "width: 96.6%;", @maxlength = "500", @readonly = true })
+                            </div>
+                        </div>
+
+                    </fieldset>
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">Contact Detail</legend>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Planner Contact:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.planner_contact_no, new { @class = "form-control", @maxlength = "150" })
+                            </div>
+                            <label class="control-label col-sm-2">Planner Tel No.:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.planner_tel_no, new { @class = "form-control", @maxlength = "150" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Planner Email:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.planner_email, new { @class = "form-control", @maxlength = "150" })
+                            </div>
+                            <label class="control-label col-sm-2">Delivery Contact:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.delivery_contact_no, new { @class = "form-control", @maxlength = "150" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Delivery Tel No.:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.delivery_tel_no, new { @class = "form-control", @maxlength = "150" })
+                            </div>
+                            <label class="control-label col-sm-2">Delivery Email:</label>
+                            <div class="col-sm-45">
+                                @Html.TextBoxFor(m => m.delivery_email, new { @class = "form-control", @maxlength = "150" })
+                            </div>
+                        </div>
+
+                    </fieldset>
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">Work Instructions</legend>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Works Instructions <br />/ Job Notes <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-10">
+                                @Html.TextAreaFor(m => m.work_instructions, new { @class = "form-control", @style = "width: 96.6%; height:100px;", @maxlength = "900" })
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">Other Detail</legend>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Remarks:</label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.remarks, new { @class = "form-control", @style = "width: 96.6%;", @maxlength = "200" })
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">Attachment</legend>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Attachment 1:</label>
+                            <div class="col-sm-10">
+                                <input type="file" name="ImageFile" id="ImageFile" class="custom-file-input" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Attachment 2:</label>
+                            <div class="col-sm-10">
+                                <input type="file" name="ImageFile" id="ImageFile" class="custom-file-input" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Attachment 3:</label>
+                            <div class="col-sm-10">
+                                <input type="file" name="ImageFile" id="ImageFile" class="custom-file-input" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Attachment 4:</label>
+                            <div class="col-sm-10">
+                                <input type="file" name="ImageFile" id="ImageFile" class="custom-file-input" />
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="tab-pane" id="StagesInfo">
+                    <fieldset class="the-fieldset">
+                        <div class="form-group">
+                            <label class="control-label col-sm-12">Stage 1 (Check bonding Terminate copper conductors to provide 48v Power to G.fast unit):</label>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                @Html.TextAreaFor(m => m.stage1, new { @class = "form-control", @style = "width: 96.6%; height:80px;", @maxlength = "200", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-12">Stage 2 (Terminate copper conductors to provide 48v Power to G.fast unit):</label>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                @Html.TextAreaFor(m => m.stage2, new { @class = "form-control", @style = "width: 96.6%; height:80px;", @maxlength = "200", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-12">Stage 3 (Complete Power Upgrade, advise earthing requirements):</label>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                @Html.TextAreaFor(m => m.stage3, new { @class = "form-control", @style = "width: 96.6%; height:80px;", @maxlength = "200", @readonly = true })
+                            </div>
+                        </div>
+
+                    </fieldset>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal">Cancel</a>
+            <button type="submit" class="btn btn-primary" id="btnSaveJobPack" @((string.IsNullOrEmpty(Model.status) || Model.status == "New") == true ? "" : "disabled")>@(Model.system_id > 0 ? "Update" : "Save")</button>
+
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        callFormValidator("frmAddJobPack");
+        si.ClearJobPackAddressTool();
+    });
+
+    function ChooseLocationFromMap() {
+        si.EnableJobPackAddressTool();
+        $(popup.DE.MinimizeModel).trigger("click");
+    }
+
+    function geoCodeJobAddress() {
+        var address = $("#manual_address").val();
+        if (address.length > 4) {
+            getLatLonByAddress(address, function (result) {
+                if (result.geometry.location != null && result.geometry.location != undefined) {
+
+                    $("#latitude").val(result.geometry.location.lat());
+                    $("#longitude").val(result.geometry.location.lng());
+                    $("#gis_address").val(result.formatted_address);
+                    $("#latitude,#longitude,#gis_address").removeClass('input-validation-error').addClass('valid');
+                }
+                else {
+                    $("#latitude").val('');
+                    $("#longitude").val('');
+                    $("#gis_address").val('');
+                    $("#latitude,#longitude,#gis_address").addClass('input-validation-error').removeClass('valid');
+
+                }
+            });
+        }
+        else {
+            $("#latitude").val('');
+            $("#longitude").val('');
+            $("#gis_address").val('');
+            $("#latitude,#longitude,#gis_address").addClass('input-validation-error').removeClass('valid');
+        }
+    }
+
+    /****ADDED BY RAM ****/
+    function getLatLonByAddress(address, callback) {
+        var geocoderNew = new google.maps.Geocoder();
+        geocoderNew.geocode({ 'address': address }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                if (typeof callback == 'function') {
+                    callback(results[0]);
+                }
+            }
+            else {
+                callback();
+            }
+        });
+    }
+    /**************/
+    /****ADDED BY RAM ****/
+    function getAddressByLatLon(latitude, longitude, callback) {
+        var geocoderNew = new google.maps.Geocoder();
+        var latlng = { lat: latitude, lng: longitude };
+        geocoderNew.geocode({ 'location': latlng }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                if (results[1]) {
+                    if (typeof callback == 'function') {
+                        callback(results[1].formatted_address);
+                    }
+                }
+                else {
+                    callback("NA");
+                }
+            }
+            else {
+                //alert("Geocode was not successful for the following reason: " + status);
+                callback();
+            }
+        });
+    }
+</script>

@@ -1,0 +1,161 @@
+﻿@model Models.AdditionalAttributeModel
+
+<link href="~/Content/css/DynamicForms/dynamicforms.css" rel="stylesheet" />
+<link href="~/Content/css/DynamicForms/dynamicscontrols.css" rel="stylesheet" />
+<link href="~/Content/css/DynamicForms/DeletePopupStyle.css" rel="stylesheet" />
+@*<link href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>*@
+<link href="~/Content/css/DynamicForms/noty-3.1.4.css" rel="stylesheet" />
+<script src="~/Content/js/DynamicForms/noty.min-3.1.4.js"></script>
+@*<script src="~/Content/js/DynamicForms/DeletePopupScript.js"></script>*@
+<style>
+    #noty_layout__topRight {
+        top: 64px;
+    }
+</style>
+
+
+
+<div id="build" class="demo welcome" data-new-gr-c-s-check-loaded="14.1014.0" data-gr-ext-installed="">
+    <div id="lightningjs-usabilla_live" style="display: none;"><div></div></div>
+    <div id="container" class="">
+        <div class="update_panel fullWidth">
+            <div class="title fullWidth">
+                <h4>Dynamic Form</h4>
+            </div>
+            <div class="fChild">
+                <label class="mr-2"> Select Entity:</label>
+                <div class="form-fields">
+                    @Html.DropDownListFor(m => m.LayerName, new SelectList(Model.layers.Select(x => new { Value = x.layer_id, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select", @onchange = "dynamicForm.controlEvents.OnEntityChange(this);" })
+                </div>
+            </div>
+            <div class="--pad-tn tabOuterH">
+                <div class="tabs">
+                    @*<div class="tab">
+                            <input type="radio" name="css-tabs" id="tab-2" checked class="tab-switch">
+                            <label for="tab-2" class="tab-label">Existing Fields</label>
+                            <div class="tab-content">
+                                <div id="divExistingControls"></div>
+                            </div>
+                        </div>*@
+                    <div class="tab">
+                        <input type="radio" name="css-tabs" id="tab-1" checked class="tab-switch">
+                        <label for="tab-1" class="tab-label">Add a Field</label>
+                        <div class="tab-content">
+                            <div class="group--btn">
+                                <input type="button" id="btnCreateTextBox" class="g--btns defaultBtn" value="Single Line Text" />
+                                <input type="button" id="btnCreateDropdown" value="Dropdown List" disabled class="g--btns" />
+                                @*<input type="button" id="btnCreateDate" value="Date" disabled class="g--btns" />*@
+                                <input type="button" id="btnSave" value="Save" class="g--btns clearBtn" />
+                                <div class="group--btn ml-auto">
+                                    <label id="lblMessage"></label>
+                                </div>
+                            </div>
+
+                            <div class="flexBox">
+                                <div id="divControlForm" class="flx-bas50">
+                                    <div class="f-property">
+                                        <div class="fChild">
+                                            <label>Untitled</label>
+                                            <div class="form-fields">
+                                                <input type="text" placeholder="Untitled" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="a-r-icons">
+                                            <img src="~/Content/images/add.svg" />
+                                            <img src="~/Content/images/remove.svg" />
+                                        </div>
+                                    </div>
+                                    <div class="f-property">
+                                        <label>Untitled</label>
+                                        <div class="form-fields">
+                                            <select class="form-control">
+                                                <option>Select</option>
+                                                <option>Option 1</option>
+                                                <option>Option 2</option>
+                                            </select>
+                                        </div>
+                                        <div class="a-r-icons">
+                                            <img src="~/Content/images/add.svg" />
+                                            <img src="~/Content/images/remove.svg" />
+                                        </div>
+                                    </div>
+                                    <div class="f-property">
+                                        <label>Untitled</label>
+                                        <div class="form-fields">
+                                            <input type="text" placeholder="Untitled" class="form-control" />
+                                        </div>
+                                        <div class="a-r-icons">
+                                            <img src="~/Content/images/add.svg" />
+                                            <img src="~/Content/images/remove.svg" />
+                                        </div>
+                                    </div>
+                                    <div class="f-property">
+                                        <label>Untitled</label>
+                                        <div class="form-fields">
+                                            <input type="text" placeholder="Untitled" class="form-control" />
+                                        </div>
+                                        <div class="a-r-icons">
+                                            <img src="~/Content/images/add.svg" />
+                                            <img src="~/Content/images/remove.svg" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="divControlSettings" class="flx-bas1">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div><!--stage-->
+    <!--container-->
+    <!--PopUpStart-->
+    <div class="deleteModal hidden">
+        <button class="close-modal">&times;</button>
+        <h1>Are you absolutely sure to delete this control?</h1>
+        <div class="modal--Body">
+            <h2><b id="note">Note:</b> This action <b>cannot</b> be undone. This will permanently delete this control <b id="label">LABEL</b>.</h2>
+            <h3> Please type <b id="confirmLabel">LABEL</b> to confirm.</h3>
+            <div class="input--box">
+                <img src="@Url.Content("/Areas/Admin/Content/images/closeIcon.svg")" class="input--box_img" /><input id="deleteControlName" type="text" placeholder="Enter Control Name" onkeyup="dynamicForm.controlValidator.ValidateForDelete();" />
+
+            </div>
+            <div class="btns--box">
+                <button class="btn--box_cancel cancel">Cancel</button>
+                <button class="btn--box_ok_disable" id="btnDeleteControl" onclick="dynamicForm.controlInitializer.DeleteField();" disabled>Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+    <div class="overlay hidden"></div>
+    <!--PopUpEnd-->
+
+    <div id="status">
+        <div id="y" style="left: 0px; top: 0px; display: none;">
+            <div id="statusText">Loading Data ...</div>
+        </div>
+    </div>
+</div>
+@*<footer id="footer">
+    </footer>*@
+<!-- JavaScript -->
+@Scripts.Render("~/bundles/AdditionalAttributes/Scripts")
+<script>
+
+    var dynamicForm = new DynamicFormsCreator();
+    dynamicForm.initApp();
+    $('.chosen-select').chosen({ width: '50%' });
+
+    Noty.overrideDefaults({
+        layout: 'topRight',
+        timeout: 8000,
+        progressBar: true
+    });
+
+    //alert, success, error, warning, info
+   // new Noty({type: 'warning',text: 'Some notification text'}).show();
+</script>

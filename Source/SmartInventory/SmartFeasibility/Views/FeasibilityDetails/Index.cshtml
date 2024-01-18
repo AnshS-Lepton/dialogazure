@@ -1,0 +1,267 @@
+﻿
+@{
+    Layout = null;
+}
+@model Models.Feasibility.FeasibilityDetailsViewModel
+@using (Ajax.BeginForm("SavefeasibilityDetails", "FeasibilityDetails", new AjaxOptions
+{
+    HttpMethod = "POST",
+    LoadingElementId = "dvProgress",
+    OnSuccess = "onSuccessSubmission(data,this)",
+    // UpdateTargetId = Model.BuildingMaster.childModel == "" ? "dvModalBody" : "dvChildModalBody",
+    UpdateTargetId = "dvModalBody"
+},
+            new { id = "frmfeasibilityEntity", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.objFeasibilityModel.feasibility_id)
+    @Html.HiddenFor(m => m.objFeasibilityModel.buffer_radius_a)
+    @Html.HiddenFor(m => m.objFeasibilityModel.buffer_radius_b)
+    @Html.HiddenFor(m => m.objFeasibilityModel.start_point_name)
+    @Html.HiddenFor(m => m.objFeasibilityModel.end_point_name)
+
+    @Html.HiddenFor(m => m.objFeasibilityModel.core_level_result, "hdn_core_level_result")
+    @Html.HiddenFor(m => m.objFeasibilityModel.feasibility_result, "hdn_feasibility_result")
+
+    @*@Html.HiddenFor(Model=>Json.Encode(Model.lstFeasibilityGeometry))*@
+@*<form id="frmfeasibilityEntity" onsubmit="sf.Savefeasibility()">*@
+     <div id="dvModalBody" class="modal-body pa20">
+        <div class="libDetail">
+                <div id="dvPageMsg"></div>
+                <div class="mb15">
+                    <ul class="nav nav-tabs tabs-left">
+                        <li class="active"><a href="#GISInfo" data-toggle="tab">Feasibility Result</a></li>
+                        
+                        <li class=""><a href="#ItemSpecf" data-toggle="tab">Feasibility Detail</a></li>
+                    </ul>
+                </div>
+                
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="GISInfo">
+                            <table class="tableOp2">
+                                <thead>
+                                    <tr class="webGridHeader">
+                                        <th>&nbsp;</th>
+                                        <th>@Resources.Resources.SF_GBL_GBL_NET_FRM_012</th>
+                                        <th>Total Length (m)</th>
+                                        <th>Inside Planned Length (m)</th>
+                                        <th>Inside As-Built Length (m)</th>
+                                        <th>Outside Length (A) (m)</th>
+                                        <th>Outside Length (B) (m)</th>
+                                        <th>LMC Length (A) (m)</th>
+                                        <th>LMC Length (B) (m)</th>
+                                        <th>Buffer Radius (A) (m)</th>
+                                        <th>Buffer Radius (B) (m)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{int i = 0;}
+                                    @foreach (var Items in Model.lstFeasibilityDetails)
+                                    {
+                                        <tr>
+                                            <td><input type="radio" id="rdbtn_@i" name="rdbtn"  checked="@Items.isSelected" onclick="sf.fillFeasibilityDetails('@Items.totalLength', '@Items.ExistingLength_A', '@Items.ExistingLength_P', '@Items.NewOutside_A_Length', '@Items.NewOutside_B_Length', '@Items.lmc_A_End_Path', '@Items.lmc_B_End_Path', '@Items.buffer_radius_a', '@Items.buffer_radius_b', @i, true);$($('.libTabs ul li a')[1]).trigger('click');"/></td>
+                                            <td>@Items.feasibilityName</td>
+                                            <td>@Items.totalLength</td>
+                                            <td>@Items.ExistingLength_P</td>
+                                            <td>@Items.ExistingLength_A</td>
+                                            <td>@Items.NewOutside_A_Length</td>
+                                            <td>@Items.NewOutside_B_Length</td>
+                                            <td>@Items.lmc_A_End_Path</td>
+                                            <td>@Items.lmc_B_End_Path</td>
+                                            <td>@Items.buffer_radius_a</td>
+                                            <td>@Items.buffer_radius_b</td>
+                                            @*<td>@Items.cable_type_id</td>*@
+                                        </tr>
+                                        i++;
+                                        if (Items.isSelected)
+                                        {
+                                            <script>
+                                                sf.fillFeasibilityDetails(@Items.totalLength, @Items.ExistingLength_A, @Items.ExistingLength_P, @Items.NewOutside_A_Length, @Items.NewOutside_B_Length, @Items.lmc_A_End_Path, @Items.lmc_B_End_Path, @Items.buffer_radius_a, @Items.buffer_radius_b, 0, true)
+                                            </script>
+                                        }
+                                    }
+                                    @if (Model.lstFeasibilityDetails.Count == 1)
+                                    {
+                                        <script>
+                                            sf.fillFeasibilityDetails(@Model.lstFeasibilityDetails[0].totalLength, @Model.lstFeasibilityDetails[0].ExistingLength_A, @Model.lstFeasibilityDetails[0].ExistingLength_P, @Model.lstFeasibilityDetails[0].NewOutside_A_Length, @Model.lstFeasibilityDetails[0].NewOutside_B_Length, @Model.lstFeasibilityDetails[0].lmc_A_End_Path, @Model.lstFeasibilityDetails[0].lmc_B_End_Path, @Model.lstFeasibilityDetails[0].buffer_radius_a,@Model.lstFeasibilityDetails[0].buffer_radius_b, 0, true)
+                                        </script>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane" id="ItemSpecf">
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="">@Resources.Resources.SF_GBL_GBL_NET_FRM_012<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityModel.feasibility_name, new { @class = "form-control", @id = "feasibility_id", @readOnly = "true" })
+                                </div>
+                                <label class="control-label col-md-3" for="">@Resources.Resources.SF_GBL_GBL_NET_FRM_010<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityModel.customer_name, new { @class = "form-control", @id = "customer_name", @readOnly = "true" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="">@Resources.Resources.SF_GBL_GBL_NET_FRM_011<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityModel.customer_id, new { @class = "form-control", @id = "customer_id", @readOnly = "true" })
+                                </div>
+                                <label class="control-label col-md-3" for="">@Resources.Resources.SF_GBL_GBL_NET_FRM_016<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityModel.cores_required, new { @class = "form-control", @id = "cores_free", @readOnly = "true" })
+                                </div>                   
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="">@Resources.Resources.SF_GBL_GBL_NET_FRM_068 :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityModel.start_point_name, new { @class = "form-control", @id = "start_point_name", @readOnly = "true" })
+                                </div>
+                                <label class="control-label col-md-3" for="">@Resources.Resources.SF_GBL_GBL_NET_FRM_070 :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityModel.end_point_name, new { @class = "form-control", @id = "end_point_name", @readOnly = "true" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="">@Resources.Resources.SF_GBL_GBL_NET_FRM_052<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityModel.start_lat_lng, new { @class = "form-control", @id = "start_lat", @readOnly = "true" })
+                                </div>
+                                <label class="control-label col-md-3" for="">@Resources.Resources.SF_GBL_GBL_NET_FRM_053<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityModel.end_lat_lng, new { @class = "form-control", @id = "end_lat", @readOnly = "true" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="">Total Length (m)<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityDetails.totalLength, new { @class = "form-control", @id = "totalLength", @readOnly = "true" })
+                                </div>
+                                <label class="control-label col-md-3" for="cableType">Cable Type<i class="clsMandatory">*</i></label>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" readonly="readonly" id="cable_type_text" />
+                                    @Html.HiddenFor(m => Model.objFeasibilityModel.cable_type_id, new { id = "cable_type_id" })
+                                    @*@Html.TextBoxFor(m => m.objFeasibilityModel.cable_type_id, new { @class = "form-control", @id = "cable_type_id", @readOnly = "true" })*@
+                                    @*@Html.DropDownListFor(m => m.objFeasibilityModel.cable_type_id, new SelectList(Model.lstCableTypes, "cable_type_id", "display_name"), "-- Cable Type --", new { @id = "cableType_id", @class = "form-control", @disabled="true" })*@
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="">Inside Planned Length (m)<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityDetails.ExistingLength_P, new { @class = "form-control", @id = "ExistingLength_P", @readOnly = "true" })
+                                </div>
+                                <label class="control-label col-md-3" for="">Inside As-Built Length (m)<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityDetails.ExistingLength_A, new { @class = "form-control", @id = "ExistingLength_A", @readOnly = "true" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="">Outside Length (A) (m)<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityDetails.NewOutside_A_Length, new { @class = "form-control", @id = "NewOutside_A_Length", @readOnly = "true" })
+                                </div>
+                                <label class="control-label col-md-3" for="">Outside Length (B) (m)<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityDetails.NewOutside_B_Length, new { @class = "form-control", @id = "NewOutside_B_Length", @readOnly = "true" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="">LMC Length (A) (m)<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityDetails.lmc_A_End_Path, new { @class = "form-control", @id = "lmc_A_End_Path", @readOnly = "true" })
+                                </div>
+                                <label class="control-label col-md-3" for="">LMC Length (B) (m)<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityDetails.lmc_B_End_Path, new { @class = "form-control", @id = "lmc_B_End_Path", @readOnly = "true" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="">Buffer Radius (A) (m)<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityDetails.buffer_radius_a, new { @class = "form-control", @id = "buffer_radius_a", @readOnly = "true" })
+                                </div>
+                                <label class="control-label col-md-3" for="">Buffer Radius (B) (m)<i class="clsMandatory">*</i> :</label>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(m => m.objFeasibilityDetails.buffer_radius_b, new { @class = "form-control", @id = "buffer_radius_b", @readOnly = "true" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                
+                            </div>
+                            @{int j = 0;}
+                            @foreach (var Items in Model.lstFeasibilityGeometry)
+                            {
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].isSelected, new { id = "objGeometryIsSelected_"+j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].cable_geometry, new { id = "objGeometryCable_geometry_"+j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].path_type, new { id = "objGeometryPath_Type_"+ j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].cable_length, new { id = "objGeometryCable_Length_"+j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].system_id, new { id = "objGeometryCable_Length_" + j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].network_status, new { id = "objGeometryCable_Length_" + j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].available_cores, new { id = "objGeometryCable_Length_" + j })
+                                @Html.HiddenFor(m => Model.lstFeasibilityGeometry[j].total_cores, new { id = "objGeometryCable_Length_" + j })
+                                j++;
+                            }
+                        </div>
+                    </div>
+                <div class="mt15 ModalFooter">
+                    
+                    <div class="text-right" id="feasibilitybtnDv">
+                        @*<button type="button" class="btn btn-default" onclick="$($('.libTabs ul li a')[0]).trigger('click');">Back</button>*@
+                        <button type="submit" class="btn btn-primary mr10" id="btnfeasibilitySubmit">Save</button>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+        </div>
+
+    </div>
+    <script>
+        $(document).ready(function(){
+
+            $('#cable_type_text').val($("#cableType option:selected").text());
+        });
+        function onSuccessSubmission(result, ref)
+        {
+            if (result.status == "ERROR") {
+                alert(result.message);
+                return;
+            }
+            alert(result.message); 
+            sf.resetFields();
+            $(".savefeasibility").trigger("click");
+            if($("#ModalPopUp_bulk").css('display') == 'block')
+            {
+                //    sf.bulkFeasibility_popUp.LoadModalDialog('ModalPopUp_bulk', 'BulkFeasibility/Index', '{}',MultilingualKey.Bulk_Feasibility, 'modal-xl');
+                //    bulkFeasibility.postFormData(sf.bulkFeasibilityData);
+                //    bulkFeasibility.AddArraySavedFeasibility(result.result);
+                //    // sf.feasibility_saved.push(result.result);
+
+                //    bulkFeasibility.FeasibilityKMLModel = result.result;
+                //    bulkFeasibility.EnableKMZbutton();
+
+                //    bulkFeasibility.DisplayDownloadFeasibleDiv();
+
+                ajaxReq('BulkFeasibility/Index', '{}', true, function (response, status, xhr) {
+                    if (status == "error") {
+                        $("#ModalPopUp_bulk .modal-body").html("<h6 style='color:red'>Error: " + xhr.status + " " + xhr.statusText + "</h6>");
+                    }
+                    else {
+                        $("#ModalPopUp_bulk .modal-body").html(response);
+                        var resObj = JSON.parse(result.result);
+                        if (resObj && resObj != undefined && resObj.history_id) {
+                            //bulkFeasibility.setHistoryID(resObj.history_id);
+                            bulkFeasibility.postFormData(sf.bulkFeasibilityData, resObj.history_id);
+                            bulkFeasibility.AddArraySavedFeasibility(result.result);
+                            //sf.feasibility_saved.push(result.result);
+
+                            bulkFeasibility.FeasibilityKMLModel = result.result;
+                            bulkFeasibility.EnableKMZbutton();
+                        }
+
+                        //bulkFeasibility.DisplayDownloadFeasibleDiv();
+                    }
+                }, true, true, false);
+
+            }
+        }
+    </script>
+@*</form>*@
+}
+@*</div>*@

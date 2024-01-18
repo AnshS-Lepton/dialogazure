@@ -1,0 +1,71 @@
+﻿<div class="libDetail">
+    <div class="libTabContent" style="display: none">
+        <select id="ddlfieldNameDropDown" class="chosen-select col-sm-12">
+            @foreach (var layer in ViewBag.lstLayers)
+            {
+                <option value="@layer.layer_id">@layer.layer_title</option>
+            }
+
+        </select>
+
+    </div>
+    <div class="libTabContent">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <label class="lblHdMergeCables">@Resources.Resources.SI_OSP_GBL_GBL_FRM_153 </label>
+            @*<div class="divChooseCable" title="Pick a another cable"
+                 onclick="si.MiscellaneousTools.MergeTool();" >
+                <span class="LocationEdit" id="iconChooseCables"></span>
+            </div>*@
+            <div class="tab-pane active" id="divTP">
+                <table id="tblMergeCables" class="grid" data-duct-Id="0">
+                    <thead>
+                        <tr>
+                            <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_RPT_126</th>
+                            <th scope="col">
+                                @Resources.Resources.SI_OSP_GBL_GBL_GBL_160
+                            </th>
+                            <th>@Resources.Resources.SI_OSP_GBL_GBL_GBL_290</th>
+
+                            <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+                        </tr>
+                    </thead>
+                    <tbody style="text-align: center;">
+                    </tbody>
+                </table>
+                <span class="nc--selected" id="dvNoMergesCables"><b>@Resources.Resources.SI_OSP_GBL_NET_FRM_497</b></span>
+            </div>
+            @*<label>Choose master cable:</label>*@
+        </div>
+    </div>
+    <div class="form-group ModalFooter" id="dvBtnAction">
+        <div class="d-fx aln-item">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancelTP" onclick="si.clearTPRelatedObjects();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            <button type="submit" class="btn btn-success ml-10" id="btnMergesCablesForm">@Resources.Resources.SI_GBL_GBL_GBL_GBL_160</button>
+
+        </div>
+    </div>
+    <div id="dialog-confirm" style="display:none;">
+        <b>Warning</b> <br>Consequences of the action<br />Are you sure you want to accept below changes?<br />
+        <ul>
+            <li>All the Splicing and assosiation will be removed.</li>
+           
+            <li>Merged Cable attribute & direction will be same as master cable.</li>
+            
+            <li>Length will be auto-calculated.</li>
+            
+            <li>Loop will be associated automatically.</li>
+        </ul>
+        
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+
+        $('.chosen-select').chosen({ width: '100%' });
+    });
+</script>
+

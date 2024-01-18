@@ -1,0 +1,52 @@
+﻿<div class="m-b-md d-flex align-items-center">
+   
+        <h3 class="m-b-none">Dashboard</h3>
+    
+            <button id="btnExport" class="btn btn-warning ml-auto mr-05" style="display:none"><i class="fa fa-file-text"></i> Export City Wise Report</button>
+            <a onclick="onDashboardLoad();" class="btn btn-warning mr-05" title="Refresh" style="display:none;">Refresh</a>
+</div>
+
+<div class="row dashboard">
+    <div class="col-md-7">
+        <div class="box">
+            <div id="" class="title">
+                <h4><span class="icon16 icomoon-icon-bars"></span><span>Usage Statistics (Last 30 Days)</span></h4>
+            </div>
+            <div id="UserLineChart" style="height: 250px"></div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="box">
+            <div id="" class="title">
+                <h4><span class="icon16 icomoon-icon-bars"></span><span>Currently logged in users (@Utility.MiscHelper.FormatDate(DateTime.Now.Date.ToString()))</span></h4>
+            </div>
+            <div id="UserPaiChart" style="height: 250px"></div>
+        </div>
+    </div>
+</div>
+<div class="row dashboard">
+    <div class="col-md-7">
+            
+    </div>
+</div>
+
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] });
+        var response = null;
+        $(document).ready(function () {
+            onDashboardLoad();
+        })
+
+        function onDashboardLoad() {
+            ajaxReq('Home/getDashboardData', {}, false,
+                function (resp) {
+                    response = resp;
+                    google.charts.setOnLoadCallback(drawUserLineChart);
+                    google.charts.setOnLoadCallback(drawUserPaiChart);
+                }, true, true);
+        }
+        $("#btnExport").on("click", function () {
+             
+            window.location = appRoot + 'Home/Export_Dashboard_Data';
+        })
+    </script>

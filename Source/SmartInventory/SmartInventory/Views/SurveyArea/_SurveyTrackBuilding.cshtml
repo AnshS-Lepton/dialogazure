@@ -1,0 +1,97 @@
+﻿
+@model Models.ViewBuildingTrackingModel
+ @using Utility;
+
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objFilterAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "objViewTrackBuilding", ajaxUpdateCallback: "addDefaultSortingIcons(tblSurveytrackBuilding)");
+    grid.Bind(Model.lstBuildingTracking, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+    if (Model.objFilterAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objFilterAttributes.currentPage - 1;
+    }
+}
+
+<!DOCTYPE html>
+<div class="libDetail">
+    @using (Ajax.BeginForm("GetTrackBuilding", "SurveyArea", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "dvChildModalBody",
+    OnBegin = ""
+
+},
+new { id = "frmShowTrackBuilding", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+       
+               @Html.HiddenFor(m => m.objFilterAttributes.user_id, new { @id = "hdnUserID" })
+                @Html.HiddenFor(m => m.objFilterAttributes.loginid, new { @id = "hdnLoginID" })
+                @Html.HiddenFor(m => m.objFilterAttributes.surveyarea_id, new { @id = "hdnSurveyAreaID" })
+        <div class="libTabContent1" style="padding: 10px; padding-top: 20px;">
+         
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+
+                </div>
+
+
+            </div>
+        </div>
+
+       
+        <div class="clearfix"></div>
+
+
+        if (Model.lstBuildingTracking.Count > 0)
+        {
+            <div id="objViewTrackBuilding" style=" padding: 10px;">
+                <div class="recordCount"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:@grid.TotalRowCount</b></div>
+                <div class="table-responsive tble_cls">
+                    @grid.GetHtml(tableStyle: "webgrid",
+                         headerStyle: "webGridHeader",
+                            alternatingRowStyle: "alt",
+                      htmlAttributes: new { id = "tblSurveytrackBuilding" },
+                            mode: WebGridPagerModes.All,
+                            columns: grid.Columns(
+                     grid.Column("created_on", Resources.Resources.SI_OSP_GBL_GBL_GBL_055, format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDate(item.created_on.ToString()))</text>),
+                        grid.Column("building_code", Resources.Resources.SI_OSP_GBL_GBL_GBL_060, format: @<text>@item.building_code </text>),
+                            grid.Column("building_name", Resources.Resources.SI_OSP_BUL_NET_FRM_011, format: @<text>@item.building_name</text>),
+                            grid.Column("latitude", Resources.Resources.SF_GBL_GBL_NET_FRM_018, format: @<text>@item.latitude</text>),
+                             grid.Column("longitude", Resources.Resources.SI_OSP_GBL_GBL_GBL_012, format: @<text>@item.longitude</text>),
+                             grid.Column("address", Resources.Resources.SI_OSP_GBL_GBL_GBL_008, format: @<text> @item.address  </text>),
+                              grid.Column("building_status", Resources.Resources.SI_OSP_GBL_GBL_GBL_014, format: @<text>@item.building_status  </text>),
+                              grid.Column("user_name", Resources.Resources.SI_OSP_GBL_NET_FRM_099, format: @<text>@item.user_name  </text>)
+                                       ))
+                </div>
+            </div>
+        }
+        else
+        {
+            <div style=" text-align: center; margin-top: 30px;">
+                @Resources.Resources.SI_OSP_GBL_NET_RPT_042
+            </div>
+        }
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+
+
+        $('#tblSurveytrackBuilding tfoot a').on("click", function () {
+            $('#frmShowTrackBuilding').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+
+        //Post form on page header click..
+        $('#tblSurveytrackBuilding th a').on("click", function () {
+            $('#frmShowTrackBuilding').attr('action', $(this).attr('href')).submit();
+
+            return false;
+        });
+        addDefaultSortingIcons('tblSurveyBuilding');
+        onGridHeaderClick('tblSurveytrackBuilding');
+    });
+   
+ 
+</script>

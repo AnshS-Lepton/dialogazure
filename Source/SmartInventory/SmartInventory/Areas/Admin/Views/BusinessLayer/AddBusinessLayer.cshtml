@@ -1,0 +1,796 @@
+﻿<!DOCTYPE html>
+@using Models;
+@model Models.BusinessLayer
+@using SmartInventory.Settings;
+@Html.HiddenFor(m => m.pageMsg.status, new { id = "submit_status" })
+
+@*@{var businessLayer = (BusinessLayer)Session["userDetail"];}*@
+
+<style>
+    #divAdminModule {
+        /*max-height: calc(93vh - 310px);*/
+        /*max-height:300px;*/
+        /*overflow: auto;*/
+        overflow: hidden;
+    }
+
+    #divWebModule {
+        /*max-height: calc(93vh - 310px);*/
+        /*max-height:300px;*/
+        /*overflow: auto;*/
+        overflow: hidden;
+    }
+
+    #divMobileModule {
+        /*max-height: calc(93vh - 310px);*/
+        /*max-height:300px;*/
+        /*overflow: auto;*/
+        overflow: hidden;
+        /*width: 300px;*/
+        /*margin-left: -44px;*/
+    }
+
+    .mobile-unit {
+        padding: 0px 0px 0px 8px !important;
+    }
+
+    #partionTable thead {
+        position: fixed;
+        color: #fff;
+        z-index: 4;
+    }
+
+    /*#partionTable tbody {
+        height: 350px !important;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        width: 110%;
+    }*/
+
+    #dvUserDetail .chosen-container-single .chosen-single {
+        height: 28px;
+    }
+
+    #ddl_UserRole_chosen {
+        width: 82% !important;
+    }
+
+    .ViewRolebtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        width: 17%;
+    }
+
+    .Nextbtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        float: right;
+    }
+
+    .Previousbtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+        margin-right: 20px;
+    }
+
+    .saveBtn {
+        padding: 3px 10px;
+        margin-top: -1px;
+    }
+
+    #dvUserDetail .form-group {
+        margin-bottom: 5px;
+    }
+
+
+    #dvUserDetail {
+        margin: 0 auto;
+        width: 70%;
+    }
+
+    .checkStep {
+        display: none;
+        height: 30px;
+        width: 29px;
+    }
+
+    .clsStepsContainer {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        min-width: 516px;
+        height: auto;
+    }
+
+    .clsUserContainer .content {
+        height: auto;
+    }
+
+    .successImg {
+        margin-top: 150px;
+        min-height: 300px;
+        width: 100%;
+        top: 40%;
+        text-align: center;
+        position: relative;
+    }
+
+    .mainModule li {
+        background: none !important;
+        padding: 0px 0pt 0px 0px !important;
+    }
+
+    .mainModule input[type="checkbox"] {
+        position: absolute !important;
+    }
+
+    #partionTable td {
+        /*width: 55%;*/
+        word-wrap: break-word;
+        vertical-align: top;
+    }
+
+    #partionTable span {
+        display: block;
+        width: 166px;
+        word-wrap: break-word;
+        white-space: normal;
+    }
+
+    .d--flex {
+        display: flex;
+    }
+
+    .Admin-section, .Web-section, .Mobile-section {
+        flex: 0 0 32%;
+    }
+
+    .boxes--minh {
+        height: 265px;
+        overflow-y: auto;
+        margin-right: 10px;
+    }
+</style>
+<div  id="dvPageMessage" style="@(Model.IsSubmit == true ? "display:none;" : "display: block;")">
+    @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+</div>
+<div class="update_panel">
+    <div class="title">
+        <h4>
+            @(Model.id > 0 ? "Update Business Layer" : "Add Business Layer")
+        </h4>
+    </div>
+
+    @using (Html.BeginForm("UpdateBusinessLayer", "BusinessLayer", FormMethod.Post, new { autocomplete = "off", @id = "frmBusinessLayerInfo", enctype = "multipart/form-data", @class = "form-horizontal pad_left" }))
+    {
+        @Html.HiddenFor(m => m.id, new { @id = "HiddenID" })
+        @Html.HiddenFor(m => m.hdnlayername, new { @id = "hdnlayername" })
+        @Html.HiddenFor(m => m.layer_type, new { @id = "hdnlayer_type" })
+        @Html.ValidationSummary(true)
+
+
+        @*<div class="bs-stepper">*@
+
+        <!-- your steps content here -->
+        <div id="userdetails" class="content">
+            <div id="UserDetails_data" style="@(Model.IsSubmit == true ? "display:none;" : "display: block;")">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Layer Type <i class="clsMandatory">*</i>:
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+
+                            @Html.DropDownListFor(model => model.layer_type, new SelectList(ViewBag.LayerType, "Text", "Value"), new { @class = "form-control" })
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cDetails">
+                    <fieldset class="cd-fieldset">
+                        <legend class="fw-bold fs-12rem">
+                            Common Details
+                        </legend>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="control-label">
+                                        Source Display Name:
+                                    </label>
+                                </div>
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(model => model.url_display_name, new { @class = "form-control", @maxlength = "50", @placeholder = "Enter URL Display Name", @id = "txturldisplayname" })
+                                    @Html.ValidationMessageFor(model => model.url_display_name)
+                                    <img style="width:21px;" class="GifImg" id="ImgUserEmail" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="control-label">
+                                        Base URL<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(model => model.base_url, new { @class = "form-control", @maxlength = "400", @placeholder = "Enter URL", @id = "txturl" })
+                                    @Html.ValidationMessageFor(model => model.base_url)
+                                    <img style="width:21px;" class="GifImg" id="ImgUserEmail" />
+                                </div>
+                            </div>
+                        </div>
+                        <div id="wmts_set4" style="display:none;">
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            SRS :
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.srs, new { @class = "form-control", @maxlength = "30", @placeholder = "Enter SRS", @id = "txtSRS" })
+                                        @Html.ValidationMessageFor(model => model.srs)
+
+                                        <img style="width:21px;" class="GifImg" id="ImgUsername" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            CRS :
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.crs, new { @class = "form-control", @maxlength = "30", @placeholder = "Enter CRS", @id = "txtCRS" })
+                                        @Html.ValidationMessageFor(model => model.crs)
+
+                                        <img style="width:21px;" class="GifImg" id="ImgUsername" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            Request:
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.request, new { @class = "form-control", @maxlength = "30", @placeholder = "Enter Request", @id = "txtREQUEST" })
+                                        @Html.ValidationMessageFor(model => model.request)
+
+                                        <img style="width:21px;" class="GifImg" id="ImgUsername" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            Service:
+
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.service, new { @class = "form-control", @maxlength = "30", @placeholder = "Enter Service", @id = "txtSERVICE" })
+                                        @Html.ValidationMessageFor(model => model.service)
+
+                                        <img style="width:21px;" class="GifImg" id="ImgUsername" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            Format:
+
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.format, new { @class = "form-control", @maxlength = "30", @placeholder = "Enter Format", @id = "txtFORMAT" })
+                                        @Html.ValidationMessageFor(model => model.format)
+
+                                        <img style="width:21px;" class="GifImg" id="ImgUsername" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            Reqver :
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.reqver, new { @class = "form-control", @maxlength = "30", @placeholder = "Enter Request Version", @id = "txtreqver" })
+                                        @Html.ValidationMessageFor(model => model.reqver)
+
+                                        <img style="width:21px;" class="GifImg" id="ImgUsername" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            Transparent
+
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.CheckBoxFor(m => m.transparent, new { @class = "chk", @id = "transparent", @checked = "checked", value = "true" })
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div id="wmts_set1" style="display:none;">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            Authentication Key:
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.authentication_key, new { @class = "form-control", @maxlength = "150", @placeholder = "Enter Authentication Key", @id = "txtauthenticationkey" })
+                                        @Html.ValidationMessageFor(model => model.authentication_key)
+
+                                        <img style="width:21px;" class="GifImg" id="ImgUsername" />
+                                        @* @Html.ValidationMessageFor(model => model.user_name)*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            VERSION :
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.version, new { @class = "form-control", @maxlength = "30", @placeholder = "Enter VERSION", @id = "txtVERSION" })
+                                        @Html.ValidationMessageFor(model => model.version)
+
+                                        <img style="width:21px;" class="GifImg" id="ImgUsername" />
+                                        @* @Html.ValidationMessageFor(model => model.user_name)*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            TileMatrixSet:
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.tilematrixset, new { @class = "form-control", @maxlength = "100", @placeholder = "Enter TileMatrixSet", @id = "txtTileMatrixSet" })
+                                        @Html.ValidationMessageFor(model => model.tilematrixset)
+
+                                        <img style="width:21px;" class="GifImg" id="ImgUsername" />
+                                        @* @Html.ValidationMessageFor(model => model.user_name)*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="wmts_set3" style="display:none;">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            Map File Path:
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.map_file_path, new { @class = "form-control", @maxlength = "150", @placeholder = "Enter Map File Path" })
+                                        @Html.ValidationMessageFor(model => model.map_file_path)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="cDetails">
+                    <fieldset class="cd-fieldset">
+                        <legend class="fw-bold fs-12rem">
+                            Layer Details:
+                        </legend>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="control-label">
+                                        Display Layer Name<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(model => model.display_layer_name, new { @class = "form-control", @maxlength = "50", @placeholder = "Enter Display Layer Name", @id = "txtdisplaylayername" })
+                                    @Html.ValidationMessageFor(model => model.display_layer_name)
+                                    <img style="width:21px;" class="GifImg" id="ImgUsername" />
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="control-label">
+                                        Layer Name <i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(model => model.layer_name, new { @class = "form-control", @maxlength = "100", @placeholder = "Enter Layer Name", @id = "txtlayername" })
+                                    @Html.ValidationMessageFor(model => model.layer_name)
+
+                                    <img style="width:21px;" class="GifImg" id="ImgUsername" />
+                                    @* @Html.ValidationMessageFor(model => model.user_name)*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="control-label">
+                                        Used For<i class="clsMandatory">*</i>:
+                                    </label>
+                                </div>
+                                <div class="col-md-8">
+                                    <select id="used_for" name="layer_type" class="form-control">
+                                        <option value="Both">Both</option>
+                                        <option value="Web">Web</option>
+                                        <option value="Mobile">Mobile</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="wmts_set2" style="display:none;">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">
+                                            STYLE :
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.style, new { @class = "form-control", @maxlength = "50", @placeholder = "Enter STYLE", @id = "txtSTYLE" })
+                                        @Html.ValidationMessageFor(model => model.style)
+
+                                        <img style="width:21px;" class="GifImg" id="ImgUsername" />
+                                        @* @Html.ValidationMessageFor(model => model.user_name)*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="control-label">
+                                        Is Active?
+                                    </label>
+                                </div>
+                                <div class="col-md-8">
+                                    @Html.CheckBoxFor(m => m.is_active, new { @class = "chk", @id = "isactive", @checked = "checked" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="control-label">
+                                        Is Base Layer?
+                                    </label>
+                                </div>
+                                <div class="col-md-8">
+                                    @Html.CheckBoxFor(m => m.isbaselayer, new { @class = "chk", @id = "isbaselayer", @checked = "checked" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="control-label">
+                                        Layer Icon
+                                    </label>
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="file" class="file" name="IconUpload" id="IconUpload">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" id="divActionButton">
+                            <div class="d-flex">
+                                <input type="button" class="a_btn btn-primary ml-auto" name="btnaction" onclick="AddNewLayer()" value="Add More Layer Details" />
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="table-responsive tble_cls" id="tblrecords_table" style="display:none;">
+                    <table class="grid">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Display Layer Name</th>
+                                <th>Layer Name</th>
+                                <th>Is Active</th>
+                                <th>Used for</th>
+                                <th>isbaselayer</th>
+                                <th id="wmts_th_style" style="display:none;">Style</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_wms_body"></tbody>
+                    </table>
+                </div>
+                <div class="d-flex">
+                    <input type="button" class="a_btn btn-danger ml-auto mr-05" name="btnaction" onclick="Reset()" value="Reset" />
+                    <input type="button" class="a_btn btn-primary" name="btnaction" id="btnSubmit" value="@(Model.id > 0 ? "Update" : "Save")" />
+                </div>
+            </div>
+            <div id="SubmitDiv" style="margin-top: 150px;min-height: 300px;width:100%;top:40%;text-align:center;position:relative;@(Model.IsSubmit == true ? "display: block;" : "display:none;")">
+                <img src="@Url.Content("~/Areas/Admin/Content/images/check.png")" id="chkImg_workarea" style="height:32px;width:32px;margin:auto;@ViewBag.showSubmitDiv" />
+                <div id="Success-Msg" style="color:green"><b>Success</b></div>
+                <div id="Success-Msg"><b>@Model.pageMsg.message</b></div>
+            </div>
+        </div>
+    }
+
+    <script type="text/javascript">
+        let Wmslayers = {
+            base_url: "",
+            url_display_name:"",
+            authentication_key: "",
+            version: "",
+            layer_type: "",
+            tilematrixset: "",
+            map_file_path:"",
+            LayerDetails:[]
+        };
+
+
+        $(document).ready(function () {
+            $("#txtSRS").val("EPSG:4326");
+            $("#txtCRS").val("EPSG:4326");
+            $("#txtREQUEST").val("GetMap");
+            $("#txtSERVICE").val("WMS");
+            $("#txtFORMAT").val("image/png");
+            $("#txtreqver").val("0");
+            $("#transparent").attr("checked", true)
+            $("#txtSRS").attr("disabled", "disabled");
+            $("#txtCRS").attr("disabled", "disabled");
+            $("#txtREQUEST").attr("disabled", "disabled");
+            $("#txtSERVICE").attr("disabled", "disabled");
+            $("#txtFORMAT").attr("disabled", "disabled");
+            $("#txtreqver").attr("disabled", "disabled");
+            $("#txtreqver").attr("disabled", "disabled");
+            $("#transparent").attr("disabled", "disabled");
+            $('#hdnlayername').val($('#txtlayername').val());
+            $('#divActionButton').css('display', '@(Model.id > 0 ? "none" : "block")');
+            checkLayerType();
+
+            $('#layer_type').change(function () {
+                checkLayerType();
+            });
+
+            $(".mainModule").treeview({
+                collapsed: false,
+                animated: "medium",
+                persist: "location"
+            });
+            $("div").removeClass("expandable-hitarea");
+            displayApplicationModule();
+            if ($('#hdnlayer_type').val() != "")
+                $('#layer_type').val($('#hdnlayer_type').val());
+        });
+
+    function validateLayer() {
+        let res = true;
+        if ($('#txtdisplaylayername').val() === "") {
+            alert("Enter Display Layer Name");
+            res = false;
+        } else if ($('#txtlayername').val() === "") {
+            alert("Enter Layer Name");
+            res = false;
+        }
+        else if ($('#isbaselayer').prop('checked')==true && $('#IconUpload').val() === '') {
+            alert("Upload Layer Icon");
+           res = false;
+        }
+        return res;
+        }
+    function checkLayerType() {
+            if ($('#layer_type').val() === "WMS") {
+                $("#wmts_set1").hide();
+                $("#wmts_set2").hide();
+                $("#wmts_set3").hide();
+                $("#wmts_set4").show();
+            } else if ($('#layer_type').val() === "WMTS")
+                {
+                $("#wmts_set1").show();
+                $("#wmts_set2").show();
+                $("#wmts_set3").hide();
+                $("#wmts_set4").hide();
+            } else if ($('#layer_type').val() === "OTHERS") {
+                $("#wmts_set1").hide();
+                $("#wmts_set2").hide();
+                $("#wmts_set3").show();
+                $("#wmts_set4").hide();
+            }
+        }
+
+        $('#btnSubmit').on("click", function (e) {
+            let validation = true;
+            if ($('#HiddenID').val() === "0") {
+
+                Wmslayers.base_url = $('#txturl').val();
+                Wmslayers.url_display_name = $('#txturldisplayname').val();
+                Wmslayers.authentication_key = $('#txtauthenticationkey').val();
+                Wmslayers.version = $('#txtVERSION').val();
+                Wmslayers.layer_type = $('#layer_type option:selected').val();
+                Wmslayers.tilematrixset = $('#txtTileMatrixSet').val();
+                Wmslayers.map_file_path = $('#map_file_path').val();
+
+                if ($('#table_wms_body tr').length == 0) {
+                    validation =   AddNewLayer();
+                }
+                setTimeout(function () {
+                    let postData = { businessLayer: Wmslayers };
+                    if (validation)
+                    $.ajax({
+                        url: "@Url.Action("SaveBusinessLayer", "BusinessLayer")",
+                        type: "POST",
+                        dataType: "json",
+                        data: JSON.stringify(postData),
+                        contentType: 'application/json; charset=utf-8',
+                    }).done(function (data) {
+                        Reset();
+                        alert(data.message);
+                    });
+
+                }, 300);
+            }
+            else {
+                e.preventDefault();
+                $('#frmBusinessLayerInfo').submit();
+            }
+        })
+
+        $(document).on('change', '#layerAllActions td input[type=checkbox]', function () {
+            //console.log("Clicked");
+            var networkType = $(this).data("networktype");
+            if ($(this).hasClass('action' + networkType)) {
+                var $row = $(this).closest('tr');
+                var isActionActive = $row.find(".action" + networkType).is(":checked");
+                var viewchecked = $row.find(".viewaction" + networkType).is(":checked");
+                if (isActionActive != viewchecked) {
+                    $row.find(".viewaction" + networkType).prop('checked', isActionActive);
+                    setPermissionByNWStatus('view' + networkType, $('.viewaction' + networkType))
+                }
+            }
+        });
+
+        function Reset() {
+            $('#txtlayername').val('');
+            $('#txtdisplaylayername').val('');
+            $('#txturl').val('');
+            $('#txtauthenticationkey').val('');
+            $('#txtVERSION').val('');
+            $('#txtSTYLE').val('');
+            $('#txtTileMatrixSet').val('');
+            $('#txturldisplayname').val('');
+            $('#map_file_path').val('');
+            $('#txtSRS').val('');
+            $('#txtCRS').val('');
+            $('#txtREQUEST').val('');
+            $('#txtSERVICE').val('');
+            $('#txtFORMAT').val('');
+            $('#txtreqver').val('');
+            $('#btnSubmit').val("Save");
+            $('#Hidden').val(0);
+
+            Wmslayers=    {
+                base_url: "",
+                url_display_name: "",
+                authentication_key: "",
+                version: "",
+                layer_type: "",
+                tilematrixset: "",
+                map_file_path: "",
+                LayerDetails: []
+            };
+            $('#table_wms_body').empty();
+            $('#tblrecords_table').hide();
+        }
+
+        function AddNewLayer() {
+            let icon64;
+            let retval = validateLayer();
+            if (retval) {
+                if ($('#IconUpload')[0].files[0] != undefined) {
+                    readImage($('#IconUpload')[0].files[0]).done(function (base64Data) {
+                        icon64 = base64Data;
+                    });
+                }
+                let layerobj = {
+                    display_layer_name: $('#txtdisplaylayername').val(),
+                    layer_name: $('#txtlayername').val(),
+                    style: $('#txtSTYLE').val(),
+                    is_active: $('#isactive').prop('checked'),
+                    isbaselayer: $('#isbaselayer').prop('checked'),
+                    used_for: $('#used_for').val(),
+                    //pk
+                    srs: $('#txtSRS').val(),
+                    crs: $('#txtCRS').val(),
+                    request: $('#txtREQUEST').val(),
+                    service: $('#txtSERVICE').val(),
+                    format: $('#txtFORMAT').val(),
+                    reqver: $('#txtreqver').val(),
+                    transparent: $('#transparent').prop('checked'),
+                    imagepath: icon64
+                };
+                Wmslayers.LayerDetails.push(layerobj);
+                bindLayerList();
+
+                $('#txtdisplaylayername').val('');
+                $('#txtlayername').val('');
+                $('#txtSTYLE').val('');
+                $('#IconUpload').val('');
+                $('#txtSRS').val('');
+                $('#txtCRS').val('');
+                $('#txtREQUEST').val('');
+                $('#txtSERVICE').val('');
+                $('#txtFORMAT').val('');
+                $('#txtreqver').val('');
+            }
+            return retval;
+        }
+        function deleteLayerDetails(curval) {
+            Wmslayers.LayerDetails = Wmslayers.LayerDetails.filter(function (item) {
+                return item.display_layer_name !== $(curval).attr('id');
+            });
+            bindLayerList();
+        }
+        function bindLayerList() {
+            $('#tblrecords_table').show();
+            $('#table_wms_body').empty();
+            $.each(Wmslayers.LayerDetails, function (i, item) {
+                var $tr = $('<tr>').append(
+                    $('<td>').html('<a href="javascript:void(0);" id="' + item.display_layer_name + '" onclick="deleteLayerDetails(this)"> <i class="fa fa-fw fa-trash" style="font-size: 13px;"></i></a>'),
+                    $('<td>').text(item.display_layer_name),
+                    $('<td>').text(item.layer_name),
+                    $('<td>').text(item.is_active),
+                    $('<td>').text(item.used_for),
+                    $('<td>').text(item.isbaselayer),
+
+                    //$('<td>').text(item.style)
+                );
+                $tr.appendTo('#table_wms_body');
+            });
+    }
+
+    function readImage(inputElement) {
+        var deferred = $.Deferred();
+        if (inputElement != undefined) {
+
+            var fr = new FileReader();
+            fr.onload = function (e) {
+                deferred.resolve(e.target.result);
+            };
+            fr.readAsDataURL(inputElement);
+            return deferred.promise();
+        }
+        else {
+            return deferred.promise();
+        }
+    }
+    </script>
+</div>

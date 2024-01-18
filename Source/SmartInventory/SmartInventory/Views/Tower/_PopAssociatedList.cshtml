@@ -1,0 +1,50 @@
+﻿@model List<Models.TowerAssociatedPopView>
+@using Utility
+
+<div>
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: 10, canSort: false, ajaxUpdateContainerId: "divPopAssociateDetail");
+        grid.Bind(Model, autoSortAndPage: false, rowCount: Model.Count);
+        //if (Model.lstTowerAssociatedPop.Count > 0)
+        //{
+        //    grid.PageIndex = 1;
+        //}
+    }
+    @if (Model.Count > 0)
+    {
+        <div id="divPopAssociateDetail">
+            <div class="recordCount"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:@grid.TotalRowCount</b></div>
+            <div class="table-responsive tble_cls">
+                @grid.GetHtml(tableStyle: "table table-hover b-t b-light",
+         headerStyle: "webGridHeader",
+         alternatingRowStyle: "alt",
+         htmlAttributes: new { id = "tblAssociatedPopDetail" },
+         mode: WebGridPagerModes.All,
+         columns:
+
+
+         grid.Columns(
+
+         grid.Column("pop_network_id", Resources.Resources.SI_OSP_GBL_GBL_FRM_089, format: @<text>@item.pop_network_id</text>),
+grid.Column("pop_name", Resources.Resources.SI_OSP_GBL_NET_GBL_139, format: @<text>@item.pop_name</text>),
+grid.Column("created_by_user", Resources.Resources.SI_OSP_GBL_GBL_GBL_056, format: @<text>@item.created_by_user</text>),
+grid.Column("created_on", Resources.Resources.SI_OSP_GBL_GBL_GBL_055, format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>),
+grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_FRM_092, format:
+            @<text>
+                <span class="floorRowDelete" onclick="DeAssociatePop('@item.pop_id','@item.tower_id');" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_092" style="width: auto;font-size: medium;">Deassociate POP</span>&nbsp;&nbsp;
+
+
+            </text>, style: "ActionCol")
+
+
+))
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <div>   @Resources.Resources.SI_OSP_GBL_GBL_FRM_096. </div>
+    }
+
+</div>

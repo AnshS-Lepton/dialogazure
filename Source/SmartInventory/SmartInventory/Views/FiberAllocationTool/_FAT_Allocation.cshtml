@@ -1,0 +1,404 @@
+﻿@model Models.FATDetailprocess
+
+@using Utility
+@using SmartInventory.Settings
+@{List<Models.FATDetail> lstPrimarySplitter = Model.lstfatdetails.FindAll(s => s.splitter_type == "Primary");}
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canPage: false, canSort: true, ajaxUpdateContainerId: "dvResultContainer", ajaxUpdateCallback: "onGridHeaderClick('gvSplitterConnDetails'); MakeGridDataCollapsible();");
+    grid.Bind(lstPrimarySplitter, rowCount: lstPrimarySplitter.Count, autoSortAndPage: false);
+
+}
+<style>
+    .alertContainer {
+        left: 407px;
+        top: 152px;
+        width: auto;
+        right: auto;
+        height: 124px;
+        bottom: auto;
+    }
+
+    .alertgrid {
+        font-size: 13px;
+        text-align: left;
+        margin-top: 5px;
+        width: 100%;
+    }
+
+    .refresh {
+        color: rgb(229 54 2 / 83%);
+    }
+
+    .download {
+        color: #105bcb;
+    }
+
+    i.disabled {
+        pointer-events: none;
+        cursor: default;
+    }
+
+    .isDisabled {
+        color: currentColor;
+        cursor: not-allowed;
+        opacity: 0.5;
+        text-decoration: none;
+        pointer-events: none;
+        display: inline-block;
+    }
+
+    .ProcessedRows {
+        background-color: #FFBF00 !important;
+    }
+
+    .ProcessedCSARows {
+        background-color: #c4f3c4 !important;
+    }
+
+    #ModalPopUp .modal-dialog {
+        margin: 20px auto !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 9999;
+        inset: auto !important;
+    }
+
+    .modal-header {
+        cursor: default;
+    }
+
+    .jc-sb {
+        justify-content: space-between;
+    }
+
+    .EntitydetailsProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url('../../Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
+<style type="text/css">
+    body {
+        font-family: Arial;
+        font-size: 10pt;
+    }
+
+    .Grid {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        background-color: #fff;
+    }
+
+        .Grid th {
+            background-color: #B8DBFD;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .Grid th, .Grid td {
+            padding: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .Grid img {
+            cursor: pointer;
+        }
+
+    .ChildGrid {
+        width: auto;
+    }
+
+        .ChildGrid th {
+            background-color: #6C6C6C;
+            color: #fff;
+            font-weight: bold;
+        }
+    .msgIcon {
+        position: absolute;
+        right: 5px;
+        top: 4px;
+        background-color: #b37e00;
+    }
+    .messageBox {
+        padding-right: 40px;
+    }
+    .showDlIcon{
+        display:block;
+    }
+    .hideDlIcon {
+        display: none;
+    }
+    
+</style>
+<!DOCTYPE html>
+<div class="tab-content" id="dvChildModalBody">
+    <div id="dvEntitydetailsProgress" class="EntitydetailsProgress"></div>
+    @using (Ajax.BeginForm("CreateSplicing", "FiberAllocationTool",
+new AjaxOptions
+{
+    OnSuccess = "OnSuccess",
+    HttpMethod = "POST",
+    UpdateTargetId = "dvChildModalBody",
+    LoadingElementId = "dvDashboardProgress",
+    InsertionMode = InsertionMode.Replace
+},
+new { id = "frmFATDashboard", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+
+        @Html.HiddenFor(m => m.systemId)
+        @Html.HiddenFor(m => m.fat_process_id)
+        <div id="dvResultContainer">
+            <div class="d-flex tablePad-bn jc-sb">
+                <div class="d-flex">
+                    <span>FSA GIS Design ID:&nbsp;</span><b>@Model.fsa_design_id</b>
+                    <span class="ml-1">FSA Name:&nbsp; </span><b>@Model.fsa_name</b>
+                    <button type="submit" id="btnRefresh" style="display:none;" name="commandName" value="PageRefresh" class="btn btn-success ml-10"> Refresh Page</button>
+                    <input type="hidden" name="ActionName" id="hdnAction" />
+                </div>
+
+                <div>
+                    @if (!Model.bt_lock)
+                    {
+                        if (Model.fsa_connection_status == "None")
+                        {
+                            <button type="submit" name="commandName" value="GenerateTempSplicing" class="btn btn-success ml-10"> Generate Splicing</button>
+                        }
+                        else if (Model.fsa_connection_status == "Temp")
+                        {
+                            <button type="submit" name="commandName" value="AcceptTempSplicing" class="btn btn-success ml-10"> Accept Splicing</button>
+                            <button type="submit" name="commandName" value="ResetTempSplicing" class="btn btn-default ml-10"> Reset Splicing</button>
+                            <button onclick="ExportTempSplicing('@Model.systemId','@Model.fsa_connection_status')" class="btn exp--btn ml-auto"><span class="fa fa-download"></span> Export</button>
+                        }
+                        else
+                        {
+                            <button type="submit" id="btnDeleteFSASplicing"  name="commandName" value="ResetFSASplicing" class="btn btn-default ml-10"> Delete FSA Splicing</button>
+                        }
+                    }
+                    else// For disabled messages
+                    {
+
+                        if (Model.fsa_connection_status == "None")
+                        {
+                            <button type="submit"  disabled value="GenerateTempSplicing" class="btn btn-success ml-10"> Generate Splicing</button>
+                        }
+                        else if (Model.fsa_connection_status == "Temp")
+                        {
+                            <button type="submit"  disabled  value="AcceptTempSplicing" class="btn btn-success ml-10"> Accept Splicing</button>
+                            <button type="submit"  disabled  value="ResetTempSplicing" class="btn btn-default ml-10"> Reset Splicing</button>
+                            <button  disabled  onclick="ExportTempSplicing('@Model.systemId','@Model.fsa_connection_status')" class="btn exp--btn ml-auto"><span class="fa fa-download"></span> Export</button>
+                        }
+                        else
+                        {
+                            <button type="submit" disabled  value="ResetFSASplicing" class="btn btn-default ml-10"> Delete FSA Splicing</button>
+                        }
+                    }
+
+
+
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.message))
+            {
+
+                <div class="d-flex jc-center">
+                    <div class="messageBox d-flex fw-bold" id="dvMessage">
+                        @Model.message                        
+                        <span class='dltmsg msgIcon icon-close @Html.Raw(Model.bt_lock?"hideDlIcon":"showDlIcon")'></span>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.BackgroundProcessStatus))
+            {
+                <div class="d-flex jc-center">
+                    <div class="messageBox d-flex fw-bold" id="dvBackgroundMessage">
+                        @Model.BackgroundProcessStatus  
+                        <span class='dltmsg msgIcon icon-close @Html.Raw(Model.bt_lock?"hideDlIcon":"showDlIcon")'></span>
+                    </div>
+                </div>
+            }
+
+
+            @if (lstPrimarySplitter.Count() > 0)
+            {
+                <div class="space-pad">
+
+                    <div class="fa-min-max">
+
+                        @grid.GetHtml(tableStyle: "stickyTh",
+
+htmlAttributes: new
+{ id = "gvSplitterConnDetails" },
+mode: WebGridPagerModes.All,
+columns: grid.Columns
+(
+grid.Column(null, null, format: @<text><img class="coll_img" src="~/Content/images/plus.png" /><div id="dvChildGrid" style="display:none"></div></text>),
+grid.Column("fdc_name", "Primary Splitter(S1)", format: @<text>@item.fdc_name</text>, canSort: true),
+grid.Column("connection_ring_name", "Connection Type", format: @<text>@item.connection_ring_name</text>, canSort: true),
+//grid.Column("is_connected", "Is Spliced", format: @<text> @Html.Label(@item.is_connected ? "Yes" : "No")</text>, canSort: false),
+grid.Column("is_connected", "Is Spliced", format: @<text> @item.is_connected</text>, canSort: true),
+grid.Column("input_1_cable_category", "Input-1 Cable Type", format: @<text> @item.input_1_cable_category </text>, canSort: true),
+grid.Column("input_1_total_core", "Input-1 Cable Total Core", format: @<text> @item.input_1_total_core </text>, canSort: true),
+grid.Column("input_1_cable_name", "Input-1 Cable", format: @<text>@item.input_1_cable_name</text>, canSort: true),
+grid.Column("input_1_tube_number", "Input-1 Cable Tube", format: @<text>@item.input_1_tube_number</text>, canSort: true),
+grid.Column("input_1_cable_fiber_no", "Input-1 Cable Core", format: @<text>@item.input_1_cable_fiber_no</text>, canSort: true),
+grid.Column("input_2_cable_category", "Input-2 Type", format: @<text> @item.input_1_cable_category </text>),
+grid.Column("input_2_total_core", "Input-2 Cable Total Core", format: @<text> @item.input_2_total_core </text>),
+grid.Column("input_2_cable_name", "Input-2 Cable", format: @<text>@item.input_2_cable_name</text>, canSort: true),
+grid.Column("input_2_tube_number", "Input-2 Cable Tube", format: @<text>@item.input_2_tube_number</text>, canSort: true),
+grid.Column("input_2_cable_fiber_no", "Input-2 Cable Core", format: @<text>@item.input_2_cable_fiber_no</text>, canSort: true),
+grid.Column("remark", "Remark", format: @<text>@item.remark</text>, canSort: false),
+grid.Column(format: (ParentItem) =>
+{
+    if (Model.lstfatdetails.FindAll(s => s.serving_bdb_system_id == ParentItem.splitter_parent_id).ToList().Count > 0)
+    {
+        WebGrid childGrid = new WebGrid(source: Model.lstfatdetails.FindAll(s => s.serving_bdb_system_id == ParentItem.splitter_parent_id).ToList(), canSort: false, canPage: false);
+        return childGrid.GetHtml(
+             htmlAttributes: new { @class = "ChildGrid stickyTh" },
+             columns: childGrid.Columns(
+             childGrid.Column("fdc_name", "Secondary Splitter(S2)", canSort: false),
+             //childGrid.Column("is_connected", "Is Spliced", format: @<text> @Html.Label(@item.is_connected ? "Yes" : "No")</text>),
+             childGrid.Column("is_connected", "Is Spliced", format: @<text> @item.is_connected</text>, canSort: false),
+childGrid.Column("input_1_cable_category", "Input-1 Cable Type", format: @<text> @item.input_1_cable_category </text>, canSort: false),
+childGrid.Column("input_1_total_core", "Input-1 Cable Total Core", format: @<text> @item.input_1_total_core </text>, canSort: false),
+childGrid.Column("input_1_cable_name", "Input-1 Cable", canSort: false),
+childGrid.Column("input_1_tube_number", "Input-1 Cable Tube", format: @<text>@item.input_1_tube_number</text>, canSort: false),
+childGrid.Column("input_1_cable_fiber_no", "Input-1 Cable Core", canSort: false),
+childGrid.Column("remark", "Remark", canSort: false)
+));
+    }
+    else
+    {
+        return new HtmlString(String.Format("<table class='ChildGrid stickyTh'><tr><td>No S2 found within associated DSA</td></tr></table>"));
+    }
+})
+)
+)
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="nr-found">
+                    <span> @Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+                </div>
+            }
+        </div>
+
+    }
+</div>
+
+<script>
+    clearInterval();
+    var IsPageRefresh = @Html.Raw(@Model.bt_lock ? "true" : "false");
+    var intervalId;
+    if (intervalId) {
+        clearInterval(intervalId);
+    }
+    if (IsPageRefresh) {
+        intervalId = setInterval(RefreshMessageByAjax, 10000);
+    }
+    $(document).ready(function () {
+        $("#frmFATDashboard").submit(function () {
+            $("#dvEntitydetailsProgress").show();
+        });
+        $('#btnDeleteFSASplicing').bind('click', function (e) {
+            e.preventDefault();
+            showConfirm('All the splicing of this FSA will be removed. Do you want to proceed?', function () {
+                $("#hdnAction").val("ResetFSASplicing");
+                $("#btnDeleteFSASplicing").trigger("submit");
+            });            
+        });
+        $(".dltmsg").click(function () {
+            DeleteMessageByAjax();
+        });
+    });
+    function OnSuccess(data) {
+        $("#dvEntitydetailsProgress").hide();
+        }
+
+        function ExportTempSplicing(id, status) {
+            window.location = baseUrl + '/FiberAllocationTool/ExportTempSplicing?id=' + id + '&status=' + status;
+        }
+
+    function RefreshMessageByAjax() {
+        var fsa_system_id = @Model.systemId;
+        console.log("RefreshMessage Called at" + new Date().toLocaleString());
+        if (IsPageRefresh == false) {
+            return;
+        }
+        ajaxReq('FiberAllocationTool/RefreshMessage', { 'fsa_system_id': fsa_system_id }
+            , false, function (resp) {
+                if (resp.status == 'OK') {
+                    $('#dvBackgroundMessage').text(resp.result.process_message);
+                    IsPageRefresh = resp.result.bt_lock;
+                    if (IsPageRefresh == false) {
+                        clearInterval(intervalId);
+                        $("#hdnAction").val("PageRefresh");
+                        $("#btnRefresh").trigger("submit");//trigger('click');
+                    }
+                } else
+                    alert(resp.message, 'Error', 'error');
+            }, true, true, true);
+    }
+
+     function DeleteMessageByAjax() {
+        var fsa_system_id = @Model.systemId;
+         ajaxReq('FiberAllocationTool/DeleteMessage', { 'fsa_system_id': fsa_system_id }
+            , false, function (resp) {
+                if (resp.status == 'OK') {
+                    $('#dvBackgroundMessage').text("");                    
+                    $('#dvMessage').text("");
+                    $('#dvBackgroundMessage').hide();
+                    $('#dvMessage').hide();
+                } else
+                    alert(resp.message, 'Error', 'error');
+            }, true, true, true);
+    }
+    
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        //Loop through all Child Grids.
+        MakeGridDataCollapsible();
+    });
+    
+    function MakeGridDataCollapsible() {
+        $("#gvSplitterConnDetails .ChildGrid").each(function () {
+            //Copy the Child Grid to DIV.
+            var childGrid = $(this).clone();
+            $(this).closest("TR").find("TD").eq(0).find("DIV").empty();
+            $(this).closest("TR").find("TD").eq(0).find("DIV").append(childGrid);
+
+            //Remove the Last Column from the Row.
+            $(this).parent().remove();
+        });
+
+        //Remove Last Column from Header Row.
+        $("#gvSplitterConnDetails TH:last-child").eq(0).remove();
+
+
+        $(".coll_img").bind("click", function () {
+            var SrcVal = $(this).attr("src");
+            if (SrcVal == "/Content/images/plus.png") {
+                $(this).closest("tr").after("<tr><td></td><td colspan = '999'>" + $(this).next().html() + "</td></tr>");
+                $(this).attr("src", "/Content/images/minus.png");
+
+            } else {
+                $(this).attr("src", "/Content/images/plus.png");
+                $(this).closest("tr").next().empty().remove();
+            }
+
+        });
+    }   
+</script>

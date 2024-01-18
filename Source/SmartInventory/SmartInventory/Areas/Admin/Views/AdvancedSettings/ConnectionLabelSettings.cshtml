@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+@model Models.Admin.ConnectionLabelSettings
+<style>
+    .CursonNotAllowed {
+        cursor: not-allowed;
+    }
+</style>
+<div id="divEditConnectionLabelSettings">
+    <div id="dvPageMessage">
+        @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+    </div>
+    @using (Ajax.BeginForm("SaveConnectionLabelSettings", "AdvancedSettings",
+                         new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divEditConnectionLabelSettings" },
+                         new { id = "frmEditConnectionLabelSettings", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id)
+        @Html.HiddenFor(m => m.display_column_name, new { id = "hdnDisplayColName" })
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Entity Type:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.entity_title, new { @class = "form-control", @readonly = "true" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Connection Label<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.display_column_name, new SelectList(Model.lstConnectionLabel.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"), new { @class = "chosen-select", @id = "dllConnLbl", @onchange = "OnChangeConnLbl()" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ModalFooter jc-flex-end" id="dvBtnAction">
+            <button type="button" class="btn btn-default mr-05" id="btnResetConnLblrSetting">Reset</button>
+            <input type="button" class="btn btn-primary CursonNotAllowed" disabled="disabled" id="btnSaveConnLblSetting" value="Update" />
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+    });
+
+    $('#btnResetConnLblrSetting').on("click", function () {
+        $('#dllConnLbl').val(0).trigger("chosen:updated");
+    });
+    $('#btnSaveConnLblSetting').on("click", function () {
+        var ConnLblColumn = $('#dllConnLbl').val();
+        $("#hdnDisplayColName").val(ConnLblColumn);
+        $("#frmEditConnectionLabelSettings").submit();
+        window.location.reload();
+    });
+
+    function OnChangeConnLbl() {
+        var prevVal = $("#hdnDisplayColName").val();
+        var CurrentVal = $('#dllConnLbl').val();
+        if (prevVal.toUpperCase() == CurrentVal.toUpperCase()) {
+            $('#btnSaveConnLblSetting').attr("disabled", "disabled");
+            $('#btnSaveConnLblSetting').addClass('CursonNotAllowed');
+
+        }
+        else {
+            $('#btnSaveConnLblSetting').removeAttr('disabled');
+            $('#btnSaveConnLblSetting').removeClass('CursonNotAllowed');     //removeAttr('disabled');
+        }
+    }
+</script>
+

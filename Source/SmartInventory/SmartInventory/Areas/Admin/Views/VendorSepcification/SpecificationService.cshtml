@@ -1,0 +1,217 @@
+﻿@model Models.Admin.ViewSpecificationServiceList
+@using Models;
+@using SmartInventory.Settings;
+@{
+    int rackLayer = 46;
+}
+<!DOCTYPE html>
+<div id="dvPageMessage">
+    @{
+        Html.RenderPartial("_PageMessage", Model.pageMsg);
+    }
+    @*@{
+            var cost_per_unit = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.cost_per_unit.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+            var service_cost_per_unit = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.service_cost_per_unit.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+        }*@
+</div>
+<div id="dvInfoVendorSpecification" class="update_panel">
+    <div class="title">
+        <h4 id="heading">Specification Services</h4>
+    </div>
+    @using (Html.BeginForm("SaveSpecificationService", "VendorSepcification", FormMethod.Post, new { autocomplete = "off", @id = "frmInfoSpecificationService", enctype = "multipart/form-data", @class = "form-horizontal  pad_left" }))
+    {
+        @*@Html.HiddenFor(m => m.unit_input_type);*@
+        @Html.HiddenFor(m => m.id);
+        @Html.HiddenFor(m => m.created_by);
+        @Html.HiddenFor(m => m.created_on);
+        @Html.HiddenFor(m => m.layer_name);
+        @Html.HiddenFor(m => m.layer_id);
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Category<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-8" id="categorydd">
+                    @if (Model.id > 0)  // to disable the control and put an overlay not to open choosen dropdown
+                    {
+                        <div class="col-sm-8" style="position: absolute;height: 28px; z-index: 1000; width: 92%;"></div>
+                    }
+                    <select name="@Html.NameFor(x=> x.layer_name )"
+                            id="selectCategory1"
+                            class="chosen-select form-control"
+                            onchange="OnCategoryChange();">
+                        <option value="0-0">-Select-</option>
+                        <optgroup value="" label="Entity">
+                            @foreach (var category in Model.entity_categories)
+                            {
+                                <option value="@category.category_key"
+                                        @if (category.category_key == Model.category_key) { <text> selected </text> }
+                                        data-layer-id="@category.layer_id"
+                                        data-accessories-id="@category.accessories_id">
+                                    @category.display_name
+                                </option>
+                            }
+                        </optgroup>
+                        <optgroup value="" label="Other">
+                            @foreach (var category in Model.other_categories)
+                            {
+                                <option value="@category.category_key"
+                                        @if (category.category_key == Model.category_key) { <text> selected </text> }
+                                        data-layer-id="@category.layer_id"
+                                        data-accessories-id="@category.accessories_id">
+                                    @category.display_name
+                                </option>
+                            }
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Specification<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @if (Model.id > 0)  // to disable the control and put an overlay not to open choosen dropdown
+                    {
+                        <div class="col-sm-8" style="position: absolute;height: 28px; z-index: 1000; width: 92%;"></div>
+                    }
+                    @Html.DropDownListFor(m => m.specification, new SelectList(Model.lstspecification.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @onchange = "return validateDropdown(this.id);" })
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Service Name<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.service_name, new { @class = "form-control", @maxlength = "100", @placeholder = "Enter Service Name", @id = "service_name" })
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Service Cost<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(model => model.service_cost, new { @class = "form-control", @maxlength = "100", @placeholder = "Enter Service Cost", @id = "service_cost", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Is Active?
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.CheckBoxFor(m => m.is_active, new { @class = "chk" })
+                </div>
+            </div>
+        </div>
+        <div id="dvBtnAction">
+            <div class="row">
+                <div class="col-md-4"> </div>
+                <div class="col-md-8 text-right">
+                    <a href="@Url.Action("AddSpecificationService",new { id=0})" class="btn btn-default mr-05" title="Reset">Reset</a>
+                    <input type="submit" class="btn btn-primary" name="sbtnaction" id="btnSubmitSpecifiaction" value="Save" />@*onclick="return app.checkCblTotalCore()"*@
+
+                </div>
+            </div>
+        </div>
+    }
+    <script type="text/javascript">
+    $(document).ready(function () {
+            if ('@Model.id' != 0) {
+                btnSubmitSpecifiaction.value = "Update";
+                $('#categorydd').addClass('chosen-disabled');
+                $('#selectCategory1').next().prop('disabled', true);
+                //$('#specification').next().addClass('chosen-disabled readonly');
+                $('#service_name').attr('readonly', 'True');
+        }
+
+        $("#btnSubmitSpecifiaction").on("click", function (e) {
+                var status = true;
+            if (!validateDropdown('selectCategory1')) { status = false; }
+                if (!validateDropdown('specification')) { status = false; }
+            if (!validateTextbox('service_name')) { status = false; }
+            if (!validateTextbox('service_cost')) { status = false; }
+                if (!status) { e.preventDefault(); }
+            });
+
+        });
+
+
+        function validateDropdown(elementId) {
+
+            if ($('#selectCategory1 option:selected').text().indexOf('Patch Cord') > -1) {
+
+                return true;
+
+            } else {
+
+                if ($('#' + elementId).length > 0) {
+                    var value = $('#' + elementId).val();
+
+                    if (value == null || value == "" || value == "0-0") {
+                        $('#' + elementId).next().addClass('input-validation-error').removeClass('valid');
+                        return false;
+                    }
+                    else {
+                        $('#' + elementId).next().addClass('valid').removeClass('input-validation-error');
+                        return true;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        function validateTextbox(elementId) {
+            if ($('#' + elementId).length > 0) {
+                var value = $('#' + elementId).val();
+
+                if (value == null || value == "" || parseFloat(value) == 0.0) {
+                    $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                    return false;
+                }
+                else {
+                    $('#' + elementId).addClass('valid').removeClass('input-validation-error');
+                    return true;
+                }
+            }
+            return true;
+        }
+
+        function OnCategoryChange() {
+
+            //var _layerId = $('#selectCategory option:selected').val();
+            let categoryData = $('#selectCategory1 option:selected').data();
+            let _layerId = categoryData.layerId;
+            let accessoriesId = categoryData.accessoriesId;
+            if (_layerId != undefined && accessoriesId != undefined) {
+                window.open(appRoot + '/VendorSepcification/AddSpecificationService?layerId=' + _layerId + '&accessoriesId=' + accessoriesId, "_self");
+            }
+            else {
+                window.open(appRoot + '/VendorSepcification/AddSpecificationService/', "_self");
+            }
+            //validateDropdown(_layerId);
+        }
+
+
+    </script>
+</div>

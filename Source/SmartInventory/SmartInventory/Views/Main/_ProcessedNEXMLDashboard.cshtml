@@ -1,0 +1,304 @@
+@model Models.ProcessSummaryFilter
+@using Utility
+@using SmartInventory.Settings;
+
+@{
+    WebGrid grid = new WebGrid(canPage: false, canSort: true, ajaxUpdateContainerId: "ProcessedXMLDetailsRecord", ajaxUpdateCallback: "onGridHeaderClick('tblProcessedXMLDetails');GridColors();showBulkApproved();");
+    grid.Bind(Model.lstProcessedXMLDetails, rowCount: Model.totalRecord, autoSortAndPage: false);
+}
+<style>
+    .alertContainer {
+        left: 407px;
+        top: 152px;
+        width: auto;
+        right: auto;
+        height: 124px;
+        bottom: auto;
+    }
+
+    .alertgrid {
+        font-size: 13px;
+        text-align: left;
+        margin-top: 5px;
+        width: 100%;
+    }
+
+    .refresh {
+        color: rgb(229 54 2 / 83%);
+    }
+
+    .download {
+        color: #105bcb;
+    }
+
+    i.disabled {
+        pointer-events: none;
+        cursor: default;
+    }
+
+    .isDisabled {
+        color: currentColor;
+        cursor: not-allowed;
+        opacity: 0.5;
+        text-decoration: none;
+        pointer-events: none;
+        display: inline-block;
+    }
+
+    .ProcessedRows {
+        background-color: #FFBF00 !important;
+    }
+
+    .ProcessedCSARows {
+        background-color: #c4f3c4 !important;
+    }
+
+    #ModalPopUp .modal-dialog {
+        margin: 20px auto !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 9999;
+        inset: auto !important;
+    }
+
+    .modal-header {
+        cursor: default;
+    }
+</style>
+<!DOCTYPE html>
+<div class="tab-content" id="dvChildModalBody">
+    @using (Ajax.BeginForm("GetProcessedXMLDashboard", "Main", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvChildModalBody",
+        LoadingElementId = "dvProgressXMLDashboard",
+    },
+    new { id = "frmProcessedXMLDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.systemId)
+
+
+        <div>
+
+            <div class="tablePad-bn d-flex">
+                <label class="labelW">Search By:</label>
+                <div class="redline-drop-box">
+                    @Html.DropDownListFor(m => m.searchByText, (IEnumerable<SelectListItem>)ViewData["listItem"], "-Select-", new { @class = "chosen-select form-control", @id = "ddlsearchBy", @style = "padding:2px;" })
+                </div>
+                <div class="ml-auto d-flex">
+                    <div class="searchInput d-flex">
+                        @Html.TextBoxFor(m => m.searchText, new { @id = "txtSearchTxt", @class = "form-control input-mr search--padding", @style = "height:26px;" })
+                        <i class="glyphicon glyphicon-search"></i>
+                    </div>
+                    <div class="ml d-flex">
+
+                        <button type="submit" class="btn btn-success ml-10" id="btnSearchXMLData" onclick="si.ValidateXMLSearch()"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                        <button type="button" class="btn btn-success ml-10" id="btnValidateXML" onclick="si.ValidateXML(@Model.systemId)"> Trace Validation</button>
+                        <button type="button" class="btn btn-success ml-10" id="btnGenerateXML" onclick="si.processGenerateXML(@Model.systemId)" disabled="disabled"> Generate XML</button>
+                        <button type="submit" class="btn btn-default ml-10" id="btnResetSearchFilter"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.lstProcessedXMLDetails.Count > 0)
+            {
+                <div id="ProcessedXMLDetailsRecord">
+                    <div class="d-flex tablePad-bn">
+                        <div class="recordCount"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:</b>&nbsp;@grid.TotalRowCount</div>
+                        <div class="recordCount">
+                            <b>Selected Splitters : </b><span id="count-checked-checkboxes">0</span>
+                        </div>
+                        <div class="d-flex fb100">
+                            <div style="background-color: #FFFFFF" class="colorDots"></div>
+                            <div class="Assign assignColor">
+                                All
+                            </div>
+                            <div style="background-color: #9CFF2E" class="colorDots"></div>
+                            <div class="Assign assignColor">
+                                CSA has been pushed to GIS
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-pad">
+                        <div class="fa-min-max">
+                            @grid.GetHtml(tableStyle: "stickyTh",
+
+                            htmlAttributes: new { id = "tblProcessedXMLDetails" },
+
+                            mode: WebGridPagerModes.All,
+                            columns: grid.Columns(
+                            // grid.Column("", ),
+                            grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>
+
+                                @if (item.is_checkbox_enabled == "True")
+                                {
+                                    <input type="checkbox" id="chk_@item.process_id" value="@item.system_id" name="ids" class="chkSurvey mr-03" onclick="SelectedSplitters('@item.csa_id')" />
+                                }
+                                <i class="fa fa-globe fa-fw m-r-xs i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="entityShowOnMap(@item.system_id,'Splitter','Point')"></i>
+                                @if (!string.IsNullOrEmpty(item.process_id) && !string.IsNullOrEmpty(item.trace_validation_status))
+                                {
+                                    <i class="fa fa-download i-icons-style i-icons-ptpb" title="Download" onclick="si.XMLDashboard.ExportProcessedXML('@item.group_xml_filename')"></i>
+                                    if (item.is_reset_enabled == "True")
+                                    {
+                                        <i class="fa fa-refresh i-icons-style i-icons-ptpb" title="Reset" onclick="si.XMLDashboard.ResetProcessedXML(@item.process_id)"></i>
+                                    }
+                                }
+                            </text>, canSort: false),
+                     grid.Column("common_name", "S2 ID", format: @<text><lable class="clsTSts" process_id="'@item.process_id'" validation_Status="'@item.trace_validation_status'" csa_rfs_status="'@item.rfs_status'">@item.common_name</lable></text>),
+grid.Column("csa_id", "CSA ID", format: (item) => Html.Raw("<p data-toggle='tooltip' class='WrapText clsTSts' colorcode='" + item.color_code + "'>" + item.csa_id + "</p>"), canSort: true),
+grid.Column("dsa_id", "DSA ID", format: @<text>@item.dsa_id</text>, canSort: true),
+grid.Column("trace_validation_path1_status", "Trace Validation Path 1 Status", format: @<text>@item.trace_validation_path1_status</text>, canSort: true),
+grid.Column("trace_validation_path2_status", "Trace Validation Path 2 Status", format: @<text>@item.trace_validation_path2_status</text>, canSort: true),
+grid.Column("group_xml_filename", "Group XML Filename", format: @<text>@item.group_xml_filename</text>, canSort: true),
+grid.Column("nas_status", "NAS Status", format: @<text>@item.nas_status</text>, canSort: true),
+grid.Column("ne_status", "NE Status", format: @<text>@item.ne_status</text>, canSort: true),
+grid.Column("rfs_status", "CSA RFS Status", format: @<text>@item.rfs_status</text>, canSort: true)))
+
+                            @Html.Hidden("dir", grid.SortDirection)
+
+                            @Html.Hidden("col", grid.SortColumn)
+
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="nr-found">
+                    <span> @Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+                </div>
+            }
+        </div>
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".fade").removeClass('modal-backdrop fade in');
+        $('th a, tfoot a').click(function () {
+            $('#frmProcessedXMLDetails').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        $('[data-toggle="tooltip"]').tooltip();
+        $("#closeModalPopup").on("click", function () {
+            if (si.gMapObj.shapeObj) {
+                $('.CustomMarker').hide();
+                si.infowindow.close();
+            }
+        });
+        $("#btnResetSearchFilter").on("click", function () {
+            $('#txtSearchTxt').val('');
+            $('#ddlsearchBy').val('').trigger("chosen:updated");
+            $('#ddlPSPort').val(0).trigger("chosen:updated");
+        });
+
+        $("#btnExportXML").on("click", function () {
+            window.location = appRoot + 'Library/ExportProcessedXML';
+        });
+        onGridHeaderClick('tblProcessedXMLDetails');
+        showBulkApproved();
+        GridColors();
+    });
+    function showBulkApproved() {
+         
+        // 1st replace first column header text with checkbox
+        $("#tblProcessedXMLDetails th").each(function () {
+            if ($.trim($(this).text().toString().toLowerCase()) === "action") {
+                /*$(this).text('');*/
+                $(this).removeAttr("class");
+                $("<input/>", { type: "checkbox", id: "cbSelectAll", value: "" }).prependTo($(this));
+            }
+        });
+
+        $("#cbSelectAll").on("click", function () {
+             
+            var ischecked = this.checked;
+            $('#tblProcessedXMLDetails').find("input:checkbox").each(function () {
+                this.checked = ischecked;
+                var $checkboxes = $('#tblProcessedXMLDetails td input[type="checkbox"]');
+                var countCheckedCheckboxes = $checkboxes.filter(':checked').length;
+                $('#count-checked-checkboxes').text(countCheckedCheckboxes);
+            });
+        });
+    }
+    function entityShowOnMap(systemID, eType, gType) {
+         
+        si.ShowEntityOnMap(systemID, eType, gType);
+        $('#ModalPopUp .minmizeModel>i').trigger("click");
+    }
+    function GridColors() {
+         
+        $("#tblProcessedXMLDetails tbody tr").each(function (e) {
+             
+            var colorcode = $(this).closest('tr').find(".clsTSts")[1].attributes["colorcode"].value
+            $(this).children('td').css({ "background-color": hexToRgbA(colorcode, 50) });
+            var process_id = $(this).closest('tr').find(".clsTSts")[0].attributes["process_id"].value;
+            var trace_validation_status = $(this).closest('tr').find(".clsTSts")[0].attributes["validation_Status"].value;
+            var csa_rfs_status = $(this).closest('tr').find(".clsTSts")[0].attributes["csa_rfs_status"].value;
+            //if (process_id != "''" && trace_validation_status != "''" && (csa_rfs_status == "''" || csa_rfs_status != "'S2_RFS'")) {
+            // $(this).addClass('ProcessedRows');
+            // //#c4f3c4
+            //}
+            //else if (process_id != "''" && trace_validation_status != "''" && csa_rfs_status != "''" && csa_rfs_status == "'S2_RFS'") {
+            // $(this).addClass('ProcessedCSARows');
+            //}
+        });
+    }
+    function SelectedSplitters(csaid) {
+         
+
+
+        var len = $('#tblProcessedXMLDetails tr').find("td:contains('" + csaid.trim() + "')").length;
+        var $sp = $('#tblProcessedXMLDetails tr').find("td:contains('" + csaid.trim() + "')").parent();
+        var classlist = $sp.find('input.menuitemshow[type=checkbox]').length;
+
+        if (classlist == 0) {
+
+
+            $('#tblProcessedXMLDetails tr').find("td:contains('" + csaid.trim() + "')").parent().each(function () {
+                 
+
+                $row = $(this);
+                // $row.find('td:nth-child(1)').find('input[type="checkbox"]').prop('checked', true);
+                $row.find('td:nth-child(1)').find('input[type="checkbox"]').prop('checked', true).addClass("menuitemshow");;
+
+                //$('#tblProcessedXMLDetails tr').find('td:nth-child(1)').prop('checked', true);
+            });
+
+        }
+        else {
+
+            $('#tblProcessedXMLDetails tr').find("td:contains('" + csaid.trim() + "')").parent().each(function () {
+                 
+
+                $row = $(this);
+                // $row.find('td:nth-child(1)').find('input[type="checkbox"]').prop('checked', true);
+                $row.find('td:nth-child(1)').find('input[type="checkbox"]').prop('checked', false).removeClass("menuitemshow");
+
+                //$('#tblProcessedXMLDetails tr').find('td:nth-child(1)').prop('checked', true);
+            });
+
+        }
+
+
+        $('#cbSelectAll').prop("checked", false);
+        var $checkboxes = $('#tblProcessedXMLDetails td input[type="checkbox"]');
+        var countCheckedCheckboxes = $checkboxes.filter(':checked').length;
+        $('#count-checked-checkboxes').text(countCheckedCheckboxes);
+
+
+    }
+    function hexToRgbA(hex, opacity) {
+        hex = hex.replace('#', '');
+        r = parseInt(hex.substring(0, 2), 16);
+        g = parseInt(hex.substring(2, 4), 16);
+        b = parseInt(hex.substring(4, 6), 16);
+
+        result = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
+        return result;
+    }
+</script>

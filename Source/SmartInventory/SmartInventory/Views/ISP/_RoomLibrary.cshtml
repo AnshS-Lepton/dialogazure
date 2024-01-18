@@ -1,0 +1,154 @@
+﻿@{ var isAttr = ((List<string>)Session["ApplicableModuleList"]).Contains("EWR"); }
+
+<!DOCTYPE html>
+<div class="leftPanelHeader">@Resources.Resources.SI_ISP_GBL_NET_FRM_003</div>
+<div class="space-pad">
+    @if (isAttr)
+    {
+
+        <div id="roomLibFilterContext" class="RadioDivCreate">
+            <div class="LibCell">
+                <div class="RadioFunction">
+                    <div class="radio">
+                        <label class="Custombtn chk">
+                            Rack<input type="radio" name="roomLibFilterCheck" value="true" checked>
+                            <span class="Custombtncheck bdrRound"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="RadioFunction">
+                    <div class="radio">
+                        <label class="Custombtn chk">
+                            @Resources.Resources.SI_ISP_GBL_GBL_FRM_002<input type="radio" name="roomLibFilterCheck" value="false">
+                            <span class="Custombtncheck bdrRound">
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+
+
+    <div id="rackTitle" class="rackRoom">
+        <label class="control-label">@Resources.Resources.SI_ISP_GBL_NET_FRM_060 ( @Resources.Resources.SI_ISP_GBL_GBL_GBL_053 )</label>
+    </div>
+    <div id="rackLibFilterContext">
+        <div class="RadioDivCreate">
+            <div class="LibCell">
+                <div class="RadioFunction">
+                    <div class="radio">
+                        <label class="Custombtn chk">
+                            @Resources.Resources.SI_ISP_GBL_NET_FRM_061<input type="radio" name="LibFilterCheck" value="6" checked>
+                            <span class="Custombtncheck bdrRound"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="RadioFunction">
+                    <div class="radio">
+                        <label class="Custombtn chk">
+                            @Resources.Resources.SI_ISP_GBL_GBL_FRM_002<input type="radio" name="LibFilterCheck" value="1">
+                            <span class="Custombtncheck bdrRound"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="RadioFunction">
+                    <div class="radio">
+                        <label class="Custombtn chk">
+                            Entity Mapping<input type="radio" name="LibFilterCheck" value="fmsMap">
+                            <span class="Custombtncheck bdrRound"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="equipmentType" style="display: none;">
+        <label class="control-label upperCase">@Resources.Resources.SI_ISP_GBL_NET_FRM_063</label>
+        <select class="form-control DivSelect" id="selectLibTypes">
+            @*<option>Line</option>*@
+        </select>
+    </div>
+    <div class="mappingEntity" style="display: none;">
+        <label class="control-label">Entity Type</label>
+        <select class="form-control DivSelect" id="selectModelType">
+            @*<option>Line</option>*@
+        </select>
+    </div>
+    <div class="mappingEntity">
+        <label class="control-label">Entity</label>
+        <select class="form-control DivSelect" id="selectExistedFms">
+            @*<option>Line</option>*@
+        </select>
+    </div>
+    <div class="rackRoom" id="rackViewDisplay">
+        <div class="svgDiv">
+            <div class="fa fa-search searchIcon searchModel" data-original-title="" title=""></div>
+            <input type="text" class="form-control searchBox endtoruds searchModel" placeholder="@Resources.Resources.SI_ISP_GBL_GBL_GBL_035" id="SearchModel" autocomplete="off" maxlength="30" data-original-title="" title="">
+            <div class="libscroll">
+                <svg id="library" style="width:100%;overflow:hidden;">
+                </svg>
+                <label id="lblmsg"></label>
+            </div>
+        </div>
+    </div>
+    @if (isAttr)
+    {
+        <div class="equipmentLib" id="roomEquipment" style="display:none;">
+            <div id="roomViewEquipmentType">
+                <div>
+                    <label class="control-label upperCase">@Resources.Resources.SI_ISP_GBL_NET_FRM_063</label>
+                </div>
+                <select class="form-control DivSelect" id="selectRoomViewLibTypes"></select>
+            </div>
+            <div>
+                <div class="svgDiv">
+                    <div class="fa fa-search searchIcon searchModel" data-original-title="" title=""></div>
+                    <input type="text" class="form-control searchBox endtoruds searchModel" placeholder="@Resources.Resources.SI_ISP_GBL_GBL_GBL_035" id="searchRoomViewModel" autocomplete="off" maxlength="30" data-original-title="" title="">
+                    <div class="libscrollEquipment">
+                        <svg id="libraryRoomView" style="width:100%;overflow:hidden;">
+                        </svg>
+                        <label id="lblRoomViewMsg"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        var style = "max-height: calc(100vh - 258px);"
+        $('.LibFilterCheck').on("click", function (e) {
+             
+            var addscc = $(this).attr("value") == "1" ? "258" : $(this).attr("value") == "6" ? "312" : $(this).attr("value") == "1" ? "365" : "";
+            if (addscc != "") {
+                $("#libscroll").css("max-height", "calc(100vh - " + addscc + "px)");
+            }
+        });
+    });
+</script>
+@*<div class="col-md-12" id="roomEquipment">
+        <div class="seprator" data-original-title="" title=""></div>
+        <div class="svgDiv" style="">
+
+            <div class="col-md-12" id="roomViewEquipmentType" >
+                <div class="col-md-12"><label class="control-label upperCase">@Resources.Resources.SI_ISP_GBL_NET_FRM_063</label></div>
+                <select class="form-control DivSelect" id="selectRoomViewLibTypes">
+                </select>
+            </div>
+            <input type="text" class="form-control searchBox endtoruds searchModel" style="color:black;background-color:white;" placeholder="@Resources.Resources.SI_ISP_GBL_GBL_GBL_035" id="selectRoomViewLibTypes" autocomplete="off" maxlength="30" data-original-title="" title="">
+            <div class="libscrollEquipment">
+
+                <svg id="libraryRoomView" style="width:100%;overflow:hidden;">
+                </svg>
+                <label style="text-align:center;" id="lblRoomViewMsg"></label>
+            </div>
+        </div>
+    </div>*@
+
+
+
+
+

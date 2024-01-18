@@ -1,0 +1,66 @@
+﻿@model Models.BarCode
+@Scripts.Render("~/bundles/Barcode/Scripts")
+<!DOCTYPE html>
+<div class="BarCodeContainer">
+    <div class="BarCodeActions">
+
+        @if (Model.barcode_img_bytes != null)
+        {
+            <a id="lnkExportBarCodeIntoPDF" onclick="BarcodeAsPDF();" class="btn btn-success PDFIcon" title="@Resources.Resources.SI_OSP_HTB_NET_FRM_012">
+                <i class="fa fa-file-pdf-o"></i>
+            </a>
+            <input id="entity_name" type="hidden" value="@Model.entity_type" />
+        }
+
+
+    </div>
+    @if (Model.barcode_img_bytes != null)
+    {
+        <div class="BarCodeDetail" id="dvBarCodeDetail">
+            <div id="dvBarcode">
+
+                <img id="imgBarCode" src="@Model.barcode_img_bytes" alt="@Resources.Resources.SI_OSP_HTB_NET_FRM_001" />
+                <p class="BarCodeLabel" style="margin:0px;">@Resources.Resources.SI_OSP_GBL_NET_FRM_058: @Model.barcode <br /> @Resources.Resources.SI_OSP_GBL_NET_FRM_059: @Model.name</p>
+
+            </div>
+        </div>
+    }
+    @if (Model.barcode_img_bytes == null)
+    {
+        <div class="nr-found">
+            <span>@Resources.Resources.SI_OSP_HTB_NET_FRM_011</span>
+        </div>
+    }
+</div>
+<script>
+    function BarcodeAsPDF() {
+         
+        showProgress();
+        var node = document.getElementById('dvBarCodeDetail'); var options = { quality: 2, bgcolor: "#fff" };
+        domtoimage.toJpeg(node, options).then(function (pngDataUrl) {
+            var w = document.getElementById("dvBarCodeDetail").offsetWidth;
+            var h = document.getElementById("dvBarCodeDetail").offsetHeight;
+            var LineWidth = w + 400;
+            var img = new Image();
+            var pdf = new jsPDF('portrait', 'pt', 'a4', [w, h]);
+            pdf.setFontSize(8);
+            var currentDate = "Date: " + GetFormattedDateTime(new Date());
+            var Title = $('#hdnApplicationName').val();
+            var FooterName = "";// "Powered by Lepton Software";
+            //Title
+            pdf.text(Title, 10, 25);
+            //Date Time
+            pdf.text(currentDate, 470, 25);
+            img.src = pngDataUrl;
+            pdf.addImage(img, 'jpeg', 40, 250);//Xs Ys
+            //Header Line: left Margin, left Ys postion, width, Right Ys postion
+            pdf.line(0, 30, LineWidth, 30);
+            //Footer Line: left Margin, left Ys postion, width, Right Ys postion
+            pdf.line(0, 800, LineWidth, 800);
+            pdf.text(FooterName, 10, 830);
+            pdf.text('Page 1', 550, 830);
+            pdf.save($('#entity_name').val() + '_Barcode.pdf');
+        });
+        setTimeout(function () { hideProgress(); }, 1000)
+    }
+</script>

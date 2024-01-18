@@ -1,0 +1,112 @@
+﻿@model Models.Admin.ISPModelImageMaster
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<link href="~/Areas/Admin/Content/css/spectrum.css" rel="stylesheet" />
+<script src="~/Areas/Admin/Content/js/spectrum.js"></script>
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+
+    .UploadModelProgress {
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        margin-top: 0px;
+        z-index: 5;
+        margin-left: 0px;
+        background-color: white;
+        background-image: url('~/../../../Areas/Admin/Content/images/loading_new.gif');
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="divAddNewModelImage">
+    <div id="dvModelProgress" class="UploadModelProgress"></div>
+    @using (Ajax.BeginForm("UploadModelImage", "Equipment",
+                                        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddNewModelImage", OnSuccess = "OnSuccess", },
+                                        new { id = "frmAddModelImage", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id, new { @id = "hdnid" });
+        @Html.HiddenFor(m => m.image_data, new { @id = "hdnimage_data" });
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Model Type<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.model_id, new SelectList(Model.lstTypeModel.Select(x => new { Value = x.id, Text = x.key }), "Value", "Text"), "--Select--", new
+                   {
+                       @class = "chosen-select form-control",
+                       @id = "ddlModelType",
+                   })
+                    </div>
+                </div>
+                <div class="row form-group">
+
+                    <div class="control-label col-md-4">Model Image<i class="clsMandatory">*</i>:</div>
+                    <div>
+                        @if (Model.id > 0)
+                        {
+                            <div>@Html.Raw(Model.image_data)</div>
+                        }
+                        else
+                        {
+                            <div class="col-md-12 UploadAction">
+                                <div class="col-md-10 col-sm-6" id="divDocumentUpload" style="display:flex; text-decoration:underline;">
+                                    <input class="choosesvg hidafter" id="DocUpload" type="file" accept=".svg, image/svg+xml" name="DocUpload" value="Choose SVG">
+                                </div>
+                                <label class="control-label col-md-12" style="margin-top: -15px;margin-bottom: -15px;">Note:Only svg files are allowed</label>
+                                <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Status:</div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.is_active, new { Style = "width:100% ;", @id = "chkis_activemodeleImage" })
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="footerModal d-flex" id="dvBtnAction">
+
+            <button type="button" class="btn btn-default ml-auto" id="btnCancel">Cancel</button>
+
+            @if (Model.id > 0)
+            {
+                <input type="button" class="btn btn-primary ml-05" onclick="return ModelImage.upload();" id="btnSaveAccessories" value="Update" />
+            }
+            else
+            {
+                <input type="button" class="btn btn-primary" onclick="return ModelImage.upload();" id="btnSaveAccessories" value="Save" />
+            }
+
+
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+         
+       if ('@Model.id' != 0) {
+           $('#ddlModelType').addClass('.EUTSetting chosen-disabled');
+           $('#divDocumentUpload').addClass('.EUTSetting chosen-disabled');
+        }
+    });
+
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+    $("#btnCancel").on("click", function () {
+        $("#closeModalPopup").trigger("click");
+
+    });
+</script>

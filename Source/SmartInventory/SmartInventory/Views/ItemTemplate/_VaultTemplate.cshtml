@@ -1,0 +1,80 @@
+﻿@model Models.VaultItemMaster
+@using Models;
+@using SmartInventory.Settings;
+
+@{var layer_Detail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Vault.ToString().ToUpper()).FirstOrDefault() : null; }
+
+<script>
+    //Set color of template icon as green in NE library
+    if ('@Model.id' > 0) {
+        $(".clsTemplateIcon[data-lyrname='Vault']").css('background-color', '#9999FF');
+    }
+</script>
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+@helper VaultTemplateMaster()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_VaultTemplateMaster.cshtml", (VaultTemplateMaster)Model); }
+}
+<!DOCTYPE html>
+<div class="libDetail">
+
+    @using (Ajax.BeginForm("SaveVaultTemplate", "ItemTemplate", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnFailure = "si.handleError",
+
+    },
+    new { id = "frmItemTemplate", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id)
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="ItemSpecfication">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend"><label>@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_052</label></legend>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="txtPodType">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023:</label>
+                            <div class="col-sm-45">
+                                @Html.DropDownListFor(m => m.vault_type, new SelectList(Model.listVaultType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Vault Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlPoleType" })
+                            </div>
+                        </div>
+                    </fieldset>
+                    @VaultTemplateMaster()
+                </div>
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancelAssignRoute">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            @*<input type="button" class="btn btn-primary" id="btnTestItemTemplate" onclick="si.TestPopupCall();" value="Test">*@
+            @if (Model.id > 0)
+            {
+                <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+
+            callFormValidator("frmItemTemplate");
+
+            $('#id').val('@Model.id');
+
+
+
+    });
+
+
+</script>

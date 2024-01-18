@@ -1,0 +1,80 @@
+﻿@model List<Models.ATAcceptanceAttachments>
+
+@if (Model != null && Model.Count > 0)
+{
+    <div class="form-group">
+        <div class="col-sm-11 UploadAction"></div>
+        <div class="col-sm-1 icon-Download cptr" onclick="downloadEntityDocuments();" id="divDownloadDocuments" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_048" style="float:right;"></div>
+    </div>
+    <div class="form-group" id="divATAttachment">
+        <ul class="mainlyr" id="ulDocumentUpload">
+
+            @foreach (var item in Model)
+                {
+                <li id="liDocumentUpload">
+                    <div class="col-md-11 mainlyrpadset">
+                        <input id="hdEntityType" type="hidden" value="@item.EntityType" />
+                        <span class="fileName" data-entity-id="@item.EntitySystemId" data-system-id="@item.Id" data-image-location="@item.FileLocation" data-image-name="@item.FileName"></span>
+                        @*<input id="chk_nLyr_@item.Id" data-entity-id="@item.EntitySystemId" data-system-id="@item.Id" data-image-location="@item.FileLocation" data-image-name="@item.FileName" type="checkbox" />*@
+                        <b style="float: left; width: 12%;margin-top: 2px;"><label for="chk_nLyr_@item.Id" class="checkbox-custom-label"></label></b>
+                        <div style="float: left; width:88%;margin-left: 15px;"><span>@item.FileName</span><br /><span>@Resources.Resources.SI_OSP_GBL_GBL_GBL_031: @item.UploadedBy</span>,<span>@Resources.Resources.SI_OSP_GBL_NET_FRM_343: <span>@item.file_size</span></span></div>
+                    </div>
+                    <div class="col-sm-1 icon-Close cptr" onclick="deleteEntityDocuments(@item.Id);" id="divDeleteDocuments" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_050" style="float:left;margin-top: 10px;color:red;"></div>
+                    <div style="width: 95%;height: 1px;background-color: grey;margin-top: 40px;margin-left: 30px;"></div>
+                    <div class="clearfix"></div>
+                </li>
+            }
+        </ul>
+    </div>
+
+}
+else
+{
+
+}
+
+<script>
+    $(document).ready(function () {
+        $('.UploadAction [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+        $('#divDocument [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+    });
+
+    function deleteEntityDocuments(systemID) {
+
+        var ListSystemIds = [];
+        //$.each($("#ulDocumentUpload  input[type='checkbox']"), function (indx, itm) {
+        //    if ($(this).is(':checked')) {
+        //        ListSystemIds.push($(this).data().systemId)
+        //    }
+        //});
+
+        ListSystemIds.push(systemID)
+        if (ListSystemIds.length > 0) {
+            var func = function () {
+                ajaxReq('Main/DeleteATAttachmentFiles', { ListSystem_Id: ListSystemIds }, true, function (j) {
+                    alert(j.message, 'success', 'success');
+                    getAttachmentFiles();
+                }, true, true)
+            };
+            showConfirm( MultilingualKey.SI_OSP_GBL_JQ_FRM_004, func);//Are you sure you want to delete this file?
+        } else {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_005, 'warning');//Please select any file!
+        }
+    }
+
+
+
+    function downloadEntityDocuments() {
+         
+        var listPathName = [];
+        var _entity_type = $('#hdEntityType').val();
+        $.each($("#ulDocumentUpload  .fileName"), function (indx, itm) {
+            listPathName.push({ name: $(this).data().imageName, location: $(this).data().imageLocation });
+        });
+        if (listPathName.length > 0) {
+            window.location = appRoot + 'Main/DownloadFiles?json=' + JSON.stringify(listPathName) + '&entity_type=' + _entity_type + '';
+        }
+
+    }
+
+</script>

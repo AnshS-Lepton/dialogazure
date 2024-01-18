@@ -1,0 +1,58 @@
+﻿@model Models.ViewOSPCPFModel
+@using Utility;
+ 
+@Scripts.Render("~/bundles/endToEndSchematic/Scripts")
+ 
+<!DOCTYPE html>
+<div class="libDetail">
+     
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content"> 
+                    @if (Model.lstFiberLinkDetails != null)
+                    {
+
+                            <div id="dvViewAssociatedLinkInfo" style="padding: 10px;" class="tab-pane active">
+                                
+                                    <fieldset class="the-fieldset">
+                                        <div id="entityInfo" class="tabcontent" style="display: block;">
+                                            <div style="overflow: auto; width: auto; height: auto;">
+                                                <table id="tblEntityInfo" border="0" cellspacing="0" cellpadding="5" class="grid" style="width:100%; height:130px">
+                                                   @foreach (var item in Model.lstFiberLinkDetails)
+                                                   {
+                                                     <tr>
+                                                        <td><label class="control-label">@item.Key</label></td>
+                                                        <td><label class="control-label">@item.Value</label></td>
+                                                    </tr>
+                                                   }
+                                                </table> 
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+
+
+
+                    }
+                    else
+                    {
+                    <div style="text-align: center; margin-top: 30px;max-height: 240px;margin-top: 15px;min-height: 267px;padding-top: 100px;font-size: 14px;visibility:@(Model.lstFiberLinkDetails == null ? "visible;" : "hidden;")" id="divNoRecordExist">No Link Found!</div>
+                    }
+
+            </div>
+        </div>
+        <div class="clearfix"></div>
+   
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        splicing.initApp();
+        $('.chosen-select').chosen({ width: '100%', disable_search_threshold: '5' }); 
+    }); 
+</script>
+
+
+
+
+

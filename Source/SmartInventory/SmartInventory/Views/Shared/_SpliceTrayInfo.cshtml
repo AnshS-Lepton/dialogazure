@@ -1,0 +1,56 @@
+﻿@model List<Models.SpliceTrayInfo>
+@using SmartInventory.Settings;
+
+<!DOCTYPE html>
+<div class="form-group">
+    @Html.Hidden("lstSpliceTrayInfo.TrayCount", @Model.Count)
+    <div class="d-flex mb-15">
+        <div id="divAllowdPort" class="fw-bold"></div>
+        <span class="trayRowAdd ml-auto" id="btnTrayRowAdd" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_042">
+        </span>
+    </div>
+    <table id="tblSpliceTrayLstInfo" class="grid" cellpadding="0" cellspacing="0">
+
+        <thead>
+            <tr>
+                <th>@Resources.Resources.SI_OSP_GBL_NET_FRM_059</th>
+                <th>@Resources.Resources.SI_OSP_ADB_NET_GBL_001</th>
+
+                <th>@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+            </tr>
+        </thead>
+        <tbody id="tbodySpliceTray">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Html.TextBox("lstSpliceTrayInfo[" + i + "].network_name", @Model[i].network_name, new { id = "lstSpliceTrayInfo_" + i + "_network_name", @class = "shaftName form-control", @maxlength = "30" })
+                    </td>
+                    <td>
+                        @Html.TextBox("lstSpliceTrayInfo[" + i + "].no_of_ports", @Model[i].no_of_ports, new { id = "lstSpliceTrayInfo_" + i + "_no_of_ports", @class = "noofport shaftName form-control", @maxlength = "3", @onkeypress = "return si.allowOnlyNumber(event);", @onkeyup = "return st.validateSplicetray(this);" })
+                    </td>
+                    <td>
+                        @Html.Hidden("lstSpliceTrayInfo[" + i + "].sequence_id", @Model[i].sequence_id)
+                        @Html.Hidden("lstSpliceTrayInfo[" + i + "].tray_number", @Model[i].tray_number)
+                        @Html.Hidden("lstSpliceTrayInfo[" + i + "].system_id", @Model[i].system_id)
+                        @*@Html.Hidden("lstSpliceTrayInfo[" + i + "].parent_system_id", @Model[i].parent_system_id)
+                            @Html.Hidden("lstSpliceTrayInfo[" + i + "].network_id", @Model[i].network_id)
+                            @Html.Hidden("lstSpliceTrayInfo[" + i + "].parent_entity_type", @Model[i].parent_entity_type)
+                            @Html.Hidden("lstSpliceTrayInfo[" + i + "].parent_network_id", @Model[i].parent_network_id)
+                            @Html.Hidden("lstSpliceTrayInfo[" + i + "].network_name", @Model[i].network_name)
+                            @Html.Hidden("lstSpliceTrayInfo[" + i + "].created_by", @Model[i].created_by)
+                            @Html.Hidden("lstSpliceTrayInfo[" + i + "].created_on", @Model[i].created_on)*@
+                        <span class="trayRowDelete" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002">x</span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        var ports = $('#no_of_port').val();
+        $('#divAllowdPort').html(MultilingualKey.SI_OSP_GBL_GBL_FRM_140 + ': ' + ports);
+
+    });
+</script>

@@ -1,0 +1,19 @@
+﻿@using Models;
+
+<div id="logo">
+   @SmartInventory.Settings.ApplicationSettings.ApplicationName
+</div>
+<div class="account">
+    <div class="userSection">
+        <div class="userSpecific">
+            @{
+                User objuser = new User();
+                objuser = (User)Session["userDetail"];
+                var user_name = objuser.user_name;
+                var user_email = objuser.user_email;
+                var imgProfile = objuser.user_img == "" ? "big.png" : objuser.user_img;
+                <span class="nameUser">@user_name</span>
+            }
+        </div>
+    </div>
+</div>

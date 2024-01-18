@@ -1,0 +1,408 @@
+﻿@model Models.EquipmentInfo
+@using Models;
+@using SmartInventory.Settings;
+@{
+    int equipmentKey = 1;
+    int trayKey = 6;
+    bool isNew = Model.objPM.isNewEntity;
+}
+
+@helper ItemSpecification()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
+}
+@helper ProjectSpecifications()
+{
+    { Html.RenderPartial("~/Views/Library/_ProjectSpecification.cshtml", (IProjectSpecification)Model); }
+}
+@helper Reference()
+{
+    { Html.RenderPartial("~/Views/Library/_Reference.cshtml", (IReference)Model); }
+}
+@helper GeographicDetails()
+{
+    { Html.RenderPartial("~/Views/Library/_GeographicDetails.cshtml", (IGeographicDetails)Model); }
+}
+@helper AdditionalFields()
+{
+    { Html.RenderPartial("~/Views/Library/_AdditionalFields.cshtml", (IAdditionalFields)Model); }
+}
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Equipment.ToString().ToUpper()).FirstOrDefault() : null;
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Equipment.ToString());
+}
+
+<!DOCTYPE html>
+<div class="libDetail">
+    @using (Ajax.BeginForm("SaveEquipment", "ISP", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        LoadingElementId = "dvProgress",
+        UpdateTargetId = "dvModalBody",
+        OnSuccess = "setNewId",
+        OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.Equipment.ToString() + "') && validatePortCount('" + Model.no_of_port + "','" + Model.model_id + "');"
+
+    },
+                                                                    new { id = "frmAddEquipment", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        @Html.HiddenFor(m => m.latitude)
+        @Html.HiddenFor(m => m.longitude)
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.system_id)
+
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.parent_network_id)
+        @Html.HiddenFor(m => m.structure_id)
+        @Html.HiddenFor(m => m.network_id)
+        @Html.HiddenFor(m => m.pos_x)
+        @Html.HiddenFor(m => m.pos_y)
+        @Html.HiddenFor(m => m.pos_z)
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+
+        @Html.HiddenFor(m => m.model_id)
+        @Html.HiddenFor(m => m.model_type_id)
+        @Html.HiddenFor(m => m.model_image_id)
+        @Html.HiddenFor(m => m.model_info_id)
+        @Html.HiddenFor(m => m.type)
+        @Html.HiddenFor(m => m.brand)
+        @Html.HiddenFor(m => m.model)
+        @Html.HiddenFor(m => m.construction)
+        @Html.HiddenFor(m => m.activation)
+        @Html.HiddenFor(m => m.accessibility)
+        @Html.HiddenFor(m => m.model_view_id)
+        @Html.HiddenFor(m => m.sequence_id)
+        @Html.HiddenFor(m => m.unit)
+        @Html.HiddenFor(m => m.rack_id)
+        @Html.HiddenFor(m => m.fms_network_id)
+        @Html.HiddenFor(m => m.entityType, new { id = "hdnEntityType" })
+        <input type="hidden" name="networkIdType" value="@Model.networkIdType" />
+        <div class="libTabs">
+            <div class="scrollmenu">
+                <ul class="nav nav-tabs tabs-left">
+                    <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_005</a></li>
+                    @if (Model.item_template_id != 0 || Model.vendor_id != 0 || Model.model_id == equipmentKey)
+                    {
+                        <li><a href="#ItemSpecf" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_006</a></li>
+                    }
+                    @if (Model.model_id == equipmentKey)
+                    {
+                        <li><a href="#modelChildren" data-toggle="tab">@Resources.Resources.SI_GBL_GBL_NET_FRM_071</a></li>
+                    }
+                    @if (Model.system_id > 0 && layerDetail != null)
+                    {
+                        <li><a href="#Reference" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">
+                            @if (Model.model_id == trayKey)
+                            {
+                                <text> @Resources.Resources.SI_GBL_GBL_NET_FRM_072 </text>
+                            }
+                            else
+                            {
+                                @layerDetail.layer_title <text>@Resources.Resources.SI_ISP_GBL_GBL_GBL_007 </text>
+
+                            }
+                        </legend>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRackCode">
+                                @Resources.Resources.SI_ISP_GBL_GBL_GBL_008
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }
+                                :
+                            </label>
+                            <div class="col-sm-10">
+                                <div id="txtMaskedNetworkId"></div>
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRackName">
+
+                                @if (Model.model_id == trayKey)
+                                {
+                                    <text> @Resources.Resources.SI_GBL_GBL_NET_FRM_073
+                                    @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                    {
+                                        <i class="clsMandatory">*</i>
+                                    }:
+                                    </text>
+                                }
+                                else
+                                {
+                                    <text>@Resources.Resources.SI_OSP_GBL_NET_FRM_059
+                                    @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                    {
+                                        <i class="clsMandatory">*</i>
+                                    }:
+                                    </text>
+
+                                }
+
+                            </label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.model_name,
+                          SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(
+                                  new
+                                  {
+                                      @class = "form-control ",
+                                      @id = "txtRackName",
+                                      @maxlength = "50"
+                                  }, (Model.networkIdType == "M" ? new { @required = true } : null)))
+                                @*@Html.TextBoxFor(m => m.model_name, new { @class = "form-control", @id = "txtRackName", @maxlength = "50" })*@
+                            </div>
+                        </div>
+                        <div class="form-group row">
+
+                            <label class="control-label col-sm-2" for="txtVendor">@Resources.Resources.SI_GBL_GBL_NET_FRM_074<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(m => m.width, new { @class = "form-control clsReadOnly", @readonly = true })
+                            </div>
+                            <label class="control-label col-sm-2" style="white-space:nowrap" for="txtRegionName">@Resources.Resources.SI_GBL_GBL_NET_FRM_075<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(m => m.length, new { @class = "form-control clsReadOnly", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="form-group row" hidden>
+
+                            <label class="control-label col-sm-2" for="txtVendor">@Resources.Resources.SI_GBL_GBL_NET_FRM_076<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(m => m.height, new { @class = "form-control clsReadOnly", @readonly = true })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtRegionName">@Resources.Resources.SI_GBL_GBL_NET_FRM_077:</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(m => m.border_width, new { @class = "form-control clsReadOnly", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRegionName">@Resources.Resources.SI_ISP_GBL_NET_FRM_071<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(m => m.unit_size, new { @class = "form-control", @id = "txtEquipmentUnit", @readonly = true })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtRegionName">@Resources.Resources.SI_ISP_GBL_GBL_GBL_017<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
+                            </div>
+                        </div>
+                        <div>
+                            @AdditionalFields()
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006</label>
+                            <div class="col-sm-10">
+                                @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate ", @maxlength = "100" })
+                            </div>
+                        </div>
+
+
+
+                    </fieldset>                    
+                    @if (Model.lstUserModule.Contains("PROJ"))
+                    {
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_ISP_GBL_GBL_GBL_016</legend>
+                            @ProjectSpecifications()
+                        </fieldset>
+                    }
+                    <div>@GeographicDetails()</div>
+                </div>
+                @if (Model.item_template_id != 0 || Model.vendor_id != 0 || Model.model_id == equipmentKey)
+                {
+                    <div class="tab-pane" id="ItemSpecf">
+                        @ItemSpecification()
+
+                    </div>
+                }
+                @if (Model.model_id == equipmentKey)
+                {
+                    <div class="tab-pane" id="modelChildren">
+                        @if (Model.system_id > 0)
+                        {
+
+                            <fieldset class="the-fieldset">
+                                <legend class="the-legend">
+                                    @if (Model.model_id == trayKey)
+                                    {
+                                        < text > @Resources.Resources.SI_GBL_GBL_NET_FRM_072 </ text >
+                                    }
+                                    else
+                                    {
+                                        @layerDetail.layer_title<text> @Resources.Resources.SI_GBL_GBL_NET_FRM_114</text>
+
+                                    }
+                                </legend>
+                                <div style="max-height:200px;overflow:auto">
+                                    @if (Model.lstEquipmentInfo != null)
+                                    {
+                                        Model.lstEquipmentInfo = Model.lstEquipmentInfo.Where(m => m.system_id != Model.system_id).ToList();
+                                        for (int i = 0; i < Model.lstEquipmentInfo.Count(); i++)
+                                        {
+                                            //if (Model.lstEquipmentInfo[i].system_id != Model.system_id)
+                                            //{
+                                            <div class="form-group">
+                                                <label class="control-label col-md-6">@Model.lstEquipmentInfo[i].short_network_id</label>
+                                                <div class="col-md-5">
+                                                    @*<input type="text" class = "form-control clsReadOnly" />*@
+                                                    @Html.TextBoxFor(x => x.lstEquipmentInfo[i].model_name, new { @class = "form-control", @maxlength = "80" })
+                                                    @Html.HiddenFor(x => x.lstEquipmentInfo[i].system_id)
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <a href="#" onclick="roomManager.showOnRack(@Model.lstEquipmentInfo[i].system_id);$(popup.DE.MinimizeModel).trigger("click");" class="dropdown-toggle" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_078">
+                                                        <i class="fa fa-globe fa-fw m-r-xs"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            //}
+                                        }
+                                    }
+                                </div>
+                            </fieldset>
+                        }
+                        else
+                        {
+                            <div>@Resources.Resources.SI_GBL_GBL_NET_FRM_079</div>
+                        }
+                    </div>
+                }
+                <div class="tab-pane" id="Reference">
+                    @Reference()
+                </div>
+            </div>
+        </div>
+
+        <div class="ModalFooter" id="dvBtnAction">
+            @if (Model.system_id > 0)
+            {
+                <div class="d-flex ModelFooterInfo">
+                    <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_014:</label>
+                    <label class="model-label-info">@(Model.network_status != null ? Utility.MiscHelper.GetNetworkStatus(Model.network_status.ToUpper()) : string.Empty)</label>
+                    <label for="txtLongitude">@Resources.Resources.SI_ISP_GBL_GBL_GBL_004:</label>
+                    <label class="model-label-info" title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
+                </div>
+            }
+        <div class="ml-auto">
+            <a href="javascript:void(0);" class="btn btn-warning mr-01" data-dismiss="modal" id="btnCancelAssignRoute">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            @if (Model.system_id > 0)
+            {
+                <button type="button" onclick="formPost();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnUpdateItemTemplate" disabled="disabled">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="button" onclick="formPost();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnSaveItemTemplate" disabled="disabled">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+
+        </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    var inputs = [];
+    $(document).ready(function () {
+        callFormValidator("frmAddEquipment");
+        $('.chosen-select').chosen({ width: '100%' });
+        //APPLY INPUT MASK ON NETWORK ID..
+        getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
+
+        $("#frmAddEquipment").on("submit", function () {
+
+            //$("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
+            upperCaseNetWorkId();
+
+            if (!entityReferencevalidation())
+                return false;
+        });
+        $('#system_id').val('@Model.system_id');
+        //-------start----Based on userInput Enable/Disable update button------//
+        EnableDisableUpdateButton("frmAddEquipment", '@Model.system_id' > 0 ? "btnUpdateItemTemplate" : "btnSaveItemTemplate");
+
+        //-----------End---------------//
+        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+
+        initSpecification();
+    });
+
+    $("input.numbers-only").on("paste", function () {
+        var thisvalue = this;
+
+        setTimeout(function () {
+            var OnlyNumber = new RegExp(/^[0-9]{1,10}$/);
+
+            if (!OnlyNumber.test(thisvalue.value)) {
+                thisvalue.value = "";
+            }
+        }, 0);
+    });
+    function formPost() {
+        if ($('#txtbomsubcategory').val() == '') {
+            $('#txtbomsubcategory').next().addClass('input-validation-error');
+            return false;
+        }
+
+        else {
+            $("#frmAddEquipment").submit();
+        }
+    }
+    function setNewId() {
+         
+        let id = '@Model.system_id';
+        let name = '@Model.model_name';
+        let model_id = '@Model.model_id';
+        let isNew = '@isNew';
+        roomManager.setNewId(id, name);
+        $('#ModalPopUp').modal('hide');
+        let modelName = 'Equipment';
+        let action = isNew.toLowerCase() == 'true' ? MultilingualKey.SI_GBL_GBL_JQ_FRM_030 : MultilingualKey.SI_GBL_GBL_JQ_FRM_031;
+        if (model_id == '@trayKey') {
+            modelName = 'Tray';
+        }
+        alert(modelName + " " + action +" "+ MultilingualKey.SI_GBL_GBL_JQ_FRM_032, 'success', 'success');
+    }
+
+    function initSpecification() {
+        $('.chosen-select').chosen({ width: '100%' });
+        $('#specification')
+        .chosen().change(function (event) {
+            var dID = $(this).val();
+            bindVendor(dID);
+        });
+        $('#ddlVendor')
+            .chosen().change(function (event) {
+                var specfi = $("#specification option:selected").val(); //
+                var vandorid = $(this).val();
+                var entitytype = $('#entityType').val();
+                bindCateSubcat(entitytype, specfi, vandorid);
+            });
+        $('#ddlType').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindBrand(dID);
+        });
+        $('#ddlBrand').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindModel(dID);
+        });
+    }
+    function validatePortCount(portCount, type) {
+         
+        let check = true;
+        @*if (type == '@equipmentKey') {
+            check = $('#no_of_port').val() == portCount;
+            if (!check) {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_099, "Warning");
+            }
+        }*@
+        return check;
+    }
+</script>

@@ -1,0 +1,181 @@
+﻿<script>
+    $(document).ready(function () {
+        $("#dropDiv").click(function () {
+            $(".svgDiv").slideToggle();
+        });
+    });
+</script>
+
+
+<div class="row margin-all-0 grid-color-box">
+    <div class="col-md-2 equipadd">
+        <div class="GridColorBox">
+            <h4> Grid Color</h4>
+            <label class="GridColor"><input type="radio" name="GridCheckColor" checked value="Green"><span class="Gridcheck Green"></span></label>
+            <label class="GridColor"><input type="radio" name="GridCheckColor" value="Createpink"><span class="Gridcheck pink"></span></label>
+            <label class="GridColor"><input type="radio" name="GridCheckColor" value="CreateBlue"><span class="Gridcheck Blue"></span></label>
+            <label class="GridColor"><input type="radio" name="GridCheckColor" value="CreateOrange"><span class="Gridcheck Orange"></span></label>
+            <label class="GridColor"><input type="radio" name="GridCheckColor" value="CreateRed"><span class="Gridcheck Red"></span></label>
+            <label class="GridColor"><input type="radio" name="GridCheckColor" value="CreateGray"><span class="Gridcheck Gray"></span></label>
+        </div>
+
+        <div class="dimensions_panel">
+            <h4>Dimensions</h4>
+            <div class="row">
+                <div class="col-md-4"><label>Length</label><input class="form-control" data-val="true" id="modelLength" name="Length" placeholder="1M" type="text" value=""></div>
+                <div class="col-md-4"><label>Width</label><input class="form-control" data-val="true" id="modelWidth" name="Width" placeholder="1M" type="text" value=""></div>
+                <div class="col-md-4"><label>Depth</label><input class="form-control" data-val="true" id="modelDepth" name="Depth" placeholder="1M" type="text" value=""></div>
+            </div>
+
+        </div>
+
+        <div class="RadioDivCreate">
+
+            <h4>Library <i class="fa fa-upload pull-right" aria-hidden="true"></i></h4>
+            <div class="LibCalls">
+                <div class="RadioFunction">
+                    <div class="radio">
+                        <label class="Custombtn chk"><input type="radio" name="optradio" value="true"><span class="Custombtncheck bdrRound"></span>Equipments</label>
+                    </div>
+                </div>
+
+                <div class="RadioFunction">
+                    <div class="radio">
+                        <label class="Custombtn chk"><input type="radio" name="optradio" value="true"><span class="Custombtncheck bdrRound"></span>Chassis</label>
+                    </div>
+                </div>
+
+                <div class="RadioFunction">
+                    <div class="radio">
+                        <label class="Custombtn chk"><input type="radio" name="optradio" value="true"><span class="Custombtncheck bdrRound"></span>Slots</label>
+                    </div>
+                </div>
+
+                <div class="RadioFunction">
+                    <div class="radio">
+                        <label class="Custombtn chk"><input type="radio" name="optradio" value="true"><span class="Custombtncheck bdrRound"></span>Cards</label>
+                    </div>
+                </div>
+
+                <div class="RadioFunction">
+                    <div class="radio">
+                        <label class="Custombtn chk"><input type="radio" name="optradio" value="true"><span class="Custombtncheck bdrRound"></span>Ports</label>
+                    </div>
+                </div>
+
+                <div class="RadioFunction">
+                    <div class="radio">
+                        <label class="Custombtn chk"><input type="radio" name="optradio" value="true"><span class="Custombtncheck bdrRound"></span>Racks</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <select class="form-control DivSelect" id="dropDiv" name="Div Select">
+            <option>Line</option>
+        </select>
+
+        <div class="svgDiv">
+            <div class="fa fa-search searchIcon" data-original-title="" title=""></div>
+            <input type="text" class="form-control searchBox endtoruds" placeholder="Search Model" id="SearchModel" autocomplete="off" maxlength="30" data-original-title="" title="">
+            <div class="svgscroll">
+                @*<div class="row">
+                        <div class="col-free" style="margin-right:7px;"><i class="fa fa-user-circle-o" id=""></i></div>
+                        <div class="col-free"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-free" style="margin-right:7px;"></div>
+                        <div class="col-free"></div>
+                    </div>*@
+                <svg id="library" style="width:100%;border:solid 1px red;overflow:hidden;">
+
+                  
+                </svg>
+            </div>
+        </div>
+
+        <div class="SpecifyNo">
+            <h4>Specify No.</h4>
+            <div class="row">
+                <div class="col-md-4"><img src="~/Areas/Admin/Content/images/col.svg" /><input class="form-control" data-val="true" id="" name="Length" placeholder="9" type="text" value=""></div>
+                <div class="col-md-4"><img src="~/Areas/Admin/Content/images/row.svg" /><input class="form-control" data-val="true" id="" name="Width" placeholder="9" type="text" value=""></div>
+                <div class="col-md-4"><label>No.</label><input class="form-control" data-val="true" id="" name="Depth" placeholder="81" type="text" value=""></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-10">
+        <div class="table-responsive tble_over_hide header_CreateEquip">
+            <div class="row">
+                <div class="col-md-2"><span>Model Workspace<br /> <b>SCALE:1M(Grid Module)=10cm</b> </span></div>
+                <div class="col-md-3">
+                    <label>Model</label>
+                    <i class="icon-lock lock" aria-hidden="true"></i>
+                    <select class="chosen-select form-control valid" id="selectModel" name="" tabindex="2" title="SearchModel">
+                        <option selected="selected" value="">specify Model</option>
+                        <option value="1">Chassis</option>
+                        <option value="2">Slot</option>
+                        <option value="3">Card</option>
+                        <option value="4">Port</option>
+                        <option value="5">Equipment</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Type</label>
+                    <select class="chosen-select form-control valid" id="selectModelType" name="" tabindex="2" title="SearchType">
+                        <option selected="selected" value="true">specify Type</option>
+                    </select>
+                </div>
+                <div class="col-md-2 lineHT FocusRed">
+                <input type="button" id="createModel" value="Create" class="btn btn-primary">
+                 <input type="button" id="resetWorkspace" value="Reset" class="btn btn-gray">
+                </div>
+                <div class="col-md-2"><input type="button" class="btn btn-primary float-right" name="btnaction" id="" value="Save Model"></div>
+            </div>
+
+        </div>
+
+        <div id="workAreaContext" class="table-responsive EquipTableCreate" data-color="Green">
+            <svg id="workspace" style="width:100%;height:100%;border:solid 1px red;"></svg>
+        </div>
+        <div class="FooterAddDiv">
+            <span>Workspace 1</span>
+
+            <i class="fa fa-plus-circle "></i>
+        </div>
+    </div>
+</div>
+
+
+
+@section equipmentScript
+{
+<script type="text/javascript">
+    $(function ($, window, document, d3) {
+        let configs = {
+            svgWorkArea: '#workspace',
+            svgLibArea: '#library',
+            model: '.model-entity',
+            libAddButton: '.rect-model',
+            modelClass: 'model-entity',
+            libAddButtonClass: 'rect-model',
+            libContext: '.svgDiv',
+            modelId: 'data-model-id',
+            libraryId: 'data-img-id',
+            workAreaContext: '#workAreaContext',
+            gridColorOptions: "input[name='GridCheckColor']",
+            defaultColor: 'Green',
+            createModel: '#createModel',
+            resetWorkspace: '#resetWorkspace',
+            selectModel: '#selectModel',
+            selectModelType: '#selectModelType'
+        };
+        equipmentBuilder.init(configs);
+
+    }($, window, document, d3));
+
+</script>
+    }

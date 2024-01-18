@@ -1,0 +1,352 @@
+﻿@model Models.PODMaster
+@using Models;
+@using SmartInventory.Settings;
+
+@helper PODTemplateMaster()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_PODTemplateMaster.cshtml", (PODTemplateMaster)Model); }
+}
+
+@helper OwnershipInfo()
+{
+    { Html.RenderPartial("~/Views/Library/_OwnershipInfo.cshtml", (IOwnershipInfo)Model); }
+}
+@helper AcquireFrom()
+{
+    { Html.RenderPartial("~/Views/Library/_AcquireFrom.cshtml", (IAcquireFrom)Model); }
+}
+@helper CustomCoordinate()
+{
+    { Html.RenderPartial("~/Views/Library/_CustomCoordinate.cshtml", (ICustomCoordinate)Model); }
+}
+@helper ProjectSpecifications()
+{
+    { Html.RenderPartial("~/Views/Library/_ProjectSpecification.cshtml", (IProjectSpecification)Model); }
+}
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+
+}
+<!--Reigon Additional Attribute to show the partial view-->
+@helper AdditionalAttributes()
+{
+    { Html.RenderPartial("~/Views/Shared/_AdditionalAttributesForm.cshtml", Model.objDynamicControls); }
+}
+<!--End Reigon Additional Attribute-->
+@helper Reference()
+{
+    { Html.RenderPartial("~/Views/Library/_Reference.cshtml", (IReference)Model); }
+}
+@helper GeographicDetails()
+{
+    { Html.RenderPartial("~/Views/Library/_GeographicDetails.cshtml", (IGeographicDetails)Model); }
+}
+@helper AdditionalFields()
+{
+    { Html.RenderPartial("~/Views/Library/_AdditionalFields.cshtml", (IAdditionalFields)Model); }
+}
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.POD.ToString());
+}
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SavePOD", "ISP", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        LoadingElementId = "dvProgress",
+        UpdateTargetId = "dvModalBody",
+        OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.POD.ToString() + "');"
+
+    },
+                new { id = "frmAddPOD", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.parent_network_id)
+        @Html.HiddenFor(m => m.networkIdType)
+        @Html.HiddenFor(m => m.network_id)
+        @Html.HiddenFor(m => m.objIspEntityMap.structure_id)
+        @Html.HiddenFor(m => m.objIspEntityMap.shaft_id)
+        @Html.HiddenFor(m => m.objIspEntityMap.floor_id)
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+        //Add the other_info as hidden field for additional attributes
+        @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="libTabs">
+            <div class="scrollmenu">
+                <div><span class="spanSide go-left" id="spnRightMenu" style="display:none;"><i class="fa fa-angle-left" aria-hidden="true"></i></span></div>
+                <div class="scrollerhide overflow-hidden">
+                    <ul class="nav nav-tabs tabs-left">
+
+                        <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_005</a></li>
+                        <li><a href="#ItemSpecf" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_006</a></li>
+                        @*@if (Model.system_id > 0)
+                            {
+                                <li><a href="#LoopMangment" id="lnk_LoopMangment" onclick="si.GetLoopMangmentDetail('@Model.latitude', '@Model.longitude', '@Model.system_id');" data-toggle="tab">Loop Mangement</a></li>
+                            }*@
+                        @if (layerDetail != null && layerDetail.is_reference_allowed)
+                        {
+                            <li><a href="#dvRefrence" onclick="isp.getEntityReference('@Model.system_id','@EntityType.POD.ToString()' ,'@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_018</a></li>
+                        }
+                        <li><a href="#divAdditionalAttributes" id="lnkAdditionalAttributes" data-is-loaded="0" onclick="getAdditionAttributes('@Model.system_id','@EntityType.POD.ToString()',this);" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
+                        <!--Reigon Additional Attribute to show the partial view-->
+                        <li><a href="#AdditionalAttributes" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
+                        <!--End Reigon Additional Attribute-->
+                        @if (Model.system_id > 0 && layerDetail != null)
+                        {
+                            <li><a href="#Reference" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                        }
+                    </ul>
+                </div>
+                <div id="divRightMenu" style="display:none;">
+                    <span class="spanSide go-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                    <span class="spanSide" id="dropdown" style="border-left: 1px solid #b9b7b7;     margin-left: -4px;"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                    <div class="arrowDropUp"></div>
+                    <div class="dropMenu">
+                        <div class="alltabs">@Resources.Resources.SI_OSP_CAB_NET_FRM_014</div>
+                        <ul>
+                            <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_005</a></li>
+                            <li><a href="#ItemSpecf" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_006</a></li>
+                            @*@if (Model.system_id > 0)
+                                {
+                                    <li><a href="#LoopMangment" id="lnk_LoopMangment" onclick="si.GetLoopMangmentDetail('@Model.latitude', '@Model.longitude', '@Model.system_id');" data-toggle="tab">Loop Mangement</a></li>
+                                }*@
+                            @if (layerDetail != null && layerDetail.is_reference_allowed)
+                            {
+                                <li><a href="#dvRefrence" onclick="isp.getEntityReference('@Model.system_id','@EntityType.POD.ToString()' ,'@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_018</a></li>
+                            }
+                            <li><a href="#divAdditionalAttributes" id="lnkAdditionalAttributes" data-is-loaded="0" onclick="getAdditionAttributes('@Model.system_id','@EntityType.POD.ToString()',this);" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
+                            <!--Reigon Additional Attribute to show the partial view-->
+                            <li><a href="#AdditionalAttributes" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
+                            <!--End Reigon Additional Attribute-->
+                            @if (Model.system_id > 0 && layerDetail != null)
+                            {
+                                <li><a href="#Reference" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SI_ISP_GBL_GBL_GBL_007</legend>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtPODCode">
+                                @Resources.Resources.SI_ISP_GBL_GBL_GBL_008
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }
+                                :
+                            </label>
+                            <div class="col-sm-4">
+                                <div id="txtMaskedNetworkId"></div>
+
+                            </div>
+                            <label class="control-label col-sm-2" for="txtPODName">
+                                @Resources.Resources.SI_ISP_GBL_GBL_GBL_009
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }:
+                            </label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.pod_name,
+                                  SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(
+                                    new
+                                    {
+                                        @class = "form-control ",
+                                        @maxlength = "50",
+                                        @id = "txtPODName"
+                                    }, (Model.networkIdType == "M" ? new { @required = true } : null)))
+                                @*@Html.TextBoxFor(m => m.pod_name, new { @class = "form-control", @id = "txtPODName", @maxlength = "50" })*@
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtLatitude">@Resources.Resources.SI_ISP_GBL_GBL_GBL_012<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @id = "txtLatitude", @readonly = true })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtLongitude">@Resources.Resources.SI_ISP_GBL_GBL_GBL_010<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @id = "txtLongitude", @readonly = true })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @CustomCoordinate()
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRegionName">@Resources.Resources.SI_ISP_GBL_GBL_GBL_017:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtPinCode">@Resources.Resources.SI_ISP_GBL_GBL_GBL_014:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.pincode, new { @class = "form-control numbers-only", @id = "txtPinCode", @onkeypress = "return allowOnlyNumber(event);", @maxlength = "6", @minlength = "6", autocomplete = "new-password" })
+                                @Html.ValidationMessageFor(m => m.pincode)
+                            </div>
+
+                        </div>
+
+                        <div>
+                            @AcquireFrom()
+                        </div>
+                        <div class="form-group">
+                            @OwnershipInfo()
+                        </div>
+                        <div>@AdditionalFields()</div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtAddress">@Resources.Resources.SI_ISP_GBL_GBL_GBL_015:</label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.address, new { @class = "form-control", @id = "txtAddress", @maxlength = "100" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                            <div class="col-sm-10">
+                                @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @id = "txtAddress", @maxlength = "1000" })
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_ISP_GBL_GBL_GBL_016</legend>
+                        @ProjectSpecifications()
+                    </fieldset>
+                    <div>
+                        @GeographicDetails()
+                    </div>
+                </div>
+                <div class="tab-pane" id="ItemSpecf">
+                    @PODTemplateMaster()
+                </div>
+                <div class="tab-pane" id="LoopMangment"></div>
+                <div id="dvRefrence" class="tab-pane"></div>
+                <div id="divAdditionalAttributes" class="tab-pane">
+                    <div id="dvAdditionProgress" style="display: none;">
+                        <div id="blur" class="progresblur">
+                            &nbsp;
+                        </div>
+                        <div id="progressbar" style="width: 247px; height: 152px; top: 25%;left: 33%;">
+                            <img alt="Loading..." src="@Url.Content("../content/images/loading.gif")" /><br />
+                            <label id="lblTotalRouted"></label>
+                        </div>
+                    </div>
+                </div>
+                <!--Reigon Additional Attribute to show the partial view-->
+                <div class="tab-pane" id="AdditionalAttributes">
+                    @AdditionalAttributes()
+                </div>
+                <!--End Reigon Additional Attribute-->
+                <div class="tab-pane" id="Reference">
+                    @Reference()
+                </div>
+            </div>
+        </div>
+
+        <div class="ModalFooter" id="dvBtnAction">
+            @if (Model.system_id > 0)
+            {
+                <div class="d-flex">
+                    <label>@Resources.Resources.SI_ISP_GBL_GBL_GBL_003:</label>
+                    <label class="model-label-info">@(Model.network_status != null ? Utility.MiscHelper.GetNetworkStatus(Model.network_status.ToUpper()) : string.Empty)</label>
+                    <label for="txtLongitude">@Resources.Resources.SI_ISP_GBL_GBL_GBL_004:</label>
+                    <label class="model-label-info" title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
+                </div>
+            }
+            <div class="ml-auto">
+                <a href="javascript:void(0);" class="btn btn-warning mr-01" data-dismiss="modal" id="btnCancelAssignRoute">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+
+                @if (Model.system_id > 0)
+                {
+                    <button type="button" onclick="formPost();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnUpdateItemTemplate" disabled="disabled">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                }
+                else
+                {
+                    <button type="button" onclick="formPost();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnSaveItemTemplate" disabled="disabled">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                }
+
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+                var inputs = [];
+                $(document).ready(function () {
+                    callFormValidator("frmAddPOD");
+                    $('.chosen-select').chosen({ width: '100%' });
+                    //APPLY INPUT MASK ON NETWORK ID..
+                    getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
+
+                    $("#frmAddPOD").on("submit", function () {
+
+                        //$("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
+                        upperCaseNetWorkId();
+                        //For AdditionalAttributes to set json and saving
+                        additionalAttributesUtility.SetJsonValue("#frmOtherInfo", "#hdnOtherInfo");
+                        //end region AdditionalAttributes
+                        if (!entityReferencevalidation())
+                            return false;
+                    });
+                    $('#system_id').val('@Model.system_id');
+                    //-------start----Based on userInput Enable/Disable update button------//
+                    EnableDisableUpdateButton("frmAddPOD", '@Model.system_id' > 0 ? "btnUpdateItemTemplate" : "btnSaveItemTemplate");
+
+                    //-----------End---------------//
+                    $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+                });
+
+                $("input.numbers-only").on("paste", function () {
+                    var thisvalue = this;
+
+                    setTimeout(function () {
+                        var OnlyNumber = new RegExp(/^[0-9]{1,10}$/);
+                         
+                        if (!OnlyNumber.test(thisvalue.value)) {
+                            thisvalue.value = "";
+                        }
+                    }, 0);
+                });
+    function formPost() {
+         
+        var selected_ownership = $("input[name='rdbOwnershipType']:checked").val();
+        var acquire_form = $("input[id='is_acquire_form']:checked").val();
+        if ((selected_ownership == 'Third Party' && $('#txt3rdPartyVendor').val() == "") || (acquire_form == "True" && $("#txtacquire_from").val() == "")) {
+            if (selected_ownership == 'Third Party' && $('#txt3rdPartyVendor').val() == "") {
+                $('#txt3rdPartyVendor').next().addClass('input-validation-error');
+                return false;
+            }
+
+
+            if (acquire_form == "True") {
+                if ($("#txtacquire_from").val() == "") {
+                    $('#txtacquire_from').css('border-color', 'red');;
+                    return false;
+                }
+                else {
+                    $('#txtacquire_from').css('border-color', '');
+                }
+
+            }
+        }
+        else if ($('#txtbomsubcategory').val() == '') {
+            $('#txtbomsubcategory').next().addClass('input-validation-error');
+            return false;
+        }
+        else {
+            $("#frmAddPOD").submit();
+        }
+    }
+</script>

@@ -1,0 +1,68 @@
+﻿@model FiberPath
+@using Models;
+<style>
+    .webgrid th, .webgrid td {
+        border: none;
+        padding: 5px;
+    }
+</style>
+
+<script>FiberCutTracing.init();</script>
+<input type="hidden" id="hdnEntityType" />
+<input type="hidden" id="hdnEntityId" />
+<input type="hidden" id="hdnNodeType" />
+<div class="libDetail">
+    <div class="libTabContent">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active">
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label col-md-6"><b>@Resources.Resources.SI_OSP_GBL_NET_GBL_165</b><i class="clsMandatory">*</i></label>
+                        <label class="control-label col-md-3"><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_050</b><i class="clsMandatory">*</i></label>
+                        <label class="control-label col-md-3"><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_051</b><i class="clsMandatory">*</i></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">@Html.TextBoxFor(m => m.equipment_id, new { @class = "form-control", id = "tracingEquipment", @maxlength = "150" })</div>
+                        <div class="col-md-3">
+                            <select id="ddlCore" @Html.NameFor(m => m.corePortNo) class="chosen-select form-control">
+                                <option value="0">-Select-</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 dvdisabled" id="dvNodeType">
+                            <select id="ddlNodeType" class="chosen-select form-control">
+                                <option>-Select-</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label col-md-6"><b>@Resources.Resources.SI_OSP_GBL_NET_FRM_041</b><i class="clsMandatory">*</i></label>
+                        <label class="control-label col-md-6"><b>@Resources.Resources.SI_OSP_GBL_NET_FRM_040</b><i class="clsMandatory">*</i></label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <select id="ddlStreamType" class="chosen-select form-control"><option>-Select-</option></select>
+                        </div>
+                        <div class="col-md-6">@Html.TextBoxFor(m => m.tracingDistance, new { @class = "form-control", @onkeypress = "return allowNumberwithOneDot(event,'tracingDistance');", @maxlength = "10" })</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group ModalFooter d-flex">
+        <button type="button" class="btn btn-default ml-auto" id="btnReset">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+        <button type="button" class="btn btn-success ml-10" id="btnShowTracingRoutes">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_007</button>
+    </div>
+    <div id="dvFuberCutDetails">
+        <div id="divNoRecordFound" class="nr-found filtersBg">
+            <span>@Resources.Resources.SI_OSP_GBL_GBL_FRM_052</span>
+        </div>
+    </div>
+</div>

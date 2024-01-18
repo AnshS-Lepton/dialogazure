@@ -1,0 +1,289 @@
+﻿@model Models.ISP.RoomInfo
+@using Models;
+@using SmartInventory.Settings;
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+
+}
+@helper Reference()
+{
+    { Html.RenderPartial("~/Views/Library/_Reference.cshtml", (IReference)Model); }
+}
+
+@using (Ajax.BeginForm("SaveRoom", "ISP", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "dvModalBody",
+    LoadingElementId = "dvProgress",
+    OnBegin = "return  ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.UNIT.ToString() + "');"
+},
+                                                                                                                        new { id = "frmAddRoom", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.system_id, new { id = "hdnUnitSystemId" })
+    @Html.HiddenFor(m => m.objIspEntityMap.structure_id)
+    @Html.HiddenFor(m => m.objIspEntityMap.floor_id, new { id = "hdnFloorId" })
+    @Html.HiddenFor(m => m.networkIdType)
+    @Html.HiddenFor(m => m.parent_system_id)
+    @Html.HiddenFor(m => m.parent_entity_type)
+    @Html.HiddenFor(m => m.network_id)
+    @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+    @Html.HiddenFor(m => m.door_position, new { id = "doorPosition" })
+    @pageMessage()
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.UNIT.ToString().ToUpper()).FirstOrDefault() : null;
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.UNIT.ToString());
+
+<!DOCTYPE html>
+    <div class="libTabs">
+        <div class="scrollmenu">
+            <div><span class="spanSide go-left" id="spnRightMenu" style="display:none;"><i class="fa fa-angle-left" aria-hidden="true"></i></span></div>
+            <div id="SpliceClosureScroll" class="scrollerhide overflow-hidden">
+                <ul class="nav nav-tabs tabs-left">
+                    <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 </a></li>
+                    @if (Model.system_id > 0 && layerDetail != null)
+                    {
+                        <li><a href="#Reference" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                    }
+                </ul>
+            </div>
+            <div id="divRightMenu" style="display:none;">
+                <span class="spanSide go-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                <span class="spanSide" id="dropdown" style="border-left: 1px solid #b9b7b7;margin-left: -4px;"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                <div class="arrowDropUp"></div>
+                <div class="dropMenu">
+                    <div class="alltabs">@Resources.Resources.SI_OSP_CAB_NET_FRM_014</div>
+                    <ul>
+                        <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 </a></li>
+                        @if (Model.system_id > 0 && layerDetail != null)
+                        {
+                            <li><a href="#Reference" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="roomInfo">
+                    <fieldset class="the-fieldset">
+                        @*<legend class="the-legend"></legend>*@
+
+                        <div class="form-group row">
+                            <div class="col-sm-2">
+                                <label class="control-label" for="txtSplitterCode">
+                                    @layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_NET_FRM_429
+                                    @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                    {
+                                        <i class="clsMandatory">*</i>
+                                    }:
+                                </label>
+                            </div>
+                            <div class="col-sm-4">
+                                <div id="txtMaskedNetworkId"></div>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <label class="control-label">
+                                    @Resources.Resources.SI_ISP_UNT_NET_FRM_002
+                                    @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                    {
+                                        <i class="clsMandatory">*</i>
+                                    }:
+                                </label>
+                            </div>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.room_name,
+             SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(
+               new
+               {
+                   @class = "form-control ",
+                   @maxlength = "30",
+                   @autocomplete = "off"
+               }, (Model.networkIdType == "M" ? new { @required = true } : null)))
+                                @*@Html.TextBoxFor(m => m.room_name, new { @class = "form-control", @maxlength = "30", @autocomplete = "off" })*@
+                                @Html.ValidationMessageFor(m => m.room_name)
+                            </div>
+                        </div>
+                        <div class="form-group row" style="display:none;">
+                            <div class="col-sm-2"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_003<i class="clsMandatory">*</i>:</label></div>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.room_type, new { @class = "form-control", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(m => m.room_type)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-2"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_004<i class="clsMandatory">*</i>:</label></div>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.room_width, new { @class = "form-control", @maxlength = "5", @autocomplete = "off", id = "txtRoomWidth", @onchange = "onChangeDoorWidth()" })
+                                @Html.ValidationMessageFor(m => m.room_width)
+                            </div>
+
+                            <div class="col-sm-2"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_005<i class="clsMandatory">*</i>:</label></div>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.room_height, new { @class = "form-control", @maxlength = "5", @autocomplete = "off", id = "txtRoomHeight" })
+                                @Html.ValidationMessageFor(m => m.room_height)
+                            </div>
+
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-2"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_006<i class="clsMandatory">*</i>:</label></div>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.room_length, new { @class = "form-control", @maxlength = "5", @autocomplete = "off", id = "txtRoomLength", @onchange = "onChangeDoorWidth()" })
+                                @Html.ValidationMessageFor(m => m.room_length)
+                            </div>
+                            <div class="col-sm-2"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_007<i class="clsMandatory">*</i>:</label></div>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.area, new { @class = "form-control clsReadOnly", @maxlength = "10", @autocomplete = "off", id = "txtArea", @readonly = true })
+                                @Html.ValidationMessageFor(m => m.area)
+                            </div>
+
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-2"><label class="control-label">@layerDetail.layer_title @Resources.Resources.SI_ISP_UNT_NET_FRM_003<i class="clsMandatory">*</i>:</label></div>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.unit_type, Model.lstUnitType.Select(m => new SelectListItem { Value = m.dropdown_value.ToString(), Text = m.dropdown_key, Selected = m.dropdown_status }).ToList(), new { @class = "chosen-select form-control" })
+                                @Html.ValidationMessageFor(m => m.unit_type)
+                            </div>
+                            <div class="col-sm-2"><label class="control-label">@string.Format(Resources.Resources.SI_ISP_UNT_NET_FRM_009, layerDetail.layer_title, layerDetail.layer_title):</label></div>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.unitno, new { @class = "form-control" })
+                                @*@Html.ValidationMessageFor(m => m.unitno)*@
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-sm-2"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_010<i class="clsMandatory">*</i>:</label></div>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.door_type, new List<SelectListItem> {
+                               new SelectListItem { Value = null, Text = "none"},
+                               new SelectListItem { Value = null, Text = "Flushed Door" },
+                               new SelectListItem { Value = null, Text = "Sliding Door" },
+                               new SelectListItem { Value = null, Text = "Roller Shutter Door" } }, new { @class = "chosen-select form-control" })
+                                @*<select class = "chosen-select form-control" id="door_type" name="door_type" >
+                                        <option>none</option>
+                                        <option value="Flushed Door">Flushed Door</option>
+                                        <option  value="Sliding Door">Sliding Door</option>
+                                        <option  value="Roller Shutter Door">Roller Shutter Door</option>
+                                    </select>*@
+                                @Html.ValidationMessageFor(m => m.door_type)
+                            </div>
+                            <label class="control-label col-sm-2">
+                                @Resources.Resources.SI_ISP_UNT_NET_FRM_011 :
+                            </label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.door_width, new { @class = "form-control", @placeholder = "max to 2 Mtr", @onchange = "onChangeDoorWidth()", @onkeyup = "return isDecimalLimit(this)" })
+                                @*@Html.ValidationMessageFor(m => m.unitno)*@
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006</label>
+                            <div class="col-sm-10">
+                                @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate ", @maxlength = "100" })
+
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-sm-2"><label class="control-label">@Resources.Resources.SI_ISP_UNT_NET_FRM_012<i class="clsMandatory">*</i>:</label></div>
+                            <div class="col-sm-4">
+                                @Html.Partial("_RoomDirection")
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="tab-pane" id="Reference">
+                    @Reference()
+                </div>
+            </div>
+        </div>
+        <div class="ModalFooter">
+            @if (Model.system_id > 0)
+            {
+                <div class="d-flex ModelFooterInfo">
+                    <label>@Resources.Resources.SI_ISP_GBL_GBL_GBL_003:</label>
+                    <label class="model-label-info">@(Model.network_status != null ? Utility.MiscHelper.GetNetworkStatus(Model.network_status.ToUpper()) : string.Empty)</label>
+                    <label for="txtLongitude">@Resources.Resources.SI_ISP_GBL_GBL_GBL_004:</label>
+                    <label class="model-label-info" title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
+                </div>
+            }
+            <div class="ml-auto">
+                <a href="javascript:void(0);" class="btn btn-warning" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                <input type="button" class="btn btn-primary @(editPermission == true ? "" : "dvdisabled")" value="@(Model.system_id == 0 ? Resources.Resources.GBL_GBL_GBL_GBL_GBL_004 : Resources.Resources.GBL_GBL_GBL_GBL_GBL_003)" onclick="isp.validateFloorDimension();" />
+            </div>
+        </div>
+        }
+    </div>
+}
+
+<script type="text/javascript" language=javascript>
+    var inputs = [];
+    $.validator.unobtrusive.parse(document);
+    //$("#txtRoomHeight,#txtRoomWidth,#txtRoomLength").on('keypress', function (event) {
+    //    isp.allowNumberOnly(event);
+    //})
+    $(document).ready(function () {
+        $("#txtRoomWidth,#txtRoomLength").blur(function () {
+            var roomWidth = $('#txtRoomWidth').val().replace(/ /g, "");
+            var roomLength = $('#txtRoomLength').val().replace(/ /g, "");
+            if (roomWidth == '' || roomLength == '') { $('#txtArea').val(''); return false; } else { var roomArea = (parseFloat(roomWidth) * parseFloat(roomLength)); $('#txtArea').val('').val(roomArea); }
+        });
+        //notAllowZero('#txtRoomWidth,#txtRoomLength,#txtRoomHeight,#txtArea');
+        //APPLY INPUT MASK ON NETWORK ID..
+        getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
+        $("#frmAddRoom").on("submit", function () {
+            $("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
+        });
+        $('.chosen-select').chosen({ width: '100%' });
+        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+        setDoorPosition();
+    });
+    function setDoorPosition() {
+        let position = $('#doorPosition').val();
+        if (position)
+        {
+            $('.doorPosition').removeClass('active');
+            let $doorPos = $('td[data-position="' + position + '"]');
+            $doorPos.addClass('active');
+        }
+    }
+    function onChangeDoorWidth() {
+        let $dWidth = $("#door_width");
+        let val = $dWidth.val();
+        let l = $("#txtRoomLength").val();
+        let w = $("#txtRoomWidth").val();
+        let res = val;
+        if (val > l)
+            val = l;
+        if (val > w)
+            val = w;
+        if (val > 2)
+            val = 2;
+        $dWidth.val(val);
+    }
+
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+    function isDecimalLimit(evt) {
+        if (evt.value == 2) {
+            return true;
+        }
+        var ex = /^[0|1]\.?\d{0,2}$/;
+        if (ex.test(evt.value)) {
+            if (evt.value.indexOf('.') == -1 && evt.value.length > 1)
+                evt.value = evt.value.substr(0, evt.value.length - 1);
+            return true;
+        }
+        evt.value = evt.value.substr(0, evt.value.length - 1);
+        return false;
+    }
+</script>

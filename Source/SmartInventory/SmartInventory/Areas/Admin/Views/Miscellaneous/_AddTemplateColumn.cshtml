@@ -1,0 +1,218 @@
+﻿@model Models.TemplateColumn
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="divAddNewTerminationPoint">
+    @using (Ajax.BeginForm("SaveTemplateColumn", "Miscellaneous",
+                                        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddNewTerminationPoint", OnSuccess = "OnSuccess", },
+                                        new { id = "frmAddTerminationPoint", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id);
+        @Html.HiddenFor(m => m.db_column_data_type, new { @id = "hdndatatype" });
+        @Html.HiddenFor(m => m.db_column_name, new { @id = "hdndbcolumnname" });
+        @Html.HiddenFor(m => m.column_sequence, new { @id = "hdnsequence" });
+        <div class="EUTSetting">
+            <div class="row form-group">
+                <div class="control-label col-md-5">Entity Name<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-7">
+                    @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstLayerDetails.Select(x => new { Value = x.layer_id, Text = x.layer_title }), "Value", "Text"), "--select--", new
+                    {
+                        @class = "chosen-select form-control errorClass",
+                        @id = "ddlLayerName",
+                   @onchange = "onMappedColumnName();"
+                    })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="control-label col-md-5">Db Column Name<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-7">
+
+                    @Html.DropDownListFor(m => m.db_column_name, new SelectList(Model.lstTemplateColumnDropdown.Select(x => new { Value = x.db_column_name, Text = x.db_column_name }), "Value", "Text"), "--select--", new
+                 {
+                     @class = "chosen-select form-control",
+                     @id = "ddl_db_column_name",
+                     @onchange = "bindheddenfild('#ddl_db_column_name');"
+                 })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="control-label col-md-5">Display Column Name<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-7">
+                    @Html.TextBoxFor(model => model.template_column_name, new { @class = "form-control", @maxlength = "100", @placeholder = "Enter Display Column Name", @id = "txt_template_column_name" })
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="control-label col-md-5">Example Value<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-7">
+                    @Html.TextBoxFor(model => model.example_value, new { @class = "form-control", @placeholder = "Enter Example Value", @id = "txt_example_value" })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="control-label col-md-5">Description<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-7">
+                    @Html.TextBoxFor(model => model.description, new { @class = "form-control", @maxlength = "150", @placeholder = "Enter Description", @id = "txt_description" })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="control-label col-md-5">Column Sequence<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-7">
+                    @Html.TextBoxFor(model => model.column_sequence, new { @class = "form-control", @placeholder = "Enter Column Sequence", @id = "txtSequence" })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="control-label col-md-5">Max Length<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-7">
+                    @Html.TextBoxFor(model => model.max_length, new { @Value = "100", @class = "form-control", @maxlength = "5", @placeholder = "Enter Max Length", @id = "txt_max_length", @onkeypress = "return allowNumberwithOneDot(event,this);" })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="control-label col-md-5">Is Dropdown Based:</div>
+                <div class="col-md-1">
+                    @Html.CheckBoxFor(m => m.is_dropdown, new { Style = "width:100% ;", @id = "chkis_dropdown" })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="control-label col-md-5">Is Null Allowed:</div>
+                <div class="col-md-1">
+                    @Html.CheckBoxFor(m => m.is_nullable, new { Style = "width:100% ;", @id = "chkis_nullable" })
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="control-label col-md-5">Is Excel Attribute:</div>
+                <div class="col-md-1">
+                    @Html.CheckBoxFor(m => m.is_excel_attribute, new { Style = "width:100% ;", @id = "chkis_excel_attribute" })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="control-label col-md-5">Is Kml Attribute:</div>
+                <div class="col-md-1">
+                    @Html.CheckBoxFor(m => m.is_kml_attribute, new { Style = "width:100% ;", @id = "chkis_kml_attribute" })
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="control-label col-md-5">Is Mandatory:</div>
+                <div class="col-md-1">
+                    @Html.CheckBoxFor(m => m.is_mandatory, new { Style = "width:100% ;", @id = "chkis_Mandatory", @disabled = "disabled" })
+                </div>
+            </div>
+        </div>
+        <div class="footerModal d-flex" id="dvBtnAction">
+            <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+            @if (Model.id > 0)
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveTP" value="Update" />
+            }
+            else
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveTP" value="Save" />
+            }
+
+
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+
+       if ('@Model.id' != 0) {
+            $('#ddlLayerName').next().addClass('.EUTSetting chosen-disabled');
+            $('#ddl_db_column_name').next().addClass('.EUTSetting chosen-disabled');
+        }
+
+
+
+    });
+    function IsValid() {
+         
+        if ($('#ddlLayerName').val() == "") {
+            $('#ddlLayerName').next().addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddlLayerName').next().removeClass("errorClass");
+        }
+        if ($('#ddl_db_column_name').val() == "") {
+            $('#ddl_db_column_name').next().addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#ddl_db_column_name').next().removeClass("errorClass");
+        }
+        if ($('#txt_template_column_name').val() == "") {
+            $('#txt_template_column_name').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txt_template_column_name').removeClass("errorClass");
+        }
+        if ($('#txt_example_value').val() == "") {
+            $('#txt_example_value').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txt_example_value').removeClass("errorClass");
+        }
+        if ($('#txt_description').val() == "") {
+            $('#txt_description').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txt_description').removeClass("errorClass");
+        }
+        if ($('#txtSequence').val() == "") {
+            $('#txtSequence').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txtSequence').removeClass("errorClass");
+        }
+        if ($('#txt_max_length').val() == "") {
+            $('#txt_max_length').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txt_max_length').removeClass("errorClass");
+        }
+
+    };
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+
+function OnSuccess(data) {
+         
+        if (data.status == "OK") {
+            $("#closeModalPopup").trigger("click");
+        }
+
+        alert(data.message, 'Success', 'success');
+        setTimeout(function () {
+            window.location = appRoot + 'Miscellaneous/ViewTemplateColumn';
+        }, 3000);
+
+}
+
+function bindheddenfild(ddlId) {
+    $('#hdndatatype').val($(ddlId + ' :selected').attr('data-type'));
+
+    $('#hdndbcolumnname').val($(ddlId + ' :selected').val());
+    $('#txt_template_column_name').val($(ddlId + ' :selected').val());
+    $('#hdnsequence').val($(ddlId + ' :selected').attr('data-column-sequence'));
+
+};
+
+$("#btnCancel").on("click", function () {
+    $("#closeModalPopup").trigger("click");
+});
+</script>

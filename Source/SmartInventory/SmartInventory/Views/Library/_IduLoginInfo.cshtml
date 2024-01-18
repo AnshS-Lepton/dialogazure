@@ -1,0 +1,24 @@
+﻿@model Models.MicrowaveLinkMaster
+
+<div class="form-group">
+
+    <label class="control-label col-md-2 col-sm-2">NMS IP :</label>
+    <div class="col-md-4 col-sm-4 mrgn_btm">
+        @Html.TextBoxFor(m => m.nms_ip, new { @id = "txtNmsIp", @class = "form-control" })
+    </div>
+    <label class="control-label col-md-2 col-sm-2">User Name :</label>
+    <div class="col-md-4 col-sm-4 mrgn_btm">
+        @Html.TextBoxFor(m => m.user_name, new { @id = "txtUserName", @class = "form-control" })
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-sm-2">Password :</label>
+    <div class="col-md-4 col-sm-4 ">
+        @Html.TextBoxFor(m => m.password, new { @id = "txtPassword", @class = "form-control" })
+    </div>
+    
+</div>
+
+
+

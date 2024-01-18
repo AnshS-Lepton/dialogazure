@@ -1,0 +1,110 @@
+﻿@model Models.Admin.ISPModelInfo
+@using System.Linq
+@using Utility
+@using SmartInventory.Settings;
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div id="dvViewEquipmentDetails">
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objOptionsEquipmentDetails.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewEquipmentDetails", ajaxUpdateCallback: "onGridHeaderClick('tblViewEquipmentDetails')");
+        grid.Bind(Model.lstModelDetails, autoSortAndPage: false, rowCount: Model.objOptionsEquipmentDetails.totalRecord);
+        if (Model.objOptionsEquipmentDetails.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objOptionsEquipmentDetails.currentPage - 1;
+        }
+    }
+
+    @using (Html.BeginForm("GetModelDetails", "Equipment", FormMethod.Post, new { autocomplete = "off", @id = "frmViewEquipmentDetails" }))
+    {
+        <section>
+
+            @if (Model.lstModelDetails.Count > 0)
+            {
+                <div id="divViewEquipmentDetails">
+                    <div class="recordCount mb-01">
+                        <b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b>
+                        @Html.HiddenFor(m => m.model_id, new { @id = "hdModelID" })
+                    </div>
+
+                    <div class="table-responsive tble_clsEqip">
+                        @{
+                            var gridColumns = new List<WebGridColumn>();
+                            gridColumns.Add(grid.Column("", "Action", canSort: false, format:
+        @<text>
+
+            <div>
+                <label class="Custombtn"><input class="chk" name="@item.id" type="checkbox" value="true" /><span class="Custombtncheck"></span></label>
+                @if (item.status == 1)
+                {
+                    <img class="statusImgAction" title="Active" src="~/Areas/Admin/Content/images/active.svg" />
+                }
+                @if (item.status == 2)
+                {
+                    <img class="statusImgAction" title="Inactive" src="~/Areas/Admin/Content/images/inactive.svg" />
+                }
+                @if (item.status == 3)
+                {
+                    <img class="statusImgAction" title="Pending Design" src="~/Areas/Admin/Content/images/pending.svg" />
+                }
+            </div>
+        </text>));
+                     gridColumns.Add(grid.Column("name", "Name", format: @<text>@item.name</text>));
+gridColumns.Add(grid.Column("type", "Type", format: @<text>@item.type</text>));
+if (Model.model_id == 1)
+{
+gridColumns.Add(grid.Column("manufacturer_name", "Manufacturer", format: @<text>@item.manufacturer_name</text>));
+}
+gridColumns.Add(grid.Column("created_by", "Created by", format: @<text>@item.created_by</text>));
+gridColumns.Add(grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>));
+gridColumns.Add(grid.Column("modified_by", "Modified by", format: @<text>@item.modified_by</text>));
+gridColumns.Add(grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>));
+
+                        }
+                        @grid.GetHtml(tableStyle: "grid",
+                                        htmlAttributes: new { id = "tblViewEquipmentDetails" },
+                                        mode: WebGridPagerModes.All,
+                                        columns: grid.Columns(gridColumns.ToArray()))
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+
+
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div style="text-align: center; margin-top: 30px;">
+                    No Records Found.
+                </div>
+            }
+
+        </section>
+    }
+    <script>
+        $(document).ready(function () {
+            updateNumberstoFormatedNumber();
+            addDefaultSortingIcons("tblViewEquipmentDetails");
+        });
+
+        $(function () {
+            $('#tblViewEquipmentDetails a').on("click", function () {
+                //var value = $('#hdModelID').val();
+                //$(this).attr('href', function () {
+                //    return this.href += '&modelID=' + encodeURIComponent(value);
+                //});
+            });
+        });
+
+        function updateNumberstoFormatedNumber() {
+            $('span[data]').each(function (index) {
+                // Get the value of the data-target attribute for each element
+                var targetValue = $(this).data('data');
+
+                // Do whatever you want with the element or its data
+                $(this).text(getFormattedNumber($(this).text().trim()));
+            });
+        }
+    </script>
+
+</div>

@@ -1,0 +1,54 @@
+﻿@model Models.PatchCordItemMaster
+@using Models;
+<script>
+    //Set color of template icon as green in NE library
+    if ('@Model.id' > 0) {
+        $(".clsTemplateIcon[data-lyrname='PatchCord']").css('background-color', '#9999FF');
+    }
+</script>
+<!DOCTYPE html>
+<div class="libDetail">
+
+    @using (Ajax.BeginForm("SavePatchCordTemplate", "ItemTemplate", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnFailure = "si.handleError",
+
+    },
+                            new { id = "frmItemTemplate", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id)
+
+        <!-- Message Pop-up -->
+        @Html.Partial("_PageMessage", Model.objPM)
+        <div class="libTabContent" style="overflow:visible !important">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="ItemSpecfication">
+                    @Html.Partial("~/Views/ItemTemplate/_PatchCordTemplateMaster.cshtml", Model)
+                </div>
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            @if (Model.id > 0)
+            {
+                <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+            x
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        callFormValidator("frmItemTemplate");
+        $('#id').val('@Model.id');
+    });
+</script>
+

@@ -1,0 +1,289 @@
+﻿@model Models.layerDetail
+
+@if (Model != null)
+{
+    <div id="dvPageMessage">
+        @{
+            Html.RenderPartial("_PageMessage", Model.pageMsg);
+        }
+    </div>
+}
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+    .required > .chosen-single {
+        border: 1px solid red;
+    }
+
+    .boxMin-height {
+        min-height: 450px;
+    }
+</style>
+
+<div id="dvViewlayers">
+    <div class="update_panel">
+        <div class="title">
+            <h4>Layer Configuration</h4>
+        </div>
+
+        <div class="tab-content" id="dvViewLink">
+            <div id="ViewLink" class="tab-pane fade in active show">
+
+                @using (Html.BeginForm("saveLayerConfigurationSettings", "LayerSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmlayerconfig" }))
+                {
+                    @Html.HiddenFor(m => m.layer_title);
+                    <div class="--pad-15 boxMin-height">
+                        @*<div class="update_panel clsStepsContainer">*@
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">
+                                    Layer Name:
+                                </label>
+                            </div>
+
+                            <div class="col-md-8">
+                                @Html.DropDownListFor(m => m.layer_id,
+                               new SelectList(Model.lstlayerdetails.Select(x => new
+                               {
+                                   Value = x.layer_id.ToString(),
+                                   Text = x.layer_title.ToString()
+                               }), "Value", "Text"), "Select Entity Type",
+                               new
+                               {
+                                   @class = "chosen-select form-control",
+                                   @onchange = "LayerDetailsById();",
+                                   @id = "layerconfigurationid",
+                                   data_placeholder = "Search for" // Add a placeholder for search
+
+
+                               })
+                            </div>
+                        </div>
+                        @*@if (Model.layer_id > 0)
+                            {*@
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">
+                                    Minimum Zoom Level:
+                                </label>
+                            </div>
+                            <div class="col-md-8">
+                                @Html.DropDownListFor(m => m.minzoomlevel, new SelectList(Model.lstzoom.
+                               Select(x => new { Value = x.zoom.ToString(), Text = x.zoom }), "Value", "Text"),
+                               new { @class = "chosen-select form-control", @id = "minzoomval" })
+                            </div>
+                        </div>
+
+                        @*<div class="row">
+                                <div class="col-md-4">
+                                    <label class="control-label">
+                                        Maximum Zoom Level:
+                                    </label>
+                                </div>
+                                <div class="col-md-8">
+                                    @Html.DropDownListFor(m => m.maxzoomlevel, new SelectList(Model.lstzoom.
+                                   Select(x => new { Value = x.zoom.ToString(), Text = x.zoom }), "Value", "Text"),
+                                   new { @class = "chosen-select form-control", @id = "maxzoomval", @onchange = "CheckZoomLevel()" })
+                                </div>
+                            </div>*@
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">
+                                    Is Mobile Layer:
+                                </label>
+                            </div>
+                            <div class="col-md-1">
+                                @Html.CheckBoxFor(m => m.is_mobile_layer, new { @id = "chkis_mobile_layer" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">
+                                    Is Visible In Mobile Library:
+                                </label>
+                            </div>
+                            <div class="col-md-1">
+                                @Html.CheckBoxFor(m => m.is_visible_in_mobile_lib, new { @id = "chkis_visible_in_mobile_lib" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">
+                                    Is Visible On Mobile Map:
+                                </label>
+                            </div>
+                            <div class="col-md-1">
+                                @Html.CheckBoxFor(m => m.is_visible_on_mobile_map, new { @id = "chkis_visible_on_mobile_map" })
+                            </div>
+                        </div>
+                        <div class="d-flex --gap-05" id="dvBtnAction">
+                            <button type="button" class="btn btn-default ml-auto" id="btnCancel">Reset</button>@*onclick="ResetFormValues();"*@
+                            <button type="button" class="btn btn-primary" id="btnUpdateOtp">Update</button>
+                        </div>
+                        @*}*@
+
+                    </div>
+                }
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<script>
+    $('#btnCancel').click(function () {
+        debugger;
+        //window.open(appRoot + '/LayerSettings/LayerConfigurationSettings', "_self");
+
+        $('#layerconfigurationid').val('').trigger("chosen:updated");
+        $('#minzoomval').val('').trigger("chosen:updated");
+        $('#maxzoomval').val('').trigger("chosen:updated");
+        // Reset the checkboxes
+        $('#chkis_mobile_layer').prop('checked', false);
+        $('#chkis_visible_in_mobile_lib').prop('checked', false);
+        $('#chkis_visible_on_mobile_map').prop('checked', false);
+    })
+    //function CheckZoomLevel() {
+    //    let min = parseInt($('#minzoomval').val());
+    //    let max = parseInt($('#maxzoomval').val());
+    //    if (min > max) {
+    //        $('#minzoomval').addClass('errorClass');
+    //        $('#maxzoomval').addClass('errorClass');
+    //        alert("Minimum Zoom should be less than Maximum Zoom");
+    //        return false;
+    //    }
+    //    else if (min == max) {
+    //        $('#minzoomval').addClass('errorClass');
+    //        $('#maxzoomval').addClass('errorClass');
+    //        alert("Minimum Zoom should not be equal to Maximum Zoom");
+    //        return false;
+    //    }
+    //    else {
+    //        $('#minzoomval').removeClass('errorClass');
+    //        $('#maxzoomval').removeClass('errorClass');
+    //    }
+    //}
+
+
+    function LayerDetailsById() {
+        debugger;
+        var layerId = $('#layerconfigurationid option:selected').val();
+        if (layerId != undefined && layerId != 0) {
+            // Perform the navigation
+            window.open(appRoot + '/LayerSettings/LayerConfigurationSettings/' + layerId, "_self");
+        }
+        else {
+            window.open(appRoot + '/LayerSettings/LayerConfigurationSettings', "_self");
+        }
+    }
+    $(document).ready(function () {
+        debugger;
+        $('#minzoomval').chosen();
+
+    // Set the default selected value
+    var defaultSelectedValue = '@Model.minzoomlevel';
+    $('#minzoomval').val(defaultSelectedValue).trigger('chosen:updated');
+        // Attach the change event to the dropdown
+        $('#layerconfigurationid').on('change', function () {
+            LayerDetailsById();
+        });
+            // Add a change event listener to the checkbox
+            $('#chkis_visible_in_mobile_lib').on('change', function () {
+                updateVisibilitylib(); // Call the function to update visibility based on the checkbox state
+                });
+            $('#chkis_visible_on_mobile_map').on('change', function () {
+                updateVisibilitymap(); // Call the function to update visibility based on the checkbox state
+            });
+            $('#chkis_mobile_layer').on('change', function () {
+            updateMobileLayer();
+            });
+
+        function updateMobileLayer() {
+            var is_chkis_mobile_layer = $('#chkis_mobile_layer').prop('checked');
+            if (is_chkis_mobile_layer) {
+                $('#chkis_mobile_layer').prop('checked', true);
+                $('#chkis_visible_in_mobile_lib').prop('checked', false);
+                $('#chkis_visible_on_mobile_map').prop('checked', false);
+            }
+            else {
+                $('#chkis_mobile_layer').prop('checked', false);
+                $('#chkis_visible_on_mobile_map').prop('checked', false);
+                $('#chkis_visible_in_mobile_lib').prop('checked', false);
+            }
+        }
+            // Define the updateVisibility function
+            function updateVisibilitylib() {
+                var is_visible_in_mobile_lib = $('#chkis_visible_in_mobile_lib').prop('checked');
+                if (is_visible_in_mobile_lib) {
+                    $('#chkis_mobile_layer').prop('checked', true);
+                }
+                else
+                {
+                    $('#chkis_mobile_layer').prop('checked', false);
+                    $('#chkis_visible_on_mobile_map').prop('checked', false);
+                }
+
+            }
+        function updateVisibilitymap() {
+            var is_visible_on_mobile_map = $('#chkis_visible_on_mobile_map').prop('checked');
+            if (is_visible_on_mobile_map) {
+                $('#chkis_mobile_layer').prop('checked', true);
+            }
+            else {
+                $('#chkis_mobile_layer').prop('checked', false);
+            }
+        }
+
+
+        // Click event handler for the "Update" button
+        $('#btnUpdateOtp').click(function () {
+            debugger;
+            var layer_id = $('#layerconfigurationid option:selected').val();
+            if (layer_id != '') {
+
+
+                var minzoomlevel = parseInt($('#minzoomval').val());
+                var maxzoomlevel = parseInt($('#maxzoomval').val());
+                var is_mobile_layer = $('#chkis_mobile_layer').prop('checked');
+                var is_visible_on_mobile_map = $('#chkis_visible_on_mobile_map').prop('checked');
+                var is_visible_in_mobile_lib = $('#chkis_visible_in_mobile_lib').prop('checked');
+
+                var data = {
+                    'layer_id': layer_id,
+                    'minzoomlevel': minzoomlevel,
+                    'maxzoomlevel': maxzoomlevel,
+                    'is_mobile_layer': is_mobile_layer,
+                    'is_visible_in_mobile_lib': is_visible_in_mobile_lib,
+                    'is_visible_on_mobile_map': is_visible_on_mobile_map
+                };
+
+                confirm("Configuration changes will be applied on all the mobile users. Do you want to continue?", function () {
+                    ajaxReq('LayerSettings/saveLayerConfigurationSettings', data, true, function (resp) {
+                        debugger;
+                        if (resp.pageMsg.status === "OK") {
+                            alert(resp.pageMsg.message);
+                        } else {
+                            alert(resp.message);
+                        }
+                    }, true, true);
+                });
+            }
+            else {
+                debugger;
+                $('#layerconfigurationid_chosen').addClass('required');
+            }
+        });
+
+        // Other code or event handlers can go here if needed
+    });
+    $(".chosen-select").chosen({
+        no_results_text: "No results matched",
+        disable_search_threshold: 5 // Optional: Show search box for 5 or more items
+    });
+</script>
+
+

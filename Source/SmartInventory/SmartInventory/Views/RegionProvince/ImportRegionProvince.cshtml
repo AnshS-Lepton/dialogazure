@@ -1,0 +1,397 @@
+﻿@model Models.ImportRegionProvince
+
+@{
+    Layout = null;
+}
+<link href="@Url.Content("~/Content/css/datauploader.css")" rel="stylesheet" />
+<link href="~/Content/css/inputpicker/jquery.inputpicker.css" rel="stylesheet" />
+
+<style>
+    #inputpicker-wrapped-list {
+        max-height: 230px;
+        left: 0px !important;
+        top: 0px !important;
+    }
+</style>
+<style>
+    .libDetail .libTabContent {
+        border: none;
+    }
+
+    .table-scroll {
+        position: relative;
+        width: 100%;
+        z-index: 1;
+        margin: auto;
+        overflow: auto;
+        height: 380px;
+    }
+
+        .table-scroll table {
+            width: 100%;
+            margin: auto;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+    .table-wrap {
+        position: relative;
+    }
+
+    .table-scroll th,
+    .table-scroll td {
+        padding: 5px 10px;
+        background: #fff;
+        vertical-align: top;
+    }
+
+    .table-scroll thead th {
+       /* background: #00ba8a;*/
+        color: #fff;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+    }
+    /* safari and ios need the tfoot itself to be position:sticky also */
+    .table-scroll tfoot,
+    .table-scroll tfoot th,
+    .table-scroll tfoot td {
+        position: -webkit-sticky;
+        position: sticky;
+        bottom: 0;
+        z-index: 4;
+    }
+
+    th:first-child {
+        position: -webkit-sticky;
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background-color: #00ba8a;
+    }
+
+    thead th:first-child,
+    tfoot th:first-child {
+        z-index: 5;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="container dataUploader" id="dvImportRegProSetting">
+    @Html.HiddenFor(m => m.boundary_type, new { id = "hdnBoundaryType" })
+    <div id="dvImportRegProvProgress">
+        <div class="libDetail">
+            @*<div class="libTabContent">*@
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div id="FileUploadUtility" class="tab-pane fade in active">
+                    <div class="uploadfiles">
+                        <span id="step1badge" class="badge">1</span> @Resources.Resources.SI_OSP_DU_NET_FRM_018 <span class="badgeLine"></span>
+                        <span id="step2badge" class="badge">2</span> Column Mapping <span class="badgeLine"></span>
+                        <span id="step4badge" class="badge">3</span> @Resources.Resources.SI_OSP_DU_NET_FRM_016
+                    </div>
+                    <div class="choosecont">
+                        <div class="steps-container">
+                            <div class="form-horizontal" id="frmupload">
+                                <div id="step0" for="Start Upload Process">
+                                    <div id="uploadcontrols">
+                                        <div class="form-group" id="divChooseOperation">
+                                            <label class="col-md-4 control-label">Entity : </label>
+                                            <div class="col-md-8" id="divOperationType">
+                                                <input type="radio" id="chkRegion" name="TemplateAction" value="Region" checked onclick="AssignTemplateValue()"> @Resources.Resources.SI_OSP_GBL_NET_FRM_065 &nbsp;&nbsp;
+                                                <input type="radio" id="chkProvince" name="TemplateAction" value="Province" onclick="AssignTemplateValue()"> @Resources.Resources.SI_OSP_GBL_NET_FRM_066
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="divUpdShape">
+                                            <label class="col-md-4 control-label">Upload File<i class="clsMandatory">*</i>:</label>
+                                            <div class="col-md-8 form-inline">
+                                                <input type="file" id="FileRegProvImport" accept=".shx,.shp,.prj,.dbf" multiple>
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                                <a class="btn" id="lnkDownloadTemplate" style="background: none;border: 1px solid gray;color: gray;">@Resources.Resources.SI_OSP_GBL_NET_FRM_095</a>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                                <input type="button" id="btnUpload" value="Upload" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="lblMessage-container">
+                                                <label id="lblMessage" class="red"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="step1" for="Uploaded Successfully">
+                                    <div class="statusContainer">
+                                        <span class="status green"></span>
+                                        <div id="images">
+                                            <img src="@Url.Content("~/Content/images/loader.gif")" class="imgcheck" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group buttons">
+                                        <button type="button" class="btn btn-default pull-left" id="btnPrevious1">@Resources.Resources.SI_OSP_DU_NET_FRM_023</button>
+                                        <button type="button" class="btn btn-success pull-right" id="btnNext">@Resources.Resources.SI_OSP_GBL_GBL_GBL_040</button>
+                                    </div>
+                                </div>
+                                <div id="step2" for="Column Mapping">
+
+                                </div>
+                                <div id="stepMain">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*</div>*@
+            @* <div style="padding: 50px 180px;">
+
+                    <div style="font-size: 14px; margin-top: 12px; " class="row form-group">
+                        <input type="radio" id="chkRegion" name="TemplateAction" value="Region" checked onclick="AssignTemplateValue()"> @Resources.Resources.SI_OSP_GBL_NET_FRM_065 &nbsp;&nbsp;
+                        <input type="radio" id="chkProvince" name="TemplateAction" value="Province" onclick="AssignTemplateValue()"> @Resources.Resources.SI_OSP_GBL_NET_FRM_066
+                    </div>
+                    <div style="margin-top: 10px;" class="row form-group">
+                        <table style="border:none;" class="BulkTable" border="1">
+                            <tr><td style="vertical-align: middle; border: none; font-size: 13px; font-weight: bold;">@Resources.Resources.SI_ISP_GBL_NET_FRM_025: &nbsp;</td></tr>
+                            <tr>
+                                <td style="border:none;">
+                                    <input type="file" id="FileRegProvImport" accept=".dbf,.prj,.shp,.shx" style="font-size: 13px;height:31px;width: 195px;" name="datafile" class="form-control" multiple />
+                                </td>
+                                <td style="border: none;"></td>
+                                <td style="text-align:center;border:none;">
+                                    <a href="#" style="padding-top: 3px;padding-bottom: 3px;color: white;" data-toggle="tooltip" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_026" onclick="DrawBoundaryOnMap(this)" data-dismiss="modal">
+                                        <i class="fa fa-chain-broken" aria-hidden="true" style="color:grey;font-size: 21px;" data-toggle="tooltip" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_026">
+                                        </i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr><td style="border:none;">&nbsp;</td></tr>
+                            <tr>
+                                <td style="border: none;">
+                                    <a class="btn"
+                                       id="lnkDownloadTemplate" style="background: none;border: 1px solid gray;color: gray;">
+                                        @Resources.Resources.SI_OSP_GBL_NET_FRM_095
+                                    </a>
+                                </td>
+                                <td style="border: none;"></td>
+                                <td style="border: none;">
+                                    <input type="button" id="btnUpload" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_013" class="btn btn-primary" />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>*@
+        </div>
+    </div>
+</div>
+<div id="dvRegionProvinceFileInfo">
+    <div id="dvFileInfoProgress" class="RegionProvinceImportProgress"></div>
+    <div class="form-group">
+        <div class="row scrollDiv table-scroll" id="div_regioninformation" style="max-height:2px; overflow:auto;margin-top:2px;">
+            @* Region provicne list will be binded there (using Jquery)*@
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="text-right" style="margin-right: 35px;">
+                <a href="#" class="btn" style="background: none;border: 1px solid gray;color: gray;" id="btnReset" title="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" onclick="ResetImport()">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</a>
+                <input type="button" id="btnSave" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</div>
+<div id="divRegionProvinceLogs">
+    <div class="form-group">
+        <div class="row">
+            <div style="text-align: center;padding: 80px 0 0 300px;">
+                <table>
+                    <tr><td colspan="6" style="text-align:center;"><img style="width:40px;" id="ImgValidation" src="/Areas/Admin/Content/images/tick_1.gif" /></td></tr>
+                    <tr><td colspan="6" style="color:green;text-align:center;">@Resources.Resources.SI_ISP_GBL_NET_FRM_027</td></tr>
+                    <tr style="font-size: 14px;">
+                        <td>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035 :</td>
+                        <td>@Html.Label("0", new { id = "lblTotalLogs" }) | </td>
+                        <td>&nbsp;</td>
+                        <td>@Resources.Resources.SI_ISP_GBL_NET_FRM_028 :</td>
+                        <td>@Html.Label("0", new { id = "lblValidLogs" }) | </td>
+                        <td>&nbsp;</td>
+                        <td>@Resources.Resources.SI_OSP_GBL_NET_FRM_212 :</td>
+                        <td>@Html.Label("0", new { id = "lblInvalidLogs" })</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div style="text-align: center;padding-top: 20px;font-size: 14px;">
+                <u>
+                    <a href="@Url.Action("DownloadRegionProvinceLog", "RegionProvince")" id="btnDownloadLogs" title="@Resources.Resources.SI_ISP_GBL_NET_FRM_029">
+                        <i class="fa fa-download" aria-hidden="true" style="color:cornflowerblue;"></i><br />
+                        @Resources.Resources.SI_ISP_GBL_NET_FRM_029
+                    </a>
+                </u>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div style="text-align: center;padding: 10px 0 50px 0;">
+                <input type="button" id="btnDone" value="@Resources.Resources.SI_ISP_GBL_NET_FRM_030" class="btn btn-primary" onclick="ResetDone()" />
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+       $("#dvRegionProvinceFileInfo").hide();
+        $("#divRegionProvinceLogs").hide();
+        AssignTemplateValue();
+    });
+    //$('#btnUpload').on("click", function (event) {
+    //    if ($('#FileRegProvImport').val() == "") {
+    //        $("#FileRegProvImport").css({ "width": "195px", "border": "1px solid red" });
+    //        return false;
+    //    }
+    //    else {
+    //        $("#FileRegProvImport").css({ "width": "195px", "border": "1px solid gray" });
+    //        var boundary_type = $("#hdnBoundaryType").val();
+    //        if (window.FormData !== undefined) {
+    //             
+    //            $("#dvImportRegProvProgress").show();
+    //            var fileUpload = $("#FileRegProvImport").get(0);
+    //            var files = fileUpload.files;
+    //            var fileData = new FormData();
+    //            if (files.length < 4) {
+    //                $("#dvImportRegProvProgress").hide();
+    //                alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_104);//Minimum 4 files are required!
+    //                return;
+    //            }
+    //            if (files.length > 4) {
+    //                $("#dvImportRegProvProgress").hide();
+    //                alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_105);
+    //                return;
+    //            }
+    //            for (var i = 0; i < files.length; i++) {
+    //                var fileName = files[0].name.split('.')[0];
+    //                 
+    //                var ext = files[i].name.substr((files[i].name.lastIndexOf('.') + 1)).toUpperCase();
+    //                if (fileName.toUpperCase() != files[i].name.split('.')[0].toUpperCase()) {
+    //                    $("#dvImportRegProvProgress").hide();
+    //                    alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_106);
+    //                    return;
+    //                }
+    //                else if (ext === "DBF" || ext === "PRJ" || ext === "SHP" || ext === "SHX") {
+    //                    fileData.append(files[i].name, files[i]);
+    //                }
+    //                else {
+    //                    $("#dvImportRegProvProgress").hide();
+    //                    alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_107);//
+    //                    //alert(MultilingualKey.SI_ISP_GBL_JQ_FRM_011);
+    //                    return;
+    //                }
+    //            }
+    //            fileData.append("boundary_type", boundary_type);
+    //            //$("#dvImportRegProvProgress").show();
+    //            UploadRegionProvinceData(fileData);
+    //            //$("#dvImportRegProvProgress").hide();
+    //        }
+    //        else {
+    //            alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_057);
+    //        }
+    //    }
+
+    //});
+    $('#btnSave').on("click", function () {
+        var boundaryType = $('input[name=boundary_type]').val();
+        var lstUpdateRegionProvince = [];
+         
+        $('#tblRegionProvinceLstInfo').find('input[type="checkbox"]:checked:not("#chkAll")').each(function () {
+            lstUpdateRegionProvince.push($(this).attr("data-shapeId"));
+        });
+        if (lstUpdateRegionProvince.length > 0) {
+             
+            $("#dvFileInfoProgress").show();
+            lstUpdateRegionProvince = JSON.stringify({ 'lstUpdateRegionProvince': lstUpdateRegionProvince });
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                type: 'POST',
+                url: "@Url.Action("SaveRegionProvinceShapFile", "RegionProvince")",
+                data: lstUpdateRegionProvince,
+                success: function (Data) {
+                    $("#dvRegionProvinceFileInfo").hide();
+                    $("#dvFileInfoProgress").hide();
+                    $("#dvImportRegProSetting").hide();
+                    $("#divRegionProvinceLogs").show();
+                    $("#lblTotalLogs").html(Data.result.Total);
+                    $("#lblValidLogs").html(Data.result.Valid);
+                    $("#lblInvalidLogs").html(Data.result.Invalid);
+                    si.refreshRegionProvince(); 
+                },
+                failure: function (response) {
+                    $("#dvFileInfoProgress").hide();
+                }
+            });
+        }
+        else { alert('No ' + boundaryType + ' selected!') }
+    });
+    function checkentity(checkvalue) {
+        var totalBoundaries = $("#tblRegionProvinceLstInfo tbody tr td input[type=checkbox]").length;
+        var totalSelected = $("#tblRegionProvinceLstInfo tbody tr td input[type=checkbox]:checked").length;
+        $('#chkAll').prop("checked", totalBoundaries == totalSelected ? true : false);
+        var checkstatus = $(checkvalue).is(":checked");
+        $(checkvalue)[0].value = checkstatus;
+        $("#lblSelectedRecords").html($("#tblRegionProvinceLstInfo input[type=checkbox]:checked:not('#chkAll')").length);
+    }
+    function checkallentity(checkvalue) {
+        $("#tblRegionProvinceLstInfo tbody tr td input[type=checkbox]").prop("checked", $(checkvalue).prop("checked"));
+        $("#tblRegionProvinceLstInfo input[type=checkbox]:not('#chkAll')").each(function () {
+            var checkstatus = $(this).is(":checked")
+            $(this)[0].value = checkstatus;
+        });
+        $("#lblSelectedRecords").html($("#tblRegionProvinceLstInfo input[type=checkbox]:checked:not('#chkAll')").length);
+    }
+    function AssignTemplateValue() {
+        var TemplateActionValue = $("input[name='TemplateAction']:checked").val();
+        var url = appRoot + "RegionProvince/DownloadRegionProvinceUploadTemplate?BoundaryType=";
+        $("#lnkDownloadTemplate").attr("href", (url + TemplateActionValue));
+        $("#hdnBoundaryType").val(TemplateActionValue);
+    }
+    function ResetImport() {
+        $('#div_regioninformation').empty();
+        $("#dvRegionProvinceFileInfo").hide();
+        $("#FileRegProvImport").val('');
+        $("#chkRegion").prop("checked", true);
+        $("#chkProvince").prop("checked", false);
+        AssignTemplateValue(); 
+        rpdataUploader.ResetUploadData(); 
+    }
+    function ShowOnMap(markervalue) {
+        var boundaryType = $("#hdnBoundaryType").val().toUpperCase();
+        var geomText = markervalue.previousElementSibling.value;
+        si.showRegionProvinceOnMap(boundaryType, geomText);
+    }
+    function DrawBoundaryOnMap(DrawOnMapValue) {
+        var boundaryType = $("#hdnBoundaryType").val().toUpperCase();
+        si.RegionProvinceDrawOnMap.initiateDrawingsRegionProvince(DrawOnMapValue, 'Polygon', boundaryType);
+    }
+    function ResetDone() {
+        confirm(MultilingualKey.SI_OSP_GBL_JQ_GBL_108, function () {//Logs will not be available after click on Done. Do you want to continue?
+            $('#closeModalPopup').trigger("click");
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        rpdataUploader.InitializeUploader();
+    });
+</script>
+<script src="~/Content/js/inputpicker/bootstrap-4.5.2.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>

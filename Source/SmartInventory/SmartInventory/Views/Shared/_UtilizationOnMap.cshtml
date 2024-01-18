@@ -1,0 +1,107 @@
+﻿<style>
+.checkboxes label {
+   display: inline-block;
+   padding-right: 10px;
+   white-space: nowrap;
+}
+
+.checkboxes input {
+    vertical-align: middle;
+}
+
+.checkboxes label span {
+     vertical-align: middle;
+     font-weight:600;
+}
+#dvUtilizationShowonmap input[type=checkbox] {
+    cursor: pointer;
+    margin-right:0.5rem;
+    margin-top:0;
+}
+
+#dvUtilizationShowonmap input[name=L]:after, #dvUtilizationShowonmap input[name=M]:after, #dvUtilizationShowonmap input[name=H]:after,
+#dvUtilizationShowonmap input[name=O]:after {
+     content: " ";
+     display: inline-block;
+     position: relative;
+     top: -3px;
+     width: 16px;
+     height: 16px;
+     text-align: center;
+     color: white;
+     border-radius:3px;
+     box-shadow:3px 3px 4px rgba(0 0 0 / 15%);
+}
+#dvUtilizationShowonmap input[name=L]:after{
+    background-color: #3380EC;
+}
+
+#dvUtilizationShowonmap input[name=L]:checked:after {
+    content: "\2714";
+    vertical-align:middle;
+}
+#dvUtilizationShowonmap input[name=M]:after {
+    background-color: #F5C84B;
+}
+
+#dvUtilizationShowonmap input[name=M]:checked:after {
+    content: "\2714";
+    vertical-align:middle;
+}
+#dvUtilizationShowonmap input[name=H]:after {
+    background-color: #F19A4D;
+}
+
+#dvUtilizationShowonmap input[name=H]:checked:after {
+    content: "\2714";
+    vertical-align:middle;
+}
+#dvUtilizationShowonmap input[name=O]:after {
+    background-color: #EC5856;
+}
+
+#dvUtilizationShowonmap input[name=O]:checked:after {
+  content: "\2714";
+  vertical-align:middle;
+}
+    /*.chkutl:after {
+  content: " ";
+  background-color: #5C2799;
+  display: inline-block;
+  visibility: visible;
+}
+
+.chkutl:checked:after {
+  content: "\2714";
+  text-align: center;
+  font-size: 9px;
+  color: white;
+}*/
+</style>
+<script type="text/javascript" src="~/Content/js/jquery-3.6.0.js"></script>
+
+<input id="utlSummaryId" type="hidden" value="" />
+<input id="utlnetworkstatus" type="hidden" value="" />
+<input id="utlentitytitle" type="hidden" value="" />
+<div id="dvUtilizationShowonmap" style="display:none;" class="UtilizationOnMap">
+    <input id="ductutilization" type="hidden" value="" />
+    <p id="dvUtilizationShowonmap_p" class="fw-bold"></p>
+    <div class="checkboxes ml-10">
+        <label for="L"><input type="checkbox" name="L" id="L" class="chkutl" /> <span>Low(</span><span id="s_L"></span><span>)</span></label>
+        <label for="M"><input type="checkbox" name="M" id="M" class="chkutl" /> <span>Moderate(</span><span id="s_M"></span><span>)</span></label>
+        <label for="H"><input type="checkbox" name="H" id="H" class="chkutl" checked="checked" /> <span>High(</span><span id="s_H"></span><span>)</span></label>
+        <label for="O"><input type="checkbox" name="O" id="O" class="chkutl" checked="checked" /> <span>Over(</span><span id="s_O"></span><span>)</span></label>
+    </div>
+</div>
+<script>
+    $('.chkutl').on("click", function () {
+         
+        var utilizationType = "";
+        $("input:checkbox[class=chkutl]:checked").each(function () {
+             
+            utilizationType = utilizationType == "" ? "'" + this.id + "'" : utilizationType + "," + "'" + this.id + "'";
+        })
+        //alert(utilizationType);
+        si.ShowUtilizationOnMap($("#utlSummaryId").val(), $("#utlentitytitle").val(), $("#utlnetworkstatus").val(), $("#s_L").html(), $("#s_M").html(), $("#s_H").html(), $("#s_O").html(), $("#ductutilization").val(), utilizationType, false);
+    });
+</script>

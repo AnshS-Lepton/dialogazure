@@ -1,0 +1,270 @@
+# Map file created from QGIS project file C:/Program Files (x86)/Quantum GIS Wroclaw/qqq.qgs
+# Edit this file to customize for your map interface
+# (Created with PyQgis MapServer Export plugin)
+MAP
+	SYMBOLSET "symbols\\symbols.sym"
+	NAME "QGIS-MAP"
+	FONTSET "fonts/fonts.list"
+	# Map image size
+	SIZE 100 100
+	UNITS meters
+
+	#EXTENT 72.504366 18.900959 73.403214 19.320367
+	EXTENT -180 -90 180 90
+	PROJECTION
+		'proj=longlat'
+		'datum=WGS84'
+		'no_defs'
+	END
+
+	# Background color for the map canvas -- change as desired
+	IMAGECOLOR 255 255 255
+	IMAGEQUALITY 95
+	IMAGETYPE png
+
+	OUTPUTFORMAT
+		NAME png
+		DRIVER 'GD/PNG'
+		MIMETYPE 'image/png'
+		IMAGEMODE RGBA
+		EXTENSION 'png'
+	END
+	
+	# Legend
+	LEGEND
+		IMAGECOLOR 255 255 255
+		STATUS ON
+		KEYSIZE 18 12
+		LABEL
+			TYPE BITMAP
+			SIZE MEDIUM
+			COLOR 0 0 89
+		END
+	END
+
+	# Web interface definition. Only the template parameter
+	# is required to display a map. See MapServer documentation
+	WEB
+		# Set IMAGEPATH to the path where MapServer should
+		# write its output.
+		IMAGEPATH '/tmp/'
+
+		# Set IMAGEURL to the url that points to IMAGEPATH
+		# as defined in your web server configuration
+		IMAGEURL '/tmp/'
+
+		# WMS server settings
+		METADATA
+			'ows_title'           'GIS-MAP'
+			#'ows_onlineresource'  ''
+			'ows_srs'             'EPSG:4326 EPSG:3857'
+			'ows_enable_request'   '*'
+			
+		"wms_title"           "WMS Demo Server"
+		'wms_enable_request' "*" 
+		'wms_allow_getmap_without_styles' 'true'
+
+		END
+
+		#Scale range at which web interface will operate
+		# Template and header/footer settings
+		# Only the template parameter is required to display a map. See MapServer documentation
+		TEMPLATE 'fooOnlyForWMSGetFeatureInfo'
+	END
+
+	#SYMBOL
+	 	#NAME "rail"
+	 	# TYPE PIXMAP		
+	  	#IMAGE "icons/railway.png"		
+	#END
+	
+	
+LAYER
+    NAME "ORTHOIMAGE"
+  DATA '%filename%'
+ # DATA 'OrthoImages/NTLeft.tif'
+    VALIDATION
+			'filename' '.*'					
+		END
+  STATUS OFF
+  TYPE RASTER  
+  PROCESSING "BANDS=1,2,3"
+  OFFSITE 71 74 65
+ PROJECTION
+        AUTO
+        # or :
+        # "+init=EPSG:4326"
+    END
+  END
+  
+  #===============================================================
+  
+  LAYER
+  NAME "r4g_state"
+  TYPE POLYGON
+  INCLUDE "datashare.inc"
+  STATUS ON
+  DATA 'geom FROM "rjio_r4g_state_boundary" USING UNIQUE id USING srid=4326'
+	CLASS
+		NAME 'r4g_state' 
+		STYLE
+			WIDTH 3
+			OUTLINECOLOR 255 0 0
+			COLOR -1 -1 -1
+		END
+	END
+  END
+  #===============================================================
+  LAYER
+  NAME "jp_boundary"
+  TYPE POLYGON
+  INCLUDE "datashare.inc"
+  STATUS ON
+  DATA 'geom FROM "rjio_jp_boundary" USING UNIQUE id USING srid=4326'
+	CLASS
+		NAME 'jp_boundary' 
+		STYLE
+			WIDTH 3
+			OUTLINECOLOR 115 1 128
+			COLOR -1 -1 -1
+		END
+	END
+  END
+  #===============================================================
+  LAYER
+  NAME "jc_boundary"
+  TYPE POLYGON
+  INCLUDE "datashare.inc"
+  STATUS ON
+  DATA 'geom FROM "rjio_jc_boundary" USING UNIQUE id USING srid=4326'
+	CLASS
+		NAME 'jc_boundary' 
+		STYLE
+			WIDTH 3
+			OUTLINECOLOR 0 0 255
+			COLOR -1 -1 -1
+		END
+	END
+  END
+  #===============================================================
+  LAYER
+  NAME "city_boundary"
+  TYPE POLYGON
+  INCLUDE "datashare.inc"
+  STATUS ON
+  DATA 'geom FROM "rjio_city_boundary" USING UNIQUE id USING srid=4326'
+	CLASS
+		NAME 'city_boundary' 
+		STYLE
+			WIDTH 3
+			OUTLINECOLOR 250 101 2
+			COLOR -1 -1 -1
+		END
+	END
+  END
+   #===============================================================
+  LAYER
+  NAME "village_boundary"
+  TYPE POLYGON
+  INCLUDE "datashare.inc"
+  STATUS ON
+  DATA 'geom FROM "rjio_village_boundary" USING UNIQUE id USING srid=4326'
+	CLASS
+		NAME 'village_boundary' 
+		STYLE
+			WIDTH 3
+			OUTLINECOLOR 230 57 102
+			COLOR -1 -1 -1
+		END
+	END
+  END
+  #===============================================================
+  LAYER
+  NAME "building"
+  TYPE POLYGON
+  INCLUDE "datashare.inc"
+  STATUS ON
+  DATA 'geom FROM "rjio_building" USING UNIQUE id USING srid=4326'
+	CLASS
+		NAME 'building' 
+		STYLE
+			WIDTH 2
+			OUTLINECOLOR 110 119 250
+			COLOR -1 -1 -1
+		END
+	END
+  END
+  #===============================================================
+  LAYER
+		NAME 'transmedia'
+		TYPE LINE
+		INCLUDE "datashare.inc"		
+		DATA 'geom FROM rjio_transmedia USING UNIQUE id USING srid=4326'	
+		METADATA
+			'ows_title' 'transmedia'
+		END
+		STATUS ON
+		TRANSPARENCY 100
+		PROJECTION
+			'proj=longlat'
+			'datum=WGS84'
+			'no_defs'
+		END		
+
+		CLASS 
+			NAME "transmedia"						
+		     STYLE
+				WIDTH 2
+				COLOR 156 5 128				                						
+			END				
+		END			
+	END
+  
+  #===============================================================
+  LAYER
+  NAME "temp"
+  TYPE POINT
+  INCLUDE "datashare.inc"
+  STATUS ON
+  DATA 'geom FROM "rjio_structure" USING UNIQUE id USING srid=4326'
+	CLASS
+		NAME 'structure' 
+		STYLE
+			SYMBOL "icons/AsBuild/structure.png" 
+			SIZE 20	
+		END
+	END
+  END
+  #===============================================================
+  LAYER
+  NAME "structure"
+  TYPE POINT
+  INCLUDE "datashare.inc"
+  STATUS ON
+  DATA 'geom FROM "rjio_structure" USING UNIQUE id USING srid=4326'
+	CLASS
+		NAME 'structure' 
+		STYLE
+			SYMBOL "icons/AsBuild/structure.png" 
+			SIZE 20	
+		END
+	END
+  END
+  #===============================================================
+  LAYER
+  NAME "equipment"
+  TYPE POINT
+  INCLUDE "datashare.inc"
+  STATUS ON
+  DATA 'geom FROM "rjio_equipment" USING UNIQUE id USING srid=4326'
+	CLASS
+		NAME 'equipment' 
+		STYLE
+			SYMBOL "icons/AsBuild/equipment.png" 
+			SIZE 20	
+		END
+	END
+  END
+  
+  
+END

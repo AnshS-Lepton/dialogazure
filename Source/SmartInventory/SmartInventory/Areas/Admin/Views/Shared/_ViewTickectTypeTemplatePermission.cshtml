@@ -1,0 +1,249 @@
+﻿@model Models.RoleViewModel
+@using SmartInventory.Settings;
+<style>
+    .searchinput {
+        width: 230px;
+    }
+
+    .searchitem {
+        cursor: pointer;
+        position: absolute;
+        right: 9px;
+        padding:0;
+    }
+
+    .nilRecord {
+        text-align: center;
+        display: none;
+        color: red;
+    }
+
+    .modal.show .modal-dialog {
+        overflow: hidden !important;
+    }
+
+    .scorllable--div {
+        max-height: 311px;
+        overflow: auto;
+    }
+
+</style>
+
+<!DOCTYPE html>
+<div class="layers" data-group="NetworkLayers">
+    
+
+    @if (Model.objRoleMaster.lstTemplateTicketTypePermission != null && Model.objRoleMaster.lstTemplateTicketTypePermission.Count > 0)
+    {
+    <div>
+        <div class="scorllable--div">
+
+            <table border="1" cellpadding="5" class="@(Model.objRoleMaster.isDisabled?"divDisabled":"") grid" id="tblNetworkTypes">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" name="AllTicket_Type" id="AllTicket_Type" class="allLayers1" onclick="setPermissionByNWStatuss('all1',this)" />Ticket Type</th>
+                        <th><input type="checkbox" name="CheckAllCreate" id="CheckAllCreate" class=" all1 createAll" onclick="setPermissionByNWStatuss('create',this)" />Create</th>
+                        <th><input type="checkbox" name="CheckAllEdit" id="CheckAllEdit" class=" all1 editAll" onclick="setPermissionByNWStatuss('edit',this)" /> Edit</th>
+                        <th><input type="checkbox" name="CheckAllView" id="CheckAllView" class=" all1 ViewAll" onclick="setPermissionByNWStatuss('view',this)" /> View</th>
+                        <th><input type="checkbox" name="CheckAllApprove" id="CheckAllApprove" class=" all1 approveT" onclick="setPermissionByNWStatuss('approve',this)" /> Approve</th>
+                    </tr>
+                </thead>
+                @for (int i = 0; i < Model.objRoleMaster.lstTemplateTicketTypePermission.Count; i++)
+                {
+                    @Html.HiddenFor(m => Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id)
+                    @Html.HiddenFor(m => Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type)
+                    @Html.HiddenFor(m => Model.objRoleMaster.lstTemplateTicketTypePermission[i].id)
+                    @Html.HiddenFor(m => Model.objRoleMaster.lstTemplateTicketTypePermission[i].created_by)
+                    @Html.HiddenFor(m => Model.objRoleMaster.lstTemplateTicketTypePermission[i].created_on)
+                    @Html.HiddenFor(m => Model.objRoleMaster.lstTemplateTicketTypePermission[i].modified_by)
+                    @Html.HiddenFor(m => Model.objRoleMaster.lstTemplateTicketTypePermission[i].modified_on)
+                    var layer_id = @Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id;
+                    <tr>
+                        <td>
+                            @if (Model.objRoleMaster.lstTemplateTicketTypePermission[i].is_create == true || Model.objRoleMaster.lstTemplateTicketTypePermission[i].is_edit == true || @Model.objRoleMaster.lstTemplateTicketTypePermission[i].is_view == true || Model.objRoleMaster.lstTemplateTicketTypePermission[i].is_approve == true)
+                            {
+                                if (Model.IsCrossDomainAllowed == true)
+                                {<input type="checkbox" class="all1 tickettype" checked="checked" datalyrid1="@Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id" onclick="setPermissionByTicketType(@Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id, this)" id="CheckAll_type_@Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id" /> @Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type }
+                            else
+                            { <input type="checkbox" class="all1 tickettype" disabled="disabled" checked="checked" datalyrid1="@Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id" onclick="setPermissionByTicketType(@Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id, this)" id="CheckAll_type_@Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id"  /> @Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type}
+
+                    }
+                    else
+                    {
+                        if (Model.IsCrossDomainAllowed == true)
+                        {<input type="checkbox" class="all1 tickettype"  datalyrid1="@Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id" onclick="setPermissionByTicketType(@Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id, this)" id="CheckAll_type_@Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id"  /> @Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type }
+                        else
+                        { <input type="checkbox" class="all1 tickettype" disabled="disabled"  datalyrid1="@Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id" onclick="setPermissionByTicketType(@Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id, this)" id="CheckAll_type_@Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id"  /> @Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type}
+
+                     }
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(m => @Model.objRoleMaster.lstTemplateTicketTypePermission[i].is_create, new { type = "checkbox", @class = "all1 create", @id = i + "_create", @datalyrId1 = Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id, datalyrIdperobj = Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id, @dataparentclass = "",  onclick = "setPermissionByPerType(" + layer_id + ",this,'create')" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(m => @Model.objRoleMaster.lstTemplateTicketTypePermission[i].is_edit, new { type = "checkbox", @class = "all1 edit", @id = i + "_edit", @datalyrId1 = Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id, datalyrIdperobj = Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id, @dataparentclass = "",  onclick = "setPermissionByPerType(" + layer_id + ",this,'edit')" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(m => @Model.objRoleMaster.lstTemplateTicketTypePermission[i].is_view, new { type = "checkbox", @class = "all1 view", @id = i + "_view", @datalyrId1 = Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id, datalyrIdperobj = Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id, @dataparentclass = "",  onclick = "setPermissionByPerType(" + layer_id + ",this,'view')" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(m => @Model.objRoleMaster.lstTemplateTicketTypePermission[i].is_approve, new { type = "checkbox", @class = "all1 approve", @id = i + "_approve", @datalyrId1 = Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id, datalyrIdperobj = Model.objRoleMaster.lstTemplateTicketTypePermission[i].ticket_type_id, @dataparentclass = "", onclick = "setPermissionByPerType(" + layer_id + ",this,'approve')" })
+                        </td>
+                    </tr>
+                }
+            </table>
+            <input type="hidden" id="IsCrossDomainAllowed" value="@(Convert.ToString(Model.IsCrossDomainAllowed))" />
+            <input type="hidden" id="perCount" value="@(Convert.ToString(Model.objRoleMaster.lstTemplateTicketTypePermission.Count))" />
+        </div>
+    </div>
+    }
+</div>
+<div class="clearfix"></div>
+<script>
+    $(document).ready(function () {
+         
+        if ($('#IsCrossDomainAllowed').val() == 'False') {
+            $('#AllTicket_Type').prop('disabled', true);
+            $('#CheckAllCreate').prop('disabled', true);
+            $('#CheckAllApprove').prop('disabled', true);
+
+
+        }
+    });
+    function setPermissionByNWStatuss(clsNmae, obj) {
+         
+        $("." + clsNmae + "[type='checkbox']").prop("checked", $(obj).prop("checked"));
+        if(clsNmae == "create" || clsNmae == "edit" || clsNmae == "view" || clsNmae == "approve") {
+            if ($('#CheckAllCreate').prop('checked') == false && $('#CheckAllEdit').prop('checked') == false && $('#CheckAllView').prop('checked') == false && $('#CheckAllApprove').prop('checked') == false)
+            {
+                $("." + "tickettype" + "[type='checkbox']").prop("checked", false);
+            }
+            else {
+                $("." + "tickettype" + "[type='checkbox']").prop("checked", true)
+            }
+        }
+        if ($('#CheckAllCreate').prop('checked') == true && $('#CheckAllEdit').prop('checked') == true && $('#CheckAllView').prop('checked') == true && $('#CheckAllApprove').prop('checked') == true)
+        {
+            $('#AllTicket_Type').prop('checked', true);
+        }
+        else {
+            $('#AllTicket_Type').prop('checked', false);
+        }
+    }
+    function setPermissionByTicketType(lyrId, obj) {
+         
+        var typeId = 'CheckAll_type_' + lyrId;
+        $("[datalyrIdperobj=" + lyrId + "]").prop("checked", $(obj).prop("checked"));
+        //$("[id=" + typeId + "]").prop("checked", $(obj).prop("checked"));
+
+
+    }
+    function setPermissionByPerType(lyrId, obj, clsNmae) {
+         
+        if ($('#IsCrossDomainAllowed').val() == 'True') {
+            var typeId = 'CheckAll_type_' + lyrId;
+            if ($("[id=" + obj.id + "]").prop('checked') == false) {
+                $('#AllTicket_Type').prop('checked', false);
+                var arr = obj.id.split("_");
+                var perType = arr[1];
+                if (arr[1] == "create") {
+                    $('#CheckAllCreate').prop('checked', false);
+                }
+                else if (arr[1] == "edit") {
+                    $('#CheckAllEdit').prop('checked', false);
+                }
+                else if (arr[1] == "view") {
+                    $('#CheckAllView').prop('checked', false);
+                }
+                else {
+                    $('#CheckAllApprove').prop('checked', false);
+                }
+                if ($("[id=" + arr[0] + '_' + 'edit' + "]").is(":checked") || $("[id=" + arr[0] + '_' + 'create' + "]").is(":checked") || $("[id=" + arr[0] + '_' + 'view' + "]").is(":checked") || $("[id=" + arr[0] + '_' + 'approve' + "]").is(":checked")) {
+                    $("[id=" + typeId + "]").prop('checked', true);
+                }
+                else {
+                    $("[id=" + typeId + "]").prop('checked', false);
+                }
+                if ($("[id=" + arr[0] + '_' + 'edit' + "]").is(":checked")) {
+                    $("[id=" + typeId + "]").prop('checked', true);
+                }
+                if ($("[id=" + arr[0] + '_' + 'create' + "]").is(":checked")) {
+                    $("[id=" + typeId + "]").prop('checked', true);
+                }
+                if ($("[id=" + arr[0] + '_' + 'view' + "]").is(":checked")) {
+                    $("[id=" + typeId + "]").prop('checked', true);
+                }
+                if ($("[id=" + arr[0] + '_' + 'approve' + "]").is(":checked")) {
+                    $("[id=" + typeId + "]").prop('checked', true);
+                }
+
+            }
+
+            if ($("[id=" + obj.id + "]").prop('checked') == true) {
+                var arr = obj.id.split("_");
+                var perType = arr[1];
+                if ($("[id=" + arr[0] + '_' + 'edit' + "]").is(":checked") || $("[id=" + arr[0] + '_' + 'create' + "]").is(":checked") || $("[id=" + arr[0] + '_' + 'view' + "]").is(":checked") || $("[id=" + arr[0] + '_' + 'approve' + "]").is(":checked")) {
+                    $("[id=" + typeId + "]").prop('checked', true);
+                }
+                else {
+                    $("[id=" + typeId + "]").prop('checked', false);
+                }
+                if ($("[id=" + arr[0] + '_' + 'edit' + "]").is(":checked")) {
+                    $("[id=" + typeId + "]").prop('checked', true);
+                }
+                if ($("[id=" + arr[0] + '_' + 'create' + "]").is(":checked")) {
+                    $("[id=" + typeId + "]").prop('checked', true);
+                }
+                if ($("[id=" + arr[0] + '_' + 'view' + "]").is(":checked")) {
+                    $("[id=" + typeId + "]").prop('checked', true);
+                }
+                if ($("[id=" + arr[0] + '_' + 'approve' + "]").is(":checked")) {
+                    $("[id=" + typeId + "]").prop('checked', true);
+                }
+            }
+        }
+        else {
+            
+            var typeId = 'CheckAll_type_' + lyrId;
+            var arr = obj.id.split("_");
+            var perType = arr[1];
+            if (arr[1] == 'create' || arr[1] == 'approve') {
+                if (arr[1] == 'create') { $("[id=" + arr[0] + '_' + 'approve' + "]").prop('checked', true) } else if (arr[1] == 'approve') { $("[id=" + arr[0] + '_' + 'create' + "]").prop('checked', true) }
+                for (var i = 0; i <= parseInt($('#perCount').val()); i++) {
+                    if ($("[id=" + arr[0] + '_' + arr[1] + "]").is(":checked")) {
+                        if (arr[0] != i) {
+                            $("[id=" + i + '_' + 'create' + "]").prop('disabled', true)
+                            $("[id=" + i + '_' + 'approve' + "]").prop('disabled', true)
+                            $("[id=" + typeId + "]").prop('checked', true);
+
+                        }
+                    }
+                    else
+                    {
+                        $("[id=" + i + '_' + 'create' + "]").prop('disabled', false)
+                        $("[id=" + i + '_' + 'approve' + "]").prop('disabled', false)
+                        $("[id=" + i + '_' + 'approve' + "]").prop('checked', false)
+                        $("[id=" + i + '_' + 'create' + "]").prop('checked', false)
+                        $("[id=" + typeId + "]").prop('checked', false);
+                    }
+
+                }
+
+            }
+
+            if ($("[id=" + arr[0] + '_' + 'edit' + "]").is(":checked") || $("[id=" + arr[0] + '_' + 'view' + "]").is(":checked")) {
+                $("[id=" + typeId + "]").prop('checked', true);
+            }
+            else {
+                if ($("[id=" + arr[0] + '_' + 'create' + "]").is(":checked") || $("[id=" + arr[0] + '_' + 'approve' + "]").is(":checked")) { }
+                else { $("[id=" + typeId + "]").prop('checked', false); }
+            }
+
+        }
+
+    }
+
+
+
+
+</script>

@@ -1,0 +1,131 @@
+﻿@model Models.CableItemMaster
+@using Models;
+
+<script>
+    //Set color of template icon as green in NE library
+    if ('@Model.id' > 0) {
+        $(".clsTemplateIcon[data-lyrname='Cable']").css('background-color', '#9999FF');
+    }
+</script>
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+@helper CableTemplateMaster()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_CableTemplateMaster.cshtml", (CableTemplateMaster)Model); }
+}
+
+<!DOCTYPE html>
+<div class="libDetail">
+
+    @using (Ajax.BeginForm("SaveCableTemplate", "ItemTemplate", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnFailure = "si.handleError"
+    },
+    new { id = "frmItemTemplate", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id)
+
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="ItemSpecfication">
+                    @CableTemplateMaster()
+                </div>
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+
+            <a href="javascript:void(0);" class="btn btn-warning ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            @if (Model.id > 0)
+            {
+                <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        notAllowZero('#cable_calculated_length');
+        setMeasuredLength('#cable_calculated_length', '#cable_measured_length');
+        callFormValidator("frmItemTemplate");
+
+        $('#id').val('@Model.id');
+
+
+        $("#btnUpdateItemTemplate").on("click", function (e) {
+            return validateCore();
+
+        });
+        $("#btnSaveItemTemplate").on("click", function (e) {
+            return validateCore();
+
+        });
+
+
+
+        $("#ddlIOP").on('change', function (e) {
+            var ddlFiberCount = $("#ddlIOP_chosen").children('a').text().trim();
+            if (ddlFiberCount != "Select Fiber Count") {
+
+                ddlFiberCount = ddlFiberCount.split(' ');
+                $('#no_of_tube').val('1').attr('readonly', false);
+                $('#no_of_core_per_tube').val(ddlFiberCount[0]).attr('readonly', false);
+                $('#total_core').val(ddlFiberCount[0]);
+            }
+            else {
+                $('#no_of_tube').val(0);
+                $('#no_of_core_per_tube').val(0);
+                $('#total_core').val(0);
+            }
+        });
+
+
+    });
+
+
+    function validateCore() {
+        debugger;
+        var ddlFiberCount = $("#ddlIOP_chosen").children('a').text().trim();
+        var tubeCount = parseInt($('#no_of_tube').val());
+        var corePerTubeCount = parseInt($('#no_of_core_per_tube').val());
+        //pk
+        var measureLen = parseFloat($("#cable_measured_length").val());
+        var calculatedLen = parseFloat($("#cable_calculated_length").val());
+        
+        if (ddlFiberCount == "Select Fiber Count") {
+            alert("Please select fiber count!!");
+            return false;
+        }
+        else {
+            var totalCount = tubeCount * corePerTubeCount;
+            ddlFiberCount = ddlFiberCount.split(' ');
+            if (totalCount != ddlFiberCount[0]) {
+                alert('Multiple of no of tube and no of core per tube should be equal to fiber count !!');
+                return false;
+            }
+        }
+
+        if (measureLen == 0) {
+            alert("Measured length should be greater than 0 !!");
+            return false;
+        }
+
+        if (calculatedLen < measureLen) {
+            alert('Cable calculated lenth should be greater or equal to cable measured length !!');
+            return false;
+        }
+    }
+
+</script>

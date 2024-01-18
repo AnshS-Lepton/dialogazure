@@ -1,0 +1,42 @@
+﻿@model Models.FiberLinkCustomerFilter
+
+@{
+    var userModuleList = (List<string>)Session["ApplicableModuleList"];
+    WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: false, ajaxUpdateContainerId: "tbllinkcustomer");
+
+    grid.Bind(Model.lstFiberLinkCustomer, autoSortAndPage: false, rowCount: Model.totalRecord);
+    if (Model.totalRecord > 0)
+    {
+        grid.PageIndex = Model.currentPage - 1;
+    }
+}
+
+<!DOCTYPE html>
+@if (Model.lstFiberLinkCustomer.Count > 0) { 
+    <div id="VwFiberLinkGrid" class="space-pad">
+       <div class="d-flex mb-15"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@grid.TotalRowCount</b>
+         @if (Model.lstFiberLinkCustomer.Count > 0)
+         {
+            <button type="button" class="btn exp--btn ml-auto"  onclick="fiberLink.FiberLinkCustomerExport();" value="Export">
+                <span class="fa fa-download mr-03"></span> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+         }
+         else
+         {
+            <button type="button" class="btn btn-primary"  disabled="disabled" onclick="fiberLink.FiberLinkCustomerExport();"  value="Export">
+                 <span class="fa fa-download mr-03"></span> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+         }
+        </div>
+        
+            <div class="table-responsive">
+                @grid.GetHtml(tableStyle: "grid",
+                            htmlAttributes: new { id = "tbllinkcustomer" },
+                            mode: WebGridPagerModes.All)
+            </div>
+        </div>
+    }
+    else
+    {
+    <div class="nr-found">
+        <span> @Resources.Resources.SF_GBL_GBL_NET_FRM_037</span>
+    </div>
+    } 

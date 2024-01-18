@@ -1,0 +1,134 @@
+﻿@model Models.Admin.VwCableMapColorSettings
+@using Utility
+@using SmartInventory.Settings;
+<link href="~/Areas/Admin/Content/css/spectrum.css" rel="stylesheet" />
+<script src="~/Areas/Admin/Content/js/spectrum.js"></script>
+
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div class="update_panel fullWidth">
+    <div class="title">
+        <h4>
+            Cable Map Color Settings
+        </h4>
+    </div>
+    <div class="pad_left">
+
+
+        <div id="dvViewCableClrSttngs" class="ViewCablClrSttngs">
+            @{
+                WebGrid grid = new WebGrid(rowsPerPage: Model.objCableColorSettingsFilter.pageSize, canSort: true, ajaxUpdateContainerId: "divCableColorSetting", ajaxUpdateCallback: "onGridHeaderClick('tblCableColorSetting')");
+                grid.Bind(Model.lstViwCableColorSetting, autoSortAndPage: false, rowCount: Model.objCableColorSettingsFilter.totalRecord);
+                if (Model.objCableColorSettingsFilter.totalRecord > 0)
+                {
+                    grid.PageIndex = Model.objCableColorSettingsFilter.currentPage - 1;
+                }
+            }
+            @using (Html.BeginForm("ViewCableMapColorSettings", "OSPSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmViewCableColorSettings" }))
+            {
+                <div class="form-inline filter-sec">
+                    <div class="form-group mr-05">
+                        <label class="control-label mr-05">Cable Type:</label>
+                        <div class="--input-width">
+                            @Html.DropDownListFor(m => m.objCableColorSettingsFilter.cable_type, new SelectList(Model.lstCableType.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select", @id = "ddlCableType" })
+                        </div>
+                    </div>
+
+                    <div class="form-group mr-05">
+                        <label class="control-label mr-05">Cable Category:</label>
+                        <div class="--input-width">
+                            @Html.DropDownListFor(m => m.objCableColorSettingsFilter.cable_category, new SelectList(Model.lstCableCategory.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select", @id = "ddlCableCategory" })
+                        </div>
+                    </div>
+                    <div class="form-group mr-05">
+                        <label class="control-label mr-05">Fiber Count:</label>
+                        <div class="--input-width">
+                            @Html.DropDownListFor(m => m.objCableColorSettingsFilter.fiber_count, new SelectList(Model.lstFiberCount.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select", @id = "ddlFiberCount" })
+                        </div>
+                    </div>
+                    <br />
+                    <div class="form-group wtd_set" id="dvBtnAction">
+                        <div class="col-md-8">
+                            <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                            @if (@grid.TotalRowCount > 0)
+                            {
+                                <input type="button" id="btnExportCableMapColor" value="Export" class="btn btn-primary clsexport  mr-05" />
+                            }
+                            else
+                            {
+                                <input type="button" id="btnExportCableMapColor" value="Export" disabled="disabled" class="btn btn-primary clsexport  mr-05" />
+                            }
+                            <a href="@Url.Action("ViewCableMapColorSettings")" class="btn btn-default mr-05" title="Reset">Reset</a>
+
+                            <input type="button" id="btnAddNew" onclick="AddNewCableColour(0);" value="Add New" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+                if (Model.lstViwCableColorSetting.Count > 0)
+                {
+                    <div id="divCableColorSetting">
+                        <div class="recordCount mb-01"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+                                                htmlAttributes: new { id = "tblCableColorSetting" },
+                                                mode: WebGridPagerModes.All,
+                                                columns: grid.Columns(
+                                                        grid.Column("", "Action", format:@<text>
+                                                                <a href="#" onclick="AddNewCableColour(@item.id);" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                                                <a href="javascript:void(0);" onclick="DeleteCableColourSettingsById(@item.id);" title="Delete"> <i class="fa fa-fw fa-trash" style="color: #f50000;"></i></a>
+                                                        </text>
+),
+grid.Column("cable_type", "Cable Type", format: @<text>@item.cable_type</text>),
+grid.Column("cable_category", "Cable Category", format: @<text>@item.cable_category</text>),
+grid.Column("fiber_count", "Fiber Count", format: @<text>@item.fiber_count</text>),
+grid.Column("color_code", "Color Code", format: @<text>
+    <span class="CableMapColrCode" style="background-color:@item.color_code;"> </span>@item.color_code </text>),
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>),
+grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>),
+grid.Column("modified_on", "Modified On", format: @<text>@(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString()))</text>
+)))
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Records Found.
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            updateNumberstoFormatedNumber();
+            // apply choose style
+            $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+            // add sorting on grid..
+            addDefaultSortingIcons("tblCableColorSetting");
+            //download cablecolorsettings as excel format
+            $("#btnExportCableMapColor").on("click", function () {
+                window.location = appRoot + 'OSPSettings/ExportCableMapColorDetails';
+            });
+            $('th a, tfoot a').on("click", function () {
+                $('#frmViewCableColorSettings').attr('action', $(this).attr('href')).submit();
+                return false;
+            });
+        });
+        function updateNumberstoFormatedNumber() {
+            $('span[data]').each(function (index) {
+                // Get the value of the data-target attribute for each element
+                var targetValue = $(this).data('data');
+
+                // Do whatever you want with the element or its data
+                $(this).text(getFormattedNumber($(this).text().trim()));
+            });
+        }
+    </script>
+</div>
+

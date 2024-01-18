@@ -1,0 +1,271 @@
+﻿@model Models.ViewlocationTrackingModel
+@using Utility;
+@using SmartInventory.Settings;
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objFilterAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "objViewLocationTracking", ajaxUpdateCallback: "onGridHeaderClick('tblSurveyAreaTracking')");
+    grid.Bind(Model.lstLocationTracking, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+    if (Model.objFilterAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objFilterAttributes.currentPage - 1;
+    }
+}
+
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div class="libDetail">
+    @using (Ajax.BeginForm("GetSurveyLocationTrackingData", "SurveyArea", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        OnBegin = ""
+
+    },
+                        new { id = "frmShowSurveyBuilding", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        <div class="libTabContent1">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+
+                    <div class="tablePad-bn locationTracker">
+                        <div class="d-flex">
+                            <label for="txtDateTo" class="mr-05">@Resources.Resources.SI_OSP_GBL_NET_FRM_069:</label>
+
+                            @*<div class="col-sm-8 @(Model.objFilterAttributes.roleid == 3?"dvdisabled":"")" style="padding-left:0px;">
+                                  @Html.DropDownListFor(m => m.objFilterAttributes.dd_user, new SelectList(Model.lstSurveyUser.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text"), new { @class = "form-control col-sm-12", @style = "padding:0;" })
+                                </div>*@
+
+
+                            @if (Model.objFilterAttributes.roleid == 3)
+                            {
+                                @Html.DropDownListFor(m => m.objFilterAttributes.dd_user, new SelectList(Model.lstSurveyUser.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text"), new { @class = "form-control clsReadOnly", @style = "padding:0;", @readonly = true })
+
+                            }
+                            else
+                            {
+
+                                // @Html.DropDownListFor(m => m.objFilterAttributes.dd_user, new SelectList(Model.lstSurveyUser.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-4", @style = "padding:0;" })
+                                @*<select id="objbuildingFilterAttributes_dd_user" name="@Html.NameFor(m => m.objFilterAttributes.dd_user)" class="chosen-select col-sm-12">
+
+                                        @foreach (var attribute in Model.lstSurveyUser.GroupBy(x => x.manager_name))
+                                        {
+                                            <optgroup value="@attribute.Select(x=>x.manager_id)" label="@attribute.Key">
+                                                @foreach (var user in attribute)
+                                                {
+                                                    var selected = user.user_id == Convert.ToString(Model.objFilterAttributes.dd_user) ? "selected" : "";
+                                                    <option value="@user.user_id" @selected>@user.user_name</option>
+                                                }
+                                            </optgroup>
+                                        }
+                                    </select>*@
+
+                                <select id="objbuildingFilterAttributes_dd_user" class="chosen-select" name="objFilterAttributes.dd_user">
+                                    @{
+                                        var groupName = "";
+                                        var count = 0;
+                                        var othersOption = "";
+                                        var options = "<option value=0>All</option>";
+                                    }
+
+                                    @foreach (var attribute in Model.lstUserReport)
+                                    {
+                                        count = count + 1;
+                                        var selected = attribute.user_id.ToString() == Convert.ToString(Model.objFilterAttributes.dd_user) ? "selected" : "";
+                                        if (attribute.groupUser != "Others")
+                                        {
+                                            options = options + "<option value=" + attribute.user_id + " " + selected + ">" + attribute.user_name + "</option>";
+                                        }
+                                        else
+                                        {
+
+                                            othersOption = othersOption + "<option value=" + attribute.user_id + " " + selected + ">" + attribute.user_name + "</option>";
+                                        }
+
+
+                                        @*if (groupName != attribute.groupUser && attribute.groupUser == "Others")
+                                            {
+                                                groupName = attribute.groupUser;
+                                                <optgroup label="Others">
+                                            }
+
+
+
+                                            if (count == Model.lstUserReport.Count() && attribute.groupUser == "Others")
+                                            {
+                                                </optgroup>
+                                            }*@
+                                    }
+                                    @Html.Raw(options);
+                                    @if (othersOption != "")
+                                    {
+                                        <optgroup label="Others">@Html.Raw(othersOption);</optgroup>
+                                    }
+
+                                </select>
+
+                            }
+                        </div>
+                        <div class="d-flex pos-rel">
+                            <label for="txtDatefrom" class="mr-05">@Resources.Resources.SI_OSP_GBL_NET_FRM_096:</label>
+
+                            @Html.TextBoxFor(m => m.objFilterAttributes.searchFrom, new { @id = "txtDateFrom", @title = "Date From", @tabindex = "4", @class = "input-sm form-control", @readonly = true })
+                            <img id="imgFromDate" class="calend" src="~/Content/images/calendar.png" />
+                        </div>
+
+                        <div class="d-flex pos-rel">
+                            <label for="txtDateTo" class="mr-05">@Resources.Resources.SI_OSP_GBL_NET_FRM_097:</label>
+
+                            @Html.TextBoxFor(m => m.objFilterAttributes.searchTo, new { @id = "txtDateTo", @title = "Date To", @tabindex = "4", @class = "input-sm form-control", @readonly = true })
+                            <img id="imgToDate" class="calend" src="~/Content/images/calendar.png" />
+                        </div>
+
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-success" id="btnSurveyTrack">@Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                            <button type="submit" class="btn btn-default ml-10" id="btnSurveyTrackClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<div class="form-group ModalFooter" id="dvBtnAction">
+                <div class="col-sm-4 col-sm-offset-2" style="float: right; text-align: right; padding-right: 25px;">
+
+                    <button type="submit" class="btn btn-primary" id="btnSurveyTrack">@Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                    @if (@grid.TotalRowCount > 0)
+                    {
+                        <input type="button" id="btnExportTrack" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-primary" />
+                    }
+                    else
+                    {
+                        <input type="button" id="btnExportTrack" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" disabled="disabled" class="btn btn-primary" />
+                    }
+
+                    <button type="submit" class="btn btn-default" id="btnSurveyTrackClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>
+                </div>
+            </div>
+            <div class="clearfix"></div>*@
+
+
+        if (Model.lstLocationTracking.Count > 0)
+        {
+
+            <div id="objViewLocationTracking" class="space-pad">
+                <div class="mb-15 d-flex">
+                    <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b>
+                    @if (@grid.TotalRowCount > 0)
+                    {
+                        <input type="button" id="btnExportTrack" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-success ml-auto" />
+                    }
+                    else
+                    {
+                        <input type="button" id="btnExportTrack" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" disabled="disabled" class="btn btn-success ml-10" />
+                    }
+                </div>
+                <div class="table-responsive">
+                    @grid.GetHtml(tableStyle: "grid",
+                          htmlAttributes: new { id = "tblSurveyAreaTracking" },
+                                mode: WebGridPagerModes.All,
+                                columns: grid.Columns(
+                                grid.Column("user_name", Resources.Resources.SI_OSP_GBL_NET_RPT_040, format: @<text>@item.user_name</text>),
+grid.Column("login_time", Resources.Resources.SI_OSP_GBL_NET_RPT_037, format: @<text>@(item.tracking_date == null ? item.tracking_date : MiscHelper.FormatDate(item.tracking_date.ToString()))</text>),
+grid.Column("login_time", Resources.Resources.SI_OSP_GBL_NET_RPT_038, format: @<text>@(item.login_time == null ? item.login_time : MiscHelper.FormatDateTime(item.login_time.ToString())) </text>),
+grid.Column("logout_time", Resources.Resources.SI_OSP_GBL_NET_RPT_039, format: @<text>@(item.logout_time == null ? item.logout_time : MiscHelper.FormatDateTime(item.logout_time.ToString()))</text>),
+//grid.Column("building_count", "Entity Count", format: (item) =>
+//{
+//    if (item.building_count == "0")
+//    {
+//        return Html.Raw(string.Format("<text>{0}</text>", item.building_count));
+//    }
+//    else
+//    {
+//        return Html.Raw(string.Format("<a  href=\"#\"  style=\"color: #0a0909\" onclick=\"showSurveyTrackBuilding({0}, {1})\">{2}</a>", item.user_id, item.login_id, item.building_count));
+//    }
+//}),
+grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_059, format: @<text><a href="#" onclick="ShowUserCurrentLocation('@item.login_id')" class="dropdown-toggle" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_036">
+        <i class="fa fa-location-arrow fa-fw m-r-xs"></i>
+    </a>
+    @*<a href="#" onclick="ShowRouteOnMap('@item.login_id','@(item.logout_time == null ? false : true)')" class="dropdown-toggle" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_080	">
+        <i class="fa fa-eye"></i>
+    </a>*@
+</text>)))
+
+                    @Html.Hidden("dir", grid.SortDirection)
+                    @Html.Hidden("col", grid.SortColumn)
+                </div>
+            </div>
+
+        }
+        else
+        {
+            <div class="nr-found">
+                <span>@Resources.Resources.SI_OSP_GBL_NET_RPT_042</span>
+            </div>
+        }
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        updateNumberstoFormatedNumber();
+        //si.setSurveyDateTimeCalendar("txtDateFrom", "imgFromDate", "1", false);
+        //si.setSurveyDateTimeCalendar("txtDateTo", "imgToDate", "1", false);
+        si.setDateTimeCalendar_Survey("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+
+        $('tfoot a').on("click", function () {
+            $('form').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+
+        //Post form on page header click..
+        $('th a').on("click", function () {
+            $('form').attr('action', $(this).attr('href')).submit();
+
+            return false;
+        });
+
+        $("#btnExportTrack").on("click", function () {
+
+            LocationTrackingReport();
+        });
+        $("#btnSurveyTrackClear").on("click", function () {
+
+            if ($("#objbuildingFilterAttributes_roleid").val() != 3) {
+
+                $("#txtDateFrom").val("");
+                $("#txtDateTo").val(""); //
+                $("#objbuildingFilterAttributes_dd_user ").val("0").trigger("chosen:updated");
+
+
+            }
+            else {
+                $("#txtDateFrom").val("");
+                $("#txtDateTo").val(""); //
+
+            }
+            $("btnSurveyTrack").trigger("click");
+        });
+
+        $('.chosen-select').chosen({ width: '100%' });
+    });
+    function showSurveyTrackBuilding(user_id, loginID) {
+
+        showtrackBuilding(user_id, loginID, 0);
+    }
+
+    $(document).ready(function () {
+        addDefaultSortingIcons('tblSurveyAreaTracking');
+        onGridHeaderClick('tblSurveyAreaTracking')
+    });
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+</script>

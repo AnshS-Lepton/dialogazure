@@ -1,0 +1,63 @@
+﻿@model Models.Feasibility.FeasibilityViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+<div id="wrapper">
+
+    @{Html.RenderPartial("_FeasibilityInput", Model);}
+
+    @{Html.RenderPartial("_LayersPanel", Model.layerView);}
+    @{Html.RenderPartial("_GlobalVariable");}
+
+    <div id="feasibilitydetailsDv"></div>
+
+    <div id="map_canvas">
+    </div>
+
+    <div class="footer">
+        <table width="100%">
+            <tr>
+                <td style="width:50%; text-align:left">
+                    <b>Coordinates :</b> <span id="spnCoords">&nbsp;</span>
+                </td>
+                <td>
+                    <b>Version :</b> <span id="spnAppVersion">@System.Configuration.ConfigurationManager.AppSettings["AppVersion"] </span>
+                </td>
+                <td>
+                    <b>Map Scale: </b><span id="mapScale"></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="legends">
+        <table class="legendsTable">
+            <tbody>
+                <tr>
+                    <td><hr class="legendLines insidePLine" /></td>
+                    <td style="width:10%;">&nbsp;</td>
+                    <td style="text-align:left">Inside Planned</td>
+                </tr>
+                <tr>
+                    <td><hr class="legendLines insideALine" /></td>
+                    <td style="width:10%;">&nbsp;</td>
+                    <td style="text-align:left">Inside As-Built</td>
+                </tr>
+                <tr>
+                    <td><hr class="legendLines outsideLine" /></td>
+                    <td style="width:10%;">&nbsp;</td>
+                    <td style="text-align:left">Outside</td>
+                </tr>
+                <tr>
+                    <td><hr class="legendLines lmcLine" /></td>
+                    <td style="width:10%;">&nbsp;</td>
+                    <td style="text-align:left">LMC</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

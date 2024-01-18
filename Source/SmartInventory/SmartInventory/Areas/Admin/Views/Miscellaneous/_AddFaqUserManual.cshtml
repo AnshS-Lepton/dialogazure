@@ -1,0 +1,82 @@
+﻿@model Models.FAQ_UserManual
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<link href="~/Areas/Admin/Content/css/spectrum.css" rel="stylesheet" />
+<script src="~/Areas/Admin/Content/js/spectrum.js"></script>
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="divAddNewFaqUserManual">
+    @using (Ajax.BeginForm("UploadUserManual", "Miscellaneous",
+                                        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddNewFaqUserManual", OnSuccess = "OnSuccess", },
+                                        new { id = "frmAddFaqUserManual", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id, new { @id="hdnid"});
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Category<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.category, new List<SelectListItem>
+                 {
+                   new SelectListItem{ Text="-Select-", Value = "" },
+                    new SelectListItem{ Text="Mobile", Value = "Mobile" },
+                    new SelectListItem{ Text="Web", Value = "Web" },
+                 }, new { @id = "ddlcategory", @tabindex = "2", @title = "category", @class = "chosen-select form-control" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                   
+                        <div class="control-label col-md-4">User Manual<i class="clsMandatory">*</i>:</div>
+                        <div>
+                            <div class="col-md-12 UploadAction">
+                                <div class="col-md-10 col-sm-6" id="divDocumentUpload" style="display:flex; text-decoration:underline;">
+                                    <input type="file" class="file" name="DocUpload" id="DocUpload">
+                                </div>
+                                <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
+                            </div>
+                        </div>
+                   
+                </div>
+             
+            </div>
+        </div>
+        <div class="form-group" id="dvBtnAction">
+            <div class="row form-group EUTFooter">
+                <div class="col-md-3"> </div>
+                <div class="col-md-9 text-right" style="padding-right: 20px;">
+                    @if (Model.id > 0)
+                    {
+                        <input type="button" class="btn btn-primary" onclick="return UserManual.upload();" id="btnSaveAccessories" value="Update" />
+                    }
+                    else
+                    {
+                    <input type="button" class="btn btn-primary" onclick="return UserManual.upload();" id="btnSaveAccessories" value="Save" />
+                    }
+                    <button type="button" class="btn btn-default" id="btnCancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+         
+        //if ($("#hdnid").val() > 0) {
+        //    $("#DocUpload").html("hi");
+        //}
+    });
+  
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+$("#btnCancel").on("click", function () {
+    $("#closeModalPopup").trigger("click");
+   
+});
+    </script>

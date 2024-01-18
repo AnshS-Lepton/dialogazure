@@ -1,0 +1,122 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Dynamic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+
+namespace Models
+{
+    public class GPON
+    {
+        public string nap_id { get; set; }
+        public string nap_name { get; set; }
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+        public decimal distance { get; set; }
+        public string utilized_port { get; set; }
+        //public GPON()
+        //{
+        //    detail = new ExpandoObject(); 
+        //}
+    }
+    public class DOCSIS
+    {
+        public string node_id { get; set; }
+        public decimal distance { get; set; }
+    }
+    public class GFAST
+    {
+        public string gfast_id { get; set; }
+        public decimal distance { get; set; }
+    }
+    public class DeviceList
+    {
+        public List<GPON> GPON { get; set; }
+        //public List<DOCSIS> DOCSIS { get; set; }
+        //public List<GFAST> GFAST { get; set; }
+        public DeviceList()
+        {
+            GPON = new List<GPON>();
+            //DOCSIS = new List<DOCSIS>();
+            //GFAST = new List<GFAST>();
+        }
+    }
+    public class ServiceabilityRoot
+    {
+        public string requestid { get; set; }
+        public DeviceList devicelist { get; set; }
+        public ServiceabilityRoot()
+        {
+            devicelist = new DeviceList();
+        }
+    }
+    public class ServiceabilityPort
+    {
+        public int system_id { get; set; }
+        public string type { get; set; }
+        public string port_type { get; set; }
+        public string port_name { get; set; }
+        public string port_status { get; set; }
+        public string port_comment { get; set; }
+        public int port_number { get; set; }
+    }
+    public class ServiceabilityPortIN
+    {
+        public string network_id { get; set; }
+        public string entity_type { get; set; }
+    }
+    public class ServiceabilityModel
+    {
+        public string requestId { get; set; }
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+        public string servicetypes { get; set; }
+        public string segment { get; set; }
+    }
+    public class ApiSettings
+    {
+        public string key { get; set; }
+        public string value { get; set; }
+    }
+    public class apiresponse
+    {
+        public string status { get; set; }
+        public string error_message { get; set; }
+        public string results { get; set; }
+    }
+    public class ReqInputs
+    {
+        public string data { get; set; }
+
+    }
+    public class ReqHelpers
+    {
+        public static T GetRequestData<T>(ReqInputs userData)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(userData.data);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+    }
+
+    public class UpdateDesignIDInputs
+    {
+        public string network_id { get; set; }
+        public string new_design_id { get; set; }
+        public string old_design_id { get; set; }
+        public string entity_type { get; set; }
+    }
+    public class UpdateDesignIDInputsDetails
+    {
+        public List<UpdateDesignIDInputs> InputDetails { get; set; }
+    }
+}

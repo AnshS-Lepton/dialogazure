@@ -1,0 +1,71 @@
+﻿
+<style>
+    #ModalPopUp .modal-dialog {
+        margin: 0 auto !important;
+        top: 2%;
+        left: 0;
+        right:0;
+        z-index: 9999;
+    }
+
+    #ChildPopUp .modal-dialog {
+        top: 10%;
+        margin: 0 auto;
+        z-index: 9999;
+    }
+
+    .MinMax {
+        top: 5%;
+        left: 25%;
+        width: 300px;
+        height: 33px;
+    }
+
+    .ModalPopUpPosition {
+        position: absolute;
+        top: 5%;
+        left: 14%;
+    }
+
+    .modal-open .modal {
+        z-index: 4000;
+    }
+</style>
+
+@*Modal pop up*@
+
+<div class="modal fade" id="ModalPopUp" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header popup_bg d-fx aln-item">
+                <h4 class='modal-title modalTextWrap'></h4>
+                <a href="javascript:void(0)" class="close minmizeModel ml-auto mr-05"> <i class='fa fa-minus'></i> </a>
+                <span type="button" id="closeModalPopup" data-dismiss="modal" class="icon-close"></span>
+
+                @*<div class="ModalSeprator"></div>*@
+            </div>           
+            <div id="dvModalBody" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="parentMinMaxContainer" style="display:none;" class="MinMaxContainer"></div>
+@*Modal pop up: END  *@
+
+<div class="modal fade modal2 in" id="ChildPopUp" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header d-fx align-itm popup_bg">
+                <h4 class='modal-title'></h4>
+                <span type="button" id="closeChildPopup" data-dismiss="modal" class="icon-close ml-auto" data-original-title="" title="Close"></span>
+                @*<a href="javascript:void(0)" class="close minmizeModel"> <i class='fa fa-minus'></i> </a>*@
+
+            </div>
+            <div id="dvChildModalBody" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="childMinMaxContainer" style="display:none;" class="MinMaxContainer"></div>

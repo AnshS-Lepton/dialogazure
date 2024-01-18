@@ -1,0 +1,258 @@
+﻿@model Models.Feasibility.PastFeasibilityFtthViewModel
+@using Utility
+
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: false, ajaxUpdateContainerId: "tblPastFeas", ajaxUpdateCallback: "onGridHeaderClick('WebGrid')", canPage: true);
+    grid.Bind(Model.lstPastFeasibilityFtth, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+    if (Model.objGridAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+    }
+}
+
+
+<!DOCTYPE html>
+
+<div class="bulkFeasContainer" id="dvMain">
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#divList">@Resources.Resources.SF_GBL_GBL_NET_FRM_049</a></li>
+            <li class="ui-state-disabled"><a href="#divDetails">@Resources.Resources.SF_GBL_GBL_NET_FRM_051</a></li>
+        </ul>
+        @using (Ajax.BeginForm("pastFeasibilitiesFtth", "FeasibilityDetails", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvMain", LoadingElementId = "dvProgress", OnBegin = "return Validform();" },
+                                                                     new { id = "frmHistoryList", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+            // @Html.HiddenFor(m => m.FromDate, "hdn_from_date")
+            // @Html.HiddenFor(m => m.ToDate, "hdn_to_date")
+
+            <div id="divList">
+                <div class="row">
+
+                    <div class="col-md-3 dflex">
+                        <label class="control-label mr05">@Resources.Resources.SF_GBL_GBL_NET_FRM_034 : </label>
+                        @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control searchPastFeas", @onChange = "clearSearchText()", @id = "ddlSearchby" })
+                    </div>
+
+                    <div class="col-sm-2">
+                        @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @title = Resources.Resources.SF_GBL_GBL_NET_FRM_035, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SF_GBL_GBL_NET_FRM_035, @id = "txtSearchtext", @style = "height:34px" })
+                    </div>
+
+                    <div class="col-md-3"></div>
+
+                    <div class="col-sm-2 pl0">
+                        @Html.TextBoxFor(m => m.ToDate, null, new { @title = "Date To", @tabindex = "4", @class = "input-sm form-control", @readonly = true, @Placeholder = "Date To", @id = "toDate" })
+                        <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                    </div>
+                    <div class="col-sm-2 pl0">
+                        @Html.TextBoxFor(m => m.FromDate, null, new { @title = "Date From", @tabindex = "4", @class = "input-sm form-control", @readonly = true, @Placeholder = "Date From", @id = "fromDate" })
+                        <img id="imgFromDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                    </div>
+
+
+                </div>
+                <div class="row">
+                    <div class="div_totalRecord col-sm-4 col-sm-4 mt15">@Resources.Resources.SF_GBL_GBL_NET_FRM_026:&nbsp;<span>@grid.TotalRowCount</span></div>
+                    <div class="col-sm-8 mt10 mb10 dfButtons">
+                        <input type="button" id="btnResetFtth" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" class="btn btn-primary"  onclick="ResetFormValues()" />
+
+                        @if (grid.TotalRowCount > 0)
+                        {
+                            <input type="button" id="btnExport" value="@Resources.Resources.SF_GBL_GBL_NET_RPT_001" class="btn btn-primary" onclick="sf.ExportPastFeasibilityRecordFTTH('@Model.objGridAttributes.searchBy', '@Model.objGridAttributes.searchText');" />
+                            <input type="button" id="btnExportKML" value="@Resources.Resources.SF_OSP_GBL_NET_RPT_001" class="btn btn-primary" onclick="sf.ExportMergedKMLFTTH('@Model.objGridAttributes.searchBy', '@Model.objGridAttributes.searchText');" />
+                        }
+                        else
+                        {
+                            <input type="button" id="btnExport" disabled title="@Resources.Resources.SF_OSP_GBL_NET_RPT_002" value="@Resources.Resources.SF_GBL_GBL_NET_RPT_001" class="btn btn-primary" />
+                            <input type="button" id="btnExportKML" disabled title="@Resources.Resources.SF_OSP_GBL_NET_RPT_002" value="@Resources.Resources.SF_OSP_GBL_NET_RPT_001" class="btn btn-primary" />
+                        }
+
+                        <button class="btn btn-primary" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5"  type="submit">@Resources.Resources.SF_GBL_GBL_GBL_GNL_006</button>
+
+                    </div>
+                </div>
+                <div class="toverflow">
+                    @* <table id="tblPastFeas" class="display compact cell-border" border="1" width="100%"></table>*@
+                    @grid.GetHtml(tableStyle: "webgrid",
+                        headerStyle: "webGridHeader",
+                        alternatingRowStyle: "alt",
+                        htmlAttributes: new { @id = "tblPastFeas", @class = "table table-responsive" },
+                        columns: grid.Columns(
+                        grid.Column("", header: null, format: @<text>
+
+
+
+                                            <input type="radio" class='form-check-input rdbPastFeas' name='rdbRowRadios' value="@item.history_id" onclick="feasibilityHistory.bindRadioEventFtth(this);" /></text>),
+                        grid.Column("history_id", "History ID", format: @<text>@item.history_display_id</text>),
+                        grid.Column("feasibility_id", "Feasibility ID", format: @<text>@item.feasibility_id</text>),
+                        grid.Column("feasibility_name", "Feasibility Name", format: @<text>@HttpUtility.HtmlDecode(item.feasibility_name) </text>),
+                        grid.Column("customer_name", "Customer Name", format: @<text>@HttpUtility.HtmlDecode(item.customer_name)</text>),
+                        grid.Column("customer_id", "Customer ID", format: @<text>@HttpUtility.HtmlDecode(item.customer_id)</text>),
+                        grid.Column("lat_lng", "Lat,Lng", format: @<text>@item.lat_lng</text>),
+                        grid.Column("entity_id", "Entity ID", format: @<text>@item.entity_id</text>),
+                        grid.Column("path_distance", "Path Distance(km)", format: @<text>@item.path_distance.Split(' ')[0]</text>),
+                        grid.Column("buffer_radius", "Buffer Radius(m)", format: @<text>@item.buffer_radius</text>),
+                        grid.Column("created_on", "Created On", format: @<text>@item.created_on</text>),
+                        grid.Column("created_by", "Created By", format: @<text>@item.created_by</text>)
+
+)
+)
+                </div>
+                @*<table id="tblPastFeas" class="display compact cell-border" border="1" width="100%"></table>*@
+            </div>
+        }
+        <div id="divDetails">
+            <form class="form-inline">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="_feasibilityID" class="col-md-6">Feasibility Id:</label>
+                            <input type="text" class="form-control col-md-5" id="_feasibilityID" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="_feasibilityName" class="col-md-6">Feasibility Name:</label>
+                            <input type="text" class="form-control col-md-5" id="_feasibilityName" disabled="disabled">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="_customerID" class="col-md-6">Customer Id:</label>
+                            <input type="text" class="form-control col-md-5" id="_customerID" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="_customerName" class="col-md-6">Customer Name:</label>
+                            <input type="text" class="form-control col-md-5" id="_customerName" disabled="disabled">
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="_Location" class="col-md-6">Location:</label>
+                            <input type="text" class="form-control col-md-5" id="_Location" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="_pathDistance" class="col-md-6">Path Distance:</label>
+                            <input type="text" class="form-control col-md-5" id="_pathDistance" disabled="disabled">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="_EntityId" class="col-md-6">Entity Id:</label>
+                            <input type="text" class="form-control col-md-4" id="_entityId" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="_bufferRadius" class="col-md-6">Buffer Radius:</label>
+                            <input type="text" class="form-control col-md-4" id="_bufferRadius" disabled="disabled">
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="historyActions">
+                <div class="row">
+                    <div class="col-sm-12 dfButtons">
+                        <button type="button" class="btn btn-primary" id="btnDisplayFeasFtth">@Resources.Resources.SF_GBL_GBL_NET_FRM_058</button>
+                        <button type="button" class="btn btn-primary" id="btnComputeAgainFtth">@Resources.Resources.SF_GBL_GBL_NET_FRM_059</button>
+
+                        <div class="dropdown ml10">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                @Resources.Resources.SF_GBL_GBL_NET_FRM_060
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                @*<li><a style="cursor:pointer" onclick="sf.dowloadFeasibilityReport('BOM', true)">BOM Report</a></li>*@
+                                <li><a onclick="sf.dowloadFeasibilityReportFTTH('PDF', true)">PDF Report</a></li>
+                                <li><a onclick="sf.dowloadFeasibilityReportFTTH('XLS', true)">Excel Report</a></li>
+                                <li><a onclick="sf.dowloadFeasibilityReportFTTH('KML', true)">KML</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        sf.setDateTimeCalendar_ExportEntities("fromDate", "toDate", "imgFromDate", "imgToDate", false);
+    });
+    @*$("#tblPastFeas tfoot tr td").each(function (i, col) {
+        $(col).children().each(function (i, a) {
+            var href = $(a).attr("href");
+            var pageUrl = href + "&searchBy=" + '@Model.objGridAttributes.searchBy' + "&searchText=" + '@Model.objGridAttributes.searchText' + '&FromDate=' + $("#fromDate").val() + '&ToDate=' + $("#toDate").val();
+            // alert(pageUrl);
+
+            $(a).attr("href", pageUrl);
+        })
+
+
+    });*@
+
+    $('#tblPastFeas tfoot a').on("click", function () {
+        $('#frmHistoryList').attr('action', $(this).attr('href')).submit();
+        return false;
+    });
+
+    function ResetFormValues() {
+        $("#txtSearchtext").val('');
+        $("#fromDate").val('');
+        $("#toDate").val('');
+        $("#ddlSearchby").val('');
+        $("#frmHistoryList").submit();
+    }
+    function clearSearchText() {
+        $("#txtSearchtext").val('');
+    }
+    function Validform() {
+        if ($("#fromDate").val() == "" && $("#toDate").val() != "") {
+            alert("Please fill From Date");
+            return false;
+        }
+        if ($("#fromDate").val() != "" && $("#toDate").val() == "") {
+            alert("Please fill To Date");
+            return false;
+        }
+        if ($("#ddlSearchby").val() == "" && $("#txtSearchtext").val() != "") {
+            alert("Please select Search By");
+            return false;
+        }
+        if ($("#ddlSearchby").val() != "" && $("#txtSearchtext").val() == "") {
+            alert("Please select Search text");
+            return false;
+        }
+        return true;
+    }
+    if (sf) {
+        sf.pastFeasibilities = JSON.parse('@Html.Raw(Json.Encode(Model.lstPastFeasibilityFtth))');
+
+        var feasibilityHistory = new FeasibilityHistory();
+        feasibilityHistory.init();
+        $($("#tabs ul li")[1]).attr("style", "display:none;");
+        // $($("#tabs ul li")[1]).attr('disabled', true).addClass('ui-state-disabled');
+        // feasibilityHistory.bindRadioEvent();
+    }
+</script>

@@ -1,0 +1,64 @@
+﻿
+@model Models.MicrowaveLinkMaster
+<style>
+    .row-outer {
+        display:flex;
+        align-items:center;
+    }
+        .row-outer:not(:last-child) {
+            margin-bottom: 1rem;
+        }
+    .row-outer .control-label{
+        display:flex;
+        flex:0 0 24%;
+        padding-top:0;
+        margin-right: 0.5rem;
+
+    }
+    .row-outer .md-2{
+        display:flex;
+        flex:0 0 22.5%;
+    }
+    .row-outer .md-2:not(:last-child){
+        margin-right:1.5rem;
+    }
+   
+</style>
+
+<fieldset class="the-fieldset" id="odu1">
+
+    <legend class="the-legend">ODU Info</legend>
+    <div class="row-outer">
+        <label class="control-label">Min Frequency Received(@SmartInventory.Settings.ApplicationSettings.OduMinFrequencyReceived):</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.min_frequency_received, new { @id = "txtMinFrequencyReceived", @class = "form-control", @maxlength = "5" })
+        </div>
+        <label class="control-label"> Min Frequency Transmitted(@SmartInventory.Settings.ApplicationSettings.OduMinFrequencyTransmitted):</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.min_frequency_transmitted, new { @id = "txtMinFrequencyTransmitted", @class = "form-control", @maxlength = "5" })
+        </div>
+    </div>
+
+    <div class="row-outer">
+        <label class="control-label">Max Frequency Received(@SmartInventory.Settings.ApplicationSettings.OduMaxFrequencyReceived):</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.max_frequency_received, new { @id = "txtMaxFrequency", @class = "form-control", @maxlength = "5" })
+        </div>
+
+
+        <label class="control-label">Max Frequency Transmitted(@SmartInventory.Settings.ApplicationSettings.OduMaxFrequencyTransmitted):</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.max_frequency_transmitted, new { @id = "txtMaxFrequencyTransmitted", @class = "form-control", @maxlength = "5" })
+        </div>
+    </div>
+
+    <div class="row-outer">
+        <label class="control-label">ODU Type :</label>
+        <div class="md-2">
+            @Html.TextBoxFor(m => m.odu_type, new { id = "txtODUType", @class = "form-control", @maxlength = "50" })
+        </div>
+    </div>
+</fieldset>
+
+
+

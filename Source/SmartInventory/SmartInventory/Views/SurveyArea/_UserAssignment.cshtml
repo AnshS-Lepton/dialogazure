@@ -1,0 +1,120 @@
+﻿@model Models.ModelSurveyAreaUser
+@using Utility;
+
+<style>
+   
+    .chosen-container-multi .chosen-choices li.search-field input[type="text"]{
+        width:100%;
+    }
+    #dvAllUserList .chosen-drop {
+        position: initial;
+    }
+
+    #frmUserAssignment .control-label {
+        padding-top: 0px;
+       /* text-align: right;*/
+    }
+
+    #frmUserAssignment .row {
+        margin: 0;
+    }
+
+    #dvAllUserList input[type="radio"], #dvAllUserList input[type="checkbox"] {
+        margin: 2px 3px 0px;
+        margin-top: 1px \9;
+        line-height: normal;
+        float: left;
+    }
+</style>
+<!DOCTYPE html>
+<form class="form-horizontal" id="frmUserAssignment">
+    @*<input type="hidden" id="hdnAccessibleCircles" name="hdnAccessibleCircles" value="">*@
+    <input type="hidden" id="hdnSurveyStatus" />
+    <input type="hidden" id="hdnSurveyId" />
+    <input type="hidden" id="hdnMaxAssignedUser" value="@Model.MaxUsersAssign" />
+    <div class="libTabContent space-pad">
+        <!-- Tab panes -->
+        <fieldset class="the-fieldset">
+            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_184</legend>
+            <div class="tab-content">
+                <div class="userAssignDetails">
+                    <label class="control-label" for="NetworkCode">@Resources.Resources.SI_OSP_GBL_NET_FRM_185:</label>
+                    <b>
+                        @Html.DisplayFor(m => m.network_code)
+                    </b>
+                    <label class="control-label" for="SurveyAreaName">@Resources.Resources.SI_OSP_GBL_NET_RPT_008:</label>
+                    <b>
+                        @Html.DisplayFor(m => m.surveyarea_name)
+
+                    </b>
+               
+                    <label class="control-label" for="DueDate">@Resources.Resources.SI_OSP_GBL_GBL_GBL_019:</label>
+                    <b>
+                        @Html.DisplayFor(m => m.due_date)
+
+                    </b>
+                    <label class="control-label" for="SurveyAreaName">@Resources.Resources.SI_OSP_GBL_NET_FRM_186:</label>
+                    <b>
+                        <b for="myalue" id="lblUsrCount"></b>
+                    </b>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="the-fieldset">
+            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_105</legend>
+            <div class="form-group row">
+                <div id="dvAllUserList" class="chosen-container chosen-container-multi chosen-container-active chosen-with-drop f-width"  title="">
+                    <ul class="chosen-choices">
+                        <li class="search-field">
+                            <input type="text" onkeyup="fnSearchCircles(this.value);" maxlength="100" autocomplete="off" placeholder="Select User"  />
+                        </li>
+                    </ul>
+                    <div class="chosen-drop" style="display: block !important;">
+                        @{
+                            var userdetails = (Models.User)Session["userDetail"];
+
+                        }
+                        <ul class="chosen-results">
+                            <li class="active-result highlighted" id="liSelectAllCircles">
+                                <input type="checkbox" @(userdetails.role_id == 1 ? "disabled" : "") class="chk_Circles_all" />
+                                <strong>@Resources.Resources.SI_OSP_GBL_GBL_GBL_045</strong>
+                                <div style="text-align:right;float:right;">@Resources.Resources.SI_OSP_GBL_NET_RPT_029</div>
+                                <div style="margin-top: 0px;float:right;margin-right: 205px;">@Resources.Resources.SI_OSP_GBL_NET_RPT_011</div>
+                            </li>
+
+                            @foreach (var item in Model.surveyuser)
+                            {
+
+                                if (item.assigned_to != null)
+                                {
+                                    <li class="active-result" style="border-bottom: 1px solid #d8d8d8;">
+                                        <input type="checkbox" @(userdetails.role_id == 1 ? "disabled" : "") class="chk_CircleName" value="@item.user_id" checked /> @item.user_name <div class="asgnDate" style="padding-left: 163px;text-align:right;float:right;margin-top: 0px;padding-right: 22px;">@MiscHelper.FormatDateTime(item.assigned_date)</div><div class="asgnDate" style="margin-top: 0px;float:right;">@item.assigned_by</div>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="active-result" style="border-bottom: 1px solid #d8d8d8;">
+                                        <input type="checkbox" @(userdetails.role_id == 1 ? "disabled" : "") class="chk_CircleName" value="@item.user_id" /> @item.user_name <div class="asgnDate" style="text-align:right;float:right;"></div>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+    </div>
+    <div class="ModalFooter d-flex" id="dvBtnAction">
+        <button type="button" class="btn btn-default ml-auto" data-dismiss="modal" onclick="clearAssignment('srvAsign')">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</button>
+        <input type="button" id="btnAssign" @(userdetails.role_id == 1 ? "disabled" : "") value="@Resources.Resources.SI_OSP_GBL_NET_RPT_004" onclick="return fnValidateUser();" class="btn btn-success ml-10" />
+
+    </div>
+    @*<div class="clearfix"></div>*@
+</form>
+<script>
+
+    $(document).ready(function () {
+        chosenSelectAll();
+    });
+</script>

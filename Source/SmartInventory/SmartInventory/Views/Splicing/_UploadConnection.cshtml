@@ -1,0 +1,108 @@
+﻿
+<!DOCTYPE html>
+<form id="form1">
+    <div class="space-pad">
+        <div class="d-flex">
+            <label class="mr-01"> <b>@Resources.Resources.SI_OSP_GBL_NET_FRM_075:</b></label>
+            <input type="file" id="UploadConnection" accept=".xls,.xlsx" style="font-size: 13px;" />
+        </div>
+
+        &nbsp;&nbsp;<label id="lblUploadProgress" style="font-weight: bold; margin-top: 15px; font-size: 13px; width: 200px;"></label>
+    </div>
+    <div class="d-flex ModalFooter" id="dvBtnAction">
+        <button class="btn btn-warning ml-auto mr-01" type="button" onclick="UploadFile('UploadConnection','@Url.Action("UploadConnectionData", "Splicing")','@Url.Action("DownloadUploadConnectionLogs", "Splicing")');">
+            @Resources.Resources.GBL_GBL_GBL_GBL_GBL_008
+        </button>
+        @Html.ActionLink(Resources.Resources.SF_GBL_GBL_NET_FRM_048, "DownloadConnectionTemplate", "Splicing", new { FileName = "SplicingTemplate" }, new { @class = "btn btn-primary", @id = "lnkDownloadTemplate" })
+
+
+    </div>
+</form>
+<script>
+    var iteration = 0; //used for bulk upload progress..
+    var loadingtext = "Uploading";//used for bulk upload progress..
+    var timer = null;//used for bulk upload progress..;
+    var Updatedfields = [];
+    function UploadFile(controlId, postUrl, logUrl) {
+        var PerformAction = 'Insert';
+
+        Updatedfields = []; // become list empty
+        $.each($("input[name='checkAll']:checked"), function () {
+            Updatedfields.push($(this).val());
+        });
+
+        var formData = new FormData();
+        var totalFiles = document.getElementById(controlId).files.length;
+        if (totalFiles > 0) {
+
+            if (Updatedfields.length == 0 && PerformAction == "Update") {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_014);
+                return false;
+            }
+
+            if (isValidFileExtn(controlId)) {
+                var file = document.getElementById(controlId).files[0];
+                formData.append("FileUpload", file);
+                formData.append("PerformAction", PerformAction);
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            alert(MultilingualKey.SI_OSP_GBL_GBL_GBL_099);
+            return false;
+        }
+
+        PostFile(formData, postUrl, logUrl);
+    }
+
+    function PostFile(formdata, posturl, logUrl) {
+        $.ajax({
+            type: "POST",
+            url: posturl,
+            data: formdata,
+            async: true,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function () {
+                $(".ui-dialog").css("pointerEvents", "none");
+                $("#lblUploadProgress").css("display", "inline-block");
+                timer = setInterval(showUploadProgress, 500);
+            },
+            success: function (response) {
+                if (response.msg.toLowerCase() == "success") {
+                    $('#UploadConnection').val('')
+                    //download logs..
+                    window.location = logUrl;
+
+                }
+                alert(response.strReturn);
+                $(".ui-dialog").css("pointerEvents", "auto");
+                $("#lblUploadProgress").css("display", "none");
+                clearInterval(timer);
+            },
+            error: function (error) {
+                $(".ui-dialog").css("pointerEvents", "auto");
+                $("#lblUploadProgress").css("display", "none");
+                clearInterval(timer);
+                alert(error);
+                $(".ui-dialog").css("pointerEvents", "auto");
+            }
+        });
+    }
+
+    function isValidFileExtn(controlid) {
+        var ext = $('#' + controlid).val().split('.').pop().toLowerCase();
+        if ($.inArray(ext, ['xls', 'xlsx']) == -1) {
+            ShowFormMessage(false, MultilingualKey.SI_OSP_DU_JQ_FRM_006, "");
+            return false;
+        }
+        return true;
+    }
+
+    function showUploadProgress() {
+        $("#lblUploadProgress").html(loadingtext + Array((++iteration % 5) + 1).join("."));
+    }
+</script>

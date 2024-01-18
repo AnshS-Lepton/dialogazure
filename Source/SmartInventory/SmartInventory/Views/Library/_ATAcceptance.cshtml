@@ -1,0 +1,219 @@
+﻿@model Models.entityATStatusAtachmentsList
+@using Models;
+<style>
+    .removeAT {
+        color: red;
+        cursor: pointer;
+        text-align: center;
+        line-height: 1.5;
+        font-weight: bold;
+    }
+
+    .referenceRowAdd {
+        margin: 2px 14px 0px 0px;
+    }
+
+    .col-md-2 {
+        width: 16.66666667%;
+    }
+
+    .form_referance_Bg {
+        padding: 0px;
+        margin: 0px;
+        position: relative;
+        padding-top: 3.4rem;
+    }
+    .form_referance_Bg .referance_Label_Header{
+        position:absolute;
+        left:0;
+        top:0;
+        width:100%;
+    }
+
+    .form-horizontal .control-label {
+        padding-top: 0px;
+    }
+
+    .referance_Label_Header .control-label {
+        font-weight: bold;
+    }
+
+    #dvAT .libDetail {
+        float: left;
+    }
+
+    #dvAT {
+        overflow-x: hidden;
+    }
+
+    #divATAttachment {
+        overflow: auto;
+    }
+    .form_referance_Bg .referenceRowAdd {
+        margin: 0 6px 0px 0px;
+        position: absolute;
+        z-index: 12;
+        right: 0px;
+        top:2px;
+    }
+    .accp-Overflow{
+        max-height:322px;
+        overflow:auto;
+        min-height:88px;
+    }
+    .accp-Overflow > div:not(:last-child){
+        margin-bottom:1rem;
+    }
+
+</style>
+
+<!DOCTYPE html>
+<div id="AddAT">
+    <div class="mb-01 accp--border">
+        <div class="form-group form_referance_Bg">
+            <div>
+                @if (Model.listAtStatusRecords.Count > 0)
+                {
+                    if (Model.listAtStatusRecords[0].status != null)
+                    {
+                        <div class="Export" id="dvATExport" onclick="si.ATAcceptance.statusExport(@Model.listAtStatusRecords[0].system_id,'@Model.listAtStatusRecords[0].entity_type')" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_045" style="background-image: url(../../Content/images/excel.gif);height: 20px;width: 20px;height: 20px;width: 20px; float: right; margin: 3px 12px 0px 0px; position: relative; cursor:pointer;"></div>
+                    }
+                }
+                <span class="referenceRowAdd" id="btnAddATStatusRow" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_042"></span>
+            </div>
+            <div class="row referance_Label_Header">
+                <div class="col-md-3">
+                    <label class="control-label"> <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_014</b></label>
+                </div>
+                <div class="col-md-3">
+                    <label class="control-label"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_027</b></label>
+                </div>
+                <div class="col-md-4">
+                    <label class="control-label"> <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_006</b></label>
+                </div>
+                <div class="col-md-1">
+                    <label class="control-label"> <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</b></label>
+                </div>
+            </div>
+        </div>
+
+        <div id="dvATAcceptance" class="space-pad accp-Overflow">
+            @{
+                if (Model.listAtStatusRecords.Count > 0)
+                {
+                    for (int i = 0; i < Model.listAtStatusRecords.Count; i++)
+                    {
+                        @Html.HiddenFor(m => m.listAtStatusRecords[i].id, new { Name = string.Format("ATAcceptance.listAtStatusRecords[{0}].id", i) });
+                        @Html.HiddenFor(m => m.listAtStatusRecords[i].created_by, new { Name = string.Format("ATAcceptance.listAtStatusRecords[{0}].created_by", i) });
+                        @Html.HiddenFor(m => m.listAtStatusRecords[i].created_on, new { Name = string.Format("ATAcceptance.listAtStatusRecords[{0}].created_on", i) });
+                        @Html.HiddenFor(m => m.listAtStatusRecords[i].system_id, new { Name = string.Format("ATAcceptance.listAtStatusRecords[{0}].system_id", i) });
+                        @Html.HiddenFor(m => m.listAtStatusRecords[i].entity_type, new { Name = string.Format("ATAcceptance.listAtStatusRecords[{0}].entity_type", i) });
+                        <div class="row AT_row_0 len">
+                            @*@("AT_row_" + i)*@
+                            <div class="col-md-3">
+                                <select id="ddl_AtStatus" name="@string.Format("ATAcceptance.listAtStatusRecords[{0}].status", i)" class="chosen-select form-group" onchange="removeBorder(this)">
+                                    <option value="0">-Select-</option>
+                                    @if (Model.listATStatus.Count > 0)
+                                    {
+                                        foreach (var entityRef in Model.listATStatus)
+                                        {
+                                            var selected = entityRef.dropdown_value == Model.listAtStatusRecords[i].status ? "selected" : "";
+                                            <option value="@entityRef.dropdown_value" data-planningname="@entityRef.dropdown_key" @selected>@entityRef.dropdown_value</option>
+                                        }
+                                    }
+
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.listAtStatusRecords[i].status_date, "{0:dd-MMM-yyyy}", new { id = string.Format("ATAcceptance.listAtStatusRecords[{0}].status_date", i), Name = string.Format("ATAcceptance.listAtStatusRecords[{0}].status_date", i), @class = "form-control clsReadOnly", @readonly = true, placeholder = @Resources.Resources.SI_OSP_GBL_NET_FRM_046, @style = "background:#fff;" })
+                                <img id="@("imgTargetDate_" + i)" class="assign-calen" src="~/Content/images/calendar.png" />
+                            </div>
+                            <div class="col-md-5">
+                                @Html.TextBoxFor(m => m.listAtStatusRecords[i].remark, new { Name = string.Format("ATAcceptance.listAtStatusRecords[{0}].remark", i), @class = "form-control", @maxlength = "150" })
+                            </div>
+                            <div class="col-md-1">
+                                <span class="icon-close removeAT @( Model.listAtStatusRecords[i].id > 0? "dvdisabled" : "") " title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" onclick="delRow(0)"></span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <input name="ATAcceptance.listAtStatusRecords[0].created_by" id="listAtStatusRecords_0__created_by" type="hidden" value="@Model.createdBy">
+                    <input name="ATAcceptance.listAtStatusRecords[0].system_id" id="listAtStatusRecords_0__system_id" type="hidden" value="@Model.systemId">
+                    <input name="ATAcceptance.listAtStatusRecords[0].entity_type" id="listAtStatusRecords_0__entity_type" type="hidden" value="@Model.entityType">
+                    <div class="row AT_row_0 len">
+                        <div class="col-md-3">
+                            <select id="ddl_AtStatus" name="@string.Format("ATAcceptance.listAtStatusRecords[{0}].status", 0)" class="chosen-select form-group" onchange="removeBorder(this)">
+                                <option value="0">-Select-</option>
+                                @if (Model.listATStatus.Count > 0)
+                                {
+                                    foreach (var entityRef in Model.listATStatus)
+                                    {
+                                        <option value="@entityRef.dropdown_value" data-planningname="@entityRef.dropdown_key">@entityRef.dropdown_value</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input name="ATAcceptance.listAtStatusRecords[0].status_date" class="form-control clsReadOnly" id="ATAcceptance.listAtStatusRecords[0].status_date" placeholder="SI_OSP_GBL_NET_FRM_046" readonly="True" style="background:#fff;" type="text" value="@Models.DateTimeHelper.Now.ToString("dd-MMM-yyyy")">
+                            <img id="@("imgTargetDate_" + 0)" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;" />
+                        </div>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="listAtStatusRecords_0__remark" name="@string.Format("ATAcceptance.listAtStatusRecords[{0}].remark", 0)" maxlength="150" />
+                        </div>
+                        <div class="col-md-1">
+                            <span class="icon-close removeAT" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" onclick="delRow(0)"></span>
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+    </div>
+
+
+    <fieldset class="the-fieldset attach">
+        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_047</legend>
+        <div>
+            <div class="col-md-12 col-sm-12 UploadAction">
+                <div class="col-md-6 col-sm-6" id="divDocumentUpload" style="display:flex; text-decoration:underline;">
+                    <input type="file" class="file" name="DocUpload" id="DocUpload">
+                    <a href="#" onclick="si.ATAcceptance.attachment.upload(@Model.systemId,'@Model.entityType');" value=@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008 id="btnUploadDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008</a>
+                    <a href="#" onclick="si.ATAcceptance.clear();" value=@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009 id="btnClearDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</a>
+                </div>
+                <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
+            </div>
+
+            <div id="divDocument" class="tab-pane y-scroll">
+                @Html.Partial("_AtAttachments", Model.listAtAttachments)
+            </div>
+
+        </div>
+    </fieldset>
+
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '100%' });
+        for(var i=0;i<$('#dvATAcceptance .assign-calen').length;i++)
+        {
+            si.setSurveyDateTimeCalendar('ATAcceptance.listAtStatusRecords['+i+'].status_date', 'imgTargetDate_'+i+'', '', true);
+        }
+        $("#btnAddATStatusRow").on("click", function () {
+            var RowIndex = $('#dvATAcceptance .row ').length;
+            AddATStatusRow(RowIndex,@Model.systemId, @Model.createdBy, '@Model.entityType');
+        });
+    });
+
+    $(document).on('keyup keypress', function(e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+</script>

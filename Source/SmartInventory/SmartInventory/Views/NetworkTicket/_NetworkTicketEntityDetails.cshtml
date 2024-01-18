@@ -1,0 +1,846 @@
+﻿@model Models.NetworkTicketFilter
+@using Models;
+<style>
+
+    .modal-content2 {
+        position: relative;
+        background-color: #fff;
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+        border: 1px solid #999;
+        border: 1px solid rgba(0, 0, 0, .2);
+        border-radius: 6px;
+        outline: 0;
+        -webkit-box-shadow: 0 3px 9px rgb(0 0 0 / 50%);
+        box-shadow: 0 3px 9px rgb(0 0 0 / 50%);
+    }
+
+    #dvverify {
+    }
+
+    #tblNWEntityDetails p {
+        margin: 0px;
+    }
+</style>
+
+<!DOCTYPE html>
+<div id="dvEntitydetailsProgress" class="EntitydetailsProgress"></div>
+@{
+    var objNWTicketDetails = (Models.NetworkTicket)Session["NWTicketDetails"];
+    WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "dvNWEntityDetails",
+ajaxUpdateCallback: "onGridHeaderClick('tblNWEntityDetails');GridColor();");
+    grid.Bind(Model.lstNetworkTicketData, autoSortAndPage: false, rowCount: Model.totalRecord);
+    if (Model.totalRecord > 0)
+    {
+        grid.PageIndex = Model.currentPage - 1;
+    }
+}
+<div class="viewReport" id="dvChildModalBody">
+    @using (Ajax.BeginForm("NetworkTicketEntityDetails", "NetworkTicket",
+                                                                    new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "" },
+                                                                    new { id = "frmNWEntityDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.objNetworkTicket.ticket_id, new { id = "hdnticketid" })
+        @Html.HiddenFor(m => m.objNetworkTicket.network_id, new { id = "hdnnetworkid" })
+        @Html.HiddenFor(m => m.objNetworkTicket.ticket_status, new { id = "hdnticketstatus" })
+        @Html.HiddenFor(m => m.objNetworkTicket.ticket_type, new { id = "hdntickettype" })
+        <input type="hidden" id="hdnStatus" />
+
+        <div class="d-flex space-pad">
+            <div class="d-flex fb100">
+                @if (Model.objticketstatus.Count > 0)
+                {
+                    foreach (var item in Model.objticketstatus)
+                    {
+                        <div style="background-color:@(item.color_code);" class="colorDots"></div>
+                        <div class="Assign assignColor" id="@item.ticket_status">
+                            @item.ticket_status (@item.ticket_count)
+                            @if (item.ticket_status.ToLower() == "approved")
+                            {
+                                <input type="hidden" id="hdnApproveStatusCount" value="@item.ticket_count" />
+                            }
+                        </div>
+                    }
+                }
+            </div>
+            @*<div class="col-md-6 divPads">
+                    <label style=" width: 75px;"><b>Entity Type</b></label>
+                    <i class="glyphicon glyphicon-search SearchIco"></i>
+                    @Html.TextBoxFor(m => m.searchText, new { @id = "txtSearchTxt", @class = "form-control", @style = "height:26px;width:145px;" })
+                    <button type="submit" class="btn btn-primary" id="btnTicketData" style="margin:0px 4px;"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                </div>*@
+            @if (Model.lstNetworkTicketData.Count > 0)
+            {
+                <div class="d-flex ml-auto">
+                    <button type="button" class="exp--btn white-space" id="btnExportEntityDetails" value="Export"><span class="fa fa-download ml-3"></span> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+
+                    <button type="button" id="btnentitysummary" onclick="getNWntitySummary(@Model.objNetworkTicket.ticket_id)" class="btn btn-success ml-10">
+                        @Resources.Resources.SI_OSP_GBL_GBL_FRM_034
+                    </button>
+                </div>
+            }
+        </div>
+        <div class="libTabContent" style="overflow:visible;">
+            <div id="dvViewNWEdetails" class="ViewReportProgress">
+                <div class="progressHeader"></div>
+                <div class="progressBody"></div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+
+        <div id="dvNWEntityDetails">
+            <div class="d-flex tablePad--tn">
+                @if (Model.lstNetworkTicketData.Count > 0)
+                {
+                    <span>
+                        <b class="mr-03"> @Resources.Resources.SI_OSP_GBL_NET_GBL_153:</b>  @Model.objNetworkTicket.Network_Ticket_ID
+                    </span>
+                    <span>
+                        <b class="ml-10 mr-03">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:</b> @Model.totalRecord
+                    </span>
+                }
+
+                <div class="pos-rel d-flex ml-auto">
+                    @Html.TextBoxFor(m => m.searchText, new { @id = "txtSearchText", @class = "form-control input-mr search--padding", @placeholder = "Search Entity Type/Name", @style = "height:26px;" })
+                    <i class="glyphicon glyphicon-search SearchIco1"></i>
+                </div>
+                <button type="submit" class="btn btn-success ml-10" id="btnTicketEntity"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                <button type="button" class="btn btn-default ml-10" id="btnResetSearch"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+            </div>
+            @if (Model.lstNetworkTicketData.Count > 0)
+            {
+                <div class="tablePad--tn">
+                    <div class="table-responsive">
+                        @grid.GetHtml(tableStyle: "grid tableWFont",
+                htmlAttributes: new { id = "tblNWEntityDetails" },
+                mode: WebGridPagerModes.All,
+
+                columns: grid.Columns(
+                 grid.Column(Resources.Resources.SI_OSP_GBL_GBL_GBL_059, format: @<text>
+                                         <label class="CustomNetwokrTicket">
+                                             @if (@Model.objNetworkTicket.ticket_type == "Construction" && item.network_status == "A" && item.entity_type == "Splitter" && item.splitter_type == "Secondary" && item.status_description != "Approved" && Convert.ToBoolean(item.is_trace_validate) == false && @Model.isTraceEnabled == true)
+                                             {
+
+                                                 <input type="checkbox" name="chkSelect" id="@item.is_freezed" title="Trace validation is pending!" data-is_manual_is_verified_barcode="@item.is_manual_barcode~@item.is_barcode_verified" data-is_manual_is_verified_meter_reading="@item.is_manual_meter_reading~@item.is_meter_reading_verified" data-entity_id_type="@item.id~@item.entity_type" data-ticketStatus="@item.is_freezed" data-status="@item.status" class="@item.id chkSurvey" disabled />
+                                             }
+                                             else
+                                             {
+                                                 if (Model.isAuthorizedToApprove == true)
+                                                 {
+
+                                                     <input type="checkbox" name="chkSelect" id="@item.is_freezed" data-is_manual_is_verified_barcode="@item.is_manual_barcode~@item.is_barcode_verified" data-is_manual_is_verified_meter_reading="@item.is_manual_meter_reading~@item.is_meter_reading_verified" data-entity_id_type="@item.id~@item.entity_type" data-ticketStatus="@item.is_freezed" data-status="@item.status" class="@item.id chkSurvey" />
+
+                                                 }
+                                                 else
+                                                 {
+                                                     <input type="checkbox" name="chkSelect" id="@item.is_freezed" title="Unauthorized Access" data-is_manual_is_verified_barcode="@item.is_manual_barcode~@item.is_barcode_verified" data-is_manual_is_verified_meter_reading="@item.is_manual_meter_reading~@item.is_meter_reading_verified" data-entity_id_type="@item.id~@item.entity_type" data-ticketStatus="@item.is_freezed" data-status="@item.status" class="@item.id chkSurvey" disabled />
+
+                                                 }
+                                             }
+                                             <span class="CustomNetwokrTickecheck"></span>
+                                         </label>
+
+                        <a href="#" class="dropdown-toggle" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="entityShowOnMap(@item.id,'@item.layer_name','@item.geom_type');"><i class="fa fa-globe fa-fw m-r-xs i-icons-style i-icons-ptpb"></i></a>
+                        @if (item.entity_action_atr != "EL")
+                        {
+                            <a href="#" class="dropdown-toggle" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_033"><i class="glyphicon glyphicon-eye-open" onclick="getNWEntityAction(@item.id,'@item.layer_name','@item.geom_type','@item.entity_action_atr')"></i></a>
+                        }
+                        @if (Convert.ToBoolean(item.is_manual_barcode) != false && Convert.ToBoolean(item.is_barcode_verified) == false)
+                        {
+                            if (Model.isAuthorizedToApprove == true)
+                            {
+                                <a href="#" class="dropdown-toggle" title="Verify Barcode" onclick="GetBarCodeImage(@item.id,'@item.layer_name');"><i class="fa fa-barcode"></i></a>
+                            }
+                            else
+                            {
+                                <a href="#" class="dropdown-toggle" title="Unauthorized Access" disabled="disabled"><i class="fa fa-barcode"></i></a>
+                            }
+
+
+                        }
+                        @if (@Model.objNetworkTicket.ticket_type == "Construction" && item.entity_type == "Splitter" && item.splitter_type == "Secondary" && item.status_description != "Approved" && Convert.ToBoolean(item.is_manual_meter_reading) != false && Convert.ToBoolean(item.is_meter_reading_verified) == false)
+                        {
+                            if (Model.isAuthorizedToApprove == true)
+                            {
+                                <a href="#" class="dropdown-toggle" title="Verify power meter reading" onclick="GetMeterReadingImage(@item.id,'@item.layer_name');"><i class="icon-icon-park_dashboard"></i></a>
+                            }
+                            else
+                            {
+                                <a href="#" class="dropdown-toggle" title="Unauthorized Access" disabled="disabled"><i class="icon-icon-park_dashboard"></i></a>
+
+                            }
+
+
+                        }
+                </text>, canSort: false, header: "{checkall}"),
+          grid.Column("entity_action", Resources.Resources.SI_OSP_GBL_GBL_GBL_149, format: @<text> @item.entity_action</text>),
+grid.Column("entity_title", Resources.Resources.SI_GBL_GBL_NET_FRM_098, format: @<text>@item.entity_title </text>),
+grid.Column("status_description", Resources.Resources.SI_OSP_GBL_NET_GBL_160, format: (item) => Html.Raw("<p data-toggle='tooltip' class='WrapText clsTSts'colorcode='" + item.status_color + "' title='" + item.status_remarks + "'>" + item.status_description + "</p>")),
+
+@*grid.Column("network_id", Resources.Resources.SI_OSP_GBL_NET_RPT_070, format: @<text>@item.network_id</text>),*@
+grid.Column("display_name", Resources.Resources.SI_OSP_GBL_GBL_GBL_160, format: @<text>@item.display_name</text>),
+grid.Column("entity_name", Resources.Resources.SI_OSP_GBL_GBL_GBL_144, format: @<text>@item.entity_name</text>),
+grid.Column("region", Resources.Resources.SI_OSP_GBL_NET_FRM_065, format: @<text>@item.region</text>),
+grid.Column("province", Resources.Resources.SI_OSP_GBL_NET_FRM_066, format: @<text> @item.province</text>)
+))
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+                    </div>
+                </div>
+                <div>
+                    @if (SmartInventory.Settings.ApplicationSettings.isVerifyActionEnabled)
+                    {
+                        if (Model.objNetworkTicket.ticket_status != "InProgress")
+                        {
+                            <div class="ModalFooter d-flex">
+                                <button type="button" id="btnveryfy" class="btn btn-warning ml-auto mr-01">
+                                    @Resources.Resources.SI_OSP_GBL_GBL_GBL_151
+                                </button>
+                                <button type="button" class="btn btn-primary" id="Verifyall">
+                                    @Resources.Resources.SI_OSP_GBL_GBL_GBL_150
+                                </button>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        if (Model.objNetworkTicket.ticket_status != "InProgress")
+                        { 
+                            if (Model.isAuthorizedToApprove == true)
+                            {<div class="ModalFooter d-flex">
+
+
+    <button type="button" id="btnReject" class="btn btn-default ml-auto">Reject</button>
+    <button type="button" id="btnRejectAll" class="btn btn-default ml-10">Reject All</button>
+    <button type="button" id="btnTraceValidate" class="btn btn-success ml-10">Trace Validate</button>
+    <button type="button" id="btnApprove" class="btn btn-success ml-10">Approve</button>
+    <button type="button" id="btnApproveAll" class="btn btn-success ml-10">Approve All</button>
+    @if (Model.objNetworkTicket.ticket_status == "Rejected" && objNWTicketDetails != null && (Model.objNetworkTicket.ticket_id == objNWTicketDetails.ticket_id) && (Model.objNetworkTicket.assigned_to == Model.userId))
+    {
+        <button type="button" id="btnSubmitNetwork" class="btn btn-success ml-10">Submit Network</button>
+    }
+</div>}
+                            else
+                            { <div class="ModalFooter d-flex">
+    <button type="button" title="Unauthorized Access" disabled="disabled" class="btn btn-default ml-auto">Reject</button>
+    <button type="button" title="Unauthorized Access" disabled="disabled" class="btn btn-default ml-10">Reject All</button>
+    <button type="button" title="Unauthorized Access" id="btnTraceValidate" disabled="disabled" class="btn btn-success ml-10">Trace Validate</button>
+    <button type="button" title="Unauthorized Access" disabled="disabled" class="btn btn-success ml-10">Approve</button>
+    <button type="button" title="Unauthorized Access" disabled="disabled" class="btn btn-success ml-10">Approve All</button>
+    @if (Model.objNetworkTicket.ticket_status == "Rejected" && objNWTicketDetails != null && (Model.objNetworkTicket.ticket_id == objNWTicketDetails.ticket_id) && (Model.objNetworkTicket.assigned_to == Model.userId))
+    {
+        <button type="button" id="btnSubmitNetwork" class="btn btn-success ml-10">Submit Network</button>
+    }
+</div>
+                            }
+
+                        }
+                        else
+                        {
+                            if (objNWTicketDetails != null && (Model.objNetworkTicket.ticket_id == objNWTicketDetails.ticket_id) && (Model.objNetworkTicket.assigned_to == Model.userId))
+                            {
+
+                                <div>
+                                    <div class="ModalFooter d-flex">
+                                        <button type="button" id="btnSubmitNetwork" class="btn btn-success ml-auto">Submit Network</button>
+                                    </div>
+                                </div>
+                            }
+
+                        }
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="nr-found">
+                    <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+                </div>
+            }
+        </div>
+
+
+        <div id="verify" class="modal fade" role="dialog" style="width:auto" draggable="true">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content2" id="dvverify">
+                    <div class="modal-header d-flex">
+                        <h4 class="modal-title" id="headers"></h4>
+                        <span type="button" class="icon-close ml-auto" id="Closeverify">
+                        </span>
+                    </div>
+                    <div class="space-pad">
+                        <div class="row form-group">
+                            <div class="col-md-3">
+                                <label class="control-label">
+                                    @Resources.Resources.SI_OSP_GBL_GBL_GBL_006:
+                                </label>
+                                <input type="hidden" id="hdnentityidstypes">
+                            </div>
+                            <div class="col-md-6" id="dvComment">
+                                <input type="text" id="txtRemarks" max="100" class="form-control" />
+                            </div>
+                            <div id="dvRejectComment">
+                                <div>
+                                    <label class="control-label col-md-10 col-sm-10">@Resources.Resources.SI_OSP_BUL_NET_FRM_023<i class="clsMandatory">*</i></label>
+                                    @foreach (var item in Model.lstRejectComment)
+                                    {
+                                        <div class="col-md-10 col-sm-10 mrgn_btm">
+                                            @Html.RadioButton("radioRejectComment", item.dropdown_value, new { @onclick = "showHideOtherCommentBox();" })
+                                            @Html.Label(item.dropdown_value)
+                                        </div>
+                                    }
+                                </div>
+                                <div class="col-md-10 col-sm-10 mrgn_btm">
+                                    <input type="text" class="form-control" maxlength="500" placeholder="@Resources.Resources.SI_OSP_BUL_NET_FRM_022" id="txtcommentother" readonly="readonly" onkeyup="removecss();" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex ModalFooter">
+                        <button type="button" class="btn btn-default ml-auto mr-01" id="verifybtnCancle" onclick="btnCancle()">
+                            @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006
+                        </button>
+                        <button type="button" id="btnverifyEntities" class="btn btn-primary" onclick="verifyEntities();">
+                            @Resources.Resources.SI_OSP_GBL_GBL_GBL_154
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        CheckBox();
+
+        if ('@Model.isAuthorizedToApprove'=='False') {
+            $("#cbSelectAll").prop('disabled', true);
+        }
+
+        // S2 Trace Validation feature ON/OFF key
+        var IsTraceEnabled = $('#hdnIsTraceEnabled').val();
+        if (IsTraceEnabled == "True") {
+            if ($("#hdntickettype").val() != 'Construction') {
+                $("#btnTraceValidate").hide();
+            }
+            else {
+                // Trace validation and approve all button Show/Hide condition
+                var p_ticketid = $("#hdnticketid").val();
+                var isAuthorizedAccess = '@Model.isAuthorizedToApprove';
+                if (isAuthorizedAccess != 'False') {
+                var isSpitterTraceStatus = '@Model.isAllSplitterTraceStatus';
+                  //  ajaxReq('NetworkTicket/IsAllSplitterTraceValid', { sourceRefId: p_ticketid }, true, function (resp) {
+                        if (isSpitterTraceStatus == 'False') {
+                            $("#btnApproveAll").prop('disabled', true);
+                            $("#cbSelectAll").prop('disabled', true);
+                            $("#btnApproveAll").prop('title', 'Trace validation is pending!');
+                        }
+                        else {
+                            $("#btnTraceValidate").prop('disabled', true);
+                            $("#btnTraceValidate").prop('title', 'All the S2 has been trace successfully!');
+                        }
+
+                   // }, false, false);
+                }
+            }
+        }
+        else {
+            $("#btnTraceValidate").hide();
+        }
+
+
+        $("#dvverify").draggable();
+        $(".fade").removeClass('modal-backdrop')
+
+        addDefaultSortingIcons("tblTicketManagerGrid");
+        $('th a, tfoot a').on("click", function () {
+            $('#frmNWEntityDetails').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+
+        onGridHeaderClick('tblNWEntityDetails');
+        $("#btnExportEntityDetails").on("click", function () {
+            window.location = appRoot + 'NetworkTicket/ExportNWentityDetails';
+        });
+        $('#tblNWEntityDetails thead tr th:eq(0)').removeClass('bothorder');
+      //  CheckBox();
+        CheckBoxStatus();
+        GridColor();
+        if ('@Model.objNetworkTicket.ticket_status' === 'InProgress') {
+            $("#tblNWEntityDetails").find("input:checkbox").each(function () {
+                this.checked = false;
+                $(".chkSurvey").hide();
+            });
+        }
+
+    });
+    $("#btnResetSearch").on("click", function () {
+        $("#txtSearchText").val("");
+        $("#btnTicketEntity").trigger("click");
+        $("#txtSearchText").attr("placeholder", "Search Entity Type/Name");
+    });
+    function CheckBoxStatus() {
+        $("#tblNWEntityDetails").find("input:checkbox").each(function () {
+            var Status = $(this).attr('id');
+            if(Status=='True')
+            {
+                this.checked = true;
+                this.disabled = true;
+
+            }
+
+
+        });
+    };
+
+    function CheckBox() {
+
+        $("#tblNWEntityDetails th").each(function () {
+            if ($.trim($(this).text().toString().toLowerCase()) === "{checkall}") {
+                $(this).text('');
+                $(this).append("<label class='CustomNetwokrTicket' style='cursor:pointer;'> <input type='CheckBox' id='cbSelectAll' name='chkSelect' class='chkSurvey'><span class='CustomNetwokrTickecheck' style='top:0px;'></span>@Resources.Resources.SI_OSP_GBL_GBL_GBL_059</label>");
+            }
+            var totalRows = $("#tblNWEntityDetails td :checkbox[data-ticketstatus='False']").length;
+            var checked = $("#tblNWEntityDetails td :checkbox[data-ticketstatus='False']:checked").length;
+            console.log("totalRows" + totalRows + " checked" + checked);
+
+            if (checked == totalRows) {
+                $("#cbSelectAll")[0].click();
+                $("#cbSelectAll").attr("disabled", true);
+                $("#btnveryfy").attr("disabled", true);
+                $("#Verifyall").attr("disabled", true);
+
+            }
+            else {
+                $("#cbSelectAll").removeAttr("checked");
+            }
+        });
+
+
+        //2nd click event for header checkbox for select /deselect all
+        $("#cbSelectAll").on("click", function () {
+            var ischecked = this.checked;
+
+            $('#tblNWEntityDetails').find("input:checkbox").not(".dvdisabled").each(function () {
+                var Status = $(this).attr('id');
+                if (Status != 'True') {
+                    this.checked = ischecked;
+                }
+            });
+
+        });
+        $("input[name='chkSelect']").on("click", function () {
+
+            var totalRows = $("#tblNWEntityDetails td :checkbox[data-ticketstatus='False']").length;
+            var checked = $("#tblNWEntityDetails td :checkbox[data-ticketstatus='False']:checked").length;
+            console.log("totalRows" + totalRows + " checked" + checked);
+            if (checked > 0 || totalRows > 0) {
+                if (checked == totalRows) {
+                    $("#tblNWEntityDetails").find("input:checkbox").each(function () {
+                        this.checked = true;
+                    });
+                }
+                else {
+
+                    $("#cbSelectAll").removeAttr("checked");
+                }
+            }
+
+        });
+    }
+
+    function entityShowOnMap(systemID, eType, gType) {
+        si.ShowEntityOnMap(systemID, eType, gType);
+        $('#ModalPopUp .minmizeModel>i').trigger("click");
+    }
+    function GridColor() {
+        $("#tblNWEntityDetails tbody tr").each(function (e) {
+
+            var ticket_stauts = $(this).closest('tr').find(".clsTSts")[0].innerHTML.trim().toUpperCase();
+            var colorcode = $(this).closest('tr').find(".clsTSts")[0].attributes["colorcode"].value;
+         var a=   $(this).closest('tr').find(".clsTSts")[0].attributes["title"].value;
+            $(this).children('td').css({ "background-color": hexToRgbA(colorcode, 50) });
+            $(this).children('td').attr("title", a);
+        });
+    }
+    $('#btnApprove').on("click", function () {
+        var _totalCount=@Model.totalRecord;//$('#tblNWEntityDetails input[type="checkbox"]:not("#cbSelectAll"),#tblNWEntityDetails input[type="checkbox"]:not("#cbSelectAll")').length;
+        let _disabledCount = $("#hdnApproveStatusCount").val();
+        //$('#tblNWEntityDetails input[type="checkbox"]:disabled:not("#cbSelectAll"),#tblNWEntityDetails input[type="checkbox"]:disabled:not("#cbSelectAll")').length;
+        var allEntities=$('#tblNWEntityDetails input[type="checkbox"][data-status!="A"][data-status!="R"][data-status!="V"]:checked');
+        if (_totalCount == _disabledCount) { alert('No entities are left to change the status!'); return false; }
+        var isManualBarcodeCount = 0;
+        var isManualMeterReadingCount = 0;
+        if(allEntities.length>0)
+        {
+            var entidstypes = "";
+            allEntities.each(function () {
+                var entity_id_type = $(this).attr('data-entity_id_type');
+                entidstypes = entidstypes == "" ? entity_id_type : entidstypes + "," + entity_id_type;
+                //check record is manual barcode and verfied barcode
+                var entity_is_manual_verified_barcode = $(this).attr('data-is_manual_is_verified_barcode');
+                var is_manual_barcode = entity_is_manual_verified_barcode.substring(0, entity_is_manual_verified_barcode.indexOf('~'));
+                var is_verified_barcode = entity_is_manual_verified_barcode.substring(entity_is_manual_verified_barcode.indexOf('~') + 1);
+                if (is_manual_barcode == "True" && is_verified_barcode == "False")
+                {
+                    isManualBarcodeCount = 1;
+                    return false;
+                }
+                //check record is manual Meter reading and verfied reading
+                var entity_is_manual_verified_meter_reading = $(this).attr('data-is_manual_is_verified_meter_reading');
+                var is_manual_meter_reading = entity_is_manual_verified_meter_reading.substring(0, entity_is_manual_verified_meter_reading.indexOf('~'));
+                var is_meter_reading_verified = entity_is_manual_verified_meter_reading.substring(entity_is_manual_verified_meter_reading.indexOf('~') + 1);
+                if (is_manual_meter_reading == "True" && is_meter_reading_verified == "False") {
+                    isManualMeterReadingCount = 1;
+                    return false;
+                }
+            });
+            // check all manual barcode entity is verified then open approve popup
+            if (isManualBarcodeCount != 1) {
+                if (isManualMeterReadingCount != 1) {
+                    $("#verify").modal("show");
+                    $("#headers").text('Approve');
+                    $("#hdnStatus").val('A')
+                    $("#dvRejectComment").hide();
+                    $("#dvComment").show();
+                    dvRejectComment
+                }
+                else {
+                    alert('Please verify power meter reading!');
+                    entidstypes = "";
+                }
+            }
+            else {
+                alert('Please verify barcode!!');
+                entidstypes = "";
+            }
+
+
+         }
+        else{
+            alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_158)
+        }
+        $("#hdnentityidstypes").val(entidstypes);
+        $('#btnverifyEntities').html('Approve');
+    });
+    $("#btnApproveAll").on("click", function () {
+        var _totalCount = '@Model.totalRecord';
+        var p_ticket_id =  $("#hdnticketid").val();
+        let _disabledCount = $("#hdnApproveStatusCount").val();
+            $('#tblNWEntityDetails input[type="checkbox"]:disabled:not("#cbSelectAll"),#tblNWEntityDetails input[type="checkbox"]:disabled:not("#cbSelectAll")').length;
+        if (_totalCount == _disabledCount) { alert('No entities are left to change the status!'); return false; }
+        var count = 0;
+        var ChkIdList = [];
+        // check all manual barcode entity is verified then open approve popup
+        ajaxReq('NetworkTicket/getEntityVerificationStatusbySourceRefId', { sourceRefId: p_ticket_id }, true, function (resp) {
+            if (resp.status == "OK") {
+                        $('#btnverifyEntities').html('Approve All');
+                        $("#hdnStatus").val('A');
+                        $("input[name='chkSelect']").each(function () {
+                            var Status = $(this).attr('id');
+                            if (Status != "A") {
+                                if (Status != "cbSelectAll") {
+                                    var Chkclass = $(this).attr('class')
+                                    ChkIdList.push({
+                                        'Id': Chkclass
+                                    });
+                                }
+                            }
+                        });
+                        $("#verify").modal("show");
+                        $("#headers").text('Approve All');
+                        $("#dvRejectComment").hide();
+                        $("#dvComment").show();
+                        $("#hdnentityidstypes").val("");
+                    }
+
+                    else {
+                     alert(resp.message);
+                    }
+                }, false, false);
+
+    });
+
+    //$('#btnApproveAll').on("click", function(){
+    //
+    //    $("#hdnStatus").val('A');
+    //    var _totalCount=$('#tblNWEntityDetails input[type="checkbox"]:not("#cbSelectAll"),#tblNWEntityDetails input[type="checkbox"]:not("#cbSelectAll")').length;
+    //    let _disabledCount=$('#tblNWEntityDetails input[type="checkbox"]:disabled:not("#cbSelectAll"),#tblNWEntityDetails input[type="checkbox"]:disabled:not("#cbSelectAll")').length;
+    //    var allEntities=$('#tblNWEntityDetails input[type="checkbox"][data-status!="A"][data-status!="R"][data-status!="V"]:not("#cbSelectAll")');
+    //    if(_totalCount==_disabledCount){alert('No entities are left to change the status!'); return false;}
+    //    if(allEntities.length>0)
+    //    {
+    //        $("#verify").modal("show");
+    //        $("#headers").text('Approve All');
+    //        $("#dvRejectComment").hide();
+    //        $("#dvComment").show();
+    //        var entidstypes = "";
+    //        allEntities.each(function(){
+    //            var entity_id_type = $(this).attr('data-entity_id_type');
+    //            entidstypes = entidstypes == "" ? entity_id_type : entidstypes + "," + entity_id_type;
+    //        });
+    //    }
+    //    else{
+    //        alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_158)
+    //    }
+    //    $("#hdnentityidstypes").val(entidstypes);
+    //    $('#btnverifyEntities').html('Approve All');
+    //});
+    $('#btnRejectAll').on("click", function(){
+        $("#hdnStatus").val('R');
+        var _totalCount ='@Model.totalRecord';
+        var _totalCount = '@Model.totalRecord';
+        let _disabledCount = $("#hdnApproveStatusCount").val();
+            $('#tblNWEntityDetails input[type="checkbox"]:disabled:not("#cbSelectAll"),#tblNWEntityDetails input[type="checkbox"]:disabled:not("#cbSelectAll")').length;
+        if (_totalCount == _disabledCount) { alert('No entities are left to change the status!'); return false; }
+        var count = 0;
+        var ChkIdList = [];
+
+            $("#verify").modal("show");
+            $("#headers").text('Reject All');
+            $("#dvRejectComment").show();
+            $("#dvComment").hide();
+            var entidstypes = "";
+            allEntities.each(function(){
+                var entity_id_type = $(this).attr('data-entity_id_type');
+                entidstypes = entidstypes == "" ? entity_id_type : entidstypes + "," + entity_id_type;
+            });
+
+
+        $("#hdnentityidstypes").val(entidstypes);
+        $('#btnverifyEntities').html('Reject All');
+    });
+    $('#btnReject').on("click", function(){
+        $("#hdnStatus").val('R');
+        var _totalCount ='@Model.totalRecord';
+            //$('#tblNWEntityDetails input[type="checkbox"]:not("#cbSelectAll"),#tblNWEntityDetails input[type="checkbox"]:not("#cbSelectAll")').length;
+        let _disabledCount =$("#hdnApproveStatusCount").val();
+            $('#tblNWEntityDetails input[type="checkbox"]:disabled:not("#cbSelectAll"),#tblNWEntityDetails input[type="checkbox"]:disabled:not("#cbSelectAll")').length;
+        var allEntities=$('#tblNWEntityDetails input[type="checkbox"][data-status!="A"][data-status!="R"][data-status!="V"]:checked');
+        if(_totalCount==_disabledCount){alert('No entities are left to change the status!'); return false;}
+        if(allEntities.length>0)
+        {
+            $("#verify").modal("show");
+            $("#headers").text('Reject');
+            $("#dvRejectComment").show();
+            $("#dvComment").hide();
+            var entidstypes = "";
+            allEntities.each(function(){
+                var entity_id_type = $(this).attr('data-entity_id_type');
+                entidstypes = entidstypes == "" ? entity_id_type : entidstypes + "," + entity_id_type;
+            });
+        }
+        else{
+            alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_158)
+        }
+        $("#hdnentityidstypes").val(entidstypes);
+        $('#btnverifyEntities').html('Reject');
+    });
+    $("#btnveryfy").on("click", function () {
+        $("#hdnStatus").val('V');
+        $('#btnverifyEntities').html('Verify');
+        var count = 0;
+        var ChkIdList = [];
+        var entidstypes = ""
+        $("input[name='chkSelect']:not('#cbSelectAll'):checked").each(function () {
+            var Status = $(this).attr('id');
+            var entity_id_type = $(this).attr('data-entity_id_type');
+            if (Status != "True")
+            {
+                count++;
+                var Chkclass = $(this).attr('class')
+                ChkIdList.push({
+                    'Id': Chkclass
+                });
+                entidstypes = entidstypes == "" ? entity_id_type : entidstypes + "," + entity_id_type;
+            }
+        });
+        $("#hdnentityidstypes").val(entidstypes);
+        //alert($("#hdnentityidstypes").val());
+        if(count>0)
+        {
+            $("#verify").modal("show");
+            $("#headers").text(MultilingualKey.SI_OSP_GBL_GBL_GBL_151);
+            $("#dvRejectComment").hide();
+            $("#dvComment").show();
+        }
+        else
+        {alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_158)}
+    });
+
+
+
+
+
+    $("#Verifyall").on("click", function () {
+        var count = 0;
+        var ChkIdList = [];
+        $('#btnverifyEntities').html('Verify All');
+        $("#hdnStatus").val('V');
+        $("input[name='chkSelect']").each(function () {
+            var Status = $(this).attr('id');
+            if (Status !="V") {
+                if(Status !="cbSelectAll")
+                {
+                    var Chkclass = $(this).attr('class')
+                    ChkIdList.push({
+                        'Id': Chkclass
+                    });
+                }
+            }
+        });
+        $("#verify").modal("show");
+        $("#headers").text(MultilingualKey.SI_OSP_GBL_GBL_GBL_150);
+        $("#dvRejectComment").hide();
+        $("#dvComment").show();
+
+        $("#hdnentityidstypes").val("");
+    });
+    function btnCancle()
+    {
+        $("#verify").modal("hide");
+        $('#headers').removeAttr();
+    };
+    $("#Closeverify").on("click", function () {
+        $("#verify").modal("hide");
+        $('#headers').removeAttr();
+    })
+    function verifyEntities() {
+        var p_remarks = $("#txtRemarks").val();
+        if( $("#hdnStatus").val()=='R')
+        {
+            var _comment = getRejectComment();
+            if (_comment.trim() != '')
+            {
+                validateEntitiest();
+            }
+        }
+        else  if (p_remarks != "") {
+            $("#txtRemarks").css('border-color', '');
+            validateEntitiest();
+        }
+        else {
+            $("#txtRemarks").css('border-color', 'red');
+            //alert("Remarks cannot be blank!");
+        }
+    };
+    function validateEntitiest() {
+        var p_remarks = $("#txtRemarks").val();
+        if(p_remarks=""){
+            p_remarks=   getRejectComment();
+        }
+        $("#dvEntitydetailsProgress").show();
+        $("#verify").addClass("dvdisabled")
+        var p_entity_ids_types = $("#hdnentityidstypes").val();
+        var p_ticket_id = $("#hdnticketid").val();
+        var _status = $("#hdnStatus").val();
+            var type= $("#headers").text()
+            showConfirm($.validator.format(MultilingualKey.SI_OSP_BUL_JQ_RPT_001, type), function () {
+                ajaxReq('NetworkTicket/VerifyEntities', { ticket_id: p_ticket_id, entity_ids_types: p_entity_ids_types, remarks: p_remarks,status:_status }, true, function (resp) {
+                    if (resp.status == "OK") {
+                        alert(resp.message);
+                        $("#verify").modal("hide");
+                        $('#headers').removeAttr();
+                        $("#txtRemarks").val("");
+                        getNWEntitydetais(@Model.objNetworkTicket.ticket_id,'@Model.objNetworkTicket.Network_Ticket_ID','@Model.objNetworkTicket.ticket_status','','','@Model.objNetworkTicket.ticket_type')
+                        $("#networkEntityDetails").toggleClass("active");
+                        $("#networkEntityDashboard").toggleClass("active");
+                        $("#dvEntitydetailsProgress").hide();
+
+                    }
+
+                    else {
+                        alert(resp.message);
+                        $("#dvEntitydetailsProgress").hide();
+                    }
+                }, false, false);
+            });
+
+
+
+    }
+    function getNWntitySummary(ticket_id) {
+
+        popup.LoadModalDialog('CHILD', 'NetworkTicket/NWEntitySummaryReport', {ticket_id:ticket_id},  MultilingualKey.SI_OSP_GBL_GBL_FRM_034, 'modal-xxl');
+
+    }
+    function getNWEntityAction(system_id,entity_type,geom_type,entity_action_atr) {
+
+        popup.LoadModalDialog('CHILD', 'NetworkTicket/GetDraftEntityInfo', { 'objNetworkTicketFilters.system_id': system_id, 'objNetworkTicketFilters.entity_type': entity_type,'objNetworkTicketFilters.geom_type': geom_type,'objNetworkTicketFilters.entity_action': entity_action_atr },  MultilingualKey.SI_OSP_GBL_GBL_FRM_033, 'modal-md');
+
+    }
+    // below function for get manual enter FAT barcode and image
+    function GetBarCodeImage(system_id, entity_type) {
+
+       popup.LoadModalDialog('CHILD', 'NetworkTicket/GetBarcodeImage', { systemId: system_id, entityType: entity_type }, 'Barcode Verification', 'modal-md');
+
+    }
+    // below function for get manual power meter reading and image
+    function GetMeterReadingImage(system_id, entity_type) {
+        popup.LoadModalDialog('CHILD', 'NetworkTicket/GetMeterReadingImage', { systemId: system_id, entityType: entity_type }, 'Power Meter Reading Verification', 'modal-md');
+
+    }
+    function showHideOtherCommentBox() {
+        if ($('input[id="radioRejectComment"]:checked').val() == "Other") {
+            $('#txtcommentother').attr('readonly', false);
+        }
+        else {
+            $('#txtcommentother').attr('readonly', true);
+            $('#txtcommentother').css('border-color', '');
+        }
+    }
+    function getRejectComment() {
+        var _comment = '';
+        var _selectedReason = $('input[id="radioRejectComment"]:checked').val();
+        if (_selectedReason == undefined) {
+            alert(MultilingualKey.SI_OSP_BUL_JQ_FRM_005);
+        }
+        else {
+            _comment = _selectedReason != "Other" ? _selectedReason : $('#txtcommentother').val();
+            if (_comment.trim() == '') {
+                $('#txtcommentother').css('border-color', 'red');
+            }
+        }
+        return _comment;
+    }
+
+    // Open trace validation screen after click
+    $('#btnTraceValidate').on("click", function(){
+        var p_source_ref_id = $("#hdnticketid").val();
+        popup.LoadModalDialog('CHILD', 'Main/GetSecondarySplitter', { objFilters: { source_ref_id: p_source_ref_id, entityType: 'Splitter', action_name: 'ConstructionValidation' } }, "Construction Validation Dashboard", 'modal-xxl');
+
+    });
+    function removecss() {
+        $('#txtcommentother').css('border-color', '');
+    }
+    $('#btnSubmitNetwork').on("click", function () {
+        debugger;
+        var p_ticket_id = $("#hdnticketid").val();
+        var region_id = '';
+        var province_id = '';
+        showConfirm("Are sure do you want to submit network?", function () {
+            $("#dvEntitydetailsProgress").show();
+            ajaxReq('NetworkTicket/SubmitNetworkTicket', { ticketId: p_ticket_id }, true, function (resp) {
+                if (resp.status == "OK") {
+                    alert(resp.message);
+                    getDashboard();
+                    $('#frmTicket').submit();
+                    $("#dvEntitydetailsProgress").hide();
+                    $("#closeModalPopup").trigger("click");
+                    $("#NWticketAction").hide();
+                     region_id = JSON.parse(resp.result).region_id;
+                     province_id = JSON.parse(resp.result).province_id;
+                    si.Networkticket.clearNetworkticket(region_id, province_id);
+
+                }
+                else {
+                    alert(resp.message);
+                }
+            }, false, false);
+        });
+
+    });
+</script>

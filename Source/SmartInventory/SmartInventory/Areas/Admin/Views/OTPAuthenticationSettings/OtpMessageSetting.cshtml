@@ -1,0 +1,110 @@
+﻿@using Models;
+@model Models.Admin.OTPAuthenticationSettings
+
+@*@{
+        ViewBag.Title = "OTPAuthenticationSettings";
+    }*@
+
+@*<h2>OTP Authentication Settings</h2>*@
+
+<!DOCTYPE html>
+<div class="update_panel fullWidth">
+    <div class="title">
+        <h4>
+            OTP Message Settings
+        </h4>
+    </div>
+    <div id="otpAuthentication" class="pad_left">
+        <div class="form-inline filter-sec">
+            <div class="form-group">
+                <label class="mr-01 d-flex">
+                    <input type="checkbox" id="isotpenabled" class="control-label mt-0" /><b>OTP Enabled</b>
+                </label>
+            </div>
+            <div class="col-md-4">
+                <select id="application" class="form-control">
+                    <option value="">Select Application</option>
+                    <option value="web">Web</option>
+                    <option value="mobile">Mobile</option>
+                </select>
+            </div>
+        </div>
+
+        @*<div class="col-md-3">
+                <label>
+                    Temporory Lack Screen After
+                    (Unsuccessfull Attempts)
+                </label>
+                @Html.TextBoxFor(m => m.temp_lock_attempt, new { @class = "form-control", @id = "temp_lock_attempt" })
+            </div>*@
+        <div class="row">
+            <div class="col-md-2">
+                <label class="control-label noWhiteSpace wordBreak">
+                    Display Alert Message Screen :
+                    (In Seconds)
+                </label>
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.temp_lock_attempt, new { @class = "form-control", @id = "temp_lock_attempt", @type = "number", @placeholder = 0 })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <label class="control-label noWhiteSpace wordBreak">
+                    Permission Message to Access SMS :
+                </label>
+            </div>
+            <div class="col-md-4">
+                <textarea id="permissionmsg" class="form-control" rows="3" cols="50">@Resources.Resources.SI_OSP_GBL_GBL_FRM_233</textarea>@*SmartInventory would like to access your messages*@
+            </div>
+
+            <div class="col-md-2">
+                <label class="control-label noWhiteSpace wordBreak">
+                    Permanent Lock Warning Message :
+                </label>
+            </div>
+            <div class="col-md-4">
+                <textarea id="permanentlock" class="form-control" rows="3" cols="50">@Resources.Resources.SI_OSP_GBL_GBL_FRM_234</textarea>@*Please enter carefully, Incorrect OTP will lock you for 1 hour.*@
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <label class="control-label noWhiteSpace wordBreak">
+                    Temporary Lock Warning Message :
+                </label>
+            </div>
+            <div class="col-md-4">
+                <textarea id="temporarylock" class="form-control" rows="3" cols="50">@Resources.Resources.SI_OSP_GBL_GBL_FRM_235</textarea>@*Please enter carefully, Incorrect OTP will lock you for 5 minuts.*@
+            </div>
+
+            <div class="col-md-2">
+                <label class="control-label noWhiteSpace wordBreak">
+                    Alert Message for OTP service failure :
+                </label>
+            </div>
+            <div class="col-md-4">
+                <textarea id="otpfailed" rows="3" class="form-control" cols="50">@Resources.Resources.SI_OSP_GBL_GBL_FRM_236</textarea>@*OTP generation failed, please check your network connection and try again.*@
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <label class="control-label noWhiteSpace wordBreak">
+                    Alert Message for Incorrect OTP :
+                </label>
+            </div>
+            <div class="col-md-4">
+                <textarea id="incorrectotp" rows="3" class="form-control" cols="50">@Resources.Resources.SI_OSP_GBL_GBL_FRM_237</textarea>@*Please enter correct OTP.*@
+            </div>
+        </div>
+        <div class="d-flex">
+            <button class="btn btn-default ml-auto mr-05" id="btnCancel" onclick="ResetFormValues();">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btnSaveOtpmsg">Save</button>
+        </div>
+    </div>
+</div>
+<script>
+    function ResetFormValues() {
+        $("#application").val('');
+        $("#temp_lock_attempt").val('');
+    }
+</script>

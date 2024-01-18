@@ -1,0 +1,36 @@
+@font-face {
+    font-family: 'JioType';
+    src: url('../css/JioType/JioType-Light.eot');
+    src: url('../css/JioType/JioType-Light.eot?#iefix') format('embedded-opentype'), url('../css/JioType/JioType-Light.woff2') format('woff2'), url('../css/JioType/JioType-Light.woff') format('woff'), url('../css/JioType/JioType-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    src: url('../css/JioType/JioType-Bold.eot');
+    src: url('../css/JioType/JioType-Bold.eot?#iefix') format('embedded-opentype'), url('../css/JioType/JioType-Bold.woff2') format('woff2'), url('../css/JioType/JioType-Bold.woff') format('woff'), url('../css/JioType/JioType-Bold.ttf') format('truetype');
+    font-family: 'JioType';
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'JioType';
+    src: url('../css/JioType-Black.eot');
+    src: url('../css/JioType/JioType-Black.eot?#iefix') format('embedded-opentype'), url('../css/JioType/JioType-Black.woff2') format('woff2'), url('../css/JioType/JioType-Black.woff') format('woff'), url('../css/JioType/JioType-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'JioType';
+    src: url('../css/JioType/JioType-Medium.eot');
+    src: url('../css/JioType/JioType-Medium.eot?#iefix') format('embedded-opentype'), url('../css/JioType/JioType-Medium.woff2') format('woff2'), url('../css/JioType/JioType-Medium.woff') format('woff'), url('../css/JioType/JioType-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+

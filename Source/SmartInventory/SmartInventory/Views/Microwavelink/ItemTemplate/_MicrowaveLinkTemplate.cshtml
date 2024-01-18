@@ -1,0 +1,73 @@
+﻿
+
+@model Models.MicrowaveLinkItemMaster
+@using Models;
+<script>
+    //Set color of template icon as green in NE library
+    if ('@Model.id' > 0) {
+        $(".clsTemplateIcon[data-lyrname='MicrowaveLink']").css('background-color', '#9999FF');
+    }
+</script>
+@helper pageMessage()
+{
+{ Html.RenderPartial("_PageMessage", Model.objPM); }
+}
+@helper MicrowaveLinkTemplateMaster()
+{
+{ Html.RenderPartial("~/Views/MicrowaveLink/ItemTemplate/_MicrowaveLinkTemplateMaster.cshtml", (MicrowaveLinkTemplateMaster)Model); }
+}
+
+<!DOCTYPE html>
+<div class="libDetail">
+
+    @using (Ajax.BeginForm("SaveMicrowaveLinkTemplate", "ItemTemplate", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        OnFailure = "si.handleError",
+
+    },
+                                    new { id = "frmItemTemplate", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id)
+             <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="ItemSpecfication">
+                    @MicrowaveLinkTemplateMaster()
+                </div>
+            </div>
+        </div>
+        <div class="form-group ModalFooter" id="dvBtnAction">
+            <div class="col-sm-4 col-sm-offset-2" style="float: right; text-align: right; padding-right: 25px;">
+                @if (Model.id > 0)
+                {
+                    <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                }
+                <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+
+    }
+</div>
+<script>
+    $(document).ready(function () {
+
+            callFormValidator("frmItemTemplate");
+
+            $('#id').val('@Model.id');
+
+
+
+    });
+
+</script>
+
+

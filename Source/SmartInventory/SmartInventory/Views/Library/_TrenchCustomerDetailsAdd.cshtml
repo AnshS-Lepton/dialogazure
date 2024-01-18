@@ -1,0 +1,181 @@
+﻿@model Models.TrenchCustomerDetails
+@using SmartInventory.Settings;
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+
+}
+@*<div class="libDetail" style="height:400px;">*@
+@using (Ajax.BeginForm("SaveTrenchCustomerDetails", "Library", new AjaxOptions
+{
+    HttpMethod = "POST",
+    LoadingElementId = "dvProgress",
+    Confirm = "Do you want to continue!",
+    // UpdateTargetId = "dvChildModalBody",
+    OnSuccess = "si.TrenchCustomerDetails.CustomerDetailsResponse(" + Model.system_id + "," + Model.trench_id + ",'Trench');"
+},
+                                     new { id = "frmAddCustomerDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.system_id, new { id = "hdnTrenchCustomerDetailsId" })
+    @Html.HiddenFor(m => m.trench_id)
+    <div class="libDetail" style="height:400px;">
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active">
+
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">CUSTOMER REQUIREMENT </legend>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtOriginFrom">State</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.state, new { id = "txtstate", @class = "form-control" })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2" for="txtOriginRefId">Customer Name</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.customer_name, new { id = "txtcustomername", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-2 col-sm-2" for="txtOriginRefCode">Service Type</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.service_type, new { id = "txtservicetype", @class = "form-control" })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2" for="txtOriginRefDesc">Section Name</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.section_name, new { id = "txtsection_name", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtReqRefId">Pair Requirement</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.pair_requirement, new { id = "txtpairrequirement", @class = "form-control" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtrequstedById">Length(km)</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.length_in_kms, new { id = "txtlengthinkms", @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,4);" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtReqApprvById">Status</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.status, new { id = "txtstatus", @class = "form-control" })
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">PO DETAIL</legend>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtOriginFrom">Po No.</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.po_no, new { id = "txtpono", @class = "form-control", @maxlength = "80" })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2" for="txtOriginRefId">Po Length(km)</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.po_length_km, new { id = "txtpolengthkm", @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,4);" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-2 col-sm-2" for="txtOriginRefCode">Po Release Date</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.po_release_date, "{0:dd-MMM-yyyy}", new { id = "txtporeleasedate", @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @style = "background:#fff;" })
+                                <img id="imgpo_release_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;" />
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2" for="txtOriginRefDesc">Period</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.period, new { id = "txtperiod", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtReqRefId">From Date</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.from_date, "{0:dd-MMM-yyyy}", new { id = "txtfromdate", @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @style = "background:#fff;" })
+                                <img id="imgfrom_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;" />
+                            </div>
+                            <label class="control-label col-sm-2" for="txtrequstedById">To Date</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.to_date, "{0:dd-MMM-yyyy}", new { id = "txttodate", @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @style = "background:#fff;" })
+                                <img id="imgto_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;" />
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">HOTO DETAIL </legend>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtOriginFrom">Hoto No</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.hoto_no, new { id = "txthotono", @class = "form-control", @maxlength = "80" })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2" for="txtOriginRefId">URID</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.urid, new { id = "txturid", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-2 col-sm-2" for="txtOriginRefCode">Hoto Status</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.hoto_status, new { id = "txthotostatus", @class = "form-control" })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2" for="txtOriginRefDesc">Hoto Date</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.hoto_date, "{0:dd-MMM-yyyy}", new { id = "txthotodate", @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @style = "background:#fff;" })
+                                <img id="imghoto_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtReqRefId">Route Name</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.route_name, new { id = "txtroute_name", @class = "form-control" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtrequstedById">Hoto Length</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.hoto_length, new { id = "txthotolength", @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,4);" })
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtReqRefId">Total Core</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.total_core, new { id = "txttotalcore", @class = "form-control", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "8" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtrequstedById">Live Core</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.live_core, new { id = "txtlivecore", @class = "form-control", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "8" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtReqRefId">Reserved Core</label>
+                            <div class="col-md-4 col-sm-4 ">
+                                @Html.TextBoxFor(m => m.reserved_core, new { id = "txtreservedcore", @class = "form-control", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "8" })
+                            </div>
+
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="form-group ModalFooter" id="dvBtnAction">
+        <div class="col-sm-10 col-sm-offset-2" style="float: right; text-align: right;">
+            <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            <button type="submit" class="btn btn-primary">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+}
+@*</div>*@
+<script type="text/javascript">
+    $(document).ready(function () {
+        callFormValidator("frmAddCustomerDetails");
+        si.setDateTimeCalendar('txtfromdate', 'txttodate', 'imgfrom_date', 'imgto_date', 'imgto_date', true);
+        si.setSurveyDateTimeCalendar('txtporeleasedate', 'imgpo_release_date', '', true);
+        si.setSurveyDateTimeCalendar('txthotodate', 'imghoto_date', '', true);
+        //si.setDateTimeCalendar("txtporeleasedate", "imgpo_release_date");
+        //si.setDateTimeCalendar("txthotodate", "imghoto_date");
+
+    });
+</script>

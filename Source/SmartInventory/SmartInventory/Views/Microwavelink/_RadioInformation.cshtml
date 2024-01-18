@@ -1,0 +1,22 @@
+﻿
+@model Models.MicrowaveLinkViewModel
+
+<fieldset class="the-fieldset">
+    <legend class="the-legend">Radio Information</legend>
+    <div class="form-group col-md-12">
+        <div class="col-md-6">
+            <label for="male" class="col-md-2">User Power(dBm)</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.microwaveLinkMaster.best_modulation, new { @class = "form-control"})
+            </div>
+        </div> 
+        <div class="col-md-6">
+            <label for="male" class="col-md-2">User Power(dBm)</label> 
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.towerMasterB.network_id, new { @class = "form-control"})
+            </div>
+        </div>
+        
+
+    </div>
+</fieldset>

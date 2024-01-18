@@ -1,0 +1,35 @@
+﻿@model IList<Models.PortHistory>
+
+@{
+    WebGrid webGrid = new WebGrid(source: Model, canSort: false, canPage: false);
+}
+<style>
+    .WrapText {
+        width: 140px;
+        overflow: hidden;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+
+
+@if (Model.Count != 0)
+{
+
+    @webGrid.GetHtml(
+                htmlAttributes: new { @id = "WebGrid", @class = "webGrd" },
+        columns: webGrid.Columns(
+
+                                     webGrid.Column("port_status", Resources.Resources.SI_OSP_GBL_NET_FRM_029),
+                                 webGrid.Column("port_name", "Port Name"),
+                                 webGrid.Column("port_number", Resources.Resources.SI_OSP_GBL_NET_FRM_026),
+                                  webGrid.Column("port_type", Resources.Resources.SI_OSP_GBL_NET_FRM_027),
+                                   webGrid.Column("input_output", Resources.Resources.SI_OSP_GBL_NET_FRM_028),
+                                    webGrid.Column("port_comment", Resources.Resources.SI_OSP_GBL_NET_FRM_312),
+                                     webGrid.Column("created_on", "Created On")))
+}
+else
+{
+    <div style="text-align:center; margin-top:50px;"><b> No History Found!</b></div>
+}

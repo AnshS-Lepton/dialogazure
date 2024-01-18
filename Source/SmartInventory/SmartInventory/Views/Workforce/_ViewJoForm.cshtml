@@ -1,0 +1,423 @@
+﻿
+@model Models.WFM.jo_form
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Converge</title>
+</head>
+@*<script src="~/Content/js/Main.js"></script>
+    <style>
+
+    </style>*@
+<body style="
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #666666;
+      box-sizing: border-box;
+      ">
+    <div style="
+         width: 900px;
+         margin: 0 auto;
+         background-color: #ffffff;
+         box-shadow: 0 5px 9px rgba(0, 0, 0, 0.1);
+         padding: 25px 15px;
+         font-size: 13px;
+         ">
+        <!--Header-->
+        <div style="display: flex; align-items: center; padding-bottom: 5px">
+            <!--Logo box-->
+            <div style="display: flex; flex-direction: column">
+                <img src="@Url.Content("~/Content/images/Converge_ICT.png")" style="width: 150px" />
+                <div style="display: flex; margin-top: 10px">
+                    <span style="padding-right: 1rem; color: #8b8b8b">ASSIGNED TO :</span>
+                    <span style="font-weight: 600">@Model.assigned_name</span>
+                </div>
+            </div>
+            <!--Company Name-->
+            <div style="
+                 display: flex;
+                 flex: 0 0 500px;
+                 flex-direction: column;
+                 margin-left: 35px;
+                 ">
+                <span style="font-weight: 600; text-transform: uppercase">Converge Information and Communication Technologies Inc.</span>
+                <span style="
+                      color: #8b8b8b;
+                      margin-top: 5px;
+                      text-transform: uppercase;
+                      line-height: 20px;
+                      ">
+                    5th floor, Savers Mall, Balibago, Angeles City <br />
+                    Pampanga, 2009 Philippines<br />
+                    <em style="text-transform: capitalize">Tel No.(02)667-008(045)599-3777 FAX No. (02)6670896</em>
+                </span>
+            </div>
+            <!--Job order box-->
+            <div style="
+                 margin-left: auto;
+                 display: flex;
+                 flex-direction: column;
+                 text-align: right;
+                 ">
+                <span style="font-weight: 600; font-size: 14px; text-transform: uppercase">job order form</span>
+                <span style="
+                      font-weight: 600;
+                      font-size: 11px;
+                      text-transform: uppercase;
+                      color: #be4646;
+                      ">Mainline Application</span>
+                <span>No. <b>@Model.hpsmid</b></span>
+                <span style="font-weight: 600; font-size: 24px; text-transform: uppercase">@Model.hpsmid</span>
+                <span>Date. @Model.jo_date<b></b></span> @*Sep. 07, 2022*@
+            </div>
+        </div>
+        <!-- body first box -->
+        <div style="
+             border: 1px solid #333333;
+             padding: 15px;
+             display: flex;
+             flex-direction: column;
+             margin-top: 10px;
+             ">
+            <!-- Line one -->
+            <div style="display: flex; margin-bottom: 10px">
+                <span style="text-transform: uppercase; font-size: 12px">subscriber's acct. No. - Name:</span>
+                <span style="
+                      text-transform: uppercase;
+                      font-size: 12px;
+                      font-weight: 600;
+                      margin-left: 10px;
+                      display: inline-flex;
+                      flex-wrap: wrap;
+                      word-wrap: break-word;
+                      ">@Model.account_number-@Model.customer_name</span>
+                </div>
+                <!-- Line two -->
+                <div style="display: flex; margin-bottom: 10px">
+                    <span style="
+                          text-transform: uppercase;
+                          font-size: 12px;
+                          white-space: nowrap;
+                          ">Service Address:</span>
+                    <span style="
+                          text-transform: uppercase;
+                          font-size: 12px;
+                          font-weight: 600;
+                          margin-left: 10px;
+                          display: inline-flex;
+                          flex-wrap: wrap;
+                          word-wrap: break-word;
+                          ">
+                        @Model.address
+                    </span>
+                </div>
+                <!-- Line three -->
+                <div style="display: flex; margin-bottom: 10px">
+                    <span style="
+                      text-transform: uppercase;
+                      font-size: 12px;
+                      white-space: nowrap;
+                      ">Telephone No.:</span>
+                    <span style="
+                      text-transform: uppercase;
+                      font-size: 12px;
+                      font-weight: 600;
+                      margin-left: 10px;
+                      display: inline-flex;
+                      ">@Model.customer_rmn</span>
+                </div>
+                <!-- Line Four -->
+                <div style="display: flex; margin-bottom: 10px">
+                    <span style="
+                          text-transform: uppercase;
+                          font-size: 12px;
+                          white-space: nowrap;
+                          ">Installation Origion:</span>
+                    <span style="
+                          text-transform: uppercase;
+                          font-size: 12px;
+                          font-weight: 600;
+                          margin-left: 10px;
+                          display: inline-flex;
+                          ">@Model.origin</span>
+                    </div>
+                    <!-- Line Five -->
+                    <div style="display: flex; margin-bottom: 10px">
+                        <span style="
+                              text-transform: uppercase;
+                              font-size: 12px;
+                              white-space: nowrap;
+                              ">Schedule Date & Time:</span>
+                        <span style="
+                              text-transform: uppercase;
+                              font-size: 12px;
+                              font-weight: 600;
+                              margin-left: 10px;
+                              display: inline-flex;
+                              ">@Model.slot</span>
+                        </div>
+                        <span style="text-transform: uppercase; font-size: 10px; margin-bottom: 5px">Special Instructions:</span>
+                        <!-- Line Six -->
+                        <div style="display: flex; margin-bottom: 10px">
+                            <span style="
+                                  text-transform: uppercase;
+                                  font-size: 12px;
+                                  white-space: nowrap;
+                                  ">Package:</span>
+                            <span style="
+                                  text-transform: uppercase;
+                                  font-size: 12px;
+                                  font-weight: 600;
+                                  margin-left: 10px;
+                                  display: inline-flex;
+                                  ">@Model.package</span>
+                            </div>
+                            <!-- Line Seven -->
+                            <div style="display: flex; margin-bottom: 10px">
+                                <span style="
+                                      text-transform: uppercase;
+                                      font-size: 12px;
+                                      white-space: nowrap;
+                                      ">Monthly Rate:</span>
+                                <span style="
+                                      text-transform: uppercase;
+                                      font-size: 12px;
+                                      font-weight: 600;
+                                      margin-left: 10px;
+                                      ">0.00</span>
+                                @*<span style="
+                                          text-transform: uppercase;
+                                          font-size: 12px;
+                                          margin-left: 25px;
+                                          ">Installation Fee:</span>
+                                    <span style="
+                                          text-transform: uppercase;
+                                          font-size: 12px;
+                                          font-weight: 600;
+                                          margin-left: 10px;
+                                          ">-</span>*@
+                            </div>
+                        </div>
+                        <div style="
+                             margin-bottom: 10px;
+                             padding: 10px;
+                             border: 1px solid #666666;
+                             border-top: none;
+                             ">
+                            <div style="display: flex">
+                                <span style="
+                                      text-transform: uppercase;
+                                      font-size: 12px;
+                                      white-space: nowrap;
+                                      ">Time started:</span>
+                                <span style="
+                                      text-transform: uppercase;
+                                      font-size: 12px;
+                                      font-weight: 600;
+                                      margin-left: 10px;
+                                      ">@Model.checkin</span>
+                                    <span style="
+                                          text-transform: uppercase;
+                                          font-size: 12px;
+                                          margin-left: 25px;
+                                          ">Time Finished:</span>
+                                    <span style="
+                                          text-transform: uppercase;
+                                          font-size: 12px;
+                                          font-weight: 600;
+                                          margin-left: 10px;
+                                          ">@Model.checkout</span>
+                                    </div>
+                                    <div style="display: flex">
+                                        <span style="text-transform: uppercase; font-size: 12px; margin-top: 10px">Remarks:</span>
+                                        <span style="
+                                              text-transform: uppercase;
+                                              font-size: 12px;
+                                              font-weight: 600;
+                                              margin-left: 10px;
+                                              margin-top: 10px;
+                                              ">@Model.remarks</span>
+                                        </div>
+                                    </div>
+                                    <!-- Body second table -->
+                                    <b style="
+                                       display: inline-block;
+                                       margin-top: 10px;
+                                       text-transform: uppercase;
+                                       ">Material Used:</b>
+                                    <div>
+                                        <table cellpadding="0" cellspacing="0" style="font-size:12px; width:100%; border-collapse: collapse">
+                                            <tr style="text-align:left">
+                                                <th style="padding:5px; border:1px solid #666666; background-color:#f3f3f3">Material Name</th>
+                                                <th style="padding:5px; border:1px solid #666666; background-color:#f3f3f3">Serial No</th>
+                                                <th style="padding:5px; border:1px solid #666666; background-color:#f3f3f3">Item Code</th>
+                                                <th style="padding:5px; border:1px solid #666666; background-color:#f3f3f3">Material Code</th>
+                                                <th style="padding:5px; border:1px solid #666666; background-color:#f3f3f3">WH Code</th>
+                                                <th style="padding:5px; border:1px solid #666666; background-color:#f3f3f3">Qty Used</th>
+                                            </tr>
+                                            @foreach (var i in Model.material_used)
+                                            {
+                                                <tr style="text-align:left">
+                                                    <td style="padding:5px; border:1px solid #666666;">@(i.material_name != null ? i.material_name : " ")</td>
+                                                    <td style="padding:5px; border:1px solid #666666;">@(i.serial_no != "null" ? i.serial_no : " ")</td>
+                                                    <td style="padding:5px; border:1px solid #666666;">@(i.item_code != "null" ? i.item_code : " ")</td>
+                                                    <td style="padding:5px; border:1px solid #666666;">@(i.material_code != "null" ? i.material_code : " ")</td>
+                                                    <td style="padding:5px; border:1px solid #666666;">@(i.wh_code != "null" ? i.wh_code : " ")</td>
+                                                    <td style="padding:5px; border:1px solid #666666;">@(i.details != "null" ? i.details : " ") @(i.material_unit != "null" ? i.material_unit : " ")</td>
+                                                </tr>
+                                            }
+                                        </table>
+                                        @*<span style="
+                                                  display: flex;
+                                                  flex: 0 0 88%;
+                                                  justify-content: center;
+                                                  padding: 5px 0;
+                                                  font-weight: 600;
+                                                  ">
+                                                Material Name
+                                            </span>
+                                            <span style="
+                                                  display: flex;
+                                                  flex: 1;
+                                                  border-left: 1px solid #666666;
+                                                  padding: 5px;
+                                                  font-weight: 600;
+                                                  justify-content: center;
+                                                  ">
+                                                Qty Used
+                                            </span>*@
+                                    </div>
+                                    <div style="display: flex; border: 1px solid #666666; border-top: none">
+                                        <div style="
+                                             display: flex;
+                                             flex: 0 0 60%;
+                                             padding: 5px 0;
+                                             font-weight: 600;
+                                             flex-direction: column;
+                                             ">
+                                            @*<span style="
+                                                      text-transform: uppercase;
+                                                      font-size: 12px;
+                                                      font-weight: 600;
+                                                      margin-left: 10px;
+                                                      display: inline-flex;
+                                                      margin-bottom: 15px;
+                                                      ">@i.material_name</span>
+                                                <div style="display: flex; margin-left: 10px">
+                                                    <span style="font-size: 11px; white-space: nowrap; font-weight: 300">Begining:</span>
+                                                    <span style="font-size: 11px; font-weight: 600; margin-left: 5px">01</span>
+                                                    <span style="font-size: 11px; margin-left: 25px; font-weight: 300">Ending:</span>
+                                                    <span style="font-size: 12px; font-weight: 600; margin-left: 5px">02</span>
+                                                </div>
+                                                <div style="
+                                                         display: flex;
+                                                         margin-left: 10px;
+                                                         margin-top: 10px;
+                                                         margin-bottom: 10px;
+                                                         ">
+                                                        <span style="font-size: 11px; white-space: nowrap; font-weight: 300">Total:</span>
+                                                        <span style="font-size: 11px; font-weight: 600; margin-left: 5px">01</span>
+                                                    </div>*@
+                                            <div style="
+                                                 text-transform: uppercase;
+                                                 font-size: 12px;
+                                                 font-weight: 600;
+                                                 display: inline-flex;
+                                                 margin-top: 15px;
+                                                 border-top: 1px solid #666666;
+                                                 border-bottom: 1px solid #666666;
+                                                 padding: 5px 0 5px 10px;
+                                                 ">
+                                                <pre>
+facility: 
+napcode : @Model.napcode port : @Model.napport
+cpe serial : @Model.cpe_serial ref serial: @Model.ref_serial 
+                    </pre>
+                                            </div>
+                                            <div style="
+                                                 display: flex;
+                                                 margin-left: 10px;
+                                                 margin-top: 10px;
+                                                 margin-bottom: 10px;
+                                                 ">
+                                                <span style="font-weight: 600; text-transform: uppercase">Satisfied with service?</span>
+                                                <span style="font-size: 11px; font-weight: 600; margin-left: 5px">Yes :</span>
+                                                <span style="font-size: 11px; font-weight: 600; margin-left: 5px">[_X_]</span>
+                                                <span style="font-size: 11px; font-weight: 600; margin-left: 5px">Yes :</span>
+                                                <span style="font-size: 11px; font-weight: 600; margin-left: 5px">[....]</span>
+                                            </div>
+                                            <div style="display: flex; margin-left: 10px; margin-bottom: 10px">
+                                                <span style="font-size: 11px; font-weight: 600; margin-left: 5px">IF NO, WHY ?</span>
+                                            </div>
+                                            <div style="
+                                                 display: flex;
+                                                 margin-left: 10px;
+                                                 margin-top: 15px;
+                                                 margin-bottom: 10px;
+                                                 ">
+                                                <span style="font-weight: 600; text-transform: uppercase">QUALITY OF SERVICE</span>
+                                                <span style="font-size: 11px; font-weight: 600; margin-left: 5px">VERY GOOD :</span>
+                                                <span style="font-size: 11px; font-weight: 600; margin-left: 5px">[....]</span>
+                                                <span style="font-size: 11px; font-weight: 600; margin-left: 5px">GOOD :</span>
+                                                <span style="font-size: 11px; font-weight: 600; margin-left: 5px">[....]</span>
+                                                <span style="font-size: 11px; font-weight: 600; margin-left: 5px">POOR :</span>
+                                                <span style="font-size: 11px; font-weight: 600; margin-left: 5px">[....]</span>
+                                            </div>
+                                        </div>
+                                        <!-- Right Box -->
+                                        <div style="
+                                             display: flex;
+                                             flex: 1;
+                                             border-left: 1px solid #666666;
+                                             padding: 5px;
+                                             font-weight: 600;
+                                             justify-content: center;
+                                             "></div>
+                                    </div>
+                                    <div style="
+                                         display: flex;
+                                         padding: 5px 0;
+                                         justify-content: center;
+                                         font-weight: 600;
+                                         border: 1px solid #666666;
+                                         border-top: none;
+                                         ">
+                                        Attested that both parties agreed that the subscriber checked his/her
+                                        belongings and nothing is missing.
+                                    </div>
+                                    <div style="margin-top: 40px; display: flex; justify-content: center">
+                                        <div style="display: flex; flex: 0 0 500px; justify-content: space-between">
+                                            <div style="display: flex; flex-direction: column">
+                                                <span style="
+                                                      padding: 5px 5px 0;
+                                                      border-top: 1px solid #666666;
+                                                      text-align: center;
+                                                      ">SIGNATURE OVER PRINTED</span>
+                                                <span style="
+                                                      margin-top: 10px;
+                                                      font-weight: 600;
+                                                      text-align: center;
+                                                      text-transform: uppercase;
+                                                      ">LINEMAN</span>
+                                            </div>
+                                            <div style="display: flex; flex-direction: column">
+                                                <span style="
+                                                      padding: 5px 5px 0;
+                                                      border-top: 1px solid #666666;
+                                                      text-align: center;
+                                                      ">SIGNATURE OVER PRINTED</span>
+                                                <span style="
+                                                      margin-top: 10px;
+                                                      font-weight: 600;
+                                                      text-align: center;
+                                                      text-transform: uppercase;
+                                                      ">SUBSCRIBER</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </body>
+                        </html>

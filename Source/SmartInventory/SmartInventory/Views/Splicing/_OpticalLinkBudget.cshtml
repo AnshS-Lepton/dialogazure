@@ -1,0 +1,415 @@
+﻿@model Models.ViewOSPCPFModel
+@using Utility;
+@{
+    WebGrid grid = new WebGrid(canPage: false, canSort: true, ajaxUpdateContainerId: "dvViewOpticalLinkBudget", ajaxUpdateCallback: "onGridHeaderClick('tblOpticalLinkBudgetInfo')");
+    grid.Bind(Model.lstConnectionInfo, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+
+}
+
+
+<style>
+    .forward {
+        float: left;
+        height: 22px;
+        width: 22px;
+        background-color: rgb(27, 148, 97);
+        /*border: 2px solid;*/
+        border-radius: 50%;
+    }
+
+    .backward {
+        float: left;
+        height: 22px;
+        width: 22px;
+        background-color: rgb(217, 220, 223);
+        /*border: 2px solid;*/
+        border-radius: 50%;
+    }
+
+    .text {
+        float: left;
+        padding-right: 5px;
+        padding-left: 5px;
+        font-weight: 700;
+        padding-top: 2px;
+    }
+</style>
+
+<div class="libDetail">
+    @using (Ajax.BeginForm("OpticalLinkBudgetSeprate", "Splicing", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "dvModalBody",
+    OnBegin = ""
+},
+new { id = "frmOpticalLinkBudget", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.objFilterAttributes.entity_type)
+        @Html.HiddenFor(m => m.objFilterAttributes.entityid)
+        @Html.HiddenFor(m => m.objFilterAttributes.port_no)
+        @Html.HiddenFor(m => m.entity_geomid)
+        @Html.HiddenFor(m => m.backword_path_type, new {@id = "hdn_pathType" })
+        
+
+        <div class="libTabs">
+            <ul class="nav nav-tabs tabs-left">
+                <li class="active"><a href="#OpticalLinkBudgetSeprate" data-toggle="tab">Optical Link Budget</a></li>
+
+            </ul>
+
+
+        </div>
+        <div class="libTabContent" style="overflow: visible; max-height: fit-content;">
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="OpticalLinkBudgetSeprate">
+
+
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtpathtype_id">Path Type<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-10" style="padding-left:23px">
+                            @*<input type="radio" id="rdo_ForwardPath" name="IsbackwordOrForword" value="false" checked onclick="SelectRadio('rdo_ForwardPath')"> Forward Path &nbsp;&nbsp;
+            <input type="radio" id="rdo_BackwardPath" name="IsbackwordOrForword" value="true" onclick="SelectRadio('rdo_BackwardPath')"> Backward Path*@
+
+
+
+                            @if (Model.backword_path_type == false)
+                            {
+                                @*@Html.RadioButtonFor(model => model.backword_path_type, "false", new { @checked = true })*@
+                                <label class="Custom_Radio_Buttons" style="padding-left:120px;">@Html.RadioButtonFor(i => i.backword_path_type, "false", new { @checked = true, @onchange = "SelectRadio();" }) <span class="checkmark"> <spam style="width: 230px; float: left; margin-left: 20px; font-size:12px;">Forward Path</spam></span></label>
+                                <label class="Custom_Radio_Buttons" style="padding-left:120px;">@Html.RadioButtonFor(i => i.backword_path_type, "true", new { @onchange = "SelectRadio();" }) <span class="checkmark"> <spam style="width: 230px; float: left; margin-left: 20px; font-size:12px;">Backward Path</spam></span></label>
+                                @*@Html.HiddenFor(m => m.backword_path_type)*@
+
+                            }
+                            else
+                            {
+                                <label class="Custom_Radio_Buttons" style="padding-left:120px;">@Html.RadioButtonFor(i => i.backword_path_type, "false", new { @onchange = "SelectRadio();" }) <span class="checkmark"> <spam style="width: 230px; float: left; margin-left: 20px; font-size:12px;">Forward Path</spam></span></label>
+                                <label class="Custom_Radio_Buttons" style="padding-left:120px;">@Html.RadioButtonFor(i => i.backword_path_type, "true", new { @checked = true, @onchange = "SelectRadio();" }) <span class="checkmark"> <spam style="width: 230px; float: left; margin-left: 20px; font-size:12px;">Backward Path</spam></span></label>
+                                @*@Html.HiddenFor(m => m.backword_path_type)*@
+                            }
+
+
+
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="txtEquipment_id">Equipment ID<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-10" style="padding-left:23px">
+                            @Html.TextBoxFor(m => m.equipment_id, new { @class = "form-control", @maxlength = 100 })
+                        </div>
+
+                    </div>
+
+
+                 
+                 
+
+
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="ddlport">Core/Port<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-10" style="padding-left:23px">
+                            <select id="ddlCore" name="ddlCore" class="chosen-select col-sm-12" style="padding:0;" onchange="osp.ddlopticalCore(this);">
+                                <option value="0">--Select--</option>
+                                @if (grid.TotalRowCount > 0)
+                                {
+                                    foreach (var item in Model.lstEquipementCore)
+                                    {
+                                        <option value=@item.port_value @string.Format((Model.objFilterAttributes.port_no == @item.port_value) ? "selected" : "")>@item.port_text </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group" style="display:none" >
+                        <label class="control-label col-sm-2" for="ddlport">Source Id<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-10" style="padding-left:23px">
+                            @*<select id="ddl_AEnd" name="ddl_AEnd" class="chosen-select col-sm-12" style="padding:0;" onchange="osp.ddlcpfCore(this);">*@
+                            <select id="ddl_AEnd" name="ddl_AEnd" class="chosen-select col-sm-12" style="padding:0;">
+                                
+                                @if (grid.TotalRowCount > 0)
+                                {
+                                    
+                                     <option value=@Model.lstConnectionInfo.Select(m=> m.source_network_id).FirstOrDefault()>@Model.lstConnectionInfo.Select(m => m.source_network_id).FirstOrDefault() </option>
+                                    
+                                    @*foreach (var item in Model.lstConnectionInfo.Select(m => m.source_network_id).FirstOrDefault())
+                                    {
+                                        <option value=@item>@item </option>
+                                    }*@
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group" style="display:none">
+                        <label class="control-label col-sm-2" for="ddlport">Destination Id<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-10" style="padding-left:23px">
+                            <span id="path_type"></span>
+                            @*@bool value = true;*@
+                            @*<script>
+                            
+                                $('input[name=IsbackwordOrForword]').change(function () {
+                                    var radioValue = $("input[name='IsbackwordOrForword']:checked").val();
+                                    alert(radioValue);
+
+                                })
+
+                            </script>*@
+
+
+
+                            <select id="ddl_BEnd" name="ddl_BEnd" class="chosen-select col-sm-12" style="padding:0;">
+                                
+                                @if (grid.TotalRowCount > 0)
+                                { 
+                                   if (@Model.backword_path_type == false)
+                                   { 
+                                    @*<option value=@Model.lstConnectionInfo.Select(m=> m.destination_network_id).Distinct().LastOrDefault()>@Model.lstConnectionInfo.Select(m=> m.destination_network_id).Distinct().LastOrDefault() </option>*@
+                                   
+                                    @*<option value=@Model.lstConnectionInfo.Where(m=> m.is_backward_path == false).Select(m=> m.destination_network_id).Distinct().LastOrDefault()>@Model.lstConnectionInfo.Where(m => m.is_backward_path == false).Select(m => m.destination_network_id).Distinct().LastOrDefault() </option>*@
+                                    
+                                
+                                    <option value=@Model.lstConnectionInfo.Where(m=> m.is_backward_path == false).Select(m=> m.destination_network_id).Distinct().LastOrDefault()>@Model.lstConnectionInfo.Where(m => m.is_backward_path == false).Select(m => m.destination_network_id).Distinct().LastOrDefault() </option>
+
+                                   }
+                                   
+                                else
+                                   {
+                                   
+                                    <option value=@Model.lstConnectionInfo.Where(m=> m.is_backward_path == true).Select(m=> m.destination_network_id).Distinct().LastOrDefault()>@Model.lstConnectionInfo.Where(m => m.is_backward_path == true).Select(m => m.destination_network_id).Distinct().LastOrDefault() </option>
+                                   }
+                                    
+                                    //foreach (var item in Model.lstConnectionInfo.Select(m => m.destination_network_id).Distinct())
+                                    //{
+                                    //    <option value=@item>@item </option>
+                                    //}
+                                }
+                            </select>
+
+
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="ddlport">Wavelength (nm)<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-10" style="padding-left:23px; width:240px">
+                            <select id="ddl_waveLength" name="ddl_waveLength" class="chosen-select col-sm-12" style="padding:0;">
+                                <option value="0">--Select--</option>
+                                @if (grid.TotalRowCount > 0)
+                                {
+                                    foreach (var item in Model.lstWave_length)
+                                    {
+                                        <option value=@item.wavelength_id>@item.wavelength_value </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <label class="control-label col-sm-2" for="txtTransmit">Transmit Power (db)<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-10" style="padding-left:23px; width:240px">
+                            @Html.TextBoxFor(m => m.txtTransmit, new { @class = "form-control allownumeric_value", @maxlength = 5, @id = "txt_transmit" })
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="form-group ModalFooter" style="height:1px;" id="dvBtnActionForOpticalLink">
+
+                        <label class="control-label col-sm-2" for="txtTransmit">Receiving power (db) :</label>
+                        <div class="col-sm-3" style="padding-left:23px; width:1px">
+
+                            <label id="txt_receving" name="txt_receving" class="control-label col-sm-2"></label>
+
+                        </div>
+
+
+                        <div class="col-sm-7 " style="float: right; text-align: right; padding-right: 25px;">
+                            <button type="submit" class="btn btn-primary" id="btnShowRoute" style="display:none">Show Route</button>
+                            <input type="button" id="btnopticalExport" value="Export" class="btn btn-primary" style="display:none;" />
+                            <input type="button" id="btnCalculate" value="Calculate" onclick="osp.BindOpticalLinkGridForSeprate()" class="btn btn-primary" />
+                            <button type="button" class="btn btn-default" onclick="OpticalLinkClearButton()" id="btnOpticalLinkClearClear">Clear</button>
+                        </div>
+
+                    </div>
+
+
+                    <div class="clearfix"></div>
+
+
+                    <div class="form-group">
+
+                        <div id="div_bindOpticalLinkGrid" style="width: 100%; height:auto; overflow-x: auto; overflow-y:auto">  </div>
+
+                        </div>
+
+
+
+                </div>
+
+            </div>
+        </div>
+
+    }
+
+</div>
+
+
+<script type="text/javascript">
+
+
+    //## Optical Link Details
+
+  
+    function OpticalLinkClearButton() {
+        
+
+        $('#equipment_id').val('');
+        $('#ddl_AEnd, #ddl_BEnd, #ddl_waveLength').val('0').trigger('chosen:updated');
+
+        $('#ddlCore').empty();
+        $('#ddlCore').append($("<option></option>").val('0').html('--Select--'));
+        $('#ddlCore').trigger("chosen:updated");
+        
+
+        $('#txt_transmit').val(0);
+        $('#txt_receving').text('');
+        $('#div_bindOpticalLinkGrid').empty();
+        $('#btnopticalExport').hide();
+        
+
+    }
+
+
+    // allow only numeric value in optical link
+    $(".allownumeric_value").on("keypress keyup blur", function (event) {
+
+        $(this).val($(this).val().replace(/[^\d].+/, ""));
+
+        if ((event.which < 48 || event.which > 57)) {
+            event.preventDefault();
+        }
+
+        if ((this.value.length == 0 && event.which == 48)) {
+
+            return false;
+        }
+
+
+    });
+
+
+    if ('@Model.objFilterAttributes.totalRecord' == 0) {
+        $('#txt_transmit').val(0);
+    }
+
+    //## End Optical Link Details
+
+
+    $(document).ready(function () {
+
+
+        osp.initApp();
+       
+        //  callFormValidator("frmCPF");
+        $('.chosen-select').chosen({ width: '100%', disable_search_threshold: '5' });
+
+        //var selectedValue = $('#ddlCore option:selected').val();
+        //if (selectedValue == '0') {
+        //    $("#ddlCore_chosen").addClass('input-validation-error');
+        //}
+        //else {
+        //    $("#ddlCore_chosen").removeClass('input-validation-error');
+        //}
+        // $('#ddlCore').trigger("chosen:updated");
+        //set backgroudn color
+
+
+
+
+
+        //$("#tblConnectionPathFinderInfo tbody tr").each(function (i, row) {
+        //    var $actualRow = $(row);
+        //    if ($actualRow.find('input[id^=hdnIsBackwardPath]').val().toUpperCase() == "FALSE") {
+        //        $actualRow.css('background-color', '#d9dcdf');
+        //    }
+        //    else {
+        //        $actualRow.css('background-color', '#1b9461c2');
+        //    }
+        //});
+    });
+
+
+
+    function SelectRadio() {
+        
+        var radioValue = $("input[name='backword_path_type']:checked").val();
+        $('#hdn_pathType').val(radioValue);
+        $('#ddlCore, #ddl_waveLength').val('0').trigger('chosen:updated');
+        $('#txt_transmit').val(0);
+        $('#txt_receving').text('');
+        $('#div_bindOpticalLinkGrid').empty();
+        $('#btnopticalExport').hide();
+
+
+        //
+        //if (rad == 'rdo_BackwardPath')
+        //{
+        //    $('#rdo_BackwardPath').checked = 'checked';
+        //}
+        //else
+        //{
+        //    $('#rdo_ForwardPath').checked = 'checked';
+        //}
+
+
+
+    }
+
+
+    //function SelectRadio(rad)
+    //{
+    //    
+    //    var radioValue = $("input[name='backword_path_type']:checked").val();
+    //    $('#hdn_pathType').val(radioValue);
+    //    //
+    //    //if (rad == 'rdo_BackwardPath')
+    //    //{
+    //    //    $('#rdo_BackwardPath').checked = 'checked';
+    //    //}
+    //    //else
+    //    //{
+    //    //    $('#rdo_ForwardPath').checked = 'checked';
+    //    //}
+
+   
+
+    //}
+    //$('input[name=IsbackwordOrForword]').change(function () {
+    //    var radioValue = $("input[name='IsbackwordOrForword']:checked").val();
+
+    //    $('#hdn_pathType').val(radioValue);
+
+    //    alert(radioValue);
+
+    //})
+
+
+
+</script>
+
+
+
+

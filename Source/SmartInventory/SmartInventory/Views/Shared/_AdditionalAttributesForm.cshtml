@@ -1,0 +1,134 @@
+﻿@model Models.vm_dynamic_form
+@using Models
+
+<!DOCTYPE html>
+<div id="frmOtherInfo">
+    <div id="dvChildModalBody">
+
+        <div @*class="libTabContent"*@>
+            @if (Model.lstFormControls.Count > 0)
+            {
+
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_221 </legend>
+                    <input id="hdnSystemID" name="record_system_id" type="hidden" value="">
+                    @foreach (var lstChunk in Model.lstFormControlsChunk)
+                    {
+                        <div class="form-group row">
+                            @foreach (var item in lstChunk)
+                            {
+                                switch (item.control_type.ToUpper())
+                                {
+                                    case "TEXT":
+
+                                        <label class="@item.label_css_class" for="@item.field_name">
+                                            @item.field_label
+                                            @if (item.is_mandatory)
+                                            {
+                                                <i class="clsMandatory">*</i>
+                                            }
+                                            :
+                                        </label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="@item.control_css_class" id="@item.field_name" name="@item.field_name" data-val=@(item.is_mandatory ? "true": "") data-val-required=@(item.is_mandatory ? item.required_text: "") value="@item.default_value" minlength="@item.min_length" maxlength="@item.max_length" placeholder="@item.placeholder_text" />
+                                        </div>
+                                        break;
+                                    case "DATETIME":
+                                        <label class="@item.label_css_class" for="@item.field_name">
+                                            @item.field_label
+                                            @if (item.is_mandatory)
+                                            {
+                                                <i class="clsMandatory">*</i>
+                                            }
+                                            :
+                                        </label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="@item.control_css_class" id="@item.field_name" name="@item.field_name" data-val=@(item.is_mandatory ? "true": "") data-val-required=@(item.is_mandatory ? item.required_text: "") value="@item.default_value" placeholder="@item.placeholder_text" style="background:#fff;" readonly />
+                                            <img id="@item.cal_id" class="assign-calen" src="~/Content/images/calendar.png" />
+                                        </div>
+                                        break;
+                                    case "DROPDOWN":
+                                        <label class="@item.label_css_class" for="@item.field_name">
+                                            @item.field_label
+                                            @if (item.is_mandatory)
+                                            {
+                                                <i class="clsMandatory">*</i>
+                                            }
+                                            :
+                                        </label>
+                                        <div class="col-sm-4">
+                                            <select class="@item.control_css_class" name="@item.field_name" id="@item.field_name" data-val=@(item.is_mandatory ? "true": "") data-val-required=@(item.is_mandatory ? item.required_text: "") placeholder="@item.placeholder_text" style="padding:0;" onchange="fnValidateDropdownValue('@item.field_name','@item.is_mandatory.ToString()');">
+                                                <option value="">--Select--</option>
+                                                @foreach (var ddl in Model.lstFormDDLValues.Where(x => x.control_id == item.id))
+                                                {
+                                                    <option value="@ddl.value_text" @(ddl.is_default ? "selected" : "")>@ddl.display_text</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        break;
+                                }
+
+                            }
+                        </div>
+                    }
+
+                </fieldset>
+            }
+            else
+            {
+                <div class="nr-found">
+                    <span> @Resources.Resources.SI_GBL_GBL_NET_FRM_221</span>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+<script src="~/Content/js/DynamicForms/dynamic.js"></script>
+<script type="text/javascript">
+    var additionalAttributesUtility = new AdditionalAttributesUtility();
+    function bindcal(classname) {
+         
+        $('.' + classname).each(function () {
+            var ctrlid = $(this).attr('id');
+            var imgid = "img_" + $(this).attr('id') + "_cal";
+            si.setDateTimeCalendar(ctrlid, imgid, false, false);
+        });
+    }
+
+    $(document).ready(function () {
+         
+
+        //setTimeout(function () {
+        //    callFormValidator(formNameForAdditional);
+
+        //}, 1000);
+
+        bindcal("dynamiccal");
+        $('.chosen-select').chosen({ width: '100%' });
+        if ($("#hdnOtherInfo").val() != null && $("#hdnOtherInfo").val() != "") {
+            var formDropDownIDs = $("#dvChildModalBody").children().find(".form-group").find(".chosen-select");
+            var objOtherInfo = JSON.parse($("#hdnOtherInfo").val());
+            $.each(objOtherInfo, function (key, val) {
+                $("#" + key).val(val);
+                for (var i = 0; i < formDropDownIDs.length; i++) {
+                    if (formDropDownIDs[i].id == key) {
+                        $("#" + key).val(val).trigger('chosen:updated');
+                    }
+                }
+            });
+        }
+    });
+    function fnValidateDropdownValue(_controlID, _isMandatory) {
+        if (_isMandatory.toUpperCase() == "TRUE") {
+            controlID = '#' + _controlID;
+            var selectedVal = $(controlID).val();
+            if (selectedVal != '' && selectedVal != null) {
+                $(controlID).next().removeClass('input-validation-error');
+            }
+            else {
+                $(controlID).next().addClass('input-validation-error');
+            }
+        }
+    }
+</script>

@@ -1,0 +1,592 @@
+﻿
+
+@model Models.Feasibility.FeasibilityViewModel
+<span class="icon-arrow_right sidectrl" id="open-close"></span>
+@{
+    int tabIndx = 0;
+}
+
+
+
+@{
+    var IsFTTH = ((List<string>)Session["ApplicableModuleListForFeasibility"]).Contains("FTTH");
+}
+<style>
+    .ph-table {
+        border: 1px solid #dddddd;
+        width: 100%;
+        font-size: 12px;
+        border-collapse: collapse;
+        background-color:#efefef;
+    }
+
+        .ph-table thead tr th, .ph-table tbody tr td {
+            text-align: left;
+            padding: 4px;
+        }
+
+        .ph-table thead tr th {
+            white-space: nowrap;
+            border: solid 1px #efefef;
+            background-color: #bbb;
+        }
+
+        .ph-table tbody tr td:nth-child(n+7):nth-child(n) {
+            text-align: right;
+        }
+
+
+    .fixTableHead {
+        overflow-y: auto;
+        height: 225px;
+    }
+
+        .fixTableHead thead th {
+            position: sticky;
+            top: -1px;
+        }
+
+
+
+   
+</style>
+<!DOCTYPE html>
+<div id="floating-panel-left">
+    @Html.HiddenFor(m => m.color_inside, new { id = "hdn_color_inside" })
+    @Html.HiddenFor(m => m.color_inside_A, new { id = "hdn_color_inside_A" })
+    @Html.HiddenFor(m => m.color_inside_P, new { id = "hdn_color_inside_P" })
+    @Html.HiddenFor(m => m.color_Outside, new { id = "hdn_color_Outside" })
+    @Html.HiddenFor(m => m.color_LMC_Start, new { id = "hdn_color_LMC_Start" })
+    @Html.HiddenFor(m => m.color_LMC_End, new { id = "hdn_color_LMC_End" })
+    @Html.HiddenFor(m => m.FeasibilityInputModel.feasibility_id, new { id = "hdn_feasibility_id" })
+    @*@Html.HiddenFor(m => m.objFeasibilityModel.core_level_result)
+        @Html.HiddenFor(m => m.objFeasibilityModel.feasibility_result)*@
+    <div class="header">
+        <span class="icon-smart_feasibility"></span> @SmartFeasibility.Settings.ApplicationSettings.ApplicationName
+
+        @*<span  class="closePanel" title="Close"><</span>*@
+    </div>
+
+
+    <div class="panelBody">
+        <span class="icon-search"></span>
+        @*<input id="txtGoogleSearch" type="text" class="fa form-control gSearch" placeholder="&#xf002 Search a location">*@
+        <div>
+            <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span>
+            <input id="txtGoogleSearch" type="text" class="fa form-control gSearch ui-autocomplete-input" placeholder='@Resources.Resources.SF_GBL_GBL_NET_FRM_020' autocomplete="off">
+            <input id="txtEntitySearch" type="text" class="fa form-control gSearch ui-autocomplete-input ui-corner-all" placeholder='Entity Search' autocomplete="off" style="display:none;">
+            <select class="pull-right" id="ftth-sel-option">
+                <option value="0">Google</option>
+                <option value="1">Entity</option>
+            </select>
+
+            @*<a href="javascript:void(0);" class="optAddSearch pull-right" id="ad-searchftth" tabindex="@(++tabIndx)" onclick="toggleSearchOpt();" style="display:none;">Advance Search</a>*@
+        </div>
+        <div class="tabsmenu" id="div-tab">
+            <input id="hdnFeasibilityInput" hidden />
+            <div class="div-tab">
+
+                @if (IsFTTH)
+                {
+                    <ul class="nav nav-tabs d-fx">
+                        <li class="active">
+                            <a href="javascript:void(0);" id="btn-enterprise" class="btn-small btn-gray" onclick="showHideTab('enterprise');">Enterprise</a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);" id="btn-ffth" class="btn-small btn-blue" onclick="showHideTab('ftth');">FTTH</a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);" id="btn-wireless" class="btn-small btn-blue" onclick="showHideTab('wireless');">Wireless</a>
+                        </li>
+                    </ul>
+
+                }
+
+            </div>
+            <div class="routeDistance pull-right width-50"></div>
+            @*<div class="flaticon-draw width-50" onclick="showMapManager2(this)" title="Show Legend" tabindex="@(++tabIndx)" id="legend" style="display:none;"></div>*@
+            @if (IsFTTH)
+            {
+                <div id="FFTH-layers" style="display:none;">
+                    <div class="row multicons">
+                        @*<span class="icon-wireline_feasibility activeicon"></span>*@
+                        <span class="icon-bulk_upload" id="iconBulkFeasFtth" title='@Resources.Resources.SF_GBL_GBL_NET_FRM_022'></span>
+
+                        <span class="icon-history" id="iconPastFeasFtth" title='@Resources.Resources.SF_GBL_GBL_NET_FRM_023'></span>
+                        @*<div class="pull-right" style="margin-right:15px;">
+                                <label class="radio-inline" title="Decimal Degrees"><input type="radio" name="latLngFrmt" value="DD" checked>DD</label>
+                                <label class="radio-inline" title="Degrees Minutes Seconds "><input type="radio" value="DMS" name="latLngFrmt">DMS</label>
+                            </div>*@
+                    </div>
+
+                    <form id="frmFeasibilityInputFtth" onsubmit="event.preventDefault();">
+                        <div class="fixform">
+                            <div class="form-group required">
+                                <fieldset>
+                                    <legend>Location</legend>
+                                    <div class="row">
+                                        <div class="col-md-6 dipfix">
+
+                                            @Html.TextBoxFor(m => m.FTTHFeasibilityModel.lat, new { @class = "form-control txtLatLng validate-ftth", placeholder = "Latitude", @id = "FtthLat", data_name = "Lat", required = "required", @maxlength = "50" })
+
+                                        </div>
+                                        <div class="col-md-6 dipfix pl0">
+
+                                            @Html.TextBoxFor(m => m.FTTHFeasibilityModel.lng, new { @class = "form-control txtLatLng validate-ftth", placeholder = "Longitude", @id = "FtthLng", data_name = "Lng", required = "required", @maxlength = "50" })
+                                            <span id="FtthLatLng" class="icon-select_on_map select-icon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row bufferRadius required">
+                                        <div class="col-md-6">
+                                            <label for="startBuffer" class="control-label">Buffer Radius(m)</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control input-sm txtBufferRadius validate-ftth" required data-name="Start" id="ftthBuffer" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="row pt10">
+                                        <div class="col-md-11">
+                                            <div id="sliderFtth" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all ui-state-disabled ui-slider-disabled">
+                                                <div id="custom-handleFtth" class="ui-slider-handle ui-state-default ui-corner-all"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+
+                        </div>
+
+                        <div class="required sideBottom enterp">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button type="button" class="btn-gray form-control" id="btnlistFtth" onclick="sf.getFeasibilityDetailsFtth();" disabled>@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                                </div>
+                                <div class="col-md-8 dinline">
+                                    <input type="button" id="btnResetFtth" class="btn-gray form-control mr05" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" />
+                                    <button type="button" id="btnComputeFtth" class="btn-info form-control">@Resources.Resources.SF_GBL_GBL_NET_FRM_021</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+
+                </div>
+            }
+            <div id="enterprise-layers">
+
+                <div class="row multicons">
+                    @*<span class="icon-wireline_feasibility activeicon"></span>*@
+                    <span class="icon-bulk_upload" id="iconBulkFeas" title='@Resources.Resources.SF_GBL_GBL_NET_FRM_022'></span>
+                    <span class="icon-history" id="iconPastFeas" title='@Resources.Resources.SF_GBL_GBL_NET_FRM_023'></span>
+                    @*<div class="pull-right" style="margin-right:15px;">
+                            <label class="radio-inline" title="Decimal Degrees"><input type="radio" name="latLngFrmt" value="DD" checked>DD</label>
+                            <label class="radio-inline" title="Degrees Minutes Seconds "><input type="radio" value="DMS" name="latLngFrmt">DMS</label>
+                        </div>*@
+                </div>
+
+                @*<h5 style="color: #50b3ea;">
+                        Wireline Feasibility
+                    </h5>*@
+
+                @*<div class="row feasTypeWrapper">
+                        <div class="col-md-6 text-center activeWrapper feasType">
+                            <span class="">FTTH</span>
+                        </div>
+                        <div class="col-md-6 text-center feasType">
+                            <span class="">Enterprise</span>
+                        </div>
+                    </div>*@
+                <form id="frmFeasibilityInput" onsubmit="event.preventDefault();">
+                    @if (IsFTTH)
+                    {
+                        <div class="fixform  pr10">
+                            <div class="form-group required">
+                                <label for="customerName" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_010</label>
+                                @Html.TextBoxFor(m => m.FeasibilityInputModel.customer_name, new { @class = "form-control validate checkQuotes", @id = "customerName", required = "required", @maxlength = "50" })
+                            </div>
+
+                            <div class="form-group required">
+                                <label for="customerID" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_011</label>
+                                @Html.TextBoxFor(m => m.FeasibilityInputModel.customer_id, new { @class = "form-control validate checkQuotes", @id = "customerID", required = "required", @maxlength = "30" })
+                            </div>
+
+                            <div class="form-group required">
+                                <label for="feasibilityID" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_012</label>
+                                @Html.TextBoxFor(m => m.FeasibilityInputModel.feasibility_name, new { @class = "form-control validate checkQuotes", @id = "feasibilityID", required = "required", @maxlength = "30" })
+                            </div>
+
+                            @*<div class="form-group">
+                                    <label class="radio-inline" style="margin-right:10px;"><input type="radio" name="optradio" checked>Aerial</label>
+                                    <label class="radio-inline" style="margin-right:10px;"><input type="radio" name="optradio">Underground</label>
+                                    <label class="radio-inline" style="margin-right:10px;"><input type="radio" name="optradio">Both</label>
+                                </div>*@
+
+                            <div class="form-group required">
+                                <fieldset>
+                                    <legend>@Resources.Resources.SF_GBL_GBL_NET_FRM_013</legend>
+                                    <div class="row mb10">
+                                        <div class="col-md-12">
+                                            @Html.TextBoxFor(m => m.FeasibilityInputModel.start_point_name, new { @class = "form-control checkQuotes endPointName", placeholder = @Resources.Resources.SF_GBL_GBL_NET_FRM_068, @id = "startPointName" })
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 dipfix">
+                                            @*<label for="startLat" class="control-label">Lat</label>*@
+                                            @Html.TextBoxFor(m => m.FeasibilityInputModel.start_lat_lng, new { @class = "form-control txtLatLng validate", placeholder = Resources.Resources.SF_GBL_GBL_NET_FRM_018, @id = "startLat", data_name = "ALat", required = "required", @maxlength = "50" })
+                                            @*<input type="text" class="form-control txtLatLng" data-name="ALat" id="startLat">*@
+                                        </div>
+                                        <div class="col-md-6 dipfix pl0">
+                                            @*<label for="startLng" class="control-label">Lng</label>*@
+                                            @Html.TextBoxFor(m => m.FeasibilityInputModel.start_lat_lng, new { @class = "form-control txtLatLng validate", placeholder = Resources.Resources.SF_GBL_GBL_NET_FRM_019, @id = "startLng", data_name = "ALng", required = "required", @maxlength = "50" })
+                                            @*<input type="text" class="form-control txtLatLng" data-name="ALng" id="startLng">*@
+                                            <span id="selectStartLatLng" class="icon-select_on_map select-icon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row bufferRadius required">
+                                        <div class="col-md-6">
+                                            <label for="startBuffer" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_084</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control input-sm txtBufferRadius validate" required data-name="Start" id="startBuffer">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-11">
+                                            <div id="slider1">
+                                                <div id="custom-handle1" class="ui-slider-handle"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+
+
+                            <div class="form-group required">
+                                <fieldset>
+                                    <legend>@Resources.Resources.SF_GBL_GBL_NET_FRM_015</legend>
+                                    <div class="row mb10">
+                                        <div class="col-md-12">
+                                            @Html.TextBoxFor(m => m.FeasibilityInputModel.end_point_name, new { @class = "form-control endPointName checkQuotes", placeholder = @Resources.Resources.SF_GBL_GBL_NET_FRM_070, @id = "endPointName" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 dipfix">
+                                            @*<label for="endLat" class="control-label">Lat</label>*@
+                                            @Html.TextBoxFor(m => m.FeasibilityInputModel.end_lat_lng, new { @class = "form-control txtLatLng validate", placeholder = @Resources.Resources.SF_GBL_GBL_NET_FRM_018, @id = "endLat", data_name = "BLat", required = "required", @maxlength = "50" })
+                                            @*Lat <input type="text" class="form-control txtLatLng" data-name="BLat" id="endLat">*@
+                                        </div>
+                                        <div class="col-md-6 dipfix pl0">
+                                            @*<label for="endLng" class="control-label">Lng</label>*@
+                                            @Html.TextBoxFor(m => m.FeasibilityInputModel.end_lat_lng, new { @class = "form-control txtLatLng validate", placeholder = @Resources.Resources.SF_GBL_GBL_NET_FRM_019, @id = "endLng", data_name = "BLng", required = "required", @maxlength = "50" })
+                                            @*Lng <input type="text" class="form-control txtLatLng" data-name="BLng" id="endLng">*@
+                                            <span id="selectEndLatLng" class="icon-select_on_map select-icon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row bufferRadius required">
+                                        <div class="col-md-6">
+                                            <label for="endBuffer" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_084 </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control input-sm txtBufferRadius validate" required data-name="End" id="endBuffer">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-11">
+                                            <div id="slider2">
+                                                <div id="custom-handle2" class="ui-slider-handle"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+
+
+                            <div class="form-group required">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="cores" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_016</label>
+                                        @Html.TextBoxFor(m => m.FeasibilityInputModel.cores_required, new { @class = "form-control validate", @id = "cores", required = "required", @onkeypress = "return sf.allowOnlyNumber(event);", @maxlength = "100" })
+                                        @*<input type="text" class="form-control" id="cores">*@
+                                    </div>
+                                    <div class="col-md-6 divCableType">
+                                        <label for="cableType" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_017</label>
+                                        @Html.DropDownListFor(m => m.FeasibilityCableType.cable_type_id, new SelectList(Model.lstCableTypes, "cable_type_id", "display_name"), "-- Select --", new { @id = "cableType", @class = "form-control", required = "required" })
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="fixform fixfHeight pr10">
+                            <div class="form-group required">
+                                <label for="customerName" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_010</label>
+                                @Html.TextBoxFor(m => m.FeasibilityInputModel.customer_name, new { @class = "form-control validate checkQuotes", @id = "customerName", required = "required", @maxlength = "50" })
+                            </div>
+
+                            <div class="form-group required">
+                                <label for="customerID" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_011</label>
+                                @Html.TextBoxFor(m => m.FeasibilityInputModel.customer_id, new { @class = "form-control validate checkQuotes", @id = "customerID", required = "required", @maxlength = "30" })
+                            </div>
+
+                            <div class="form-group required">
+                                <label for="feasibilityID" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_012</label>
+                                @Html.TextBoxFor(m => m.FeasibilityInputModel.feasibility_name, new { @class = "form-control validate checkQuotes", @id = "feasibilityID", required = "required", @maxlength = "30" })
+                            </div>
+
+                            @*<div class="form-group">
+                                    <label class="radio-inline" style="margin-right:10px;"><input type="radio" name="optradio" checked>Aerial</label>
+                                    <label class="radio-inline" style="margin-right:10px;"><input type="radio" name="optradio">Underground</label>
+                                    <label class="radio-inline" style="margin-right:10px;"><input type="radio" name="optradio">Both</label>
+                                </div>*@
+
+                            <div class="form-group required">
+                                <fieldset>
+                                    <legend>@Resources.Resources.SF_GBL_GBL_NET_FRM_013</legend>
+                                    <div class="row mb10">
+                                        <div class="col-md-12">
+                                            @Html.TextBoxFor(m => m.FeasibilityInputModel.start_point_name, new { @class = "form-control checkQuotes endPointName", placeholder = @Resources.Resources.SF_GBL_GBL_NET_FRM_068, @id = "startPointName" })
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 dipfix">
+                                            @*<label for="startLat" class="control-label">Lat</label>*@
+                                            @Html.TextBoxFor(m => m.FeasibilityInputModel.start_lat_lng, new { @class = "form-control txtLatLng validate", placeholder = Resources.Resources.SF_GBL_GBL_NET_FRM_018, @id = "startLat", data_name = "ALat", required = "required", @maxlength = "50" })
+                                            @*<input type="text" class="form-control txtLatLng" data-name="ALat" id="startLat">*@
+                                        </div>
+                                        <div class="col-md-6 dipfix pl0">
+                                            @*<label for="startLng" class="control-label">Lng</label>*@
+                                            @Html.TextBoxFor(m => m.FeasibilityInputModel.start_lat_lng, new { @class = "form-control txtLatLng validate", placeholder = Resources.Resources.SF_GBL_GBL_NET_FRM_019, @id = "startLng", data_name = "ALng", required = "required", @maxlength = "50" })
+                                            @*<input type="text" class="form-control txtLatLng" data-name="ALng" id="startLng">*@
+                                            <span id="selectStartLatLng" class="icon-select_on_map select-icon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row bufferRadius required">
+                                        <div class="col-md-6">
+                                            <label for="startBuffer" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_084</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control input-sm txtBufferRadius validate" required data-name="Start" id="startBuffer">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-11">
+                                            <div id="slider1">
+                                                <div id="custom-handle1" class="ui-slider-handle"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+
+
+                            <div class="form-group required">
+                                <fieldset>
+                                    <legend>@Resources.Resources.SF_GBL_GBL_NET_FRM_015</legend>
+                                    <div class="row mb10">
+                                        <div class="col-md-12">
+                                            @Html.TextBoxFor(m => m.FeasibilityInputModel.end_point_name, new { @class = "form-control endPointName checkQuotes", placeholder = @Resources.Resources.SF_GBL_GBL_NET_FRM_070, @id = "endPointName" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 dipfix">
+                                            @*<label for="endLat" class="control-label">Lat</label>*@
+                                            @Html.TextBoxFor(m => m.FeasibilityInputModel.end_lat_lng, new { @class = "form-control txtLatLng validate", placeholder = @Resources.Resources.SF_GBL_GBL_NET_FRM_018, @id = "endLat", data_name = "BLat", required = "required", @maxlength = "50" })
+                                            @*Lat <input type="text" class="form-control txtLatLng" data-name="BLat" id="endLat">*@
+                                        </div>
+                                        <div class="col-md-6 dipfix pl0">
+                                            @*<label for="endLng" class="control-label">Lng</label>*@
+                                            @Html.TextBoxFor(m => m.FeasibilityInputModel.end_lat_lng, new { @class = "form-control txtLatLng validate", placeholder = @Resources.Resources.SF_GBL_GBL_NET_FRM_019, @id = "endLng", data_name = "BLng", required = "required", @maxlength = "50" })
+                                            @*Lng <input type="text" class="form-control txtLatLng" data-name="BLng" id="endLng">*@
+                                            <span id="selectEndLatLng" class="icon-select_on_map select-icon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row bufferRadius required">
+                                        <div class="col-md-6">
+                                            <label for="endBuffer" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_084 </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control input-sm txtBufferRadius validate" required data-name="End" id="endBuffer">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-11">
+                                            <div id="slider2">
+                                                <div id="custom-handle2" class="ui-slider-handle"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+
+
+                            <div class="form-group required">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="cores" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_016</label>
+                                        @Html.TextBoxFor(m => m.FeasibilityInputModel.cores_required, new { @class = "form-control validate", @id = "cores", required = "required", @onkeypress = "return sf.allowOnlyNumber(event);", @maxlength = "100" })
+                                        @*<input type="text" class="form-control" id="cores">*@
+                                    </div>
+                                    <div class="col-md-6 divCableType">
+                                        <label for="cableType" class="control-label">@Resources.Resources.SF_GBL_GBL_NET_FRM_017</label>
+                                        @Html.DropDownListFor(m => m.FeasibilityCableType.cable_type_id, new SelectList(Model.lstCableTypes, "cable_type_id", "display_name"), "-- Select --", new { @id = "cableType", @class = "form-control", required = "required" })
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+
+                    <div class="required mt05 sideBottom enterp">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button type="button" class="btn-gray form-control" id="btnlist" onclick="sf.getFeasibilityDetails();" disabled>@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                            </div>
+                            <div class="col-md-8" style="display:inline-flex;">
+                                <input type="button" id="btnReset" class="btn-gray form-control mr05" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" />
+                                <button type="button" id="btnCompute" class="btn-info form-control">@Resources.Resources.SF_GBL_GBL_NET_FRM_021</button>
+                                @*<input type="button" id="btnCompute" class="btn-info form-control" value="Compute"/>*@
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="wirelessBox" id="wirelessBox" style="display:none;">
+                <div id="FFTH-layers">
+                    <div class="row multicons">
+                        @*<span class="icon-wireline_feasibility activeicon"></span>*@
+                        <span class="icon-bulk_upload" id="iconBulkFeasFtth" title='@Resources.Resources.SF_GBL_GBL_NET_FRM_022'></span>
+
+                        @*<span class="icon-history" id="iconPastFeasFtth" title='@Resources.Resources.SF_GBL_GBL_NET_FRM_023'></span>*@
+                        @*<div class="pull-right" style="margin-right:15px;">
+                <label class="radio-inline" title="Decimal Degrees"><input type="radio" name="latLngFrmt" value="DD" checked>DD</label>
+                <label class="radio-inline" title="Degrees Minutes Seconds "><input type="radio" value="DMS" name="latLngFrmt">DMS</label>
+            </div>*@
+                    </div>
+
+                    <form id="frmFeasibilityInputFtth" onsubmit="event.preventDefault();">
+                        <div class="fixform">
+                            <div class="form-group required">
+                                <fieldset>
+                                    <legend>Location</legend>
+                                    <div class="row">
+                                        <div class="col-md-6 dipfix">
+
+                                            @Html.TextBoxFor(m => m.FTTHFeasibilityModel.lat, new { @class = "form-control txtLatLng validate-ftth", placeholder = "Latitude", @id = "FtthLat", data_name = "Lat", required = "required", @maxlength = "50" })
+
+                                        </div>
+                                        <div class="col-md-6 dipfix pl0">
+
+                                            @Html.TextBoxFor(m => m.FTTHFeasibilityModel.lng, new { @class = "form-control txtLatLng validate-ftth", placeholder = "Longitude", @id = "FtthLng", data_name = "Lng", required = "required", @maxlength = "50" })
+                                            <span id="FtthLatLng" class="icon-select_on_map select-icon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row bufferRadius required">
+                                        <div class="col-md-6">
+                                            <label for="startBuffer" class="control-label">Buffer Radius(m)</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control input-sm txtBufferRadius validate-ftth" required data-name="Start" id="ftthBuffer" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="row pt10">
+                                        <div class="col-md-11">
+                                            <div id="sliderFtth" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all ui-state-disabled ui-slider-disabled">
+                                                <div id="custom-handleFtth" class="ui-slider-handle ui-state-default ui-corner-all"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+
+                        </div>
+
+                        <div class="required sideBottom enterp">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button type="button" class="btn-gray form-control" id="btnlistFtth" onclick="sf.getFeasibilityDetailsFtth();" disabled>@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                                </div>
+                                <div class="col-md-8 dinline">
+                                    <input type="button" id="btnResetFtth" class="btn-gray form-control mr05" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" />
+                                    <button type="button" id="btnComputeFtth" class="btn-info form-control">@Resources.Resources.SF_GBL_GBL_NET_FRM_021</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<span class="legend-icon" onclick="showMapManager2(this)" title="Show Legend"><i class="fa fa-list-alt"></i></span>
+<div class="pop">
+    <div class="arrow"></div>
+    <div class="drag-title">
+    </div>
+</div>
+@if (IsFTTH)
+{
+    <div class="modal-manager col-sm-12" id="myModal" style="display:none;">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>*@
+                @*<button type="button" class="close" aria-label="Close" onclick="minmize('myModal')" id="minimise">
+                        <span aria-hidden="true">&minus;</span>
+                    </button>
+                    <button type="button" class="close" aria-label="Close" onclick="expand('myModal')" id="expand" style="display:none;">
+                        <span aria-hidden="true">&plus;</span>
+                    </button>*@
+
+                <h5 class="modal-title">FTTH Network Elements Detail</h5>
+            </div>
+            <div class="modal-body">
+                @*<table class="table" id="tblbatchLOS" width="100%">
+            <thead>
+
+            </thead>
+            <tbody></tbody>
+        </table>*@
+                <div class="fixTableHead">
+                    <table class="table ph-table" id="tblbatchLOS">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="nowrap"><span class="flaticon-undo19"></span></th>
+                                <th scope="col" class="nowrap"></th>
+                                <th scope="col" class="nowrap">Network ID</th>
+                                <th scope="col" class="nowrap">Network Type</th>
+                                <th scope="col" class="nowrap">Name</th>
+                                <th scope="col" class="nowrap">Status</th>
+                                <th scope="col" class="nowrap">Total No. of Ports</th>
+                                <th scope="col" class="nowrap">Port Utilization</th>
+                                <th scope="col" class="nowrap">Faulty Port</th>
+                                <th scope="col" class="nowrap">Utilization(%)</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="10">No record found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+}
+
+

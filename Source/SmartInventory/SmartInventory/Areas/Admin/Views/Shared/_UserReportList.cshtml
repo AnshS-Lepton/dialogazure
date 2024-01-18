@@ -1,0 +1,73 @@
+﻿@model List<Models.UserReportDetail>
+@if (Model.Count() > 0)
+{
+    var currentGroup = "";
+    <div class="d-flex mb-01">
+        <div><b>Total Count:</b> <b><span class="totalUsers">@Model.Count</span></b></div>
+        <div class="ml-02"><b>Selected:</b> <b><span class="selectedUsers"></span></b></div>
+        <input type="text" class="form-control ml-auto search_width" placeholder="Search User" id="search">
+    </div>
+    <div class="table-responsive tble_cls">
+        <table class="grid">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" class="allselect fNone" onclick="selectAllCheckBox()" value="false" />Select All
+
+                    </th>
+                    <th>
+                        User Name
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Email
+                    </th>
+                    <th>
+                        Role Name
+                    </th>
+                    <th>
+                        Mobile No.
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    if (currentGroup == "" || currentGroup != Model[i].groupUser)
+                    {
+                        currentGroup = Model[i].groupUser;
+                        <tr class="parenttr @Model[i].groupUser">
+                            <td class="alt" colspan="7"><b>@(currentGroup=="same"?"Self and Sub Users":currentGroup)</b></td>
+                        </tr>
+                    }
+                    <tr class="@Model[i].groupUser">
+                        <td>
+                            @*<input type="checkbox" value="@Model[i].isSelected.ToString()" @(Model[i].isSelected?"checked":"") name="UserReportMappingList[@i].isSelected"  @(Model[i].groupUser == "same"?"disabled":"") />*@
+                            @if (Model[i].groupUser == "same")
+                            {
+                                @Html.CheckBoxFor(model => Model[i].isSelected, new { Name = "UserReportMappingList[" + i + "].isSelected", @class = "dvdisabled", @Disabled = "disabled" })
+                            }
+                            else
+                            {
+                                @Html.CheckBoxFor(model => Model[i].isSelected, new { Name = "UserReportMappingList[" + i + "].isSelected" })
+                            }
+
+                            <input type="hidden" name="UserReportMappingList[@i].user_id" value="@Model[i].user_id" />
+                        </td>
+                        <td>@Model[i].user_name</td>
+                        <td>@Model[i].name</td>
+                        <td>@Model[i].user_email</td>
+                        <td>@Model[i].role_name</td>
+                        <td>@Model[i].mobile_number</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <span> No User found!</span>
+}

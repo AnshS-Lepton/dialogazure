@@ -1,0 +1,339 @@
+﻿
+@model Models.RouteAssetDeatils
+@{
+    Layout = null;
+
+}
+
+<html class='no-js' lang='en-US'>
+<head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <title>Excel Html</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            font: 13px/16px;
+            color: #666666;
+            text-transform: uppercase;
+        }
+        /* table {
+            border: 1px solid black;
+            width: 90%;
+            text-align: center;
+            font-weight: bold;
+        }  */
+    </style>
+
+
+</head>
+<body>
+    <div style='margin: 0 auto 20px; width: 99%'>
+        <div style='display: flex;justify-content: flex-end;margin-bottom: 7px;margin-top: 7px;'>
+            <button class="btn1" style='border: none;border-radius: 3px;padding: 7px 10px;background-color: #00b109;color: #ffffff;font-size: 14px;cursor: pointer;' onclick="window.open('data:application/vnd.ms-excel,' + encodeURIComponent(document.getElementById('exportexcel').innerHTML));">
+                Download
+            </button>
+        </div>
+    </div>
+    @if (Model != null)
+    {
+        <table style='border-collapse: collapse; width: 100%; border: 2px solid #333333; overflow: auto;' id='exportexcel'>
+            <tr>
+                <td style='border: 2px solid #333333;'>
+                    <br>
+                    <div>
+                        <div><table style='border-collapse:collapse; width:100%;'><tr><td colspan='2' style='background:Gray; padding: 4px 6px; color: white; font-size:16px;font-weight:bold;text-align:center; width:100%;'>DEPL ROUTE DETAIL</td></tr></table></div>
+
+
+                        <table style='width: 100%;border: 1px solid #cccccc;border-collapse: collapse;font-size: 13px;'>
+                            <tbody>
+                                <tr>
+                                    <td style='width: 30%;padding: 3px 5px;text-align: left;border-right: 1px solid #cccccc;'>STATE</td>
+                                    <td style='width: 70%; text-align: left; padding: 3px 5px'>@Model.state</td>
+                                </tr>
+                                <tr>
+                                    <td style='width: 30%;padding: 3px 5px;text-align: left;border-right: 1px solid #cccccc;border-top: 1px solid #cccccc;'>URID</td>
+                                    <td style=' width: 70%; padding: 3px 5px;text-align: left; border-top: 1px solid #cccccc;'>@Model.urid</td>
+                                </tr>
+                                <tr>
+                                    <td style='width: 30%;padding: 3px 5px;text-align: left;border-right: 1px solid #cccccc;border-top: 1px solid #cccccc;'>DEPL SECTION NAME</td>
+                                    <td style='width: 70%;padding: 3px 5px;text-align: left;border-top: 1px solid #cccccc;'>@Model.depl_section_name </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div><table style='border-collapse:collapse; width:100%;'><tr><td colspan='2' style='padding: 4px 6px; color: white; font-size:14px;font-weight:bold;text-align:center; width:100%;'></td></tr></table></div>
+                    <div><table style='border-collapse:collapse; width:100%;'><tr><td colspan='2' style='background:Gray; padding: 4px 6px; color: white; font-size:16px;font-weight:bold;text-align:center; width:100%;'>NETWORK DETAIL</td></tr></table></div>
+                    <table style='width: 100%;border: 1px solid #cccccc;border-collapse: collapse;font-size: 13px;'>
+                        <tbody>
+                            <tr>
+                                <td style='width: 30%;padding: 3px 5px;text-align: left;border-right: 1px solid #cccccc;'>GOOGLE LENGTH</td>
+                                <td style='width: 70%; text-align: left; padding: 3px 5px'>@Model.google_length</td>
+                            </tr>
+                            <tr>
+                                <td style='width: 30%;padding: 3px 5px;text-align: left;border-right: 1px solid #cccccc;border-top: 1px solid #cccccc;'>CIVIL ROUTE LENGTH </td>
+                                <td style='width: 70%;padding: 3px 5px;text-align: left;border-top: 1px solid #cccccc;'>@Model.civil_route_length</td>
+                            </tr>
+                            <tr>
+                                <td style='width: 30%;padding: 3px 5px;text-align: left;border-right: 1px solid #cccccc;border-top: 1px solid #cccccc;'>SECTION LENGTH</td>
+                                <td style='width: 70%;padding: 3px 5px;text-align: left;border-top: 1px solid #cccccc;'>@Model.section_length</td>
+                            </tr>
+                            <tr>
+                                <td style='width: 30%;padding: 3px 5px;text-align: left;border-right: 1px solid #cccccc;border-top: 1px solid #cccccc;'>BACKBONE CIVIL LENGTH</td>
+                                <td style='width: 70%;padding: 3px 5px;text-align: left;border-top: 1px solid #cccccc;'>@Model.backbone_civil_length</td>
+                            </tr>
+                            <tr>
+                                <td style='width: 30%;padding: 3px 5px;text-align: left;border-right: 1px solid #cccccc;border-top: 1px solid #cccccc;'>LAST MILE CIVIL LENGTH</td>
+                                <td style='width: 70%;padding: 3px 5px;text-align: left;border-top: 1px solid #cccccc;'>@Model.last_mile_civil_length</td>
+                            </tr>
+                            <tr>
+                                <td style='width: 30%;padding: 3px 5px;text-align: left;border-right: 1px solid #cccccc;border-top: 1px solid #cccccc;'>TOTAL OPTICAL CABLE LENGTH</td>
+                                <td style='width: 70%;padding: 3px 5px;text-align: left;border-top: 1px solid #cccccc;'>@Model.optical_cable_length</td>
+                            </tr>
+                            @if (Model.network_cable_length != null)
+                            {
+                                foreach (var item in Model.network_cable_length)
+                                {
+                                    <tr>
+                                        <td style='width: 30%;padding: 3px 5px;text-align: left;border-right: 1px solid #cccccc;border-top: 1px solid #cccccc;'>@item.cable_length.substring.Split(' ')[0] @item.cable_length.right LENGTH - @item.cable_length.substring.Split(' ')[1] </td>
+                                        <td style='width: 70%;padding: 3px 5px;text-align: left;border-top: 1px solid #cccccc;'>@item.cable_length.sum</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td style=' width: 30%; padding: 3px 5px; text-align: left; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc;'>No Record Found</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+
+                    <div><table style='border-collapse:collapse; width:100%;'><tr><td colspan='2' style='padding: 4px 6px; color: white; font-size:14px;font-weight:bold;text-align:center; width:100%;'></td></tr></table></div>
+                    <div><table style='border-collapse:collapse; width:100%;'><tr><td colspan='2' style='background:Gray; padding: 4px 6px; color: white; font-size:16px;font-weight:bold;text-align:center; width:100%;'> AERIAL SECTION - O&M ACTIVITY</td></tr></table></div>
+                    <table style=' width: 100%; border: 1px solid #cccccc; border-collapse: collapse; font-size: 13px;'>
+                        <tbody>
+                            <tr>
+                                <td style=' width: 30%; padding: 3px 5px; text-align: left; border-right: 1px solid #cccccc; '>AERIAL ROUTE LENGTH</td>
+                                <td style='width: 70%; text-align: left; padding: 3px 5px'>@Model.aerial_route_length</td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+                    <div><table style='border-collapse:collapse; width:100%;'><tr><td colspan='6' style='padding: 4px 6px; color: white; font-size:14px;font-weight:bold;text-align:center; width:100%;'></td></tr></table></div>
+                    <div><table style='border-collapse:collapse; width:100%;'><tr><td colspan='7' style='background:Gray; padding: 4px 6px; color: white; font-size:16px;font-weight:bold;text-align:center; width:100%;'>DUCT & FIBER DETAIL</td></tr></table></div>
+
+                    <table style=' width: 100%;border:1px solid #cccccc;border-collapse:collapse; font-size:13px;'>
+                        <tbody>
+                            <tr>
+                                <td style=' width: 15%; padding: 3px 5px; text-align: left; border-right: 1px solid #cccccc; '>TOTAL DUCT</td>
+                                <td colspan='6' style='width: 85%; text-align: left; padding: 3px 5px'>@Model.total_duct</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table style=' width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid #cccccc;'>
+                        <tbody>
+                            <tr>
+                                <td style=' width: 15%; padding: 3px 5px; text-align: left; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8;'>DUCT DETAIL</td>
+                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold; background-color:#e8e8e8; '>DUCT STATUS</td>
+                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8; '>FIBER CABLE LAID</td>
+
+                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8; '>USED FIBER CORES</td>
+                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8; '>RESERVED FIBER CORES</td>
+
+                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8; '>AVAILABLE FIBER CORES</td>
+                                @*<td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8; '>TOTAL CORES</td>*@
+                                <td style=' width: 17%; text-align: left; padding: 3px 5px; font-weight: bold; background-color:#e8e8e8;'>FEASIBILITY</td>
+
+                            </tr>
+                            @if (Model.total_duct != null)
+                            {
+                                if (Model.duct_fiber_details != null)
+                                {
+                                    if (Model.duct_fiber_details[0].fiber_details != null)
+                                    {
+                                        foreach (var item in Model.duct_fiber_details.OrderBy(m => m.fiber_details.duct_name).ThenBy(m => m.fiber_details.cable_name))
+                                        {
+                                            <tr>
+                                                @{
+                                                    string ductname = String.IsNullOrEmpty(@item.fiber_details.duct_name) ? "" : @item.fiber_details.duct_name.Substring(item.fiber_details.duct_name.Trim().Length - 2, 1).Replace("D", "DUCT ") + @item.fiber_details.duct_name.Substring(item.fiber_details.duct_name.Trim().Length - 1, 1) + " - ";
+                                                    string cblname = String.IsNullOrEmpty(@item.fiber_details.cable_name) ? "" : @item.fiber_details.cable_name.Trim().Substring(item.fiber_details.cable_name.Trim().Length - 2, 1).Replace("C", "CABLE ") + item.fiber_details.cable_name.Substring(item.fiber_details.cable_name.Trim().Length - 1, 1);
+                                                    <td style=' width: 15%; padding: 3px 5px; text-align: left; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@ductname @cblname</td>
+                                                }
+
+
+                                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.fiber_details.duct_status</td>
+                                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.fiber_details.total_core</td>
+                                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.fiber_details.used_fiber_core</td>
+                                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.fiber_details.reserved_fiber_core</td>
+
+                                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.fiber_details.available_fiber_core</td>
+                                                @*<td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.fiber_details.total_core</td>*@
+                                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-top: 1px solid #cccccc; '>@item.fiber_details.feasibility</td>
+
+                                            </tr>
+                                        }
+                                    }
+                                }
+                                else { }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td style='width: 15%; padding: 3px 5px; text-align: center; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc;' colspan="6">No Record found</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <div><table style='border-collapse:collapse; width:100%;'><tr><td colspan='6' style='padding: 4px 6px; color: white; font-size:14px;font-weight:bold;text-align:center; width:100%;'></td></tr></table></div>
+                    <div><table style='border-collapse:collapse; width:100%;'><tr><td colspan='6' style='background:Gray; padding: 4px 6px; color: white; font-size:16px;font-weight:bold;text-align:center; width:100%;'>ROW STATUS</td></tr></table></div>
+
+
+                    <table style=' width: 100%; border: 1px solid #cccccc; border-collapse: collapse; font-size: 13px;'>
+                        <tbody>
+                            <tr>
+                                <td style=' width: 15%; padding: 3px 5px; text-align: left; border-right: 1px solid #cccccc;'>ROW SECTIONS</td>
+                                <td colspan='5' style='width: 85%; text-align: center; padding: 3px 5px'>ROW APPLICATION DETAIL</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table style='width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid #cccccc;'>
+                        <tbody>
+                            <tr>
+                                <td style='width: 20%; padding: 3px 5px; text-align: left; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8;'>ROW_SECTION NAME</td>
+                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8;'>DEPL_ROW DOCUMENT NO</td>
+                                <td style='width: 17%;text-align: left;border-top:1px solid #cccccc; padding: 3px 5px;border-right: 1px solid #cccccc;font-weight: bold;background-color:#e8e8e8;'>ROW _ AUTHORITY</td>
+                                <td style='width: 17%;text-align: left;padding: 3px 5px;border-right: 1px solid #cccccc;font-weight: bold;background-color:#e8e8e8;'>ROW PERMISSION LENGTH</td>
+
+
+                                <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8;'>APPLICATION NO</td>
+                                <td style=' width: 17%; text-align: left; padding: 3px 5px; font-weight: bold;background-color:#e8e8e8;'>APPLICATION RECEIVED DATE</td>
+                            </tr>
+                            @if (Model.row_status == null)
+                            {
+                                <tr>
+                                    <td style=' width: 20%; padding: 3px 5px; text-align: center; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc;' colspan="6"> NO Record Found </td>
+
+                                </tr>
+
+
+                            }
+                            else
+                            {
+                                foreach (var item in Model.row_status)
+                                {
+                                    <tr>
+                                        <td style=' width: 20%; padding: 3px 5px; text-align: left; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc;'>@item.row_details.row_section_name</td>
+                                        <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc;'>@item.row_details.depl_row_document_no</td>
+                                        <td style=' width: 12%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc;'>@item.row_details.row_authority</td>
+                                        <td style=' width: 14%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc;'> @item.row_details.row_permission_length</td>
+                                        <td style=' width: 17%; text-align: left; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc;'>@item.row_details.application_no</td>
+                                        <td style=' width: 17%; text-align: left; padding: 3px 5px; border-top: 1px solid #cccccc; '>@item.row_details.application_received_date</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+
+                    <table style=' width: 100%; border: 1px solid #cccccc; border-collapse: collapse; font-size: 13px;'>
+                        <tbody>
+                            <tr>
+                                <td style=' width: 20%; padding: 3px 5px; text-align: left; border-right: 1px solid #cccccc; '>TOTAL ROW PERMISSION RECEIVED</td>
+                                <td colspan='5' style='width: 80%; text-align: left; padding: 3px 5px'>@Model.total_row_permission_received</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div><table style='border-collapse:collapse; width:100%;'><tr><td colspan='10' style='padding: 4px 6px; color: white; font-size:14px;font-weight:bold;text-align:center; width:100%;'></td></tr></table></div>
+                    <div><table style='border-collapse:collapse; width:100%;'><tr><td colspan='10' style='background:Gray; padding: 4px 6px; color: white; font-size:16px;font-weight:bold;text-align:center; width:100%;'>CUSTOMER DETAILS</td></tr></table></div>
+
+
+                    <table style=' width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid #cccccc; border-top: none; white-space:nowrap'>
+                        <tbody>
+                            <tr>
+                                <td style='padding: 3px 5px; text-align: center; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8;'>NO of CUSTOMER</td>
+                                <td style='text-align: center; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8;'>CUSTOMER NAME</td>
+                                <td style=' text-align: center; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8;'>STATUS</td>
+                                <td style=' text-align: center; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8;'>UNIQUE PO NO</td>
+                                <td style=' text-align: center; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8;'>SECTION NAME</td>
+                                <td style=' text-align: center; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8;'>TOTAL HOTO LENGTH (KM)</td>
+                                <td style=' text-align: center; padding: 3px 5px; border-right: 1px solid #cccccc; font-weight: bold;background-color:#e8e8e8;'>HOTO DATE</td>
+
+                                <td style=' text-align: center; padding: 3px 5px; font-weight: bold; border-right: 1px solid #cccccc; background-color:#e8e8e8;'>PO END DATE</td>
+                                <td style=' text-align: center; padding: 3px 5px; font-weight: bold; border-right: 1px solid #cccccc;background-color:#e8e8e8;'>LINK IN PAIR</td>
+                                <td style=' text-align: center; padding: 3px 5px; font-weight: bold; background-color:#e8e8e8;'>LIVE CORE</td>
+                            </tr>
+                            @if (Model.customer_details == null)
+                            {
+                                <tr>
+                                    <td style=' width: 11%; padding: 3px 5px; text-align: center; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; ' colspan="10"> No Record Found</td>
+                                </tr>
+                            }
+                            else
+                            {
+
+                                if (Model.customer_details[0].customer_table != null)
+                                {
+                                    foreach (var item in Model.customer_details)
+                                    {
+                                        <tr>
+                                            <td style=' width: 11%; padding: 3px 5px; text-align: center; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.customer_table.no_of_customer</td>
+                                            <td style=' width: 11%; text-align: center; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.customer_table.customer_name</td>
+                                            <td style=' width: 11%; text-align: center; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.customer_table.status</td>
+
+                                            <td style=' width: 10%; text-align: center; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.customer_table.unique_po_no</td>
+                                            <td style=' width: 20.5%; text-align: center; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.customer_table.section_name .</td>
+                                            <td style=' width: 12.5%; text-align: center; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.customer_table.total_hoto_length</td>
+                                            <td style=' width: 12.5%; text-align: center; padding: 3px 5px; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; '>@item.customer_table.hoto_date</td>
+
+                                            <td style=' width: 12.5%; text-align: center; padding: 3px 5px; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; '>@item.customer_table.po_end_date</td>
+                                            <td style=' width: 12.5%; text-align: center; padding: 3px 5px; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; '>@item.customer_table.link_in_pair</td>
+                                            <td style=' width: 10%; text-align: center; padding: 3px 5px; border-top: 1px solid #cccccc; '>@item.customer_table.live_core</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td style=' width: 11%; padding: 3px 5px; text-align: center; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc; ' colspan="10"> No Record Found</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                    <br>
+                    <br>
+                    <br>
+                </td>
+            </tr>
+        </table>
+    }
+    else
+    {
+        <div>
+            <p style='text-align: center; border-right: 1px solid #cccccc; border-top: 1px solid #cccccc;'>
+                No Record Found....
+            </p>
+        </div>
+    }
+    <script>
+        $(document).ready(function () {
+             
+            @if (Model == null) {
+                Response.Write("<script>alert('Please Select Trench Entity');</script>");
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>
+

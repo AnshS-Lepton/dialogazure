@@ -1,0 +1,47 @@
+﻿
+@{
+    Layout = null;
+}
+@using Models;
+
+@model System.Web.Mvc.HandleErrorInfo
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Error</title>
+    <style>
+        .link {
+            background: #189361;
+            padding: 5px;
+            float: right;
+            margin-right: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
+            border: 1px solid white;
+            color: white;
+        }
+
+            .link:hover {
+                text-decoration: none;
+                color: white;
+            }
+    </style>
+</head>
+<body>
+
+    <div id="header">
+    </div>
+    <div id="content" class="w3" style="height: calc(100% - 78px); position: relative; overflow: hidden; background: white; margin-top: 7px; text-align:center;">
+        <h3 style=" margin-top: 100px; color: red;"> Error.@Model.Exception.Message!</h3>
+    </div>
+    <div id="content" class="w3" style="height: calc(100% - 78px); position: relative; overflow: hidden; background: white; margin-top: 7px; text-align:center;">
+        <h3 style=" margin-top: 100px; color: red;"> An error occurred while processing your request.</h3>
+    </div>
+    <div class="footer">
+    </div>
+</body>
+</html>
+
+

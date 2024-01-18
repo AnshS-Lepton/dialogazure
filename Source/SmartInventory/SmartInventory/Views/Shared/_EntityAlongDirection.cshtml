@@ -1,0 +1,77 @@
+﻿@model Models.EntityDirection
+@using Models;
+@using SmartInventory.Settings;
+@using System.Text;
+
+
+<!DOCTYPE html>
+<div class="libDetail">
+    <form class="form-horizontal">
+        <div class="libTabContent" style="overflow:visible;">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                    <div class="form-group auto">
+                        <label class="control-label col-md-4">
+                            @Resources.Resources.SI_GBL_GBL_NET_FRM_098<i class="clsMandatory">*</i>:
+                                            </label>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.layer_type, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_name, Text = x.layer_title }), "Value", "Text"),  new { @class = "chosen-select form-control col-sm-12 input-validation-error", @id = "ddlEntity", @multiple = "multiple" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_160:</label>
+                        <div class="col-md-8">
+                            <div class="splicing--Box-check">
+                                @Html.RadioButtonFor(m => m.is_offset_required, true, new { @id = "is_offset_requiredYes", @onclick = "si.CheckOffSetRequired();" })
+                                <label for="is_offset_requiredYes">Yes</label>
+
+                                @Html.RadioButtonFor(m => m.is_offset_required, false, new { @id = "is_offset_requiredNo", @onclick = "si.CheckOffSetRequired();" })
+                                <label for="is_offset_requiredNo">No</label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div id="optionDiv">
+                        <div class="form-group">
+                            <label class="control-label col-md-4 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_159:</label>
+                            <div class="col-md-8">
+                                <div class="splicing--Box-check  offsetcheck dvDisabled">
+                                    @Html.RadioButtonFor(m => m.offset_position, false, new { @id = "is_offset_requiredLeft", @onclick = "si.createOffsetCable()" })
+                                    <label for="is_offset_requiredLeft">Left</label>
+
+                                    @Html.RadioButtonFor(m => m.offset_position, true, new { @id = "is_offset_requiredRight", @onclick = "si.createOffsetCable()" })
+                                    <label for="is_offset_requiredRight">Right</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_204:</label>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(x => x.offset_value, new { @class = "form-control", Value = "", onblur = "si.createOffsetCable();", @onkeydown = "return ValidateNumberDecimal(this,event,3,2);", @readonly = true })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group ModalFooter" id="dvBtnAction">
+            <div class="col-md-6 col-sm-6 ModelFooterInfo" data-original-title="" title="">
+                <label class="control-label col-md-5" id="lengthAutoPlaningDiv"></label>
+            </div>
+            <div class="col-md-6 col-sm-6 ModalFooterControll">
+                <button type="button" class="btn btn-primary" id="btnProcessEntity" onclick="si.entityDirectionProcess();">@Resources.Resources.SI_OSP_GBL_NET_FRM_147</button>
+                <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        </form>
+</div>
+
+<script charset="utf-8">
+        var inputs = [];
+        $(document).ready(function () {
+            $('.chosen-select').chosen({ placeholder_text_multiple: 'Select Entity', width: '100%' });
+            si.updateLength();
+        });
+</script>

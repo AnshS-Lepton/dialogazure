@@ -1,0 +1,140 @@
+﻿@model Models.PrintExportLogVM
+@using SmartInventory.Settings;
+@using Utility
+
+<style>
+    .main-table > tbody > tr > th {
+        border: 0px solid #ddd;
+    }
+</style>
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "divPrintLog", ajaxUpdateCallback: "onGridHeaderClick('tblPrintLog')");
+    grid.Bind(Model.printLog, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+    if (Model.objGridAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+    }
+}
+
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+@using (Ajax.BeginForm("PrintExportLog", "Print", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "dvModalBody",
+},
+   new { id = "frmPrintLog", autocomplete = "off", @class = "form-horizontal" }))
+{
+    <div class="PrintMapBody">
+        <div class="printRpt" id="ExportLog">
+            <div class="scrollDiv">
+                <div class="space-pad">
+                    <div class="form-group">
+                        <div class="d-flex mb-15">
+                            <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b>
+                            @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @tabindex = "4", @class = "form-control inp-n-w inp-n-h ml-auto", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @maxlength = 50 })
+                            <button type="submit" class="btn btn-success ml-10" id="btnPrintLogSearch">@Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                            <button type="submit" class="btn btn-default ml-10" id="btnSearchClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>
+                        </div>
+                        </div>
+                        @if (Model.printLog.Count > 0)
+                        {
+                            <div id="divPrintLog">
+                                <div class="print-maxH">
+                                    @grid.GetHtml(tableStyle: "stickyTh",
+                                                 htmlAttributes: new { id = "tblPrintLog" },
+                                                 mode: WebGridPagerModes.All,
+                                                 columns: grid.Columns(
+                                                     grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>@if (!string.IsNullOrEmpty(item.export_status) && item.export_status.ToUpper() == "SUCCESS")
+                                                     {
+                                                @*<span><a style="text-decoration: underline;" href="@Url.Action("DownloadFileFromFTP", "Print",new { filePath = item.file_path,fileExtension = item.file_extension, pageType = item.page_type })" target="_self">Download</a></span>*@
+                                                <span>
+                                                    <a title="@Resources.Resources.SI_OSP_GBL_JQ_FRM_166" style="font-size: 16px;" href="@Url.Action("DownloadFileFromFTP", "Print",new { filePath = item.file_path,fileExtension = item.file_extension, pageType = item.page_type })" target="_self">
+                                                        <i class="fa fa-download"></i>
+                                                    </a>
+                                                </span>
+                                                <span>
+                                                    <a title="@Resources.Resources.SI_OSP_PM_GBL_FRM_001" href="javascript:void(0);" onclick="si.toggleReMapPrintModel(@item.id)" target="_self">
+                                                        <i class="fa fa-print"></i>
+                                                    </a>
+                                                </span>
+                                                <span>
+                                                    <span><i class="fa fa-fw fa-trash" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" onclick="si.Deleteexportlog(@item.id)"></i></span>
+                                                  
+                                                </span>
+                                 }
+                                                    </text>),
+grid.Column("", Resources.Resources.SI_OSP_GBL_NET_GBL_160, format: @<text>@if (string.IsNullOrEmpty(item.export_status))
+
+{
+                                <div class="col-xl-12 col-sm-12 progress-container" style="margin-left:-17px; width:100px;">
+                                    <div class="Progress progress-striped active" style="height:20px; margin-top:-10px; width:100%; background-image:none;">
+                                        <div class="progress-bar progress-bar-success text-center" style="color: #fff;width: @(item.export_progress == null ? "0" : item.export_progress)">
+                                            @(item.export_progress == null ? "0%" : item.export_progress)
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<span style="font-style:italic;color:#16aaca;">@(item.export_progress == null ? "0%" : item.export_progress) In progress...</span>*@
+}
+else if (item.export_status.ToUpper() == "SUCCESS")
+{
+
+                                <span style="color:green;">@(item.export_status)</span>
+}
+else
+{
+                                <span style="color:red;">@(item.export_status)</span>
+}
+                                </text>),
+             grid.Column("page_type", Resources.Resources.SI_OSP_PM_NET_FRM_037, format: @<text>@item.page_type</text>),
+grid.Column("page_title", Resources.Resources.SI_OSP_GBL_GBL_GBL_047, format: @<text>@item.page_title</text>),
+grid.Column("page_count", Resources.Resources.SI_OSP_PM_NET_FRM_038, format: @<text>@(item.page_count == 0 ? "-" : item.page_count.ToString())</text>),
+grid.Column("file_size", Resources.Resources.SI_OSP_GBL_GBL_GBL_030, format: @<text>@(item.file_size == null ? "-" : item.file_size)</text>),
+grid.Column("start_on", Resources.Resources.SI_OSP_PM_NET_FRM_039, format: @<text>@(item.start_on == null ? "-" : MiscHelper.FormatDateTime(item.start_on.ToString()))</text>),
+grid.Column("end_on", Resources.Resources.SI_OSP_PM_NET_FRM_040, format: @<text>@(item.end_on == null ? "-" : MiscHelper.FormatDateTime(item.end_on.ToString()))</text>)
+))
+
+                                    @Html.Hidden("dir", grid.SortDirection)
+                                    @Html.Hidden("col", grid.SortColumn)
+
+                                </div>
+                    </div>
+
+                            <span class="mt-1rem d-fx">
+                                <span class="red-font">*</span>
+                                @String.Format(Resources.Resources.SI_OSP_PM_NET_FRM_042, @ApplicationSettings.PrintLogTimeInterval)
+                            </span>
+                        }
+                        else
+                        {
+                            <div class="nr-found">
+                                <span> @Resources.Resources.SI_OSP_PM_NET_FRM_041</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $("#btnSearchClear").on("click", function () {
+            $("#txtSearchText").val("");
+            $("#btnPrintLogSearch").trigger("click");
+        });
+        addDefaultSortingIcons("tblPrintLog");
+        onGridHeaderClick('tblPrintLog')
+        updateNumberstoFormatedNumber();
+    });
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+ </script>
+
+

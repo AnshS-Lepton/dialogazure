@@ -1,0 +1,186 @@
+﻿@model Models.LandBaseLayer
+@using Models;
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.pageMsg); }
+
+}
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SaveLandBaselayer", "LandBaselayer", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+        OnFailure = "si.handleError",
+        OnSuccess = "LandBase.clearToolbarSelection();"
+    },
+                                  new { id = "frmAddLandBaseLayer", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.networkIdType)
+        @Html.HiddenFor(m => m.sp_geometry)
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.region_name)
+        @Html.HiddenFor(m => m.province_name)
+        @Html.HiddenFor(m => m.geomType)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.parent_network_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+
+        @Html.HiddenFor(m => m.id)
+        @Html.HiddenFor(m => m.buffer_geom)
+        @Html.HiddenFor(m => m.buffer_width, new { @id = "hdnbuffer_width" })
+        @Html.HiddenFor(m => m._isBufferEnable)
+        @pageMessage()
+
+        <div class="TabContent--max-over">
+            <div class="form-group row">
+                <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_GBL_001<i class="clsMandatory">*</i> :</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly", @id = "txtLBLNetworkId", @readonly = true })
+                </div>
+
+                <label class="control-label col-sm-2" for="entities4">@Resources.Resources.SI_OSP_GBL_NET_FRM_059 <i class="clsMandatory">*</i>:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.name, new { @class = "form-control", @id = "txtLBLname", @maxlength = "50" })
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="entities1">@Resources.Resources.SI_OSP_GBL_NET_FRM_438 <i class="clsMandatory">*</i>:</label>
+
+                <div class="col-sm-4">
+                    @if (Model.id > 0)
+                    {
+                        @Html.DropDownListFor(x => x.landbase_layer_id, new SelectList(Model.lstlandBaseLyaerName.Select(x => new { Value = x.id, Text = x.layer_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlLandBaseLayerName", @disabled = true })
+                        @Html.HiddenFor(m => m.landbase_layer_id)
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(x => x.landbase_layer_id, new SelectList(Model.lstlandBaseLyaerName.Select(x => new { Value = x.id, Text = x.layer_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "landbase_layer_id", @onchange = "si.BindLandbaseDropdown();si.ddlChangeRemoveCss(this.id, 'landbase_layer_id');" })
+                        @Html.HiddenFor(m => m.landbase_layer_id)
+                    }
+                </div>
+                <label class="control-label col-sm-2" for="entities4">@Resources.Resources.SI_OSP_GBL_NET_FRM_439 :</label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(m => m.classification_id, new SelectList(Model.landbaseClassificationList.Select(x => new { Value = x.id.ToString(), Text = x.value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @id = "ddlClassification" })
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="entities4">@Resources.Resources.SI_OSP_GBL_NET_GBL_003</label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(m => m.category_id, new SelectList(Model.landbaseCategoryList.Select(x => new { Value = x.id.ToString(), Text = x.value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @onchange = "si.BindLandbaseSubCategoryDropdown();", @id = "ddlCategory" })
+
+                </div>
+                <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_GBL_022 :</label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(m => m.sub_category_id, new SelectList(Model.landbaseSubCategoryList.Select(x => new { Value = x.id.ToString(), Text = x.value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @id = "ddlSubCategory" })
+                </div>
+            </div>
+            @if (Model.geomType.ToUpper() == "POINT")
+            {
+                <div class="form-group row">
+                    <label class="control-label col-sm-2" for="txtLatitude1">@Resources.Resources.SI_OSP_GBL_GBL_GBL_011<i class="clsMandatory">*</i> :</label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @id = "txtLatitude", @readonly = true })
+                    </div>
+                    <label class="control-label col-sm-2" for="txtLongitude1">@Resources.Resources.SI_OSP_GBL_GBL_GBL_012<i class="clsMandatory">*</i> :</label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @id = "txtLongitude", @readonly = true })
+                    </div>
+                </div>
+            }
+
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="txtAttribute_11">@Resources.Resources.SI_OSP_GBL_NET_FRM_440:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.attribute_1, new { @class = "form-control", @id = "txtAttribute_1", @maxlength = "50" })
+                </div>
+                <label class="control-label col-sm-2" for="txtAttribute_21">@Resources.Resources.SI_OSP_GBL_NET_FRM_441:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.attribute_2, new { @class = "form-control", @id = "txtAttribute_2", @maxlength = "50" })
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="txtAttribute_31">@Resources.Resources.SI_OSP_GBL_NET_FRM_442:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.attribute_3, new { @class = "form-control", @id = "txtAttribute_3", @maxlength = "50" })
+                </div>
+                <label class="control-label col-sm-2" for="txtAttribute_41">@Resources.Resources.SI_GBL_GBL_NET_FRM_219:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.attribute_4, new { @class = "form-control", @id = "txtAttribute_4", @maxlength = "50" })
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="txtAttribute_51">@Resources.Resources.SI_OSP_GBL_NET_FRM_443:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.attribute_5, new { @class = "form-control", @id = "txtAttribute_5", @maxlength = "50" })
+                </div>
+                <label class="control-label col-sm-2" for="txtAttribute_61">@Resources.Resources.SI_OSP_GBL_NET_FRM_444:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.attribute_6, new { @class = "form-control", @id = "txtAttribute_6", @maxlength = "50" })
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="txtAttribute_71">@Resources.Resources.SI_OSP_GBL_NET_FRM_445:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.attribute_7, new { @class = "form-control", @id = "txtAttribute_7", @maxlength = "50" })
+                </div>
+                <label class="control-label col-sm-2" for="txtAttribute_81">@Resources.Resources.SI_OSP_GBL_NET_FRM_446:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.attribute_8, new { @class = "form-control", @id = "txtAttribute_8", @maxlength = "50" })
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="txtAttribute_91">@Resources.Resources.SI_OSP_GBL_NET_FRM_447:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.attribute_9, new { @class = "form-control", @id = "txtAttribute_9", @maxlength = "50" })
+                </div>
+                <label class="control-label col-sm-2" for="txtAttribute_101">@Resources.Resources.SI_OSP_GBL_NET_FRM_448:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.attribute_10, new { @class = "form-control", @id = "txtAttribute_10", @maxlength = "50" })
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="txtAddress1">@Resources.Resources.SI_OSP_GBL_GBL_GBL_008:</label>
+                <div class="col-sm-10">
+                    @Html.TextBoxFor(m => m.address, new { @class = "form-control", @id = "txtAddress", @maxlength = "500" })
+                </div>
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+
+            @if (Model.id > 0)
+            {
+                <button type="submit" class="btn btn-primary" id="btnUpdateLandBase">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" id="btnSaveLandBase">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+        </div>
+    }
+</div>
+<script type='text/javascript'>
+
+    $(document).ready(function () {
+        callFormValidator("frmAddLandBaseLayer");
+        $('.chosen-select').chosen({ width: '100%' });
+
+        $("#frmAddLandBaseLayer").on("submit", function () {
+             
+            var _bufferValue = $('#hdnbuffer_value').val();
+            $('#hdnbuffer_width').val(_bufferValue);
+
+        });
+        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+
+    });
+
+
+</script>
+
+
+

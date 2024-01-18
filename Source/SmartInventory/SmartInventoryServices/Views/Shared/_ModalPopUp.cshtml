@@ -1,0 +1,69 @@
+﻿
+<style>
+    #ModalPopUp .modal-dialog {
+        margin:0 auto !important ;
+        top:5%;
+        left:0;
+        right:0;
+        z-index:99;
+
+
+    }
+    #ChildPopUp .modal-dialog {
+      
+        top: 10%;
+        margin:0 auto;
+        z-index: 99;
+    }
+    .MinMax {
+        top: 5%;
+        left: 25%;
+        width: 300px;
+        height: 33px;
+        
+    }
+    .ModalPopUpPosition {
+        position: absolute;
+        top: 5%;
+        left: 14%;
+    }
+    .modal-open .modal {
+    z-index:4000;
+    }
+</style>
+
+@*Modal pop up*@
+
+<div class="modal fade" id="ModalPopUp" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header  popup_bg">
+                <span type="button" id="closeModalPopup" data-dismiss="modal" class="icon-close"></span>
+                <a href="javascrip:void(0)" class="close minmizeModel"> <i class='fa fa-minus'></i> </a>
+                <h4 class='modal-title'></h4>
+                @*<div class="ModalSeprator"></div>*@
+            </div>           
+            <div id="dvModalBody" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="parentMinMaxContainer" style="display:none;" class="MinMaxContainer"></div>
+@*Modal pop up: END  *@
+
+<div class="modal fade modal2 in" id="ChildPopUp" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header  popup_bg">
+                <span type="button" id="closeChildPopup" data-dismiss="modal" class="icon-close" data-original-title="" title="Close"></span>
+                @*<button class="close minmizeModel"> <i class='fa fa-minus'></i> </button>*@
+                <h4 class='modal-title'></h4>
+            </div>
+            <div id="dvChildModalBody" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="childMinMaxContainer" style="display:none;" class="MinMaxContainer"></div>

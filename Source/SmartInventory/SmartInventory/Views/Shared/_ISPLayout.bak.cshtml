@@ -1,0 +1,118 @@
+﻿@using SmartInventory.Settings;
+<html>
+<head>
+    <title>Main</title>
+    <link id="favicon" rel="shortcut icon" href="@ApplicationSettings.ClientFavicon" type="image/x-icon" />
+    @Styles.Render("~/ISPCSS")
+    <script type="text/javascript">
+        var appRoot = '@Url.Content("~")';
+        var baseUrl = '@Request.Url.GetLeftPart(UriPartial.Authority)';
+    </script>
+    @Scripts.Render("~/bundles/ISP/Scripts")
+</head>
+<body>
+    <div id="header">
+        @{Html.RenderPartial("_ModalPopUp");}
+        @{Html.RenderPartial("_ISPHeader");}
+    </div>
+    <div id="content" class="w3">
+        <div class="module-inner">
+            <div class="module-title">
+                <div id="dvLibraryHeading">
+                    <div id="lib_switch">
+                        <label class="switch" title="Show/Hide Library">
+                            <input id="chkShowLibrary" type="checkbox" checked="checked">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <span class="libtext">&nbsp; Library</span>
+                </div>
+                <div style="display:none;">
+                    <div id="breadcrumb">
+                        <ul class="crumbs">
+                            <li class="first"><a href="#" style="z-index:9;"><span></span>Structure</a></li>
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="iconBaricomoon clsWireLine" title="Wireline Tools" onclick="isp.showWLTB('WireLine', this)">
+                    <span class="icon-wireline_tool"></span>
+                </div>
+                <div class="WirelineToolbar" id="wLineTBar" style="width: 100px; display: none; ">
+
+                    @*<div class="spliceTool" onclick="isp.spliceHere(this)" title="Manual Splicing">
+                        </div>*@
+                    <div class="iconBaricomoon spliceTool" onclick="isp.spliceHere(this)" title="Manual Splicing"><span class="icon-Manual_Splicing"></span></div>
+                    @*<div class="bulkSplicing" onclick="isp.toggleConnectionUpload()" title="Bulk Splicing">
+                        </div>*@
+                    <div class="iconBaricomoon bulkSplicing" onclick="isp.toggleConnectionUpload()" title="Bulk Splicing" style="display:none;"><span class="icon-Bulk_Splicing"></span></div>
+
+
+                </div>
+            </div>
+            <div class="module-content" id="map_canvas" style="height:100%;">
+                @RenderBody()
+            </div>
+            <div class="bottom-title">
+
+                <div class="VirtualShaftLegend"></div>
+                <div style="float: right;margin-right: 5px;">Virtual Shaft</div>
+                <div class="NormalShaftLegend"></div>
+                <div style="float: right;margin-right: 5px;">Normal Shaft</div>
+            </div>
+            @*<div>
+                    <div class="WithRiserShaftLegend"></div>
+                    <div style="float: right;margin-right: 5px;">With Riser Shaft</div>
+                </div>*@
+            <div>
+
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+    </div>
+    <div id="alertBackOverLay" class="progresblur" style="display:none;"></div>
+    <div id="dvProgress" style="display: none;">
+        <div id="blur" class="progresblur">
+            &nbsp;
+        </div>
+        <div id="progressbar" style="width: 247px; height: 152px; top: 40%; left: 40%;">
+            <img alt="Loading..." src="../content/images/loading.gif" /><br />
+
+        </div>
+    </div>
+    <div id="dvProgressSplice" style="display: none;">
+        <div id="blur" class="progresblur">
+            &nbsp;
+        </div>
+        <div id="progressbar" style="width: 247px; height: 152px; top: 40%; left: 40%;">
+            <img alt="Loading..." src="../content/images/loading.gif" /><br />
+
+        </div>
+    </div>
+
+    <div class="info_block" id="SplicingDiv" style="overflow:visible;z-index:999;height:310px;">
+        <div class="info_header_bg" id="splicingHeader">
+            <label id="Information">Splicing</label>
+            <span onclick="isp.cancelSplice()"></span>
+        </div>
+        <div class="splicingMain">
+
+        </div>
+    </div>
+    <script type="text/javascript">
+        var splicing = new splicing();
+        var isp = new ISPMain();
+        var popup = new ModalPopUp();
+        var si = null;
+        var osp = null;
+        $(document).ready(function () {
+            isMDUCall = true;
+            isp.initApp();
+            splicing.initApp();
+            $('.chosen-select').chosen({ width: '100%' });
+            popup.InitPopUp();
+        });
+    </script>
+</body>
+</html>

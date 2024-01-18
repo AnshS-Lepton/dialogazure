@@ -1,0 +1,100 @@
+﻿@model Models.Admin.LinkBudgetMaster
+<div id="dvLinkBudgetDetail" class="update_panel">
+    <div class="form-group" style="padding:15">
+        <table border="1" class="table table-hover b-t b-light">
+            <thead>
+                <tr>
+                   
+                    <td width="50%" colspan="2" align="left">
+                        <b>WaveLength : @Model.wavelength_value nm</b>
+                    </td>
+                </tr>
+            </thead>
+            <thead>
+                <tr class="webGridHeader">
+                    <th width="50%">
+                        Loss Type
+                    </th>
+                    <th>
+                        Loss Values(dB)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        Splice Loss 
+                    </td>
+                    <td>
+                        @Model.splice_loss dB
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Cable Loss 
+                    </td>
+                    <td>
+                        @Model.cable_loss dB/KM
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Patch Cord Loss 
+                    </td>
+                    <td>
+                        @Model.patch_cord_loss dB/Mtr
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Connector Loss 
+                    </td>
+                    <td>
+                        @Model.connector_loss dB
+                    </td>
+                </tr>
+            </tbody>
+            <tr>
+                    <td colspan="2">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div class="table-responsive tble_cls" style="height: 300px; overflow: auto; text-align: center;">
+                                        <table border="1" class="table table-hover b-t b-light">
+                                            <tr><b>Splitter Losses</b></tr>
+                                            <thead>
+                                                <tr class="webGridHeader">
+                                                    <th width="50%">
+                                                        Port Ratio
+                                                    </th>
+                                                    <th>
+                                                        Loss Value(dB)
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (int i = 0; i < Model.lstSplitterLoss.Count; i++)
+                                                {
+                                                    <tr>
+                                                        <td width="50%">
+                                                            @Model.lstSplitterLoss[i].splitter_ratio
+                                                        </td>
+                                                        <td>
+                                                            @Model.lstSplitterLoss[i].splitter_loss
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+        </table>
+    </div>
+
+</div>
+

@@ -1,0 +1,756 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2EDBEB77-4038-4762-9D1D-D7EF9B3C5446}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SmartInventoryServices</RootNamespace>
+    <AssemblyName>SmartInventoryServices</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <TargetFrameworkProfile />
+    <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.6\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\SmartInventory\DLL\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.0.0\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.4.1\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=4.1.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.1.1\lib\net45\Microsoft.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.HttpListener, Version=2.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.2.0.2\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Hosting, Version=2.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Hosting.2.0.2\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.4.0.0\lib\net451\Microsoft.Owin.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.0.0\lib\net451\Microsoft.Owin.Security.Cookies.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.4.0.0\lib\net451\Microsoft.Owin.Security.OAuth.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.2.2.7\lib\net45\Mono.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Npgsql, Version=2.2.7.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.2.2.7\lib\net45\Npgsql.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Npgsql.EntityFramework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.EntityFramework.2.2.7\lib\net45\Npgsql.EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.7\lib\net45\System.Web.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Cors.5.2.7\lib\net45\System.Web.Http.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.Owin, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.7\lib\net45\System.Web.Http.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.7\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.0.0\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\ConvergeERPService\INV_Maintenance.wsdl" />
+    <None Include="Connected Services\ConvergeERPService\Service1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\ConvergeERPService\Service11.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\ConvergeERPService\Service12.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\WebService\configuration91.svcinfo" />
+    <None Include="Connected Services\WebService\configuration.svcinfo" />
+    <None Include="Connected Services\WebService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\ConvergeERPService\configuration91.svcinfo" />
+    <None Include="Connected Services\ConvergeERPService\configuration.svcinfo" />
+    <None Include="Connected Services\ConvergeERPService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\css\chosen.css" />
+    <Content Include="Content\css\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\css\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\css\fonts\icomoon.svg" />
+    <Content Include="Content\css\HPSMTicket.css" />
+    <Content Include="Content\css\icostyle.css" />
+    <Content Include="Content\css\images\chosen-sprite.png" />
+    <Content Include="Content\css\images\split_img.png" />
+    <Content Include="Content\css\images\transparent.png" />
+    <Content Include="Content\css\logicalView.css" />
+    <Content Include="Content\css\splicing\Alert.css" />
+    <Content Include="Content\css\splicing\bootstrap.css" />
+    <Content Include="Content\css\splicing\chosen.css" />
+    <Content Include="Content\css\splicing\icostyle.css" />
+    <Content Include="Content\css\splicing\jquery-ui.css" />
+    <Content Include="Content\css\splicing\main.css" />
+    <Content Include="Content\css\splicing\Splicing.css" />
+    <Content Include="Content\css\arrow.png" />
+    <Content Include="Content\Images\attach.svg" />
+    <Content Include="Content\Images\chosen-sprite.png" />
+    <Content Include="Content\Images\icons\lib\big\ADB.png" />
+    <Content Include="Content\Images\icons\lib\big\area.png" />
+    <Content Include="Content\Images\icons\lib\big\BDB.png" />
+    <Content Include="Content\Images\icons\lib\big\building.png" />
+    <Content Include="Content\Images\icons\lib\big\Cabinet.png" />
+    <Content Include="Content\Images\icons\lib\big\Cable.png" />
+    <Content Include="Content\Images\icons\lib\big\CDB.png" />
+    <Content Include="Content\Images\icons\lib\big\Chamber.png" />
+    <Content Include="Content\Images\icons\lib\big\customer.png" />
+    <Content Include="Content\Images\icons\lib\big\duct.png" />
+    <Content Include="Content\Images\icons\lib\big\Fault.png" />
+    <Content Include="Content\Images\icons\lib\big\FDB.png" />
+    <Content Include="Content\Images\icons\lib\big\handhole.png" />
+    <Content Include="Content\Images\icons\lib\big\HTB.png" />
+    <Content Include="Content\Images\icons\lib\big\Loop.png" />
+    <Content Include="Content\Images\icons\lib\big\Manhole.png" />
+    <Content Include="Content\Images\icons\lib\big\MPOD.png" />
+    <Content Include="Content\Images\icons\lib\big\OHCable.png" />
+    <Content Include="Content\Images\icons\lib\big\ont.png" />
+    <Content Include="Content\Images\icons\lib\big\OverheadCable.png" />
+    <Content Include="Content\Images\icons\lib\big\pod.png" />
+    <Content Include="Content\Images\icons\lib\big\Pole.png" />
+    <Content Include="Content\Images\icons\lib\big\Province.png" />
+    <Content Include="Content\Images\icons\lib\big\SpliceClosure.png" />
+    <Content Include="Content\Images\icons\lib\big\Splitter.png" />
+    <Content Include="Content\Images\icons\lib\big\Structure.png" />
+    <Content Include="Content\Images\icons\lib\big\subarea.png" />
+    <Content Include="Content\Images\icons\lib\big\SurveyArea.png" />
+    <Content Include="Content\Images\icons\lib\big\Tree.png" />
+    <Content Include="Content\Images\icons\lib\big\trench.png" />
+    <Content Include="Content\Images\icons\lib\big\UGCable.png" />
+    <Content Include="Content\Images\icons\lib\big\UnderGroundCable.png" />
+    <Content Include="Content\Images\icons\lib\big\WallMount.png" />
+    <Content Include="Content\Images\icons\lib\CompetitorIcons\1.png" />
+    <Content Include="Content\Images\icons\lib\CompetitorIcons\2.png" />
+    <Content Include="Content\Images\icons\lib\CompetitorIcons\3.png" />
+    <Content Include="Content\Images\icons\lib\CompetitorIcons\4.png" />
+    <Content Include="Content\Images\icons\lib\CompetitorIcons\5.png" />
+    <Content Include="Content\Images\icons\lib\CompetitorIcons\6.png" />
+    <Content Include="Content\Images\icons\lib\CompetitorIcons\7.png" />
+    <Content Include="Content\Images\icons\lib\CompetitorIcons\8.png" />
+    <Content Include="Content\Images\icons\lib\Legend\12FOH.png" />
+    <Content Include="Content\Images\icons\lib\Legend\12FUG.png" />
+    <Content Include="Content\Images\icons\lib\Legend\24FOH.png" />
+    <Content Include="Content\Images\icons\lib\Legend\24FUG.png" />
+    <Content Include="Content\Images\icons\lib\Legend\2FOH.png" />
+    <Content Include="Content\Images\icons\lib\Legend\2FUG.png" />
+    <Content Include="Content\Images\icons\lib\Legend\48FOH.png" />
+    <Content Include="Content\Images\icons\lib\Legend\48FUG.png" />
+    <Content Include="Content\Images\icons\lib\Legend\4FOH.png" />
+    <Content Include="Content\Images\icons\lib\Legend\4FUG.png" />
+    <Content Include="Content\Images\icons\lib\Legend\6FOH.png" />
+    <Content Include="Content\Images\icons\lib\Legend\6FUG.png" />
+    <Content Include="Content\Images\icons\lib\Legend\8FOH.png" />
+    <Content Include="Content\Images\icons\lib\Legend\8FUG.png" />
+    <Content Include="Content\Images\icons\lib\Legend\96FOH.png" />
+    <Content Include="Content\Images\icons\lib\Legend\96FUG.png" />
+    <Content Include="Content\Images\icons\lib\Legend\ADB.png" />
+    <Content Include="Content\Images\icons\lib\Legend\AggregationPOD.png" />
+    <Content Include="Content\Images\icons\lib\Legend\AppliedROW.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Approved&amp;AssociatedROW.png" />
+    <Content Include="Content\Images\icons\lib\Legend\approved.png" />
+    <Content Include="Content\Images\icons\lib\Legend\approved.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\approvedbuilding.png" />
+    <Content Include="Content\Images\icons\lib\Legend\ApprovedROW.png" />
+    <Content Include="Content\Images\icons\lib\Legend\area.png" />
+    <Content Include="Content\Images\icons\lib\Legend\As-built_cable.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\AsBuilt.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Asbuilt.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\A_OH.png" />
+    <Content Include="Content\Images\icons\lib\Legend\A_UG.png" />
+    <Content Include="Content\Images\icons\lib\Legend\A_WC.png" />
+    <Content Include="Content\Images\icons\lib\Legend\BaseMountBDBBox.png" />
+    <Content Include="Content\Images\icons\lib\Legend\BDB.png" />
+    <Content Include="Content\Images\icons\lib\Legend\building.png" />
+    <Content Include="Content\Images\icons\lib\Legend\building_blue.png" />
+    <Content Include="Content\Images\icons\lib\Legend\building_green.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Cabinet.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Cabinet.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\CDB.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Competitor.png" />
+    <Content Include="Content\Images\icons\lib\Legend\CorePOD.png" />
+    <Content Include="Content\Images\icons\lib\Legend\coreref.png" />
+    <Content Include="Content\Images\icons\lib\Legend\coupler.png" />
+    <Content Include="Content\Images\icons\lib\Legend\CPEToCustomer.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\CSA.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Customer.png" />
+    <Content Include="Content\Images\icons\lib\Legend\customer.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\Default.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\Dormant.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\Dormant_cable.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\Dorment.png" />
+    <Content Include="Content\Images\icons\lib\Legend\DSA.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Duct.png" />
+    <Content Include="Content\Images\icons\lib\Legend\D_OH.png" />
+    <Content Include="Content\Images\icons\lib\Legend\D_UG.png" />
+    <Content Include="Content\Images\icons\lib\Legend\D_WC.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Electrical.png" />
+    <Content Include="Content\Images\icons\lib\Legend\electric_pole.png" />
+    <Content Include="Content\Images\icons\lib\Legend\FDB.png" />
+    <Content Include="Content\Images\icons\lib\Legend\fms.png" />
+    <Content Include="Content\Images\icons\lib\Legend\HTB.png" />
+    <Content Include="Content\Images\icons\lib\Legend\legands.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Light.png" />
+    <Content Include="Content\Images\icons\lib\Legend\LightPole.png" />
+    <Content Include="Content\Images\icons\lib\Legend\loop-bold.png" />
+    <Content Include="Content\Images\icons\lib\Legend\loop_back %282%29.png" />
+    <Content Include="Content\Images\icons\lib\Legend\loop_back %283%29.png" />
+    <Content Include="Content\Images\icons\lib\Legend\loop_back-1.png" />
+    <Content Include="Content\Images\icons\lib\Legend\loop_Black.png" />
+    <Content Include="Content\Images\icons\lib\Legend\loop_pending.png" />
+    <Content Include="Content\Images\icons\lib\Legend\manhole.png" />
+    <Content Include="Content\Images\icons\lib\Legend\MicroPOD.png" />
+    <Content Include="Content\Images\icons\lib\Legend\MPOD.png" />
+    <Content Include="Content\Images\icons\lib\Legend\N-RFECommercial+Residential.png" />
+    <Content Include="Content\Images\icons\lib\Legend\N-RFECommercialHighRise.png" />
+    <Content Include="Content\Images\icons\lib\Legend\N-RFECommercialLowRise.png" />
+    <Content Include="Content\Images\icons\lib\Legend\N-RFECommercialResidential.png" />
+    <Content Include="Content\Images\icons\lib\Legend\N-RFEResidentialHighRise.png" />
+    <Content Include="Content\Images\icons\lib\Legend\N-RFEResidentialLowRise.png" />
+    <Content Include="Content\Images\icons\lib\Legend\N-RFSCommercial+Residential.png" />
+    <Content Include="Content\Images\icons\lib\Legend\N-RFSCommercialHighRise.png" />
+    <Content Include="Content\Images\icons\lib\Legend\N-RFSCommercialLowRise.png" />
+    <Content Include="Content\Images\icons\lib\Legend\N-RFSCommercialResidential.png" />
+    <Content Include="Content\Images\icons\lib\Legend\N-RFSResidentialHighRise.png" />
+    <Content Include="Content\Images\icons\lib\Legend\N-RFSResidentialLowRise.png" />
+    <Content Include="Content\Images\icons\lib\Legend\NewROW.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Normal.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\not-customer.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\ont.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Out_of_Range.png" />
+    <Content Include="Content\Images\icons\lib\Legend\PADB.png" />
+    <Content Include="Content\Images\icons\lib\Legend\patch.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\PBDB.png" />
+    <Content Include="Content\Images\icons\lib\Legend\PCDB.png" />
+    <Content Include="Content\Images\icons\lib\Legend\PFDB.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Planned.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Planned.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\planned_cable.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\Pod.png" />
+    <Content Include="Content\Images\icons\lib\Legend\point.png" />
+    <Content Include="Content\Images\icons\lib\Legend\pole.png" />
+    <Content Include="Content\Images\icons\lib\Legend\PolygonStructure.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Primary.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\PrimarySplitter.png" />
+    <Content Include="Content\Images\icons\lib\Legend\ProjectArea.png" />
+    <Content Include="Content\Images\icons\lib\Legend\P_OH.png" />
+    <Content Include="Content\Images\icons\lib\Legend\P_UG.png" />
+    <Content Include="Content\Images\icons\lib\Legend\P_WC.png" />
+    <Content Include="Content\Images\icons\lib\Legend\RejectROW.png" />
+    <Content Include="Content\Images\icons\lib\Legend\reopened.png" />
+    <Content Include="Content\Images\icons\lib\Legend\resolved.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Resurveyed.png" />
+    <Content Include="Content\Images\icons\lib\Legend\RFSCommercial+Residential.png" />
+    <Content Include="Content\Images\icons\lib\Legend\RFSCommercialHighRise.png" />
+    <Content Include="Content\Images\icons\lib\Legend\RFSCommercialLowRise.png" />
+    <Content Include="Content\Images\icons\lib\Legend\RFSCommercialResidential.png" />
+    <Content Include="Content\Images\icons\lib\Legend\RFSResidentialHighRise.png" />
+    <Content Include="Content\Images\icons\lib\Legend\RFSResidentialLowRise.png" />
+    <Content Include="Content\Images\icons\lib\Legend\ROW.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Secondary.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\SecondaryBDB.png" />
+    <Content Include="Content\Images\icons\lib\Legend\SecondarySplitter.png" />
+    <Content Include="Content\Images\icons\lib\Legend\spliceclosure.png" />
+    <Content Include="Content\Images\icons\lib\Legend\SSplitter.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Structure.png" />
+    <Content Include="Content\Images\icons\lib\Legend\subarea.png" />
+    <Content Include="Content\Images\icons\lib\Legend\surveyarea.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Surveyed.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Surveyed.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\TelephoneandOther.png" />
+    <Content Include="Content\Images\icons\lib\Legend\TelephoneandOtherOwnerPole.png" />
+    <Content Include="Content\Images\icons\lib\Legend\temporary_resolved.png" />
+    <Content Include="Content\Images\icons\lib\Legend\tree.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Trench.png" />
+    <Content Include="Content\Images\icons\lib\Legend\unresloved.png" />
+    <Content Include="Content\Images\icons\lib\Legend\virtual.svg" />
+    <Content Include="Content\Images\icons\lib\Legend\v_manhole.png" />
+    <Content Include="Content\Images\icons\lib\Legend\v_spliceclosure.png" />
+    <Content Include="Content\Images\icons\lib\Legend\WallMount.png" />
+    <Content Include="Content\Images\icons\lib\small\ADB.png" />
+    <Content Include="Content\Images\icons\lib\small\Area.png" />
+    <Content Include="Content\Images\icons\lib\small\BDB.png" />
+    <Content Include="Content\Images\icons\lib\small\building.png" />
+    <Content Include="Content\Images\icons\lib\small\Cabinet.png" />
+    <Content Include="Content\Images\icons\lib\small\Cable.png" />
+    <Content Include="Content\Images\icons\lib\small\CDB.png" />
+    <Content Include="Content\Images\icons\lib\small\Duct.png" />
+    <Content Include="Content\Images\icons\lib\small\FDB.png" />
+    <Content Include="Content\Images\icons\lib\small\HTB.png" />
+    <Content Include="Content\Images\icons\lib\small\Loop.png" />
+    <Content Include="Content\Images\icons\lib\small\Manhole.png" />
+    <Content Include="Content\Images\icons\lib\small\MPOD.png" />
+    <Content Include="Content\Images\icons\lib\small\ont.png" />
+    <Content Include="Content\Images\icons\lib\small\POD.png" />
+    <Content Include="Content\Images\icons\lib\small\Pole.png" />
+    <Content Include="Content\Images\icons\lib\small\SpliceClosure.png" />
+    <Content Include="Content\Images\icons\lib\small\Splitter.png" />
+    <Content Include="Content\Images\icons\lib\small\Structure.png" />
+    <Content Include="Content\Images\icons\lib\small\SubArea.png" />
+    <Content Include="Content\Images\icons\lib\small\SurveyArea.png" />
+    <Content Include="Content\Images\icons\lib\small\Tree.png" />
+    <Content Include="Content\Images\icons\lib\small\Trench.png" />
+    <Content Include="Content\Images\icons\lib\small\WallMount.png" />
+    <Content Include="Content\css\images\Information.png" />
+    <Content Include="Content\Images\icons\map\ADB\A\ADB.png" />
+    <Content Include="Content\Images\icons\map\ADB\A\Primary\ADB.png" />
+    <Content Include="Content\Images\icons\map\ADB\A\Secondary\ADB.png" />
+    <Content Include="Content\Images\icons\map\ADB\D\ADB.png" />
+    <Content Include="Content\Images\icons\map\ADB\D\Primary\ADB.png" />
+    <Content Include="Content\Images\icons\map\ADB\D\Secondary\ADB.png" />
+    <Content Include="Content\Images\icons\map\ADB\P\ADB.png" />
+    <Content Include="Content\Images\icons\map\ADB\P\Primary\ADB.png" />
+    <Content Include="Content\Images\icons\map\ADB\P\Secondary\ADB.png" />
+    <Content Include="Content\Images\icons\map\BDB\A\BDB.png" />
+    <Content Include="Content\Images\icons\map\BDB\A\Primary\BDB.png" />
+    <Content Include="Content\Images\icons\map\BDB\A\Secondary\BDB.png" />
+    <Content Include="Content\Images\icons\map\BDB\D\BDB.png" />
+    <Content Include="Content\Images\icons\map\BDB\D\Primary\BDB.png" />
+    <Content Include="Content\Images\icons\map\BDB\D\Secondary\BDB.png" />
+    <Content Include="Content\Images\icons\map\BDB\P\BDB.png" />
+    <Content Include="Content\Images\icons\map\BDB\P\Primary\BDB.png" />
+    <Content Include="Content\Images\icons\map\BDB\P\Secondary\BDB.png" />
+    <Content Include="Content\Images\icons\map\Cabinet\A\Cabinet.png" />
+    <Content Include="Content\Images\icons\map\Cabinet\D\Cabinet.png" />
+    <Content Include="Content\Images\icons\map\Cabinet\P\Cabinet.png" />
+    <Content Include="Content\Images\icons\map\FDB\A\FDB.png" />
+    <Content Include="Content\Images\icons\map\FDB\A\Primary\FDB.png" />
+    <Content Include="Content\Images\icons\map\FDB\A\Secondary\FDB.png" />
+    <Content Include="Content\Images\icons\map\FDB\D\FDB.png" />
+    <Content Include="Content\Images\icons\map\FDB\P\FDB.png" />
+    <Content Include="Content\Images\icons\map\FDB\P\Primary\FDB.png" />
+    <Content Include="Content\Images\icons\map\FDB\P\Secondary\FDB.png" />
+    <Content Include="Content\Images\icons\map\FMS\A\fms.png" />
+    <Content Include="Content\Images\icons\map\FMS\D\fms.png" />
+    <Content Include="Content\Images\icons\map\FMS\P\fms.png" />
+    <Content Include="Content\Images\icons\map\Handhole\A\handhole.png" />
+    <Content Include="Content\Images\icons\map\Handhole\D\handhole.png" />
+    <Content Include="Content\Images\icons\map\Handhole\P\handhole.png" />
+    <Content Include="Content\Images\icons\map\HTB\A\HTB.png" />
+    <Content Include="Content\Images\icons\map\HTB\D\HTB.png" />
+    <Content Include="Content\Images\icons\map\HTB\P\HTB.png" />
+    <Content Include="Content\Images\icons\map\Manhole\A\manhole.png" />
+    <Content Include="Content\Images\icons\map\Manhole\D\manhole.png" />
+    <Content Include="Content\Images\icons\map\Manhole\P\manhole.png" />
+    <Content Include="Content\Images\icons\map\POD\A\pod.png" />
+    <Content Include="Content\Images\icons\map\POD\D\Pod.png" />
+    <Content Include="Content\Images\icons\map\POD\P\Pod.png" />
+    <Content Include="Content\Images\icons\map\Pole\A\Electrical\pole.png" />
+    <Content Include="Content\Images\icons\map\Pole\A\Light\pole.png" />
+    <Content Include="Content\Images\icons\map\Pole\A\Other\pole.png" />
+    <Content Include="Content\Images\icons\map\Pole\A\pole.png" />
+    <Content Include="Content\Images\icons\map\Pole\D\electrical\pole.png" />
+    <Content Include="Content\Images\icons\map\Pole\D\light\pole.png" />
+    <Content Include="Content\Images\icons\map\Pole\D\other\pole.png" />
+    <Content Include="Content\Images\icons\map\Pole\D\pole.png" />
+    <Content Include="Content\Images\icons\map\Pole\P\Electrical\pole.png" />
+    <Content Include="Content\Images\icons\map\Pole\P\Light\pole.png" />
+    <Content Include="Content\Images\icons\map\Pole\P\Other\pole.png" />
+    <Content Include="Content\Images\icons\map\Pole\P\pole.png" />
+    <Content Include="Content\Images\icons\map\SpliceClosure\A\spliceclosure.png" />
+    <Content Include="Content\Images\icons\map\SpliceClosure\D\spliceclosure.png" />
+    <Content Include="Content\Images\icons\map\SpliceClosure\P\spliceclosure.png" />
+    <Content Include="Content\Images\icons\map\Splitter\A\Primary\Splitter.png" />
+    <Content Include="Content\Images\icons\map\Splitter\A\Secondary\splitter.png" />
+    <Content Include="Content\Images\icons\map\Splitter\D\Primary\Splitter.png" />
+    <Content Include="Content\Images\icons\map\Splitter\D\Secondary\splitter.png" />
+    <Content Include="Content\Images\icons\map\Splitter\P\Primary\Splitter.png" />
+    <Content Include="Content\Images\icons\map\Splitter\P\Secondary\splitter.png" />
+    <Content Include="Content\Images\icons\map\Structure\A\Structure.png" />
+    <Content Include="Content\Images\icons\map\Structure\D\Structure.png" />
+    <Content Include="Content\Images\icons\map\Structure\P\Structure.png" />
+    <Content Include="Content\Images\icons\map\Tower\P\tower.png" />
+    <Content Include="Content\Images\icons\map\Tree\A\tree.png" />
+    <Content Include="Content\Images\icons\map\Tree\D\tree.png" />
+    <Content Include="Content\Images\icons\map\Tree\P\tree.png" />
+    <Content Include="Content\Images\icons\map\Vault\A\Vault.png" />
+    <Content Include="Content\Images\icons\map\Vault\D\Vault.png" />
+    <Content Include="Content\Images\icons\map\Vault\P\Vault.png" />
+    <Content Include="Content\Images\icons\map\Wallmount\A\WallMount.png" />
+    <Content Include="Content\Images\icons\map\Wallmount\D\WallMount.png" />
+    <Content Include="Content\Images\icons\map\Wallmount\P\WallMount.png" />
+    <Content Include="Content\Images\loading.gif" />
+    <Content Include="Content\Images\Logical plan %28option 1%29.jpg" />
+    <Content Include="Content\Images\sArrow.svg" />
+    <Content Include="Content\Images\transparent.png" />
+    <Content Include="Content\js\Alert.js" />
+    <Content Include="Content\js\chosen.jquery.min.js" />
+    <Content Include="Content\js\HPSMTicket.js" />
+    <Content Include="Content\js\jquery-1.10.2.min.js" />
+    <Content Include="Content\js\jquery-3.6.0.min.js" />
+    <Content Include="Content\js\jquery-swapsies.js" />
+    <Content Include="Content\js\jquery-ui.min.js" />
+    <Content Include="Content\js\jquery.js" />
+    <Content Include="Content\js\Splice\Alert.js" />
+    <Content Include="Content\js\Splice\canvg.min.js" />
+    <Content Include="Content\js\Splice\chosen.jquery.js" />
+    <Content Include="Content\js\Splice\chosen.jquery.min.js" />
+    <Content Include="Content\js\Splice\html2canvas.js" />
+    <Content Include="Content\js\Splice\Js-Plumb-1.4.1.min.js" />
+    <Content Include="Content\js\Splice\Main.js" />
+    <Content Include="Content\js\Splice\ModalPopUp.js" />
+    <Content Include="Content\js\Splice\splice-style.css" />
+    <Content Include="Content\js\Splice\Utility.js" />
+    <Content Include="Content\js\Splicing.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Scripts\jquery-3.6.0.intellisense.js" />
+    <Content Include="Scripts\jquery-3.6.0.js" />
+    <Content Include="Scripts\jquery-3.6.0.min.js" />
+    <Content Include="Scripts\jquery-3.6.0.slim.js" />
+    <Content Include="Scripts\jquery-3.6.0.slim.min.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\Startup.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Connected Services\ConvergeERPService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\WebService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\BuildingController.cs" />
+    <Compile Include="Controllers\BulkUserUploadController.cs" />
+    <Compile Include="Controllers\CRMController.cs" />
+    <Compile Include="Controllers\FEController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IntegrationController.cs" />
+    <Compile Include="Controllers\ISPController.cs" />
+    <Compile Include="Controllers\ItemTemplateController.cs" />
+    <Compile Include="Controllers\JobPackController.cs" />
+    <Compile Include="Controllers\LegendDetailsController.cs" />
+    <Compile Include="Controllers\LibraryController.cs" />
+    <Compile Include="Controllers\LogicalDiagramController.cs" />
+    <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\MiscellaneousTaskController.cs" />
+    <Compile Include="Controllers\NetworkTicketController.cs" />
+    <Compile Include="Controllers\OfflineController.cs" />
+    <Compile Include="Controllers\OTPController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\ResourcesController.cs" />
+    <Compile Include="Controllers\SignInController.cs" />
+    <Compile Include="Controllers\SplicingController.cs" />
+    <Compile Include="Controllers\SurveyController.cs" />
+    <Compile Include="Controllers\TicketManagerController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\VectorLayerController.cs" />
+    <Compile Include="Filters\CompressionFilter.cs" />
+    <Compile Include="Filters\CustomAuthorizationOTP.cs" />
+    <Compile Include="Filters\CustomAuthorization.cs" />
+    <Compile Include="Filters\HandleException.cs" />
+    <Compile Include="Filters\CustomAction.cs" />
+    <Compile Include="Filters\UserActivityLog.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Helper\NPOIExcelHelper.cs" />
+    <Compile Include="Helper\ReqHelper.cs" />
+    <Compile Include="Helper\ReqInput.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\OAuthProvider.cs" />
+    <Compile Include="Settings\ApplicationSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\fonts\icomoon.ttf" />
+    <Content Include="Content\fonts\icomoon.woff" />
+    <Content Include="Content\css\fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\css\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\css\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\css\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Content\css\fonts\FontAwesome.otf" />
+    <Content Include="Content\css\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\css\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Content\css\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Content\css\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Content\css\fonts\glyphicons-halflings-regular2.woff" />
+    <Content Include="Content\css\fonts\icomoon.eot" />
+    <Content Include="Content\css\fonts\icomoon.ttf" />
+    <Content Include="Content\css\fonts\icomoon.woff" />
+    <None Include="Connected Services\WebService\ConvergeERP.wsdl" />
+    <Content Include="Connected Services\WebService\SmartInventoryServices.WebService.createInvIssueResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\WebService\SmartInventoryServices.WebService.createInvIssueResponse1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\WebService\SmartInventoryServices.WebService.createInvReturnResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\WebService\SmartInventoryServices.WebService.createInvReturnResponse1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <None Include="Properties\PublishProfiles\mobile api.pubxml" />
+    <None Include="Properties\PublishProfiles\mobileAPI.pubxml" />
+    <None Include="Properties\PublishProfiles\Services.pubxml" />
+    <None Include="Properties\PublishProfiles\SmartInventory_MobileAPI.pubxml" />
+    <None Include="Properties\PublishProfiles\Spectra Services.pubxml" />
+    <None Include="Properties\PublishProfiles\Spectra-API.pubxml" />
+    <None Include="Properties\PublishProfiles\SpectraAPI.pubxml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\LogicalDiagram\_EntityLogicalViewDiagram.cshtml" />
+    <Content Include="Views\LogicalDiagram\_Unauthorize.cshtml" />
+    <Content Include="Views\LogicalDiagram\_Error.cshtml" />
+    <Content Include="Views\LogicalDiagram\_ViewStart.cshtml" />
+    <Content Include="Views\LegendDetails\_Legend.cshtml" />
+    <Content Include="Views\LegendDetails\_Unauthorize.cshtml" />
+    <Content Include="Views\LegendDetails\_Error.cshtml" />
+    <Content Include="Views\Splicing\_CableToCable.cshtml" />
+    <Content Include="Views\Splicing\connectionDetails.cshtml" />
+    <Content Include="Views\Shared\_GlobalVariable.cshtml" />
+    <Content Include="Views\Splicing\_Splicing.cshtml" />
+    <Content Include="Views\Shared\_ModalPopUp.cshtml" />
+    <Content Include="Views\TicketManager\_HPSMTicket.cshtml" />
+    <Content Include="Scripts\jquery-3.6.0.slim.min.map" />
+    <Content Include="Scripts\jquery-3.6.0.min.map" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ApiErrorLogs\" />
+    <Folder Include="Content\Images\icons\map\FDB\D\Primary\" />
+    <Folder Include="Content\Images\icons\map\FDB\D\Secondary\" />
+    <Folder Include="Content\Images\icons\map\Tower\A\" />
+    <Folder Include="Content\Images\icons\map\Tower\D\" />
+    <Folder Include="Uploads\Temp\" />
+    <Folder Include="Views\CustomAuthorization\" />
+    <Folder Include="Views\ISP\" />
+    <Folder Include="Views\NetworkPlanning\" />
+    <Folder Include="Views\Report\" />
+    <Folder Include="Views\SignIn\" />
+    <Folder Include="Views\User\" />
+    <Folder Include="Views\VectorLayer\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ApplicationConfig\ApplicationConfig.csproj">
+      <Project>{C88E7577-72D6-47AB-BA49-A0E3C00A4419}</Project>
+      <Name>ApplicationConfig</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BusinessLogics\BusinessLogics.csproj">
+      <Project>{1fd26f85-e70f-4e77-8234-2769f4051c24}</Project>
+      <Name>BusinessLogics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{2e40e756-53a0-4a32-9614-15f0a7e126db}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Resources\Resources.csproj">
+      <Project>{2C985C1B-9BA4-49B4-BD0F-7BFBBF3EFB07}</Project>
+      <Name>Resources</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utility\Utility.csproj">
+      <Project>{0A7D542F-4E3A-44F0-A8AD-B1281599A2AE}</Project>
+      <Name>Utility</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\ConvergeERPService\" />
+    <WCFMetadataStorage Include="Connected Services\WebService\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>50034</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:56825/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,193 @@
+﻿<!DOCTYPE html>
+@model Models.ViewBusinessLayerModel
+@using Utility
+@using SmartInventory.Settings;
+<script type="text/javascript" src="https://rawgit.com/Bttstrp/bootstrap-switch/master/dist/js/bootstrap-switch.js"></script>
+<div id="dvViewUsers">
+    <input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                View Business Layer
+            </h4>
+        </div>
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewBusinessLayer", ajaxUpdateCallback: "onGridHeaderClick('tblBusinessLayerDetail')");
+            grid.Bind(Model.lstBusinessLayer, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+            if (Model.objGridAttributes.totalRecord > 0)
+            {
+                grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+            }
+        }
+
+        @using (Html.BeginForm("ViewBusinessLayer", "BusinessLayer", FormMethod.Post, new { autocomplete = "off", @id = "frmViewBusinessLayer", @class = "pad_left" }))
+        {
+            <div class="form-inline filter-sec">
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4">
+                        Status :
+                    </label>
+                    <div class="col-md-8">
+
+                        @Html.DropDownListFor(m => m.objGridAttributes.is_active, new List<SelectListItem>
+                 {
+                    new SelectListItem{ Text="Active", Value = "true" },
+                    new SelectListItem{ Text="InActive", Value = "false" }
+                 }, new { @id = "ddlStatus", @tabindex = "2", @title = "Status", @class = "chosen-select form-control --input-width mr-05" })
+                    </div>
+                </div>
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4">Search By : </label>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select form-control" })
+                    </div>
+
+                </div>
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4">
+                        Search Text :
+                    </label>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                    </div>
+                </div>
+                <div class="form-group wtd_set" id="dvBtnAction">
+                    <div class="col-md-8">
+                        <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                        @*@if (@grid.TotalRowCount > 0)
+                            {
+                                <input type="button" id="btnViewUserExport" value="Export" class="btn btn-primary" onclick="ViewUserReport()" />
+                            }
+                            else
+                            {
+                                <input type="button" id="btnViwUserExport" value="Export" disabled="disabled" class="btn btn-primary" />
+                            }*@
+                        <a href="@Url.Action("ViewBusinessLayer")" id="btnReset" class="btn btn-default" title="Reset">Reset</a>
+                    </div>
+                </div>
+            </div>
+
+            if (Model.lstBusinessLayer.Count > 0)
+            {
+                <div id="divUserDetail">
+                    <div class="recordCount mb-1"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+                    <div class="table-responsive tble_cls">
+                        @grid.GetHtml(tableStyle: "grid",
+                            htmlAttributes: new { id = "tblUserDetail" },
+                            mode: WebGridPagerModes.All,
+                            columns: grid.Columns(
+                                       grid.Column("", "Action", format:@<text>
+
+                                                <a href="@Url.Action("AddBusinessLayer", "BusinessLayer", new { id = @item.id})" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                                <a href="javascript:void(0);" onclick="DeleteBusinessLayerDetail(@item.id);" title="Delete"> <i class="fa fa-fw fa-trash" style="font-size: 13px; color: #f50000;"></i></a>
+                                                <label class="switch">
+                                                    <input id='Edit_@item.id' @(item.is_active == true ? "checked" : "") type="checkbox" class="chk-valid" onclick="EditUserStatus('@item.id',this,event)">
+                                                    <span class="slider round"></span>
+                                                </label>
+
+
+
+
+
+                                    </text>, canSort: false
+),
+grid.Column(header: "S.No.", format: @<text>@item.S_No</text>, canSort: false),
+grid.Column("url_display_name", "URL Display Name", format: @<text>@item.url_display_name</text>, canSort: true),
+grid.Column("display_layer_name", "Display Layer Name", format: @<text>@item.display_layer_name</text>, canSort: true),
+grid.Column("layer_name", "Layer Name", format: @<text>@item.layer_name</text>, canSort: true),
+grid.Column("layer_type", "Layer Type", format: @<text>@item.layer_type</text>, canSort: true),
+grid.Column("is_active", "Status", format: @<text>@(item.is_active == true ? "Active" : "InActive")</text>, canSort: false)
+//grid.Column("created_by", "Created By", format: @<text>@item.created_by</text>, canSort: true),
+//grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>, canSort: true),
+//grid.Column("modified_by", "Modified By", format: @<text>@item.modified_by</text>, canSort: true),
+//grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>, canSort: true)
+))
+
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+                        @Html.HiddenFor(m => m.objGridAttributes.searchBy)
+                        @Html.HiddenFor(m => m.objGridAttributes.searchText)
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div style="text-align: center; margin-top: 30px;">
+                    No Layer Found.
+                </div>
+            }
+        }
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        updateNumberstoFormatedNumber();
+        addDefaultSortingIcons("tblBusinessLayerDetail");
+
+    });
+    function EditBusinessLayerStatus(id, event, e) {
+
+        e.preventDefault();
+        var item_id = '#Edit_' + id;
+        var msg = event.checked == true ? "Are you sure you want to Activate this `business layer?" : "Are you sure you want to de-activate this business layer?";
+
+        var csts = $(item_id).is(":checked");
+        showConfirm(msg, function () {
+
+            ajaxReq('User/EditBusinessLayerStatus', { user_id: id, status: csts }, true, function (resp) {
+
+                if (resp.status == "OK") {
+
+                    alert(resp.message, 'Success', 'success');
+                    setTimeout(function () {
+
+                        $("#frmViewBusinessLayer").submit();
+                    }, 1000);
+                    return $(item_id).is(":checked") == true ? $(item_id).prop('checked', false) : $(item_id).prop('checked', true);
+                }
+                else
+                    alert(resp.message);
+            }, true, true);
+        }, function () {
+            if (event.checked) {
+                $(item_id).prop('checked', true);
+            }
+            else {
+                $(item_id).prop('checked', false);
+            }
+
+        });
+
+    }
+    //function ViewUserReport() {
+    //    window.location = appRoot + 'User/DownloadViewUserDetail';
+    //}
+    $('th a, tfoot a').on("click", function () {
+        $('#frmViewBusinessLayer').attr('action', $(this).attr('href')).submit();
+        return false;
+    });
+    function DeleteBusinessLayerDetail(id) {
+
+        confirm("Are you sure you want to delete this business layer?", function () {
+            ajaxReq('BusinessLayer/DeleteBusinessLayerByID', { id: id }, false, function (resp) {
+
+                if (resp.status == "OK") {
+                    $("#frmViewBusinessLayer").submit();
+
+                }
+                else
+                    alert(resp.message);
+            }, true, true);
+        });
+    }
+
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+</script>

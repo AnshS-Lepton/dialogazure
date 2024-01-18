@@ -1,0 +1,475 @@
+# Map file created from QGIS project file C:/Program Files (x86)/Quantum GIS Wroclaw/qqq.qgs
+# Edit this file to customize for your map interface
+# (Created with PyQgis MapServer Export plugin)
+MAP
+	SYMBOLSET "symbols\\symbols.sym"
+	CONFIG "PROJ_LIB" "conf"
+	NAME "QGIS-MAP"
+	FONTSET "fonts/fonts.list"
+	# Map image size  
+	SIZE 100 100
+	UNITS meters
+  
+	#EXTENT 72.504366 18.900959 73.403214 19.320367
+	PROJECTION
+		'proj=longlat'
+		'datum=WGS84'
+		'no_defs'
+	END
+
+	# Background color for the map canvas -- change as desired
+	IMAGECOLOR 255 255 255
+	IMAGEQUALITY 95
+	IMAGETYPE png
+
+	OUTPUTFORMAT
+		NAME png
+		DRIVER 'GD/PNG'
+		MIMETYPE 'image/png'
+		IMAGEMODE RGBA
+		EXTENSION 'png'
+	END
+  
+	# Legend
+	LEGEND
+		IMAGECOLOR 255 255 255
+		STATUS ON
+		KEYSIZE 25 15
+		LABEL
+		  TYPE BITMAP	  
+		  SIZE MEDIUM
+		  COLOR 0 0 89
+		END		
+	END
+  
+	SYMBOL
+		NAME "circlef"
+		TYPE ellipse
+		FILLED true
+		POINTS 
+			1 1
+		END
+	END	
+	SYMBOL
+		NAME "arrow-end"
+		TYPE vector
+		FILLED false
+		POINTS
+			0  10
+			10  5
+			0 0
+		END
+		#ANCHORPOINT 1 0.5
+	END 
+
+
+	# Web interface definition. Only the template parameter
+	# is required to display a map. See MapServer documentation
+	WEB
+		# Set IMAGEPATH to the path where MapServer should
+		# write its output.
+		IMAGEPATH '/tmp/'
+
+		# Set IMAGEURL to the url that points to IMAGEPATH
+		# as defined in your web server configuration
+		IMAGEURL '/tmp/'
+	# WMS server settings
+	METADATA
+		'ows_title'           'QGIS-MAP'
+		#'ows_onlineresource'  ''
+		'ows_srs'             'EPSG:4326 EPSG:900913' 
+		'ows_enable_request'   '*'
+	END
+
+	#Scale range at which web interface will operate
+	# Template and header/footer settings
+	# Only the template parameter is required to display a map. See MapServer documentation
+	TEMPLATE 'fooOnlyForWMSGetFeatureInfo'
+	END
+
+	#SYMBOL
+	 	#NAME "rail"
+	 	# TYPE PIXMAP		
+	  	#IMAGE "icons/railway.png"		
+	#END	
+	
+	# ===================AREA======================================= 	
+	LAYER 
+		NAME 'ARA'
+		TYPE POLYGON
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		INCLUDE "datashare.inc"
+		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
+		DATA 'sp_geometry FROM "vw_att_details_area_map" USING UNIQUE system_id USING srid=4326'
+		FILTER  (provinceFilter) 
+		
+		VALIDATION		
+			'provinceFilter'   '.*'	
+		END 
+		METADATA
+			'ows_title' 'Area'
+		END
+		STATUS OFF
+		GROUP 'Network'
+		TRANSPARENCY 30
+		PROJECTION
+			'proj=longlat'  
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASS
+			NAME 'Area' 
+			STYLE
+				WIDTH 1
+				OUTLINECOLOR 0 0 0
+				COLOR 26 149 190
+			END
+		END
+	END
+	
+	#===================================Loop Mangment==================================
+	LAYER
+		NAME 'LOP'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_loop_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))	
+		#VALIDATION		
+			#'provinceFilter'   '.*'
+            #'layerFilter'   '.*'	
+			#'prjectspecificationFilter'   '.*'	
+		#END 
+		METADATA
+			'ows_title' 'Loop'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'Loop' 							
+			STYLE
+				SYMBOL "icons/loop.png" 
+				SIZE 20			
+			END	  
+		END		
+	END	
+	# ========================================================================== 
+	LAYER
+		NAME 'DCT'
+		TYPE LINE
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		#EXTENT 72.504366 18.900959 73.403214 19.320367
+		
+		CONNECTIONTYPE CONTOUR
+		CONNECTION "dbname='spectra_mvc' host=192.168.1.6 port=5450 user='postgres' password='lepton#19'"		
+		DATA '010200008002000000FBE769C0204553407FF5B86FB57E3C400000000000002E400F26C5C72745534020ED7F80B57E3C400000000000002E40' 		
+		PROCESSING "BANDS=4"
+		PROCESSING "CONTOUR_ITEM=elevation"
+		PROCESSING "CONTOUR_INTERVAL=20"
+		METADATA
+			'ows_title' 'Duct'
+		END
+		STATUS OFF
+		GROUP 'Network1'
+		TRANSPARENCY 100
+		PROJECTION
+			'proj=longlat'
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASS
+			STYLE
+				WIDTH 11
+				COLOR 255 0 0
+			END
+		END	
+	END
+	# ================================== CABLE ======================================== 
+	LAYER
+		NAME 'CBL'
+		TYPE LINE
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		#EXTENT 72.504366 18.900959 73.403214 19.320367
+		INCLUDE "datashare.inc"		
+		DATA 'sp_geometry FROM vw_att_details_cable_map USING UNIQUE system_id USING srid=4326'	
+		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
+
+		#VALIDATION		
+			#'provinceFilter'   '.*'		
+            #'layerFilter'   '.*'			
+			#'prjectspecificationFilter'   '.*'			
+		#END 
+		METADATA
+			'ows_title' 'CABLE'
+		END
+		STATUS OFF
+		GROUP 'Network1'
+		TRANSPARENCY 100
+		PROJECTION
+			'proj=longlat'
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASSITEM 'cable_cores' 
+
+#==========================================OH=====================================
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Overhead' AND '[network_status]'  eq 'P')					
+		     STYLE
+				WIDTH 2
+				COLOR 255 0 0				                		
+				LINECAP round #[round|miter|bevel]				
+				PATTERN 10 5  END
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 255 17 147  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          0 0 255     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Overhead' AND '[network_status]'  eq 'D')						
+		     STYLE
+				WIDTH 2
+				COLOR 255 0 0				                		
+				LINECAP round #[round|miter|bevel]				
+				PATTERN 10 5 0 5  END
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 255 17 147  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          0 0 255     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Overhead' AND '[network_status]'  eq 'A')						
+		     STYLE
+				WIDTH 2
+				COLOR 255 0 0				                						
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 255 17 147  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          0 0 255     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		#==========================================UG=====================================
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Underground' AND '[network_status]'  eq 'P')					
+		     STYLE
+				WIDTH 2
+				COLOR 0 0 255				                		
+				LINECAP round #[round|miter|bevel]				
+				PATTERN 10 5  END
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 0 0 255  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          0 0 255     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Underground' AND '[network_status]'  eq 'D')						
+		     STYLE
+				WIDTH 2
+				COLOR 0 0 255				                		
+				LINECAP round #[round|miter|bevel]				
+				PATTERN 10 5 0 5  END
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 0 0 255  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          0 0 255     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+		
+		CLASS 
+			NAME "Cable"
+			TEXT "[cable_cores]"
+			#EXPRESSION "2F OH"
+			EXPRESSION ('[cable_type]' eq 'Underground' AND '[network_status]'  eq 'A')						
+		     STYLE
+				WIDTH 2
+				COLOR 0 0 255				                						
+			END
+		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 255 255 255				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 0 0 255  # background rect.
+				END
+				STYLE
+					GEOMTRANSFORM 'labelunderline'
+					COLOR          0 0 255     # underline
+					OFFSET 0 -1 # with some offset
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END
+		
+	END
+	LAYER
+		NAME 'CoreRef'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		#EXTENT 47.485699 5.997356 118.089757 37.843469
+		INCLUDE "datashare.inc"
+		DATA 'sp_geometry FROM "core_ref"  USING srid=4326'
+		FILTER (%regionProvinceFilter% )
+		VALIDATION	
+			'regionProvinceFilter'   '.*' 
+		END
+		METADATA
+			'ows_title' 'CoreRef'
+		END
+		STATUS OFF
+		TRANSPARENCY 100
+		LABELITEM 'core_balance'
+		PROJECTION
+			'proj=longlat'
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASS
+		NAME 'CoreRef' 
+			STYLE
+				SYMBOL "icons/coreref.png" 
+				SIZE 4
+				OUTLINECOLOR 255 0 0
+				COLOR 214 205 104
+			END
+			LABEL 
+				COLOR  255 0 0  		
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE
+			END
+		END
+	END
+END

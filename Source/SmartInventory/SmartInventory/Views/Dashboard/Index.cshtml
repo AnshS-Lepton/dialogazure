@@ -1,0 +1,736 @@
+﻿@using SmartInventory.Settings;
+
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+
+<style>
+    td, tr, th, tr {
+        padding: 0;
+        margin: 0;
+        vertical-align: top;
+        box-sizing: border-box;
+    }
+
+    body {
+        box-sizing: border-box;
+    }
+
+    .underDevelopment {
+        display: flex;
+        flex-direction: column;
+        min-height: 195px;
+        background-color: rgba(255,255,255,0.5);
+        border: 2px solid #9999FF;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        z-index: 5;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+    }
+
+        .underDevelopment h1 {
+            color: #0d6efd;
+            font-size: 18px;
+        }
+
+    .partBoarding {
+        left: 0;
+        top: 0;
+        width: 20%;
+    }
+
+    .onBoarding {
+        left: 254px;
+        top: 0;
+        width: 62.8%;
+    }
+</style>
+
+<div class="update_panel fullWidth">
+
+    <div id="" class="title d-flex">
+        <h4>JFP - Network & Construction Dashboard </h4>
+        <div class="ml-auto dateStyle ss">
+            Last Updated on
+            <span id="Dashboard_Refresh_Date" class="fw-60">04-Feb-2023 00:40:57</span>
+        </div>
+    </div>
+    <div class="pad_left dashOverFlow">
+        <div class="form-group">
+            <div class="filterGrid">
+                <div class="selects">
+                    <select id="ddlState" class="form-control chosen-select col-sm-12">
+                        <option>-Select State-</option>
+                    </select>
+                </div>
+                <div class="selects">
+                    <select id="ddlJC" class=" form-control chosen-select col-sm-12">
+                        <option>-Select JC-</option>
+                    </select>
+
+                </div>
+                <div class="selects">
+                    <select id="ddlTown" class="form-control chosen-select col-sm-12">
+                        <option>-Select Town-</option>
+                    </select>
+
+                </div>
+                <div class="selects">
+                    <select id="ddlPartner" class="form-control chosen-select col-sm-12">
+                        <option>-Select Partner-</option>
+                    </select>
+                </div>
+                <div class="selects">
+                    <select id="ddlFSA" class="form-control chosen-select col-sm-12">
+                        <option>-Select FSA-</option>
+                    </select>
+                </div>
+                <div class="d-flex --gap-05">
+                    <button class="btn btn-primary allBtn ml-auto" onclick="BindAllDropdownMain()">
+                        Reset
+                    </button>
+                    <button class="btn btn-warning allBtn" id="BtnApplyDashboard" onclick="btnApply()">
+                        Apply
+                    </button>
+                    <div class="pos-rel">
+                        <button type="button" class="btn btn-warning d-flex allBtn dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <img src="~/Content/dashboard/css/images/ddArrow.svg" class="ml-05 arrowD" /> </button>
+                        <div class="dropboxDasb">
+                            <div onclick="window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('.ss').html() +$('.templateBox').html()));">Summary Report</div>
+                            <div onclick="ExportDashboardDump()">JFP- Network & Construction-Export Report FSA Wise</div>
+                        </div>
+                    </div>
+                    @*<button class="btn btn-warning allBtn" onclick="window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('.ss').html() +$('.templateBox').html()));" download>
+                            Export
+                        </button>*@
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="templateBox pose-rel">
+            @*<div class="underDevelopment partBoarding">
+                    <h1>Coming Soon</h1>
+                </div>
+                <div class="underDevelopment onBoarding">
+                    <h1>Coming Soon</h1>
+                </div>*@
+
+            <table style="border-collapse:collapse; width:100%; text-align:center">
+
+                @*<tr >
+                                        <td>
+                                            <table style="border-collapse:collapse; width:100%; text-align:center" class="ss">
+
+                                                <tr>
+                                                    <td colspan="4" style="background-color:#9999FF; color:#FFFFFF; text-align:center; font-size:14px; font-weight:bold; height:38px; line-height:38px;">
+                                                        Date:Last Updated on- <span style="color:#000000" id="Dashboard_Refresh_Date"> 21-Feb-23 10:22 PM</span>
+                                                    </td>
+                                                </tr>
+                                                <tr ><td style="width:15px;">
+                        &nbsp;
+                    </td></tr>
+
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr><td></td></tr>
+                                    <tr><td></td></tr>
+                    <tr>*@
+                <td style="opacity:0.5">
+                    <table style="border-collapse:collapse; width:100%; text-align:center">
+                        <tr>
+                            <td colspan="2" style="background-color:#9999FF; color:#FFFFFF; text-align:center; font-size:14px; font-weight:bold; height:38px; line-height:38px;">
+                                Partner Onboarding <span style="color:#000000">(Coming Soon)</span>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="border-collapse:collapse; width:100%; text-align:center">
+                        <thead>
+                            <tr>
+                                <th style="border-left:1px solid #D3D3FF; border-right:1px solid #AEA0FF; background-color:#C2C2FF; color:#5A5A63; height:38px; line-height:38px; text-align:center; width:50%"></th>
+                                <th style="border-right:1px solid #D3D3FF; background-color:#C2C2FF; color:#5A5A63;height:38px; line-height:38px; text-align:center; font-weight:bold;">OnBoarded</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; text-align:center; height:38px; line-height:38px; width:50%">Town</td>
+                                <td style="border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF; color:#5A5A63; height:38px;  line-height:38px; text-align:center;"
+                                    id="td_Grid1_Town"></td>
+                            </tr>
+                            <tr>
+                                <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center; width:50%">Partner</td>
+                                <td style="border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF; color:#5A5A63; height:38px; line-height:38px; text-align:center;"
+                                    id="td_Grid1_Partner"></td>
+                            </tr>
+                            <tr>
+                                <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center; width:50%">FSA</td>
+                                <td style="border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF; color:#5A5A63; height:38px; line-height:38px; text-align:center" id="td_Grid1_FSA"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td style="width:15px;">
+                </td>
+                <td @*style="opacity:0.5"*@>
+                    <table style="border-collapse:collapse; width:100%; text-align:center">
+                        <tr>
+                            <td colspan="4" style="background-color:#9999FF; color:#FFFFFF; text-align:center; font-size:14px; font-weight:bold; height:38px; line-height:38px;">
+                                FSA Design @*<span style="color:#000000">(Coming Soon)</span>*@
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table style="border-collapse:collapse; width:100%; text-align:center">
+                        <thead>
+                            <tr>
+                                <th style="border-left:1px solid #D3D3FF; border-right:1px solid #AEA0FF; background-color:#C2C2FF; color:#5A5A63; height:38px; line-height:38px; text-align:center;"></th>
+                                <th style="border-right:1px solid #AEA0FF; background-color:#C2C2FF; color:#5A5A63; height:38px; line-height:38px; text-align:center; font-weight:bold;">Survey Initiated</th>
+                                <th style="border-right:1px solid #AEA0FF; background-color:#C2C2FF; color:#5A5A63; height:38px; line-height:38px; text-align:center; font-weight:bold;">Survey Completed</th>
+                                <th style="border-right:1px solid #D3D3FF; background-color:#C2C2FF; color:#5A5A63; height:38px; line-height:38px; text-align:center; font-weight:bold;">Design Completed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center;">Town</td>
+                                <td style="border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF; color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid2_SI_Town"></td>
+                                <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center;"
+                                    id="td_Grid2_SC_Town"></td>
+                                <td style="border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF; color:#5A5A63; height:38px; line-height:38px; text-align:center;"
+                                    id="td_Grid2_DC_Town"></td>
+                            </tr>
+                            <tr>
+                                <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center;">PSA</td>
+                                <td style="border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF; color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid2_SI_Partner"></td>
+                                <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid2_SC_Partner"></td>
+                                <td style="border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF; color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid2_DC_Partner"></td>
+                            </tr>
+                            <tr>
+                                <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center;">FSA</td>
+                                <td style="border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF; color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid2_SI_FSA"></td>
+                                <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid2_SC_FSA"></td>
+                                <td style="border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF; color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid2_DC_FSA"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td style="width:15px;">
+                    &nbsp;
+                </td>
+                <td>
+                    <div>
+                        <table style="border-collapse:collapse; width:100%; text-align:center">
+                            <tr>
+                                <td colspan="3" style="background-color:#9999FF; color:#FFFFFF; text-align:center; font-size:14px; font-weight:bold; padding:8px 0">
+                                    Construction
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table style="border-collapse:collapse; width:100%; text-align:center">
+                            <thead>
+                                <tr>
+                                    <th style="border-right:1px solid #AEA0FF; border-left:1px solid #D3D3FF; background-color:#C2C2FF; color:#5A5A63; height:38px; line-height:38px; text-align:center;"></th>
+                                    <th style="border-right:1px solid #AEA0FF; border-left:1px solid #AEA0FF; background-color:#C2C2FF; color:#5A5A63; height:38px; line-height:38px; text-align:center; font-weight:bold;">CWIP</th>
+                                    <th style="border-right:1px solid #D3D3FF; background-color:#C2C2FF; color:#5A5A63; padding:8px 0; font-weight:bold;">RFS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center;">Town</td>
+                                    <td style="border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF; color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid3_CWIP_Town"></td>
+                                    <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid3_RWIP_Town"></td>
+
+                                </tr>
+                                <tr>
+                                    <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center;">JC</td>
+                                    <td style="border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF; color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid3_CWIP_JC"></td>
+                                    <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid3_RWIP_JC"></td>
+                                </tr>
+                                <tr>
+                                    <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center;">FSA</td>
+                                    <td style="border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF; color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid3_CWIP_FSA"></td>
+                                    <td style="border-left:1px solid #D3D3D3; border-right:1px solid #D3D3D3; border-bottom:1px solid #D3D3D3; background-color:#FFFFFF;  color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid3_RWIP_FSA"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+                </tr>
+            </table>
+
+
+            <table style="width:100%;">
+                <tr>
+                    <td style="height:15px;"></td>
+                </tr>
+            </table>
+            <div>
+                <table style="border-collapse:collapse; width:100%; text-align:center">
+                    <tr>
+                        <td colspan="14" style="background-color:#9999FF; color:#FFFFFF; text-align:center; font-size:14px; font-weight:bold; height:38px; line-height:38px;">
+                            Key Construction KPIs
+                        </td>
+                    </tr>
+                </table>
+
+                <table style="border-collapse:collapse; width:100%; text-align:center">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="border:1px solid #AEA0FF; background-color: #C2C2FF;"></th>
+                            <th colspan="5" style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">Scope</th>
+                            <th rowspan="2" style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63;  line-height:76px;">CWIP</th>
+                            <th colspan="4" style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">Completed</th>
+                            <th colspan="3" style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">RFS</th>
+                        </tr>
+                        <tr>
+                            <th style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">Feeder</th>
+                            <th style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">Distribution</th>
+                            <th style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">S1</th>
+                            <th style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">S2</th>
+                            <th style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">CSA</th>
+                            <th style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">Feeder</th>
+                            <th style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">Distribution</th>
+                            <th style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">S1</th>
+                            <th style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">S2</th>
+                            <th style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">CSA</th>
+                            <th style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">S2</th>
+                            <th style="border:1px solid #AEA0FF; background-color: #C2C2FF; color:#5A5A63; height:38px; line-height:38px;">Home RFS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">UOM</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">km</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">km</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">Nos</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">Nos</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">Nos</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">FSA/Ring</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">km</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">km</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">Nos</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">Nos</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">Nos</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">Nos</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">Nos</td>
+                        </tr>
+                        <tr>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">FSA</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_Feeder_FSA">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_Distribution_FSA">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_S1_FSA">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_S2_FSA">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_CSA_FSA">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_CWIP_FSA">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Completed_Feeder_FSA">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Completed_Distribution_FSA">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Completed_S1_FSA">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Completed_S2_FSA">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_RFS_CSA_FSA">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_RFS_S2_FSA">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_RFS_Home1_FSA1">-</td>
+                        </tr>
+                        <tr>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">Ring 1</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_Feeder_Ring1">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_Distribution_Ring1">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_S1_Ring1">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_S2_Ring1">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_CSA_Ring1">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_CWIP_Ring1">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Completed_Feeder_Ring1">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Completed_Distribution_Ring1">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Completed_S1_Ring1">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Completed_S2_Ring1">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_RFS_CSA_Ring1">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_RFS_S2_Ring1">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_RFS_Home2_Ring2">-</td>
+                        </tr>
+                        <tr>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;">Ring 2</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_Feeder_Ring2">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_Distribution_Ring2">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_S1_Ring2">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_S2_Ring2">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Scope_CSA_Ring2">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_CWIP_Ring2">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Completed_Feeder_Ring2">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Completed_Distribution_Ring2">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Completed_S1_Ring2">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_Completed_S2_Ring2">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_RFS_CSA_Ring2">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_RFS_S2_Ring2">-</td>
+                            <td style="border:1px solid #E2E2E2;color:#5A5A63; height:38px; line-height:38px; text-align:center;" id="td_Grid4_RFS_Home3_Ring3">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts{
+    <script src="~/Content/js/Utility.js"></script>
+    <script type="text/javascript">
+        var HierarchyData = [];
+        let stateData = [];
+        let townData = [];
+        let FSAData = [];
+        let PartnerData = [];
+        let JCData = [];
+
+        let stateDataFilter = [];
+        let townDataFilter = [];
+        let FSADataFilter = [];
+        let PartnerDataFilter = [];
+        let JCDataFilter = [];
+        $(document).ready(function () {
+            ajaxReq('hierachylist', {}, true, function (response) {
+
+                HierarchyData = response.Data;
+                BindAllDropdownMain();
+            }, false, false);
+
+        });
+
+        function BindAllDropdownMain() {
+            $('#ddlState').html('');
+            $('#ddlTown').html('');
+            $('#ddlPartner').html('');
+            $('#ddlFSA').html('');
+            $('#ddlJC').html('');
+            var Stateoptions = "<option value>-Select State-</option>";
+            var Townoptions = "<option value>-Select Town-</option>";
+            var Partneroptions = "<option value>-Select Partner-</option>";
+            var FSAoptions = "<option value>-Select FSA-</option>";
+            var JCoptions = "<option value>-Select JC-</option>";
+
+            $('#Dashboard_Refresh_Date').text(HierarchyData[0].now);
+
+            stateData = [...new Map(HierarchyData.map(item => [item['r4g_state_code'], item])).values()];
+            townData = [...new Map(HierarchyData.map(item => [item['town_code'], item])).values()];
+            FSAData = [...new Map(HierarchyData.map(item => [item['fsa_id'], item])).values()];
+            JCData = [...new Map(HierarchyData.map(item => [item['jc_sapplant_code'], item])).values()];
+            PartnerData = [...new Map(HierarchyData.map(item => [item['partner_prms_id'], item])).values()];
+
+            stateData.forEach((e, i) => {
+                Stateoptions += '<option value="' + e.r4g_state_code + '">' + e.r4g_state_name + '</option>';
+            });
+            townData.forEach((e, i) => {
+                Townoptions += '<option value="' + e.town_code + '">' + e.town_name + '</option>';
+            });
+            FSAData.forEach((e, i) => {
+                FSAoptions += '<option value="' + e.fsa_id + '">' + e.fsa_id + '</option>';
+            });
+            JCData.forEach((e, i) => {
+                JCoptions += '<option value="' + e.jc_sapplant_code + '">' + e.jc_name + '</option>';
+            });
+            PartnerData.forEach((e, i) => {
+                Partneroptions += '<option value="' + e.partner_prms_id + '">' + e.partner_prms_id + '</option>';
+            });
+            $('#ddlState').append(Stateoptions);
+            $('#ddlState').trigger("chosen:updated");
+
+            $('#ddlTown').append(Townoptions);
+            $('#ddlTown').trigger("chosen:updated");
+
+            $('#ddlFSA').append(FSAoptions);
+            $('#ddlFSA').trigger("chosen:updated");
+
+            $('#ddlJC').append(JCoptions);
+            $('#ddlJC').trigger("chosen:updated");
+
+            $('#ddlPartner').append(Partneroptions);
+            $('#ddlPartner').trigger("chosen:updated");
+            $("#BtnApplyDashboard").trigger("click");
+        }
+        $('.chosen-select').chosen({ placeholder_text_multiple: 'All', width: '100%' });
+        $('.chosen-select').chosen({ width: '100%' });
+
+        function ajaxReq(url, _data, isAsync, callback, is_request_JSON, isLoaderRequired, is_response_JSON) {
+            if (isAsync === true) isasync = !0; else isAsync = !1;
+            if (is_response_JSON == undefined) is_response_JSON = true;
+
+            var ajaxParams = {
+                type: "POST", timeout: 3600000, url: url, async: isAsync, error: function (a, b, c, d) {
+                    if (a.status === 401 || a.status === 570 || (a.status === 0 && b != "timeout"))
+                        window.location.reload();
+                    if (isLoaderRequired) { hideProgress(); }
+                }, success: callback,
+                complete: function (a, b) {
+                    if (b === "timeout") { console.log('Request timeout reached.'); }
+                    if (isLoaderRequired) { hideProgress(); }
+                },
+                beforeSend: function () { if (isLoaderRequired) { showProgress(); } }
+            };
+            if (is_request_JSON === true) {
+                ajaxParams = $.extend(ajaxParams, { contentType: "application/json; charset=utf-8" });
+                // changed on : 24 July-2018
+                if (is_response_JSON) { ajaxParams = $.extend(ajaxParams, { dataType: 'json' }); }
+
+                _data = JSON.stringify(_data);
+            }
+            ajaxParams = $.extend(ajaxParams, { data: _data });
+            $.ajax(ajaxParams);
+        }
+
+        function BindAllDropdownBasedOnResult(result, selectedDropdown) {
+
+            var Stateoptions = '';
+            var JCoptions = selectedDropdown > 1 ? '' : "<option value>-Select JC-</option>";
+            var Townoptions = selectedDropdown > 2 ? '' : "<option value>-Select Town-</option>";
+            var Partneroptions = selectedDropdown > 3 ? '' : "<option value>-Select Partner-</option>";
+            var FSAoptions = selectedDropdown > 4 ? '' : "<option value>-Select FSA-</option>";
+
+            $('.sm').hide();
+
+            if (selectedDropdown != 1) {
+                $('#ddlState').html('');
+                stateDataFilter = [...new Map(result.map(item => [item['r4g_state_code'], item])).values()];
+                stateData.forEach((e, i) => {
+                    if (e.r4g_state_code == stateDataFilter[0].r4g_state_code) {
+                        Stateoptions += '<option value="' + e.r4g_state_code + '" selected>' + e.r4g_state_name + '</option>';
+                    }
+                    else {
+                        Stateoptions += '<option value="' + e.r4g_state_code + '">' + e.r4g_state_name + '</option>';
+                    }
+                });
+                $('#ddlState').append(Stateoptions);
+                $('#ddlState').trigger("chosen:updated");
+            }
+            if (selectedDropdown != 2) {
+
+                $('#ddlJC').html('');
+                JCDataFilter = [...new Map(result.map(item => [item['jc_sapplant_code'], item])).values()];
+                if (selectedDropdown < 2) {
+                    JCDataFilter.forEach((e, i) => {
+                        JCoptions += '<option value="' + e.jc_sapplant_code + '">' + e.jc_name + '</option>';
+
+                    });
+                }
+                else {
+                    JCData.forEach((e, i) => {
+                        if (e.jc_sapplant_code == JCDataFilter[0].jc_sapplant_code) {
+                            JCoptions += '<option value="' + e.jc_sapplant_code + '" selected>' + e.jc_name + '</option>';
+                        }
+                        else {
+                            JCoptions += '<option value="' + e.jc_sapplant_code + '">' + e.jc_name + '</option>';
+                        }
+                    });
+                }
+
+                $('#ddlJC').append(JCoptions);
+                $('#ddlJC').trigger("chosen:updated");
+            }
+            if (selectedDropdown != 3) {
+                $('#ddlTown').html('');
+                townDataFilter = [...new Map(result.map(item => [item['town_code'], item])).values()];
+                if (selectedDropdown < 3) {
+                    townDataFilter.forEach((e, i) => {
+                        Townoptions += '<option value="' + e.town_code + '">' + e.town_name + '</option>';
+                    });
+                }
+                else {
+                    townData.forEach((e, i) => {
+                        if (e.town_code == townDataFilter[0].town_code) {
+                            Townoptions += '<option value="' + e.town_code + '" selected>' + e.town_name + '</option>';
+                        }
+                        else {
+                            Townoptions += '<option value="' + e.town_code + '">' + e.town_name + '</option>';
+                        }
+                    });
+                }
+                $('#ddlTown').append(Townoptions);
+                $('#ddlTown').trigger("chosen:updated");
+            }
+            if (selectedDropdown != 4) {
+                $('#ddlPartner').html('');
+                PartnerDataFilter = [...new Map(result.map(item => [item['partner_prms_id'], item])).values()];
+                if (selectedDropdown < 4) {
+                    PartnerDataFilter.forEach((e, i) => {
+                        Partneroptions += '<option value="' + e.partner_prms_id + '">' + e.partner_prms_id + '</option>';
+
+                    });
+                }
+                else {
+                    PartnerData.forEach((e, i) => {
+                        if (e.partner_prms_id == PartnerDataFilter[0].partner_prms_id) {
+                            Partneroptions += '<option value="' + e.partner_prms_id + '" selected>' + e.partner_prms_id + '</option>';
+                        }
+                        else {
+                            Partneroptions += '<option value="' + e.partner_prms_id + '">' + e.partner_prms_id + '</option>';
+                        }
+                    });
+                }
+                $('#ddlPartner').append(Partneroptions);
+                $('#ddlPartner').trigger("chosen:updated");
+            }
+            if (selectedDropdown != 5) {
+                $('#ddlFSA').html('');
+                FSADataFilter = [...new Map(result.map(item => [item['fsa_id'], item])).values()];
+                if (selectedDropdown < 5) {
+                    FSADataFilter.forEach((e, i) => {
+                        FSAoptions += '<option value="' + e.fsa_id + '">' + e.fsa_id + '</option>';
+
+                    });
+                }
+                else {
+                    FSAData.forEach((e, i) => {
+                        if (e.fsa_id == FSADataFilter[0].fsa_id) {
+                            FSAoptions += '<option value="' + e.fsa_id + '" selected>' + e.fsa_id + '</option>';
+                        }
+                        else {
+                            FSAoptions += '<option value="' + e.fsa_id + '">' + e.fsa_id + '</option>';
+                        }
+                    });
+                }
+                $('#ddlFSA').append(FSAoptions);
+                $('#ddlFSA').trigger("chosen:updated");
+            }
+
+        }
+
+        $('#ddlState').on('change', function () {
+            var state = $('#ddlState :selected').val();
+            var result = HierarchyData.filter(x => x.r4g_state_code == state);
+            BindAllDropdownBasedOnResult(result, 1);
+        });
+        $('#ddlJC').on('change', function () {
+            var jc = $('#ddlJC :selected').val();
+            var result = HierarchyData.filter(x => x.jc_sapplant_code == jc);
+            BindAllDropdownBasedOnResult(result, 2);
+        });
+        $('#ddlTown').on('change', function () {
+            var town = $('#ddlTown :selected').val();
+            var result = HierarchyData.filter(x => x.town_code == town);
+            BindAllDropdownBasedOnResult(result, 3);
+        });
+        $('#ddlPartner').on('change', function () {
+            var partner = $('#ddlPartner :selected').val();
+            var result = HierarchyData.filter(x => x.partner_prms_id == partner);
+            BindAllDropdownBasedOnResult(result, 4);
+        });
+        $('#ddlFSA').on('change', function () {
+            var fsa = $('#ddlFSA :selected').val();
+            var result = HierarchyData.filter(x => x.fsa_id == fsa);
+            BindAllDropdownBasedOnResult(result, 5);
+        });
+        function btnApply() {
+            //getFormattedNumber(2000);
+            var state = $('#ddlState :selected').val();
+            var jc = $('#ddlJC :selected').val();
+            var town = $('#ddlTown :selected').val();
+            var partner = $('#ddlPartner :selected').val();
+            var fsa = $('#ddlFSA :selected').val();
+            ajaxReq('dashboardresult', { state: state, jc: jc, town: town, partner: partner, fsa: fsa }, true, function (response) {
+                 
+                //$('#td_Grid1_Town').text(response.Data.partner_town);
+                //$('#td_Grid1_Partner').text(response.Data.partner_partner);
+                //$('#td_Grid1_FSA').text(response.Data.partner_fsa);
+                $('#td_Grid2_SI_Town').text(getFormattedNumber(response.Data.fsa_si_town));
+                $('#td_Grid2_SC_Town').text(getFormattedNumber(response.Data.fsa_sc_town));
+                $('#td_Grid2_DC_Town').text(getFormattedNumber(response.Data.fsa_dc_town));
+
+                $('#td_Grid2_SI_Partner').text(getFormattedNumber(response.Data.fsa_si_partner));
+                $('#td_Grid2_SC_Partner').text(getFormattedNumber(response.Data.fsa_sc_partner));
+                $('#td_Grid2_DC_Partner').text(getFormattedNumber(response.Data.fsa_dc_partner));
+
+                $('#td_Grid2_SI_FSA').text('NA');
+                $('#td_Grid2_SC_FSA').text(getFormattedNumber(response.Data.fsa_sc_fsa));
+                $('#td_Grid2_DC_FSA').text(getFormattedNumber(response.Data.fsa_dc_fsa));
+
+                $('#td_Grid3_CWIP_Town').text(getFormattedNumber(response.Data.cwip_town));
+                $('#td_Grid3_CWIP_JC').text(getFormattedNumber(response.Data.cwip_jc));
+                $('#td_Grid3_CWIP_FSA').text(getFormattedNumber(response.Data.cwip_fsa));
+
+                $('#td_Grid3_RWIP_Town').text(getFormattedNumber(response.Data.rwip_town));
+                $('#td_Grid3_RWIP_JC').text(getFormattedNumber(response.Data.rwip_jc));
+                $('#td_Grid3_RWIP_FSA').text(getFormattedNumber(response.Data.rwip_fsa));
+
+                $('#td_Grid4_Scope_Feeder_FSA').text(getFormattedNumber(response.Data.scope_feeder_fsa));
+                $('#td_Grid4_Scope_Feeder_Ring1').text(getFormattedNumber(response.Data.scope_feeder_ring1));
+                $('#td_Grid4_Scope_Feeder_Ring2').text(getFormattedNumber(response.Data.scope_feeder_ring2));
+
+                $('#td_Grid4_Scope_Distribution_FSA').text(getFormattedNumber(response.Data.scope_distribution_fsa));
+                $('#td_Grid4_Scope_Distribution_Ring1').text(getFormattedNumber(response.Data.scope_distribution_ring1));
+                $('#td_Grid4_Scope_Distribution_Ring2').text(getFormattedNumber(response.Data.scope_distribution_ring2));
+
+                $('#td_Grid4_Scope_S1_FSA').text(getFormattedNumber(response.Data.scope_s1_fsa));
+                $('#td_Grid4_Scope_S1_Ring1').text(getFormattedNumber(response.Data.scope_s1_ring1));
+                $('#td_Grid4_Scope_S1_Ring2').text(getFormattedNumber(response.Data.scope_s1_ring2));
+
+                $('#td_Grid4_Scope_S2_FSA').text(getFormattedNumber(response.Data.scope_s2_fsa));
+                $('#td_Grid4_Scope_S2_Ring1').text(getFormattedNumber(response.Data.scope_s2_ring1));
+                $('#td_Grid4_Scope_S2_Ring2').text(getFormattedNumber(response.Data.scope_s2_ring2));
+
+                $('#td_Grid4_Scope_CSA_FSA').text(getFormattedNumber(response.Data.scope_csa_fsa));
+                $('#td_Grid4_Scope_CSA_Ring1').text(getFormattedNumber(response.Data.scope_csa_ring1));
+                $('#td_Grid4_Scope_CSA_Ring2').text(getFormattedNumber(response.Data.scope_csa_ring2));
+
+                $('#td_Grid4_CWIP_FSA').text(getFormattedNumber(response.Data.cwip_fsa_ring));
+                $('#td_Grid4_CWIP_Ring1').text(getFormattedNumber(response.Data.cwip_ring1));
+                $('#td_Grid4_CWIP_Ring2').text(getFormattedNumber(response.Data.cwip_ring2));
+
+                $('#td_Grid4_Completed_Feeder_FSA').text(getFormattedNumber(response.Data.completed_feeder_fsa));
+                $('#td_Grid4_Completed_Feeder_Ring1').text(getFormattedNumber(response.Data.completed_feeder_ring1));
+                $('#td_Grid4_Completed_Feeder_Ring2').text(getFormattedNumber(response.Data.completed_feeder_ring2));
+
+                $('#td_Grid4_Completed_Distribution_FSA').text(getFormattedNumber(response.Data.completed_distribution_fsa));
+                $('#td_Grid4_Completed_Distribution_Ring1').text(getFormattedNumber(response.Data.completed_distribution_ring1));
+                $('#td_Grid4_Completed_Distribution_Ring2').text(getFormattedNumber(response.Data.completed_distribution_ring2));
+
+                $('#td_Grid4_Completed_S1_FSA').text(getFormattedNumber(response.Data.completed_s1_fsa));
+                $('#td_Grid4_Completed_S1_Ring1').text(getFormattedNumber(response.Data.completed_s1_ring1));
+                $('#td_Grid4_Completed_S1_Ring2').text(getFormattedNumber(response.Data.completed_s1_ring2));
+
+                $('#td_Grid4_Completed_S2_FSA').text(getFormattedNumber(response.Data.completed_s2_fsa));
+                $('#td_Grid4_Completed_S2_Ring1').text(getFormattedNumber(response.Data.completed_s2_ring1));
+                $('#td_Grid4_Completed_S2_Ring2').text(getFormattedNumber(response.Data.completed_s2_ring2));
+
+                $('#td_Grid4_RFS_CSA_FSA').text(getFormattedNumber(response.Data.rfs_csa_fsa));
+                $('#td_Grid4_RFS_CSA_Ring1').text(getFormattedNumber(response.Data.rfs_csa_ring1));
+                $('#td_Grid4_RFS_CSA_Ring2').text(getFormattedNumber(response.Data.rfs_csa_ring2));
+
+                $('#td_Grid4_RFS_S2_FSA').text(getFormattedNumber(response.Data.rfs_s2_fsa));
+                $('#td_Grid4_RFS_S2_Ring1').text(getFormattedNumber(response.Data.rfs_s2_ring1));
+                $('#td_Grid4_RFS_S2_Ring2').text(getFormattedNumber(response.Data.rfs_s2_ring2));
+
+                var rsa1 = response.Data.rfs_s2_fsa;
+                var rsa2 = response.Data.rfs_s2_ring1;
+                var rsa3 = response.Data.rfs_s2_ring2;
+                var s1 = parseFloat(rsa1 * 7);
+                var s2 = parseFloat(rsa2 * 7);
+                var s3 = parseFloat(rsa3 * 7);
+                $('#td_Grid4_RFS_Home1_FSA1').text(getFormattedNumber(s1));
+                $('#td_Grid4_RFS_Home2_Ring2').text(getFormattedNumber(s2));
+                $('#td_Grid4_RFS_Home3_Ring3').text(getFormattedNumber(s3));
+            }, false, false);
+
+        }
+
+        function ExportDashboardDump() {
+            var state = $('#ddlState :selected').val();
+            var jc = $('#ddlJC :selected').val();
+            var town = $('#ddlTown :selected').val();
+            var partner = $('#ddlPartner :selected').val();
+            var fsa = $('#ddlFSA :selected').val();
+            var date = $('#Dashboard_Refresh_Date').text();
+            window.location = '/DashBoard/ExportDashboardDataDump?state=' + state + '&jc=' + jc + '&town=' + town + '&partner=' + partner + '&fsa=' + fsa + '&date=' + date;
+        }
+
+        $('.dropfiles').on('click', function () {
+            $('.dropboxDasb').toggleClass('hideDash');
+            $('.arrowD').toggleClass('arrowUp');
+            event.stopPropagation();
+        })
+        $('body').on('click', function () {
+            $('.dropboxDasb').removeClass('hideDash');
+        })
+
+    </script>
+}
+

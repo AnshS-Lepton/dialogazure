@@ -1,0 +1,161 @@
+﻿
+
+@model Models.ViewEntityDropdownMasterSettings
+@using Utility
+
+<div class="update_panel fullWidth">
+    <div class="title">
+        <h4>RCA Master</h4>
+
+    </div>
+    <div id="dvViewDropdownMaster" class="pad_left">
+        @{
+
+            WebGrid grid = new WebGrid(rowsPerPage: Model.objRCAFilter.pageSize,
+                canSort: true, ajaxUpdateContainerId: "dvViewDropdownMaster",
+                ajaxUpdateCallback: "onGridHeaderClick('tblEntityDropDownGrid')");
+            grid.Bind(Model.rcaDropdownTypes, autoSortAndPage: false,
+                rowCount: Model.objRCAFilter.totalRecords);
+            if (Model.objRCAFilter.totalRecords > 0)
+            {
+                grid.PageIndex = Model.objRCAFilter.currentPage - 1;
+            }
+        }
+        @using (Html.BeginForm("RCAMaster", "WFM", FormMethod.Post, new { autocomplete = "off", @id = "frmViewrcaMasters" }))
+        {
+            <div class="form-inline filter-sec ">
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4">RC Name:</label>
+                    <div class="col-md-8 wtd_set">
+                        @Html.DropDownListFor(m => m.status,
+                       new SelectList(Model.ViewRCADetails.Select(x => new
+                       {
+                           Value = x.status.ToString(),
+                           Text = x.status.ToString()
+                       }), "Value", "Text"), "--Select--",
+                       new { @class = "chosen-select col-sm-12", @onchange = "BindDrptypeByLayerIdrca();", @id = "lstLayerss" })
+                    </div>
+                </div>
+
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4">RCA Name:</label>
+                    <div class="col-md-8">
+
+                        @Html.DropDownListFor(m => m.RCA,
+                                                         new SelectList(Model.rcaDropdownTypes.Select(x => new
+                                                         {
+                                                             Value = x.RCA.ToString(),
+                                                             Text = x.RCA.ToString()
+                                                         }), "Value", "Text"),
+                                                                "--Select--"
+                                                                , new { @class = "chosen-select col-sm-12", @id = "fieldNameDropDown" })
+
+
+                        @*<select id="fieldNameDropDown" class="chosen-select col-sm-12">
+                                <option value="Select">Select</option>
+                            </select>*@
+                    </div>
+                </div>
+                @*<div class="form-group wtd_set" style="width:20%">
+                            <label class="control-label col-sm-4">Value</label>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(m => m.Value, new { @class = "form-control displayName", id = "txtValue", style = "width:100%;float:left;" })
+                            </div>
+                        </div>
+                    <br />*@
+
+                <div class="form-group ml-05" id="dvBtnAction">
+                    <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" type="submit">Search</button>
+                    @*@if (@grid.TotalRowCount > 0)
+                        {
+                            <input type="button" id="btnExportDropdownMaster" value="Export" class="btn btn-primary" />
+                        }
+                        else
+                        {
+                            <input type="button" id="btnExportDropdownMaster" value="Export" disabled="disabled" class="btn btn-primary" />
+                        }
+                        <a href="@Url.Action("DropdownMaster")" class="btn btn-default" title="Reset">Reset</a>*@
+                    <span>
+                        <input type="button" id="btnAddNew"
+                               onclick="AddDropdownMasters(0);" value="Add New" class="btn btn-primary" />
+                    </span>
+                  
+                </div>
+
+            </div>
+
+            @*</div>*@
+            if (Model.rcaDropdownTypes.Count > 0)
+            {
+                <div id="divEntityDropDownGridBind">
+                    <div class="recordCount mb-01"><b>Total Records:@grid.TotalRowCount</b></div>
+
+                    <div class="table-responsive tble_cls">
+
+                        @grid.GetHtml(tableStyle: "grid",
+                                        htmlAttributes: new { id = "tblEntityDropDownGrid" },
+                                        mode: WebGridPagerModes.All,
+                                        columns: grid.Columns(
+                                                grid.Column("is_action_allowed", "Action", format:@<text>
+
+                                                        <a href="javascript:void(0);" onclick="AddNewRCAMaster(@item.id,'@item.status','@item.rca');;" title="Edit">
+                                                            <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i>
+                                                        </a>
+                                                        <a href="javascript:void(0);" onclick="DeleteDropdownMasters(@item.id);;" title="Delete">
+                                                            <i class="fa fa-fw fa-trash" style="font-size: 13px; color: #f50000;"></i>
+                                                        </a>
+
+                                                </text>, canSort: false
+),
+                grid.Column("status", "RC", format: @<text>@item.status</text>, canSort: true),
+grid.Column("RCA", "RCA", format: @<text>@item.rca</text>, canSort: true)
+
+
+
+@*grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>, canSort: true),
+    grid.Column("modified_by", "Modified By", format: @<text>@item.modified_by</text>, canSort: true),
+    grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>, canSort: true)*@
+))
+
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+                        @Html.HiddenFor(m => m.dropdown_type)
+                        @Html.HiddenFor(m => m.id)
+                        @Html.HiddenFor(m => m.Value)
+
+                    </div>
+                </div>
+            }
+            @*else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Records Found.
+                    </div>
+                }*@
+        }
+        <script>
+                                        //$(document).ready(function () {
+
+                            //    $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+                            //    // add sorting on grid..
+                            //    addDefaultSortingIcons("tblEntityDropDownGrid");
+                            //    //download utalization as excel format
+                            //    $("#btnExportDropdownMaster").on("click", function () {
+                            //        window.location = appRoot + 'Miscellaneous/ExportDropdownMasterDetails';
+
+                                        //    });
+                                        //});
+
+                                        //$('#frmViewDropdownMaster').on('submit', function(e) {
+                                        //    if(!$('[id="lstLayers"]').valid()) {
+                                        //        e.preventDefault();
+                                        //        return false;
+                                        //    }
+                                        //    else{
+                                        //        return true;
+                                        //    }
+                                       // });
+        </script>
+    </div>
+
+</div>

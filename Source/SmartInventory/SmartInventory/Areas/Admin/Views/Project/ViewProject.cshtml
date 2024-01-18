@@ -1,0 +1,132 @@
+﻿@model Models.Admin.ViewProjectDetailsList
+@using Utility
+@using SmartInventory.Settings;
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div id="dvViewProject" style="white-space: nowrap;">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>
+                View Projects
+            </h4>
+        </div>
+
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.viewProjectDetail.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewProject", ajaxUpdateCallback: "onGridHeaderClick('tblProjectDetail')");
+            grid.Bind(Model.ProjectDetailList, autoSortAndPage: false, rowCount: Model.viewProjectDetail.totalRecord);
+            if (Model.viewProjectDetail.totalRecord > 0)
+            {
+                grid.PageIndex = Model.viewProjectDetail.currentPage - 1;
+            }
+        }
+
+        <div class="pad_left">
+            @using (Html.BeginForm("ViewProject", "Project", FormMethod.Post, new { autocomplete = "off", @id = "frmViewProject" }))
+            {
+                <section>
+                    <div class="form-inline filter-sec">
+                        <div class="d-flex mr-01">
+                            <label class="control-label mr-05">
+                                Network Stage:
+                            </label>
+                            <div class="--input-width">
+                                @Html.DropDownListFor(m => m.viewProjectDetail.networkStage, new SelectList(Model.lstNetworkstage.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select form-control" })
+                            </div>
+                        </div>
+                        <div class="d-flex mr-01">
+                            <label class="control-label mr-05">
+                                Search By:
+                            </label>
+                            <div class="">
+                                @Html.DropDownListFor(m => m.viewProjectDetail.searchBy, new SelectList(Model.lstBindSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select form-control" })
+
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <label class="control-label mr-05">
+                                Search Text:
+                            </label>
+                            <div class="">
+                                @Html.TextBoxFor(m => m.viewProjectDetail.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                            </div>
+                        </div>
+                        <div class="form-group wtd_set" id="dvBtnAction">
+                            <button class="btn btn-primary mr-05 ml-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                            <a href="@Url.Action("ViewProject")" class="btn btn-default" title="Reset">Reset</a>
+                        </div>
+                    </div>
+
+                    @if (Model.ProjectDetailList.Count > 0)
+                    {
+                        <div id="divProjectDetail">
+                            <div class="recordCount mb-01"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+
+                            <div class="table-responsive tble_cls">
+                                @grid.GetHtml(tableStyle: "grid",
+                htmlAttributes: new { id = "tblProjectDetail" },
+                mode: WebGridPagerModes.All,
+                columns: grid.Columns(
+
+                     grid.Column("project_name", "Project Name", format: @<text>@item.project_name</text>),
+grid.Column("project_code", "Project Code", format: @<text>@item.project_code</text>),
+
+grid.Column("planing_name", "Planning Name", format: @<text>@item.planing_name</text>),
+grid.Column("planing_code", "Planning Code", format: @<text>@item.planing_code</text>),
+
+
+grid.Column("purpose_name", "Purpose Name", format: @<text>@item.purpose_name</text>),
+grid.Column("purpose_code", "Purpose Code", format: @<text>@item.purpose_code</text>),
+
+
+grid.Column("workorder_name", "Workorder Name", format: @<text>@item.workorder_name</text>),
+grid.Column("workorder_code", "Workorder Code", format: @<text>@item.workorder_code</text>),
+
+
+grid.Column("network_stage", "Network Stage", format: @<text>@(item.network_stage == "P"?"Planned":"As Built")</text>),
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>),
+
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime (item.created_on.ToString()))</text>),
+
+grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>),
+grid.Column("modified_on", "Modified On", format: @<text>@(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime (item.modified_on.ToString()))
+</text>
+)))
+
+                                @Html.Hidden("dir", grid.SortDirection)
+                                @Html.Hidden("col", grid.SortColumn)
+
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div style=" text-align: center; margin-top: 30px;">
+                            No Records Found.
+                        </div>
+                    }
+
+                </section>
+
+
+            }
+        </div>
+
+
+        <script>
+            $(document).ready(function () {
+                updateNumberstoFormatedNumber();
+                addDefaultSortingIcons("tblProjectDetail");
+            });
+            function updateNumberstoFormatedNumber() {
+                $('span[data]').each(function (index) {
+                    // Get the value of the data-target attribute for each element
+                    var targetValue = $(this).data('data');
+
+                    // Do whatever you want with the element or its data
+                    $(this).text(getFormattedNumber($(this).text().trim()));
+                });
+            }
+        </script>
+
+    </div>
+</div>

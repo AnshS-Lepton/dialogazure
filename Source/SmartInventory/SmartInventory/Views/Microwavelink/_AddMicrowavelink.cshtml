@@ -1,0 +1,648 @@
+﻿@model Models.MicrowaveLinkMaster
+@using Models;
+@using SmartInventory.Settings;
+
+@helper TowerInformation()
+{
+    { Html.RenderPartial("~/Views/Microwavelink/_TowerInformation.cshtml", Model); }
+}
+
+@helper AntennaInformation()
+{
+    { Html.RenderPartial("~/Views/Microwavelink/_AntennaInformation.cshtml", Model); }
+}
+
+
+@helper ItemSpecification()
+{
+    { Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
+}
+@helper ProjectSpecifications()
+{
+    { Html.RenderPartial("~/Views/Library/_ProjectSpecification.cshtml", (IProjectSpecification)Model); }
+}
+@helper OwnershipInfo()
+{
+    { Html.RenderPartial("~/Views/Library/_OwnershipInfo.cshtml", (IOwnershipInfo)Model); }
+}
+@helper InstallationInfo()
+{
+    { Html.RenderPartial("~/Views/Library/_InstallationInformation.cshtml", (IInstallationInfo)Model); }
+}
+@helper IduOduScreen()
+{
+    { Html.RenderPartial("~/Views/Microwavelink/_IduOduScreen.cshtml", Model); }
+
+}
+
+@helper Idu()
+{
+    { Html.RenderPartial("~/Views/Microwavelink/_IduScreen.cshtml", Model); }
+
+}
+@helper pageMessage()
+{
+    {
+        Html.RenderPartial("_PageMessage", Model.objPM);
+    }
+}
+@helper Reference()
+{
+    { Html.RenderPartial("~/Views/Library/_Reference.cshtml", (IReference)Model); }
+}
+@helper GeographicDetails()
+{
+    { Html.RenderPartial("~/Views/Library/_GeographicDetails.cshtml", (IGeographicDetails)Model); }
+}
+@helper AdditionalFields()
+{
+    { Html.RenderPartial("~/Views/Library/_AdditionalFields.cshtml", (IAdditionalFields)Model); }
+}
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.MicrowaveLink.ToString().ToUpper()).FirstOrDefault() : null;
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.MicrowaveLink.ToString());
+
+}
+
+
+<style type="text/css">
+    .maindiv {
+        width: 650px;
+        height: 500px;
+        margin: auto;
+        background-color: #ffffff;
+        border-radius: 5px;
+        border: 1px solid #b9b7b7;
+    }
+
+    .headerMD {
+        width: 100%;
+        height: 30px;
+        background-color: #02bb8a;
+    }
+
+    div.scrollmenu {
+        background-color: #f8f8f8;
+        white-space: nowrap;
+        font-size: 14px;
+        display: flex;
+        border-bottom: 1px solid #efefef;
+        position: relative;
+    }
+
+    div.scrollerhide {
+        overflow: hidden;
+    }
+
+        div.scrollerhide .nav-tabs {
+            display: flex;
+        }
+
+            div.scrollerhide .nav-tabs > li > a {
+                padding: 7px 8px;
+                font-weight: normal;
+            }
+
+
+    .spanSide {
+        padding: 8px 10px;
+        background-color: #efefef;
+        cursor: pointer;
+        font-size: 16px;
+        height: 100%;
+        top: 8px;
+        position: relative;
+    }
+
+    .scrollmenu .overflow a {
+        display: inline-block;
+        color: #6a6a6a;
+        text-align: center;
+        padding: 7px 12px;
+        text-decoration: none;
+        border-radius: 0px;
+    }
+
+        .scrollmenu .overflow a:hover {
+            background-color: #30be74;
+            color: #fff;
+            border-radius: 0px;
+        }
+
+    .dropMenu ul li a {
+        color: #6a6a6a;
+        text-decoration: none;
+        border-radius: 0px;
+    }
+
+
+
+    ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+    .dropMenu {
+        position: absolute;
+        width: 200px;
+        height: 250px;
+        background-color: white;
+        right: 0px;
+        margin: 0px 4px 0px 0px;
+        box-shadow: #ccc 0px 0 10px;
+        overflow: auto;
+        color: #888;
+        display: none;
+        top: 28px;
+        z-index: 9;
+    }
+
+        .dropMenu ul {
+            padding: 0px;
+            margin: 35px 0px 0px;
+        }
+
+            .dropMenu ul li {
+                list-style: none;
+                padding: 8px 0px 8px 10px;
+                cursor: pointer;
+            }
+
+                .dropMenu ul li:hover {
+                    background-color: #efefef;
+                    border-left: 3px solid #02bb8a;
+                    font-weight: 600;
+                }
+
+
+        .dropMenu .alltabs {
+            width: 198px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            position: fixed;
+        }
+
+    .arrowDropUp {
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid #ffffff;
+        position: absolute;
+        z-index: 12;
+        right: 0px;
+        margin: 20px 10px 0px 0px;
+        display: none;
+    }
+
+    .dropMenu::-webkit-scrollbar-thumb {
+        background: #02bb8a;
+    }
+
+    /*.activeMenu {
+            background-color: #30be74;
+            color: #fff !important;
+        }*/
+
+    .activeSideMenu {
+        background-color: #efefef;
+        border-left: 3px solid #02bb8a;
+        font-weight: 600;
+    }
+
+    .go-left {
+        border-right: 1px solid #b9b7b7;
+    }
+
+    .go-right {
+        border-left: 1px solid #b9b7b7;
+    }
+</style>
+
+
+
+
+
+
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SaveMicrowavelink", "MicrowaveLink", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        LoadingElementId = "dvProgress",
+        UpdateTargetId = "dvModalBody",
+        OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.MicrowaveLink.ToString() + "');"
+    },
+                                                                                                                                    new { id = "frmAddMicrowaveLink", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.entityType)
+        @Html.HiddenFor(m => m.geom)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.networkIdType)
+        @Html.HiddenFor(m => m.network_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.pSystemId)
+        @Html.HiddenFor(m => m.pEntityType)
+        @Html.HiddenFor(m => m.network_status)
+        @Html.HiddenFor(m => m.antenna_a_system_id)
+        @Html.HiddenFor(m => m.antenna_b_system_id)
+        @Html.HiddenFor(m => m.tower_a_system_id)
+        @Html.HiddenFor(m => m.tower_b_system_id)
+        @Html.HiddenFor(m => m.parent_network_id)
+
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+        <!-- Message Pop-up -->
+        @pageMessage()
+
+        <div class="libTabs">
+            <div class="scrollmenu">
+                <div><span class="spanSide go-left" id="spnRightMenu" style="display:none;"><i class="fa fa-angle-left" aria-hidden="true"></i></span></div>
+                <div class="scrollerhide overflow-hidden">
+                    <ul class="nav nav-tabs tabs-left" id="ulCableTabs">
+                        <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                        <li><a href="#ItemSpecf" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_006</a></li>
+                        <li><a href="#TowerInformation" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_105</a></li>
+                        <li><a href="#AntennaInformation" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_106</a></li>
+                        @if (layerDetail != null && layerDetail.is_reference_allowed)
+                        {
+                            <li><a href="#dvRefrence" onclick="si.getEntityReference('@Model.system_id','@EntityType.MicrowaveLink.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a></li>
+                        }
+                        <li><a href="#InstallationInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_083</a></li>
+                        <li><a href="#IduOduScreen" data-toggle="tab">ODU</a></li>
+                        <li><a href="#IduScreen" data-toggle="tab">IDU</a></li>
+                        @if (Model.system_id > 0 && layerDetail != null)
+                        {
+                            <li><a href="#Reference" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                        }
+
+                    </ul>
+                </div>
+                <div id="divRightMenu" style="display:none;">
+                    <span class="spanSide go-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                    <span class="spanSide" id="dropdown" style="border-left: 1px solid #b9b7b7;     margin-left: -4px;"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                    <div class="arrowDropUp"></div>
+                    <div class="dropMenu">
+                        <div class="alltabs">@Resources.Resources.SI_OSP_CAB_NET_FRM_014</div>
+                        <ul>
+                            <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                            <li><a href="#ItemSpecf" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_006</a></li>
+
+                            <li><a href="#TowerInformation" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_105</a></li>
+                            <li><a href="#AntennaInformation" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_106</a></li>
+                            @if (layerDetail != null && layerDetail.is_reference_allowed)
+                            {
+                                <li><a href="#dvRefrence" onclick="si.getEntityReference('@Model.system_id','@EntityType.Antenna.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a></li>
+                            }
+                            <li><a href="#InstallationInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_083</a></li>
+                            <li><a href="#IduOduScreen" data-toggle="tab">ODU</a></li>
+                            <li><a href="#IduScreen" data-toggle="tab">IDU</a></li>
+                            @if (Model.system_id > 0 && layerDetail != null)
+                            {
+                                <li><a href="#Reference" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                            }
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="TabContent--max-over">
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane" id="AntennaInformation">@AntennaInformation()</div>
+                <div class="tab-pane active" id="GISInfo">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_098</legend>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtSplitterCode">
+                                @Resources.Resources.SI_OSP_GBL_GBL_GBL_001
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }
+                                :
+                            </label>
+                            <div class="col-sm-10">
+                                <div id="txtMaskedNetworkId"></div>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtSectorName">
+                                @Resources.Resources.SI_OSP_GBL_GBL_FRM_099
+                                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                {
+                                    <i class="clsMandatory">*</i>
+                                }:
+                            </label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.network_name, new { @class = "form-control", @id = "txtSectorName", @maxlength = "50" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtParentID">@Resources.Resources.SI_OSP_GBL_GBL_GBL_155 :<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.link_type, new SelectList(Model.LstLinkType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Link Type", new { @id = "ddlLinkType", @class = "chosen-select col-sm-12", @onchange = "OnChangeddlLinkType()" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRegionName">@Resources.Resources.SI_OSP_GBL_GBL_FRM_100 :</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.link_name, new { @class = "form-control", @id = "txtRegionName", @maxlength = "50" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtProvinceName">@Resources.Resources.SI_OSP_GBL_GBL_FRM_101 : </label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.hierarchy_type, new { @class = "form-control", @id = "txtProvinceName", @maxlength = "50" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRegionName">@Resources.Resources.SI_OSP_GBL_GBL_FRM_102 :</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.service_id, new { @class = "form-control", @id = "txtRegionName", @maxlength = "50" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtProvinceName">@Resources.Resources.SI_OSP_GBL_GBL_FRM_103 : </label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.total_capacity, new { @class = "form-control", @id = "txtProvinceName", @maxlength = "100" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRegionName">@Resources.Resources.SI_OSP_GBL_GBL_FRM_104 :</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.free_capacity, new { @class = "form-control", @id = "txtRegionName", @maxlength = "100" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @OwnershipInfo()
+                        </div>
+                        <div>
+                            @AdditionalFields()
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_206:</label>
+                            <div class="col-md-4">
+
+                                @Html.DropDownListFor(m => m.main_link_type, new List<SelectListItem>
+                                 {
+                                  new SelectListItem{ Text="--Select--", Value = ""},
+                                    new SelectListItem{ Text="Optical", Value = "Optical"},
+                                    new SelectListItem{ Text="MW", Value = "MW"  }
+                                 }, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                 {
+                                     @class = "chosen-select form-control",
+                                     @style = "padding:0;",
+                                 }, new { @id = "ddlMainlinktype", @tabindex = "2", @title = "Status" }))
+                            </div>
+                            @*@Html.DropDownListFor(x => x.Main_link_type, new SelectList(Model.lstEndPointType.Select(x => new { Value = x.layer_title, Text = x.layer_title }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlEndPointtype", @onchange = "fiberLink.GetEndPoint();" })*@
+                            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_GBL_190:</label>
+                            <div class="col-md-4">
+                                @*@Html.DropDownListFor(m => m.main_link_id, new List<SelectListItem>
+                    {
+                     new SelectListItem{ Text="--Select--", Value = ""},
+                       new SelectListItem{ Text="Optical", Value = "Optical"},
+                       new SelectListItem{ Text="MW", Value = "MW"  }
+                    }, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                    {
+                        @class = "chosen-select form-control",
+                        @style = "padding:0;",
+                    }, new { @id = "ddlredundantlinktype", @tabindex = "2", @title = "Status", @required = true }))*@
+
+                                @Html.TextBoxFor(m => m.main_link_id, new { @class = "form-control", @maxlength = "50", @id = "txtmainlinkid" })
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_GBL_191:</label>
+                            <div class="col-md-4">
+                                @Html.DropDownListFor(m => m.redundant_link_type, new List<SelectListItem>
+                                 {
+                                  new SelectListItem{ Text="--Select--", Value = ""},
+                                    new SelectListItem{ Text="Optical", Value = "Optical"},
+                                    new SelectListItem{ Text="MW", Value = "MW"  }
+                                 }, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                 {
+                                     @class = "chosen-select form-control",
+                                     @style = "padding:0;",
+                                 }, new { @id = "ddlredundantlinktype", @tabindex = "2", @title = "Status" }))
+                            </div>
+                            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_GBL_192:</label>
+                            <div class="col-md-4">
+                                @*@Html.DropDownListFor(m => m.redundant_link_id, new List<SelectListItem>
+                    {
+                     new SelectListItem{ Text="--Select--", Value = ""},
+                       new SelectListItem{ Text="Optical", Value = "Optical"},
+                       new SelectListItem{ Text="MW", Value = "MW"  }
+                    }, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                    {
+                        @class = "chosen-select form-control",
+                        @style = "padding:0;",
+                    }, new { @id = "ddlMainlinktype", @tabindex = "2", @title = "Status", @required = true }))*@
+                                @Html.TextBoxFor(m => m.redundant_link_id, new { @class = "form-control", @maxlength = "50", @id = "txtredundantlinkid" })
+
+                            </div>
+                        </div>
+
+                    </fieldset>
+                    @if (Model.lstUserModule.Contains("PROJ"))
+                    {
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_001</legend>
+                            @ProjectSpecifications()
+                        </fieldset>
+                    }
+                    <div>
+                        @GeographicDetails()
+                    </div>
+                </div>
+                <div class="tab-pane" id="ItemSpecf">
+                    @ItemSpecification()
+                </div>
+                <div class="tab-pane" id="TowerInformation">@TowerInformation()</div>
+                <div class="tab-pane" id="InstallationInfo">
+                    @InstallationInfo()
+                </div>
+                <div class="tab-pane" id="IduOduScreen">
+                    @IduOduScreen()
+                </div>
+                <div class="tab-pane" id="IduScreen">
+                    @Idu()
+                </div>
+                <div class="tab-pane" id="Reference">
+                    @Reference()
+                </div>
+
+            </div>
+        </div>
+
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            @if (Model.system_id > 0)
+            {
+                <div class="ModelFooterInfo">
+                    <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_014:</label>
+                    <label class="model-label-info">@(Model.network_status != null ? Utility.MiscHelper.GetNetworkStatus(Model.network_status.ToUpper()) : string.Empty)</label>
+                    <label for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_007:</label>
+                    <label class="model-label-info" title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
+                </div>
+            }
+            <div class="ml-auto">
+                <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+
+                @if (Model.system_id > 0)
+                {
+                    <button type="button" onclick="formPost()" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" onclick="return Validation()" id="btnUpdateItemTemplate" disabled="disabled">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                }
+                else
+                {
+                    <button type="button" onclick="formPost()" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" onclick="return Validation()" id="btnSaveItemTemplate" disabled="disabled">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                }
+
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    }
+</div>
+<script type="text/javascript">
+    var inputs = [];
+    $(document).ready(function () {
+        $("#dropdown").on("click", function () {
+            $(".dropMenu").slideToggle();
+            $(".arrowDropUp").toggle();
+        });
+
+        $('.dropMenu ul li').on("click", function () {
+            $('.dropMenu ul li').removeClass("activeSideMenu ");
+            $(this).addClass("activeSideMenu");
+        });
+        $('.go-right').on("click", function (event) {
+            var pos = $('div.overflow-hidden').scrollLeft() + 160;
+            $('div.overflow-hidden').css("scroll-behavior", "smooth");
+            $('div.overflow-hidden').scrollLeft(pos);
+
+        });
+        $('.go-left').on("click", function (event) {
+            var pos = $('div.overflow-hidden').scrollLeft() - 160;
+            $('div.overflow-hidden').css("scroll-behavior", "smooth");
+            $('div.overflow-hidden').scrollLeft(pos);
+        });
+
+
+        callFormValidator("frmAddMicrowaveLink");
+
+        $('.chosen-select').chosen({ width: '100%' });
+        $('#specification').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindVendor(dID);
+        });
+        $('#ddlVendor').chosen().change(function (event) {
+            var specfi = $("#specification option:selected").val(); //
+            var vandorid = $(this).val();
+            var entitytype = $('#entityType').val();
+            bindCateSubcat(entitytype, specfi, vandorid);
+        });
+        $('#ddlType').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindBrand(dID);
+        });
+        $('#ddlBrand').chosen().change(function (event) {
+            var dID = $(this).val();
+            bindModel(dID);
+        });
+
+        EnableDisableUpdateButton("frmAddMicrowaveLink", @Model.system_id > 0 ? "btnUpdateItemTemplate" : "btnSaveItemTemplate");
+
+        //$("#microwaveLinkMaster_network_id").val()
+        //APPLY INPUT MASK ON NETWORK ID..
+        getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
+        $("#frmAddMicrowaveLink").on("submit", function () {
+            $("#microwaveLinkMaster_network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
+            si.upperCaseNetWorkId();
+            if (!entityReferencevalidation())
+                return false;
+            return true;
+        });
+        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+    });
+    function Validation() {
+         
+      /*  emID.addClass('input-validation-error');*/
+        if ($('#ddlLinkType_chosen :selected').val() == "") {
+           // $('#ddlLinkType').css('border-color', 'red');
+            $('#ddlLinkType_chosen').addClass('input-validation-error');
+            return false;
+        } else {
+
+            /*  $('#ddlLinkType').css('border-color', '');*/
+            $('#ddlLinkType_chosen').removeClass('input-validation-error');
+        }
+        if (($('#ddlLinkType').val() == "Redundant Link") && ($('#ddlMainlinktype').val() == "")) {
+            $('#ddlMainlinktype_chosen a').css('border-color', 'red');
+            return false;
+        } else {
+
+            $('#ddlMainlinktype_chosen a').css('border-color', '');
+
+        }
+        if (($('#ddlLinkType').val() == "Redundant Link") && ($('#txtmainlinkid').val() == "")) {
+            $('#txtmainlinkid').css('border-color', 'red');
+
+            return false;
+        } else {
+
+            $('#txtmainlinkid').css('border-color', '');
+        }
+
+
+        if (($('#ddlLinkType').val() == "Main Link") && ($('#ddlredundantlinktype').val() == "")) {
+            $('#ddlredundantlinktype_chosen a').css('border-color', 'red');
+            return false;
+        } else {
+
+            $('#ddlredundantlinktype_chosen a').css('border-color', '');
+        }
+        if (($('#ddlLinkType').val() == "Main Link") && ($('#txtredundantlinkid').val() == "")) {
+
+            $('#txtredundantlinkid').css('border-color', 'red');
+
+            return false;
+        } else {
+            $('#txtredundantlinkid').css('border-color', '');
+        }
+    }
+    function OnChangeddlLinkType()
+    {
+        if ($('#ddlLinkType_chosen :selected').val() == "")
+        {
+            $('#ddlLinkType_chosen').removeClass('input-validation-error');
+        }
+    }
+    function formPost() {
+         
+        if ($('#txtbomsubcategory').val() == '') {
+            $('#txtbomsubcategory').next().addClass('input-validation-error');
+            return false;
+        }
+        else {
+            $("#frmAddMicrowaveLink").submit();
+        }
+    }
+</script>

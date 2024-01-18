@@ -1,0 +1,298 @@
+﻿@model  List<Models.EntityDetail>
+@using Models;
+@using SmartInventory.Settings;
+<style>
+    .doc-child-checkbox {
+        position: absolute;
+        z-index: 999;
+        left: 30px;
+        height: 17px;
+        width: 17px;
+    }
+
+        .doc-child-checkbox input[type="radio"], .doc-child-checkbox input[type="checkbox"] {
+            margin: 7px 0 0;
+        }
+</style>
+<!DOCTYPE html>
+<div id="dvInfoElement" class="infoLeft">
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="infBox--style">
+            <b>@Resources.Resources.SI_OSP_GBL_NET_FRM_249</b>
+            <div class="mt-1rem mb-15">
+                <label class="Custom_Radio_Buttons"><input type="radio" name="Layer" value="All" onclick="si.filterInfoElements('All')"  id="rdbAllLayer"> <span class="checkmark"> <spam style="width: 230px; float: left; margin-left: 20px; font-size:12px;">@Resources.Resources.SI_OSP_GBL_GBL_GBL_037</spam></span></label>
+                <label class="Custom_Radio_Buttons"><input type="radio" name="Layer" value="DisplayLayer" onclick="si.filterInfoElements('DisplayLayer')" checked id="rdbDisplayedLayer"> <span class="checkmark"> <spam style="width: 230px; float: left; margin-left: 20px; font-size: 12px;">@Resources.Resources.SI_OSP_GBL_NET_FRM_250</spam></span></label>
+            </div>
+            <div class="d-flex">
+                <input class="form-control mr-01" type="text" placeholder="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046" onkeyup="si.srchelement()" id="txtInfoSrch" />
+                @*<input class="form-control clsReadOnly" data-val="true" data-val-required="The a_location field is required." id="a_location" name="a_location" readonly="True" type="text" value="GGN-JCL000140">*@
+
+                <select id="ddNetLayerType" class="form-control chosen-select" onchange="si.changeNetworkStage()">
+                    <option value="All">All</option>
+                    <option value="P">Planned</option>
+                    <option value="A">As-Built</option>
+                    @if (ApplicationSettings.IsDormantEnabled)
+                    {
+                        <option value="D">Dormant</option>
+                    }
+                    </select>
+                @*<input class="form-control clsReadOnly" data-val="true" data-val-required="The b_location field is required." id="b_location" name="b_location" readonly="True" type="text" value="GGN-JCL000142">*@
+            </div>
+
+        </div>
+        <div class="InfoElements wp-table" id="divDefault">
+            <div class="scrollTable">
+                <table id="infoTable" border="0" cellspacing="0" cellpadding="5" class="ElementsList grid cur-poiner">
+                    <tbody>
+                        @foreach (var objEntity in Model)
+                        {
+                        
+                            var networkStatus = "";
+                            if (objEntity.network_status == "P")
+                            {
+                                networkStatus = "Planned";
+                            }
+                            else if (objEntity.network_status == "A")
+                            {
+                                networkStatus = "As-Built";
+                            }
+                            else if (objEntity.network_status == "D")
+                            {
+                                networkStatus = "Dormant";
+                            }
+                            var isvisibleP = @objEntity.network_status == "P" ? "block" : "none";
+
+
+                            <tr id="@objEntity.entity_type" onmouseout="si.removeInfoHoverItem()"
+                                onmouseover="si._focusMe('@objEntity.geom_type',si.getLatLongArr('@objEntity.geom'),'@objEntity.entity_type',si.getLatLongArr('@objEntity.centroid_geom'))"
+                                onclick="si.showElementInfo('@objEntity.system_id','@objEntity.entity_type', '@objEntity.geom_type','@HttpUtility.HtmlEncode(objEntity.common_name)','@objEntity.network_status','@HttpUtility.HtmlEncode(objEntity.display_name)','@objEntity.geom')">
+                                <td>@objEntity.entity_title</td>
+                                <td>@(objEntity.display_name +  (!string.IsNullOrEmpty(objEntity.total_core) ? "-(" + (objEntity.total_core) + ")" : "")+(!string.IsNullOrEmpty(objEntity.network_status) ?
+                                "-(" + objEntity.network_status + ")" : ""))</td>
+                                @*<td>@(string.IsNullOrEmpty(networkStatus) ? "" : ":")</td>
+                                    <td>
+                                        @(string.IsNullOrEmpty(networkStatus) ? "" : networkStatus) <input type="hidden" id="hdnNetworkId" value="@objEntity.network_status" />
+                                    </td>*@
+                                <span id="@(objEntity.entity_type + "_" + objEntity.system_id)"><input type="hidden" id="hdnnetwtyp" value="@objEntity.network_status" /></span>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="nr-found infoLeft">
+            <span>@Resources.Resources.SI_OSP_GBL_GBL_GBL_051</span>
+        </div>
+    }
+</div>
+@*<div id="infoTB" class="row" style="margin-left: 0px; width: 408px; float: left;margin-top:8px; ">
+    <a title="Back to List" class="infoBack" onclick="si.HideElementInfo()"></a>
+    <div id="OSPToolBar" class="tool_bar">
+        <a title="Back to List" class="infoBack" onclick="si.HideElementInfo()"></a>
+        @Html.Partial("_InformationToolbar", new List<Models.LayerActionMapping>())
+    </div>*@
+<div class="infoLeft">
+    <div class="tool_bar toolBar--loader infBox--style" id="infoTB" att_systemid="0" att_entitytype="0" att_featurename="EntityInfo">
+        @Html.Partial("_InformationToolbar", new List<Models.LayerActionMapping>())
+    </div>
+
+
+
+    @*<div class="tool_bar" id="infoTB" att_systemid="0" att_entitytype="0">
+            <a title="Back to List" class="infoBack" onclick="si.HideElementInfo()"></a>
+            <div class="Export" title="Export">
+                &nbsp;
+            </div>
+            <div class="zoom" title="Zoom on Map">
+                &nbsp;
+            </div>
+            <div class="detail" title="Network Element Detail">
+                &nbsp;
+            </div>
+            <div class="edit" title="Location Edit">
+                &nbsp;
+            </div>
+            <div class="save" title="Save">
+            </div>
+            <div class="btnCancel" title="Cancel">
+            </div>
+            <div class="Delete" title="Delete">
+                &nbsp;
+            </div>
+            <div class="uploadImage" title="Upload Image/Document">
+                &nbsp;
+            </div>
+
+            <div class="addSplitter" title="Add Splitter">
+                &nbsp;
+            </div>
+            <span class="SplitterTemplate infoTemplate" title="Splitter Template" data-href="ItemTemplate/SplitterTemplate" data-lyrname="Splitter" data-title="Splitter">T</span>
+
+            <div class="addFMS" title="Add FMS">
+                &nbsp;
+            </div>
+            <span class="FMSTemplate infoTemplate" title="FMS Template" data-href="ItemTemplate/FMSTemplate" data-lyrname="FMS" data-title="FMS">T</span>
+
+            @{
+                var BDBlayerTitle = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.BDB.ToString().ToUpper()).FirstOrDefault().layer_title : null;
+            }
+            <div class="addBDB" title="Add @BDBlayerTitle">
+                @BDBlayerTitle&nbsp;
+            </div>
+            <span class="BDBTemplate infoTemplate" title="@BDBlayerTitle Template" data-href="ItemTemplate/BDBTemplate" data-lyrname="BDB" data-title="@BDBlayerTitle" style="margin-right:5px">T</span>
+
+            <div class="addStructure" title="Add Structure">
+                &nbsp;
+            </div>
+            <div class="dragStructure" title="Drag & Drop Structure" style="cursor:move;">
+                &nbsp;
+            </div>
+            <div class="addONT" title="Add ONT">
+                &nbsp;
+            </div>
+            <span class="ONTTemplate infoTemplate" title="ONT Template" data-href="ItemTemplate/ONTTemplate" data-lyrname="ONT" data-title="ONT">T</span>
+            <div class="addCustomer" title="Add Customer">
+                &nbsp;
+            </div>
+            <div class="addCloneEntity" title="Clone">
+                &nbsp;
+            </div>
+            <div class="saveBulkClone" title="Save Clone">
+            </div>
+            <div class="saveClone" title="Save">
+            </div>
+
+            <div class="ISPView" title="ISP View">
+                &nbsp;
+            </div>
+            <div class="addSpliceClosure" title="Add Splice Closure">
+                &nbsp;
+            </div>
+            <div class="addAdb" title="Add ADB">
+                &nbsp;
+            </div>
+            <div class="addCdb" title="Add CDB">
+                &nbsp;
+            </div>
+            <div class="ParallelCable" title="Parallel Cable" data-geometry="">
+            </div>
+            <div class="convertCableType" title="Convert to Overhead/Undergorud" data-geometry="">
+            </div>
+            <div class="InsideCable" title="Add Cable" data-geometry="">
+            </div>
+            <div class="InsideDuct" title="Add Duct" data-geometry="">
+            </div>
+            <div class="itemAssociate" title="Associate">
+            </div>
+            <div class="splitCable" title="Split Cable" data-geometry="">
+            </div>
+            <div class="splitDuct" title="Split Duct" data-geometry="">
+            </div>
+            <div class="toPlanned" title="Convert to Planned">
+                &nbsp;
+            </div>
+            <div class="toAsBuilt" title="Convert to As Built">
+                &nbsp;
+            </div>
+            <div class="toDorment" title="Dorment">
+                &nbsp;
+            </div>
+            <div class="auditEntity" title="History">
+                &nbsp;
+            </div>
+            <div class="areaPotential" title="BOM/BOQ Report">
+                &nbsp;
+            </div>
+            <div class="AssociationBOMBOQ" title="Associated Entity BOM/BOQ Report">
+                &nbsp;
+            </div>
+            <div class="bulkOperation" title="Bulk Operation">
+                &nbsp;
+            </div>
+            <div class="areareport" title="Export Report">
+                &nbsp;
+            </div>
+            <div class="pentrowreport icon-export_report_ROW" title="Export ROW Report">
+                &nbsp;
+            </div>
+            <div class="CPF" title="Connection Path Finder">
+                &nbsp;
+            </div>
+            <div class="subarea" title="Add SubArea">
+                &nbsp;
+            </div>
+            <div class="logicalView" title="Logical View"></div>
+            <div class="convertToPolygon" title="Convert to Polygon"></div>
+            <div class="convertToPoint" title="Convert to Point"></div>
+            <div class="btnSavePoygon" title="Save"></div>
+            <div class="btnCancelPolygon" title="Cancel"></div>
+            <div class="addPITEntity" title="Add PIT"></div>
+            <span class="PITTemplate infoTemplate" title="PIT Template" data-href="ItemTemplate/PITTemplate" data-lyrname="PIT" data-title="PIT">T</span>
+            <div class="savePIT" title="Save PIT"></div>
+            <div class="btnCancelPIT" title="Cancel"></div>
+            <div id="EntityRoomView" class="RoomView" title="Room View"></div>
+            <div class="exportROWBOM" title="Export BOM Report"></div>
+            <div class="exportROWBOQ" title="Export BOQ Report"></div>
+            @if (ApplicationSettings.IsEntityConversionEnable)
+            {
+            <div class="convertCDBtoSC" title="Convert to Spliceclosure" data-geometry="">
+            </div>
+            }
+            @if (ApplicationSettings.IsEntityConversionEnable)
+            {
+                <div class="convertSCtoCDB" title="Convert to CDB" data-geometry="">
+                </div>
+            }
+        </div>*@
+    <div class="carousel_border" style="display:none;">
+    </div>
+    <div>
+        <div class="libInfoTabs">
+            <ul class="nav nav-tabs tabs-left tab--bg">
+                <li class="active"><a href="#Details" data-toggle="tab" id="divDetails">@Resources.Resources.SF_GBL_GBL_NET_FRM_051</a></li>
+                <li onclick="si.getElementImages()" class="hide-li" style="display:none"><a href="#Image" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_285</a></li>
+                <li onclick="si.getAttachmentFiles()" class="hide-li" style="display:none"><a href="#Attachment" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_286</a></li>
+                <li onclick="si.getRefLinks()" class="hide-li" style="display:none"><a href="#RefLinks" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_187</a></li>
+            </ul>
+        </div>
+        <div class="wp-table">
+            <div class="scrollTable libTabContent">
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="Details">
+                        <div class="showloader info-load-hight">
+                            <div id="divDraftTitle" class="red-font">
+                            </div>
+                            @*<fieldset class="the-fieldset" style="margin: 0px;">*@
+                            <div id="entityInfo" class="tabcontent" style="display: block;">
+                                <table id="tblEntityInfo" border="0" cellspacing="0" cellpadding="5" class="grid"></table>
+                            </div>
+                            @*</fieldset>*@
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="Image">
+                        <div id="dvImages" class="showloader info-load-hight">
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="Attachment">
+                        <div id="dvDocument" class="showloader info-load-hight">
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="RefLinks">
+                        <div id="dvRefLink" class="showloader info-load-hight">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

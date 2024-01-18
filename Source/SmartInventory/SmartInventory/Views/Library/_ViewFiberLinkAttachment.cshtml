@@ -1,0 +1,51 @@
+﻿
+@model List<Models.LibraryAttachment>
+
+<style>
+    .webgrid {
+        margin: 4px;
+        border-collapse: collapse;
+        width: 98%;
+        white-space: nowrap;
+        font-size: 13px;
+    }
+</style>
+@if (Model != null && Model.Count > 0)
+{ 
+        <div class="form-group" style="text-align:right;">
+            <div class="col-sm-8 UploadAction"></div>
+            <div class="col-sm-4 icon-Download cptr" onclick="fiberLink.attachment.downLoadFile(@Model[0].entity_system_id,'@Model[0].entity_type');" id="divDownloadDocuments" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_048" style="float:right; text-align:right;">@Resources.Resources.SI_OSP_GBL_NET_FRM_049</div>
+        </div>
+        <div class="form-group" style="padding-top: 11px;padding-left: 16px;">
+            <table class="webgrid" id="ulDocumentUpload">
+                <thead>
+                    <tr class="webGridHeader">
+                        <th scope="col" class="">@Resources.Resources.SI_OSP_GBL_GBL_GBL_029</th>
+                        <th scope="col" class="">@Resources.Resources.SI_OSP_GBL_GBL_GBL_030</th>
+                        <th scope="col" class="">@Resources.Resources.SI_OSP_GBL_GBL_GBL_031</th>
+                        <th scope="col" class="">@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                {
+                        <tr id="liDocumentUpload_@item.id"
+                            data-entity-id="@item.entity_system_id"
+                            data-system-id="@item.id"
+                            data-image-location="@item.file_location"
+                            data-image-name="@item.org_file_name">
+                            <td>
+                                <input id="hdEntityType" type="hidden" value="@item.entity_type" />
+                                @*<a style="cursor:pointer;" href="Main/DownloadFile?path=@item.file_location&name=@item.file_name">@item.org_file_name</a>*@ 
+                                <a style="cursor:pointer;" href="@Url.Action("DownloadFileById", "Main",new {id=@item.id })" title="@item.org_file_name">@(item.org_file_name.Length > 30 ? item.org_file_name.Substring(0, 30) + "..." : item.org_file_name)</a>
+                            </td>
+                            <td style="text-align:center;">@item.file_size_converted</td>
+                            <td style="text-align:center;">@item.uploaded_by</td>
+                            <td><div class="col-sm-1 icon-Close cptr" onclick="fiberLink.attachment.deleteFile(@item.id,@item.entity_system_id,@item.entity_type);" id="divDeleteDocuments" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_050" style="text-align:center;color:red;"></div></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div> 
+}
+

@@ -1,0 +1,444 @@
+﻿@using Models
+@model Models.TicketMaster
+
+<style>
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 16px;
+    color: #887375;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+}
+
+p,
+label {
+    margin: 0;
+    font-weight: 600;
+}
+
+textarea {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+html {
+    box-sizing: border-box;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.align-top {
+    align-items: flex-start;
+}
+
+.wrapper {
+    margin: 2rem auto;
+    width: 70%;
+    max-width: 700px;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border-radius: 3px;
+    box-shadow: -1px 30px 26px -26px rgba(0, 0, 0, 0.51);
+    -webkit-box-shadow: -1px 30px 26px -26px rgba(0, 0, 0, 0.51);
+    -moz-box-shadow: -1px 30px 26px -26px rgba(0, 0, 0, 0.51);
+}
+
+.content {
+    font-size: 17px;
+    line-height: 22px;
+    margin-top: 0;
+    color: #21160c;
+    margin-bottom: 1.5rem;
+}
+
+.pose-rel {
+    position: relative;
+}
+
+.fieldsRow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.fieldInput,
+.fieldTextArea {
+    flex-direction: column;
+}
+
+    .fieldInput input[type="text"],
+    .fieldTextArea textarea {
+        border-radius: 4px;
+        border: 1px solid #c4c8d5;
+        padding: 0.5rem 0.8rem;
+        margin-top: 0.3rem;
+        font-weight: 600;
+        transition: 0.3s;
+        box-shadow: inset -1px 1px 3px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+        .fieldInput input::-webkit-input-placeholder,
+        .fieldTextArea textarea::-webkit-input-placeholder {
+            color: #b4b6c8;
+        }
+
+        .fieldInput input:focus,
+        .fieldTextArea textarea:focus {
+            outline: none;
+            background-color: #f7f7f7;
+        }
+
+    .fieldInput label,
+    .fieldTextArea label {
+        font-size: 13px;
+        color: #818181;
+    }
+
+    .fieldInput input[type="submit"] {
+        padding: 0.8rem 2rem;
+        background: #3535f3;
+        color: #ffffff;
+        text-transform: capitalize;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: inset 0 0 0 #9999ff;
+        transition: 0.4s;
+        outline: none;
+        font-weight: bold;
+        font-size: 14px;
+        position: relative;
+    }
+
+        .fieldInput input[type="submit"]:active {
+            transform: translateY(4px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .fieldInput input[type="submit"]:hover {
+            background: #9999ff;
+        }
+
+    .fieldInput select {
+        box-shadow: inset -1px 1px 3px rgba(0, 0, 0, 0.1);
+        margin-top: 0.3rem;
+        pointer-events: all;
+        padding: 0.5rem 0.8rem;
+        border: 1px solid #c4c8d5;
+        border-radius: 4px;
+        padding-right: 1.7rem;
+        background-image: url(arrow.png);
+        background-color: transparent;
+        background-repeat: no-repeat;
+        background-position: calc(100% - 10px) center;
+        background-size: 10px;
+        font-weight: 600;
+        color: #b4b6c8;
+    }
+
+    .fieldInput select {
+        -webkit-appearance: none;
+        appearance: none;
+        -moz-appearance: none;
+    }
+
+        .fieldInput select:focus {
+            background-color: #f5f5f5;
+            outline: none;
+        }
+
+.input--content {
+    position: absolute;
+    left: 2px;
+    bottom: 1px;
+    width: 34px;
+    height: 31px;
+    line-height: 30px;
+    border-right: 1px solid #c4c8d5;
+    padding-right: 5px;
+    padding-left: 5px;
+    font-weight: 600;
+    text-align: center;
+    background-color: #ffffff;
+}
+
+.input-pad {
+    padding-left: 3.7rem !important;
+}
+
+.maxFile {
+    font-weight: 600;
+    color: #b4b6c8;
+    font-size: 13px;
+    display: inline-block;
+    margin-top: 0.3rem;
+}
+
+.textArea--content {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-weight: 600;
+}
+
+.fileContent {
+    margin-left: 0;
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
+.fileUploadBtn {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.btn {
+    border: none;
+    background-color: transparent;
+}
+
+.fileUploadBtn input[type="file"] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+    .form-control {
+        height: 30px;
+        padding: 5px 5px;
+        /*border: 1px solid #bdb9b9;
+    border-radius: 2px;*/
+        box-shadow: none;
+        outline: none;
+    }
+    .highlight_chosen_select {
+        border: 1px solid #ff0000 !important;
+        border-radius: 5px;
+    }
+@*@media screen and (max-width: 768px) {*@
+    /*.fieldInput input[type="submit"] {
+        width: 100%;
+        text-align: center;
+    }*/
+/*}*/
+
+</style>
+<div class="col-lg-12" id="dvPageMessage">
+    @*@{
+            if (@Model.pageMsg != null)
+            {
+                Html.RenderPartial("_PageMessage", Model.pageMsg);
+            }
+        }*@
+</div>
+<div class="wrapper">
+
+    @Html.HiddenFor(m => m.FileSize)
+    @Html.HiddenFor(m => m.FileType)
+    <h2 class="content">
+        Fill in the form to report any issues. Kindly provide a detailed description so that we
+        understand your needs better and give faster solutions
+    </h2>
+
+    <div class="form-group">
+
+        <div class="fieldsRow">
+            <div class="fieldInput d-flex">
+                <label class="control-label">
+                    Name
+                </label>
+                @Html.TextBoxFor(m => m.customer_name, new { @id = "txtCustomerName", @title = "Name", @class = "input-sm form-control", @placeholder = "eg. Angrie Singh", @readonly = "readonly" })
+            </div>
+
+            <div class="fieldInput d-flex">
+                <label class="control-label">
+                    Mobile Number
+                </label>
+                <div class="pose-rel">
+
+                    @Html.TextBoxFor(m => m.contact_no, new { @id = "txtContactNo", @title = "Name", @class = "input-sm form-control", @placeholder = "9818XXXX10", @readonly = "readonly" })
+                </div>
+            </div>
+        </div>
+        <div class="fieldsRow mt-1">
+            <div class="fieldInput d-flex">
+                <label class="control-label">
+                    Business Name
+                </label>
+                @Html.TextBoxFor(m => m.ticket_reference, new { @id = "txtTicketReference", @title = "TicketReference", @class = "input-sm form-control", @placeholder = "JioFiber", @readonly = "readonly" })
+            </div>
+
+            <div class="fieldInput d-flex">
+                <label class="control-label">
+                    Category
+                </label>
+                @Html.DropDownListFor(x => x.ticket_type_id, new SelectList(Model.lstTicketTypeMaster.Select(x => new { Value = x.id, Text = x.ticket_type }), "Value", "Text"), "Select", new { @class = "chosen-select form-control", @id = "ddlTicketTypes", @onchange = "return validateDropdown(this.id);" })
+            </div>
+        </div>
+        <br />
+        <div class="">
+            <label class="control-label">
+                Enter issue description
+            </label>
+            <div class="pose-rel">
+                @Html.TextAreaFor(m => m.ticket_description, 5, 100, new { @id = "txtDescription", @title = "Ticket Description", @placeholder = "Write something...", @maxlength = 200, @onkeyup = "return validateTextbox(this.id);", @Style = "resize: none" })
+                <div class="textArea--content"><span id="charLength">0</span>/200</div>
+            </div>
+        </div>
+
+        <div class="attachFile mt-1 d-flex align-top">
+            <div class="fileUploadBtn">
+                <button class="btn">
+                    <img src="~/Content/Images/attach.svg" />
+                    <span id="fileName" style="font-size: 13px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 20ch;"></span>
+                </button>
+                <input type="file" id="FileTicketForm" multiple style="font-size: 13px;height:37px;width: 195px;" name="datafile" onchange="return isValidUploadFile(this.id);" />
+                <label id="lblUploadProgress" style="font-weight: bold; margin-top: 15px; font-size: 13px; width: 200px;"></label>
+                <div class="fileContent">
+                    <p>Attach a File</p>
+                    <span class="maxFile">
+                        Max file size @Model.FileSize MB<br />
+                        zip, exe, dll not acceptable
+                    </span>
+                </div>
+            </div>
+
+        </div>
+        <div class="fieldsRow mt-1">
+            <div class="fieldInput">
+                <input type="submit" class="btn btn-primary" name="btnaction" id="btnSubmit" width="20" value="Save" onclick="return SaveTicketData();" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    debugger
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '100%' });
+        $('#txtDescription').keyup(function () {
+            debugger
+            var charLen = this.value.length;
+            $('#charLength').html(charLen);
+        })
+    });
+    function validateDropdown(elementId) {
+        $("#" + elementId + "_chosen").removeClass("highlight_chosen_select");
+        if ($("#" + elementId).val() == '') {
+            $("#" + elementId + "_chosen").addClass("highlight_chosen_select");
+             return false;
+
+        }
+        return true;
+
+    }
+
+    function validateTextbox(elementId) {
+        if ($('#' + elementId).length > 0) {
+            var value = $('#' + elementId).val();
+
+            if (value == null || value == "" || parseFloat(value) == 0.0) {
+                $('#' + elementId).addClass('input-validation-error').removeClass('valid');
+                return false;
+            }
+            else {
+                $('#' + elementId).addClass('valid').removeClass('input-validation-error');
+                return true;
+            }
+        }
+        return true;
+    }
+
+
+    function isValidUploadFile(controlid) {
+        debugger
+        $('#fileName').val(null);
+        var formData = new FormData();
+        var RestrictedTicketAttachments = '@Model.FileType';
+        var acceptedFileSize = '@Model.FileSize';
+        var postedFiles = document.getElementById(controlid);
+        var Files = postedFiles.files;
+        for (var i = 0; i < Files.length; i++) {
+
+            var ext = Files[i].name.split(".").pop().toLowerCase();
+            if (RestrictedTicketAttachments.search(ext) != -1) {
+                $("#" + controlid).val(null);
+                alert("zip, exe, dll not acceptable!");
+                return false;
+            }
+
+            const fsize = Files.item(i).size;
+            const fileMB = fsize / (1024 * 1024);
+            /**/
+            if (fileMB > acceptedFileSize) {
+                $("#" + controlid).val(null);
+                alert("Please select a file less than " + acceptedFileSize + "MB");
+                return false;
+            }
+        }
+
+        for (var i = 0; i < Files.length; i++) {
+            $('#fileName').append(Files[i].name + " ");
+        }
+        return true
+    }
+    function SaveTicketData() {
+        debugger
+        var status = true;
+        if (!validateDropdown('ddlTicketTypes')) { return status = false; }
+        if (!validateTextbox('txtDescription')) { return status = false; }
+        if (!validateTextbox('txtCustomerName')) { return status = false; }
+        if (!validateTextbox('txtContactNo')) { return status = false; }
+        if (!validateTextbox('txtTicketReference')) { return status = false; }
+        if (!status) { e.preventDefault(); }
+
+        var fileUpload = $('#FileTicketForm').get(0);
+        var files = fileUpload.files;
+        var data = new FormData();
+        if (files.length) {
+            if (!isValidUploadFile('FileTicketForm')) {
+                return false;
+            }
+            for (var i = 0; i < files.length; i++) {
+                data.append(files[i].name, files[i]);
+            }
+        }
+
+        data.append("txtCustomerName", $('#txtCustomerName').val());
+        data.append("txtContactNo", $('#txtContactNo').val());
+        data.append("txtTicketReference", $('#txtTicketReference').val());
+        data.append("ddlTicketTypes", $('#ddlTicketTypes').val());
+        data.append("txtDescription", $('#txtDescription').val());
+        data.append("FileTicketForm", $('#FileTicketForm').val());
+
+        ajaxReqforFileUpload('TicketManager/SaveTicketForm', data, true, function (Data) {
+            debugger
+
+            if (Data.Status == "OK") {
+                alert(Data.Message);
+                $('#closeChildPopup').click();
+            }
+            else {
+                alert(Data.Message);
+            }
+        }, true);
+
+    }
+</script>
+

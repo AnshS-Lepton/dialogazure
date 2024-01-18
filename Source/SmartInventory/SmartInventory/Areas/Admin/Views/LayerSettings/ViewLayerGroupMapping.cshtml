@@ -1,0 +1,120 @@
+﻿@model Models.Admin.ViewLayerGroupMapping
+@using Utility
+
+<!DOCTYPE html>
+<div class="header_Equip">
+    <h4 id="Heading"></h4><h4 style="margin-left:30px">View Layer Group Mapping</h4>
+</div>
+<div id="dvViewLayerGroupsMapping" style="width: 100%; padding: 30px; white-space: nowrap; font-size:14px;">
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewLayerGroupsMapping", ajaxUpdateCallback: "onGridHeaderClick('tblLayerGroupsMapping')");
+        grid.Bind(Model.lstLayerGroupsMapping, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+        if (Model.objGridAttributes.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+        }
+    }
+
+
+    @using (Html.BeginForm("ViewLayerGroupsMapping", "LayerSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmViewLayerGroupsMapping" }))
+    {
+        <section>
+            <div class="form-inline filter-sec ">
+
+                <div class="form-group wtd_set">
+
+                    <label class="control-label col-sm-4">
+                        Search By :
+                    </label>
+
+                    <div class="col-md-8">
+
+                        @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstBindSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group wtd_set">
+                    <label class="control-label col-sm-4">
+                        Search Text:
+                    </label>
+
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                    </div>
+                </div>
+
+
+                <div class="form-group wtd_set" id="dvBtnAction">
+                    <div class="col-md-8 offset-md-4  text-right">
+                        <button class="btn btn-primary right" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                        @if (@grid.TotalRowCount > 0)
+                        {
+                            <input type="button" id="btnViewGroupMpngExport" value="Export" class="btn btn-primary" onclick="ViewGroupsMappingReport()" />
+                        }
+                        else
+                        {
+                            <input type="button" id="btnViewGroupMpngExport" value="Export" disabled="disabled" class="btn btn-primary" />
+                        }
+                        <a href="@Url.Action("ViewLayerGroupsMapping")" class="btn btn-default" title="Reset">Reset</a>
+                    </div>
+                </div>
+
+            </div>
+            <br />
+
+            @if (Model.lstLayerGroupsMapping.Count > 0)
+            {
+                <div id="divLayerGroupMappingDetail">
+                    <div class="recordCount"><b>Total Records:@grid.TotalRowCount</b></div>
+
+                    <div class="table-responsive tble_cls">
+                        @grid.GetHtml(tableStyle: "grid",
+ htmlAttributes: new { id = "tblLayerGroupsMapping" },
+ mode: WebGridPagerModes.All,
+ columns: grid.Columns(
+ grid.Column("", "Action", format:
+                            @<text>
+                        <a href="#" onclick="AddNewLayerGroupMapping(@item.mapping_id);" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                            </text>),
+ grid.Column("layer_name", "Layer Name", format: @<text>@item.layer_name</text>),
+ grid.Column("group_name", "Group Name", format: @<text>@item.group_name</text>),
+ grid.Column("group_description", "Group Description", format: @<text>@item.group_description</text>),
+ grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>),
+ grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>),
+ grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>),
+ grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>)
+))
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+                        @Html.HiddenFor(m => m.objGridAttributes.searchBy)
+                        @Html.HiddenFor(m => m.objGridAttributes.searchText)
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div style="text-align: center; margin-top: 30px;">
+                    No Records Found.
+                </div>
+            }
+
+        </section>
+
+
+    }
+
+    <script>
+        $(document).ready(function () {
+            addDefaultSortingIcons("tblLayerGroupsMapping");
+        });
+
+        function ViewGroupsMappingReport() {
+            window.location = appRoot + 'LayerSettings/DownloadViewGroupsMappingDetail';
+        }
+    </script>
+
+</div>

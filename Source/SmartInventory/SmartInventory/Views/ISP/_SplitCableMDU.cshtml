@@ -1,0 +1,272 @@
+﻿@model Models.SplitCableMDU
+@using SmartInventory.Settings;
+@helper pageMessage()
+{
+{
+    Html.RenderPartial("_PageMessage", Model.objPM);
+}
+}
+@{
+    var startEndReading = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == Models.formFeatureName.start_end_reading.ToString() && m.form_feature_type.ToLower() == Models.formFeatureType.feature.ToString() && m.is_active == true).FirstOrDefault() : null;
+}
+<script>
+    $(document).ready(function () {
+        //isp.NearCable();
+        notAllowZero('#cable_one_calculated_length');
+        notAllowZero('#cable_two_calculated_length');
+
+        setMeasuredLength('#cable_one_calculated_length', '#cable_one_measured_length');
+        setMeasuredLength('#cable_two_calculated_length', '#cable_two_measured_length');
+        callFormValidator("frmSplitCableMDU");
+    });
+</script>
+
+
+<!DOCTYPE html>
+<div class="libDetail">
+    @using (Ajax.BeginForm("saveSplitCable", "ISP", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress"
+    },
+    new { id = "frmSplitCableMDU", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.split_entity_networkId)
+        @Html.HiddenFor(m => m.split_entity_type)
+        @Html.HiddenFor(m => m.split_entity_system_id)
+        @Html.HiddenFor(m => m.split_cable_system_id)
+        @Html.HiddenFor(m => m.split_entity_network_status)
+        @Html.HiddenFor(m => m.ispLineGeomCableOne)
+        @Html.HiddenFor(m => m.ispLineGeomCableTwo)
+        @Html.HiddenFor(m => m.split_entity_x)
+        @Html.HiddenFor(m => m.split_entity_y)
+        @Html.HiddenFor(m => m.cable_one_a_node_type)
+        @Html.HiddenFor(m => m.cable_one_b_node_type)
+        @Html.HiddenFor(m => m.cable_two_a_node_type)
+        @Html.HiddenFor(m => m.cable_two_b_node_type)
+        <input type="hidden" id="cable_type" value="ISP"/>
+        @pageMessage()
+        <div class="libTabContent" style="padding: 10px;">
+            @if (Model.cables != null && Model.cables.Count > 0)
+            {
+                <div id="splitCableContent">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_ISP_GBL_NET_FRM_074</legend>
+
+                        <div>
+                            <table id="nearCables" border="0" cellspacing="0" cellpadding="5" class="ElementsList grid ">
+                                <tbody>
+                                    @if (Model.cables != null && Model.cables.Count > 0)
+                                    {
+                                        foreach (var item in Model.cables)
+                                        {
+                                           
+                                            <tr>
+                                                <td>
+                                                    <input type="radio" name="Cable" value="@item.network_id " s_id='@item.system_id' />
+                                                </td>
+                                                <td>
+                                                    <span> @string.Concat(item.network_id, " (", item.total_core, "F) (", @item.network_status,")" )</span>
+                                                </td>
+                                                <td>
+                                                    <a href="#" onclick="isp.cableActions.focus($('#ispCable_@item.system_id')); $(popup.DE.MinimizeModel).trigger("click");" class="dropdown-toggle" title="@Resources.Resources.SI_ISP_GBL_GBL_FRM_011">
+                                                        <i class="fa fa-globe fa-fw m-r-xs"></i>
+                                                    </a>
+                                                    <a href="#" onclick="isp.cableActions.getSplitCableFiberDetail('@item.system_id')" class="dropdown-toggle" title="@Resources.Resources.SI_ISP_GBL_GBL_FRM_012">
+                                                        <i class="glyphicon glyphicon-eye-open"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </fieldset>
+
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_ISP_GBL_GBL_FRM_013</legend>
+                        <div class="form-group" style="text-align: center;">
+                            <fieldset class="the-fieldset">
+                                <legend class="the-legend">@Resources.Resources.SI_ISP_GBL_NET_FRM_013 1</legend>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="txtCableCode">
+                                        @Resources.Resources.SI_ISP_GBL_GBL_FRM_014 :
+                                    </label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.cable_one_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
+                                        @Html.ValidationMessageFor(model => model.cable_one_network_id)
+                                    </div>
+                                    <label class="control-label col-sm-2" for="txtCableName">@Resources.Resources.SI_ISP_CAB_NET_FRM_002<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.cable_one_name, new { @class = "form-control clsReadOnly" })
+                                        @Html.ValidationMessageFor(model => model.cable_one_name)
+                                    </div>
+                                </div>
+                                @if (ApplicationSettings.isterminationpointenable)
+                                {
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-2" for="txtStartPoint">@Resources.Resources.SI_ISP_GBL_GBL_GBL_023<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-sm-45">
+                                            @Html.TextBoxFor(m => m.cable_one_a_location, new { @class = "form-control clsReadOnly", @readonly = true })
+                                            @Html.ValidationMessageFor(model => model.cable_one_a_location)
+                                        </div>
+
+                                        <label class="control-label col-sm-2" for="txtEndPoint">@Resources.Resources.SI_ISP_GBL_GBL_GBL_024<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-sm-4">
+                                            @Html.TextBoxFor(m => m.cable_one_b_location, new { @class = "form-control clsReadOnly", @readonly = true })
+                                        </div>
+                                    </div>
+                                }
+                                @if (startEndReading != null)
+                                {
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-2" for="txtRemarks">@Resources.Resources.SI_ISP_CAB_NET_FRM_004<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-sm-4">
+
+                                            @Html.TextBoxFor(m => m.cable_one_start_reading, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                       {
+                                           @class = "form-control",
+                                           @maxlength = "10",
+                                           @onkeypress = "return allowNumberwithOneDot(event,'cable_one_start_reading');"
+                                       }))
+
+                                        </div>
+                                        <label class="control-label col-sm-2" for="txtSubAreaName">@Resources.Resources.SI_ISP_CAB_NET_FRM_005<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-sm-4">
+                                            @Html.TextBoxFor(m => m.cable_one_end_reading, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                       {
+                                           @class = "form-control",
+                                           @maxlength = "10",
+                                           @onkeypress = "return allowNumberwithOneDot(event,'cable_one_end_reading');"
+                                       }))
+                                        </div>
+                                    </div>
+                                }
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="txtSubAreaName">@Html.Raw(Resources.Resources.SI_ISP_GBL_NET_FRM_075)<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-4">
+                                        @Html.TextBoxFor(m => m.cable_one_measured_length, new { @class = "form-control clsReadOnly", @readonly = true })
+                                    </div>
+                                    <label class="control-label col-sm-2" for="txtRemarks">@Html.Raw(Resources.Resources.SI_ISP_GBL_GBL_FRM_015)<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.cable_one_calculated_length, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                   {
+                                       @class = "form-control",
+                                       @onkeypress = "return allowNumberwithOneDot(event,'cable_one_calculated_length');",
+                                       @maxlength = "10"
+                                   }, (startEndReading != null) ? new { @readonly = "readonly" } : null))
+                                    </div>
+
+                                </div>
+
+                            </fieldset>
+
+                            <fieldset class="the-fieldset">
+                                <legend class="the-legend">@Resources.Resources.SI_ISP_GBL_NET_FRM_013 2</legend>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="txtCableCode">
+                                       @Resources.Resources.SI_ISP_GBL_GBL_FRM_014
+                                        :
+                                    </label>
+                                    <div class="col-sm-4">
+                                        @Html.TextBoxFor(m => m.cable_two_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
+                                        @Html.ValidationMessageFor(model => model.cable_two_network_id)
+                                    </div>
+                                    <label class="control-label col-sm-2" for="txtCableTwoName">@Resources.Resources.SI_ISP_CAB_NET_FRM_002<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.cable_two_name, new { @class = "form-control clsReadOnly" })
+                                        @Html.ValidationMessageFor(model => model.cable_two_name)
+                                    </div>
+                                </div>
+                                @if (ApplicationSettings.isterminationpointenable)
+                                {
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-2" for="txtStartPoint">@Resources.Resources.SI_ISP_GBL_GBL_GBL_023<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-sm-4">
+                                            @Html.TextBoxFor(m => m.cable_two_a_location, new { @class = "form-control clsReadOnly", @readonly = true })
+                                            @Html.ValidationMessageFor(model => model.cable_two_a_location)
+                                        </div>
+
+                                        <label class="control-label col-sm-2" for="txtEndPointe">@Resources.Resources.SI_ISP_GBL_GBL_GBL_024<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-sm-4">
+                                            @Html.TextBoxFor(m => m.cable_two_b_location, new { @class = "form-control clsReadOnly", @readonly = true })
+                                            @Html.ValidationMessageFor(model => model.cable_two_b_location)
+                                        </div>
+
+                                    </div>
+                                }
+                                @if (startEndReading != null)
+                                {
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-2" for="txtRemarks">@Resources.Resources.SI_ISP_CAB_NET_FRM_004<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-sm-4">
+                                            @Html.TextBoxFor(m => m.cable_two_start_reading, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                       {
+                                           @class = "form-control",
+                                           @maxlength = "10",
+                                           @onkeypress = "return allowNumberwithOneDot(event,'cable_two_start_reading');"
+                                       }, null))
+                                        </div>
+                                        <label class="control-label col-sm-2" for="txtSubAreaName">@Resources.Resources.SI_ISP_CAB_NET_FRM_005<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-sm-4">
+                                            @Html.TextBoxFor(m => m.cable_two_end_reading, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                       {
+                                           @class = "form-control",
+                                           @maxlength = "10",
+                                           @onkeypress = "return allowNumberwithOneDot(event,'cable_two_end_reading');"
+                                       }, null)
+)
+                                        </div>
+                                    </div>
+                                }
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="txtSubAreaName">@Html.Raw(Resources.Resources.SI_ISP_GBL_NET_FRM_075)<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-4">
+                                        @Html.TextBoxFor(m => m.cable_two_measured_length, new { @class = "form-control clsReadOnly", @readonly = true })
+                                    </div>
+                                    <label class="control-label col-sm-2" for="txtRemarks">@Html.Raw(Resources.Resources.SI_ISP_GBL_GBL_FRM_015)<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-4">
+                                        @Html.TextBoxFor(m => m.cable_two_calculated_length, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                   {
+                                       @class = "form-control",
+                                       @onkeypress = "return allowNumberwithOneDot(event,'cable_two_calculated_length');",
+                                       @maxlength = "10"
+                                   }, (startEndReading != null) ? new { @readonly = "readonly" } : null))
+                                    </div>
+
+                                </div>
+
+                            </fieldset>
+
+                        </div>
+
+                    </fieldset>
+                </div>
+            }
+            else
+            {
+
+                <div id="NoContent" class="nr-found">
+                    <span>@Resources.Resources.SI_ISP_GBL_GBL_FRM_016</span>
+                </div>
+
+            }
+
+        </div>
+        if (Model.cables != null && Model.cables.Count > 0)
+        {
+            <div class="ModalFooter" id="dvBtnAction">
+                    <input class="btn btn-small btn-danger ml-auto mr-01" type="Button" id="btnCableProcess" value="@Resources.Resources.SI_ISP_GBL_GBL_FRM_017" onclick="isp.cableActions.setNewCableDetails();">
+                    <input type="submit" class="btn btn-small btn-primary" name="btnaction" id="btnSplitCable" value="@Resources.Resources.SI_ISP_GBL_NET_FRM_077" />
+                </div>
+        }
+        else
+        {
+            <div class="clearfix"></div>
+        }
+
+    }
+</div>

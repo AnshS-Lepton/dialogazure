@@ -1,0 +1,189 @@
+﻿@model Models.PatchingViewModel
+@{
+    var layerDetails = SmartInventory.Settings.ApplicationSettings.listLayerDetails.Where(m => m.layer_name.ToUpper() == Models.EntityType.PatchCord.ToString().ToUpper()).FirstOrDefault();
+    var isTemplateRequired = layerDetails.is_template_required;
+}
+@Html.HiddenFor(m => m.filter.SourcePODId, new { id = "hdnSourcePODId" })
+@Html.HiddenFor(m => m.filter.DestinationPODId, new { id = "hdnDestinationPODId" })
+@Html.HiddenFor(m => m.filter.SourceRackId, new { id = "hdnSourceRackId" })
+@Html.HiddenFor(m => m.filter.DestinationRackId, new { id = "hdnDestinationRackId" })
+@Html.HiddenFor(m => m.filter.SourceEquipmentId, new { id = "hdnSourceEqpmtId" })
+@Html.HiddenFor(m => m.filter.DestinationEquipmentId, new { id = "hdnDestinationEqpmtId" })
+@Html.HiddenFor(m => m.filter.isInsideConnectivity, new { id = "hdnInsideConnectivity" })
+<input type="hidden" id="hdnIsTemplateRequired" value="@isTemplateRequired.ToString()" />
+<style>
+    .noprint {
+        text-align: right;
+        margin: 10px;
+        display: none;
+    }
+
+    .tooltip {
+        position: fixed !important;
+    }
+    #progressbar img {
+    border:none;border-radius:0px;}
+</style>
+<script src="~/Content/js/room-view/ConnectionBuilder.js"></script>
+
+<!DOCTYPE html>
+<div class="form-group noprint">
+    <a id="print" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i> Save as PDF</a>
+    @Html.DropDownList("pageSize", new List<SelectListItem>
+    {
+    new SelectListItem{ Text="A4", Value = "A4" },
+    new SelectListItem{ Text="A3", Value = "A3" },
+    new SelectListItem{ Text="A2", Value = "A2" },
+    new SelectListItem{ Text="A1", Value = "A1" },
+    new SelectListItem{ Text="A0", Value = "A0" },
+    }, new { @class = "chosen-select col-sm-4", @style = "width: 81px !important;height: 26px;float: right;margin-left: 11px;" })
+</div>
+<div id="PrintContainer" style="height: 100%;border:none;">
+    <div class="mainContainer" id="mainContainer">
+        <div class="alert alert-info conBuilderMessage">
+            <strong>Success! &nbsp;</strong><span id="SlideMessage">@Resources.Resources.SI_OSP_GBL_NET_FRM_412</span>
+        </div>
+        <input type="hidden" id="hdnUserId" value="@Model.userId" />
+
+        <div class="form-group connectionHeader">
+            @if (Model.filter.isInsideConnectivity)
+            {<div class="col-md-12" >@Model.filter.SourceEquipmentNWId</div>}
+            else
+            {<div class="col-md-6" style="text-align:right;">@Model.filter.SourceEquipmentNWId</div> }
+            @if (!Model.filter.isInsideConnectivity)
+            {
+                <div style="float:left;font-weight:bold;">@(!string.IsNullOrEmpty(Model.filter.SourceEquipmentNWId) ? Resources.Resources.SI_GBL_GBL_NET_FRM_087 : "")</div>
+                <div class="col-md-5" style="text-align:left;">@Model.filter.DestinationEquipmentNWId</div>
+            }
+        </div>
+        @if (Model.splicingConnections != null && Model.splicingConnections.Count > 0)
+        {
+            <div class="splicingLegendSection">
+                @foreach (var item in Model.listPortStatus)
+                {
+                    <div class="left--lines">
+                        <div class="splicingLegend" style="background:@(item.color_code)"></div><span style="float:left;padding-top: 3px;">@item.status</span>
+                        </div>
+                }
+                        @*<div class="splicingLegend" style="background:yellow;"></div><span style="float:left;padding-top: 3px;">Single Allow</span>
+                            <div class="splicingLegend" style="background:blue;"></div><span style="float:left;padding-top: 3px;">Multi Allow</span>*@
+
+                        @if (!Model.filter.isInsideConnectivity)
+                        {
+                            <button type="submit" class="btn btn-primary" style="float: right;padding-top: 3px;margin-right: 10px;cursor:pointer;background: green;color: #fff;width: 80px;height: 28px;border: none;border-radius: 3px;" id="btnAdvanceFilter">@Resources.Resources.SI_OSP_GBL_NET_FRM_151</button>
+                        }
+
+                        <div onclick="conBuilder.unSpliceAll();"><span style="float: right;padding-top: 3px;margin-right: 10px;cursor:pointer;color: red;display:none;">Un-link All</span><div class="icon-unlink" style="float: right;margin-right: 5px;margin-top: 5px;color: red;font-size: 15px;"></div></div>
+                        @if (Model.filter.isInsideConnectivity)
+                        {
+                            <div onclick="conBuilder.AddConnection(@Model.filter.SourceEquipmentId);" style="float: right;padding-top: 3px;margin-right: 10px;cursor:pointer;" title="Add Connection"><i style="padding-right: 5px;" class="glyphicon glyphicon-plus"></i>Add Connection</div>
+                        }
+                        <div style="display:none;"><span style="float: right;padding-top: 3px;margin-right: 10px;cursor:pointer;">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</span><div class="ExportConnections" title="@Resources.Resources.SI_OSP_GBL_JQ_FRM_137"></div></div>
+                        <input type="hidden" id="hdnConnectedColor" value="#00BA6C" />
+                        <input type="hidden" id="hdnVacantColor" value="#A9A9A9" />
+                        @*<div class="SwapConnections" title="Swap Cables">&nbsp;</div>*@
+                    </div>
+        }
+        <div class="connectionB--main">
+            <div id="dvMainProgress" style="display: none;" data-original-title="" title="">
+                <div id="blur" class="progresblur" data-original-title="" title="" style="background-color:#fff;">
+                    <div id="progressbar" class="conProgressBar" data-original-title="" title="">
+                        <img alt="Loading..." src="../content/images/loading_new.gif" data-original-title="" title=""><br data-original-title="" title="">
+                    </div>
+                </div>
+            </div>
+            <div style="display:table;height:0;width:100%;overflow-x:hidden">
+                @if (Model.splicingConnections != null && !Model.filter.isInsideConnectivity)
+                {
+                    <div id="divSource" class="cell" style="padding-left:10px;">
+                        <div class="wrapper coreRangeContainer">
+                            <div style="display:table-cell;vertical-align:top;">
+                                <div style="width: 180px;">
+                                    @Html.DropDownListFor(m => m.filter.SourceEquipmentId, new SelectList(Model.filter.SourceEquipmentList.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--All--", new { @class = "chosen-select form-control", id = "ddlSourcePort", @onchange = "conBuilder.filterConnections(this,true);" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="MidSection"></div>
+                    <div id="divDestination" class="cell" style="padding-right:10px;">
+                        <div class="wrapper coreRangeContainer" style="float:right;">
+                            <div style="display:table-cell;vertical-align:top;">
+                                <div style="width: 180px;">
+                                    @Html.DropDownListFor(m => m.filter.DestinationEquipmentId, new SelectList(Model.filter.DestinationEquipmentList.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--All--", new { @class = "chosen-select form-control", id = "ddlDestinationPort", @onchange = "conBuilder.filterConnections(this,false);" })
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+            </div>
+            <div class="MainSection" id="divSpliceWindow">
+
+                @if (Model.splicingConnections != null)
+                {
+                    @Html.Partial("_ModelConnections", Model)
+                }
+                else
+                {
+                    <div class="d-flex jc-center flex-d-colum">
+                        <img src="../Content/images/NoConnection.svg" />
+                        <div>@Resources.Resources.SI_GBL_GBL_NET_FRM_093</div>
+                        <button type="submit" class="btn btn-primary mt-02"  id="btnConnectionFilter">@Resources.Resources.SI_OSP_GBL_NET_FRM_151</button>
+                    </div>
+                }
+            </div>
+        </div>
+        <div id="divFilterContainer" style="display:none;"></div>
+        @if (Model.splicingConnections != null)
+        {
+            <div class="form-group ModalFooter" id="dvBtnAction" style="border-top: 1px solid #80808029;padding-top: 13px;font-style: normal;background: none;">
+                <div class="col-md-9 col-sm-9 ModelFooterInfo" style="font-style: normal;color:#4a4a4a;">
+                    <label class="control-label" style="float:left;font-weight:bold;">Connection Limits:</label>
+                    <div class="singleConnection" style="float: left; width: 20px;height: 10px;margin: 5px;"></div>
+                    <label class="control-label model-label-info" style="float:left;">Single Connection</label>
+                    <div class="multiConnection" style="float: left; width: 20px;height: 10px;margin: 5px;"></div>
+                    <label class="control-label model-label-info" style="float:left;">Multiple Connection</label>
+                    <img src="../Content/css/images/t.gif" alt="" style="float:left;height: 30px;margin-top: -5px;">
+                    <i title="View Connections" class="icon-DrawCircle InternalConnectionLegend"></i>
+                    <label class="control-label model-label-info" style="float:left;margin-left: 5px;">Internal Connected</label>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script>
+    var conBuilder = null;
+    var connections = [];
+    $(document).ready(function () {
+        conBuilder = new connectionBuilder();
+        conBuilder.initApp();
+        isAutoDeleteConnection=false;
+        $('.chosen-select').chosen({ search_contains: true, width: '100%' });
+        $('#divSpliceWindow').css('visibility', 'visible');
+        if ($('#hdnInsideConnectivity').val() == 'False') {
+            conBuilder.bindSplicingTool();
+        }
+        //$('#dvRightCable .endPint').tooltip({ title: '', html: true, placement: "left" });
+        //$('#dvRightCable .otherEndFiber').tooltip({ title: '', html: true, placement: "left" });
+        //$('#dvLeftCable .endPint').tooltip({ title: '', html: true, placement: "right" });
+        //$('#dvLeftCable .otherEndFiber').tooltip({ title: '', html: true, placement: "right" });
+        //$('.innerFiber').tooltip({ title: '', html: true, placement: "right" });
+        //if ($(splicing.DE.SourceCable).val() != '0')
+        //{ $('#SourceCableName').text($(splicing.DE.SourceCable + ' :selected').text()); }
+        //if ($(splicing.DE.DestinationCable).val() != '0')
+        //{ $('#DestinationCableName').text($(splicing.DE.DestinationCable + ' :selected').text()); }
+        //$('#ConnectingDevice').text($(splicing.DE.ConnectingEntity + ' :selected').text());
+        //conBuilder.initApp();
+        $(conBuilder.DE.Filter).on("click", function () {
+            $('#divConnectionFilter').show();
+        });
+        $('#btnAdvanceFilter').on("click", function () { $('#divConnectionFilter').show(); });
+        $('#closeModalPopup').on("click", function () { $('#divConnectionFilter').hide(); });
+
+    })
+</script>
+@*<script id="splicingInfowindow" type="text/html">
+        @Html.Partial("connectionDetails")
+    </script>*@
+<link href="~/Content/css/ConnectionBuilder.css" rel="stylesheet" />

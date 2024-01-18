@@ -1,0 +1,86 @@
+﻿@model Models.IOwnershipInfo
+@Html.HiddenFor(m => m.ownership_type, new { id = "hdnOwnershipType" })
+
+<!DOCTYPE html>
+<div class="form-group row">
+    <label class="control-label col-md-2 col-sm-2" for="RdOwnershipType">@Resources.Resources.SI_GBL_GBL_GBL_GBL_147<i class="clsMandatory">*</i>:</label>
+    <div class="col-md-4 col-sm-4">
+        <div class="radio whiteSpace">
+            <label class="col-md-6"><input type="radio" name="rdbOwnershipType" onchange="getThirdPartyType()" id="rdb_Own" value="Own"><span>@Resources.Resources.SI_GBL_GBL_GBL_GBL_150</span></label>
+            <label class="col-md-6"><input type="radio" name="rdbOwnershipType" onchange="getThirdPartyType()" id="rdb_ThirdParty" value="Third Party"><span>@Resources.Resources.SI_GBL_GBL_GBL_GBL_151</span></label>
+        </div>
+    </div>
+    <label class="control-label col-md-2 col-sm-2" for="txt3rdprtyvndr">@Resources.Resources.SI_GBL_GBL_GBL_GBL_148</label>
+    <div class="col-md-4 col-sm-4">
+        @Html.DropDownListFor(m => m.third_party_vendor_id, new SelectList(Model.list3rdPartyVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "txt3rdPartyVendor", @onchange = "onChangeThirdParyVendor()" })
+    </div>
+</div>
+@if (!string.IsNullOrWhiteSpace(Model.entityType) && Model.entityType.ToUpper() == "CABLE")
+{
+    <div class="form-group row">
+        <label class="control-label col-sm-2" for="txtCirucitId">@Resources.Resources.SI_GBL_GBL_GBL_FRM_011:</label>
+        <div class="col-md-4 col-sm-4">
+            @Html.TextBoxFor(m => m.circuit_id, new { id = "txtCircuitId", @class = "form-control" })
+        </div>
+        <label class="control-label col-md-2 col-sm-2" for="txt3rdPrtyCrctId">@Resources.Resources.SI_GBL_GBL_GBL_GBL_149</label>
+        <div class="col-md-4 col-sm-4">
+            @Html.TextBoxFor(m => m.thirdparty_circuit_id, new { @class = "form-control" })
+        </div>
+    </div>
+}
+<script>
+
+        $(document).ready(function () {
+            if ('@Model.ownership_type.ToUpper()' == 'OWN') {
+                $("input[id='rdb_Own']").prop("checked", true);
+                $('#txt3rdPartyVendor').prop('disabled', true).trigger("chosen:updated");
+            }
+            else {
+                $("input[id='rdb_ThirdParty']").prop("checked", true);
+            }
+            $(document).on('click', 'form button[type=submit]', function (e) {
+                var selected_ownership = $("input[name='rdbOwnershipType']:checked").val();
+                if (selected_ownership == 'Third Party' && $('#txt3rdPartyVendor').val() == '' && $('#txt3rdPartyVendor').val() == null) {
+                    $('#txt3rdPartyVendor').next().addClass('input-validation-error');
+                    return false;
+                }
+                if (selected_ownership == "Third Party" && $('#txt3rdPartyVendor').val() == "") {
+                    $('#txt3rdPartyVendor').next().addClass('input-validation-error');
+                    return false;
+                }
+                if (selected_ownership == "Third Party" && $('#txtCircuitId').val() == "") {
+                    $('#txtCircuitId').addClass('input-validation-error');
+                    return false;
+                }
+            });
+        });
+        function getThirdPartyType() {
+
+            var selectedownership = $("input[name='rdbOwnershipType']:checked").val();
+            $('#txt3rdPartyVendor').val('');
+            $('#txtCircuitId').val('');
+            if (selectedownership == 'Third Party') {
+                //$('#txt3rdPartyVendor').next().addClass('input-validation-error');
+                // $('#txtCircuitId').addClass('input-validation-error');
+                $('#txt3rdPartyVendor').prop('disabled', false).trigger("chosen:updated");
+            }
+            else {
+                // $('#txt3rdPartyVendor').next().removeClass('input-validation-error');
+                //$('#txtCircuitId').removeClass('input-validation-error');
+                $('#txt3rdPartyVendor').prop('disabled', true).trigger("chosen:updated");
+            }
+            $("#hdnOwnershipType").val(selectedownership);
+
+        }
+
+        function onChangeThirdParyVendor() {
+
+            var selectedVal = $('#txt3rdPartyVendor').val();
+            if (selectedVal != '' && selectedVal != null) {
+                $('#txt3rdPartyVendor').next().removeClass('input-validation-error');
+            }
+            else {
+                $('#txt3rdPartyVendor').next().addClass('input-validation-error');
+            }
+        }
+</script>

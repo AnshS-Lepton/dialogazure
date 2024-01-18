@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+@model Models.AccessoriesMaster
+
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<style>
+    .errorClass {
+        border: 1px solid red;
+    }
+
+    .success {
+        border: 1px solid black;
+    }
+</style>
+
+<div id="divAddNewAccessories">
+    @using (Ajax.BeginForm("SaveAccessories", "Accessories",
+                                        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddNewAccessories", OnSuccess = "OnSuccess", },
+                                        new { id = "frmAddAccessories", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.id);
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Name<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.name, new { @class = "form-control onchang", @maxlength = "50", @placeholder = "Name", @id = "txtname" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Display Name<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.display_name, new { @class = "form-control", @maxlength = "50", @placeholder = "Display Name", @id = "txtdisplayname" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Status:</div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.is_active, new { Style = "width:100% ;", @id = "chkis_active" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footerModal d-flex" id="dvBtnAction">
+            <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+
+            @if (Model.id > 0)
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveAccessories" value="Update" />
+            }
+            else
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveAccessories" value="Save" />
+            }
+
+        </div>
+    }
+</div>
+<script>
+    function IsValid() {
+        
+        if ($('#txtname').val() == "") {
+            $('#txtname').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txtname').removeClass("errorClass");
+        }
+        if ($('#txtdisplayname').val() == "") {
+            $('#txtdisplayname').addClass('errorClass');
+            return false;
+        }
+        else {
+            $('#txtdisplayname').removeClass("errorClass");
+        }
+
+    };
+    $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+
+    function OnSuccess(data) {
+        
+        $("#closeModalPopup").trigger("click");
+        alert(data.pageMsg.message, 'Success', 'success');
+        setTimeout(function () {
+            window.location = appRoot + 'Accessories/ViewAccessories';
+        }, 3000);
+
+    }
+    $("#btnCancel").on("click", function () {
+        $("#closeModalPopup").trigger("click");
+    });
+</script>

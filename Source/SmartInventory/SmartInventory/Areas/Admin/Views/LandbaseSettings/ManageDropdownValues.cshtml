@@ -1,0 +1,157 @@
+﻿@model Models.Admin.ViewLandBaseDropdownMasterSettings
+@using Utility
+@using SmartInventory.Settings;
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div id="dvViewDropdownMaster" class="update_panel fullWidth">
+    <input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+    <div class="title">
+        <h4>Landbase Dropdown Master</h4>
+    </div>
+    @{
+        WebGrid grid = new WebGrid(rowsPerPage: Model.objdrpFilter.pageSize,
+            canSort: true, ajaxUpdateContainerId: "dvViewDropdownMaster",
+            ajaxUpdateCallback: "onGridHeaderClick('tblEntityDropDownGrid')");
+        grid.Bind(Model.lstViewDropdownMasterSetting, autoSortAndPage: false,
+            rowCount: Model.objdrpFilter.totalRecord);
+        if (Model.objdrpFilter.totalRecord > 0)
+        {
+            grid.PageIndex = Model.objdrpFilter.currentPage - 1;
+        }
+    }
+    <div class="--pad-15">
+        @using (Html.BeginForm("ManageDropdownValues", "LandbaseSettings", FormMethod.Post, new { autocomplete = "off", @id = "frmViewDropdownMaster" }))
+        {
+            <div class="form-inline filter-sec">
+                <div class="form-group wtd_set mr-05">
+                    <label class="control-label mr-05">Status:</label>
+                    <div class="--input-width">
+                        @Html.DropDownListFor(m => m.status, new List<SelectListItem>
+                     {
+                        new SelectListItem{ Text="Active", Value = "true"},
+                        new SelectListItem{ Text="InActive", Value = "false" }
+                     }, new { @id = "ddlStatus", @tabindex = "2", @title = "Status", @class = "chosen-select form-control" })
+                    </div>
+                </div>
+                <div class="form-group wtd_set mr-05">
+                    <label class="control-label mr-05">Layer Name:</label>
+                    <div class="--input-width">
+                        @Html.DropDownListFor(m => m.landbase_layer_id,
+                       new SelectList(Model.lstLayers.Select(x => new
+                       {
+                           Value = x.id.ToString(),
+                           Text = x.layer_name.ToString()
+                       }), "Value", "Text"), "--Select--",
+                       new { @class = "chosen-select col-sm-12", @id = "lstLayers", @tabindex = "1" })
+                    </div>
+                </div>
+
+                <div class="form-group wtd_set mr-05">
+                    <label class="control-label mr-05">Type:</label>
+                    <div class="--input-width">
+                        @Html.DropDownListFor(m => m.type, new List<SelectListItem> { new SelectListItem{ Text="--Select--", Value = "" },
+                        new SelectListItem{ Text="Category", Value = "Category" },
+                        new SelectListItem{ Text="Sub Category", Value = "SubCategory" },
+                        new SelectListItem{ Text="Classification", Value = "Classification" }}, new { @class = "chosen-select col-sm-12", @tabindex = "2", @title = "Type" })
+                    </div>
+                </div>
+                <div class="form-group wtd_set">
+                    <label class="control-label mr-05">Value:</label>
+                    <div class="--input-width">
+                        @Html.TextBoxFor(m => m.value, new { @class = "form-control displayName", @tabindex = "3", id = "txtValue" })
+                    </div>
+                </div>
+                <br />
+                <div class="d-flex" id="dvBtnAction">
+                    <button class="btn btn-primary ml-05 mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="4" type="submit">Search</button>
+
+                    @if (@grid.TotalRowCount > 0)
+                    {
+                        <input type="button" id="btnExportDropdownMaster" value="Export" class="btn btn-primary mr-05" />
+                    }
+                    else
+                    {
+                        <input type="button" id="btnExportDropdownMaster" value="Export" disabled="disabled" class="btn btn-primary mr-05" />
+                    }
+                    <a href="@Url.Action("ManageDropdownValues")" class="btn btn-default mr-05" title="Reset">Reset</a>
+
+                    <input type="button" id="btnAddNew" onclick="AddLandBaseDropdownMaster(0);" value="Add New" class="btn btn-primary" />
+                </div>
+
+            </div>
+            if (Model.lstViewDropdownMasterSetting.Count > 0)
+            {
+                <div id="divEntityDropDownGridBind">
+                    <div class="recordCount mb-01"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+
+                    <div class="table-responsive tble_cls">
+
+                        @grid.GetHtml(tableStyle: "grid",
+                                        htmlAttributes: new { id = "tblEntityDropDownGrid" },
+                                        mode: WebGridPagerModes.All,
+                                        columns: grid.Columns(
+                                                grid.Column("", "Action", format:@<text>
+                                                        <a href="javascript:void(0);" onclick="EditLandBaseDropdownMaster(@item.id);" title="Edit">
+                                                            <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i>
+                                                        </a>
+                                                        <a href="javascript:void(0);" onclick="DeleteLandBaseDropdownMaster(@item.landbase_layer_id, @item.id,'@item.layer_name','@item.type','@item.value');" title="Delete">
+                                                            <i class="fa fa-fw fa-trash" style="font-size: 13px; color: #f50000;"></i>
+                                                        </a>
+                                                </text>, canSort: false
+),
+grid.Column("layer_name", "Layer Name", format: @<text>@item.layer_name</text>, canSort: true),
+grid.Column("type", "Dropdown Type", format: @<text>@item.type</text>, canSort: true),
+grid.Column("value", "Value", format: @<text>@item.value</text>, canSort: true),
+grid.Column("status", "Status", format: @<text> @item.status</text>, canSort: true),
+grid.Column("created_by_text", "Created By", format: @<text>@item.created_by_text</text>, canSort: true),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>, canSort: true),
+grid.Column("modified_by_text", "Modified By", format: @<text>@item.modified_by_text</text>, canSort: true),
+grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>, canSort: true)
+))
+
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+
+                        @Html.HiddenFor(m => m.type)
+                        @Html.HiddenFor(m => m.landbase_layer_id)
+                        @Html.HiddenFor(m => m.value)
+
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div style="text-align: center; margin-top: 30px;">
+                    No Records Found.
+                </div>
+            }
+        }
+    </div>
+    <script>
+        $(document).ready(function () {
+            updateNumberstoFormatedNumber();
+            $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+            // add sorting on grid..
+            addDefaultSortingIcons("tblEntityDropDownGrid");
+            //download utalization as excel format
+            $("#btnExportDropdownMaster").on("click", function () {
+                window.location = appRoot + 'LandbaseSettings/ExportDropdownMasterDetails';
+
+            });
+        });
+
+        $('th a, tfoot a').on("click", function () {
+            $('#frmViewDropdownMaster').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        function updateNumberstoFormatedNumber() {
+            $('span[data]').each(function (index) {
+                // Get the value of the data-target attribute for each element
+                var targetValue = $(this).data('data');
+
+                // Do whatever you want with the element or its data
+                $(this).text(getFormattedNumber($(this).text().trim()));
+            });
+        }
+    </script>
+</div>
+

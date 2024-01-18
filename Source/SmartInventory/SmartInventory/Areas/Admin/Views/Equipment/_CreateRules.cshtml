@@ -1,0 +1,231 @@
+﻿@model Models.Admin.ISPModelRule
+@using System.Linq
+@using Utility
+@using SmartInventory.Settings;
+
+@{
+    //Setting Type Abbreviation Min and Max lenght
+    var taMaxLength = ApplicationSettings.type_abbr_max_length; var taMinLength = ApplicationSettings.type_abbr_min_length;
+}
+
+
+<link href="~/Areas/Admin/Content/css/spectrum.css" rel="stylesheet" />
+<script src="~/Areas/Admin/Content/js/docs.js"></script>
+<script src="~/Areas/Admin/Content/js/spectrum.js"></script>
+
+<script>
+    //$(document).ready(function () {
+    //    $('.ccpicker').wheelColorPicker({ format: 'hsv' });
+
+    //});
+
+</script>
+
+<!DOCTYPE html>
+
+<ul class="nav nav-tabs">
+    <li><a id="anchorCreateType" onclick="ResetType()" data-toggle="tab" href="#CreateType" class="active show">Create Type</a></li>
+    <li><a id="anchorCreateRule" onclick="ResetRule()" data-toggle="tab" href="#CreateRule">Create Rule</a></li>
+
+</ul>
+<div class="tab-content">
+    <div id="tabCreateRule" class="tab-pane fade">
+        <div class="form-group" style="width:100%;">
+            <label class="control-label col-md-2" for="">Parent Model<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4">
+                <input type="hidden" id="hdRuleID" />
+                @Html.DropDownListFor(m => m.parent_model_id, new SelectList(Model.lstModel.Select(x => new { Value = x.id, Text = x.value }), "Value", "Text"), "", new { @class = "chosen-select form-control", @id = "selectParentModel", @onChange = "BindSubType(this.value,'selectParentModelType')" })
+                @Html.HiddenFor(m => m.parent_model_id)
+            </div>
+
+            <label class="control-label col-md-2" for="">Parent Type<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.parent_model_type_id, new SelectList(Model.lstModelType.Select(x => new { Value = x.id, Text = x.value }), "Value", "Text"), "", new { @class = "chosen-select form-control", @id = "selectParentModelType", @onChange = "BindRuleDetailsByParentSubType()" })
+                @Html.HiddenFor(m => m.parent_model_type_id)
+
+            </div>
+        </div>
+        <div class="form-group" style="width:100%;">
+            <label class="control-label col-md-2" for="">Child Model<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.child_model_id, new SelectList(Model.lstModel.Select(x => new { Value = x.id, Text = x.value }), "Value", "Text"), "", new { @class = "chosen-select form-control", @id = "selectChildModel", @onChange = "BindSubType(this.value,'selectChildModelType')" })
+                @Html.HiddenFor(m => m.parent_model_id)
+            </div>
+
+            <label class="control-label col-md-2" for="">Child Type<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.child_model_type_id, new SelectList(Model.lstModelType.Select(x => new { Value = x.id, Text = x.value }), "Value", "Text"), null, new { @class = "chosen-select form-control", @id = "selectChildModelType", multiple = "true" })
+                @Html.HiddenFor(m => m.parent_model_type_id)
+
+            </div>
+        </div>
+        @*<div class="form-group" style="width:100%;">
+                <label class="control-label col-md-2" for="">Active:</label>
+                <div class="col-md-4">
+                    @Html.CheckBoxFor(m => m.is_active)
+                </div>
+
+            </div>*@
+        <div class="form-group">
+            <div class="col-md-12">
+                <input type="button" id="btnSaveRule" onclick="SaveRule();" class="btn btn-primary" value="Save" />
+                <input type="button" id="btnReset" onclick="ResetRule();" class="btn btn-gray" value="Reset" />
+                @*<input type="button" id="btnUpdateeRule" onclick="UpdateRule();" class="btn btn-default" value="Update" />*@
+            </div>
+        </div>
+
+        <div id="dvRuleDetails"></div>
+    </div>
+    <div id="tabCreateType" class="tab-pane fade in active show">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">Model<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4">
+                <input type="hidden" id="hdModalTypeID" />
+                @Html.DropDownListFor(m => m.parent_model_id, new SelectList(Model.lstHasTypeModel.Select(x => new { Value = x.id, Text = x.value }), "Value", "Text"), "Select Model", new { @class = "chosen-select form-control", @id = "ddlModel", @onChange = "BindModalTypeById(this.value)" })
+                @Html.HiddenFor(m => m.parent_model_id)
+            </div>
+            @*<label class="control-label col-md-2" for="">Key<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="txtModelTypeKey" maxlength="50"/>
+
+                </div>*@
+            <label class="control-label col-md-2 middlewareOption" for="">Is Middleware Type:</label>
+            <div class="col-md-4 middlewareOption">
+                <input type="checkbox" name="is_middleware_model_type" id="is_middleware_model_type" />
+            </div>
+
+            <label class="control-label col-md-2" for="">Type Name<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4">
+                <select id="ddlModelTypeValue" class="form-control middleware">
+                    <option style="" value="">Select Type</option>
+                    @foreach (var item in Model.lstMiddleWare)
+                    {
+                        <option data-layer-abbr="@item.Layer_Abbr" value=@item.Layer_Name>@item.Layer_Title</option>
+                    }
+
+                </select>
+
+                <input type="text" class="form-control middleware" id="txtModelTypeValue" maxlength="50" />
+
+            </div>
+            <label class="control-label col-md-2" for="" style="text-align:right;white-space:nowrap;">Type Abbreviation<i class="clsMandatory">*</i>:</label>
+            <div class="col-md-4">
+                <input type="hidden" id="hdTAminLenght" value="@taMinLength" /><input type="hidden" id="hdTAmaxLenght" value="@taMaxLength" />
+                <input type="text" onkeypress="return AllowCharacters()" onkeyup="this.value = this.value.toUpperCase();" class="form-control" style="text-transform:capitalize;" minlength="@taMinLength" maxlength="@taMaxLength" id="txtTypeAbbr" />
+            </div>
+            <label class="control-label col-md-2" for="">Color@*<i class="clsMandatory">*</i>*@:</label>
+            <div class="col-md-4">
+                <select id="ddlModelTypeColor" name="LabelColors" class="form-control">
+                    <option style="" value="">Select Color</option>
+                    @*<option style="background:#2B3740;color:#FFFFFF;" value="1" data-font-color="#FFFFFF" data-bg-color="#2B3740" >-------</option>
+                        <option style="background:#F2994A;color:#FFFFFF;" value="2" data-font-color="#FFFFFF" data-bg-color="#F2994A">-------</option>
+                        <option style="background:#EB5757;color:#FFFFFF;" value="3" data-font-color="#FFFFFF" data-bg-color="#EB5757">-------</option>
+                        <option style="background:#27AE60;color:#FFFFFF;" value="4" data-font-color="#FFFFFF" data-bg-color="#27AE60">-------</option>
+                        <option style="background:#2F80ED;color:#FFFFFF;" value="5" data-font-color="#FFFFFF" data-bg-color="#2F80ED">-------</option>
+                        <option style="background:#FFFFFF;color:#2B3740;" value="6" data-font-color="#2B3740" data-bg-color="#FFFFFF">-------</option>
+                        <option style="background:#FFFFFF;color:#F2994A;" value="7" data-font-color="#F2994A" data-bg-color="#FFFFFF">-------</option>
+                        <option style="background:#FFFFFF;color:#EB5757;" value="8" data-font-color="#EB5757" data-bg-color="#FFFFFF">-------</option>
+                        <option style="background:#FFFFFF;color:#27AE60;" value="9" data-font-color="#27AE60" data-bg-color="#FFFFFF">-------</option>
+                        <option style="background:#FFFFFF;color:#2F80ED;" value="10" data-font-color="#2F80ED" data-bg-color="#FFFFFF">-------</option>*@
+                </select>
+                @*<input type="text" class="form-control mtfull" maxlength="7" id="txtColorCode"/>*@
+            </div>
+        </div>
+
+        @*<div class="form-group" style="width:100%">
+                <label class="control-label col-md-2" for="">Type Abbreviation<i class="clsMandatory">*</i>:</label>
+                <div class="col-md-4">
+                    <input type="hidden" id="hdTAminLenght" value="@taMinLength" /><input type="hidden" id="hdTAmaxLenght" value="@taMaxLength" />
+                    <input type="text" onkeypress="return AllowCharacters()" class="form-control"  minlength="@taMinLength" maxlength="@taMaxLength" id="txtTypeAbbr" />
+                </div>
+
+            </div>*@
+
+        <div class="d-flex">
+            <input type="button" style="display:none;" id="btnUpdateModelType" onclick="UpdateType();" class="btn btn-default" value="Update" />
+            <input type="button" id="btnReset" onclick="ResetType()" class="btn btn-gray ml-auto" value="Reset" />
+            <input type="button" id="btnSaveType" onclick="SaveType();" class="btn btn-primary ml-05 mr-05" value="Save" />
+        </div>
+
+        <div id="dvTypeDetails"></div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    hideShowMiddlewareOption();
+    $('#anchorCreateRule').on("click", function () {
+
+        $('#anchorCreateRule').addClass('active').addClass('show');
+        $('#tabCreateRule').addClass('active').addClass('show');
+
+        $('#anchorCreateType').removeClass('active').removeClass('show');
+        $('#tabCreateType').removeClass('active').removeClass('show');
+
+    });
+    $('#anchorCreateType').on("click", function () {
+        $('#anchorCreateType').addClass('active').addClass('show');
+        $('#tabCreateType').addClass('active').addClass('show');
+
+        $('#anchorCreateRule').removeClass('active').removeClass('show');
+        $('#tabCreateRule').removeClass('active').removeClass('show')
+
+    });
+
+    $(".mtfull").spectrum({
+        color: 'transparent',
+        allowEmpty: true,
+        showInput: true,
+        containerClassName: "full-spectrum",
+        showInitial: true,
+        showPalette: true,
+        showSelectionPalette: true,
+        showAlpha: false,
+        maxPaletteSize: 10,
+        preferredFormat: "hex",
+        palette: [
+            ["rgb(0, 0, 0)", "rgb(67, 67, 67)", "rgb(102, 102, 102)", /*"rgb(153, 153, 153)","rgb(183, 183, 183)",*/
+                "rgb(204, 204, 204)", "rgb(217, 217, 217)", /*"rgb(239, 239, 239)", "rgb(243, 243, 243)",*/ "rgb(255, 255, 255)"],
+            ["rgb(152, 0, 0)", "rgb(255, 0, 0)", "rgb(255, 153, 0)", "rgb(255, 255, 0)", "rgb(0, 255, 0)",
+                "rgb(0, 255, 255)", "rgb(74, 134, 232)", "rgb(0, 0, 255)", "rgb(153, 0, 255)", "rgb(255, 0, 255)"],
+            ["rgb(230, 184, 175)", "rgb(244, 204, 204)", "rgb(252, 229, 205)", "rgb(255, 242, 204)", "rgb(217, 234, 211)",
+                "rgb(208, 224, 227)", "rgb(201, 218, 248)", "rgb(207, 226, 243)", "rgb(217, 210, 233)", "rgb(234, 209, 220)",
+                "rgb(221, 126, 107)", "rgb(234, 153, 153)", "rgb(249, 203, 156)", "rgb(255, 229, 153)", "rgb(182, 215, 168)",
+                "rgb(162, 196, 201)", "rgb(164, 194, 244)", "rgb(159, 197, 232)", "rgb(180, 167, 214)", "rgb(213, 166, 189)",
+                "rgb(204, 65, 37)", "rgb(224, 102, 102)", "rgb(246, 178, 107)", "rgb(255, 217, 102)", "rgb(147, 196, 125)",
+                "rgb(118, 165, 175)", "rgb(109, 158, 235)", "rgb(111, 168, 220)", "rgb(142, 124, 195)", "rgb(194, 123, 160)",
+                "rgb(166, 28, 0)", "rgb(204, 0, 0)", "rgb(230, 145, 56)", "rgb(241, 194, 50)", "rgb(106, 168, 79)",
+                "rgb(69, 129, 142)", "rgb(60, 120, 216)", "rgb(61, 133, 198)", "rgb(103, 78, 167)", "rgb(166, 77, 121)",
+                /*"rgb(133, 32, 12)", "rgb(153, 0, 0)", "rgb(180, 95, 6)", "rgb(191, 144, 0)", "rgb(56, 118, 29)",
+                "rgb(19, 79, 92)", "rgb(17, 85, 204)", "rgb(11, 83, 148)", "rgb(53, 28, 117)", "rgb(116, 27, 71)",*/
+                "rgb(91, 15, 0)", "rgb(102, 0, 0)", "rgb(120, 63, 4)", "rgb(127, 96, 0)", "rgb(39, 78, 19)",
+                "rgb(12, 52, 61)", "rgb(28, 69, 135)", "rgb(7, 55, 99)", "rgb(32, 18, 77)", "rgb(76, 17, 48)"]
+        ]
+    });
+    $("#selectParentModel").chosen({
+        width: "100%",
+        placeholder_text_single: "Select Parent Model",
+        no_results_text: "No record found"
+    });
+    $("#selectParentModelType").chosen({
+        width: "100%",
+        placeholder_text_single: "Select Parent Type",
+        no_results_text: "No record found"
+    });
+    $("#selectChildModel").chosen({
+        width: "100%",
+        placeholder_text_single: "Select Child Model",
+        no_results_text: "No record found"
+    });
+    $("#selectChildModelType").chosen({
+        width: "100%",
+        placeholder_text_single: "Select Child Type",
+        no_results_text: "No record found"
+    });
+    $("#ddlModel").chosen({
+        width: "100%",
+        placeholder_text_single: "Select Model",
+        no_results_text: "No record found"
+    });
+</script>

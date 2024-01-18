@@ -1,0 +1,91 @@
+﻿
+@model Models.MicrowaveLinkViewModel
+<fieldset class="the-fieldset">
+    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_105</legend>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_107:<i class="clsMandatory">*</i>:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwavelinkFeederSystemA.mwlink_sys_id, new { @class = "form-control", @readonly = true })
+        </div>
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_120:<i class="clsMandatory">*</i>:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwavelinkFeederSystemB.mwlink_sys_id, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_GBL_002:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.region_name, new { @class = "form-control", @readonly = true })
+        </div>
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_GBL_003:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.province_name, new { @class = "form-control", @readonly = true })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_108:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_distance, new { @class = "form-control", @readonly = true })
+        </div>
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_109:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.towerMasterB.network_id, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_110:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.tower_owner, new { @class = "form-control" })
+        </div>
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_111:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.manufacturer, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_112:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.capex, new { @class = "form-control" })
+        </div>
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_113		:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.opex, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_114:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.mtbf, new { @class = "form-control" })
+        </div>
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_115:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.mttr, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_CAB_NET_FRM_025:<i class="clsMandatory">*</i>:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.activation_stage, new { @class = "form-control" })
+        </div>
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_NET_FRM_108	:<i class="clsMandatory">*</i>:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.accessibility, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_CAB_NET_FRM_024:<i class="clsMandatory">*</i>:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.construction_stage, new { @class = "form-control" })
+        </div>
+        <label class="control-label col-sm-2" for="txtParentType">@Resources.Resources.SI_OSP_GBL_GBL_FRM_101:</label>
+        <div class="col-sm-4">
+            @Html.TextBoxFor(m => m.microwaveLinkMaster.hierarchy_type, new { @class = "form-control" })
+        </div>
+    </div>
+</fieldset>

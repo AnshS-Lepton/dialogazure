@@ -1,0 +1,143 @@
+﻿@model Models.UpdateGeomtaryValue
+
+@{
+    Layout = null;
+    var buttonText = Model.lstUpdateRegionProvince[0].existing_id > 0 ? Resources.Resources.GBL_GBL_GBL_GBL_GBL_003 : Resources.Resources.GBL_GBL_GBL_GBL_GBL_004;
+}
+@helper pageMessage()
+{
+{ Html.RenderPartial("_PageMessage", Model.pageMsg); }
+
+}
+<style>
+    .RegProvFooter {
+        margin-bottom: -10px;
+        margin-top: 20px;
+    }
+
+    .ValidationError {
+        width: 100%;
+        border: 1px solid red;
+    }
+
+    .ValidationSucess {
+        width: 100%;
+        border: 1px solid red;
+    }
+</style>
+
+<!DOCTYPE html>
+<div style="padding: 30px;">
+    @using (Ajax.BeginForm("SaveProvince", "RegionProvince", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress", OnSuccess = "si.refreshRegionProvince();" }, new { id = "frmSaveRegionProvince", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.lstUpdateRegionProvince[0].geomtext)
+        @Html.HiddenFor(m => m.lstUpdateRegionProvince[0].existing_id)
+        @Html.HiddenFor(m => m.lstUpdateRegionProvince[0].entryStatus)
+        @Html.HiddenFor(m => m.lstUpdateRegionProvince[0].boundarytype, new { id = "hdnBoundaryType" })
+        @pageMessage()
+        <div>
+
+            <div class="row form-group">
+                <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_065<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.lstUpdateRegionProvince[0].region_name, new { @id = "txtRegionName", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_002, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_357, maxlength = 20, @readOnly = true })
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_066<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.lstUpdateRegionProvince[0].province_name, new { @id = "txtProvinceName", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_003, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_356, maxlength = 20 })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_352<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.lstUpdateRegionProvince[0].province_abbreviation, new { @id = "txtProvinceAbbreviation", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_352, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_355, maxlength = 5 })
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_353<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.lstUpdateRegionProvince[0].country_name, new { @id = "txtCountry", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_353, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_354, maxlength = 20, @readOnly = true })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label">
+                           @Resources.Resources.SI_OSP_GBL_GBL_FRM_014
+                        </label>
+                    </div>
+                    <div class="col-md-8">
+                        @Html.CheckBoxFor(m => m.is_active, new { @class = "chk" })
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group RegProvFooter">
+                <div class="col-md-3"></div>
+                <div class="col-md-9 text-right">
+                    <button type="submit" class="btn btn-primary" id="btnAddProvince" onclick="return ValidateProvince();">@buttonText</button>
+                    <button type="button" class="btn btn-default" id="btnProvinceClear" onclick="$('#ModalPopUp  #closeModalPopup').trigger("click");">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    @*$(document).ready(function () {
+        if (@Model.lstUpdateRegionProvince[0].id > 0 && '@Model.pageMsg.message' != "") {
+            alert('@Model.pageMsg.message');
+        }
+        else if ('@Model.pageMsg.message' != "") {
+            if ('@Model.pageMsg.status' == "OK") {
+                ResetProvince();
+            }
+            alert('@Model.pageMsg.message');
+            $('#closeModalPopup').trigger("click");
+        }
+    });*@
+    function ResetProvince() {
+        $("#txtRegionName").addClass("ValidationSuccess").removeClass("ValidationError");
+        $("#txtProvinceName").val("").addClass("ValidationSuccess").removeClass("ValidationError");
+        $("#txtProvinceAbbreviation").val("").addClass("ValidationSuccess").removeClass("ValidationError");
+        $("#txtCountry").addClass("ValidationSuccess").removeClass("ValidationError");
+    }
+    function ValidateProvince() {
+        var purpose = $("#hdnBoundaryType").val().toUpperCase();
+        if ($("#txtProvinceName").val().trim() == "" && $("#txtProvinceAbbreviation").val().trim() == "") {
+            $("#txtProvinceName").addClass("ValidationError").removeClass("ValidationSuccess");
+            $("#txtProvinceAbbreviation").addClass("ValidationError").removeClass("ValidationSuccess");
+            return false;
+        }
+        if ($("#txtRegionName").val().trim() == "") {
+            $("#txtRegionName").addClass("ValidationError").removeClass("ValidationSuccess");
+            return false;
+        }
+        else {
+            $("#txtRegionName").addClass("ValidationSuccess").removeClass("ValidationError");
+        }
+        if ($("#txtProvinceName").val().trim() == "") {
+            $("#txtProvinceName").addClass("ValidationError").removeClass("ValidationSuccess");
+            return false;
+        }
+        else {
+            $("#txtProvinceName").addClass("ValidationSuccess").removeClass("ValidationError");
+        }
+        if ($("#txtProvinceAbbreviation").val().trim() == "") {
+            $("#txtProvinceAbbreviation").addClass("ValidationError").removeClass("ValidationSuccess");
+            return false;
+        }
+        else {
+            $("#txtProvinceAbbreviation").addClass("ValidationSuccess").removeClass("ValidationError");
+        }
+        if ($("#txtCountry").val().trim() == "") {
+            $("#txtCountry").addClass("ValidationError").removeClass("ValidationSuccess");
+            return false;
+        }
+        else {
+            $("#txtCountry").addClass("ValidationSuccess").removeClass("ValidationError");
+        }
+        return true;
+    }
+</script>

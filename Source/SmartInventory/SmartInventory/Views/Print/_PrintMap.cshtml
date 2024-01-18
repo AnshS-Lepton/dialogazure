@@ -1,0 +1,482 @@
+﻿@model Models.PrintMap
+@using SmartInventory.Settings;
+
+<form class="form-horizontal">
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(m => m.layerURL)
+    @Html.HiddenFor(m => m.mapCenterLat)
+    @Html.HiddenFor(m => m.mapCenterLng)
+    @Html.HiddenFor(m => m.radius)
+    @Html.HiddenFor(m => m.mapType)
+    @Html.HiddenFor(m => m.mapCurrentZoom)
+    @Html.HiddenFor(m => m.mapCordinates)
+    @Html.HiddenFor(m => m.mapCanvasWidth)
+    @Html.HiddenFor(m => m.mapCanvasHeight)
+    @Html.HiddenFor(m => m.layerFilters)
+    @Html.HiddenFor(m => m.legendData)
+
+    @Html.HiddenFor(m => m.mapSelectedGeom)
+    @Html.HiddenFor(m => m.pageSize, new { @id = "hdnPmpageSize", @name = "hdnPmpageSize" })
+    @Html.HiddenFor(m => m.pageScale, new { @id = "hdnPmpageScale", @name = "hdnPmpageScale" })
+    @Html.HiddenFor(m => m.printHistoryID)
+    @Html.HiddenFor(m => m.selectedGeomType)
+    @Html.Hidden("hdnMaxPDFWihoutThread", ApplicationSettings.MaxPDFWihoutThread)
+    @{ var isAttr = ((List<string>)Session["ApplicableModuleList"]).Contains("PMA");}
+    <input type="hidden" id="hdntemplateids" value="0" />
+    <div class="@(isAttr ? "divHeightWithAttr" : "divHeightWithoutAttr")">
+        <div class="space-pad">
+            <fieldset class="the-fieldset">
+                <legend class="the-legend title_popout">@Resources.Resources.SI_OSP_PM_NET_FRM_003</legend>
+                <div class="form-group row">
+                    <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_GBL_GBL_FRM_002<i class="clsMandatory">*</i>:</label>
+                    <div class="col-sm-8">
+                        <select id="pageSize" class="chosen-select col-sm-12">
+                            <option value="A4" data-height="527" data-width="527">A4</option>
+                            <option value="A3" data-height="738" data-width="738">A3</option>
+                            <option value="A2" data-height="1047" data-width="1047">A2</option>
+                            <option value="A1" data-height="1512" data-width="1512">A1</option>
+                            <option value="A0" data-height="2152" data-width="2152">A0</option>
+                        </select>
+                        <span>@Resources.Resources.SI_OSP_PM_NET_FRM_004</span>
+                    </div>
+                </div>
+                @if (Model.ApplicableModuleList.Contains("PGS"))
+                {
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_005<i class="clsMandatory"></i>:</label>
+                        <div class="col-sm-8">
+
+                            @*<select id="pageScale" class="chosen-select col-sm-12">
+                                    <option value="0">Fit to selected page size</option>
+                                    @{
+                                        for (int i = 5; i < 21; i++)
+                                        {
+                                            string scaleText = string.Format("{0} m ({1})", Model.ScaleLimit[i], i);
+                                            if (i <= 13)
+                                            {
+                                                scaleText = string.Format("{0} km ({1})", Model.ScaleLimit[i] / 1000, i);
+                                            }
+                                            <option value="@i">1:@scaleText</option>
+                                        }
+                                    }
+                                </select>*@
+                            @*<select id="pageScale" class="chosen-select col-sm-12">
+                                    <option value="0">Fit to selected page size</option>
+                                    <option value="20">1:500</option>
+                                    <option value="19">1:1000</option>
+                                </select>*@
+
+                            @Html.DropDownListFor(m => m.pageScale, new SelectList(Model.ddlMapScale.Select(x => new { Value = x.Zoom.ToString(), Text = x.Scale }), "Value", "Text"), "-Select-", new { @class = "chosen-select", @id = "pageScale" })
+                        </div>
+                    </div>
+                }
+                <div class="form-group row">
+                    <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_GBL_GBL_GBL_047<i class="clsMandatory">*</i>:</label>
+                    <div class="col-sm-8">
+                        @Html.TextBoxFor(m => m.pageTitle, new { @class = "input-sm form-control", autocomplete = "off", @maxlength = "50" })
+                        @*@Html.ValidationMessageFor(model => model.pageTitle)*@
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_098<i class="clsMandatory">*</i>:</label>
+                    <div class="col-sm-8">
+                        <div class="bottom_txt legendRadio" title=@Resources.Resources.SI_OSP_PM_NET_FRM_043>
+                            <label class="radio-inline">
+                                <input type="radio" name="chkLegendRequired" id="chkLegendRequiredYes" value=true checked="checked"> @Resources.Resources.SI_OSP_PM_NET_FRM_006
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="chkLegendRequired" id="chkLegendRequiredNo" value=false> @Resources.Resources.SI_GBL_GBL_NET_FRM_214
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                @if (SmartInventory.Settings.ApplicationSettings.isStaticMapEnabled)
+                {
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_NET_GBL_158<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-8">
+                            <div class="bottom_txt" title="Quality">
+                                @*<label class="switch">
+                                        <input id="chkBckMap" onchange="si.checkBckMapRequired()" type="checkbox" />
+                                        <span class="slider round"></span>
+                                    </label>*@
+                                <label class="radio-inline">
+                                    <input type="radio" name="chkBckMap" id="chkBckMapYes" value="true" checked="checked"> @Resources.Resources.SI_OSP_PM_NET_FRM_006
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="chkBckMap" id="chkBckMapNo" value="false"> @Resources.Resources.SI_GBL_GBL_NET_FRM_214
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row bckClip">
+                        <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_NET_GBL_157<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-8">
+                            <div class="bottom_txt" title="Quality">
+                                @*<label class="switch">
+                                        <input id="chkBckClipping" onchange="si.checkBckClippingRequired()" type="checkbox" />
+                                        <span class="slider round"></span>
+                                    </label>*@
+                                <label class="radio-inline">
+                                    <input type="radio" name="chkBckClipping" id="chkBckClippingYes" value="true" checked="checked"> @Resources.Resources.SI_OSP_PM_NET_FRM_006
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="chkBckClipping" id="chkBckClippingNo" value="false"> @Resources.Resources.SI_GBL_GBL_NET_FRM_214
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="form-group row" style="display:none">
+                    <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_GBL_GBL_FRM_003<i class="clsMandatory">*</i>:</label>
+                    <div class="col-sm-8">
+                        @Html.DropDownList("pageLayout", new List<SelectListItem>
+                {
+                   new SelectListItem{ Text="Landscape", Value = "Landscape" }
+                 }, new { @class = "chosen-select col-sm-12" })
+                    </div>
+                </div>
+                <div class="form-group row" style="display:none">
+                    <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                    <div class="col-sm-8">
+                        <textarea id="pageRemarks" name="pageRemarks" class="input-sm form-control" cols="30" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-sm-4">@Resources.Resources.SI_GBL_GBL_NET_FRM_095<i class="clsMandatory">*</i> :</label>
+                    <div class="col-sm-8">
+                        <div class="bottom_txt qualityDiv" title="Quality">
+                            <label class="radio-inline">
+                                <input type="radio" name="chkPrintQuality" id="chkPrintQualityYes" value="2">@Resources.Resources.SI_OSP_PM_NET_FRM_006
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="chkPrintQuality" id="chkPrintQualityNo" value="1" checked="checked"> @Resources.Resources.SI_GBL_GBL_NET_FRM_214
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            @if (((List<string>)Session["ApplicableModuleList"]).Contains("PMA"))
+            {
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend title_popout">
+                        @Html.CheckBoxFor(m => m.isFooterTemplateEnabled, new { @checked = true })
+                        @Resources.Resources.SI_OSP_PM_NET_FRM_007
+                    </legend>
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="ddlSavedTemplate"> @Resources.Resources.SI_OSP_PM_NET_FRM_045:</label>
+                        <div class="col-sm-8">
+                            @Html.DropDownListFor(m => m.printMapAttr.templateId, new SelectList(Model.ddlSavedTemplate.Select(x => new { Value = x.id.ToString(), Text = x.template_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select", @onchange = "Fill_PrintSavedTemplate(this.value);", @id = "ddlSavedTemplate" })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-12">
+                            <label class="d-flex j-flex-end">
+                                @Html.CheckBox("IsSavedAsTemplate", new { @class = "input-sm form-control", @onchange = "ShowHide_Div(this,'saved-temp-css',false);", @style = "height:21px;width:16px; margin-right: 7px; " })
+                                <label class="control-label" for="IsSavedAsTemplate">@Resources.Resources.SI_OSP_PM_NET_FRM_046</label>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group saved-temp-css row" style="display:none;">
+                        <label class="control-label col-sm-4" for="Template_name">@Resources.Resources.SI_GBL_GBL_GBL_GBL_159 :</label>
+                        <div class="col-sm-8">
+                            <div class="TickCrossicon">
+                                @*<img src="~/Content/images/cross.gif" class="GifImg crossIcon @(Model.system_id==0?" crossIcon":"")" id="IconCross" title="Link Id Already Exist!" />*@
+
+                                <img src="~/Content/images/tic.gif" class="css-saved-PTemplare TickCrossicon GifImg" id="ImgIsAvailable" />
+
+                            </div>
+                            @Html.TextBox("Template_name", null, new { @class = "input-sm form-control", @maxlength = "30", @onblur = "validateTemplate(this.value);", @autocomplete = "OFF", @placeholder = Resources.Resources.SI_OSP_PM_NET_FRM_047 })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_008 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.jobId, new { @class = "input-sm form-control", @maxlength = "28", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_GBL_JQ_FRM_166 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.department, new { @class = "input-sm form-control", @maxlength = "11", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_009 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.plottedBy, new { @class = "input-sm form-control", @maxlength = "20", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_010 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.team, new { @class = "input-sm form-control", @autocomplete = "OFF", @maxlength = "30", })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_011 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.drawnBy, new { @class = "input-sm form-control", @maxlength = "18", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_012 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.checkedBy, new { @class = "input-sm form-control", @maxlength = "18", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_028 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.recheckedBy, new { @class = "input-sm form-control", @maxlength = "18", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_013 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.approvedBy, new { @class = "input-sm form-control", @maxlength = "18", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_014 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.X_Document_Index, new { @class = "input-sm form-control", @maxlength = "10", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_015 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.Y_Document_Index, new { @class = "input-sm form-control", @maxlength = "10", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_016 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.phase, new { @class = "input-sm form-control", @maxlength = "4", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_017 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.plan, new { @class = "input-sm form-control", @maxlength = "24", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_018 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.provDir, new { @class = "input-sm form-control", @maxlength = "18", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_019 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.FDCNo, new { @class = "input-sm form-control", @maxlength = "4", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-4" for="status">@Resources.Resources.SI_OSP_PM_NET_FRM_020 :</label>@*//LINGUAL NEEDED*@
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.printMapAttr.OLT, new { @class = "input-sm form-control", @maxlength = "12", @autocomplete = "OFF" })
+                        </div>
+                    </div>
+                </fieldset>
+            }
+        </div>
+    </div>
+    <div class="ModalFooter d-flex" id="dvBtnAction">
+        <a href="javascript:void(0);" class="btn btn-danger ml-auto" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        <input type="button" class="btn btn-warning ml-10" name="btnaction" id="btnDeletePrintTemp" onclick="fnDeletePrintTemp()" value="Delete Template" @(Model.printMapAttr.templateId == 0 ? "display:none;" : "display: block;") ">
+        <input type="button" class="btn btn-success ml-10" name="btnaction" id="btnGenerate" onclick="si.printMap()" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010">
+    </div>
+    <input type="hidden" id="hdnValdateIsTemplate" value="OK" />
+</form>
+<div class="PrintLegend">
+</div>
+
+<style>
+
+    .TickCrossicon {
+        position: absolute;
+        font-size: 13px;
+        right: 0;
+        margin: 1px 10px 0px 0px;
+        display: none;
+    }
+
+    .GifImg {
+        width: 20px;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        setTimeout(function () {
+            var setPgSval = $("[id$=hdnPmpageSize]").val() == "" ? "A4" : $("[id$=hdnPmpageSize]").val();
+            $("[id$=pageSize]").val(setPgSval);
+            $("#pageSize").val($("[id$=pageSize]").val()).trigger("chosen:updated");
+            $("[id$=pageScale]").val($("[id$=hdnPmpageScale]").val());
+            $("#pageScale").val($("[id$=pageScale]").val()).trigger("chosen:updated");
+        }, 1000);
+
+        if ($("#selectedGeomType").val() != "" && $("#selectedGeomType").val() != null && $("#selectedGeomType").val() != undefined) {
+            $("#hdnPrintAreaType").val($("#selectedGeomType").val());
+        }
+        $('.chosen-select').chosen({ width: '100%', disable_search_threshold: '5' });
+
+        if ($("#hdnPrintAreaType").val() == "Polygon") {
+            $(".bckClip").show();
+            $("#chkBckClippingYes").prop("checked", true);
+        } else {
+            $(".bckClip").hide();
+            $("#chkBckClippingNo").prop("checked", true);
+        }
+        //if( $('#pageScale').length )
+        //{setPageScaleOptions();}
+    });
+
+    function ShowHide_Div(th, toggleCtrlID, IsCtrlID) {
+        $(".TickCrossicon").css('display', 'none');
+        var $ctrl;
+        if (IsCtrlID) {
+            $ctrl = $("[id$=" + toggleCtrlID + "]");
+        }
+        else {
+            $ctrl = $("." + toggleCtrlID + "");
+        }
+        var chkval = $(th).is(":checked");
+        if (chkval) {
+            $ctrl.show(500);
+            $("[id$=Template_name]").attr("required", true);
+            $("[id$=Template_name]").val("");
+            $("[id$=ddlSavedTemplate]").trigger("chosen:updated");
+            $("[id$=ddlSavedTemplate]").prop('disabled', true).trigger("chosen:updated");
+        }
+        else {
+            $ctrl.hide(500);
+            $("[id$=ddlSavedTemplate]").prop('disabled', false).trigger("chosen:updated");
+            $("[id$=Template_name]").removeAttr("required", true);
+        }
+    }
+
+    function Fill_PrintSavedTemplate(vals) {
+       //$("[id$=ddlSavedTemplate]").val()
+        if (vals > 0) {
+            ajaxReq('Print/GetSaveTemplateData', { p_id: vals }, true, function (resp) {
+                if (resp.status == "success") {
+                    if (resp.success.length > 0) {
+                        $("[id$=printMapAttr_jobId]").val(resp.success[0].job_id);
+                        $("[id$=printMapAttr_department]").val(resp.success[0].department);
+                        $("[id$=printMapAttr_plottedBy]").val(resp.success[0].plotted_by);
+                        $("[id$=printMapAttr_team]").val(resp.success[0].team);
+                        $("[id$=printMapAttr_drawnBy]").val(resp.success[0].drawn_by);
+                        $("[id$=printMapAttr_checkedBy]").val(resp.success[0].checked_by);
+                        $("[id$=printMapAttr_recheckedBy]").val(resp.success[0].rechecked_by);
+                        $("[id$=printMapAttr_approvedBy]").val(resp.success[0].approved_by);
+                        $("[id$=printMapAttr_X_Document_Index]").val(resp.success[0].x_document_index);
+                        $("[id$=printMapAttr_Y_Document_Index]").val(resp.success[0].y_document_index);
+                        $("[id$=printMapAttr_phase]").val(resp.success[0].phase);
+                        $("[id$=printMapAttr_plan]").val(resp.success[0].plan);
+                        $("[id$=printMapAttr_provDir]").val(resp.success[0].prov_dir);
+                        $("[id$=printMapAttr_FDCNo]").val(resp.success[0].fdc_no);
+                        $("[id$=printMapAttr_OLT]").val(resp.success[0].olt);
+                        $("#hdntemplateids").val(resp.success[0].id);
+                        $("#btnDeletePrintTemp").show();
+                    }
+                }
+                else if (resp.status == "fail") {
+                    alert(resp.error);
+                }
+            });
+        }
+        else
+        {
+            $("#printMapAttr_jobId").val("");
+            $("#printMapAttr_department").val("");
+            $("#printMapAttr_plottedBy").val("");
+            $("#printMapAttr_team").val("");
+            $("#printMapAttr_drawnBy").val("");
+            $("#printMapAttr_checkedBy").val("");
+            $("#printMapAttr_recheckedBy").val("");
+            $("#printMapAttr_approvedBy").val("");
+            $("#printMapAttr_X_Document_Index").val("");
+            $("#printMapAttr_Y_Document_Index").val("");
+            $("#printMapAttr_phase").val("");
+            $("#printMapAttr_plan").val("");
+            $("#printMapAttr_provDir").val("");
+            $("#printMapAttr_FDCNo").val("");
+            $("#printMapAttr_OLT").val("");
+            $("#btnDeletePrintTemp").hide();
+        }
+    }
+
+
+    function PrintmapValidateTemplate() {
+         
+        if ($("#hdnValdateIsTemplate").val() == "0" || $("#hdnValdateIsTemplate").val() == "") {
+            if (confirm('Same name template already exist. Do you want to change?')) {
+                si.printMap();
+            }
+        }
+            else {
+                si.printMap();
+            }
+
+
+    }
+    function validateTemplate(_searchText) {
+        if (_searchText.trim().length > 0) {
+            ajaxReq('Print/validateTemplateText', { searchText: _searchText.trim() }, true, function (resp) {
+                $("#hdnValdateIsTemplate").val(resp.status);
+                if (resp.status == 'OK') {
+                    $(".css-saved-PTemplare").css('border-color', '');
+                    $(".TickCrossicon").css('display', 'block');
+                    $(".css-saved-PTemplare").removeClass("crossIcon");
+                    $(".css-saved-PTemplare").addClass("tickIcon");
+                    $(".css-saved-PTemplare").attr("src", "Content/images/tick_1.gif");
+                }
+                else {
+                    $(".TickCrossicon").css('display', 'block');
+                    $(".css-saved-PTemplare").removeClass("crossIcon");
+                    $(".css-saved-PTemplare").removeClass("tickIcon");
+                    $(".css-saved-PTemplare").attr("src", "Content/images/cross.gif");
+                }
+            });
+        }
+        else {
+            $(".TickCrossicon").css('display', 'none');
+            $(app.DE.tickIcon).css('display', 'none');
+            $(app.DE.crossIcon).css('display', 'none');
+        }
+    }
+
+    function setPageScaleOptions()
+    {
+
+        var currentZoom = si.map.getZoom();
+        var scaleLimits = [];
+
+    @foreach (var d in Model.ScaleLimit)
+    {
+        @:scaleLimits.push("@d");
+    }
+        var options = '<option value="0">Fit to selected page size</option>';
+        for (var i = 5; i <= 21; i++) {
+            if (i >= currentZoom) {
+                var scaleText = "" + scaleLimits[i] + " m (" + i + ")";
+                if (i <= 13) {
+                    scaleText = "" + scaleLimits[i] / 1000 + " km (" + i + ")";
+                }
+                options += '<option value="' + i + '">' + scaleText + '</option>';
+
+            }
+        }
+        $('#pageScale').empty().append(options);
+        $('#pageScale').trigger("chosen:updated");
+    }
+</script>

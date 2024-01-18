@@ -1,0 +1,110 @@
+﻿@model Models.ViewAuditMasterModel
+@using Utility
+@using SmartInventory.Settings;
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objFilterAttributes.pageSize, canPage: true, canSort: true, ajaxUpdateContainerId: "objViewAuditHistory", ajaxUpdateCallback: "onGridHeaderClick('tblUserHistory')");
+    grid.Bind(Model.lstData, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+    if (Model.objFilterAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objFilterAttributes.currentPage - 1;
+    }
+}
+
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div class="libDetail">
+    @using (Ajax.BeginForm("DownloadUserHistory", "User", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody" },
+                                     new { id = "frmUserHistory", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+        @Html.HiddenFor(m => m.systemId);
+
+        if (Model.lstData.Count > 0)
+        {
+            <div class="form-group row" id="dvBtnAction" style="padding: 10px 10px 8px 10px;margin:0px;">
+                <div class="div_totalRecord col-sm-4" style="float: left;"><b>Total Records:&nbsp;<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+                <div class="col-sm-8" style="float: right; text-align: right; cursor:pointer;">
+                    @if (@grid.TotalRowCount > 0)
+                    {
+                        <input type="button" id="btnExport" value="Export" class="btn btn-primary" />
+                    }
+                    else
+                    {
+                        <input type="button" id="btnExport" value="Export" disabled="disabled" class="btn btn-primary" />
+                    }
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+            <div id="objViewAuditHistory" style="padding:10px;padding-top:0px;">
+
+                @if (Model.lstData.Count > 0)
+                {
+                    <div id="dvViewExportData" style="padding: 4px;padding-top: 0px;    white-space: nowrap;">
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+                         htmlAttributes: new { id = "tblUserHistory" },
+                            mode: WebGridPagerModes.All,
+                             columns: grid.Columns(
+
+     grid.Column("user_name", "User Name", format: @<text>@item.user_name</text>),
+grid.Column("name", "Name", format: @<text>@item.name</text>),
+grid.Column("user_email", "Email", format: @<text>@item.user_email</text>),
+grid.Column("role_name", "Role Name", format: @<text>@item.role_name</text>),
+grid.Column("reporting_manager", "Reporting Manager", format: @<text>@item.reporting_manager</text>),
+grid.Column("mobile_number", "Mobile Number", format: @<text>@item.mobile_number</text>),
+grid.Column("password", "Password", format: @<text>@item.password</text>),
+grid.Column("application_access", "Application Access", format: @<text>@item.application_access</text>),
+grid.Column("user_type", "User Type", format: @<text>@item.user_type</text>),
+grid.Column("is_admin_rights_enabled", "Has Admin Rights", format: @<text>@(Convert.ToBoolean(item.is_admin_rights_enabled) == true ? "Yes" : "No")</text>),
+grid.Column("is_active", "Status", format: @<text>@(Convert.ToBoolean(item.is_active) == true ? "Active" : "InActive")</text>),
+grid.Column("created_by", "Created By", format: @<text>@item.created_by</text>),
+grid.Column("created_on", "Created On", format: @<text>@(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString()))</text>),
+grid.Column("modified_by", "Modified By", format: @<text>@item.modified_by</text>),
+grid.Column("modified_on", "Modified On", format: @<text> @(item.modified_on == null ? item.modified_on : MiscHelper.FormatDateTime(item.modified_on.ToString())) </text>)))
+
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div style="text-align: center; margin-top: 30px;">
+                @Resources.Resources.SI_OSP_GBL_GBL_RPT_001
+            </div> 
+        }
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        updateNumberstoFormatedNumber();
+        $('th a, tfoot a').on("click", function () {
+            $('#frmUserHistory').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        addDefaultSortingIcons('tblUserHistory');
+
+        onGridHeaderClick('tblUserHistory');
+        changeColor('tblUserHistory');
+
+        $("#btnExport").on("click", function () {
+            EntityAuditReport("DownloadUserHistory");
+        });
+    });
+
+    function EntityAuditReport(downloadEntity) {
+        window.location = appRoot + 'User/' + downloadEntity;
+    }
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+</script>

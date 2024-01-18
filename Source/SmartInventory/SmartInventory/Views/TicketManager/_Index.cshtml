@@ -1,0 +1,577 @@
+﻿@*@model Models.TicketMasterViewModel*@
+@model Models.TicketManagerFilter
+@using Models;
+@using Utility;
+@*@helper CreateTicket()
+    {
+    { Html.RenderPartial("~/Views/TicketManager/_AddTicket.cshtml", (TicketMaster)Model); }
+    }*@
+<style>
+   
+    .modal-body .FilterDiv .padRow .divPads {
+        display: inline-block;
+    }
+
+    .divPads .assign-calen {
+        position: absolute;
+        margin-top: 5px;
+        margin-right: 19px;
+        cursor: pointer;
+        right: 0px;
+    }
+
+
+    .DateIco {
+        position: absolute;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.25);
+        right: 0;
+        margin: 11px 9px 0px 0px;
+        cursor: pointer;
+    }
+
+
+    .BDR {
+        color: #1890FF;
+        border: 1px solid #1890FF !important;
+    }
+
+
+    .nav-tabs {
+        border-bottom: 1px solid #ddd;
+    }
+
+
+    /*.tab-content > .active {
+        border-top: #31bd72 solid 1px;
+    }*/
+
+    .TicketManager > li {
+        border-bottom: none !important;
+    }
+
+   
+    .FilterDiv {
+        position: relative;
+        width: 100%;
+        height: auto;
+        /*box-shadow: 0px 0 5px rgba(0, 0, 0, 0.5);*/
+        /*border-radius: 4px;*/
+        background-color: #fff;
+        /*margin: 45px 0px 0px -180px;*/
+    }
+
+
+        .FilterDiv .padRow {
+            border-bottom: 1px solid rgba(204, 204, 204, 0.5);
+        }
+
+            .FilterDiv .padRow .text-left {
+                color: #E30000;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            .FilterDiv .padRow .text-right {
+                color: #2567C5;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+    #VwTicketGrid .CustomTicketManager .CustomTicketManagercheck {
+        top: -6px;
+    }
+</style>
+
+
+@{
+    var userModuleList = (List<string>)Session["ApplicableModuleList"];
+    WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "VwTicketGrid",
+    ajaxUpdateCallback: "onGridHeaderClick('tblTicketManagerGrid');CheckBox();GridColor();");
+    grid.Bind(Model.lstTicketMaster, autoSortAndPage: false, rowCount: Model.totalRecord);
+    if (Model.totalRecord > 0)
+    {
+        grid.PageIndex = Model.currentPage - 1;
+    }
+}
+@helper CreateTicket()
+{
+{ Html.RenderPartial("~/Views/TicketManager/_AddTicket.cshtml", Model.objTicketMaster); }
+}
+@helper ApplyFilter()
+{
+{ Html.RenderPartial("~/Views /TicketManager /_ApplyFilter.cshtml", Model.objTicketMaster); }
+}
+@helper UploadTickets()
+{
+{
+    Html.RenderPartial("~/Views/TicketManager/_UploadTickets.cshtml");
+}
+}
+
+
+
+
+<div class="tab-content" id="Index">
+    <ul class="nav nav-tabs TicketManager">
+
+        @{
+            var activated = false;
+
+
+         }
+        @if (userModuleList.Contains("VTK"))
+        {
+            
+            <li class="active"><a data-toggle="tab" href="#Dashboard" class="active show">@Resources.Resources.SI_OSP_GBL_NET_FRM_127</a></li>
+            activated = true;
+        }
+        @if (userModuleList.Contains("CTK"))
+        {
+            <li id="liAddTicket" class="@(Model.objTicketMaster.user_role_id!=1?"":"dvdisabled") @(activated?"":"active")" style="@(Model.objTicketMaster.user_role_id!=1?"": "pointer-events: none;opacity: 0.4;")"><a data-toggle="tab" href="#CreateTickets">@Resources.Resources.SI_OSP_GBL_NET_FRM_128</a></li>
+            activated = true;
+        }
+        @if (userModuleList.Contains("UTK"))
+        {
+            <li id="liUploadTickets" class="@(Model.objTicketMaster.user_role_id != 1 ? "" : "dvdisabled")  @(activated?"":"active")" style="@(Model.objTicketMaster.user_role_id != 1 ? "" : "pointer-events: none;opacity: 0.4;")"><a data-toggle="tab" href="#UploadTickets">@Resources.Resources.SI_OSP_GBL_NET_FRM_129</a></li>
+        }
+        @if (Model.objTicketMaster.ticket_status != null)
+        {
+            <li class="building-status-lbl" id="liStatus">@Resources.Resources.SI_OSP_GBL_GBL_GBL_014 : @Model.objTicketMaster.ticket_status</li>
+        }
+    </ul>
+@{
+            var activatedTab = false;
+
+
+}
+@if (userModuleList.Contains("VTK"))
+{
+    <div id="Dashboard" class="tab-pane fade in active show">
+        @using (Ajax.BeginForm("ShowTicketManager", "TicketManager", new AjaxOptions
+        {
+            // OnSuccess = "SaveTicket",
+            HttpMethod = "POST",
+            UpdateTargetId = "Index",
+            InsertionMode = InsertionMode.Replace
+        },
+                              new { id = "frmIndexTicket", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+            <div class="d-flex space-pad bb-grey">
+                <div class="d-flex">
+                    @*<div class="Assign AT"><div class="numList">@Model.lstTicketMaster.Where(x => x.ticket_status == "Assigned").Count()</div> Assigned Ticket</div> <div class="Assign InPT"><div class="numList">@Model.lstTicketMaster.Where(x => x.ticket_status == "InProgress").Count()</div>In Progress Ticket</div> <div class="Assign PT"><div class="numList">@Model.lstTicketMaster.Where(x => x.ticket_status == "Pending").Count()</div>Pending Ticket</div> <div class="Assign CT"><div class="numList">@Model.lstTicketMaster.Where(x => x.ticket_status == "Completed").Count()</div>Complete Ticket</div>*@
+                    @if (Model.objticketstatus.Count > 0)
+                    {
+                        foreach (var item in Model.objticketstatus)
+                        {
+                            <div class="cus--tick_assign d-flex" style="background-color:@(item.color_code)">
+                                <div class="numList">
+                                    @item.ticket_count
+                                </div>
+                                @item.ticket_status
+                            </div>
+
+                        }
+                    }
+
+                </div>
+
+                @if (Model.lstTicketMaster.Count > 0)
+                {
+                    <button type="button" class="exp--btn ml-auto" id="btnExportTickets" value="Export"><span class="fa fa-download"></span> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+                }
+                else
+                {
+                    <button type="button" class="exp--btn ml-auto dvdisabled" id="btnExportTickets" value="Export"><span class="fa fa-download"></span> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+                }
+            </div>
+
+            <div class="BdrSet">
+                <div class="d-flex tablePad-bn">
+
+                    @*<label class="control-label col-sm-2" for="txtDatefrom" style="margin-top: 10px;padding-right: 0px;">Duration<i class="clsMandatory">*</i>:</label>*@
+                    @*<fieldset class="the-fieldset" style="margin-bottom:0px; float:left; padding:5px;">*@
+                    <div class="tckt-inp-widht mr-01">
+
+                        @Html.DropDownListFor(m => m.customDate, new List<SelectListItem>{
+                        new SelectListItem { Text = "Select", Value = "0"},
+                        new SelectListItem { Text = "Custom", Value = "1"},
+                        new SelectListItem { Text = "Today", Value = "2"},
+                        new SelectListItem { Text = "Previous Day", Value = "3"},
+                        new SelectListItem { Text = "Last 7 Days", Value = "4"},
+                        new SelectListItem { Text = "Last 30 Day", Value = "5"},
+                        new SelectListItem { Text = "Last 3 Months", Value = "6"},
+                        new SelectListItem { Text = "Last 6 Months", Value = "7"},
+                      new SelectListItem { Text = "Last 1 Year", Value = "8"},
+                    },
+new { @class = "chosen-select", @onchange = "onChangeCustomDate();", @id = "customedate" })
+                    </div>
+                    <div class="pos-rel d-flex mr-01">
+                        <label class="control-label pt-0" for="txtDatefrom">@Resources.Resources.SI_OSP_GBL_NET_FRM_130<i class="clsMandatory">*</i>:&nbsp; </label>
+                        @*<i class="glyphicon glyphicon-calendar DateIco"></i>*@
+                        @Html.TextBoxFor(m => m.fromDate, new { @id = "txtDateFrom", @title = @Resources.Resources.SI_OSP_GBL_NET_FRM_096, @class = "input-sm form-control tckt-inp-widht", @readonly = true, @style = "height:26px;" })
+                        <img id="imgFromDate" class="calend" src="~/Content/images/calendar.png" />
+                    </div>
+                    <div class="pos-rel d-flex mr-01">
+                        <label class="control-label pt-0" for="txtDatefrom">&nbsp;&nbsp;@Resources.Resources.SI_OSP_GBL_NET_FRM_131<i class="clsMandatory">*</i>:&nbsp;  </label>
+                        @*<i class="glyphicon glyphicon-calendar DateIco"></i>*@
+                        @Html.TextBoxFor(m => m.toDate, new { @id = "txtDateTo", @title = @Resources.Resources.SI_OSP_GBL_NET_FRM_097, @class = "input-sm form-control tckt-inp-widht", @readonly = true, @style = "height:26px;" })
+                        <img id="imgToDate" class="calend" src="~/Content/images/calendar.png" />
+                    </div>
+                    @*</fieldset>*@
+
+                    @*<div class="col-md-1 divPads" style="margin-top: 3px;">
+            <i class="glyphicon glyphicon-filter DateIco"></i>
+            <input type='text' class="form-control BDR" Value="Filter" onclick="applyFilter();" style="height:26px;" />
+
+        </div>*@
+                    <div class="pos-rel d-flex">
+                        @*<input type='text' class="form-control" placeholder="Search" />*@
+                        @Html.TextBoxFor(m => m.Searchtext, new { @id = "txtSearchTxt", @class = "form-control mr-01 input-mr search--padding", @style = "height:26px;" })
+                        <i class="glyphicon glyphicon-search SearchIco"></i>
+                        <button type="submit" class="btn btn-success ml-2 mr-01" id="btnTicketData"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                        <button type="submit" class="btn btn-default" id="btnResetSearchFilter"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+                    </div>
+                    <div class="lineMR ml-10 d-flex jc-sb @(Model.objTicketMaster.user_role_id != 1 ? "" : "dvdisabled")" style="@(Model.objTicketMaster.user_role_id != 1 ? "" : "pointer-events: none;opacity: 0.4;")">
+                        @if (Model.lstTicketMaster.Count > 0)
+                        {
+                            <i class="fa fa-fw fa-edit" id="iconEdit" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_003" onclick="si.editTicket();" tabindex="5"></i>
+                            <i class="fa fa-fw fa-trash" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" onclick="deleteTicket();"></i>
+                        }
+                        else
+                        {
+                        <i class="fa fa-fw fa-edit dvdisabled" id="iconEdit" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_003" onclick="si.editTicket();" tabindex="5"></i>
+                        <i class="fa fa-fw fa-trash dvdisabled" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" onclick="deleteTicket();"></i>
+                        }
+                    </div>
+                </div>
+                @if (Model.lstTicketMaster.Count > 0)
+                {
+                    <div id="VwTicketGrid">
+                        <div class="space-pad">
+                            <div class="mb-15"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@grid.TotalRowCount</b></div>
+                            <div class="table-responsive">
+                                @grid.GetHtml(tableStyle: "grid",
+         htmlAttributes: new { id = "tblTicketManagerGrid" },
+
+       mode: WebGridPagerModes.All,
+       columns: grid.Columns(
+        grid.Column(format: @<text> <label class="CustomTicketManager @(Model.objTicketMaster.user_role_id == 1 || ((User)Session["userDetail"]).user_name.ToUpper() != item.assigned_by.ToUpper() ? "dvdisabled" : "")" style="display:@(item.ticket_status != "Assigned" ? "none" : "block");cursor:pointer;@(Model.objTicketMaster.user_role_id == 1 || ((User)Session["userDetail"]).user_name.ToUpper() != item.assigned_by.ToUpper() ? "pointer-events: none;opacity: 0.4;" : "")"><input type="checkbox" value="@item.ticket_id" name="chkSelect" class="chkSurvey @(((User)Session["userDetail"]).user_name.ToUpper() != item.assigned_by.ToUpper()?"dvdisabled":"")" data-ticketStatus="@item.ticket_status" /><span class="CustomTicketManagercheck @(Model.objTicketMaster.user_role_id != 1 ? "" : "dvdisabled")" style="cursor:pointer;@(Model.objTicketMaster.user_role_id != 1 ? "" : "pointer-events: none;opacity: 0.4;")"></span></label></text>, header: "{checkall}"),
+grid.Column("ticket_id", Resources.Resources.SI_OSP_GBL_NET_RPT_025, format: @<text>@item.ticket_id </text>),
+grid.Column("ticket_type", Resources.Resources.SI_OSP_GBL_NET_FRM_133, format: @<text>@item.ticket_type </text>),
+grid.Column("reference_type", Resources.Resources.SI_OSP_GBL_NET_FRM_134, format: @<text>@item.reference_type</text>),
+grid.Column("can_id", Resources.Resources.SI_OSP_CUS_NET_FRM_001, format: @<text> @item.can_id</text>),
+grid.Column("tm.customer_name", Resources.Resources.SI_OSP_GBL_NET_FRM_138, format: @<text> @item.customer_name</text>),
+grid.Column("tm.address", Resources.Resources.SI_OSP_GBL_GBL_GBL_008, format: @<text> @item.address</text>),
+grid.Column("ticket_status", Resources.Resources.SI_OSP_GBL_NET_RPT_026, format: @<text>@item.ticket_status</text>),
+grid.Column("Building_code", Resources.Resources.SI_OSP_GBL_NET_FRM_140, format: @<text>@item.building_code</text>),
+grid.Column("bld_rfs_type", Resources.Resources.SI_OSP_GBL_NET_FRM_142, format: @<text>@item.bld_rfs_type</text>),
+grid.Column("assigned_to", Resources.Resources.SI_OSP_GBL_NET_FRM_105, format: @<text> @item.assigned_to </text>),
+grid.Column("assigned_by", Resources.Resources.SI_OSP_GBL_NET_RPT_011, format: @<text> @item.assigned_by </text>),
+grid.Column("completed_by", Resources.Resources.SI_OSP_GBL_NET_RPT_027, format: @<text> @item.completed_by </text>),
+grid.Column("completed_on", Resources.Resources.SI_OSP_GBL_NET_RPT_028, format: @<text> @(item.completed_on == null ? item.completed_on : MiscHelper.FormatDateTime(item.completed_on.ToString())) </text>),
+grid.Column("target_date", Resources.Resources.SI_OSP_GBL_NET_FRM_141, format: @<text>@(item.target_date == null ? item.target_date : MiscHelper.FormatDate(item.target_date.ToString())) </text>),
+grid.Column("assigned_date", Resources.Resources.SI_OSP_GBL_NET_RPT_029, format: @<text> @(item.assigned_date == null ? item.assigned_date : MiscHelper.FormatDateTime(item.assigned_date.ToString())) </text>)))
+
+                                @Html.Hidden("dir", grid.SortDirection)
+                                @Html.Hidden("col", grid.SortColumn)
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="nr-found">
+                        <span>@Resources.Resources.SF_GBL_GBL_NET_FRM_037</span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    activatedTab = true;
+}
+@if (userModuleList.Contains("CTK"))
+{
+    <div id="CreateTickets" class="tab-pane fade in @(activatedTab?"":" active show")">
+
+        @CreateTicket()
+    </div>
+    activatedTab = true;
+}
+@if (userModuleList.Contains("UTK"))
+{
+    <div id="UploadTickets" class="tab-pane fade in @(activatedTab ? "" : " active show")">
+
+        @UploadTickets()
+    </div>
+}
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('th a, tfoot a').on("click", function () { 
+            $('#frmIndexTicket').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+        addDefaultSortingIcons("tblTicketManagerGrid");
+        onGridHeaderClick('tblTicketManagerGrid');
+        $('.chosen-select').chosen({ width: '100%', });
+        if ($('#Dashboard').length) {
+            si.setDateTimeCalendar_ExportEntities("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+        }
+        
+        $("#btnExportTickets").on("click", function () {
+
+            TicketManagerExport();
+        });
+
+        if ($("#customedate_chosen").children('a').text().trim() != "Custom") {
+
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+
+        $("#btnResetSearchFilter").on("click", function () {
+            //showConfirm('Are you sure to reset ticket form?', function () {
+            si.btnResetSearchFilter();
+            // });
+        });
+
+        CheckBox();
+        $("#btnTicketData").on("click", function () {
+
+            //if (($('#customedate option:selected').text() == "Select") && ($("#txtSearchTxt").val() == "")) {
+            //    alert("Please select From date or search by text!");
+            //    return false;
+            //}
+
+            if (($('#customedate option:selected').text() != "Select") && ($("#txtDateFrom").val() == "")) {
+                alert( MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
+                return false;
+            }
+
+            else if (($('#customedate option:selected').text() != "Select") && ($("#txtDateTo").val() == "")) {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
+                return false;
+            }
+
+            else if ($("#txtDateFrom").val() != "" && $("#txtDateTo").val() != "") {
+                var startDate = new Date($('#txtDateFrom').val());
+                var endDate = new Date($('#txtDateTo').val());
+                var configuredDay = 1825;
+                return GetDaysDifference(startDate, endDate, configuredDay);
+            }
+            else {
+                return true;
+            }
+        });
+        GridColor();
+
+
+    });
+
+    function GetDaysDifference(firstDate, secondDate, configuredDay) {
+
+        var oneDay = 24 * 60 * 60 * 1000;
+        var diff = 0;
+        diff = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / (oneDay)));
+
+
+        if (diff > configuredDay) {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_015)
+            return false;
+
+        }
+    }
+    function GridColor(){
+
+        $("#tblTicketManagerGrid tbody tr").each(function (e) {
+             
+            var ticket_stauts=  $($(this).children('td')[7]).text();
+            if (ticket_stauts=="Assigned") {
+                $(this).css('background-color','rgba(128, 142, 251, 0.5)');
+            }
+            else if (ticket_stauts=="InProgress") {
+                $(this).css('background-color','rgba(255, 206, 75, 0.6)');
+            }
+            else if (ticket_stauts=="Completed") {
+                $(this).css('background-color','rgba(77, 167, 115, 0.6)');
+            }
+            @*var model = @Html.Raw(Json.Encode(Model.lstTicketMaster));
+            var model1=@Html.Raw(Json.Encode(Model.objticketstatus));
+
+            for (let i = 0; i < model.length; ++i) {
+                if (model[i].ticket_status=="Assigned") {
+
+                    // $("#tblTicketManagerGrid tbody tr").addClass('Assign');
+                   // $(this).parent().context.css('background-color','#808efb');
+                    $("#tblTicketManagerGrid tbody tr").css('background-color','#808efb');
+                }
+                else if (model[i].ticket_status=="InProgress") {
+
+                    // $("#tblTicketManagerGrid tbody tr").addClass('Assign');
+                    //$(this).parent().context.css('background-color','#ffce4b');
+                    $("#tblTicketManagerGrid tbody tr").css('background-color','#ffce4b');
+                }
+                else if (model[i].ticket_status=="Completed") {
+
+                    // $("#tblTicketManagerGrid tbody tr").addClass('Assign');
+                   // $(this).parent().context.css('background-color','#4da773');
+                   $("#tblTicketManagerGrid tbody tr").css('background-color','#4da773');
+                }
+            }*@
+
+
+        });
+    }
+
+    function CheckBox(){
+         
+        $("#tblTicketManagerGrid th").each(function () {
+            if ($.trim($(this).text().toString().toLowerCase()) === "{checkall}") {
+                $(this).text('');
+                $(this).append("<label class='CustomTicketManager @(Model.objTicketMaster.user_role_id!=1?"":"dvdisabled")' style='cursor:pointer;@(Model.objTicketMaster.user_role_id!=1?"": "pointer-events: none;opacity: 0.4;")'> <input type='CheckBox' id='cbSelectAll' name='chkSelect' class='chkSurvey'><span class='CustomTicketManagercheck' style='top:0px;'></span> "+MultilingualKey.SI_OSP_GBL_GBL_GBL_037+"</label>");
+            }
+        });
+
+        //2nd click event for header checkbox for select /deselect all
+        $("#cbSelectAll").on("click", function () {
+             
+            var ischecked = this.checked;
+            $('#tblTicketManagerGrid').find("input:checkbox").not(".dvdisabled").each(function () {
+                this.checked = ischecked;
+            });
+
+        });
+        $("input[name='chkSelect']").on("click", function () {
+             
+            var totalRows = $("#tblTicketManagerGrid td :checkbox[data-ticketstatus='Assigned']").not(".dvdisabled").length;
+            var checked =$("#tblTicketManagerGrid td :checkbox[data-ticketstatus='Assigned']:checked").not(".dvdisabled").length;
+            console.log("totalRows"+totalRows+" checked"+checked);
+            if (checked >0 || totalRows>0) {
+                if ( checked == totalRows) {
+                    $("#tblTicketManagerGrid").find("input:checkbox").not(".dvdisabled").each(function () {
+                        this.checked = true;
+                    });
+                }
+                else {
+                    $("#cbSelectAll").removeAttr("checked");
+                }
+            }
+
+        });
+    }
+    function deleteTicket() {
+         
+        //var totalSelected = $('#VwTicketGrid input:checkbox[name=chkSelect]:checked').length;
+        var totalSelected =$("#tblTicketManagerGrid td :checkbox[data-ticketstatus='Assigned']:checked").length;
+        if (totalSelected == 0) {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_023);
+        }
+        else {
+            //var selectedIds = $('#VwTicketGrid input[name=chkSelect]:checked').map(function () {
+            var selectedIds = $("#tblTicketManagerGrid td :checkbox[data-ticketstatus='Assigned']:checked").map(function () {
+                return $(this).val();
+            }).get().join(',');
+            var selectedId = $('input:checkbox[name=chkSelect]:checked').val();
+             
+            showConfirm( MultilingualKey.SI_OSP_GBL_JQ_FRM_105, function () {
+                ajaxReq('TicketManager/DeleteTicket', { ticket_ids: selectedIds, }, true, function (resp) {
+                     
+                    if (resp.status == "OK") {
+
+                        alert(resp.message);
+                        $('#frmIndexTicket').submit();
+                    }
+                    else {
+                        alert(resp.message);
+                    }
+                }, false, false)
+            });
+        }
+    }
+    function onChangeCustomDate() {
+
+        var value = $('#customedate option:selected').val();
+
+        SetFromAndToDate(value);
+    }
+    function SetFromAndToDate(value) {
+
+        var endDate = new Date();
+        var startDate = new Date();
+        var startDateDiff = 0;
+        var endDateDiff = 0;
+
+        if (value == 1) // custom
+        {
+            $('#txtDateFrom').val("");
+            $('#txtDateTo').val("");
+            $("#imgFromDate").show();
+            $('#imgToDate').show();
+            return;
+        }
+        else if (value == 2) { //Today
+            startDateDiff = 0;
+            endDateDiff = 0;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 3) { //previous day
+            startDateDiff = -1;
+            endDateDiff = -1;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 4) {//last 7 days
+            startDateDiff = -6;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 5) {//last 30 days
+            startDateDiff = -29;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 6) {//last 3 Months
+            startDateDiff = -89;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 7) {//last 6 Months
+            startDateDiff = -179;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 8) {//last 6 Months
+            startDateDiff = -364;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+
+        startDate.setDate(startDate.getDate() + startDateDiff);
+        endDate.setDate(endDate.getDate() + endDateDiff);
+
+        var newStartDate = startDate.toDateString();
+        newStartDate = new Date(Date.parse(newStartDate));
+
+        var newEndDate = endDate.toDateString();
+        newEndDate = new Date(Date.parse(newEndDate));
+
+        $('#txtDateFrom').val(fncCurrentDate(newStartDate));
+        $('#txtDateTo').val(fncCurrentDate(newEndDate));
+        if (value == 0) {
+            $('#txtDateFrom').val('');
+            $('#txtDateTo').val('');
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+    }
+
+
+    function applyFilter()
+    {var Model = @Html.Raw(Json.Encode(Model));
+        popup.LoadModalDialog('CHILD', 'TicketManager/TicketFilter', _data = { objTicketManagerFilter:Model,  childModel: "dvChildModalBody" }, "Filter", 'modal-sm');
+    }
+</script>

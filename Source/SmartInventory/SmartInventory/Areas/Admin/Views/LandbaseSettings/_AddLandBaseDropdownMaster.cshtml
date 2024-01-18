@@ -1,0 +1,140 @@
+﻿@model Models.Admin.ViewLandBaseDropdownMasterSettings
+@using Utility
+
+<!DOCTYPE html>
+<div id="divAddDropdownMasterSettings">
+    <div id="dvPageMessage">
+        @{Html.RenderPartial("_PageMessage", Model.pageMsg);}
+    </div>
+    @using (Ajax.BeginForm("SaveDropdownValues", "LandbaseSettings", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddDropdownMasterSettings" },
+                                                                     new
+                                                                     {
+                                                                         id = "frmAddDropdownMasterSetting",
+                                                                         enctype = "multipart/form-data",
+                                                                         autocomplete = "off",
+                                                                         @class = "form-horizontal"
+                                                                     }))
+    {
+        @Html.HiddenFor(m => m.id)
+        @Html.ValidationSummary(true);
+        <div class="EUTSetting">
+            <div class="scrollDiv">
+
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Layer Name<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.landbase_layer_id, new SelectList(Model.lstLayers.Select
+                       (x => new { Value = x.id.ToString(), Text = x.layer_name.ToString() }),
+                       "Value", "Text"), "--Select--", new { @class = "chosen-select", @tabindex = "1", @id = "ddlLayers" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Dropdown Type<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.type, new List<SelectListItem> { new SelectListItem{ Text="--Select--", Value = "" },
+                    new SelectListItem{ Text="Category", Value = "Category" },
+                    new SelectListItem{ Text="Sub Category", Value = "SubCategory" },
+                    new SelectListItem{ Text="Classification", Value = "Classification" }}, new { @class = "chosen-select", @onchange = "BindCategory();", @tabindex = "2", @id = "ddlType", @title = "Dropdown Type" })
+                    </div>
+                </div>
+                <div Id="divCat" class="row form-group">
+                    <div class="control-label col-md-4">Category<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.category_id, new SelectList(Model.landbaseCategoryList.Select(x => new { Value = x.id.ToString(), Text = x.value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @id = "ddlCategory", @tabindex = "3" })
+
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">Value<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.HiddenFor(m => m.OldValue)
+                        @Html.TextBoxFor(m => m.value, new
+                   {
+                       @class = "form-control displayName",
+                       @maxlength = 50,
+                       id = "txtValue",
+                       @onblur = "return checkIsDuplicate_value_abbrAvailable();",
+                       @tabindex = "4",
+                       style = "width:100%;float:left;"
+                   })
+                        @*<span id="ddlValueValidation" style="color: #721c24;"></span>*@
+
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom:0px;">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Is Active?
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            @Html.CheckBoxFor(m => m.is_active, new { @class = "chk", @tabindex = "5", @onchange = "return CheckDataExistAgainstDropdownType();" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="ModalFooter" id="dvBtnAction">
+            <button type="button" tabindex="7" class="btn btn-default ml-auto mr-05" id="btnClearDropdownMaster">Reset</button>
+            <input type="button" tabindex="6" class="btn btn-primary" id="btnSaveManageDropdownMaster" value="Save" />
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        if ($('#type').val() == "SubCategory") {
+            ($('#divCat')).show();
+        }
+        else {
+            ($('#divCat')).hide();
+        }
+
+        $('.chosen-select').chosen({ placeholder_text_single: '--Select--', width: '100%' });
+
+        //validate all dropdowns for blank selection
+        $('.EUTSetting select').on('change', function () {
+            return validateDropdown(this.id);
+        });
+        // refresh grid data on close of add/edit form
+        $('#closeModalPopup').on('click', function () {
+            window.location.reload();
+        });
+        if ($('#id').val() > 0) {
+            $('#btnSaveManageDropdownMaster').val("Update");
+            $("#btnClearDropdownMaster").hide();
+            $('#ddlLayers').attr("disabled", "disabled").trigger("chosen:updated");
+            $('#ddlType').attr("disabled", "disabled").trigger("chosen:updated");
+            if ($('#ddlType').val() == "SubCategory") {
+                $('#ddlCategory').attr("disabled", "disabled").trigger("chosen:updated");
+            }
+            else {
+                $('#ddlCategory').prop("disabled", false);
+            }
+        }
+        $('#btnClearDropdownMaster').on("click", function () {
+
+            $('#ddlLayers').val(0).trigger("chosen:updated");
+            $('#ddlCategory').val(0).trigger("chosen:updated");
+            $('#ddlType').val('').trigger("chosen:updated");
+            $('#is_active').prop('checked', false);
+            $('#txtValue').val('');
+        });
+    });
+    $("#btnSaveManageDropdownMaster").on("click", function (e) {
+
+        if (!validateDropdown('ddlLayers')) { e.preventDefault(); return false; }
+        if (!validateDropdown('ddlType')) { e.preventDefault(); return false; }
+        if (!validate('txtValue')) { e.preventDefault(); return false; }
+
+        if ($('#txtValue').css("border-color") === "rgb(255, 0, 0)") {
+            return false;
+        }
+        else {
+            $("#frmAddDropdownMasterSetting").submit();
+            return true;
+        }
+    });
+</script>

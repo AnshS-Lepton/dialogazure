@@ -1,0 +1,404 @@
+﻿@model Models.ViewOSPCPFModel
+@using Utility;
+@using Models;
+@using SmartInventory.Settings;
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Cable.ToString().ToUpper()).FirstOrDefault() : null;
+
+    WebGrid grid = new WebGrid(canPage: false, canSort: false, ajaxUpdateContainerId: "dvViewConnectionPathFinder", ajaxUpdateCallback: "onGridHeaderClick('tblConnectionPathFinderInfo')");
+    grid.Bind(Model.lstConnectionInfo, autoSortAndPage: false, rowCount: Model.objFilterAttributes.totalRecord);
+}
+@Scripts.Render("~/bundles/endToEndSchematic/Scripts")
+<style>
+    .dropbox {
+        position: absolute;
+        width: 80px !important;
+        height: auto;
+        background-color: #fff;
+        right: 0px;
+        margin: 0;
+        box-shadow: 0px 1px 3px #b3b3b3;
+        border-radius: 2px;
+        text-align: left;
+        font-size: 14px;
+        z-index: 10000;
+        display: none;
+    }
+
+    #tblConnectionPathFinderInfo {
+        width: 100%;
+    }
+
+    #dvViewConnectionPathFinder ::-webkit-scrollbar-thumb {
+        background: #9999ff;
+    }
+
+    .fullWidth {
+        width: 100%;
+    }
+
+    .width50 {
+        width: 50%;
+    }
+
+    .smtopBpad {
+        padding-top: 7.5px;
+        padding-bottom: 7px;
+    }
+</style>
+
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div>
+    @using (Ajax.BeginForm("ConnectionPathFinder", "Splicing", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        LoadingElementId = "dvProgress",
+    },
+                                                       new { id = "frmCPF", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.objFilterAttributes.entity_type)
+        @Html.HiddenFor(m => m.objFilterAttributes.entityid)
+        @Html.HiddenFor(m => m.objFilterAttributes.port_no)
+        @Html.HiddenFor(m => m.entity_geomid)
+        
+            <div class="libTabs">
+                <ul class="nav nav-tabs tabs-left">
+                    <li class="@(Model.lstUserModule.Contains("ENT-CPF-PT")?"active":"active roledisabled")"
+                        title="@Resources.Resources.SI_OSP_ONT_NET_RPT_006 @(Model.lstUserModule.Contains("ENT-CPF-PT")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)"><a href="@(Model.lstUserModule.Contains("ENT-CPF-PT")?"#PathTrack":"")" data-toggle="tab">@Resources.Resources.SI_OSP_ONT_NET_RPT_006</a></li>
+                        <li class="@(Model.lstUserModule.Contains("OLB") ? "" : "roledisabled")"
+                            title="@Resources.Resources.SI_OSP_ONT_NET_RPT_007 @(Model.lstUserModule.Contains("OLB") ? "" : Resources.Resources.SI_GBL_GBL_GBL_GBL_1436)"><a href="@(Model.lstUserModule.Contains("OLB") ? "#OpticalLinkBudget" : "")" data-toggle="tab">@Resources.Resources.SI_OSP_ONT_NET_RPT_007</a></li>
+                        </ul>
+                    </div>
+               
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="PathTrack">
+                        <div class="@(Model.lstUserModule.Contains("ENT-CPF-PT")?"space-pad":"space-pad dvdisabled")">
+                            <div class="d-fx --gap07 fullWidth">
+                                <div class="width50 --gap07 flex-dir-column">
+                                    <label  for="txtEquipment_id">@layerDetail.layer_title @Resources.Resources.SI_OSP_ONT_NET_RPT_008<i class="clsMandatory">*</i>:</label>
+                                    <div class="fullWidth">
+                                            @Html.TextBoxFor(m => m.equipment_id, new { @class = "form-control", @maxlength = 100 })
+                                    </div>
+
+                                </div>
+                                <div class="--gap07 flex-dir-column">
+                                    <label for="ddlport">@Resources.Resources.SI_OSP_ONT_NET_RPT_010<i class="clsMandatory">*</i>:</label>
+                                    <div class="fullWidth">
+                                        <select id="ddlCore" name="ddlCore" class="chosen-select" onchange="splicing.ddlcpfCore(this);">
+                                            <option value="0">-Select-</option>
+                                            @foreach (var item in Model.lstEquipementCore)
+                                            {
+                                                <option value=@item.port_value @string.Format((Model.objFilterAttributes.port_no == @item.port_value) ? "selected" : "")>@item.port_text </option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="d-flex --gap07 align-flex-end">
+                                    <button type="submit" class="btn btn-primary btn-small" title="@Resources.Resources.SI_OSP_ONT_NET_RPT_009" id="btnShowRoute">@Resources.Resources.SI_OSP_ONT_NET_RPT_009</button>
+                                    <button type="button" id="btnSchView" target="_blank" title="@Resources.Resources.SI_OSP_ONT_NET_RPT_012" @*value="@Resources.Resources.SI_OSP_ONT_NET_RPT_012"*@ class="btn btn-primary btn-small" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")>@Resources.Resources.SI_OSP_ONT_NET_RPT_012</button>
+                                    <button type="button" id="btnShowOnMap" value="" title="Show on map" class="btn btn-primary btn-small" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")> @Resources.Resources.SI_OSP_GBL_GBL_GBL_036</button>
+
+                                    @if (Model.isControllEnable)
+                                    {
+                                        if (grid.TotalRowCount != 0)
+                                        {
+                                            <div class="text-right d-inline-block pos-rel">
+                                                <button type="button" class="btn btn-default dropfiles  w100">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                                                <div class="dropbox">
+                                                    <span id="btncpfExport" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")>@Resources.Resources.SI_GBL_GBL_NET_FRM_042</span>
+                                                    <span id="btnCPFexportToKML" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")>@Resources.Resources.SI_GBL_GBL_NET_FRM_043</span>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <input type="button" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-primary btn-small" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "") />
+                                        }
+                                    }
+                                    <button type="button" class="btn btn-default btn-small ml-auto" id="btncpfClear" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="libTab--dis" id="dvBtnAction">
+                            @if (Model.lstConnectionInfo.Count > 0)
+                            {
+                                <div id="divParentStream" style="display: flex; gap:19px">
+                                    <span id="divDownStream">
+                                        <input id="chkFittomap" type="checkbox" class="checkbox-custom3" checked="checked">
+                                        <b><label for="chkFittomap" id="chklblFittomap" class="checkbox-custom3-label"></label></b>
+                                        <b>Fit to map</b>
+                                    </span>
+                                    <span  id="divDownStream">
+                                        <input id="chkDownStream" type="checkbox" class="checkbox-custom2" checked="checked" onchange="splicing.changeUpDownStream('#chkDownStream', '.downStream');">
+                                        <b><label for="chkDownStream" id="chklbldownstream" class="checkbox-custom2-label"></label></b>
+                                        <b>@Resources.Resources.SI_OSP_ONT_NET_RPT_013</b>
+                                    </span>
+                                    <span  id="divUpStream">
+                                        <input id="chkUpStream" type="checkbox" class="checkbox-custom2" checked="checked" onchange="splicing.changeUpDownStream('#chkUpStream', '.upStream');">
+                                        <b><label for="chkUpStream" id="chklblupstream" class="checkbox-custom2-label"></label></b>
+                                        <b>@Resources.Resources.SI_OSP_ONT_NET_RPT_014</b>
+                                    </span>
+                                </div>
+                            }
+                        </div>
+
+                        @if (Model.lstConnectionInfo.Count > 0)
+                        {
+
+                            <div class="tab-content">
+                                <div id="dvViewConnectionPathFinder" class="tab-pane active">
+                                    <div class="d-flex tablePad-bn mb-15" id="dvHeader">
+                                        <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp; <span id="spnTotalRecord">@grid.TotalRowCount</span></b>
+                                        <div class="ml-auto">
+                                            @*@Resources.Resources.SI_OSP_ONT_NET_RPT_015:<span id="spnCalculatedLength"> @Math.Round(Convert.ToDouble(Model.lstConnectionInfo.Where(a=>a.network_status=="P").Sum(m => m.cable_calculated_length)), 2) @Resources.Resources.SI_OSP_GBL_GBL_GBL_034</span>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                @Resources.Resources.SI_OSP_ONT_NET_RPT_016: <span id="spnMeasuredLength">@Math.Round(Convert.ToDouble(Model.lstConnectionInfo.Sum(m => m.cable_measured_length)), 2) @Resources.Resources.SI_OSP_GBL_GBL_GBL_034</span>*@
+                                            @Resources.Resources.SI_GBL_GBL_NET_FRM_218 [
+                                            @string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_016, "P"): <span id="spnCableMeasuredLength">@Math.Round(Convert.ToDouble(Model.lstConnectionInfo.Where(a => a.cable_network_status == "P").Sum(m => m.cable_measured_length)), 2)</span>
+                                            @Resources.Resources.SI_OSP_GBL_GBL_GBL_034,
+                                            @string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_015, "P"): <span id="spnCableCalculatedLength">@Math.Round(Convert.ToDouble(Model.lstConnectionInfo.Where(a => a.cable_network_status == "P").Sum(m => m.cable_calculated_length)), 2)</span>
+                                            @Resources.Resources.SI_OSP_GBL_GBL_GBL_034
+                                            |@string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_016, "A"): <span id="spnCableMeasuredLength">@Math.Round(Convert.ToDouble(Model.lstConnectionInfo.Where(a => a.cable_network_status == "A").Sum(m => m.cable_measured_length)), 2)</span>
+
+
+                                            @*@Resources.Resources.SI_OSP_GBL_GBL_GBL_034,
+                                            |@string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_016, "A"): <span id="spnCableMeasuredLength">@Math.Round(Convert.ToDouble(Model.lstConnectionInfo.Where(a => a.cable_network_status == "A").Sum(m => m.cable_measured_length)), 2)</span>*@
+
+
+                                            @string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_015, "A"):  <span id="spnCableCalculatedLength">@Math.Round(Convert.ToDouble(Model.lstConnectionInfo.Where(a => a.cable_network_status == "A").Sum(m => m.cable_calculated_length)), 2)</span>
+                                            @Resources.Resources.SI_OSP_GBL_GBL_GBL_034
+                                            ]
+                                        </div>
+                                    </div>
+                                    <div class="tablePad--tn ">
+                                        <div class="cpf-max-height of-auto">
+
+                                            @grid.GetHtml(tableStyle: "stickyTh",
+                      htmlAttributes: new { id = "tblConnectionPathFinderInfo" },
+
+                      mode: WebGridPagerModes.All,
+                      columns: grid.Columns(
+
+                    grid.Column("source_entity_title", Resources.Resources.SI_OSP_ONT_NET_RPT_017, format:
+                                                                                                                                    @<text>@item.source_entity_title
+                                                                                                                                    <input type="hidden" id="hdnCPFRowid" value="@item.id" />
+                                                                                                                                    <input type="hidden" id="hdncalculatedLength" value="@item.cable_calculated_length" />
+                                                                                                                                    <input type="hidden" id="hdnMeasuredLength" value="@item.cable_measured_length" />
+                                                                                                                                    </text>),
+ grid.Column("source_display_name", Resources.Resources.SI_OSP_ONT_NET_RPT_018, format: @<text>@item.source_display_name</text>),
+
+grid.Column("source_tray_display_name", Resources.Resources.SI_OSP_GBL_GBL_FRM_146, format: @<text>@item.source_tray_display_name</text>),
+grid.Column("source_cable_calculated_length", "Source Cable Calculated Length(meter)", format: @<text>@(item.source_cable_calculated_length!=null?(@Math.Round(Convert.ToDouble(@item.source_cable_calculated_length), 2)):@item.source_cable_calculated_length)</text>),
+//grid.Column("source_port_no", "Source Port No", format: @<text> @item.source_port_no</text>),
+grid.Column("source_port_no", Resources.Resources.SI_OSP_ONT_NET_RPT_019, format: (item) =>
+{
+return (item.is_source_virtual == false ? (string.IsNullOrEmpty(item.source_port_display_name) ? string.Empty : item.source_port_display_name) : "");
+}),
+grid.Column("destination_entity_title", Resources.Resources.SI_OSP_ONT_NET_RPT_021, format: @<text>@item.destination_entity_title </text>),
+grid.Column("destination_display_name", Resources.Resources.SI_OSP_ONT_NET_RPT_020, format: @<text>@item.destination_display_name</text>),
+grid.Column("destination_cable_calculated_length", "Destination Cable Calculated Length(meter)", format: @<text>@(item.destination_cable_calculated_length != null?(@Math.Round(Convert.ToDouble(@item.destination_cable_calculated_length), 2)):@item.destination_cable_calculated_length)</text>),
+grid.Column("destination_tray_display_name", Resources.Resources.SI_OSP_GBL_GBL_FRM_147, format: @<text>@item.destination_tray_display_name</text>),
+grid.Column("destination_port_no", Resources.Resources.SI_OSP_ONT_NET_RPT_022,
+format: (item) =>
+{
+return (item.is_destination_virtual == false ? Html.Raw(string.Format("<text>{0}</text>" + "<input type=\"hidden\" id=\"hdnIsBackwardPath\" value=" + item.is_backward_path.ToString() + " />", string.IsNullOrEmpty(item.destination_port_display_name) ? string.Empty : item.destination_port_display_name)) : Html.Raw("<input type=\"hidden\" id=\"hdnIsBackwardPath\" value=" + item.is_backward_path.ToString() + " />"));
+
+}),
+grid.Column("created_on", Resources.Resources.SI_OSP_ONT_NET_RPT_023, format: @<text> @(item.created_on == null ? item.created_on : MiscHelper.FormatDateTime(item.created_on.ToString())) </text>)))
+
+                                            @Html.Hidden("dir", grid.SortDirection)
+                                            @Html.Hidden("col", grid.SortColumn)
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<div id="dvSchematicViewContainer" class="tab-pane">
+                                        <div style="width: 200px;position: absolute;right: 10px;margin-top: 4px;">
+                                            <div class="form-group noprint" id="divCPFPrint">
+                                                <a onclick="SaveSchematicDiagram('png', 'dvSchematicView');" class="btn btn-success" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_113" style="font-size:18px; color: #676767; background-color:transparent;"><i class="fa fa fa-camera"></i></a>
+                                                <a onclick="SaveSchematicDiagram('pdf', 'dvSchematicView');" class="btn btn-success" title="@Resources.Resources.SI_ISP_GBL_JQ_FRM_001" style="font-size:18px; color: #e60000; background-color:transparent;"><i class="fa fa-file-pdf-o"></i></a>
+                                                @Html.DropDownList("pageSize", new List<SelectListItem>
+                                                 {
+                                                     new SelectListItem{ Text="A4", Value = "A4" },
+                                                     new SelectListItem{ Text="A3", Value = "A3" },
+                                                     new SelectListItem{ Text="A2", Value = "A2" },
+                                                     new SelectListItem{ Text="A1", Value = "A1" },
+                                                     new SelectListItem{ Text="A0", Value = "A0" },
+                                                  }, new { @class = "chosen-select col-sm-4", @style = "width: 20px !important;border-color: #428600;" })
+
+                                            </div>
+                                        </div>
+                                        <div style="border: 1px solid grey;max-height: 300px;">
+                                            <div id="dvSchematicView"> </div>
+
+                                        </div>
+                                    </div>*@
+                            </div>
+                        }
+
+                        <div class="nr-found" style="display:@(Model.lstConnectionInfo.Count==0?"display;":"none;")" id="divNoRecordExist">
+                            <span> @Resources.Resources.SI_OSP_ONT_NET_RPT_024</span>
+                        </div>
+                    </div>
+                    <div id="OpticalLinkBudget" class="tab-pane">
+                        <div class="space-pad">
+                            <div class="form-group row">
+                                <label class="control-label col-sm-2" for="ddlSourceNetworkid">@Resources.Resources.SI_OSP_ONT_NET_RPT_018<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    <select id="ddlSourceNetworkid" class="chosen-select">
+                                        <option value="0">--Select--</option>
+                                        @if (grid.TotalRowCount > 0)
+                                        {
+                                            foreach (var item in Model.lstConnectionInfo.Where(m => m.is_source_virtual == false).Distinct())
+                                            {
+                                                <option data-portno=@item.source_port_no data-entityType=@item.source_entity_type value=@item.source_system_id>@string.Format("{0} ({1})", item.source_display_name, item.source_entity_type.ToUpper() != "CABLE" ? (item.source_port_no < 0 ? Math.Abs(item.source_port_no).ToString() + " IN" : item.source_port_no.ToString() + " OUT") : item.source_port_no.ToString())</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <label class="control-label col-sm-2" for="ddlDestinationNewtorkid">@Resources.Resources.SI_OSP_ONT_NET_RPT_020<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    <select id="ddlDestinationNewtorkid" class="chosen-select">
+                                        <option value="0">--Select--</option>
+                                        @if (grid.TotalRowCount > 0)
+                                        {
+                                            foreach (var item in Model.lstConnectionInfo.Where(m => m.is_destination_virtual == false).Distinct())
+                                            {
+                                                <option data-portno=@item.destination_port_no data-entityType=@item.destination_entity_type value=@item.destination_system_id>@string.Format("{0} ({1})", item.destination_display_name, item.destination_entity_type.ToUpper() != "CABLE" ? (item.destination_port_no < 0 ? Math.Abs(item.destination_port_no).ToString() + " IN" : item.destination_port_no.ToString() + " OUT") : item.destination_port_no.ToString())</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="control-label col-sm-2" for="ddlport">@Resources.Resources.SI_OSP_ONT_NET_RPT_025<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    <select id="ddl_waveLength" name="ddl_waveLength" class="chosen-select">
+                                        <option value="0">--Select--</option>
+                                        @foreach (var item in Model.lstWave_length)
+                                        {
+                                            <option value=@item.wavelength_id>@item.wavelength_value </option>
+                                        }s
+                                    </select>
+                                </div>
+                                <label class="control-label col-sm-2" for="txtTransmit">
+                                    @string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_026, ApplicationSettings.dBPowerUnit)
+                                    <i class="clsMandatory">*</i>:
+                                </label>
+                                <div class="col-md-4 col-sm-4">
+                                    @Html.TextBoxFor(m => m.txtTransmit, new { @class = "form-control ", @onkeypress = "return si.allowPositiveNegativeNumberWithOneDot(event,'txt_transmit');", @maxlength = 5, @id = "txt_transmit" })
+                                </div>
+                            </div>
+                            <div class="form-group mb-0 row">
+                                <label class="control-label col-sm-2"></label>
+                                <div class="col-md-4 col-sm-4">
+                                    <a onclick="si.ViewLossDetail();" href="javascript:void(0);" class="anchor-btn">@Resources.Resources.SI_OSP_ONT_NET_RPT_027</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ModalFooter d-flex" id="dvBtnActionForOpticalLink">
+                            <label for="txtTransmit">@string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_028, ApplicationSettings.dBLossUnit)  :</label>
+                            <label class="ml-05" id="txt_receving" name="txt_receving"></label>
+                            <label class="ml-05" for="txtLossDetails">@Resources.Resources.SI_OSP_GBL_GBL_FRM_213 (@ApplicationSettings.dBLossUnit)  :</label>
+                            <label class="ml-05" id="txt_totallossdetail" name="txt_totallossdetail"></label>
+                            <label class="ml-05" for="txtTransmit">@string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_028, ApplicationSettings.dBPowerUnit)  :</label>
+                            <label class="ml-05" id="txt_receving" name="txt_receving" class="control-label col-sm-2"></label>
+                            <label class="ml-05" for="txtLossDetails" style="">@Resources.Resources.SI_OSP_GBL_GBL_FRM_213 (@ApplicationSettings.dBLossUnit)  :</label>
+                            <label id="txt_totallossdetail" name="txt_totallossdetail"></label>
+                            <div class="d-flex ml-auto">
+                                <button type="button" class="btn btn-default mr-01" onclick="splicing.OpticalLinkClearButton()" id="btnOpticalLinkClearClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>
+                                <input type="button" id="btnopticalExport" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-primary mr-01" disabled="disabled" />
+                                <input type="button" id="btnCalculate" value="@Resources.Resources.SI_OSP_ONT_NET_RPT_029" onclick="splicing.CalculateLinkBudgetDetail()" class="btn btn-primary @(!Model.isOLBEnabled?"dvdisabled":"")" />
+
+                            </div>
+                        </div>
+                        <div id="div_bindOpticalLinkGrid" style="width:100%;max-height:40%">
+
+                        </div>
+                    </div>
+                </div>
+            }
+</div>
+<script src="~/Content/js/Utility.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        splicing.initApp();
+        $('.chosen-select').chosen({ width: '100%', disable_search_threshold: '5' });
+        $('#dvSchematicViewContainer #pageSize_chosen').css('width', '40%')
+        if ('@Model.objFilterAttributes.totalRecord' == 0) {
+            $('#txt_transmit').val(0);
+        }
+
+        $("#tblConnectionPathFinderInfo tbody tr").each(function (i, row) {
+            var $actualRow = $(row);
+            if ($actualRow.find('input[id^=hdnIsBackwardPath]').val().toUpperCase() == "FALSE") {
+                $actualRow.addClass('downStream');
+            }
+            else {
+                $actualRow.addClass('upStream');
+            }
+            $actualRow.attr('data-calculated-length', $actualRow.find('input[id^=hdncalculatedLength]').val());
+            $actualRow.attr('data-measured-length', $actualRow.find('input[id^=hdnMeasuredLength]').val());
+            $("#tblConnectionPathFinderInfo tbody tr").css('display', 'table-row')
+        });
+
+        $($("#tblConnectionPathFinderInfo tbody tr.downStream")[0]).addClass('conTerningPoint');
+        $($("#tblConnectionPathFinderInfo tbody tr.upStream")[0]).addClass('conTerningPoint');
+        UpdateFormattedNumbers();
+
+    });
+    @*splicing.upStream = null;
+    splicing.downStream = null;
+    if ('@Model.upStreamPath' != '' && '@Model.upStreamPath' != null) {
+        PdfPortNo = $("#ddlCore option:selected").text();
+        equipmentId = $('#equipment_id').val();
+        splicing.upStream = '@Model.upStreamPath'.replace(/&quot;/g, '"');
+        SchematicView(splicing.upStream, "#dvSchematicView", 870, 320);
+        $('#divCPFPrint').show();
+        $('#dvSchematicView').removeClass('divErrorMessage');
+    }
+    if ('@Model.downStreamPath' != '' && '@Model.downStreamPath' != null) {
+        PdfPortNo = $("#ddlCore option:selected").text();
+        equipmentId = $('#equipment_id').val();
+        splicing.downStream = '@Model.downStreamPath'.replace(/&quot;/g, '"');
+        $('#divCPFPrint').show();
+        $('#dvSchematicView').removeClass('divErrorMessage');
+    }*@
+
+
+    function UpdateFormattedNumbers() {
+        // Get the table element
+        const table = document.getElementById('tblConnectionPathFinderInfo');
+
+        // Loop through the rows
+        if (table && table.rows) {
+            for (let rowIndex = 0; rowIndex < table.rows.length; rowIndex++) {
+                const row = table.rows[rowIndex];
+
+
+                // Loop through the cells in the row
+                for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
+                    const cell = row.cells[cellIndex];
+
+                    // Extract data from the cell
+                    const cellData = cell.textContent.trim();
+
+                    // Do something with the cell data
+                    if ($.isNumeric(cellData))
+                        row.cells[cellIndex].textContent = getFormattedNumber(cellData);
+                }
+            }
+        }
+    }
+</script>
+
+
+

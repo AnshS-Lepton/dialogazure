@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Mappings>
+	<Mapping id="0">
+		<DbColName>entity_type</DbColName>
+		<TemplateColName>Entity Type/Accessories</TemplateColName>
+	</Mapping>
+	<Mapping id="1">
+		<DbColName>specification</DbColName>
+		<TemplateColName>Specification</TemplateColName>
+	</Mapping>
+	<Mapping id="2">
+		<DbColName>vendor</DbColName>
+		<TemplateColName>Vendor Name</TemplateColName>
+	</Mapping>
+	<Mapping id="3">
+		<DbColName>code</DbColName>
+		<TemplateColName>Item Code</TemplateColName>
+	</Mapping>
+	<Mapping id="4">
+		<DbColName>item_type</DbColName>
+		<TemplateColName>Item Type</TemplateColName>
+	</Mapping>
+	<Mapping id="5">
+		<DbColName>is_brfs</DbColName>
+		<TemplateColName>B-RFS Item</TemplateColName>
+	</Mapping>
+	<Mapping id="5">
+		<DbColName>is_arfs</DbColName>
+		<TemplateColName>A-RFS Item</TemplateColName>
+	</Mapping>
+	<Mapping id="6">
+		<DbColName>is_crfs</DbColName>
+		<TemplateColName>C-RFS Item</TemplateColName>
+	</Mapping>
+	<Mapping id="7">
+		<DbColName>unit_measurement</DbColName>
+		<TemplateColName>Unit Measurement</TemplateColName>
+	</Mapping>
+	<Mapping id="8">
+		<DbColName>cost_per_unit</DbColName>
+		<TemplateColName>Cost Per Unit/Mtr </TemplateColName>
+	</Mapping>
+	<Mapping id="9">
+		<DbColName>service_cost_per_unit</DbColName>
+		<TemplateColName>Service Cost Per Unit/Mtr </TemplateColName>
+	</Mapping>
+  <Mapping id="10">
+    <DbColName>subcategory_1</DbColName>
+    <TemplateColName>Sub Category 1</TemplateColName>
+  </Mapping>
+  <Mapping id="11">
+    <DbColName>subcategory_2</DbColName>
+    <TemplateColName>Sub Category 2</TemplateColName>
+  </Mapping>
+  <Mapping id="12">
+    <DbColName>subcategory_3</DbColName>
+    <TemplateColName>Sub Category 3</TemplateColName>
+  </Mapping>
+  <Mapping id="13">
+    <DbColName>is_active</DbColName>
+    <TemplateColName>Is Active</TemplateColName>
+  </Mapping>
+  <Mapping id="14">
+    <DbColName>no_of_port</DbColName>
+    <TemplateColName>No of Ports</TemplateColName>
+  </Mapping>
+  <Mapping id="15">
+    <DbColName>iop_value</DbColName>
+    <TemplateColName>Fiber Count/Port Ratio</TemplateColName>
+  </Mapping>
+   <Mapping id="16">
+    <DbColName>length</DbColName>
+    <TemplateColName>Length(in Mtr)</TemplateColName>
+  </Mapping>
+  <Mapping id="17">
+    <DbColName>width</DbColName>
+    <TemplateColName>Width(in Mtr)</TemplateColName>
+  </Mapping>
+  <Mapping id="19">
+    <DbColName>no_of_units</DbColName>
+    <TemplateColName>No of Units</TemplateColName>
+  </Mapping>
+  <Mapping id="20">
+    <DbColName>border_width</DbColName>
+    <TemplateColName>Border Width(in mm)</TemplateColName>
+  </Mapping>
+  <Mapping id="21">
+    <DbColName>border_color</DbColName>
+    <TemplateColName>Border Color</TemplateColName>
+  </Mapping>
+    <Mapping id="22">
+    <DbColName>specify_type</DbColName>
+    <TemplateColName>Specify Type</TemplateColName>
+  </Mapping>
+  
+</Mappings>

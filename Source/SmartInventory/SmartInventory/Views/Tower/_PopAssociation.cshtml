@@ -1,0 +1,77 @@
+﻿@model Models.TowerMaster
+@using Utility
+@helper PopAssociationList()
+{
+    { Html.RenderPartial("~/Views/Tower/_PopAssociatedList.cshtml", Model.lstTowerAssociatedPop); }
+}
+<div class="form-group">
+
+    <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_FRM_088:</label>
+    <div class="col-md-4 col-sm-4 mrgn_btm">
+        <select id="ddlBufferDistance" class="chosen-select col-sm-12" name="ddlBufferDistance">
+            <option value="0">--Select--</option>
+            <option value="1">1 km</option>
+            <option value="2">2 km</option>
+            <option value="3">3 km</option>
+            <option value="4">4 km</option>
+            <option value="5">5 km</option>
+            <option value="6">6 km</option>
+            <option value="7">7 km</option>
+            <option value="8">8 km</option>
+            <option value="9">9 km</option>
+            <option value="10">10 km</option>
+            <option value="100">100 km</option>
+        </select>
+    </div>
+    <label class="control-label col-md-2 col-sm-2"></label>
+    <div class="col-md-4 col-sm-4 mrgn_btm">
+        @*@Html.TextBoxFor(m => m.installation_year, new { @id = "txtInstallationYear", @class = "form-control" })*@
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_FRM_089:</label>
+    <div class="col-md-4 col-sm-4 ">
+        <select id="popAssociated" name="ddlpopAssociated" class="chosen-select">
+            <option value="0">--Select--</option>
+        </select>
+    </div>
+    <label class="control-label col-md-2 col-sm-2"></label>
+    <div class="col-md-4 col-sm-4 mrgn_btm">
+        <button type="button" class="btn btn-primary disabled" id="btnAssociatePOD">@Resources.Resources.SI_OSP_GBL_GBL_FRM_090</button>
+    </div>
+</div>
+<fieldset class="the-fieldset">
+    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_091</legend>
+    <div id="PopAssociateList">
+        @PopAssociationList()
+    </div>
+</fieldset>
+<script>
+    $(document).ready(function () {
+       var towerId = @Model.system_id;
+        //getPopInBuffer(towerId, 1);
+        $('#ddlBufferDistance').chosen().change(function (event) {
+            //var specfi = $("#specification option:selected").val(); //
+            var distance = $(this).val();
+            getPopInBuffer(towerId, distance);
+            $('.chosen-select').trigger("chosen:updated");
+
+        });
+        $("#btnAssociatePOD").on("click", function () {
+            var podID = $("#popAssociated").val();
+            if(podID!="0"){
+                saveAssociation(podID,towerId);
+            }
+            else
+            {
+                alert("Please choose POP Network ID");
+            }
+        });
+
+    });
+
+</script>
+
+
+
