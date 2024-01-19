@@ -147,11 +147,11 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public void UpdateDuctColorCode(int systemId, int trench_id)
+        public void UpdateDuctColorCode(int systemId, int trench_id, int ductcount)
         {
             try
             {
-                repo.ExecuteProcedure("fn_update_duct_color_code", new { p_system_id = systemId, trench_system_id = trench_id });
+                repo.ExecuteProcedure("fn_update_duct_color_code", new { p_system_id = systemId, trench_system_id = trench_id, ductCount = ductcount });
 
             }
             catch { throw; }
