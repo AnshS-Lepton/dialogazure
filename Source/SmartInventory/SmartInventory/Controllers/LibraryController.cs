@@ -6569,7 +6569,6 @@ namespace SmartInventory.Controllers
 				ductobjduct1.b_system_id = SplitductsEntity.duct_one_b_system_id ?? 0;
 				ductobjduct1.b_entity_type = SplitductsEntity.duct_one_b_entity_type;
 				ductobjduct1.b_location = SplitductsEntity.duct_one_b_location;
-                ductobjduct1.duct_count = 1;
                 SaveDuct(ductobjduct1, false);
 
 				var ductobjduct2 = getDuctObject(2, model, ductDetail, model.duct_two_a_location, model.duct_two_b_location, model.duct_two_measured_length, model.duct_two_calculated_length, model.duct_two_name, model.duct_two_network_id, SplitductsEntity.geom_duct2);
@@ -6580,7 +6579,6 @@ namespace SmartInventory.Controllers
 				ductobjduct2.b_system_id = SplitductsEntity.duct_two_b_system_id ?? 0;
 				ductobjduct2.b_entity_type = SplitductsEntity.duct_two_b_entity_type;
 				ductobjduct2.b_location = SplitductsEntity.duct_two_b_location;
-                ductobjduct2.duct_count = 1;
                 SaveDuct(ductobjduct2, false);
 				// accociate split ducts
 				new BLMisc().AssociateSplitEntities(ductobjduct1.system_id, ductobjduct2.system_id, model.duct_one_network_id, model.duct_two_network_id, EntityType.Duct.ToString(), model.split_duct_system_id);

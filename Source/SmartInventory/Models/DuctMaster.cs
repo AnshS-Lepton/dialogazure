@@ -183,8 +183,9 @@ namespace Models
         public string a_city { get; set; }
         public string b_city { get; set; }
         [NotMapped]
-        public IList<DropDownMaster> DuctCount { get; set; }     
-        public int duct_count { get; set; }
+        public IList<DropDownMaster> DuctCount { get; set; }
+        [NotMapped]
+        public int duct_count { get; set; }    
         public string duct_color { get; set; }
        
         public DuctMaster()
