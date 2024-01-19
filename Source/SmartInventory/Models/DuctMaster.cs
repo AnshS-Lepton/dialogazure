@@ -185,7 +185,7 @@ namespace Models
         [NotMapped]
         public IList<DropDownMaster> DuctCount { get; set; }     
         public int duct_count { get; set; }
-        public char duct_color { get; set; }
+        public string duct_color { get; set; }
        
         public DuctMaster()
         {
