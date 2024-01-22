@@ -66,7 +66,7 @@ namespace DataAccess.VectorLayers
                 if (!string.IsNullOrEmpty(vectorDataIn.connectionString))
                     connetionString = vectorDataIn.connectionString;
                 DateTime dbDate = System.DateTime.Now;
-                var allFeatures = repo.ExecuteProcedure<VectorFeatures<dynamic>>("fn_get_vector_layers_data", new { p_prvinceIds = vectorDataIn.PrvinceIds}, true);
+                var allFeatures = repo.ExecuteProcedure<VectorFeatures<dynamic>>("fn_get_vector_layers_data", new { p_prvinceIds = vectorDataIn.PrvinceIds, p_entity_type  = vectorDataIn.entityType}, true);
                 dbDate = repo.ExecuteProcedure<DateTime>("fn_get_DB_date", new { }, false).FirstOrDefault();
                 dbServerDate = dbDate;
                 return allFeatures;

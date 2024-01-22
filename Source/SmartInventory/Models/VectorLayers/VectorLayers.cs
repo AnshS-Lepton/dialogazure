@@ -18,6 +18,7 @@ namespace Models.VectorLayers
     {
         public string PrvinceIds { get; set; }
         public string connectionString { get; set; }
+        public string entityType { get; set; }
 
     }
 

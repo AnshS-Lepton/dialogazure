@@ -17,7 +17,7 @@ namespace SmartInventoryServices.Controllers
  //   [CustomAuthorization]
     [APIExceptionFilter]
     [Compression]
-    [CustomAction]   
+    //[CustomAction]   
     public class VectorLayerController : ApiController
     {
         // GET: VectorLayer
@@ -45,11 +45,11 @@ namespace SmartInventoryServices.Controllers
            // }
             try
             {
-                DateTime _FetchDateTime;
+                DateTime _FetchDateTime;               
                 var obj = BLVectorLayers.Instance.GetAllLayersVector(oVectorDataIn, out _FetchDateTime);
 
                 response.results = new { LayersData = obj, FetchDateTime = _FetchDateTime.ToString("yyyy-MM-dd HH:mm:ss") };
-                response.status = ResponseStatus.OK.ToString();
+                response.status = ResponseStatus.OK.ToString();                             
             }
             catch (Exception ex)
             {
