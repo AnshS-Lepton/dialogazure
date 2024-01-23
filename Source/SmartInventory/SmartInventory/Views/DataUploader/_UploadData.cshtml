@@ -14,128 +14,327 @@
     }
 </style>
 <!DOCTYPE html>
-<div class="dataUploader space-pad">  
-    @*<ul class="nav nav-tabs">
+<div class="dataUploader space-pad">
+    @if (Model.AllUsers != null)
+    {
+        @*<ul class="nav nav-tabs">
 
-        @if (Model.lstUserModule.Contains("IMD"))
-        {
-            <li class="active" id="liImportDataUtility"><a id="aImportDataUtility" data-toggle="tab" href="#ImportDataUtility">@Resources.Resources.SI_OSP_DU_NET_FRM_035</a></li>
-        }
-        <li id="liFileUploadUtility" class="@("" + (Model.lstUserModule.Contains("IMD") ? "" : "active"))"><a id="aFileUploadUtility" data-toggle="tab" href="#FileUploadUtility">@Resources.Resources.SI_OSP_DU_NET_FRM_020</a></li>
-        <li id="liUploadlogs"><a id="aUploadlogs" data-toggle="tab" href="#dvUploadLogsContainer" onclick="dataUploader.ShowUploadSummary();">@Resources.Resources.SI_OSP_DU_NET_FRM_019</a></li>
-    </ul>*@
-    <ul class="nav nav-tabs">
-        @*<li class="@(Model.lstUserModule.Contains("IMD")?"active":"roledisabled")" id="liImportDataUtility"><a id="aImportDataUtility" data-toggle="tab" href="@(Model.lstUserModule.Contains("IMD")?"#ImportDataUtility":"")" title="@Resources.Resources.SI_OSP_DU_NET_FRM_035 @(Model.lstUserModule.Contains("IMD")?"":Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)">@Resources.Resources.SI_OSP_DU_NET_FRM_035</a></li>*@
-        <li class="@(Model.lstUserModule.Contains("IMD")?"":"active") @((Model.lstUserModule.Contains("DUP-UPLD")?"": "roledisabled"))" id="liFileUploadUtility"><a id="aFileUploadUtility" data-toggle="tab" href="@(Model.lstUserModule.Contains("DUP-UPLD")?"#FileUploadUtility":"")" title="@Resources.Resources.SI_OSP_DU_NET_FRM_020 @(Model.lstUserModule.Contains("DUP-UPLD")?"":Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)">@Resources.Resources.SI_OSP_DU_NET_FRM_020</a></li>
-        <li class="@(Model.lstUserModule.Contains("DUP-LOG")?"":"roledisabled")" id="liUploadlogs"><a id="aUploadlogs" data-toggle="tab" href="@(Model.lstUserModule.Contains("DUP-LOG")?"#dvUploadLogsContainer":"")" title="@Resources.Resources.SI_OSP_DU_NET_FRM_019 @(Model.lstUserModule.Contains("DUP-LOG")?"":Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" onclick="@(Model.lstUserModule.Contains("DUP-LOG")?"dataUploader.ShowUploadSummary();":"")">@Resources.Resources.SI_OSP_DU_NET_FRM_019</a></li>
-    </ul>
-    <div class="tab-content">
-        @if (Model.lstUserModule.Contains("IMD"))
-        {
-            <div id="ImportDataUtility" class="tab-pane fade in active">
+                @if (Model.lstUserModule.Contains("IMD"))
+                {
+                    <li class="active" id="liImportDataUtility"><a id="aImportDataUtility" data-toggle="tab" href="#ImportDataUtility">@Resources.Resources.SI_OSP_DU_NET_FRM_035</a></li>
+                }
+                <li id="liFileUploadUtility" class="@("" + (Model.lstUserModule.Contains("IMD") ? "" : "active"))"><a id="aFileUploadUtility" data-toggle="tab" href="#FileUploadUtility">@Resources.Resources.SI_OSP_DU_NET_FRM_020</a></li>
+                <li id="liUploadlogs"><a id="aUploadlogs" data-toggle="tab" href="#dvUploadLogsContainer" onclick="dataUploader.ShowUploadSummary();">@Resources.Resources.SI_OSP_DU_NET_FRM_019</a></li>
+            </ul>*@
+        <ul class="nav nav-tabs">
+            @*<li class="@(Model.lstUserModule.Contains("IMD")?"active":"roledisabled")" id="liImportDataUtility"><a id="aImportDataUtility" data-toggle="tab" href="@(Model.lstUserModule.Contains("IMD")?"#ImportDataUtility":"")" title="@Resources.Resources.SI_OSP_DU_NET_FRM_035 @(Model.lstUserModule.Contains("IMD")?"":Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)">@Resources.Resources.SI_OSP_DU_NET_FRM_035</a></li>*@
+            <li class="@(Model.lstUserModule.Contains("IMD") ? "" : "active") @((Model.lstUserModule.Contains("DUP-UPLD") ? "" : "roledisabled"))" id="liFileUploadUtility"><a id="aFileUploadUtility" data-toggle="tab" href="@(Model.lstUserModule.Contains("DUP-UPLD") ? "#FileUploadUtility" : "")" title="@Resources.Resources.SI_OSP_DU_NET_FRM_020 @(Model.lstUserModule.Contains("DUP-UPLD") ? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)">@Resources.Resources.SI_OSP_DU_NET_FRM_020</a></li>
+            <li class="@(Model.lstUserModule.Contains("DUP-LOG") ? "" : "roledisabled")" id="liUploadlogs"><a id="aUploadlogs" data-toggle="tab" href="@(Model.lstUserModule.Contains("DUP-LOG") ? "#dvUploadLogsContainer" : "")" title="@Resources.Resources.SI_OSP_DU_NET_FRM_019 @(Model.lstUserModule.Contains("DUP-LOG") ? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" onclick="@(Model.lstUserModule.Contains("DUP-LOG") ? "dataUploader.ShowUploadSummary();" : "")">@Resources.Resources.SI_OSP_DU_NET_FRM_019</a></li>
+        </ul>
+        <div class="tab-content">
+            @if (Model.lstUserModule.Contains("IMD"))
+            {
+                <div id="ImportDataUtility" class="tab-pane fade in active">
+                    <div class="uploadfiles">
+                        <span id="stepID1badge" class="badge">1</span> @Resources.Resources.SI_OSP_GBL_GBL_FRM_214<span class="badgeLine"></span>
+                        <span id="stepID3badge" class="badge">2</span> @Resources.Resources.SI_OSP_DU_NET_FRM_017 <span class="badgeLine"></span>
+                        <span id="stepID4badge" class="badge">3</span> @Resources.Resources.SI_OSP_DU_NET_FRM_016
+                    </div>
+                    <div class="choosecont">
+                        <div class="steps-container">
+                            <div class="form-horizontal" id="frmImport">
+                                <div id="stepID0" for="Start Upload Process">
+                                    <div class="form-group" id="divChooseEntity">
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_GBL_NET_RPT_040 <i class="clsMandatory">*</i>:</label>
+                                            <div class="col-md-8">
+                                                <select id="selUserName" class="chosen-select form-control" onchange="dataUploader.bindPlanName();">
+                                                    <option label="" value="0">-Select-</option>
+                                                    @foreach (var user in Model.AllUsers)
+                                                    {
+                                                        <option label="@user.user_name" value="@user.user_name">@user.user_name</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_036<i class="clsMandatory">*</i>:</label>
+                                            <div class="col-md-8">
+                                                <select id="selPlanName" class="chosen-select form-control" onchange=" $('#selPlanName').next().addClass('valid').removeClass('input-validation-error');">
+                                                    <option label="" value="0">-Select-</option>
+                                                    @*<option label="" value="0">--Select--</option>
+                                                        @foreach (var plan in Model.planDetails)
+                                                        {
+                                                            <option label="@plan.plan_name" value="@plan.plan_id">@plan.plan_name</option>
+                                                        }*@
+                                                </select>
+                                            </div>
+                                        </div>
+                                        @*<div class="form-group">
+                                                <label class="col-md-4 control-label">Plan Id<i class="clsMandatory">*</i>:</label>
+                                                <div class="col-md-8">
+                                                    @Html.TextBoxFor(m => m.Plan_Id, new { @class = "form-control", @id = "txtPlan", @maxlength = "10", @onkeypress = "return allowOnlyNumber(event);", @placeholder = "Enter Plan Id" })
+                                                </div>
+                                            </div>*@
+                                    </div>
+                                    <div id="uploadcontrolsID">
+                                        <div class="form-group">
+                                            <div class="col-md-4"></div>
+                                            <div class="col-md-8">
+                                                <button type="button" class="btn btn-success pull-right" id="btnIDUpload">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="lblMessage-container">
+                                                <label id="IDlblMessage" class="red"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="stepID1" style="display:none;" for="Uploaded Successfully">
+                                    <div class="statusContainer">
+                                        <span class="status green"></span>
+                                        <div id="images" class="icon-Success succesBig">
+                                            <img src="@Url.Content("~/Content/images/loader.gif")" class="imgcheck" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group buttons">
+                                        <button type="button" class="btn btn-default pull-left" id="btnImpDataPrevious1">@Resources.Resources.SI_OSP_DU_NET_FRM_023</button>
+                                        <button type="button" class="btn btn-success pull-right" id="btnIDNext">@Resources.Resources.SI_OSP_GBL_GBL_GBL_040</button>
+                                    </div>
+                                </div>
+                                <div id="stepID2" style="display:none;" for="Column Mapping">
+                                </div>
+                                <div id="stepID3" style="display:none;" for="Validation Completed">
+                                    <div class="statusContainer" style="height:auto">
+                                        <span class="status green"></span>
+                                        <div id="uploadinfoID">
+                                            <div class="uploadinfo-container black">
+                                                <span><label id="lblEntityName" class="entityName_bold"></label></span>
+                                                <span style="display:none">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<label id="lblIDTotalRecord"> </label>|</span>
+                                                <span style="display:none">@Resources.Resources.SI_OSP_DU_NET_FRM_024:<label id="lblIDValidRecord"> </label>|</span>
+                                                <span style="display:none">@Resources.Resources.SI_OSP_DU_NET_FRM_025:<label id="lblIDInvalidRecord"> </label></span>
+                                                <span id="spDownloadIconID" style="display:none">
+                                                    <a id="downloadFailedLogsID" data-uploadId="" class="icon-download"></a>
+                                                </span>
+                                                @*<p style="text-align:left"></p>*@
+                                                <div id="divTotalReordsdetails" style="text-align:left"></div>
+                                            </div>
+                                            <div class="red">* @Resources.Resources.SI_OSP_DU_NET_FRM_026.</div>
+                                            @*<div class="downlad-container">
+                                                    <span class="icon-download" id="spDownloadIconID"></span>
+                                                    <a id="downloadFailedLogsID" onclick="dataUploader.DownloadLogs();">@Resources.Resources.SI_ISP_GBL_NET_FRM_029</a>
+                                                </div>*@
+                                        </div>
+                                        <div id="images">
+                                            <img src="@Url.Content("~/Content/images/loader.gif")" class="imgcheck" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group buttons">
+                                        <button type="button" class="btn btn-default pull-left" id="btnImpDataPrevious3">@Resources.Resources.SI_OSP_DU_NET_FRM_023</button>
+                                        <button type="button" class="btn btn-success pull-right" id="btnIDExecute">@Resources.Resources.SI_OSP_DU_NET_FRM_011</button>
+                                        <button type="button" style="display:none" class="btn btn-success" id="btnSingleDone">@Resources.Resources.SI_ISP_GBL_NET_FRM_030</button>
+                                    </div>
+                                </div>
+                                <div id="stepID4" style="display:none;" for="Execution">
+                                    <div class="statusContainer">
+                                        <span class="status green"></span>
+                                        <div id="images">
+                                            <img src="@Url.Content("~/Content/images/loader.gif")" class="imgcheck" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group buttons" style="text-align:center;">
+                                        <button type="button" class="btn btn-success" id="btnIDDone">@Resources.Resources.SI_ISP_GBL_NET_FRM_030</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div id="FileUploadUtility" class="@(Model.lstUserModule.Contains("DUP-UPLD") ? "tab-pane active" : "tab-pane dvDisabled")">
                 <div class="uploadfiles">
-                    <span id="stepID1badge" class="badge">1</span> @Resources.Resources.SI_OSP_GBL_GBL_FRM_214<span class="badgeLine"></span>
-                    <span id="stepID3badge" class="badge">2</span> @Resources.Resources.SI_OSP_DU_NET_FRM_017 <span class="badgeLine"></span>
-                    <span id="stepID4badge" class="badge">3</span> @Resources.Resources.SI_OSP_DU_NET_FRM_016
+                    <span id="step1badge" class="badge">1</span> @Resources.Resources.SI_OSP_DU_NET_FRM_018 <span class="badgeLine"></span>
+                    <span id="step2badge" class="badge">2</span> @Resources.Resources.SI_OSP_GBL_GBL_GBL_263 <span class="badgeLine"></span>
+                    <span id="step3badge" class="badge">3</span> @Resources.Resources.SI_OSP_DU_NET_FRM_017 <span class="badgeLine"></span>
+                    <span id="step4badge" class="badge">4</span> @Resources.Resources.SI_OSP_DU_NET_FRM_016
                 </div>
                 <div class="choosecont">
                     <div class="steps-container">
-                        <div class="form-horizontal" id="frmImport">
-                            <div id="stepID0" for="Start Upload Process">
+                        <div class="form-horizontal" id="frmupload">
+                            <div id="step0" for="Start Upload Process">
+                                @if (IsCustomProjectionAllowed)
+                                {
+
+
+                                    <div class="form-group" id="divChooseFileType">
+                                        <label class="col-md-4 control-label">Projection</label>
+                                        <div class="col-md-8" id="divTemplateType">
+                                            <span>@CustomProjection</span>
+
+                                        </div>
+                                    </div>
+                                }
                                 <div class="form-group" id="divChooseEntity">
-                                    <div class="form-group">
-                                        <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_GBL_NET_RPT_040 <i class="clsMandatory">*</i>:</label>
-                                        <div class="col-md-8">
-                                            <select id="selUserName" class="chosen-select form-control" onchange="dataUploader.bindPlanName();">
+
+                                    <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_GBL_NET_GBL_015 <i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-8">
+                                        <select id="selEntity" class="chosen-select form-control">
+                                            <option label="" value="0">-Select-</option>
+                                            @foreach (var layer in Model.lstLayerDetails)
+                                            {
+                                                <option label="@layer.geom_type" value="@layer.layer_name">@layer.layer_title</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="uploadcontrols" style="display:none;">
+                                    <div class="form-group" id="divChooseOperation">
+                                        <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_027</label>
+                                        <div class="col-md-8" id="divOperationType">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="OperationTypes" id="rdbtnNew" checked value="1"> New
+                                            </label>
+                                            @*<label class="radio-inline">
+                                                    <input type="radio" name="OperationTypes" id="rdbtnUpdate" value="2"> Update
+                                                </label>*@
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divChooseFileType">
+                                        <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_014</label>
+                                        <div class="col-md-8" id="divTemplateType">
+                                            <select id="ddlTemplateType" class="chosen-select form-control" onchange="dataUploader.templateType();">
                                                 <option label="" value="0">-Select-</option>
-                                                @foreach (var user in Model.AllUsers)
+                                                @*<option value="KML">KML/KMZ</option>
+                                                    <option value="EXL">Excel</option>
+                                                    <option value="SHP">Shape</option>*@
+                                                @*commented by Ram as DXF does not contains the attribute info
+                                                    and it is not feasibile to upload entity using geometry information only.*@
+                                                @*<option value="DXF">DXF</option>*@
+                                                @*<option value="TAB">Tab</option>
+                                                    <option value="JSON">Json</option>*@
+                                                @foreach (var file in Model.lstfiletypes)
                                                 {
-                                                    <option label="@user.user_name" value="@user.user_name">@user.user_name</option>
+                                                    <option label="@file.file_type" value="@file.file_type">@file.file_display_name</option>
                                                 }
                                             </select>
-                                        </div>
-
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_036<i class="clsMandatory">*</i>:</label>
-                                        <div class="col-md-8">
-                                            <select id="selPlanName" class="chosen-select form-control" onchange=" $('#selPlanName').next().addClass('valid').removeClass('input-validation-error');">
-                                                <option label="" value="0">-Select-</option>
-                                                @*<option label="" value="0">--Select--</option>
-                                                    @foreach (var plan in Model.planDetails)
-                                                    {
-                                                        <option label="@plan.plan_name" value="@plan.plan_id">@plan.plan_name</option>
-                                                    }*@
-                                            </select>
+                                            @*<label class="radio-inline">
+                                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" data-template-type="KML" onchange="dataUploader.templateType(this);"> KML/KMZ
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio2" checked value="option2" data-template-type="EXL" onchange="dataUploader.templateType(this);"> Excel
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3" data-template-type="SHP" onchange="dataUploader.templateType(this);"> Shape
+                                                </label>*@
                                         </div>
                                     </div>
-                                    @*<div class="form-group">
-                                            <label class="col-md-4 control-label">Plan Id<i class="clsMandatory">*</i>:</label>
-                                            <div class="col-md-8">
-                                                @Html.TextBoxFor(m => m.Plan_Id, new { @class = "form-control", @id = "txtPlan", @maxlength = "10", @onkeypress = "return allowOnlyNumber(event);", @placeholder = "Enter Plan Id" })
+                                    <div class="form-group" id="divDxfSourceId">
+                                        <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_GBL_GBL_GBL_265</label>
+                                        <div class="col-md-8" id="divDxfSource">
+                                            <input class="form-control" id="demo" value="-Select-">
+                                            <div id="demo-input-picker" style="position:relative;">
                                             </div>
-                                        </div>*@
-                                </div>
-                                <div id="uploadcontrolsID">
+                                            @*<select id="ddlSourceList" class="chosen-select form-control">
+                                                </select>*@
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divUpdExcel">
+                                        <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_021<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-md-8 form-inline">
+                                            <input type="file" id="updExcel" accept=".xls,.xlsx"><input type="button" id="clearExcelFile" class="cancel" value="X">
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divUpdTab">
+                                        <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_028<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-md-8 form-inline">
+                                            <input type="file" id="updTab" accept=".tab,.id,.map,.dat" multiple><input type="button" id="clearTabFile" class="cancel" value="X">
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divUpdDxf">
+                                        <label class="col-md-4 control-label">DXF File<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-md-8 form-inline">
+                                            <input type="file" id="updDxf" accept=".dxf"><input type="button" id="clearDxfFile" class="cancel" value="X">
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divUpdKML">
+                                        <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_013<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-md-8 form-inline">
+                                            <input type="file" id="updKML" accept=".kml,.kmz"><input type="button" id="clearKMLFile" class="cancel" value="X">
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divUpdShape">
+                                        <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_029<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-md-8 form-inline">
+                                            <input type="file" id="updSHP" accept=".shx,.shp,.prj,.dbf" multiple><input type="button" id="clearShapeFile" class="cancel" value="X">
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divUpdJson">
+                                        <label class="col-md-4 control-label">Upload Json File please<i class="clsMandatory">*</i>:</label>
+                                        <div class="col-md-8 form-inline">
+                                            <input type="file" id="updJson" accept=".json"><input type="button" id="clearJsonFile" class="cancel" value="X">
+                                        </div>
+                                    </div>
                                     <div class="form-group">
                                         <div class="col-md-4"></div>
                                         <div class="col-md-8">
-                                            <button type="button" class="btn btn-success pull-right" id="btnIDUpload">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008</button>
+                                            <button type="button" class="btn btn-default" id="btnDownloadTemplate">@Resources.Resources.SI_OSP_GBL_NET_FRM_095</button>
+                                            <button type="button" class="btn btn-success pull-right" id="btnUpload">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008</button>
                                         </div>
                                     </div>
+                                    @*<div class="form-group">
+                                        <input class="form-control" id="demo">
+                                        <div id="demo-input-picker" style="position:relative;right:585px;top:-1150px;">
+
+                                        </div>*@
                                     <div class="form-group">
                                         <div class="lblMessage-container">
-                                            <label id="IDlblMessage" class="red"></label>
+                                            <label id="lblMessage" class="red"></label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div id="stepID1" style="display:none;" for="Uploaded Successfully">
+                            <div id="step1" style="display:none;" for="Uploaded Successfully">
                                 <div class="statusContainer">
                                     <span class="status green"></span>
-                                    <div id="images" class="icon-Success succesBig">
+                                    <div id="images">
                                         <img src="@Url.Content("~/Content/images/loader.gif")" class="imgcheck" />
                                     </div>
                                 </div>
                                 <div class="form-group buttons">
-                                    <button type="button" class="btn btn-default pull-left" id="btnImpDataPrevious1">@Resources.Resources.SI_OSP_DU_NET_FRM_023</button>
-                                    <button type="button" class="btn btn-success pull-right" id="btnIDNext">@Resources.Resources.SI_OSP_GBL_GBL_GBL_040</button>
+                                    <button type="button" class="btn btn-default pull-left" id="btnPrevious1">@Resources.Resources.SI_OSP_DU_NET_FRM_023</button>
+                                    <button type="button" class="btn btn-success pull-right" id="btnNext">@Resources.Resources.SI_OSP_GBL_GBL_GBL_040</button>
                                 </div>
                             </div>
-                            <div id="stepID2" style="display:none;" for="Column Mapping">
+                            <div id="step2" style="display:none;" for="Column Mapping">
                             </div>
-                            <div id="stepID3" style="display:none;" for="Validation Completed">
-                                <div class="statusContainer" style="height:auto">
+                            <div id="step3" style="display:none;" for="Validation Completed">
+                                <div class="statusContainer">
                                     <span class="status green"></span>
-                                    <div id="uploadinfoID">
+                                    <div id="uploadinfo">
                                         <div class="uploadinfo-container black">
-                                            <span><label id="lblEntityName" class="entityName_bold"></label></span>
-                                            <span style="display:none">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<label id="lblIDTotalRecord"> </label>|</span>
-                                            <span style="display:none">@Resources.Resources.SI_OSP_DU_NET_FRM_024:<label id="lblIDValidRecord"> </label>|</span>
-                                            <span style="display:none">@Resources.Resources.SI_OSP_DU_NET_FRM_025:<label id="lblIDInvalidRecord"> </label></span>
-                                            <span id="spDownloadIconID" style="display:none">
-                                                <a id="downloadFailedLogsID" data-uploadId="" class="icon-download"></a>
-                                            </span>
-                                            @*<p style="text-align:left"></p>*@
-                                            <div id="divTotalReordsdetails" style="text-align:left"></div>
+                                            <span>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<label id="lblTotalRecord"> </label>|</span>
+                                            <span>@Resources.Resources.SI_OSP_DU_NET_FRM_024:<label id="lblValidRecord"> </label>|</span>
+                                            <span>@Resources.Resources.SI_OSP_DU_NET_FRM_025:<label id="lblInvalidRecord"> </label></span>
                                         </div>
                                         <div class="red">* @Resources.Resources.SI_OSP_DU_NET_FRM_026.</div>
-                                        @*<div class="downlad-container">
-                                                <span class="icon-download" id="spDownloadIconID"></span>
-                                                <a id="downloadFailedLogsID" onclick="dataUploader.DownloadLogs();">@Resources.Resources.SI_ISP_GBL_NET_FRM_029</a>
-                                            </div>*@
+                                        <div class="downlad-container">
+                                            <span class="icon-download" id="spDownloadIcon"></span>
+                                            <a id="downloadFailedLogs" onclick="dataUploader.DownloadLogs();">@Resources.Resources.SI_ISP_GBL_NET_FRM_029</a>
+                                        </div>
                                     </div>
                                     <div id="images">
                                         <img src="@Url.Content("~/Content/images/loader.gif")" class="imgcheck" />
                                     </div>
                                 </div>
                                 <div class="form-group buttons">
-                                    <button type="button" class="btn btn-default pull-left" id="btnImpDataPrevious3">@Resources.Resources.SI_OSP_DU_NET_FRM_023</button>
-                                    <button type="button" class="btn btn-success pull-right" id="btnIDExecute">@Resources.Resources.SI_OSP_DU_NET_FRM_011</button>
-                                    <button type="button" style="display:none" class="btn btn-success" id="btnSingleDone">@Resources.Resources.SI_ISP_GBL_NET_FRM_030</button>
+                                    <button type="button" class="btn btn-default pull-left" id="btnPrevious3">@Resources.Resources.SI_OSP_DU_NET_FRM_023</button>
+                                    <button type="button" class="btn btn-success pull-right" id="btnExecute">@Resources.Resources.SI_OSP_DU_NET_FRM_011</button>
                                 </div>
                             </div>
-                            <div id="stepID4" style="display:none;" for="Execution">
+                            <div id="step4" style="display:none;" for="Execution">
                                 <div class="statusContainer">
                                     <span class="status green"></span>
                                     <div id="images">
@@ -143,218 +342,27 @@
                                     </div>
                                 </div>
                                 <div class="form-group buttons" style="text-align:center;">
-                                    <button type="button" class="btn btn-success" id="btnIDDone">@Resources.Resources.SI_ISP_GBL_NET_FRM_030</button>
+                                    <button type="button" class="btn btn-success" id="btnDone">@Resources.Resources.SI_ISP_GBL_NET_FRM_030</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        }
-    <div id="FileUploadUtility" class="@(Model.lstUserModule.Contains("DUP-UPLD")?"tab-pane active" : "tab-pane dvDisabled")">
-            <div class="uploadfiles">
-                <span id="step1badge" class="badge">1</span> @Resources.Resources.SI_OSP_DU_NET_FRM_018 <span class="badgeLine"></span>
-                <span id="step2badge" class="badge">2</span> @Resources.Resources.SI_OSP_GBL_GBL_GBL_263 <span class="badgeLine"></span>
-                <span id="step3badge" class="badge">3</span> @Resources.Resources.SI_OSP_DU_NET_FRM_017 <span class="badgeLine"></span>
-                <span id="step4badge" class="badge">4</span> @Resources.Resources.SI_OSP_DU_NET_FRM_016
-            </div>
-            <div class="choosecont">
-                <div class="steps-container">
-                    <div class="form-horizontal" id="frmupload">
-                        <div id="step0" for="Start Upload Process">
-                            @if (IsCustomProjectionAllowed)
-                            {
-
-
-                                <div class="form-group" id="divChooseFileType">
-                                    <label class="col-md-4 control-label">Projection</label>
-                                    <div class="col-md-8" id="divTemplateType">
-                                        <span>@CustomProjection</span>
-
-                                    </div>
-                                </div>
-                            }
-                            <div class="form-group" id="divChooseEntity">
-
-                                <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_GBL_NET_GBL_015 <i class="clsMandatory">*</i>:</label>
-                                <div class="col-md-8">
-                                    <select id="selEntity" class="chosen-select form-control">
-                                        <option label="" value="0">-Select-</option>
-                                        @foreach (var layer in Model.lstLayerDetails)
-                                        {
-                                            <option label="@layer.geom_type" value="@layer.layer_name">@layer.layer_title</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <div id="uploadcontrols" style="display:none;">
-                                <div class="form-group" id="divChooseOperation">
-                                    <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_027</label>
-                                    <div class="col-md-8" id="divOperationType">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="OperationTypes" id="rdbtnNew" checked value="1"> New
-                                        </label>
-                                        @*<label class="radio-inline">
-                                                <input type="radio" name="OperationTypes" id="rdbtnUpdate" value="2"> Update
-                                            </label>*@
-                                    </div>
-                                </div>
-                                <div class="form-group" id="divChooseFileType">
-                                    <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_014</label>
-                                    <div class="col-md-8" id="divTemplateType">
-                                        <select id="ddlTemplateType" class="chosen-select form-control" onchange="dataUploader.templateType();">
-                                            <option label="" value="0">-Select-</option>
-                                            @*<option value="KML">KML/KMZ</option>
-                                                <option value="EXL">Excel</option>
-                                                <option value="SHP">Shape</option>*@
-                                            @*commented by Ram as DXF does not contains the attribute info
-                                                and it is not feasibile to upload entity using geometry information only.*@
-                                            @*<option value="DXF">DXF</option>*@
-                                            @*<option value="TAB">Tab</option>
-                                                <option value="JSON">Json</option>*@
-                                            @foreach (var file in Model.lstfiletypes)
-                                            {
-                                                <option label="@file.file_type" value="@file.file_type">@file.file_display_name</option>
-                                            }
-                                        </select>
-                                        @*<label class="radio-inline">
-                                                <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" data-template-type="KML" onchange="dataUploader.templateType(this);"> KML/KMZ
-                                            </label>
-                                            <label class="radio-inline">
-                                                <input type="radio" name="inlineRadioOptions" id="inlineRadio2" checked value="option2" data-template-type="EXL" onchange="dataUploader.templateType(this);"> Excel
-                                            </label>
-                                            <label class="radio-inline">
-                                                <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3" data-template-type="SHP" onchange="dataUploader.templateType(this);"> Shape
-                                            </label>*@
-                                    </div>
-                                </div>
-                                <div class="form-group" id="divDxfSourceId">
-                                    <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_GBL_GBL_GBL_265</label>
-                                    <div class="col-md-8" id="divDxfSource">
-                                        <input class="form-control" id="demo" value="-Select-">
-                                        <div id="demo-input-picker" style="position:relative;">
-                                        </div>
-                                        @*<select id="ddlSourceList" class="chosen-select form-control">
-                                            </select>*@
-
-                                    </div>
-                                </div>
-                                <div class="form-group" id="divUpdExcel">
-                                    <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_021<i class="clsMandatory">*</i>:</label>
-                                    <div class="col-md-8 form-inline">
-                                        <input type="file" id="updExcel" accept=".xls,.xlsx"><input type="button" id="clearExcelFile" class="cancel" value="X">
-                                    </div>
-                                </div>
-                                <div class="form-group" id="divUpdTab">
-                                    <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_028<i class="clsMandatory">*</i>:</label>
-                                    <div class="col-md-8 form-inline">
-                                        <input type="file" id="updTab" accept=".tab,.id,.map,.dat" multiple><input type="button" id="clearTabFile" class="cancel" value="X">
-                                    </div>
-                                </div>
-                                <div class="form-group" id="divUpdDxf">
-                                    <label class="col-md-4 control-label">DXF File<i class="clsMandatory">*</i>:</label>
-                                    <div class="col-md-8 form-inline">
-                                        <input type="file" id="updDxf" accept=".dxf"><input type="button" id="clearDxfFile" class="cancel" value="X">
-                                    </div>
-                                </div>
-                                <div class="form-group" id="divUpdKML">
-                                    <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_013<i class="clsMandatory">*</i>:</label>
-                                    <div class="col-md-8 form-inline">
-                                        <input type="file" id="updKML" accept=".kml,.kmz"><input type="button" id="clearKMLFile" class="cancel" value="X">
-                                    </div>
-                                </div>
-                                <div class="form-group" id="divUpdShape">
-                                    <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_029<i class="clsMandatory">*</i>:</label>
-                                    <div class="col-md-8 form-inline">
-                                        <input type="file" id="updSHP" accept=".shx,.shp,.prj,.dbf" multiple><input type="button" id="clearShapeFile" class="cancel" value="X">
-                                    </div>
-                                </div>
-                                <div class="form-group" id="divUpdJson">
-                                    <label class="col-md-4 control-label">Upload Json File please<i class="clsMandatory">*</i>:</label>
-                                    <div class="col-md-8 form-inline">
-                                        <input type="file" id="updJson" accept=".json"><input type="button" id="clearJsonFile" class="cancel" value="X">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-md-4"></div>
-                                    <div class="col-md-8">
-                                        <button type="button" class="btn btn-default" id="btnDownloadTemplate">@Resources.Resources.SI_OSP_GBL_NET_FRM_095</button>
-                                        <button type="button" class="btn btn-success pull-right" id="btnUpload">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_008</button>
-                                    </div>
-                                </div>
-                                @*<div class="form-group">
-                                    <input class="form-control" id="demo">
-                                    <div id="demo-input-picker" style="position:relative;right:585px;top:-1150px;">
-
-                                    </div>*@
-                                <div class="form-group">
-                                    <div class="lblMessage-container">
-                                        <label id="lblMessage" class="red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="step1" style="display:none;" for="Uploaded Successfully">
-                            <div class="statusContainer">
-                                <span class="status green"></span>
-                                <div id="images">
-                                    <img src="@Url.Content("~/Content/images/loader.gif")" class="imgcheck" />
-                                </div>
-                            </div>
-                            <div class="form-group buttons">
-                                <button type="button" class="btn btn-default pull-left" id="btnPrevious1">@Resources.Resources.SI_OSP_DU_NET_FRM_023</button>
-                                <button type="button" class="btn btn-success pull-right" id="btnNext">@Resources.Resources.SI_OSP_GBL_GBL_GBL_040</button>
-                            </div>
-                        </div>
-                        <div id="step2" style="display:none;" for="Column Mapping">
-                        </div>
-                        <div id="step3" style="display:none;" for="Validation Completed">
-                            <div class="statusContainer">
-                                <span class="status green"></span>
-                                <div id="uploadinfo">
-                                    <div class="uploadinfo-container black">
-                                        <span>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<label id="lblTotalRecord"> </label>|</span>
-                                        <span>@Resources.Resources.SI_OSP_DU_NET_FRM_024:<label id="lblValidRecord"> </label>|</span>
-                                        <span>@Resources.Resources.SI_OSP_DU_NET_FRM_025:<label id="lblInvalidRecord"> </label></span>
-                                    </div>
-                                    <div class="red">* @Resources.Resources.SI_OSP_DU_NET_FRM_026.</div>
-                                    <div class="downlad-container">
-                                        <span class="icon-download" id="spDownloadIcon"></span>
-                                        <a id="downloadFailedLogs" onclick="dataUploader.DownloadLogs();">@Resources.Resources.SI_ISP_GBL_NET_FRM_029</a>
-                                    </div>
-                                </div>
-                                <div id="images">
-                                    <img src="@Url.Content("~/Content/images/loader.gif")" class="imgcheck" />
-                                </div>
-                            </div>
-                            <div class="form-group buttons">
-                                <button type="button" class="btn btn-default pull-left" id="btnPrevious3">@Resources.Resources.SI_OSP_DU_NET_FRM_023</button>
-                                <button type="button" class="btn btn-success pull-right" id="btnExecute">@Resources.Resources.SI_OSP_DU_NET_FRM_011</button>
-                            </div>
-                        </div>
-                        <div id="step4" style="display:none;" for="Execution">
-                            <div class="statusContainer">
-                                <span class="status green"></span>
-                                <div id="images">
-                                    <img src="@Url.Content("~/Content/images/loader.gif")" class="imgcheck" />
-                                </div>
-                            </div>
-                            <div class="form-group buttons" style="text-align:center;">
-                                <button type="button" class="btn btn-success" id="btnDone">@Resources.Resources.SI_ISP_GBL_NET_FRM_030</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div id="dvUploadLogsContainer" class="tab-pane fade">
+                @*Data uploader logs*@
             </div>
         </div>
-        <div id="dvUploadLogsContainer" class="tab-pane fade">
-            @*Data uploader logs*@
+    }
+    else
+    {
+        <div class="nr-found">
+           <span> No Users Available</span>
         </div>
-    </div>
+    }
 </div>
 <script>
     $(document).ready(function () {
-        debugger;
         dataUploader.InitializeUploader();
     });
 </script>
