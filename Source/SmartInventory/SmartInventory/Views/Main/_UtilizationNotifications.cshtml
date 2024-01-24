@@ -136,7 +136,7 @@
         <div class="filterwindow">
             <form>
                 <div class="form-group">
-                    @Html.DropDownListFor(m => m.objEntityNotiFilter.searchBy, new SelectList(Model.lstUtilLayers.Select(x => new { Value = x.layer_name.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), Resources.Resources.SI_OSP_GBL_NET_GBL_015, new { @class = "chosen-select utilfilter", @id = "ddlLayers" })
+                    @Html.DropDownListFor(m => m.objEntityNotiFilter.searchBy, new SelectList(Model.lstUtilLayers.Select(x => new { Value = x.layer_name.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), "-Select " + Resources.Resources.SI_OSP_GBL_NET_GBL_015 + "-", new { @class = "chosen-select utilfilter", @id = "ddlLayers" })
                 </div>
                 <div class="form-group">
                     @Html.TextBoxFor(m => m.objEntityNotiFilter.searchText, new { @id = "txtSearchTextNoti", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @class = "input-sm form-control utilfilter", @maxlength = "50" })
