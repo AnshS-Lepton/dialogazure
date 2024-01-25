@@ -1921,7 +1921,7 @@
 
             // At this point the container has no SVG, it only has HTML and Canvases.
             html2canvas($(targetElem)[0], {
-                allowTaint: true, useCORS: true, logging: false, height: window.outerHeight + window.innerHeight, windowHeight: window.outerHeight + window.innerHeight
+                allowTaint: true, useCORS: true, logging: false, height: window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight, windowHeight: window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight
             }).then(function (canvas) {
                 // Put the SVGs back in place
                 elements.each(function () {

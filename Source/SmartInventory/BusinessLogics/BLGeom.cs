@@ -66,9 +66,9 @@ namespace BusinessLogics
         {
              DASaveEntityGeometry.Instance.UpdateDuctLocation(systemId, distance, OffsetDir);
         } 
-        public void UpdateDuctColorCode(int systemId, int trench_id )
+        public void UpdateDuctColorCode(int systemId, int trench_id, int ductcount)
         {
-             DASaveEntityGeometry.Instance.UpdateDuctColorCode(systemId, trench_id);
+             DASaveEntityGeometry.Instance.UpdateDuctColorCode(systemId, trench_id, ductcount);
         }
 
     }
