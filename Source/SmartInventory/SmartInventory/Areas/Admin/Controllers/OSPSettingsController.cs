@@ -277,7 +277,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                     if (result)
                     {
                         objMsg.status = ResponseStatus.OK.ToString();
-                        objMsg.message = objModel.type + " colors saved successfully!";
+                        objMsg.message = objModel.type + " colors update successfully!";
                     }
                     else
                     {
