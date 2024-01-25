@@ -2031,22 +2031,29 @@ namespace SmartInventory.Areas.Admin.Controllers
                 dtReport.Columns.Remove("ICON_CONTENT");
                 dtReport.Columns.Remove("ICON_CLASS");
 
+                dtReport.Columns.Remove("ABBREVIATION");
+                dtReport.Columns.Remove("OBJPM");
+                dtReport.Columns.Remove("IS_CREATE");
+                dtReport.Columns.Remove("IS_EDIT");
+                dtReport.Columns.Remove("IS_VIEW");
+                dtReport.Columns.Remove("IS_APPROVE");
+
                 dtReport.Columns["ticket_type"].SetOrdinal(0);
                 dtReport.Columns["description"].SetOrdinal(1);
                 dtReport.Columns["color_code"].SetOrdinal(2);
                 dtReport.Columns["module"].SetOrdinal(3);
-                dtReport.Columns["Created On"].SetOrdinal(4);
-                dtReport.Columns["created_by_text"].SetOrdinal(5);
-                dtReport.Columns["Modified On"].SetOrdinal(6);
-                dtReport.Columns["modified_by_text"].SetOrdinal(7);
-
+                dtReport.Columns["created_by_text"].SetOrdinal(4);
+                dtReport.Columns["Created On"].SetOrdinal(5);
+                dtReport.Columns["modified_by_text"].SetOrdinal(6);
+                dtReport.Columns["Modified On"].SetOrdinal(7);
                 dtReport.Columns["ticket_type"].ColumnName = "Ticket Type";
                 dtReport.Columns["description"].ColumnName = "Description";
                 dtReport.Columns["color_code"].ColumnName = "Color Code";
                 dtReport.Columns["module"].ColumnName = "Module";
                 dtReport.Columns["created_by_text"].ColumnName = "Created By";
+                dtReport.Columns["created on"].ColumnName = "Created On";
                 dtReport.Columns["modified_by_text"].ColumnName = "Modified By";
-
+                dtReport.Columns["modified on"].ColumnName = "Modified On";
                 var filename = "Ticlet Type";
                 dtReport.TableName = "Ticlet Typ";
                 ExportAccessoriesData(dtReport, "Export_" + filename + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));
