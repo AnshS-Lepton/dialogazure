@@ -1,7 +1,7 @@
 ﻿@model Models.DataUploaderModel
 <link href="@Url.Content("~/Content/css/datauploader.css")" rel="stylesheet" />
 <link href="~/Content/css/inputpicker/jquery.inputpicker.css" rel="stylesheet" />
-@{ 
+@{
     var IsCustomProjectionAllowed = SmartInventory.Settings.ApplicationSettings.IsCustomProjectionAllowed;
     var CustomProjection = SmartInventory.Settings.ApplicationSettings.customProjection;
 
@@ -14,24 +14,29 @@
     }
 </style>
 <!DOCTYPE html>
-<div class="dataUploader space-pad">  
+<div class="dataUploader space-pad">
+
     @*<ul class="nav nav-tabs">
 
+            @if (Model.lstUserModule.Contains("IMD"))
+            {
+                <li class="active" id="liImportDataUtility"><a id="aImportDataUtility" data-toggle="tab" href="#ImportDataUtility">@Resources.Resources.SI_OSP_DU_NET_FRM_035</a></li>
+            }
+            <li id="liFileUploadUtility" class="@("" + (Model.lstUserModule.Contains("IMD") ? "" : "active"))"><a id="aFileUploadUtility" data-toggle="tab" href="#FileUploadUtility">@Resources.Resources.SI_OSP_DU_NET_FRM_020</a></li>
+            <li id="liUploadlogs"><a id="aUploadlogs" data-toggle="tab" href="#dvUploadLogsContainer" onclick="dataUploader.ShowUploadSummary();">@Resources.Resources.SI_OSP_DU_NET_FRM_019</a></li>
+        </ul>*@
+    <ul class="nav nav-tabs">
         @if (Model.lstUserModule.Contains("IMD"))
         {
-            <li class="active" id="liImportDataUtility"><a id="aImportDataUtility" data-toggle="tab" href="#ImportDataUtility">@Resources.Resources.SI_OSP_DU_NET_FRM_035</a></li>
+            <li class="@(Model.lstUserModule.Contains("IMD")?"active":"roledisabled")" id="liImportDataUtility"><a id="aImportDataUtility" data-toggle="tab" href="@(Model.lstUserModule.Contains("IMD")?"#ImportDataUtility":"")" title="@Resources.Resources.SI_OSP_DU_NET_FRM_035 @(Model.lstUserModule.Contains("IMD")?"":Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)">@Resources.Resources.SI_OSP_DU_NET_FRM_035</a></li>
         }
-        <li id="liFileUploadUtility" class="@("" + (Model.lstUserModule.Contains("IMD") ? "" : "active"))"><a id="aFileUploadUtility" data-toggle="tab" href="#FileUploadUtility">@Resources.Resources.SI_OSP_DU_NET_FRM_020</a></li>
-        <li id="liUploadlogs"><a id="aUploadlogs" data-toggle="tab" href="#dvUploadLogsContainer" onclick="dataUploader.ShowUploadSummary();">@Resources.Resources.SI_OSP_DU_NET_FRM_019</a></li>
-    </ul>*@
-    <ul class="nav nav-tabs">
-        @*<li class="@(Model.lstUserModule.Contains("IMD")?"active":"roledisabled")" id="liImportDataUtility"><a id="aImportDataUtility" data-toggle="tab" href="@(Model.lstUserModule.Contains("IMD")?"#ImportDataUtility":"")" title="@Resources.Resources.SI_OSP_DU_NET_FRM_035 @(Model.lstUserModule.Contains("IMD")?"":Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)">@Resources.Resources.SI_OSP_DU_NET_FRM_035</a></li>*@
-        <li class="@(Model.lstUserModule.Contains("IMD")?"":"active") @((Model.lstUserModule.Contains("DUP-UPLD")?"": "roledisabled"))" id="liFileUploadUtility"><a id="aFileUploadUtility" data-toggle="tab" href="@(Model.lstUserModule.Contains("DUP-UPLD")?"#FileUploadUtility":"")" title="@Resources.Resources.SI_OSP_DU_NET_FRM_020 @(Model.lstUserModule.Contains("DUP-UPLD")?"":Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)">@Resources.Resources.SI_OSP_DU_NET_FRM_020</a></li>
-        <li class="@(Model.lstUserModule.Contains("DUP-LOG")?"":"roledisabled")" id="liUploadlogs"><a id="aUploadlogs" data-toggle="tab" href="@(Model.lstUserModule.Contains("DUP-LOG")?"#dvUploadLogsContainer":"")" title="@Resources.Resources.SI_OSP_DU_NET_FRM_019 @(Model.lstUserModule.Contains("DUP-LOG")?"":Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" onclick="@(Model.lstUserModule.Contains("DUP-LOG")?"dataUploader.ShowUploadSummary();":"")">@Resources.Resources.SI_OSP_DU_NET_FRM_019</a></li>
+        <li class="@(Model.lstUserModule.Contains("IMD") ? "" : "active") @((Model.lstUserModule.Contains("DUP-UPLD") ? "" : "roledisabled"))" id="liFileUploadUtility"><a id="aFileUploadUtility" data-toggle="tab" href="@(Model.lstUserModule.Contains("DUP-UPLD") ? "#FileUploadUtility" : "")" title="@Resources.Resources.SI_OSP_DU_NET_FRM_020 @(Model.lstUserModule.Contains("DUP-UPLD") ? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)">@Resources.Resources.SI_OSP_DU_NET_FRM_020</a></li>
+        <li class="@(Model.lstUserModule.Contains("DUP-LOG") ? "" : "roledisabled")" id="liUploadlogs"><a id="aUploadlogs" data-toggle="tab" href="@(Model.lstUserModule.Contains("DUP-LOG") ? "#dvUploadLogsContainer" : "")" title="@Resources.Resources.SI_OSP_DU_NET_FRM_019 @(Model.lstUserModule.Contains("DUP-LOG") ? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" onclick="@(Model.lstUserModule.Contains("DUP-LOG") ? "dataUploader.ShowUploadSummary();" : "")">@Resources.Resources.SI_OSP_DU_NET_FRM_019</a></li>
     </ul>
     <div class="tab-content">
         @if (Model.lstUserModule.Contains("IMD"))
         {
+
             <div id="ImportDataUtility" class="tab-pane fade in active">
                 <div class="uploadfiles">
                     <span id="stepID1badge" class="badge">1</span> @Resources.Resources.SI_OSP_GBL_GBL_FRM_214<span class="badgeLine"></span>
@@ -48,9 +53,12 @@
                                         <div class="col-md-8">
                                             <select id="selUserName" class="chosen-select form-control" onchange="dataUploader.bindPlanName();">
                                                 <option label="" value="0">-Select-</option>
-                                                @foreach (var user in Model.AllUsers)
+                                                @if (Model.AllUsers != null)
                                                 {
-                                                    <option label="@user.user_name" value="@user.user_name">@user.user_name</option>
+                                                    foreach (var user in Model.AllUsers)
+                                                    {
+                                                        <option label="@user.user_name" value="@user.user_name">@user.user_name</option>
+                                                    }
                                                 }
                                             </select>
                                         </div>
@@ -151,7 +159,7 @@
                 </div>
             </div>
         }
-    <div id="FileUploadUtility" class="@(Model.lstUserModule.Contains("DUP-UPLD")?"tab-pane active" : "tab-pane dvDisabled")">
+        <div id="FileUploadUtility" class="@(Model.lstUserModule.Contains("DUP-UPLD") ? "tab-pane active" : "tab-pane dvDisabled")">
             <div class="uploadfiles">
                 <span id="step1badge" class="badge">1</span> @Resources.Resources.SI_OSP_DU_NET_FRM_018 <span class="badgeLine"></span>
                 <span id="step2badge" class="badge">2</span> @Resources.Resources.SI_OSP_GBL_GBL_GBL_263 <span class="badgeLine"></span>
@@ -351,10 +359,11 @@
             @*Data uploader logs*@
         </div>
     </div>
+
+
 </div>
 <script>
     $(document).ready(function () {
-        debugger;
         dataUploader.InitializeUploader();
     });
 </script>

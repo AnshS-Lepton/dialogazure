@@ -214,9 +214,9 @@
         // edit utilization
         if ('@Model.system_id' != 0) {
             btnSaveUtilization.value = "Update";
-            $('#OtherEntities').hide();
-            $('#btnSaveUtilization').prop('disabled', true);
-            $(':input[type="button"]').prop('disabled', true);
+            //$('#OtherEntities').hide();
+            //$('#btnSaveUtilization').prop('disabled', true);
+            //$(':input[type="button"]').prop('disabled', true);
             $('#ddlRegions').next().addClass('.EUTSetting chosen-disabled');
             $('#ddlProvinces').next().addClass('.EUTSetting chosen-disabled');
             $('#SelectedNetworkStatus').next().addClass('.EUTSetting chosen-disabled');
@@ -241,10 +241,10 @@
         });
         $('#btnClearUtlization').on("click", function () {
 
-            $('#ddlLayers').val(0).trigger("chosen:updated");
-            $('#SelectedNetworkStatus').val(0).trigger("chosen:updated");
-            $('#ddlRegions').val(0).trigger("chosen:updated");
-            $('#ddlProvinces').val(0).trigger("chosen:updated");
+            //$('#ddlLayers').val(0).trigger("chosen:updated");
+            //$('#SelectedNetworkStatus').val(0).trigger("chosen:updated");
+            //$('#ddlRegions').val(0).trigger("chosen:updated");
+            //$('#ddlProvinces').val(0).trigger("chosen:updated");
             $("#txtLowRangeFrom").val(0);
             $("#txtLowRangeTo").val('');
             $("#txtModerateRangeFrom").val('');
