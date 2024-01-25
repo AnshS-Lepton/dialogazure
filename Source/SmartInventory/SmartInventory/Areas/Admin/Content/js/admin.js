@@ -2138,15 +2138,18 @@ function DeleteUtilizationSettingsById(id) {
     });
 }
 
+
 function AddNewUtlization(_system_id) {
     
     if (_system_id == 0) {
         $('#OtherEntities').show();
+        popup.LoadModalDialog('Miscellaneous/AddEntityUtilization', { system_id: _system_id }, 'Add New Utilization', 'modal-md');
     }
     else {
         $('#OtherEntities').hide();
+        popup.LoadModalDialog('Miscellaneous/AddEntityUtilization', { system_id: _system_id }, 'Update Utilization', 'modal-md');
     }
-    popup.LoadModalDialog('Miscellaneous/AddEntityUtilization', { system_id: _system_id }, 'Add New Utilization', 'modal-md');
+    
 }
 
 
