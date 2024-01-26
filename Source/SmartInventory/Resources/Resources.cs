@@ -27460,5 +27460,13 @@ namespace Resources {
                 return resourceProvider.GetResource("SI_GBL_GBL_GBL_GBL_1436", CultureInfo.CurrentUICulture.Name) as string;
             }
         }
+        /// <summary>Please select an option to Applied the filter!</summary>
+        public static string SI_OSP_GBL_JQ_GBL_115
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_JQ_GBL_115", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
     }        
 }
