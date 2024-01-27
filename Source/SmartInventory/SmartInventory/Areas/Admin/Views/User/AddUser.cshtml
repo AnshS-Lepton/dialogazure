@@ -424,7 +424,9 @@ new SelectListItem{ Text="-Select-", Value = "" },
                                         </div>
                                     </div>
                                 </div>
-                                <div id="divprmsid" class="form-group" style="@(ispanprmvendorvisible? Html.Raw("display:none") : Html.Raw("display:none"))">
+                                @if (prms_id != null)
+                                {
+                                <div id="divprmsid" class="form-group" style="@(ispanprmvendorvisible ? Html.Raw("display:block") : Html.Raw("display:none"))">
                                     <div class="row">
                                         <div class="col-md-4">
                                             <label class="control-label">
@@ -436,15 +438,17 @@ new SelectListItem{ Text="-Select-", Value = "" },
                                         </div>*@
                                         <div class="col-md-7">
                                             @Html.TextBoxFor(model => model.prms_id,
-                                            SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
-                                            {
-                                                @class = "form-control",
-                                                @placeholder = "Enter PRMS ID",
-                                            }, (prms_id != null) ? (prms_id.is_readonly == true) ? new { @readonly = "readonly" } : null : null))
+                                         SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                         {
+                                             @class = "form-control",
+                                             @placeholder = "Enter PRMS ID",
+                                         }, (prms_id != null) ? (prms_id.is_readonly == true) ? new { @readonly = "readonly" } : null : null))
                                         </div>
                                     </div>
                                 </div>
+                                }
                                 <div id="divvendorid" class="form-group" style="@(ispanprmvendorvisible? Html.Raw("display:block") : Html.Raw("display:none"))">
+                                
                                     <div class="row">
                                         <div class="col-md-4">
                                             <label class="control-label">
