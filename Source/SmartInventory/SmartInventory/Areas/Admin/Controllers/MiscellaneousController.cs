@@ -2054,8 +2054,8 @@ namespace SmartInventory.Areas.Admin.Controllers
                 dtReport.Columns["created on"].ColumnName = "Created On";
                 dtReport.Columns["modified_by_text"].ColumnName = "Modified By";
                 dtReport.Columns["modified on"].ColumnName = "Modified On";
-                var filename = "Ticlet Type";
-                dtReport.TableName = "Ticlet Typ";
+                var filename = "Ticket Type";
+                dtReport.TableName = "Ticket Type";
                 ExportAccessoriesData(dtReport, "Export_" + filename + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));
             }
         }
