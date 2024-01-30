@@ -8094,7 +8094,7 @@ var Main = function () {
     this.clearInfoRelatedObjects = function () {
         var buffer = getMeterDistanceFromZoom(app.map.getZoom());
         $(app.DE.InfoDiv).hide();
-        si.resetShapeTools();
+        //si.resetShapeTools();
         $(app.DE.lblInformation).text(MultilingualKey.GBL_OSP_GBL_GBL_GBL_001);
         app.removeInfoHoverItem();
         app.removeSrchHoverItem();
