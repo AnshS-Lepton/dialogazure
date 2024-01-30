@@ -193,7 +193,6 @@ new { id = "frmNetworkPlanning", enctype = "multipart/form-data", autocomplete =
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-md-5 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_204 :</label>
-                                        <label class="control-label col-md-5 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_204 :</label>
                                         <div class="col-md-7">
                                             @Html.TextBoxFor(x => x.offset_value, new { @class = "form-control", Value = "", onblur = "networkdata.createOffsetCable();", @onkeydown = "return ValidateNumberDecimal(this,event,3,2);" })
                                         </div>
