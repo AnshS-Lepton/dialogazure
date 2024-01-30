@@ -9437,6 +9437,7 @@ var Main = function () {
     //Response After Save Data
     this.loadLayerOnEntity = function () {
         //;
+        $('#btnclrFilter').hide();
         if (app.getActiveRegionLayers().length != 0 || app.getActiveProvinceLayers().length != 0) {
             app.reqver++; // this is to reload the layer from mapserver instead of from cache memory
             app.LoadLayersOnMap();
@@ -15964,7 +15965,29 @@ var Main = function () {
 
 
 
-
+    this.ClearAdvanceFilter = function ()
+    {
+        $('#ddl_ProjectSpeciCode').val('0');
+        $('#ddl_PlanningSpeciCode').val('0');
+        $('#ddl_WorkorderSpeciCode').val('0');
+        $('#ddl_PurposeSpeciCode').val('0');
+        $('#ddlFilterCableType').val('0');
+        $('#ddlFilterCableCategory').val('0');
+        $('#ddlFilterFaultStatus').val('0');
+        $('#txt3rdPartyVendor').val('');
+        $('#ddlFilterOwnership').val('');
+        $('#ddlPrimaryPOD').val('0');
+        $('#ddlSecondaryPOD').val('0');
+        app.filterprojectvalue = "";
+        app.filtercablevalue = "";
+        app.cable_type = "";
+        app.cable_category = "";
+        app.fault_status = "";
+        app.filterSplitterType = "";
+        $('#btnclrFilter').hide();
+        app.LoadLayersOnMap();
+        app.RenderVectorLayer(0);
+    }
 
     this.GetProjecSpeciFilter = function () {
         ////;
@@ -16012,11 +16035,24 @@ var Main = function () {
 
     this.ProjectSpeciFilter = function () {
         ////;
-        $('#btnclrFilter').show();
-        app.filterprojectvalue = "";
-        app.LoadLayersOnMap();
-        app.RenderVectorLayer(0);
-        $(popup.DE.MinimizeModel).trigger("click");
+        var hasAdvSelectVal = $(".AdvanceFilterCHK").find("select").filter(function () {
+            return $(this).val() !== '' && $(this).val() !== null && $(this).val() !== "0";
+        }).length > 0;
+        var hasAdvtextVal = $(".AdvanceFilterCHK").find("input[type='text']").filter(function () {
+            return $(this).val().trim() !== '' && $(this).val().trim() !== '-All-';
+        }).length > 0;
+        var hasAnyChecked = $(".AdvanceFilterCHK").find("input[type='checkbox']").is(":checked");
+        var cnt = hasAdvSelectVal || hasAdvtextVal || hasAnyChecked;
+        if (cnt) {
+            $('#btnclrFilter').show();
+            app.filterprojectvalue = "";
+            app.LoadLayersOnMap();
+            app.RenderVectorLayer(0);
+            $(popup.DE.MinimizeModel).trigger("click");
+        } else {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_115); //Please select an option to Applied the filter
+            return false;
+        }
 
     }
 
