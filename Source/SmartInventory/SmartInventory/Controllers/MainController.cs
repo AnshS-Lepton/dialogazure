@@ -2566,7 +2566,7 @@ namespace SmartInventory.Controllers
                         string strFilePath = "";
                         if (entityType == EntityType.ROW.ToString() && !string.IsNullOrEmpty(featureName))
                         {
-                            attachmentType = collection["attachment_type"];
+                            attachmentType = (!string.IsNullOrEmpty(collection["attachment_type"]) ? collection["attachment_type"] : attachmentType);
                             strFilePath = UploadfileOnFTP(featureName, systemId, file, attachmentType, strNewfilename, entityType);
                         }
                         else if (!string.IsNullOrEmpty(featureName))
