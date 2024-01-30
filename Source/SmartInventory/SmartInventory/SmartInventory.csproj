@@ -2820,6 +2820,7 @@
     <Folder Include="Content\UploadedFiles\Resources\" />
     <Folder Include="Content\UploadedFiles\VendorSpecifications\" />
     <Folder Include="ErrorLogs\" />
+    <Folder Include="MigrationScripts\" />
     <Folder Include="shp2kml_convertor\" />
     <Folder Include="Uploads\ExternalData\KMZ\" />
     <Folder Include="Uploads\LayerStyleMaster\" />

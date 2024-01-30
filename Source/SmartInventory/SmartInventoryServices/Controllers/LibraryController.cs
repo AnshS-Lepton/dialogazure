@@ -5771,9 +5771,9 @@ namespace SmartInventoryServices.Controllers
                             }
                         }
                         // update duct color code 
-                        if (objnewDuct.system_id == 0)
+                        if (objnewDuct.system_id == 0 && string.IsNullOrEmpty(objnewDuct.duct_color))
                         {
-                            BASaveEntityGeometry.Instance.UpdateDuctColorCode(resultItem.system_id, objDuct.trench_id);
+                            BASaveEntityGeometry.Instance.UpdateDuctColorCode(resultItem.system_id, objDuct.trench_id,i);
                         }
                         if (string.IsNullOrEmpty(resultItem.objPM.message))
                         {

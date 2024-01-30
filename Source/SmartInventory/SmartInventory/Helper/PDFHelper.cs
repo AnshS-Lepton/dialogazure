@@ -1576,9 +1576,9 @@ namespace SmartInventory.Helper
             //int ActualImageWidth = bitmap.Width;
             int ActualImageHeight = bitmap.Height;
             float horizontalMargin = pdfDoc.LeftMargin + pdfDoc.RightMargin + 10;
-            //float verticalMargin = pdfDoc.TopMargin + pdfDoc.BottomMargin + 10;
+            float verticalMargin = pdfDoc.TopMargin + pdfDoc.BottomMargin + 25;
 
-            int ActualPageHeight = Convert.ToInt32(pdfDoc.PageSize.Height);
+            int ActualPageHeight = Convert.ToInt32(pdfDoc.PageSize.Height) - Convert.ToInt32(verticalMargin);
             int ActualPageWidth = Convert.ToInt32(pdfDoc.PageSize.Width) - Convert.ToInt32(horizontalMargin);
             int pageIteration = 0;
 
@@ -1594,8 +1594,13 @@ namespace SmartInventory.Helper
                 Image imgPlanned = Image.GetInstance(imgCropped, System.Drawing.Imaging.ImageFormat.Png);
                 imgCropped.Dispose();
                 imgPlanned.ScaleToFit(ActualPageWidth, ActualPageHeight);
-                pdfDoc.Add(imgPlanned);
-                //pdfDoc.NewPage();
+                if (ActualImageHeight > ActualPageHeight)
+                    pdfDoc.Add(imgPlanned);
+                else
+                {
+                    pdfDoc.NewPage();
+                    pdfDoc.Add(imgPlanned);
+                }
                 ActualImageHeight = ActualImageHeight - ActualPageHeight;
                 pageIteration++;
 
