@@ -3334,6 +3334,10 @@ function AddNewAccessories(_id) {
      
     popup.LoadModalDialog('Accessories/AddNewAccessories', { id: _id }, 'Add Accessories', 'modal-md');
 }
+function EditAccessories(_id) {
+
+    popup.LoadModalDialog('Accessories/AddNewAccessories', { id: _id }, 'Update Accessories', 'modal-md');
+}
 
 function DeleteAccessoriesById(id, name) {
      
