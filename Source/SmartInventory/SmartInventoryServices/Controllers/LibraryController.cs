@@ -5062,8 +5062,8 @@ namespace SmartInventoryServices.Controllers
 						{
 							if (resultItem.isPortConnected)
 							{
-								objBDBMaster.status = ResponseStatus.OK.ToString();
-								objBDBMaster.message = BLConvertMLanguage.MultilingualMessageConvert(resultItem.message);//resultItem.message;
+								objBDBMaster.objPM.status = ResponseStatus.OK.ToString();
+								objBDBMaster.objPM.message = BLConvertMLanguage.MultilingualMessageConvert(resultItem.message);//resultItem.message;
 								response.status = ResponseStatus.OK.ToString();
 								response.error_message = BLConvertMLanguage.MultilingualMessageConvert(resultItem.message);//resultItem.message;
 							}
