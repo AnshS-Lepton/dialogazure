@@ -1389,10 +1389,10 @@ namespace SmartInventory.Helper
                         p.Add(new Chunk(logo, 0, -5, true));
                     }
                 }
-                if (ApplicationSettings.isClientNameRequiredOnLoginPage)
-                {
-                    p.Add(new Chunk("   " + ApplicationSettings.ClientName, FontFactory.GetFont("Arial", 16, new BaseColor(System.Drawing.Color.Black))));
-                }
+                //if (ApplicationSettings.isClientNameRequiredOnLoginPage)
+                //{
+                //    p.Add(new Chunk("   " + ApplicationSettings.ClientName, FontFactory.GetFont("Arial", 16, new BaseColor(System.Drawing.Color.Black))));
+                //}
                 headerTbl.AddCell((new PdfPCell(p) { Border = 0, BorderWidthBottom = 1, PaddingBottom = 5 }));
 
                 Paragraph pDate = new Paragraph(new Chunk("Date: " + DateTimeHelper.DateTimeFormatWithTime(DateTimeHelper.Now.ToString()), FontFactory.GetFont("ARIAL", 10)));
