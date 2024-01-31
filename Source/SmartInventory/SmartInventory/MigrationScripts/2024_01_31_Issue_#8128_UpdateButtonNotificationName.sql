@@ -1,0 +1,1 @@
+update res_resources set value='Submit' where key='SI_OSP_GBL_NET_FRM_112' and culture='en';
