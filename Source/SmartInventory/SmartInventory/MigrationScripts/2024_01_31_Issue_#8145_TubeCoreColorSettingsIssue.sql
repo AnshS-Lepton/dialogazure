@@ -1,0 +1,1 @@
+delete from cable_color_master a using (select min(color_id) as ctid from cable_color_master group by color_id having count(*) > 1) b where a.color_id = b.ctid;
