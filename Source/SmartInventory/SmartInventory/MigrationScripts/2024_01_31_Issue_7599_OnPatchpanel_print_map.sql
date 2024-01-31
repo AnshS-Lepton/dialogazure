@@ -1,0 +1,1 @@
+update layer_action_mapping set is_active=false WHERE layer_id = (select layer_id from layer_details where layer_name='PatchPanel') and is_active=true and action_name='Print'
