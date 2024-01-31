@@ -1400,7 +1400,7 @@
             var geomstyle
             var type = feature.getGeometry().getType();
             // var entity_name = feature.i.entity_name;
-            var entity_name = feature.h.entity_name;
+            var entity_name = feature.getProperty("entity_name");
             switch (type) {
                 case "LineString":
                     //var fiberType = feature.getProperty('fiber_type');
@@ -1441,7 +1441,7 @@
                         geomstyle = {
                             icon: imageUrl,
                             //   title: feature.i.network_id
-                            title: feature.h.network_id
+                            title: feature.getProperty("network_id")
                         };
                     }
 
