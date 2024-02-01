@@ -1,0 +1,2 @@
+update layer_action_mapping set is_active=false where layer_id=(select layer_id from layer_details where layer_name='Rack') and action_name='LocationEdit';
+update layer_action_mapping set is_active=false where layer_id=(select layer_id from layer_details where layer_name='Rack') and action_name='Save';

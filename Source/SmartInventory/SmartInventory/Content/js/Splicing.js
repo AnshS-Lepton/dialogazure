@@ -2407,7 +2407,8 @@
         }                
         app.clearCPFMarker();        
         $('#divNoRecordExist').show();        
-        $('#tblConnectionPathFinderInfo,#dvHeader,#dvBtnAction').hide()
+        $('#tblConnectionPathFinderInfo,#dvHeader,#dvBtnAction').hide();
+        $(app.DE.ddlCore).html('').html('<option value="0">-Select-</option>').val("0").trigger("chosen:updated");
 
     }
     this.downloadOpticalLink = function () {
