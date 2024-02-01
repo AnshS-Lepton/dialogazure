@@ -49,6 +49,11 @@ namespace BusinessLogics.VectorLayers
         {
             return DAVectorLayers.Instance.GetAllLayersVector(vectorDataIn, out dbServerDate);
         }
+
+        public List<VectorFeatures<dynamic>> GetAllLayersVectorByGeom(VectorDataIn vectorDataIn, out DateTime dbServerDate)
+        {
+            return DAVectorLayers.Instance.GetAllLayersVectorByGeom(vectorDataIn, out dbServerDate);
+        }
         #endregion
 
         #region All Delta

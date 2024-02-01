@@ -73,6 +73,21 @@ namespace DataAccess.VectorLayers
             }
             catch { throw; }
         }
+
+        public List<VectorFeatures<dynamic>> GetAllLayersVectorByGeom(VectorDataIn vectorDataIn, out DateTime dbServerDate)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(vectorDataIn.connectionString))
+                    connetionString = vectorDataIn.connectionString;
+                DateTime dbDate = System.DateTime.Now;
+                var allFeatures = repo.ExecuteProcedure<VectorFeatures<dynamic>>("fn_get_vector_layers_data_by_geom", new { p_prvinceIds = vectorDataIn.PrvinceIds, p_longitude = vectorDataIn.lng, p_latitude = vectorDataIn.lat, p_ticket_id = vectorDataIn.ticketID }, true);
+                dbDate = repo.ExecuteProcedure<DateTime>("fn_get_DB_date", new { }, false).FirstOrDefault();
+                dbServerDate = dbDate;
+                return allFeatures;
+            }
+            catch { throw; }
+        }
         #endregion
 
         #region All Delta

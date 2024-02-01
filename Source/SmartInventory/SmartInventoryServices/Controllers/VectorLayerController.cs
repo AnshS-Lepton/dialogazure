@@ -54,13 +54,40 @@ namespace SmartInventoryServices.Controllers
             catch (Exception ex)
             {
                 ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.ApiLogWriter("GetPoles()", "VectorLayer Controller", null, ex);
+                logHelper.ApiLogWriter("GetVectorData()", "VectorLayer Controller", null, ex);
                 response.status = StatusCodes.UNKNOWN_ERROR.ToString();
                 response.error_message = "Error while getting poles vector data!";
             }
             return response;
         }
+        [HttpPost]
+        public dynamic GetVectorDataByGeom(ReqInput data)
+        {
+            VectorDataIn oVectorDataIn = ReqHelper.GetRequestData<VectorDataIn>(data);
+            var response = new ApiResponse<dynamic>();
+            var moduleAbbr = "NWTLYR";           
+            ConnectionMaster con = new BLLayer().GetConnectionString(moduleAbbr);            
+            if (con != null)
+            {
+                oVectorDataIn.connectionString = con.connection_string;
+            }           
+            try
+            {
+                DateTime _FetchDateTime;
+                var obj = BLVectorLayers.Instance.GetAllLayersVectorByGeom(oVectorDataIn, out _FetchDateTime);
 
+                response.results = new { LayersData = obj, FetchDateTime = _FetchDateTime.ToString("yyyy-MM-dd HH:mm:ss") };
+                response.status = ResponseStatus.OK.ToString();
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("GetVectorDataByGeom()", "VectorLayer Controller", null, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = "Error while getting GetVectorDataByGeom vector data!";
+            }
+            return response;
+        }
         [HttpPost]       
         public dynamic GetVectorDelta(ReqInput data)
         {
