@@ -175,7 +175,7 @@ namespace SmartInventory.Controllers
                 if (objConection != null)
                 {
 
-                    new Thread(() =>
+                    System.Threading.Tasks.Task.Factory.StartNew(() =>
                     {
 
                         DbMessage objDbMessage = new BLOSPSplicing().SaveUtilizationNotification(objConection);
@@ -186,7 +186,10 @@ namespace SmartInventory.Controllers
                         objNotification.sendToAllUser = false;
                         objNotification.notificationType = notificationType.Utilization.ToString();
                         smartInventoryhub.BroadCastInfo(objNotification);
-                    }).Start();
+                    }).ContinueWith(tsk =>
+                    {
+                        tsk.Exception.Handle(ex => { ErrorLogHelper.WriteErrorLog("Splicing", "SaveConnectionInfo", ex); return true; });
+                    }, System.Threading.Tasks.TaskContinuationOptions.OnlyOnFaulted);
                     SendUtilizationEmail(objConnectionInfo);
                 }
             }
