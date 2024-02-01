@@ -123,6 +123,10 @@
         pointer-events: none;
         opacity: 0.4;
     }
+
+    .mtb-0 {
+        margin-block: 0;
+    }
 </style>
 
 <!DOCTYPE html>
@@ -187,15 +191,15 @@
         columns: grid.Columns(
             @*grid.Column(Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>
 
-    </text>, canSort: false),*@
+                </text>, canSort: false),*@
 grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>
                 <div class="d-flex">
                     <a href="javascript:void(0);" class="i-icons-style icon-fs" onclick="showOnMap('@item.task_system_id');" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036"><i class="fa fa-map-marker"></i></a>
                     <a href="javascript:void(0);" class="i-icons-style icon-fs" onclick="EditRecord('@item.task_system_id','@item.assigned_to_id');" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_003"><i class="fa far fa-edit"></i></a>
                     <a href="javascript:void(0);" class="i-icons-style icon-fs" onclick="RedlineHistory('@item.task_system_id', '@item.assigned_to_id');" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_339"><i class="fa far fa-history"></i></a>
                 </div>
-            </text>),
-     grid.Column("task_name", Resources.Resources.SI_OSP_GBL_GBL_FRM_149, format: @<text>@item.task_name</text>),
+</text>),
+grid.Column("task_name", Resources.Resources.SI_OSP_GBL_GBL_FRM_149, format: @<text>@item.task_name</text>),
 grid.Column("task_type", Resources.Resources.SI_OSP_GBL_GBL_FRM_150, format: @<text> @item.task_type</text>),
 grid.Column("task_remarks", Resources.Resources.SI_OSP_GBL_GBL_GBL_279, format: @<text>@item.task_remarks </text>),
 grid.Column("task_action", Resources.Resources.SI_OSP_GBL_GBL_FRM_151, format: @<text> @item.task_action</text>),
@@ -224,7 +228,7 @@ grid.Column("task_status", Resources.Resources.SI_OSP_GBL_GBL_GBL_280, format: @
                     <!-- Modal content-->
                     <div class="modal-content1" id="dvModelid">
                         <div class="modal-header d-flex">
-                            <h4 class="modal-title">Redline</h4>
+                            <h5 class="mtb-0">Advance Filter</h5>
                             <span class="ml-auto icon-close" id="CloseAdvanceFilter">
 
                             </span>
@@ -351,7 +355,7 @@ grid.Column("task_status", Resources.Resources.SI_OSP_GBL_GBL_GBL_280, format: @
 
 <script>
     $(document).ready(function () {
-         
+
         $("#dvModelid").draggable();
         $($('#tblNetworkTicketManagerGrid tr:first th')).addClass('gridHeaderStyle');
 
@@ -409,7 +413,7 @@ grid.Column("task_status", Resources.Resources.SI_OSP_GBL_GBL_GBL_280, format: @
 
         //GridColor();
 
-        // 
+        //
         //si.setDateTimeCalendar_ExportEntities("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
         $("#frmTicket").submit(function () {
             $("#dvEntitydetailsProgress").show();
@@ -472,7 +476,7 @@ grid.Column("task_status", Resources.Resources.SI_OSP_GBL_GBL_GBL_280, format: @
     });
 
     //Nik
-  
+
     $("#btnTicketData").on("click", function () {
         if ($("#searchByText").val() == "" || $("#searchByText").val() == null || $("#searchByText").val() == 0) {
             alert('Please select Search By !!', 'warning');
@@ -576,13 +580,13 @@ grid.Column("task_status", Resources.Resources.SI_OSP_GBL_GBL_GBL_280, format: @
 
     }
     function EditRecord(task_system_id, assigned_to_id) {
-         
+
         popup.LoadModalDialog('CHILD', 'Redline/AddRedlineDetails', { 'objRedlineMaster.system_id': task_system_id, 'objRedlineMaster.assigned_to_id': assigned_to_id }, 'Redline Details', 'modal-xxl');
     }
 
     function RedlineHistory(task_system_id, assigned_to_id) {
-         
-        popup.LoadModalDialog('CHILD', 'Redline/Redline_Entity_History', { 'objRedlineFilters.task_id': task_system_id, 'objRedlineFilters.userId': assigned_to_id }, 'Redline Details', 'modal-xxl');
+
+        popup.LoadModalDialog('CHILD', 'Redline/Redline_Entity_History', { 'objRedlineFilters.task_id': task_system_id, 'objRedlineFilters.userId': assigned_to_id }, 'History', 'modal-xxl');
     }
 
     function showOnMap(task_system_id) {
