@@ -28,8 +28,8 @@
             <div class="table table-hover webgrid">
                 <table id="tblEntityInfo" class="webgrid" style="width:100%;">
                     <tr class="info_table_tr"><td width="105">Cut Location(lat/long)</td><td>:</td><td>@(Model.fault_lat == null ? "NA" : Model.fault_lat + "/" + Model.fault_long)</td></tr>
-                    <tr class="info_table_tr2"><td width="105">Physical Distance</td><td>:</td><td>@(Model.physical_distance == 0 ? "NA" : Convert.ToString(Model.physical_distance)) Meter</td></tr>
-                    <tr class="info_table_tr"><td width="105">Dist. From Last Termination Point</td><td>:</td><td>@(Model.last_tp_distance == 0 ? "NA" : Convert.ToString(Model.last_tp_distance)) Meter</td></tr>
+                    <tr class="info_table_tr2"><td width="105">Physical Distance</td><td>:</td><td>@(Model.physical_distance == 0 ? "NA" : Convert.ToString(Model.physical_distance)) meter</td></tr>
+                    <tr class="info_table_tr"><td width="105">Dist. From Last Termination Point</td><td>:</td><td>@(Model.last_tp_distance == 0 ? "NA" : Convert.ToString(Model.last_tp_distance) + "meter") </td></tr>
                     <tr class="info_table_tr2"><td width="105">Last Termination Point Type</td><td>:</td><td>@(Model.last_tp_type == null ? "NA" : Model.last_tp_type)</td></tr>
                     <tr class="info_table_tr"><td width="105">Last Termination Point Network Id</td><td>:</td><td>@(Model.last_tp_network_id == null ? "NA" : Model.last_tp_network_id)</td></tr>
                 </table>
