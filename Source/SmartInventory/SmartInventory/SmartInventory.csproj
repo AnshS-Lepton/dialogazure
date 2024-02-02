@@ -1571,7 +1571,7 @@
     <Content Include="Content\js\vis_4_18_1.min.js" />
     <Content Include="Content\sort_asc.png" />
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
-    <Content Include="MigrationScripts\Priyanka.sql" />
+    <Content Include="MigrationScripts\2024_02_02_issue_#7705.sql" />
     <Content Include="MultilingualJunkKeys\Content\Js\Alert.js" />
     <Content Include="Scripts\APIHandler.js" />
     <Content Include="Content\js\canvg.min.js" />
