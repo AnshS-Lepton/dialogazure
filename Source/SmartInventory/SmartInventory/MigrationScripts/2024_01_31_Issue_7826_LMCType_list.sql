@@ -1,0 +1,1 @@
+update dropdown_master set is_active=true where UPPER(dropdown_type)= upper('LMC_TYPE')

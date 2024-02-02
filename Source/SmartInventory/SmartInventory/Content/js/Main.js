@@ -4869,6 +4869,7 @@ var Main = function () {
             if ($('.WarningAcceptance').find('input[type=checkbox]').is(":checked")) {
                 $('.ui-dialog-buttonset button').attr('style', 'background: #428600!important');
                 $('.ui-dialog-buttonset button').prop("disabled", false);
+                $('.ui-dialog-buttonset button').removeClass('okBtn');
             }
             else {
                 $('.ui-dialog-buttonset button').removeAttr("style");
