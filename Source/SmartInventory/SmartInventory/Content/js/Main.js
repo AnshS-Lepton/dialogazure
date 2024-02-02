@@ -4881,13 +4881,23 @@ var Main = function () {
 
         $(document).on("click", "#tblMergeCables tbody tr td input[type='checkbox']", function () {
             var rowcount = $('#tblMergeCables >tbody input:checkbox:checked').length;
-            if (rowcount > 2) {
-                $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', 'disabled');
-                event.preventDefault();
-                event.stopPropagation();
+            var _rowcount = $('#tblMergeCables >tbody input:checkbox:unchecked').length;
+            for (var i = 0; i < rowcount; i++) {
+                var id = $('#tblMergeCables >tbody input:checkbox:checked')[i].id;
+                if (rowcount > 2) {
+                    $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', 'disabled');
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                else {
+                    $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', false);
+                    $('input[name="MergeCables_' + id + '"]').prop('disabled', '');
+                }
             }
-            else {
-                $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', false);
+            for (var i = 0; i < _rowcount; i++) {
+                var _id = $('#tblMergeCables >tbody input:checkbox:unchecked')[i].id;
+                $('input[name="MergeCables_' + _id + '"]').prop('disabled', 'disabled');
+
             }
         });
 
@@ -22751,7 +22761,7 @@ var Main = function () {
         for (var cable of _result) {
             var sNo = $('#tblMergeCables tbody tr').length + 1;
             var result = "si._focusMe('Line', si.getLatLongArr('" + cable.geom + "'), '" + cable.entity_type + "',si.getLatLongArr('" + cable.centroid_geom + "'))";
-            $('#tblMergeCables tbody').append('<tr class="cptr" data-system-id="' + cable.common_name + '" id="' + cable.entity_type + '" onmouseover="' + result + '"><td>' + sNo + '</td><td>' + cable.common_name + '</td><td><input type="radio" id="' + cable.system_id + '" data-id="' + cable.system_id + '" name="MergeCables" value = "' + cable.system_id + '"'
+            $('#tblMergeCables tbody').append('<tr class="cptr" data-system-id="' + cable.common_name + '" id="' + cable.entity_type + '" onmouseover="' + result + '"><td>' + sNo + '</td><td>' + cable.common_name + '</td><td><input type="radio" id="' + cable.system_id + '" data-id="' + cable.system_id + '" name="MergeCables_' +cable.system_id+'" value = "' + cable.system_id + '" disabled'
                 + '></td><td style="font-weight: bold; color: red; cursor: pointer; " class="remove"><input type="checkbox" id="' + cable.system_id + '" data-id="' + cable.system_id + '"></td></tr>');
         }
     }
