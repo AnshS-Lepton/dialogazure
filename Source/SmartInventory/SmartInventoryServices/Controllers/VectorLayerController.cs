@@ -123,6 +123,36 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
+        [HttpPost]
+        public dynamic GetVectorDeltaByGeom(ReqInput data)
+        {
+            VectorDeltaIn vectorDeltaIn = ReqHelper.GetRequestData<VectorDeltaIn>(data);
+
+            var response = new ApiResponse<dynamic>();
+            var moduleAbbr = "NWTLYR";          
+            ConnectionMaster con = new BLLayer().GetConnectionString(moduleAbbr);         
+            if (con != null)
+            {
+                vectorDeltaIn.connectionString = con.connection_string;
+            }           
+            try
+            {
+                DateTime _FetchDateTime;
+                var obj = BLVectorLayers.Instance.GetAllLayersDeltaByGeom(vectorDeltaIn, out _FetchDateTime);
+
+                response.results = new { LayersData = obj, FetchDateTime = _FetchDateTime.ToString("yyyy-MM-dd HH:mm:ss") };
+                response.status = ResponseStatus.OK.ToString();
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("GetVectorDelta()", "VectorLayer Controller", null, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = "Error while getting VectorDelta data!";
+            }
+            return response;
+        }
+
         [HttpPost]       
         public dynamic GetVectorProvinceData(ReqInput data)
         {

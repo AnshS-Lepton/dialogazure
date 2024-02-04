@@ -61,6 +61,11 @@ namespace BusinessLogics.VectorLayers
         {
             return DAVectorLayers.Instance.GetAllLayersDelta(vectorDeltaIn, out dbServerDate);
         }
+
+        public List<VectorFeatures<dynamic>> GetAllLayersDeltaByGeom(VectorDeltaIn vectorDeltaIn, out DateTime dbServerDate)
+        {
+            return DAVectorLayers.Instance.GetAllLayersDeltaByGeom(vectorDeltaIn, out dbServerDate);
+        }
         #endregion
         #region Get Province BBOX
         public List<VectorFeatures<dynamic>> GetVectorProvinceData(VectorProvinceDataIn oVectorProvinceDataIn)
