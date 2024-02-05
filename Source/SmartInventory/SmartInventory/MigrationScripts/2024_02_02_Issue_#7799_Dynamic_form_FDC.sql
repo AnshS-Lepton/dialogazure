@@ -1,0 +1,1 @@
+drop view if exists vw_jfp_fdc;
