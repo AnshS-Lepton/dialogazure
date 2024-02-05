@@ -1,0 +1,1 @@
+update dropdown_master set is_active=true where dropdown_type='charge_category';

@@ -4869,6 +4869,7 @@ var Main = function () {
             if ($('.WarningAcceptance').find('input[type=checkbox]').is(":checked")) {
                 $('.ui-dialog-buttonset button').attr('style', 'background: #428600!important');
                 $('.ui-dialog-buttonset button').prop("disabled", false);
+                $('.ui-dialog-buttonset button').removeClass('okBtn');
             }
             else {
                 $('.ui-dialog-buttonset button').removeAttr("style");
@@ -4880,13 +4881,23 @@ var Main = function () {
 
         $(document).on("click", "#tblMergeCables tbody tr td input[type='checkbox']", function () {
             var rowcount = $('#tblMergeCables >tbody input:checkbox:checked').length;
-            if (rowcount > 2) {
-                $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', 'disabled');
-                event.preventDefault();
-                event.stopPropagation();
+            var _rowcount = $('#tblMergeCables >tbody input:checkbox:unchecked').length;
+            for (var i = 0; i < rowcount; i++) {
+                var id = $('#tblMergeCables >tbody input:checkbox:checked')[i].id;
+                if (rowcount > 2) {
+                    $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', 'disabled');
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                else {
+                    $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', false);
+                    $('input[name="MergeCables_' + id + '"]').prop('disabled', '');
+                }
             }
-            else {
-                $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', false);
+            for (var i = 0; i < _rowcount; i++) {
+                var _id = $('#tblMergeCables >tbody input:checkbox:unchecked')[i].id;
+                $('input[name="MergeCables_' + _id + '"]').prop('disabled', 'disabled');
+
             }
         });
 
@@ -8094,7 +8105,7 @@ var Main = function () {
     this.clearInfoRelatedObjects = function () {
         var buffer = getMeterDistanceFromZoom(app.map.getZoom());
         $(app.DE.InfoDiv).hide();
-        si.resetShapeTools();
+        //si.resetShapeTools();
         $(app.DE.lblInformation).text(MultilingualKey.GBL_OSP_GBL_GBL_GBL_001);
         app.removeInfoHoverItem();
         app.removeSrchHoverItem();
@@ -15965,7 +15976,29 @@ var Main = function () {
 
 
 
-
+    this.ClearAdvanceFilter = function ()
+    {
+        $('#ddl_ProjectSpeciCode').val('0');
+        $('#ddl_PlanningSpeciCode').val('0');
+        $('#ddl_WorkorderSpeciCode').val('0');
+        $('#ddl_PurposeSpeciCode').val('0');
+        $('#ddlFilterCableType').val('0');
+        $('#ddlFilterCableCategory').val('0');
+        $('#ddlFilterFaultStatus').val('0');
+        $('#txt3rdPartyVendor').val('');
+        $('#ddlFilterOwnership').val('');
+        $('#ddlPrimaryPOD').val('0');
+        $('#ddlSecondaryPOD').val('0');
+        app.filterprojectvalue = "";
+        app.filtercablevalue = "";
+        app.cable_type = "";
+        app.cable_category = "";
+        app.fault_status = "";
+        app.filterSplitterType = "";
+        $('#btnclrFilter').hide();
+        app.LoadLayersOnMap();
+        app.RenderVectorLayer(0);
+    }
 
     this.GetProjecSpeciFilter = function () {
         ////;
@@ -22728,7 +22761,7 @@ var Main = function () {
         for (var cable of _result) {
             var sNo = $('#tblMergeCables tbody tr').length + 1;
             var result = "si._focusMe('Line', si.getLatLongArr('" + cable.geom + "'), '" + cable.entity_type + "',si.getLatLongArr('" + cable.centroid_geom + "'))";
-            $('#tblMergeCables tbody').append('<tr class="cptr" data-system-id="' + cable.common_name + '" id="' + cable.entity_type + '" onmouseover="' + result + '"><td>' + sNo + '</td><td>' + cable.common_name + '</td><td><input type="radio" id="' + cable.system_id + '" data-id="' + cable.system_id + '" name="MergeCables" value = "' + cable.system_id + '"'
+            $('#tblMergeCables tbody').append('<tr class="cptr" data-system-id="' + cable.common_name + '" id="' + cable.entity_type + '" onmouseover="' + result + '"><td>' + sNo + '</td><td>' + cable.common_name + '</td><td><input type="radio" id="' + cable.system_id + '" data-id="' + cable.system_id + '" name="MergeCables_' +cable.system_id+'" value = "' + cable.system_id + '" disabled'
                 + '></td><td style="font-weight: bold; color: red; cursor: pointer; " class="remove"><input type="checkbox" id="' + cable.system_id + '" data-id="' + cable.system_id + '"></td></tr>');
         }
     }

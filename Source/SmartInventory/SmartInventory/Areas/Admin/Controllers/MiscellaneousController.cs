@@ -182,6 +182,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                 dtReport.Columns.Remove("MODIFIED_BY");
                 dtReport.Columns.Remove("CREATED_ON");
                 dtReport.Columns.Remove("MODIFIED_ON");
+                
 
                 dtReport.Columns["layer_name"].SetOrdinal(0);
                 dtReport.Columns["network_status"].SetOrdinal(1);
@@ -191,10 +192,12 @@ namespace SmartInventory.Areas.Admin.Controllers
                 dtReport.Columns["utilization_range_Moderate"].SetOrdinal(5);
                 dtReport.Columns["utilization_range_High"].SetOrdinal(6);
                 dtReport.Columns["utilization_range_Over"].SetOrdinal(7);
-                dtReport.Columns["created_by_text"].SetOrdinal(8);
-                dtReport.Columns["created on"].SetOrdinal(9);
-                dtReport.Columns["modified_by_text"].SetOrdinal(10);
-                dtReport.Columns["modified on"].SetOrdinal(11);
+                dtReport.Columns["entity_to_be_utilized"].SetOrdinal(8);
+                dtReport.Columns["entity_utilization_percentage"].SetOrdinal(9);
+                dtReport.Columns["created_by_text"].SetOrdinal(10);
+                dtReport.Columns["created on"].SetOrdinal(11);
+                dtReport.Columns["modified_by_text"].SetOrdinal(12);
+                dtReport.Columns["modified on"].SetOrdinal(13);
 
                 dtReport.Columns["layer_name"].ColumnName = "Entity Type";
                 dtReport.Columns["network_status"].ColumnName = "Network Status";
@@ -204,6 +207,8 @@ namespace SmartInventory.Areas.Admin.Controllers
                 dtReport.Columns["utilization_range_Moderate"].ColumnName = "Moderate(%)";
                 dtReport.Columns["utilization_range_High"].ColumnName = "High(%)";
                 dtReport.Columns["utilization_range_Over"].ColumnName = "Over(%)";
+                dtReport.Columns["entity_to_be_utilized"].ColumnName = "Entity For Utilization Report";
+                dtReport.Columns["entity_utilization_percentage"].ColumnName = "Utilization(%)";
                 dtReport.Columns["created_by_text"].ColumnName = "Created By";
                 dtReport.Columns["created on"].ColumnName = "Created On";
                 dtReport.Columns["modified_by_text"].ColumnName = "Modified By";
@@ -592,8 +597,16 @@ namespace SmartInventory.Areas.Admin.Controllers
                 dtReport.Columns.Remove("modified_by");
                 dtReport.Columns.Remove("created_on");
                 dtReport.Columns.Remove("modified_on");
-
                 dtReport.Columns.Remove("is_action_allowed");
+                dtReport.Columns["S_NO"].SetOrdinal(0);
+                dtReport.Columns["layer_name"].SetOrdinal(1);
+                dtReport.Columns["DROPDOWN_TYPE"].SetOrdinal(2);
+                dtReport.Columns["DROPDOWN_VALUE"].SetOrdinal(3);
+                dtReport.Columns["STATUS"].SetOrdinal(4);
+                dtReport.Columns["created_by_text"].SetOrdinal(5);
+                dtReport.Columns["Created On"].SetOrdinal(6);
+                dtReport.Columns["modified_by_text"].SetOrdinal(7);
+                dtReport.Columns["Modified On"].SetOrdinal(8);
                 dtReport.Columns["S_NO"].ColumnName = "Sr.No";
                 dtReport.Columns["layer_name"].ColumnName = "Entity Name";
                 dtReport.Columns["DROPDOWN_TYPE"].ColumnName = "Dropdown Type";
@@ -2054,8 +2067,8 @@ namespace SmartInventory.Areas.Admin.Controllers
                 dtReport.Columns["created on"].ColumnName = "Created On";
                 dtReport.Columns["modified_by_text"].ColumnName = "Modified By";
                 dtReport.Columns["modified on"].ColumnName = "Modified On";
-                var filename = "Ticlet Type";
-                dtReport.TableName = "Ticlet Typ";
+                var filename = "Ticket Type";
+                dtReport.TableName = "Ticket Type";
                 ExportAccessoriesData(dtReport, "Export_" + filename + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));
             }
         }

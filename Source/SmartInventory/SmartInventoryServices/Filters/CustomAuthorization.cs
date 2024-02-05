@@ -81,35 +81,41 @@ namespace SmartInventoryServices.Filters
 			//--------------Below code for get user id from request-------------
 			var requestUserId = "";
 			dynamic requestData = "";
-			string request = actionContext.Request.Content.ReadAsStringAsync().Result;
-			if (!string.IsNullOrEmpty(request))
+			string request = actionContext.Request.Content.Headers.ToString();
+
+
+			if (!string.IsNullOrEmpty(request) && request.Contains("application/json"))
 			{
-				request = request.ToLower();
-				JObject Obj = JObject.Parse(request);
-				var innerdata = (string)Obj["data"];
-				if (!string.IsNullOrEmpty(innerdata))
+				request = actionContext.Request.Content.ReadAsStringAsync().Result;
+				if (!string.IsNullOrEmpty(request))
 				{
-					JToken token = JToken.Parse(innerdata);
-					if (token is JArray)
+					request = request.ToLower();
+					JObject Obj = JObject.Parse(request);
+					var innerdata = (string)Obj["data"];
+					if (!string.IsNullOrEmpty(innerdata))
 					{
-						List<JObject> jsonObjectList = JsonConvert.DeserializeObject<List<JObject>>(innerdata);
-						if (jsonObjectList.Count > 0)
+						JToken token = JToken.Parse(innerdata);
+						if (token is JArray)
 						{
-							requestData = (jsonObjectList[0]);
+							List<JObject> jsonObjectList = JsonConvert.DeserializeObject<List<JObject>>(innerdata);
+							if (jsonObjectList.Count > 0)
+							{
+								requestData = (jsonObjectList[0]);
+								requestUserId = Convert.ToString(requestData.user_id);
+								if (requestUserId == null)
+								{
+									requestUserId = Convert.ToString(requestData.userid);
+								}
+							}
+						}
+						else if (token is JObject)
+						{
+							requestData = JObject.Parse((string)Obj["data"]);
 							requestUserId = Convert.ToString(requestData.user_id);
 							if (requestUserId == null)
 							{
 								requestUserId = Convert.ToString(requestData.userid);
 							}
-						}
-					}
-					else if (token is JObject)
-					{
-						requestData = JObject.Parse((string)Obj["data"]);
-						requestUserId = Convert.ToString(requestData.user_id);
-						if (requestUserId == null)
-						{
-							requestUserId = Convert.ToString(requestData.userid);
 						}
 					}
 				}
