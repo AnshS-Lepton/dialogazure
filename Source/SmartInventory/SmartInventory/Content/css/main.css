@@ -3638,8 +3638,8 @@ div.slider-nav span.left {
             width: 100%;
             overflow: auto;
             max-height: calc(100% - 104px);
-            scrollbar-color: #c9d0d8 #efefef;
-            scrollbar-width: thin;
+            /*scrollbar-color: #c9d0d8 #efefef;
+            scrollbar-width: thin;*/
         }
 
             .NELibrary .libItems .padding td img {
