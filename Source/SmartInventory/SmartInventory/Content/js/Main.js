@@ -4891,13 +4891,13 @@ var Main = function () {
                 }
                 else {
                     $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', false);
-                    $('input[name="MergeCables_' + id + '"]').prop('disabled', '');
+                    $('input[data-id="' + id + '"]').prop('disabled', '');
                 }
             }
             for (var i = 0; i < _rowcount; i++) {
                 var _id = $('#tblMergeCables >tbody input:checkbox:unchecked')[i].id;
-                $('input[name="MergeCables_' + _id + '"]').prop('disabled', 'disabled');
-
+                $('input[data-id="' + _id + '"]').prop('disabled', 'disabled');
+                $('input[data-id="' + _id + '"]').prop('checked', false);
             }
         });
 
@@ -22761,8 +22761,8 @@ var Main = function () {
         for (var cable of _result) {
             var sNo = $('#tblMergeCables tbody tr').length + 1;
             var result = "si._focusMe('Line', si.getLatLongArr('" + cable.geom + "'), '" + cable.entity_type + "',si.getLatLongArr('" + cable.centroid_geom + "'))";
-            $('#tblMergeCables tbody').append('<tr class="cptr" data-system-id="' + cable.common_name + '" id="' + cable.entity_type + '" onmouseover="' + result + '"><td>' + sNo + '</td><td>' + cable.common_name + '</td><td><input type="radio" id="' + cable.system_id + '" data-id="' + cable.system_id + '" name="MergeCables_' +cable.system_id+'" value = "' + cable.system_id + '" disabled'
-                + '></td><td style="font-weight: bold; color: red; cursor: pointer; " class="remove"><input type="checkbox" id="' + cable.system_id + '" data-id="' + cable.system_id + '"></td></tr>');
+            $('#tblMergeCables tbody').append('<tr class="cptr" data-system-id="' + cable.common_name + '" id="' + cable.entity_type + '" onmouseover="' + result + '"><td>' + sNo + '</td><td>' + cable.common_name + '</td><td><input type="radio" id="' + cable.system_id + '" data-id="' + cable.system_id + '" name="MergeCables" value = "' + cable.system_id + '" disabled'
+                + '></td><td style="font-weight: bold; color: red; cursor: pointer; " class="remove"><input type="checkbox" id="' + cable.system_id + '" data-mergeCableID="' + cable.system_id + '"></td></tr>');
         }
     }
     //End Merge Cable Module
