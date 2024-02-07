@@ -25288,10 +25288,9 @@ var Main = function () {
         $('.gm-style-iw, .gm-style-iw-c').hide();
     }
     this.ShowUtilizationOnMap = function (summaryid, entitytitle, networkstatus, lowcount, moderatecount, highcount, overcount, ductutilization, utilizationtype, reportminval) {
-        //;
-        if (reportminval) {
-            $("#L").attr('checked', false);
-            $("#M").attr('checked', false);
+        if (lowcount != 0 || moderatecount!=0) {
+            $("#L").attr('checked', true);
+            $("#M").attr('checked', true);
         }
         if (utilizationtype != "") {
             ajaxReq('Report/ShowUtilizationOnMap', {
