@@ -19855,6 +19855,33 @@ var Main = function () {
             }
 
         },
+        setROWDateTimeCalendar : function (startdateid, startdateimgid, chkDisabled, isFutureDateAllowed) {
+            Calendar.setup({
+                inputField: startdateid,   // id of the input field
+                button: startdateimgid,
+                ifFormat: "%d-%b-%Y",       // format of the input field datetime format %d-%b-%Y %I:%M %p
+                showsTime: false,
+                timeFormat: "12",
+                weekNumbers: false,
+                onUpdate: function () {
+                    var emID = $("#" + startdateid).val();
+                    if (emID != "") {
+                        $("#" + startdateid).removeClass('input-validation-error').removeClass('field-validation-error').addClass('field-validation-valid').html('');
+                    } else {
+                        $("#" + startdateid).addClass('input-validation-error');
+                    }
+                },
+                disableFunc: function (date) {
+                    if (!isFutureDateAllowed) {
+                        var now = new Date();
+                        now.setDate(now.getDate() - 1);
+                        if (date.getTime() > now.getTime()) {
+                            return true;
+                        }
+                    }
+                }
+            });
+        },
         getApproveStage: function (systemId, geomType, rowType, editPermission) {
             //if (parseInt(systemId) > 0)
             //{
