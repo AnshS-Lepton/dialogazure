@@ -15,12 +15,12 @@
         <label class="control-label col-sm-2" for="ddlType">@Resources.Resources.SI_OSP_ONT_NET_FRM_008<i class="clsMandatory">*</i>:</label>
         <div class="col-sm-4">
             @Html.DropDownListFor(m => m.splitter_type, new SelectList(Model.lstType.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Type", new
-            {
-                @class = "chosen-select col-sm-12",
-                @style = "padding:0;",
+       {
+           @class = "chosen-select col-sm-12",
+           @style = "padding:0;",
            @id = "ddlSplitterType",
-           @onchange = "si.ddlChangeRemoveCss(this.id, 'Type');"
-            })
+           @onchange = "ddlChangeRemoveCss(this.id, 'Type');"
+       })
         </div>
     </div>
 </fieldset>
