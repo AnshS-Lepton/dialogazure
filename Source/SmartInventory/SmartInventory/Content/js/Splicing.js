@@ -140,6 +140,9 @@
             $("#PathTrack .dropfiles").trigger("click");
         });
         $(app.DE.btnCPFClear).on("click", function () {
+            $('#equipment_id').val('');
+            $('#btnSchView').prop('disabled', true);
+            $('#btnShowOnMap').prop('disabled', true);
 
             if (isp != null) {
                 $('#btnShowOnMap').hide();
