@@ -2396,6 +2396,7 @@
     this.downloadCPEKML = function () {
         window.location = appRoot + 'Splicing/DownloadCPFIntoKML';
     }
+    //pk
     this.clearCFPGrid = function () {
         if (app.apptestvalue == false) {
             $(app.DE.equipmentid).val('');            
@@ -2407,7 +2408,8 @@
         }                
         app.clearCPFMarker();        
         $('#divNoRecordExist').show();        
-        $('#tblConnectionPathFinderInfo,#dvHeader,#dvBtnAction').hide();
+        $('#tblConnectionPathFinderInfo,#dvHeader').hide();
+        $('.libTab--dis').hide();
         $(app.DE.ddlCore).html('').html('<option value="0">-Select-</option>').val("0").trigger("chosen:updated");
 
     }
