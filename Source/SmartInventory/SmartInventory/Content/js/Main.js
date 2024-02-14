@@ -230,6 +230,8 @@ var Main = function () {
     this.OldWorkSpaceId = 0;
     this.createMrkngs = 0;
     this.LastEditedMarking = 0;
+    this.MaxCableLength = 0;
+    this.LengthUnit = "";
     this.DE = {
         "frmAddHTB": "#frmAddHTB",
         "libDetail": ".libDetail",
@@ -10315,7 +10317,13 @@ var Main = function () {
 
 
     this.drawAddLineEntity = function (latLng, libItem) {
-        ;// cbl
+        if (si.MaxCableLength > parseInt($('#hdnMaxLineEntityLength').val()) && si.LengthUnit != 'meter') {
+            alert("Maximum " + parseInt($('#hdnMaxLineEntityLength').val()) + " KM length of an entity can be created!");
+            $('#btnCancelTP').click();
+            si.MaxCableLength = 0;
+            si.LengthUnit = "";
+            return false;
+        }
         app.clearTempNewEntity();
         LandBase.clearTempNewEntity();
         app.gMapObj.libPath.push(latLng);
