@@ -2526,6 +2526,10 @@ namespace SmartInventory.Controllers
             {
                 obj.listPortStatus = obj.listPortStatus.Where(i => i.status != PortStatus.Connected.ToString()).ToList();
             }
+            else
+            {
+                obj.listPortStatus = obj.listPortStatus.Where(i => i.status != PortStatus.Vacant.ToString() && i.status != PortStatus.Reserved.ToString()).ToList();
+            }
             if (entitySystemId != 0)
             {
                 obj.entity_type = entityType;
