@@ -47,7 +47,7 @@
                                 <div class="col-md-12" id="chkBldRfs">
                                     @foreach (var item in Model.lstBuildingRFS)
                                     {
-                                        <input id="chk_nLyr_@item.Text" type="checkbox" data-mapabbr="@item.Text.ToUpper()" class="checkbox-custom">
+                                        <input id="chk_nLyr_@item.Text" type="checkbox" data-mapabbr="@item.Text" class="checkbox-custom">
                                         <b class="align_check_box"><label for="chk_nLyr_@item.Text" class="checkbox-custom-label"><span>@item.Text</span></label></b>
                                         @*@Html.CheckBoxFor(model => item.IsChecked, new { @class = "checkbox-custom", id = @item.Value })@item.Text*@
                                     }
