@@ -187,12 +187,18 @@
 
             if (panelClass == 'clslibraryEntity') {
                 $(app.DE.ShowAllEntity).prop('checked', false);
-                $(app.DE.ShowAllEntity)[0].click();
+                //pk
+                var showAllEntityElements = $(app.DE.ShowAllEntity);
+                if (showAllEntityElements.length) {
+                    $(app.DE.ShowAllEntity)[0].click();
+                }
                 $.each($(".mainlyr  input[type='checkbox']"), function (indx, itm) {
                     $(this).prop('checked', false);
                     $(this)[0].click();
                 });
             }
+
+
             //remove info events..
             if ($(this).hasClass('neLibrary')) {
                 $(app.DE.circleMarker).css('visibility', 'hidden');

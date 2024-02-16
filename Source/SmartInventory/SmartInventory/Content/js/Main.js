@@ -230,6 +230,8 @@ var Main = function () {
     this.OldWorkSpaceId = 0;
     this.createMrkngs = 0;
     this.LastEditedMarking = 0;
+    this.MaxCableLength = 0;
+    this.LengthUnit = "";
     this.DE = {
         "frmAddHTB": "#frmAddHTB",
         "libDetail": ".libDetail",
@@ -4869,6 +4871,7 @@ var Main = function () {
             if ($('.WarningAcceptance').find('input[type=checkbox]').is(":checked")) {
                 $('.ui-dialog-buttonset button').attr('style', 'background: #428600!important');
                 $('.ui-dialog-buttonset button').prop("disabled", false);
+                $('.ui-dialog-buttonset button').removeClass('okBtn');
             }
             else {
                 $('.ui-dialog-buttonset button').removeAttr("style");
@@ -4880,13 +4883,23 @@ var Main = function () {
 
         $(document).on("click", "#tblMergeCables tbody tr td input[type='checkbox']", function () {
             var rowcount = $('#tblMergeCables >tbody input:checkbox:checked').length;
-            if (rowcount > 2) {
-                $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', 'disabled');
-                event.preventDefault();
-                event.stopPropagation();
+            var _rowcount = $('#tblMergeCables >tbody input:checkbox:unchecked').length;
+            for (var i = 0; i < rowcount; i++) {
+                var id = $('#tblMergeCables >tbody input:checkbox:checked')[i].id;
+                if (rowcount > 2) {
+                    $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', 'disabled');
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                else {
+                    $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', false);
+                    $('input[data-id="' + id + '"]').prop('disabled', '');
+                }
             }
-            else {
-                $('#tblMergeCables >tbody input:checkbox:unchecked').prop('disabled', false);
+            for (var i = 0; i < _rowcount; i++) {
+                var _id = $('#tblMergeCables >tbody input:checkbox:unchecked')[i].id;
+                $('input[data-id="' + _id + '"]').prop('disabled', 'disabled');
+                $('input[data-id="' + _id + '"]').prop('checked', false);
             }
         });
 
@@ -8094,7 +8107,7 @@ var Main = function () {
     this.clearInfoRelatedObjects = function () {
         var buffer = getMeterDistanceFromZoom(app.map.getZoom());
         $(app.DE.InfoDiv).hide();
-        si.resetShapeTools();
+        //si.resetShapeTools();
         $(app.DE.lblInformation).text(MultilingualKey.GBL_OSP_GBL_GBL_GBL_001);
         app.removeInfoHoverItem();
         app.removeSrchHoverItem();
@@ -9437,6 +9450,7 @@ var Main = function () {
     //Response After Save Data
     this.loadLayerOnEntity = function () {
         //;
+        $('#btnclrFilter').hide();
         if (app.getActiveRegionLayers().length != 0 || app.getActiveProvinceLayers().length != 0) {
             app.reqver++; // this is to reload the layer from mapserver instead of from cache memory
             app.LoadLayersOnMap();
@@ -10303,7 +10317,13 @@ var Main = function () {
 
 
     this.drawAddLineEntity = function (latLng, libItem) {
-        ;// cbl
+        if (si.MaxCableLength > parseInt($('#hdnMaxLineEntityLength').val()) && si.LengthUnit != 'meter') {
+            alert("Maximum " + parseInt($('#hdnMaxLineEntityLength').val()) + " KM length of an entity can be created!");
+            $('#btnCancelTP').click();
+            si.MaxCableLength = 0;
+            si.LengthUnit = "";
+            return false;
+        }
         app.clearTempNewEntity();
         LandBase.clearTempNewEntity();
         app.gMapObj.libPath.push(latLng);
@@ -15964,7 +15984,29 @@ var Main = function () {
 
 
 
-
+    this.ClearAdvanceFilter = function ()
+    {
+        $('#ddl_ProjectSpeciCode').val('0');
+        $('#ddl_PlanningSpeciCode').val('0');
+        $('#ddl_WorkorderSpeciCode').val('0');
+        $('#ddl_PurposeSpeciCode').val('0');
+        $('#ddlFilterCableType').val('0');
+        $('#ddlFilterCableCategory').val('0');
+        $('#ddlFilterFaultStatus').val('0');
+        $('#txt3rdPartyVendor').val('');
+        $('#ddlFilterOwnership').val('');
+        $('#ddlPrimaryPOD').val('0');
+        $('#ddlSecondaryPOD').val('0');
+        app.filterprojectvalue = "";
+        app.filtercablevalue = "";
+        app.cable_type = "";
+        app.cable_category = "";
+        app.fault_status = "";
+        app.filterSplitterType = "";
+        $('#btnclrFilter').hide();
+        app.LoadLayersOnMap();
+        app.RenderVectorLayer(0);
+    }
 
     this.GetProjecSpeciFilter = function () {
         ////;
@@ -16012,11 +16054,24 @@ var Main = function () {
 
     this.ProjectSpeciFilter = function () {
         ////;
-        $('#btnclrFilter').show();
-        app.filterprojectvalue = "";
-        app.LoadLayersOnMap();
-        app.RenderVectorLayer(0);
-        $(popup.DE.MinimizeModel).trigger("click");
+        var hasAdvSelectVal = $(".AdvanceFilterCHK").find("select").filter(function () {
+            return $(this).val() !== '' && $(this).val() !== null && $(this).val() !== "0";
+        }).length > 0;
+        var hasAdvtextVal = $(".AdvanceFilterCHK").find("input[type='text']").filter(function () {
+            return $(this).val().trim() !== '' && $(this).val().trim() !== '-All-';
+        }).length > 0;
+        var hasAnyChecked = $(".AdvanceFilterCHK").find("input[type='checkbox']").is(":checked");
+        var cnt = hasAdvSelectVal || hasAdvtextVal || hasAnyChecked;
+        if (cnt) {
+            $('#btnclrFilter').show();
+            app.filterprojectvalue = "";
+            app.LoadLayersOnMap();
+            app.RenderVectorLayer(0);
+            $(popup.DE.MinimizeModel).trigger("click");
+        } else {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_115); //Please select an option to Applied the filter
+            return false;
+        }
 
     }
 
@@ -19808,6 +19863,33 @@ var Main = function () {
             }
 
         },
+        setROWDateTimeCalendar : function (startdateid, startdateimgid, chkDisabled, isFutureDateAllowed) {
+            Calendar.setup({
+                inputField: startdateid,   // id of the input field
+                button: startdateimgid,
+                ifFormat: "%d-%b-%Y",       // format of the input field datetime format %d-%b-%Y %I:%M %p
+                showsTime: false,
+                timeFormat: "12",
+                weekNumbers: false,
+                onUpdate: function () {
+                    var emID = $("#" + startdateid).val();
+                    if (emID != "") {
+                        $("#" + startdateid).removeClass('input-validation-error').removeClass('field-validation-error').addClass('field-validation-valid').html('');
+                    } else {
+                        $("#" + startdateid).addClass('input-validation-error');
+                    }
+                },
+                disableFunc: function (date) {
+                    if (!isFutureDateAllowed) {
+                        var now = new Date();
+                        now.setDate(now.getDate() - 1);
+                        if (date.getTime() > now.getTime()) {
+                            return true;
+                        }
+                    }
+                }
+            });
+        },
         getApproveStage: function (systemId, geomType, rowType, editPermission) {
             //if (parseInt(systemId) > 0)
             //{
@@ -22714,8 +22796,8 @@ var Main = function () {
         for (var cable of _result) {
             var sNo = $('#tblMergeCables tbody tr').length + 1;
             var result = "si._focusMe('Line', si.getLatLongArr('" + cable.geom + "'), '" + cable.entity_type + "',si.getLatLongArr('" + cable.centroid_geom + "'))";
-            $('#tblMergeCables tbody').append('<tr class="cptr" data-system-id="' + cable.common_name + '" id="' + cable.entity_type + '" onmouseover="' + result + '"><td>' + sNo + '</td><td>' + cable.common_name + '</td><td><input type="radio" id="' + cable.system_id + '" data-id="' + cable.system_id + '" name="MergeCables" value = "' + cable.system_id + '"'
-                + '></td><td style="font-weight: bold; color: red; cursor: pointer; " class="remove"><input type="checkbox" id="' + cable.system_id + '" data-id="' + cable.system_id + '"></td></tr>');
+            $('#tblMergeCables tbody').append('<tr class="cptr" data-system-id="' + cable.common_name + '" id="' + cable.entity_type + '" onmouseover="' + result + '"><td>' + sNo + '</td><td>' + cable.common_name + '</td><td><input type="radio" id="' + cable.system_id + '" data-id="' + cable.system_id + '" name="MergeCables" value = "' + cable.system_id + '" disabled'
+                + '></td><td style="font-weight: bold; color: red; cursor: pointer; " class="remove"><input type="checkbox" id="' + cable.system_id + '" data-mergeCableID="' + cable.system_id + '"></td></tr>');
         }
     }
     //End Merge Cable Module
@@ -25241,10 +25323,9 @@ var Main = function () {
         $('.gm-style-iw, .gm-style-iw-c').hide();
     }
     this.ShowUtilizationOnMap = function (summaryid, entitytitle, networkstatus, lowcount, moderatecount, highcount, overcount, ductutilization, utilizationtype, reportminval) {
-        //;
-        if (reportminval) {
-            $("#L").attr('checked', false);
-            $("#M").attr('checked', false);
+        if (lowcount != 0 || moderatecount!=0) {
+            $("#L").attr('checked', true);
+            $("#M").attr('checked', true);
         }
         if (utilizationtype != "") {
             ajaxReq('Report/ShowUtilizationOnMap', {

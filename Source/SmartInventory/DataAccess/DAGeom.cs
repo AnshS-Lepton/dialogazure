@@ -71,7 +71,7 @@ namespace DataAccess
         {
             try
             {
-                DbMessage dbMessage = repo.ExecuteProcedure<DbMessage>("fn_validate_geom_update", new { p_system_id = objgeom.systemId, p_geom_type = objgeom.geomType, p_entity_type = objgeom.entityType, p_userid = objgeom.userId, p_longlat = objgeom.longLat, p_bld_buffer = objgeom.Bld_Buffer }).FirstOrDefault();
+                DbMessage dbMessage = repo.ExecuteProcedure<DbMessage>("fn_validate_geom_update", new { p_system_id = objgeom.systemId, p_geom_type = objgeom.geomType, p_entity_type = objgeom.entityType, p_userid = objgeom.userId, p_longlat = objgeom.longLat, p_bld_buffer = objgeom.Bld_Buffer, p_source_ref_type = objgeom.source_ref_type, p_source_ref_id = objgeom.source_ref_id }).FirstOrDefault();
                 return dbMessage;
             }
             catch { throw; }

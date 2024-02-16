@@ -17,58 +17,52 @@
                                         new { id = "frmAddTerminationPoint", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
     {
         @Html.HiddenFor(m => m.system_id);
-        <div class="EUTSetting">
-            <div class="scrollDiv">
 
-                <div class="row form-group">
-                    <div class="control-label col-md-5">Entity Name<i class="clsMandatory">*</i>:</div>
-                    <div class="col-md-7">
-                        @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstSELayerDetails.Select(x => new { Value = x.layer_id, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlLayerName", @onchange = "onChangeEntityName()" })
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="control-label col-md-5">Associate Entity Name<i class="clsMandatory">*</i>:</div>
-                    <div class="col-md-7">
-                        @Html.DropDownListFor(m => m.associate_layer_id, new SelectList(Model.lstSELayerDetails.Select(x => new { Value = x.layer_id, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlTPLayerName" })
-                    </div>
-                </div>
-                @*<div class="row form-group">
-                        <div class="control-label col-md-4">IS ISP TP:</div>
-                        <div class="col-md-1">
-                            @Html.CheckBoxFor(m => m.is_isp_tp, new { Style = "width:100% ;",  @id = "chkis_isp_tp" })
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="control-label col-md-4">IS OSP TP:</div>
-                        <div class="col-md-1">
-                            @Html.CheckBoxFor(m => m.is_osp_tp, new { Style = "width:100% ;", @id = "chkis_osp_tp" })
-                        </div>
-                    </div>*@
+        <div class="scrollDiv space-pad">
 
-                <div class="row form-group">
-                    <div class="control-label col-md-1">Status:</div>
-                    <div class="col-md-9">
-                        @Html.CheckBoxFor(m => m.is_enabled, new { Style = "width:100% ;", @id = "chkis_active", @checked = "checked" })
-                    </div>
+            <div class="row form-group">
+                <div class="control-label col-md-5">Entity Name<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-7">
+                    @Html.DropDownListFor(m => m.layer_id, new SelectList(Model.lstSELayerDetails.Select(x => new { Value = x.layer_id, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlLayerName", @onchange = "onChangeEntityName()" })
                 </div>
-
             </div>
+            <div class="row form-group">
+                <div class="control-label col-md-5">Associate Entity Name<i class="clsMandatory">*</i>:</div>
+                <div class="col-md-7">
+                    @Html.DropDownListFor(m => m.associate_layer_id, new SelectList(Model.lstSELayerDetails.Select(x => new { Value = x.layer_id, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlTPLayerName" })
+                </div>
+            </div>
+            @*<div class="row form-group">
+                    <div class="control-label col-md-4">IS ISP TP:</div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.is_isp_tp, new { Style = "width:100% ;",  @id = "chkis_isp_tp" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="control-label col-md-4">IS OSP TP:</div>
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.is_osp_tp, new { Style = "width:100% ;", @id = "chkis_osp_tp" })
+                    </div>
+                </div>*@
+
+            <div class="row form-group">
+                <div class="control-label col-md-1">Status:</div>
+                <div class="col-md-9">
+                    @Html.CheckBoxFor(m => m.is_enabled, new { Style = "width:100% ;", @id = "chkis_active", @checked = "checked" })
+                </div>
+            </div>
+
         </div>
-        <div class="form-group" id="dvBtnAction">
-            <div class="row form-group EUTFooter">
-                <div class="col-md-3"> </div>
-                <div class="col-md-9 text-right" style="padding-right: 20px;">
-                    @if (Model.system_id > 0)
-                    {
-                        <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveTP" value="Update" />
-                    }
-                    else
-                    {
-                        <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveTP" value="Save" />
-                    }
-                    <button type="button" class="btn btn-default" id="btnCancel">Cancel</button>
-                </div>
-            </div>
+        <div class="ModalFooter --gap-05" id="dvBtnAction">
+            <button type="button" class="btn btn-default ml-auto" id="btnCancel">Cancel</button>
+            @if (Model.system_id > 0)
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveTP" value="Update" />
+            }
+            else
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveTP" value="Save" />
+            }
         </div>
     }
 </div>

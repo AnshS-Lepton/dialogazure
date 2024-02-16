@@ -119,7 +119,7 @@
 
                                                                             <a href="javascript:OpenVendorSpecificationModel(@item.id,'@item.entity_type');" title="History"><i class="fa fa-history action_icon fa-fw m-r-xs" id="dvVendorSpecfhstry_addicon"></i></a>
                                                                             <a href="@Url.Action("AddVendorSpecification", "VendorSepcification", new { id = @item.id })" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
-                                                                            <a href="javascript:void(0);" onclick="DeleteVendorSpecification(@item.id);" title="Close"> <i class="fa fa-fw fa-trash" style="font-size: 13px; color: #f50000;"></i></a>
+                                                                            <a href="javascript:void(0);" onclick="DeleteVendorSpecification(@item.id);" title="Delete"> <i class="fa fa-fw fa-trash" style="font-size: 13px; color: #f50000;"></i></a>
 
                                                                         </text>),
  grid.Column("is_active", "Status", format: @<text>@(item.is_active == true ? "Active" : "InActive")</text>),

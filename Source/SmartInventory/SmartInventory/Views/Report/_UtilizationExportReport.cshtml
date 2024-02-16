@@ -246,8 +246,8 @@
                             <th scope="col">@Resources.Resources.SI_GBL_GBL_GBL_GBL_108</th>
                             <th scope="col">@Resources.Resources.SI_GBL_GBL_GBL_GBL_109</th>
                             <th scope="col">@Resources.Resources.SI_GBL_GBL_GBL_GBL_110</th>
-                            <th scope="col">Utilized Port</th>
-                            <th scope="col">Available Port</th>
+                            @*<th scope="col">Utilized Port</th>
+                            <th scope="col">Available Port</th>*@
                             <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
                         </tr>
                     </thead>
@@ -277,7 +277,7 @@
                         @if (list[l].entity_name.ToUpper() == "DUCT")
                         {
 
-                            <td colspan="6" style="background: lightgray;" align="center" class="tdlowcount"><label>@list[l].low_count @list[l].entity_name @list[l].utilization_text</label></td>
+                            <td colspan="4" style="background: lightgray;" align="center" class="tdlowcount"><label>@list[l].low_count @list[l].entity_name @list[l].utilization_text</label></td>
                         }
                         else
                         {
@@ -285,7 +285,6 @@
                             <td style="background: lightgray;" align="center" class="tdmoderatecount">@list[l].moderate_count</td>
                             <td style="background: lightgray;" align="center" class="tdhighcount">@list[l].high_count</td>
                             <td style="background: lightgray;" align="center" class="tdovercount">@list[l].over_count</td>
-                            
                         }
                         <td style="background: lightgray;" align="center">
                             <a href="#" id="aShowBoundary" data-toggle="tooltip" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036"
@@ -633,6 +632,6 @@
     function ShowOnMap(summaryid, entitytitle,networkstatus, lowcount, moderatecount, highcount, overcount, ductutilization)
     {
          
-        si.ShowUtilizationOnMap(summaryid, entitytitle, networkstatus, lowcount, moderatecount, highcount, overcount, ductutilization, "'H','O'",true);
+        si.ShowUtilizationOnMap(summaryid, entitytitle, networkstatus, lowcount, moderatecount, highcount, overcount, ductutilization, "'H','O','L','M'",true);
     }
 </script>

@@ -176,6 +176,7 @@
         $(app.DE.ModalPopUp).removeClass('MinMax');
         //if (isp != null)
         //{ isp.bindCableRightPop(); }
+        /*if (si != null) { si.ClearAdvanceFilter(); }*/
     }
     this.resetToolBar = function () { if ($('#dvROWReport').hasClass('activeToolBar')) { $('#dvROWReport').trigger("click"); $('#reportToolBar div,#reportToolBar div a').removeClass('activeToolBar'); } }
     //this.hideButtonsWhenLayerDisabled = function () {

@@ -1,0 +1,1 @@
+update res_resources set value='All selected child and associated entities, if any along with accessories will be cloned with this entity. </br> Do you want to continue?' where key='SI_OSP_GBL_JQ_FRM_165' and culture='en';
