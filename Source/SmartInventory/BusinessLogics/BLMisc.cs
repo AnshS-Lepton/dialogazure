@@ -18,7 +18,7 @@ namespace BusinessLogics
     {
         DAMisc objDAMisc = new DAMisc();
         DADropDownItems objDADropDownItems = new DADropDownItems();
-        public static List<Models.EmailSettingsModel> EmailSettingsModel { get; set; }
+        //public static List<Models.EmailSettingsModel> EmailSettings { get; set; }
         public List<MicrowaveLinkViewModel> GetMicroWaveLinkAssociatedElements(int systemId)
         {
             return new DAMisc().GetMicroWaveLinkAssociatedElements(systemId);
@@ -636,10 +636,15 @@ namespace BusinessLogics
         {
             return new DAMisce().getEmailSettings();
         }
-        public List<EmailSettingsModel> InitializeEmailSettings()
+        //public List<EmailSettingsModel> InitializeEmailSettings()
+        //{
+        //    EmailSettings = new DAMisce().getAllEmailData();
+        //    return EmailSettings;
+        //}
+
+        public List<EmailSettingsModel> GetAllEmailSettings()
         {
-            EmailSettingsModel = new DAMisce().getAllEmailData();
-            return EmailSettingsModel;
+            return new DAMisce().getAllEmailData();
         }
 
         public EmailSettingsModel SaveEmailSettings(EmailSettingsModel objUser, string EncodePassword, int userid)

@@ -222,7 +222,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                         //objFileList.Add(VendorSpecificationReportForEmail());
                         BLUser objBLuser = new BLUser();
                         List<EventEmailTemplateDetail> objEventEmailTemplateDetail = objBLuser.GetEventEmailTemplateDetail(EmailEventList.PriceChange.ToString());
-                        System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objPriceDict, null, filePath, "", EmailEventList.PriceChange.ToString()));
+                        System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objPriceDict, null, EmailSettings.AllEmailSettings, filePath, "", EmailEventList.PriceChange.ToString()));
                         //commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objPriceDict, null, filePath);
                     }
                     #endregion

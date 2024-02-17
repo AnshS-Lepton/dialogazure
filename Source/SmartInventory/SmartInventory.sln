@@ -20,6 +20,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "Resources\Resources.csproj", "{2C985C1B-9BA4-49B4-BD0F-7BFBBF3EFB07}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataUploader", "DataUploader\DataUploader.csproj", "{8B62F19B-181C-4489-803A-2BF07C14E545}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1FD26F85-E70F-4E77-8234-2769F4051C24} = {1FD26F85-E70F-4E77-8234-2769F4051C24}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationConfig", "ApplicationConfig\ApplicationConfig.csproj", "{C88E7577-72D6-47AB-BA49-A0E3C00A4419}"
 EndProject
