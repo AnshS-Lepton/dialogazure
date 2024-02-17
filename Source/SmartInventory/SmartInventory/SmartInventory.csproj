@@ -2396,6 +2396,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Settings\ApplicationSettings.cs" />
+    <Compile Include="Settings\EmailSettings.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Controllers\FiberAllocationToolController.cs" />
   </ItemGroup>

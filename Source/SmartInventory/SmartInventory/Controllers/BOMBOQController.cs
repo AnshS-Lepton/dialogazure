@@ -1579,7 +1579,7 @@ namespace SmartInventory.Controllers
                     List<string> objAttachmentFileList = new List<string>();
                     if (filePath != null && filePath != "")
                         objAttachmentFileList.Add(filePath);
-                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, objAttachmentFileList, projectName, EmailEventList.ManagerReview.ToString()));
+                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, EmailSettings.AllEmailSettings, objAttachmentFileList, projectName, EmailEventList.ManagerReview.ToString()));
                     //commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, objAttachmentFileList, projectName);
                 }
                 else
@@ -1588,7 +1588,7 @@ namespace SmartInventory.Controllers
                     List<EventEmailTemplateDetail> objEventEmailTemplateDetail = objBLuser.GetEventEmailTemplateDetail(EmailEventList.MaterialRequestSubmitted.ToString());
                     List<string> objAttachmentFileList = new List<string>();
                     objAttachmentFileList.Add(filePath);
-                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, objAttachmentFileList, projectName, EmailEventList.MaterialRequestSubmitted.ToString()));
+                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, EmailSettings.AllEmailSettings, objAttachmentFileList, projectName, EmailEventList.MaterialRequestSubmitted.ToString()));
                     //commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, objAttachmentFileList, projectName);
 
                 }
