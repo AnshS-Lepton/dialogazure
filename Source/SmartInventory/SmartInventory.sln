@@ -38,8 +38,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackupDownloadUtility", "Ba
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceabilityWinService", "ServiceabilityWinService\ServiceabilityWinService.csproj", "{E54C84F1-55CB-46FA-B396-99F32338FB6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PartnerServices", "PartnetServices\PartnerServices.csproj", "{BF776414-69D3-4AC6-B43D-958BFF859C8E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFMNotificationService", "WFMNotificationService\WFMNotificationService.csproj", "{795D4C9F-35DB-43BB-BA65-A28A760D0AAF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilizationEmailScheduler", "UtilizationEmailScheduler\UtilizationEmailScheduler.csproj", "{533D773C-E932-4308-954C-478025112A50}"
@@ -114,10 +112,6 @@ Global
 		{E54C84F1-55CB-46FA-B396-99F32338FB6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E54C84F1-55CB-46FA-B396-99F32338FB6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E54C84F1-55CB-46FA-B396-99F32338FB6E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BF776414-69D3-4AC6-B43D-958BFF859C8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BF776414-69D3-4AC6-B43D-958BFF859C8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BF776414-69D3-4AC6-B43D-958BFF859C8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF776414-69D3-4AC6-B43D-958BFF859C8E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{795D4C9F-35DB-43BB-BA65-A28A760D0AAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{795D4C9F-35DB-43BB-BA65-A28A760D0AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{795D4C9F-35DB-43BB-BA65-A28A760D0AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
