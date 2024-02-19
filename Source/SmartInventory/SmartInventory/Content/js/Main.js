@@ -18520,6 +18520,15 @@ var Main = function () {
 
     // ##End Get Loop Details For Cable
 
+    // ## Get Slack Details For Duct
+    this.getSlackDetailsForDuct = function (_system_id) {
+
+        ajaxReq('Library/GetSlackDetailsForDuct', {duct_system_id: _system_id}, true, function (resp) {
+            $("#SlackDetails").html(resp);
+            $("#SlackDetails").css('background-image', 'none');
+        }, false, false);
+    }
+
     // ## Get the Reference details
     this.getEntityReference = function (_entityId, _entityType, editPermission) {
         if ($("#dvRefrence").html().trim() == '') {

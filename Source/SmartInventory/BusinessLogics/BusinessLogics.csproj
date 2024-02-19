@@ -124,6 +124,7 @@
     <Compile Include="BLExportData.cs" />
     <Compile Include="BLExportReportLog.cs" />
     <Compile Include="BLKPIMaster.cs" />
+    <Compile Include="BLSlack.cs" />
     <Compile Include="BLWebRequestLog.cs" />
     <Compile Include="BLTemp\BLTempGipipe.cs" />
     <Compile Include="BLXMLBuilderDashboard.cs" />

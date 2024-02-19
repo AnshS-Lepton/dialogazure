@@ -100,7 +100,8 @@ namespace Models
         Gipipe,
         FAT,
         ATB,
-        FDC
+        FDC,
+        Slack
     }
 
     public enum EntityAction

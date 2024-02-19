@@ -117,6 +117,11 @@
                                    href="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"#dvRefrence":"")" onclick="si.getEntityReference('@Model.system_id','@EntityType.Duct.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a>
                             </li>
                         }
+                        @if (Model.system_id > 0)
+                        {
+                            <li><a title="Slack Detail" style="display:block;" href="#SlackDetails" onclick="si.getSlackDetailsForDuct('@Model.system_id');" data-toggle="tab">Slack Details</a></li>
+
+                        }
                         @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_barcode_enabled)
                         {
                             <li>
@@ -155,6 +160,7 @@
                                    href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a>
                             </li>
                         }
+
                     </ul>
                 </div>
                 <div id="divRightMenu" style="display:none;">
@@ -185,6 +191,11 @@
                                     <a class="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_006 @(Model.lstUserModule.Contains("ENT-DTL-GRF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GRF") ? "" : "block;")"
                                        href="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"#dvRefrence":"")" onclick="si.getEntityReference('@Model.system_id','@EntityType.Duct.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a>
                                 </li>
+                            }
+                            @if (Model.system_id > 0)
+                            {
+                                <li><a title="Slack Detail" style="display:block;" href="#SlackDetails" onclick="si.getSlackDetailsForDuct('@Model.system_id');" data-toggle="tab">Slack Details</a></li>
+
                             }
                             @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_barcode_enabled)
                             {
@@ -335,6 +346,14 @@
                                     @Html.DropDownListFor(m => m.no_of_ducts_created, new SelectList(Model.NoofDuctsCreated.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
                                 </div>
                             }
+                            <label class="control-label col-md-2 col-sm-2 " for="txtSubAreaName">Slack Count:</label>
+                            <div class="col-md-4 col-sm-4  mrgn_btm">
+                                @Html.TextBoxFor(m => m.total_slack_count, new { @class = "form-control clsReadOnly", @onkeypress = "return si.allowNumberwithOneDot(event,'calculated_length');", @readonly = true, @maxlength = "10" })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2 " for="txtSubAreaName">Slack Length (Mtr):</label>
+                            <div class="col-md-4 col-sm-4  mrgn_btm">
+                                @Html.TextBoxFor(m => m.total_slack_length, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
+                            </div>
                             @if (innserOuterDimension != null)
                             {
                                 <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_DUC_NET_FRM_008:</label>
@@ -364,21 +383,21 @@
                             {
                                 <label class="control-label col-md-2 col-sm-2 ">@layerDetail.layer_title Count:</label>
                                 <div class="col-md-4 col-sm-4  mrgn_btm">
-                                    @Html.DropDownListFor(m => m.duct_count, new SelectList(Model.DuctCount.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" }) 
+                                    @Html.DropDownListFor(m => m.duct_count, new SelectList(Model.DuctCount.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
 
                                 </div>
                             }
                         </div>
                         <!--<div class="form-group">-->
                         @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-                            <div class="col-sm-45">
-                                @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
-                            </div>*@
+                <div class="col-sm-45">
+                    @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
+                </div>*@
                         <!--<label class="control-label col-md-2 col-sm-2" for="txtAcquireFrom">Resources.Resources.SI_GBL_GBL_GBL_GBL_010:</label>
-                            <div class="col-sm-45">
-                                Html.TextBoxFor(m => m.acquire_from, new { class = "form-control" })
-                            </div>
-                        </div>-->
+                <div class="col-sm-45">
+                    Html.TextBoxFor(m => m.acquire_from, new { class = "form-control" })
+                </div>
+            </div>-->
                         <div class="form-group">
                             @AcquireFrom()
                         </div>
@@ -410,6 +429,7 @@
                     @CableTemplateMaster()
                 </div>
                 <div id="dvRefrence" class="tab-pane"></div>
+                <div id="SlackDetails" class="tab-pane">  </div>
                 <div class="tab-pane" id="PODAssoctn"></div>
                 <div class="tab-pane" id="BarCodeInfo"></div>
                 <div class="tab-pane" id="dvAT"></div>
