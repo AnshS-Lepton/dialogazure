@@ -610,6 +610,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\OAuthProvider.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
+    <Compile Include="Settings\EmailSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

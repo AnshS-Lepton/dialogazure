@@ -8,8 +8,9 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
+using Utility;
 
-namespace Utility.MapPrinter
+namespace BusinessLogics.MapPrinter
 {
     public class MapReport
     {

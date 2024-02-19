@@ -401,7 +401,7 @@ namespace SmartInventory.Helper
             return table;
         }
 
-        public static DataTable ExcelToTable(string filepath, string sheetName , out bool isHeaderFound)
+        public static DataTable ExcelToTable(string filepath, string sheetName, out bool isHeaderFound)
         {
             var table = new DataTable();
             isHeaderFound = false;
@@ -973,8 +973,8 @@ namespace SmartInventory.Helper
         public static void CreateCustomCell(IRow row, int colIndex, string colText, ICellStyle cellStyle, bool isHeader = false, ICellStyle customStyle = null)
         {
             ICell cell = row.CreateCell(colIndex);
-           
-            if (customStyle!=null && double.TryParse(colText, out double d))
+
+            if (customStyle != null && double.TryParse(colText, out double d))
             {
                 cell.SetCellValue(d);
                 cell.CellStyle = customStyle;
@@ -989,8 +989,8 @@ namespace SmartInventory.Helper
                 cell.SetCellValue(colText);
                 cell.CellStyle = cellStyle;
             }
-          
-            
+
+
         }
 
 
@@ -1287,7 +1287,7 @@ namespace SmartInventory.Helper
                             if (node.Name.ToLower() == "linestring" || (node.Name.ToLower() == "polygon"))
                             {
                                 coordinates = node.InnerText;
-                                coordinates = coordinates.Replace("  ", "");
+                                //coordinates = coordinates.Replace("  ", "");
                                 if (coordinates.Contains("1\n") || coordinates.Contains("11\n"))
                                 {
                                     coordinates = coordinates.Replace("1\n", "");
@@ -1298,36 +1298,41 @@ namespace SmartInventory.Helper
                                     coordinates = coordinates.Replace("\\", "");
                                     coordinates = coordinates.Replace("\r", "");
                                 }
-                                if (coordinates.Contains(",0"))
-                                {
-                                    string Delimiter = ",0";
-                                    string[] Result = coordinates.Split(new[] { Delimiter }, StringSplitOptions.None);
-                                    List<string> lstOutLatLng = new List<string>();
+                                //if (coordinates.Contains(",0"))
+                                //{
+                                string Delimiter = " ";
+                                string[] Result = coordinates.Split(new[] { Delimiter }, StringSplitOptions.None);
+                                List<string> lstOutLatLng = new List<string>();
 
-                                    if (Result.Length > 1 && Result[1].ToString() != "")
+                                if (Result.Length > 1 && Result[1].ToString() != "")
+                                {
+                                    foreach (string latLng in Result)
                                     {
-                                        foreach (string latLng in Result)
+                                        //if (!string.IsNullOrEmpty(latLng))
+                                        //{
+                                        //    lstOutLatLng.Add(latLng.Replace(",", " "));
+                                        //}
+                                        string[] coords = latLng.Split(',');
+                                        if (coords.Length >= 2)
                                         {
-                                            if (!string.IsNullOrEmpty(latLng))
-                                            {
-                                                lstOutLatLng.Add(latLng.Replace(",", " "));
-                                            }
+                                            lstOutLatLng.Add($"{coords[0]} {coords[1]}");
                                         }
                                     }
-
-                                    outGeometry = string.Join(",", lstOutLatLng);
-
-                                    if (node.Name.ToUpper() == "LINESTRING")
-                                    {
-                                        outGeometry = "LINESTRING(" + outGeometry.Trim().TrimEnd(',') + ")";
-                                    }
-                                    else if (node.Name.ToUpper() == "POLYGON")
-                                    {
-                                        outGeometry = "POLYGON((" + outGeometry.Trim().TrimEnd(',') + "))";
-                                    }
-
-                                    //dataRow[j] = outGeometry;
                                 }
+
+                                outGeometry = string.Join(",", lstOutLatLng);
+
+                                if (node.Name.ToUpper() == "LINESTRING")
+                                {
+                                    outGeometry = "LINESTRING(" + outGeometry.Trim().TrimEnd(',') + ")";
+                                }
+                                else if (node.Name.ToUpper() == "POLYGON")
+                                {
+                                    outGeometry = "POLYGON((" + outGeometry.Trim().TrimEnd(',') + "))";
+                                }
+
+                                //dataRow[j] = outGeometry;
+                                //}
                                 if (!string.IsNullOrEmpty(coordinates))
                                 {
                                     dataRow[geomTempColName] = outGeometry;

@@ -391,7 +391,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                         objEventEmailTemplateDetail[0].recipient_list = managerEmailId;
                     }
 
-                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objUserDict, objHttpPostedFileBase, null, "", EmailEventList.UserCreation.ToString()));
+                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objUserDict, objHttpPostedFileBase, EmailSettings.AllEmailSettings, null, "", EmailEventList.UserCreation.ToString()));
                     //commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objUserDict, objHttpPostedFileBase);
                     #endregion
                 }
@@ -615,7 +615,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                         }
                         objEventEmailTemplateDetail[0].recipient_list = managerEmailId;
                     }
-                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objUserDict, objHttpPostedFileBase, null, "", EmailEventList.UserDeletion.ToString()));
+                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objUserDict, objHttpPostedFileBase, EmailSettings.AllEmailSettings, null, "", EmailEventList.UserDeletion.ToString()));
                     //commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objUserDict, objHttpPostedFileBase);
                     #endregion
 
@@ -1178,7 +1178,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                         if (cnt > 0)
                             objEventEmailTemplateDetail[0].recipient_list = managerEmailId;
                     }
-                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objUserDict, objHttpPostedFileBase,null,"", EmailEventList.UserDeletion.ToString()));
+                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objUserDict, objHttpPostedFileBase,EmailSettings.AllEmailSettings, null,"", EmailEventList.UserDeletion.ToString()));
                     //commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objUserDict, objHttpPostedFileBase);
                     #endregion
 

@@ -215,11 +215,11 @@
     <div class="container">
         <div class="d-flex">
             <p>Copyright&nbsp;©&nbsp;@DateTime.Now.Year.ToString()&nbsp;@ApplicationSettings.CopyRightText</p>
-
             <ul class="footer--links ml-auto d-flex">
                 @*<li><a href="#">Regulatory</a></li>*@
-                <li>Policies</li>
-                <li>Terms & Conditions</li>
+                @*<li>Policies</li> <li>Terms & Conditions</li>*@
+                @Resources.Resources.SI_GBL_GBL_NET_FRM_006:&nbsp;
+                <span id="spnAppVersion">@System.Configuration.ConfigurationManager.AppSettings["AppVersion"] </span>
             </ul>
         </div>
     </div>

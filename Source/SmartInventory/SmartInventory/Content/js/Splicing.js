@@ -140,6 +140,9 @@
             $("#PathTrack .dropfiles").trigger("click");
         });
         $(app.DE.btnCPFClear).on("click", function () {
+            //$('#equipment_id').val('');
+            $('#btnSchView').prop('disabled', true);
+            $('#btnShowOnMap').prop('disabled', true);
 
             if (isp != null) {
                 $('#btnShowOnMap').hide();
@@ -2396,6 +2399,7 @@
     this.downloadCPEKML = function () {
         window.location = appRoot + 'Splicing/DownloadCPFIntoKML';
     }
+    //pk
     this.clearCFPGrid = function () {
         if (app.apptestvalue == false) {
             $(app.DE.equipmentid).val('');            
@@ -2407,9 +2411,9 @@
         }                
         app.clearCPFMarker();        
         $('#divNoRecordExist').show();        
-        $('#tblConnectionPathFinderInfo,#dvHeader,#dvBtnAction').hide();
-        $(app.DE.ddlCore).html('').html('<option value="0">-Select-</option>').val("0").trigger("chosen:updated");
-
+        $('#tblConnectionPathFinderInfo,#dvHeader').hide();
+        $('.libTab--dis').hide();
+        $(app.DE.ddlCore).val(0).trigger("chosen:updated");
     }
     this.downloadOpticalLink = function () {
         window.location = appRoot + 'Splicing/DownloadOpticalLinkBudgetReport';

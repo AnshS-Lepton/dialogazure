@@ -17,7 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Utility;
-using Utility.MapPrinter;
+using BusinessLogics.MapPrinter;
 namespace SmartInventory.Helper
 {
     public class PDFHelper

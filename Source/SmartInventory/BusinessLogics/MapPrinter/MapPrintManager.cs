@@ -13,13 +13,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Ionic.Zip;
-using System.Threading;
-using System.Windows.Forms;
+//using System.Threading;
+//using System.Windows.Forms;
 using iTextSharp.text.pdf;
-using NPOI.SS.Formula.Functions;
+//using NPOI.SS.Formula.Functions;
+using Utility;
 
-
-namespace Utility.MapPrinter
+namespace BusinessLogics.MapPrinter
 {
     public class MapPrintManager
     {
