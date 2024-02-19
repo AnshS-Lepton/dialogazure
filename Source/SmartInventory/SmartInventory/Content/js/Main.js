@@ -11585,7 +11585,7 @@ var Main = function () {
                                     if (resp.status = 'OK') {
                                         if (resp.result != null && resp.result != undefined) {
                                             var latLngArr = app.getLatLongArr(resp.result.sp_geometry);
-                                            var libItem = $('[title="Cable"]');
+                                            var libItem = $('[data-lyrname="Cable"]');
                                             app.EntityAttributeDetails = app.GetEntityAttrDetails(libItem);
                                             if (app.EntityAttributeDetails["geomType"] == 'Line') {
                                                 app.showTerminationPointPopup();
@@ -11614,7 +11614,7 @@ var Main = function () {
                             if (resp.status = 'OK') {
                                 if (resp.result != null && resp.result != undefined) {
                                     var latLngArr = app.getLatLongArr(resp.result.sp_geometry);
-                                    var libItem = $('[title="Duct"]');
+                                    var libItem = $('[data-lyrname="Duct"]');
                                     app.EntityAttributeDetails = app.GetEntityAttrDetails(libItem);
                                     if (app.EntityAttributeDetails["geomType"] == 'Line') {
                                         app.showTerminationPointPopup();
@@ -11640,7 +11640,7 @@ var Main = function () {
                             if (resp.status = 'OK') {
                                 if (resp.result != null && resp.result != undefined) {
                                     var latLngArr = app.getLatLongArr(resp.result.sp_geometry);
-                                    var libItem = $('[title="Conduit"]');
+                                    var libItem = $('[data-lyrname="Conduit"]');
                                     app.EntityAttributeDetails = app.GetEntityAttrDetails(libItem);
                                     if (app.EntityAttributeDetails["geomType"] == 'Line') {
                                         app.showTerminationPointPopup();
@@ -11781,7 +11781,7 @@ var Main = function () {
                             if (resp.status = 'OK') {
                                 if (resp.result != null && resp.result != undefined) {
                                     var latLngArr = app.getLatLongArr(resp.result.sp_geometry);
-                                    var libItem = $('[title="Microduct"]');
+                                    var libItem = $('[data-lyrname="Microduct"]');
                                     var lyrDetail = getLayerDetail('Microduct');
                                     app.EntityAttributeDetails = app.SetEntityAttributes(lyrDetail);
                                     if (app.EntityAttributeDetails["geomType"] == 'Line') {
@@ -11876,7 +11876,7 @@ var Main = function () {
                             if (resp.status = 'OK') {
                                 if (resp.result != null && resp.result != undefined) {
                                     var latLngArr = app.getLatLongArr(resp.result.sp_geometry);
-                                    var libItem = $('[title="Conduit"]');
+                                    var libItem = $('[data-lyrname="Conduit"]');
                                     var lyrDetail = getLayerDetail('Conduit');
                                     app.EntityAttributeDetails = app.SetEntityAttributes(lyrDetail);
                                     if (app.EntityAttributeDetails["geomType"] == 'Line') {
@@ -12752,7 +12752,7 @@ var Main = function () {
                 latLngArr.push(new google.maps.LatLng(parseFloat(LongLatsingle[1]), parseFloat(LongLatsingle[0])));
             }
 
-            var libItem = $('[title="Cable"]');
+            var libItem = $('[data-lyrname="Cable"]');
             //var libItem = $('[title="Underground Cable"]');
             //if (jSonResp.cable_type.toLowerCase() == 'underground')
             //{ libItem = $('[title="Underground Cable"]'); } else { libItem = $('[title="Overhead Cable"]'); }
