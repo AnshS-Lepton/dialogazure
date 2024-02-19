@@ -140,7 +140,7 @@
             $("#PathTrack .dropfiles").trigger("click");
         });
         $(app.DE.btnCPFClear).on("click", function () {
-            $('#equipment_id').val('');
+            //$('#equipment_id').val('');
             $('#btnSchView').prop('disabled', true);
             $('#btnShowOnMap').prop('disabled', true);
 
@@ -2413,8 +2413,7 @@
         $('#divNoRecordExist').show();        
         $('#tblConnectionPathFinderInfo,#dvHeader').hide();
         $('.libTab--dis').hide();
-        $(app.DE.ddlCore).html('').html('<option value="0">-Select-</option>').val("0").trigger("chosen:updated");
-
+        $(app.DE.ddlCore).val(0).trigger("chosen:updated");
     }
     this.downloadOpticalLink = function () {
         window.location = appRoot + 'Splicing/DownloadOpticalLinkBudgetReport';
