@@ -140,7 +140,7 @@
             $("#PathTrack .dropfiles").trigger("click");
         });
         $(app.DE.btnCPFClear).on("click", function () {
-            $('#equipment_id').val('');
+            //$('#equipment_id').val('');
             $('#btnSchView').prop('disabled', true);
             $('#btnShowOnMap').prop('disabled', true);
 
@@ -1921,10 +1921,13 @@
                     canvas: canvas
                 };
             });
-
+            
+            var computedHeight = window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight;
             // At this point the container has no SVG, it only has HTML and Canvases.
             html2canvas($(targetElem)[0], {
-                allowTaint: true, useCORS: true, logging: false, height: window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight, windowHeight: window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight
+                allowTaint: true, useCORS: true, logging: false,
+                height: computedHeight > 1900 ? 4400 : computedHeight,
+                windowHeight: computedHeight > 1900 ? 4400 : computedHeight
             }).then(function (canvas) {
                 // Put the SVGs back in place
                 elements.each(function () {
@@ -2413,8 +2416,7 @@
         $('#divNoRecordExist').show();        
         $('#tblConnectionPathFinderInfo,#dvHeader').hide();
         $('.libTab--dis').hide();
-        $(app.DE.ddlCore).html('').html('<option value="0">-Select-</option>').val("0").trigger("chosen:updated");
-
+        $(app.DE.ddlCore).val(0).trigger("chosen:updated");
     }
     this.downloadOpticalLink = function () {
         window.location = appRoot + 'Splicing/DownloadOpticalLinkBudgetReport';

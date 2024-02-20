@@ -23,7 +23,8 @@ namespace SmartInventory
             GlobalFilters.Filters.Add(new HandleErrorAttribute());
             ApplicationSettings.InitializeGlobalSettings();
 
-            new BLMisc().InitializeEmailSettings();
+            //new BLMisc().InitializeEmailSettings();
+            EmailSettings.InitializeEmailSettings();
 
             if (ApplicationSettings.IsUserActivityLogEnabled) { 
             GlobalFilters.Filters.Add(new UserActivityLogAttribute());

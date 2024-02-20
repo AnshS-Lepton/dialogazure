@@ -102,9 +102,7 @@
                                     <button type="button" id="btnSchView" target="_blank" title="@Resources.Resources.SI_OSP_ONT_NET_RPT_012" @*value="@Resources.Resources.SI_OSP_ONT_NET_RPT_012"*@ class="btn btn-primary btn-small" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")>@Resources.Resources.SI_OSP_ONT_NET_RPT_012</button>
                                     <button type="button" id="btnShowOnMap" value="" title="Show on map" class="btn btn-primary btn-small" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")> @Resources.Resources.SI_OSP_GBL_GBL_GBL_036</button>
 
-                                    @if (Model.isControllEnable)
-                                    {
-                                        if (grid.TotalRowCount != 0)
+                                        @if (grid.TotalRowCount != 0)
                                         {
                                             <div class="text-right d-inline-block pos-rel">
                                                 <button type="button" class="btn btn-default dropfiles  w100">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
@@ -118,7 +116,7 @@
                                         {
                                             <input type="button" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-primary btn-small" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "") />
                                         }
-                                    }
+                                    
                                     <button type="button" class="btn btn-default btn-small ml-auto" id="btncpfClear" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>
 
                                 </div>
