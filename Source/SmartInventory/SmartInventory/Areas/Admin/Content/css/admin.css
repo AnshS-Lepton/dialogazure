@@ -2637,3 +2637,7 @@ tfoot tr td a:hover {
     z-index: 99;
     width: 22px;
 }
+
+.space-pad {
+    padding: 15px;
+}

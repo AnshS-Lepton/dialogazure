@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Utility.MapPrinter
+namespace BusinessLogics.MapPrinter
 {
     public class MapTile
     {

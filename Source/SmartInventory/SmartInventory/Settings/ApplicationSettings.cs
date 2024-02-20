@@ -239,6 +239,7 @@ namespace SmartInventory.Settings
         public static string smspassword = "";
         static string originator = "";
         static string smsapi = "";
+        public static int MaxLineEntityLength = 0;
 
 
         public static void InitializeGlobalSettings()
@@ -827,9 +828,13 @@ namespace SmartInventory.Settings
 				{
 					ExcelReportLimitCount = Convert.ToInt32(objSetting.value);
 				}
+                if (objSetting.key == "MaxLineEntityLength")
+                {
+                    MaxLineEntityLength = Convert.ToInt32(objSetting.value);
+                }
 
 
-			}
+            }
         }
     }
 }

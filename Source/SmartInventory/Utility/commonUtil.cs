@@ -1,5 +1,5 @@
 ﻿
-using BusinessLogics;
+//using BusinessLogics;
 using Microsoft.SqlServer.Server;
 using Models;
 using Models.WFM;
@@ -672,21 +672,21 @@ namespace Utility
             return message;
         }
 
-        public static void SendEventBasedEmail(List<EventEmailTemplateDetail> objEventEmailTemplateDetail, Dictionary<string, string> objKeyValueList, List<HttpPostedFileBase> objHttpPostedFileBase, List<string> objFileList = null, string ProjectName = "",string EmailEvent = "")
+        public static void SendEventBasedEmail(List<EventEmailTemplateDetail> objEventEmailTemplateDetail, Dictionary<string, string> objKeyValueList, List<HttpPostedFileBase> objHttpPostedFileBase, List<EmailSettingsModel> lstEmailSettings, List<string> objFileList = null, string ProjectName = "",string EmailEvent = "")
         {
             try
             {
                 string emailBody = commonUtil.GetEmailBody(objKeyValueList, objEventEmailTemplateDetail[0].template.ToString());
                 string subject = objEventEmailTemplateDetail[0].subject.Replace("XXX", ProjectName);
                 string mailSentMessage;
-                List<EmailSettingsModel> objEmailSettingsModelList = BLMisc.EmailSettingsModel;
+                //List<EmailSettingsModel> objEmailSettingsModelList = BLMisc.EmailSettingsModel;
                 if (objHttpPostedFileBase == null)
                 {
                     objHttpPostedFileBase = new List<HttpPostedFileBase>();
                 }
                 bool IsSent = true;
 
-                IsSent = commonUtil.SendEmailAsHtmlBody(objEventEmailTemplateDetail[0].recipient_list.Split(','), subject, emailBody, objHttpPostedFileBase, out mailSentMessage, objEmailSettingsModelList, objFileList,EmailEvent);
+                IsSent = commonUtil.SendEmailAsHtmlBody(objEventEmailTemplateDetail[0].recipient_list.Split(','), subject, emailBody, objHttpPostedFileBase, out mailSentMessage, lstEmailSettings, objFileList,EmailEvent);
             }
             catch (Exception ex)
             {

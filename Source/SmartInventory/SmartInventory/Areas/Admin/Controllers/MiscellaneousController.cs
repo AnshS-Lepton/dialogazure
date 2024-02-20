@@ -603,11 +603,10 @@ namespace SmartInventory.Areas.Admin.Controllers
                 dtReport.Columns["DROPDOWN_TYPE"].SetOrdinal(2);
                 dtReport.Columns["DROPDOWN_VALUE"].SetOrdinal(3);
                 dtReport.Columns["STATUS"].SetOrdinal(4);
-                dtReport.Columns["Created On"].SetOrdinal(5);
-                dtReport.Columns["created_by_text"].SetOrdinal(6);
-                dtReport.Columns["Modified On"].SetOrdinal(7);
-                dtReport.Columns["modified_by_text"].SetOrdinal(8);
-
+                dtReport.Columns["created_by_text"].SetOrdinal(5);
+                dtReport.Columns["Created On"].SetOrdinal(6);
+                dtReport.Columns["modified_by_text"].SetOrdinal(7);
+                dtReport.Columns["Modified On"].SetOrdinal(8);
                 dtReport.Columns["S_NO"].ColumnName = "Sr.No";
                 dtReport.Columns["layer_name"].ColumnName = "Entity Name";
                 dtReport.Columns["DROPDOWN_TYPE"].ColumnName = "Dropdown Type";
