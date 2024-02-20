@@ -1918,10 +1918,13 @@
                     canvas: canvas
                 };
             });
-
+            
+            var computedHeight = window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight;
             // At this point the container has no SVG, it only has HTML and Canvases.
             html2canvas($(targetElem)[0], {
-                allowTaint: true, useCORS: true, logging: false, height: window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight, windowHeight: window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight
+                allowTaint: true, useCORS: true, logging: false,
+                height: computedHeight > 1900 ? 4400 : computedHeight,
+                windowHeight: computedHeight > 1900 ? 4400 : computedHeight
             }).then(function (canvas) {
                 // Put the SVGs back in place
                 elements.each(function () {
