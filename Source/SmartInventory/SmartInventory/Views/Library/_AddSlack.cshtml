@@ -1,0 +1,204 @@
+﻿@model Models.SlackMaster
+@using Models;
+@using SmartInventory.Settings;
+
+
+@helper pageMessage()
+{
+    {
+        Html.RenderPartial("_PageMessage", Model.objPM);
+    }
+
+}
+@helper GeographicDetails()
+{
+    { Html.RenderPartial("~/Views/Library/_GeographicDetails.cshtml", (IGeographicDetails)Model); }
+}
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Slack.ToString().ToUpper()).FirstOrDefault() : null;
+    var lstInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name.ToLower() == Models.EntityType.Duct.ToString().ToLower()).ToList();
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Slack.ToString());
+}
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SaveSlack", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        LoadingElementId = "dvProgress",
+        UpdateTargetId = "dvModalBody"
+
+    },
+     new { id = "frmAddSlack", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.parent_network_id)
+        @Html.HiddenFor(m => m.network_id)
+        @Html.HiddenFor(m => m.geom)
+        @Html.HiddenFor(m => m.networkIdType)
+        @Html.HiddenFor(m => m.province_name)
+        @Html.HiddenFor(m => m.region_name)
+        @Html.HiddenFor(m => m.latitude)
+        @Html.HiddenFor(m => m.longitude)
+        @Html.HiddenFor(m => m.associated_entity_type)
+        @Html.HiddenFor(m => m.associated_system_id)
+        @Html.HiddenFor(m => m.sequence_id)
+        @Html.HiddenFor(m => m.duct_system_id)
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+        @Html.HiddenFor(m => m.associated_network_id, new { id = "hdnAssNtwkId" })
+
+
+        <!-- Message Pop-up -->
+        @pageMessage()
+        <div class="TabContent--max-over">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">Duct Details</legend>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-4" for="txtNearByDuct">Near By Ducts:<i class="clsMandatory">*</i></label>
+                        <div class="col-md-8 col-sm-8 mrgn_btm ">
+                            @Html.DropDownListFor(m => m.duct_id, new SelectList(Model.lstSlack.Select(x => new { Value = x.duct_system_id, Text = x.duct_id }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "txtDuctId", @onchange = "OnChangeDuctId();" })
+                            <span>@Resources.Resources.SI_OSP_ONT_NET_FRM_005  @ApplicationSettings.LoopBuffer @Resources.Resources.SI_OSP_GBL_GBL_GBL_034</span>
+                        </div>
+                    </div>
+                    <div id="changeDuctId" style="display:none;">
+
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txtductname">@Resources.Resources.SI_OSP_DUC_NET_RPT_001<i class="clsMandatory">*</i>:</label>
+                            <label class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.duct_name, new { @class = "form-control", @id = "txtductname", @readonly = true })
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txtDuctCalcLength">Duct Length(Mtr)<i class="clsMandatory">*</i></label>
+                            <label class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.duct_calculated_length, new { @class = "form-control", @id = "txtDuctCalcLength", @readonly = true })
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txttotalslackcount">Existing Slack Count<i class="clsMandatory">*</i>:</label>
+                            <label class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.total_slack_count, new { @class = "form-control", @id = "txttotal_slack_count", @readonly = true })
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txttotalslacklength">Existing Slack Length(Mtr)<i class="clsMandatory">*</i></label>
+                            <label class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.total_slack_length, new { @class = "form-control", @id = "txttotal_slack_length", @readonly = true })
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txtAvailbleCalLngth" title="(Duct Length- Duct Existing Slack Length)">Unused Duct Length(Mtr)<i class="clsMandatory">*</i>:</label>
+                            <label class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.available_calculated_length, new { @class = "form-control", @id = "txtAvailbleCalLngth", @readonly = true })
+                            </label>
+                        </div>
+
+                    </div>
+                </fieldset>
+                <fieldset class="the-fieldset" id="OnselectOfDuct" style="display:none;">
+                    <legend class="the-legend">Slack Details</legend>
+                        <div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4" for="txtlooplength">Slack Length(Mtr)<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-8 col-sm-8 mrgn_btm">
+                                @Html.TextBoxFor(m => m.slack_length, new { @class = "form-control allownumeric_value enableControl ", @maxlength = "10", @id = "txt_slack_length" })
+                            </div>
+                        </div>
+                </fieldset>
+                <div id="ShowGeoDetailOnselectOfDuct" style="display:none;">@GeographicDetails()</div>
+
+            </div>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <div class="ml-auto">
+                <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCancelSlack">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                @if (Model.system_id > 0)
+                {
+                    <button type="button" onclick="SaveSlack();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnUpdateSlack">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                }
+                else
+                {
+                    <button type="button" onclick="SaveSlack();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnSaveSlack">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                }
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($("#txtDuctId").val() != "") {
+            $("#txtDuctId").prop("disabled", "disabled");
+            OnChangeDuctId();
+        }
+        $('.chosen-select').chosen({ width: '100%' });
+    });
+
+    calculateLoopLength = function () {
+        if ($("#txtDuctId").val() != "" && $("#txtDuctId").val() != undefined) {
+            var startReading = parseFloat($("#txtStrtRdng").val());
+            var endReading = parseFloat($("#txtEndReading").val());
+            var length = Math.abs(endReading - startReading);
+            if (length > 0) {
+                $("#txt_loop_length").val(Math.round(length * 100) / 100);
+            } else {
+                $("#txt_loop_length").val(0);
+            }
+        }
+        else {
+            alert(MultilingualKey.SI_OSP_GBL_NET_FRM_461);
+            $("#txtStrtRdng").val("");
+            $("#txtEndReading").val("");
+            $("#txt_loop_length").val("");
+        }
+    }
+
+    function OnChangeDuctId() {
+        if ($("#txtDuctId").val() != "") {
+            var Duct_id = $("#txtDuctId").val();
+            $("#changeDuctId").show();
+            $("#OnselectOfDuct").show();
+            $("#ShowGeoDetailOnselectOfDuct").show();
+            ajaxReq('Library/GetDuctNameAndLengthForSlack', { DuctId: Duct_id }, true, function (resp) {
+                debugger;
+                if (resp.system_id > 0) {
+                    $("#txtductname").val(resp.duct_name);
+                    $("#txtDuctCalcLength").val(resp.calculated_length.toFixed(2));
+                    $("#txttotal_slack_count").val(resp.total_slack_count);
+                    $("#txtAvailbleCalLngth").val((resp.calculated_length - resp.total_slack_length).toFixed(2));
+                    $("#txttotal_slack_length").val(resp.total_slack_length.toFixed(2));
+                    $("#hdnAssNtwkId").val(resp.network_id);
+                }
+            }, false, false);
+
+        }
+        else {
+            $("#changeDuctId").hide();
+            $("#OnselectOfDuct").hide();
+            $("#ShowGeoDetailOnselectOfDuct").hide();
+        }
+    }
+
+    function SaveSlack() {
+        if ($('#txtDuctId').val() == "" || $('#txtDuctId').val() == undefined || $('#txtDuctId').val() == null) {
+            alert("Please select Near By Duct First!");
+            return false;
+        }
+        else if ($('#txt_slack_length').val() == 0) {
+            alert("Slack length cannot be 0 or empty!");
+            return false;
+        }
+        else if (parseFloat($('#txt_slack_length').val()) > parseFloat($('#txtAvailbleCalLngth').val())) {
+            alert("Slack length cannot be greater than unused duct length!");
+            return false;
+        }
+        else {
+            $("#frmAddSlack").submit();
+        }
+
+    }
+
+</script>

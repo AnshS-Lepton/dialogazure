@@ -768,6 +768,10 @@ namespace SmartInventory.Controllers
                             case EntityType.RestrictedArea:
                                 response = new BLMisc().deleteEntity(systemId, EntityType.RestrictedArea.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
                                 break;
+                            case EntityType.Slack:
+                                response = new BLMisc().deleteEntity(systemId, EntityType.Slack.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                                break;
+
                         }
                     }
                 }
