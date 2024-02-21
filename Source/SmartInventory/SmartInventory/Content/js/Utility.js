@@ -1928,8 +1928,11 @@ function onGridHeaderClick(gridControlId) {
     var dir = $('#dir').val(); //direction value
     var col = $('#col').val(); // header value
 
-    var clickedheader = $('th a[href*=' + col + ']');
-    var countTh = document.getElementsByTagName('th').length; //total column header
+    //var clickedheader = $('th a[href*=' + col + ']');
+    //var countTh = document.getElementsByTagName('th').length; //total column header
+
+    var clickedheader = $('#' + gridControlId + '  tr th a[href*=' + col + ']');
+    var countTh = $('#' + gridControlId + '  tr th').length; //total column header
 
     for (var i = 1; i <= countTh; i++) {
         var txtTh = $('#' + gridControlId + '  tr th:nth-child(' + i + ')').text(); // header text

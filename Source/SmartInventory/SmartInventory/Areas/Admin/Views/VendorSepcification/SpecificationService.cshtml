@@ -145,7 +145,21 @@
         }
 
         $("#btnSubmitSpecifiaction").on("click", function (e) {
-                var status = true;
+            var status = true;
+            let category = $("#selectCategory1 option:selected").text();
+            if (category == "-Select-") {
+                $('#selectCategory1').css("border-color", "red");
+            }
+            else {
+                $('#selectCategory1').css("border-color", "");
+            }
+            let Specification = $("#specification option:selected").text();
+            if (Specification == "-Select-") {
+                $('#specification').css("border-color", "red");
+            }
+            else {
+                $('#specification').css("border-color", "");
+            }
             if (!validateDropdown('selectCategory1')) { status = false; }
                 if (!validateDropdown('specification')) { status = false; }
             if (!validateTextbox('service_name')) { status = false; }

@@ -26,7 +26,7 @@
                          columns: grid.Columns(
 
 grid.Column(header: "S.No.", format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(grid.TotalRowCount / grid.PageCount) / grid.RowsPerPage) * grid.RowsPerPage * grid.PageIndex, canSort: true),
-grid.Column("role_name", "Role Name", format: @<text>@item.role_name</text>, canSort: false)
+grid.Column("role_name", "Reporting Role Name", format: @<text>@item.role_name</text>, canSort: false)
 ))
                     </div>
 

@@ -28,6 +28,7 @@
     .ports--Box-inner {
         padding: 1.5rem;
     }
+
     .modal-xxxl{
         left:0 !important;
     }
@@ -239,7 +240,7 @@
                                 <div class="core" style="display: table-cell; vertical-align:middle;">
                                     @foreach (var portItem in Model.splicingConnections.Where(m => m.is_parent == 1 && m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "I").OrderByDescending(m => m.core_port_number).Select((value, i) => new { i, value }))
                                     {
-                                        var fmsID = portItem.value.system_id + "_" + Convert.ToString(Model.connector.entity_type) + "_" + portItem.value.core_port_number;
+                                        var fmsID = portItem.value.system_id + "_" + Convert.ToString(Model.connector.entity_type).ToUpper() + "_" + portItem.value.core_port_number;
                                         <div class="fiber rightFiber">
                                             <div id="@fmsID" class="@(Model.is_middleware_entity?"":(!portItem.value.is_connected_to_other ? "trg" : "")) innerFiber"
                                                  title="@((portItem.value.port_statusid==1||portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
@@ -265,7 +266,7 @@
                                 <div class="core" style="display: table-cell; vertical-align:middle;">
                                     @foreach (var portItem in Model.splicingConnections.Where(m => m.is_parent == 1 && m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "O").Select((value, i) => new { i, value }))
                                     {
-                                        var fmsID = portItem.value.system_id + "_" + Convert.ToString(Model.connector.entity_type) + "_" + portItem.value.core_port_number;
+                                        var fmsID = portItem.value.system_id + "_" + Convert.ToString(Model.connector.entity_type).ToUpper() + "_" + portItem.value.core_port_number;
                                         <div class="fiber leftFiber" style="margin-top:10px;">
                                             <div id="@fmsID" class="@(!portItem.value.is_connected_to_other? "src" : "") innerFiber"
                                                  title="@((portItem.value.port_statusid==1|| portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
@@ -302,7 +303,7 @@
                                     <div class="fiber rightFiber" style="margin-top: 0px;height: 15px;text-align: right;padding-right: 28px;font-size:13px;">@Resources.Resources.SI_OSP_GBL_GBL_FRM_011</div>
                                     @foreach (var portItem in Model.splicingConnections.Where(m => m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "I").OrderByDescending(m => m.core_port_number).Select((value, i) => new { i, value }))
                                     {
-                                        var entityUiId = portItem.value.system_id + "_" + Convert.ToString(Model.connector.entity_type) + "_" + portItem.value.core_port_number;
+                                        var entityUiId = portItem.value.system_id + "_" + Convert.ToString(Model.connector.entity_type).ToUpper() + "_" + portItem.value.core_port_number;
                                         <div class="fiber rightFiber">
                                             <div id="@entityUiId" class="@(Model.is_middleware_entity?"":(!portItem.value.is_connected_to_other ? "trg" : "")) innerFiber"
                                                  title="@((portItem.value.port_statusid==1|| portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
@@ -410,7 +411,7 @@
                                                 <div class="fiber rightFiber" style="margin-top: 0px;height: 15px;text-align: right;padding-right: 28px;font-size:13px;">@Resources.Resources.SI_OSP_GBL_GBL_FRM_011</div>
                                                 @foreach (var portItem in Model.splicingConnections.Where(m => m.is_parent == 0 && m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "I").OrderByDescending(m => m.core_port_number).Select((value, i) => new { i, value }))
                                                 {
-                                                    var fmsID = portItem.value.system_id + "_" + Convert.ToString(item.entity_type) + "_" + portItem.value.core_port_number;
+                                                    var fmsID = portItem.value.system_id + "_" + Convert.ToString(item.entity_type).ToUpper() + "_" + portItem.value.core_port_number;
                                                     <div class="fiber rightFiber">
                                                         <div id="@fmsID" class="@(!portItem.value.is_connected_to_other ? "trg" : "") innerFiber"
                                                              title="@((portItem.value.port_statusid==1|| portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"
@@ -437,7 +438,7 @@
                                                 <div class="fiber leftFiber" style="margin-top: 0px;height: 15px;text-align: left;padding-left: 17px; font-size:13px;">@Resources.Resources.SI_OSP_GBL_GBL_FRM_012</div>
                                                 @foreach (var portItem in Model.splicingConnections.Where(m => m.is_parent == 0 && m.system_id == item.system_id && m.entity_type == item.entity_type && m.input_output == "O").Select((value, i) => new { i, value }))
                                                 {
-                                                    var fmsID = portItem.value.system_id + "_" + Convert.ToString(item.entity_type) + "_" + portItem.value.core_port_number;
+                                                    var fmsID = portItem.value.system_id + "_" + Convert.ToString(item.entity_type).ToUpper() + "_" + portItem.value.core_port_number;
                                                     <div class="fiber leftFiber">
                                                         <div id="@fmsID" class="@(!portItem.value.is_connected_to_other ? "src" : "") innerFiber"
                                                              title="@((portItem.value.port_statusid==1|| portItem.value.port_statusid==3 || portItem.value.port_statusid==4)?portItem.value.port_comment:(portItem.value.is_connected_to_other ? portItem.value.other_text : ""))"

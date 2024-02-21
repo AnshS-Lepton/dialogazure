@@ -45,6 +45,11 @@ namespace BusinessLogics
         {
             return DADuct.Instance.getDuctCount(duct_Id);
         }
+        public DuctMaster GetDuctNameAndLengthForSlack(int DuctId)
+        {
+            return DADuct.Instance.GetDuctNameAndLengthForSlack(DuctId);
+        }
+
         #region Additional-Attributes
         public string GetOtherInfoDuct(int systemId)
         {

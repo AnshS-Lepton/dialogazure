@@ -25,7 +25,7 @@
                 </ul>
             </div>
         </span>
-        <span class="fontID mt05 mb01"> @item.entity_network_id <i class="pull-right"><label class="control-label float-right"title="@(@item.created_on != null ? Utility.MiscHelper.FormatDateTime(@item.created_on.ToString()) : string.Empty)">@(@item.created_on != null ? Utility.MiscHelper.TimeAgo(@item.created_on.ToString()) : string.Empty)</label> </i></span>
+        <div class="fontID d-flex flex-wrap mt05 mb01"> @item.entity_network_id <i class="ml-auto"><label class="control-label float-right" title="@(@item.created_on != null ? Utility.MiscHelper.FormatDateTime(@item.created_on.ToString()) : string.Empty)">@(@item.created_on != null ? Utility.MiscHelper.TimeAgo(@item.created_on.ToString()) : string.Empty)</label> </i></div>
         <span id="spnNotiText_@item.notification_id" class="fontID @(item.is_closed==true?"grayColor":"importantcolor")">@item.notification_text<i class="pull-right">@item.entity_used_ports/@item.entity_total_ports</i></span>
         <div class="prowindowE1" style="display:none">
             <div id="NotiComment_@item.notification_id" class="clsNotiComment">

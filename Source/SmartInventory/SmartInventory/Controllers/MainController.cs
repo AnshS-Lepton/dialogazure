@@ -768,6 +768,10 @@ namespace SmartInventory.Controllers
                             case EntityType.RestrictedArea:
                                 response = new BLMisc().deleteEntity(systemId, EntityType.RestrictedArea.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
                                 break;
+                            case EntityType.Slack:
+                                response = new BLMisc().deleteEntity(systemId, EntityType.Slack.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                                break;
+
                         }
                     }
                 }
@@ -2566,7 +2570,7 @@ namespace SmartInventory.Controllers
                         string strFilePath = "";
                         if (entityType == EntityType.ROW.ToString() && !string.IsNullOrEmpty(featureName))
                         {
-                            attachmentType = collection["attachment_type"];
+                            attachmentType = (!string.IsNullOrEmpty(collection["attachment_type"]) ? collection["attachment_type"] : attachmentType);
                             strFilePath = UploadfileOnFTP(featureName, systemId, file, attachmentType, strNewfilename, entityType);
                         }
                         else if (!string.IsNullOrEmpty(featureName))

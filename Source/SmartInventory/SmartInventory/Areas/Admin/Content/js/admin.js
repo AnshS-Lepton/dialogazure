@@ -2138,15 +2138,18 @@ function DeleteUtilizationSettingsById(id) {
     });
 }
 
+
 function AddNewUtlization(_system_id) {
     
     if (_system_id == 0) {
         $('#OtherEntities').show();
+        popup.LoadModalDialog('Miscellaneous/AddEntityUtilization', { system_id: _system_id }, 'Add New Utilization', 'modal-md');
     }
     else {
         $('#OtherEntities').hide();
+        popup.LoadModalDialog('Miscellaneous/AddEntityUtilization', { system_id: _system_id }, 'Update Utilization', 'modal-md');
     }
-    popup.LoadModalDialog('Miscellaneous/AddEntityUtilization', { system_id: _system_id }, 'Add New Utilization', 'modal-md');
+    
 }
 
 
@@ -2235,12 +2238,13 @@ $(document).on("click", app.DE.AddNewCoreLstRow, function () {
         TubeColorRowData += '<td><span><input class="full col-md-10" value="#1c4587" data-val="true" data-val-required="The color_code field is required." id="lstCableColor_' + rowCount + '__color_code" name="lstCableColor[' + rowCount + '].color_code" type="text" value=""></td>';
         // TubeColorRowData += '<td><span><input style="width: 100%; display: none;" class="full col-md-10" id="lstCableColor_' + rowCount + '__color_code" maxlength="25" name="lstCableColor[' + rowCount + '].color_code" type="text" value="#1c4587"><div class="sp-replacer sp-light"><div class="sp-preview"><div class="sp-preview-inner" style="background-color: rgb(28, 69, 135);"></div></div><i class="fa fa-paint-brush"></i></div></span></td>';
 
-        TubeColorRowData += '<td><span class="TubeColorRowDelete" title="Delete" >x</span></td></tr>';
+        TubeColorRowData += '<td><span class="TubeColorRowDelete" title="Delete" ><i class="fa fa-fw fa-trash" style=" font-size: 13px; color: #f50000;"></i></span></td></tr>';
 
         addRowInFloorTbl.append(TubeColorRowData);
         var chk = $('#lstCableColor');
         //$(app.DE.ShaftNFloorInut).unbind('keypress').keypress(function () { $(this).removeClass('NotValid'); });
         CallRunTimeCssForColorPicker();
+        alert('One row added successfully.');
     }
     else {
         alert('Only 30 row can be added!');
@@ -3330,6 +3334,10 @@ function onChangeLandBaseAttributeBind() {
 function AddNewAccessories(_id) {
      
     popup.LoadModalDialog('Accessories/AddNewAccessories', { id: _id }, 'Add Accessories', 'modal-md');
+}
+function EditAccessories(_id) {
+
+    popup.LoadModalDialog('Accessories/AddNewAccessories', { id: _id }, 'Update Accessories', 'modal-md');
 }
 
 function DeleteAccessoriesById(id, name) {

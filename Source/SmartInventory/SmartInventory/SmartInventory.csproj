@@ -58,10 +58,6 @@
     <Reference Include="GeoAPI">
       <HintPath>..\Models\ReferenceDLL\GeoAPI.dll</HintPath>
     </Reference>
-    <Reference Include="GIS_Convertor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GIS_Convertor\bin\Debug\GIS_Convertor.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
@@ -1571,7 +1567,6 @@
     <Content Include="Content\js\vis_4_18_1.min.js" />
     <Content Include="Content\sort_asc.png" />
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
-    <Content Include="MigrationScripts\test.sql" />
     <Content Include="MultilingualJunkKeys\Content\Js\Alert.js" />
     <Content Include="Scripts\APIHandler.js" />
     <Content Include="Content\js\canvg.min.js" />
@@ -2289,6 +2284,8 @@
     <Content Include="Views\Main\_DesignValidationDashboard.cshtml" />
     <Content Include="Views\BOMBOQ\_FSAlockedDetails.cshtml" />
     <Content Include="Views\NetworkTicket\_ManualMeterReading.cshtml" />
+    <Content Include="Views\Library\_AddSlack.cshtml" />
+    <Content Include="Views\Library\_SlackDetailsForDuct.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2397,6 +2394,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Settings\ApplicationSettings.cs" />
+    <Compile Include="Settings\EmailSettings.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Controllers\FiberAllocationToolController.cs" />
   </ItemGroup>
@@ -2821,6 +2819,7 @@
     <Folder Include="Content\UploadedFiles\Resources\" />
     <Folder Include="Content\UploadedFiles\VendorSpecifications\" />
     <Folder Include="ErrorLogs\" />
+    <Folder Include="MigrationScripts\" />
     <Folder Include="shp2kml_convertor\" />
     <Folder Include="Uploads\ExternalData\KMZ\" />
     <Folder Include="Uploads\LayerStyleMaster\" />

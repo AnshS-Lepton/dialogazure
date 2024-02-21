@@ -368,9 +368,9 @@
                     $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
                 });
 
-                function formPost() {
-                     
-                    $('#faultEntitySystemId').val($('#ddlSelectEntity').val());
+    function formPost() {
+
+        $('#faultEntitySystemId').val($('#ddlSelectEntity').val());
                     if ($('#ddlFaultStatus').val() == "Temporary Resolved" || $('#ddlFaultStatus').val() == "Resolved") {
                         if ($('#txtRCA').val().trim() == "" || $('#txtRCA').val().trim() == undefined) {
                             $('#txtRCA').css('border-color', 'red');
@@ -384,8 +384,9 @@
 
                     }
 
-                    else {
+                    else {                        
                         $("#frmAddFault").submit();
+                        $("#btnCancelFault").trigger("click");
                     }
 
                 }

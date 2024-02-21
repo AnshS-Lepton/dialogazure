@@ -188,8 +188,8 @@ namespace SmartInventory.Controllers
                         smartInventoryhub.BroadCastInfo(objNotification);
                     }).ContinueWith(tsk =>
                     {
-                        tsk.Exception.Handle(ex => { ErrorLogHelper.WriteErrorLog("AutoAssosiation", "Main", ex); return true; });
-                    }, TaskContinuationOptions.OnlyOnFaulted);                   
+                        tsk.Exception.Handle(ex => { ErrorLogHelper.WriteErrorLog("Splicing", "SaveConnectionInfo", ex); return true; });
+                    }, System.Threading.Tasks.TaskContinuationOptions.OnlyOnFaulted);
                     SendUtilizationEmail(objConnectionInfo);
                 }
             }
@@ -253,7 +253,7 @@ namespace SmartInventory.Controllers
                     List<HttpPostedFileBase> objHttpPostedFileBase = null;
                     BLUser objBLuser = new BLUser();
                     List<EventEmailTemplateDetail> objEventEmailTemplateDetail = objBLuser.GetEventEmailTemplateDetail(EmailEventList.PercentUtilization70.ToString());
-                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, objHttpPostedFileBase, filePath,"", EmailEventList.PercentUtilization70.ToString()));
+                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, objHttpPostedFileBase, EmailSettings.AllEmailSettings, filePath,"", EmailEventList.PercentUtilization70.ToString()));
                     //commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, objHttpPostedFileBase, filePath);
                     #endregion
                 }

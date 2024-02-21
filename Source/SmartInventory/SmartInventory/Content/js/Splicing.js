@@ -140,6 +140,9 @@
             $("#PathTrack .dropfiles").trigger("click");
         });
         $(app.DE.btnCPFClear).on("click", function () {
+            //$('#equipment_id').val('');
+            $('#btnSchView').prop('disabled', true);
+            $('#btnShowOnMap').prop('disabled', true);
 
             if (isp != null) {
                 $('#btnShowOnMap').hide();
@@ -1918,10 +1921,13 @@
                     canvas: canvas
                 };
             });
-
+            
+            var computedHeight = window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight;
             // At this point the container has no SVG, it only has HTML and Canvases.
             html2canvas($(targetElem)[0], {
-                allowTaint: true, useCORS: true, logging: false, height: window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight, windowHeight: window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight
+                allowTaint: true, useCORS: true, logging: false,
+                height: computedHeight > 1900 ? 4400 : computedHeight,
+                windowHeight: computedHeight > 1900 ? 4400 : computedHeight
             }).then(function (canvas) {
                 // Put the SVGs back in place
                 elements.each(function () {
@@ -2396,6 +2402,7 @@
     this.downloadCPEKML = function () {
         window.location = appRoot + 'Splicing/DownloadCPFIntoKML';
     }
+    //pk
     this.clearCFPGrid = function () {
         if (app.apptestvalue == false) {
             $(app.DE.equipmentid).val('');            
@@ -2407,8 +2414,9 @@
         }                
         app.clearCPFMarker();        
         $('#divNoRecordExist').show();        
-        $('#tblConnectionPathFinderInfo,#dvHeader,#dvBtnAction').hide()
-
+        $('#tblConnectionPathFinderInfo,#dvHeader').hide();
+        $('.libTab--dis').hide();
+        $(app.DE.ddlCore).val(0).trigger("chosen:updated");
     }
     this.downloadOpticalLink = function () {
         window.location = appRoot + 'Splicing/DownloadOpticalLinkBudgetReport';
