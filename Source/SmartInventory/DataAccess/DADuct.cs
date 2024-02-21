@@ -283,5 +283,17 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public DuctMaster GetDuctNameAndLengthForSlack(int DuctId)
+        {
+            try
+            {
+                var result = repo.GetById(m => m.system_id == DuctId);
+                return result != null ? result : new DuctMaster();
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }
