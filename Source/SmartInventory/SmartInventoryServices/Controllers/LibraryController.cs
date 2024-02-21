@@ -11887,7 +11887,8 @@ namespace SmartInventoryServices.Controllers
 				objLib.parent_entity_type = networkCodeDetail.parent_entity_type;
 				objLib.parent_network_id = networkCodeDetail.parent_network_id;
 				objLib.parent_system_id = networkCodeDetail.parent_system_id;
-			}
+                objLib.sequence_id = networkCodeDetail.sequence_id;
+            }
 		}
 		#endregion
 
