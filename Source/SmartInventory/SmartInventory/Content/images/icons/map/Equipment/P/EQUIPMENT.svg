@@ -1,0 +1,24 @@
+<svg width="24" height="32" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="0.5" y="8.5" width="23" height="23" rx="11.5" fill="white"/>
+<rect x="0.5" y="8.5" width="23" height="23" rx="11.5" stroke="#4E2932"/>
+<rect width="16" height="5" transform="translate(4 14)" fill="#4E2932"/>
+<rect width="2" height="1" transform="translate(5 15)" fill="white"/>
+<rect width="2" height="1" transform="translate(9 15)" fill="white"/>
+<rect width="2" height="1" transform="translate(13 15)" fill="white"/>
+<rect width="2" height="1" transform="translate(17 15)" fill="white"/>
+<rect width="2" height="1" transform="translate(5 17)" fill="white"/>
+<rect width="2" height="1" transform="translate(9 17)" fill="white"/>
+<rect width="2" height="1" transform="translate(13 17)" fill="white"/>
+<rect width="2" height="1" transform="translate(17 17)" fill="white"/>
+<rect width="16" height="5" transform="translate(4 21)" fill="#4E2932"/>
+<rect width="2" height="1" transform="translate(5 22)" fill="white"/>
+<rect width="2" height="1" transform="translate(9 22)" fill="white"/>
+<rect width="2" height="1" transform="translate(13 22)" fill="white"/>
+<rect width="2" height="1" transform="translate(17 22)" fill="white"/>
+<rect width="2" height="1" transform="translate(5 24)" fill="white"/>
+<rect width="2" height="1" transform="translate(9 24)" fill="white"/>
+<rect width="2" height="1" transform="translate(13 24)" fill="white"/>
+<rect width="2" height="1" transform="translate(17 24)" fill="white"/>
+<path d="M17 3.22727L12 1V5.45455L17 3.22727Z" fill="#4DA234"/>
+<path d="M12 8V5.45455M12 5.45455V1L17 3.22727L12 5.45455Z" stroke="#4DA234"/>
+</svg>

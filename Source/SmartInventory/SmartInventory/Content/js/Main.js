@@ -8,7 +8,7 @@ let CollisionFilterExtension = deck.CollisionFilterExtension;
 //let ICON_MAPPING = null;
 var Main = function () {
     var app = this;
-    this.IsVecorLayerEnabled = false;
+    this.IsVecorLayerEnabled = true;// $("#hdnIsWMSLayerLoadingEnabled").val() == 'False' ? true : false;
     this.layoutMap = undefined;
     this.map = undefined;
     this.infowindow = new google.maps.InfoWindow();
@@ -198,6 +198,14 @@ var Main = function () {
     this.rowLabelData = [];
     this.handholeGeoJson = {};
     this.structureGeoJson = {};
+
+    this.rackGeoJson = {};
+    this.patchpanelGeoJson = {};
+    this.htbGeoJson = {};
+    this.equipmentGeoJson = {};
+
+
+
     this.LayerStyles = [];
     this.ActivePlannedVectorlayers = [];
     this.ActiveAsBuiltVectorlayers = [];
@@ -212,7 +220,7 @@ var Main = function () {
     this.minLayerIndex = 99;
     this.provinceLimitToStoreDatainBrowser = 3;
     this.CollisionEnableZoomConfiguration = 18;
-    this.useDevicePixelsInVectorLayer = true;
+    this.useDevicePixelsInVectorLayer = false;
     this.IsCollisionEnabled = true;
     this.provinceLimitToSelectForLoadinVectorLayer = parseInt($("#hdnMapRegionProvinceLimit").val());
     this.VectorInfoWindow = new google.maps.InfoWindow({ pixelOffset: new google.maps.Size(40, -40), disableAutoPan: false });
@@ -232,6 +240,7 @@ var Main = function () {
     this.LastEditedMarking = 0;
     this.MaxCableLength = 0;
     this.LengthUnit = "";
+    this.LayerLoadingStatusMap = new Map();
     this.DE = {
         "frmAddHTB": "#frmAddHTB",
         "libDetail": ".libDetail",
@@ -324,8 +333,8 @@ var Main = function () {
         "txtNEBuffer": "#txtNEBuffer",
         "frtUserId": "#frtUserId",
     }
-    this.layestList = ['Network_Ticket', 'Area', 'SubArea', 'DSA', 'CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD', 'Duct', 'Customer', 'ROW', 'Handhole', 'Structure', 'SurveyArea', 'Cabinet'];
-    this.layerListAbbr = ['NT', 'ARA', 'SBA', 'DSA', 'CSA', 'POL', 'MH', 'WMT', 'FDB', 'BDB', 'SPL', 'ADB', 'SC', 'CBL', 'TRH', 'FMS', 'ONT', 'TRE', 'BLDP,BLD,BLDC', 'POD', 'DCT', 'CUS', 'ROW,ROWL,PIT', 'HH', 'STRC', 'SVA','CBT'];
+    this.layestList = ['Network_Ticket', 'Area', 'SubArea', 'DSA', 'CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD', 'Duct', 'Customer', 'ROW', 'Handhole', 'Structure', 'SurveyArea', 'Cabinet', 'HTB', 'Equipment', 'Rack', 'PatchPanel'];
+    this.layerListAbbr = ['NT', 'ARA', 'SBA', 'DSA', 'CSA', 'POL', 'MH', 'WMT', 'FDB', 'BDB', 'SPL', 'ADB', 'SC', 'CBL', 'TRH', 'FMS', 'ONT', 'TRE', 'BLDP,BLD,BLDC', 'POD', 'DCT', 'CUS', 'ROW,ROWL,PIT', 'HH', 'STRC', 'SVA', 'CBT', 'HTB', 'EQPMNT', 'RCK','PATCHP'];
     this.layerListArranged = [];
     //'Area', 'SubArea', 'DSA','CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD'
     this.vectorLayerConfiguration =
@@ -357,6 +366,10 @@ var Main = function () {
         "Structure": { "entityName": "Structure", "DataObject": "structureGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getStructureLayer'] },
         "SurveyArea": { "entityName": "SurveyArea", "DataObject": "surveyAreaGeoJson", "LayerInstance": "AreaInstance", "layerList": ['getSurveyAreaLayer'] },
         "Cabinet": { "entityName": "Cabinet", "DataObject": "cabinetGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getCabinetLayer'] },
+        "HTB": { "entityName": "HTB", "DataObject": "htbGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getHTBLayer'] },
+        "Equipment": { "entityName": "Equipment", "DataObject": "equipmentGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getEquipmentLayer'] },
+        "Rack": { "entityName": "Rack", "DataObject": "rackGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getRackLayer'] },
+        "PatchPanel": { "entityName": "PatchPanel", "DataObject": "patchpanelGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getPatchPanelLayer'] },
     };
     
     //this.layerOverlayInstance = ['SubAreaInstance'];
@@ -377,11 +390,11 @@ var Main = function () {
         // All Layers redraw  to enable disable the colisition
         if (app.IsZoomInTriggered == true && _Zoom == app.CollisionEnableZoomConfiguration) {
             app.IsCollisionEnabled = false;
-            app.RenderVectorLayer(0);
+            app.RenderVectorLayer(-1);
             return;
         } else if (app.IsZoomInTriggered == false && _Zoom == app.CollisionEnableZoomConfiguration - 1) {
             app.IsCollisionEnabled = true;
-            app.RenderVectorLayer(0);
+            app.RenderVectorLayer(-1);
             return;
         }
         //All Layers redraw on layer checked/unchecked 
@@ -399,7 +412,7 @@ var Main = function () {
             });
         }
         if (areValuesEqual == false) {
-            app.RenderVectorLayer(0);
+            app.RenderVectorLayer(-1);
             return;
         }
         //All Layers redraw on min/max zoom change
@@ -956,6 +969,7 @@ var Main = function () {
                                     region_id: feature.properties.region_id,
                                     province_id: feature.properties.province_id,
                                     position: pointOnLine.geometry.coordinates,
+                                    feature: feature,
                                     text: feature.properties.cable_cores,
                                     network_status: feature.properties.network_status,
                                     system_id: feature.properties.system_id,
@@ -968,6 +982,7 @@ var Main = function () {
                                     province_id: feature.properties.province_id,
                                     position: pointOnLine.geometry.coordinates,
                                     text: app.GetLabelText(feature),
+                                    feature: feature,
                                     network_status: feature.properties.network_status,
                                     system_id: feature.properties.system_id,
                                     entity_category: feature.properties.entity_category,
@@ -1007,6 +1022,7 @@ var Main = function () {
                                     region_id: feature.properties.region_id,
                                     province_id: feature.properties.province_id,
                                     position: pointOnLine.geometry.coordinates,
+                                    feature: feature,
                                     text: app.GetLabelText(feature),
                                     network_status: feature.properties.network_status,
                                     entity_category: feature.properties.entity_category,
@@ -1046,6 +1062,7 @@ var Main = function () {
                                     region_id: feature.properties.region_id,
                                     province_id: feature.properties.province_id,
                                     position: pointOnLine.geometry.coordinates,
+                                    feature: feature,
                                     text: app.GetLabelText(feature),
                                     network_status: feature.properties.network_status,
                                     entity_category: feature.properties.entity_category,
@@ -1106,6 +1123,7 @@ var Main = function () {
     }
     this.RenderVectorLayer = function (layerIndex) {
         //FetchRequiredData
+        $(app.DE.lyrRefresh).addClass('eaSpin');
         app.ActivePlannedVectorlayers = app.getActiveNetworkLayers('P', false);
         app.ActiveAsBuiltVectorlayers = app.getActiveNetworkLayers('A', false);
         app.PolygonVectorlayers = app.getActivePolygonlayer();
@@ -1118,9 +1136,10 @@ var Main = function () {
         // Get an array of all LayerInstance values  
         let uniqueLayerInstancesSet = new Set();
         let _entityName = app.layestList[layerIndex];
+        console.log("Rendering:" + _entityName);
         // Fetch all instances associted with entities in the order of entities exists in "layestListArranged" array
         app.layerListArranged.forEach(entityName => {
-            if (layerIndex == 0 || entityName === _entityName) {
+            if (layerIndex == -1 || entityName === _entityName) {
                 const config = this.vectorLayerConfiguration[entityName];
                 if (config) {
                     uniqueLayerInstancesSet.add(config.LayerInstance);
@@ -1174,14 +1193,19 @@ var Main = function () {
             _instanceValue.setMap(app.map);
         });
         app.minLayerIndex = 99;
+        $(app.DE.lyrRefresh).removeClass('eaSpin');
+        if (layerIndex != -1) {
+            app.updateLayerLoadingStatus(_entityName);
+        }
     }
-    this.LoadVectorLayers = function () {
-        $("#dvProgress").show();
-        $('#dvProgress').css('display', 'block');
-        //console.log("in the body of fetchVectorLayerData function");
+    this.updateLayerLoadingStatus = function (_entityName) {
+        app.LayerLoadingStatusMap[_entityName] = "Done";
+        let filteredMap = Object.fromEntries(
+            Object.entries(app.LayerLoadingStatusMap).filter(([key, value]) => value === "Done")
+        );
+        $('#layerLoadingStatusDiv').html('<div class="bottom_line">&nbsp;</div><div class="bottom_txt">Data downloaded for <b>' + Object.keys(filteredMap).length + ' </b>layer(s) out of  <span><b> ' + Object.keys(app.LayerLoadingStatusMap).length + '</b></span></div>');
 
-        //Boundaries Layers
-
+    }
         this.getSurveyAreaLayer = function () {
 
             var styleObj = app.LayerStyles.filter(function (item) {
@@ -1189,7 +1213,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: 'SurveyArea',
-                data: app.filterDataWithProvince(app.surveyAreaGeoJson, "FeatureCollection"),//app.areaGeoJson
+                data: app.filterDataWithProvinceGeom(app.surveyAreaGeoJson, "FeatureCollection", "SVA"),//app.areaGeoJson
                 pickable: true,
                 stroked: true,
                 filled: true,
@@ -1216,7 +1240,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: 'area',
-                data: app.filterDataWithProvince(app.areaGeoJson, "FeatureCollection"),//app.areaGeoJson
+                data: app.filterDataWithProvinceGeom(app.areaGeoJson, "FeatureCollection", "ARA"),//app.areaGeoJson
                 pickable: true,
                 stroked: true,
                 filled: true,
@@ -1242,7 +1266,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: 'subarea',
-                data: app.filterDataWithProvince(app.subareaGeoJson, "FeatureCollection"), //app.subareaGeoJson,
+                data: app.filterDataWithProvinceGeom(app.subareaGeoJson, "FeatureCollection", "SBA"), //app.subareaGeoJson,
                 pickable: true,
                 stroked: true,
                 filled: true,
@@ -1270,10 +1294,10 @@ var Main = function () {
                 return item.properties.network_id == TicketNetworkId;
             });
             networkTicketJson.features = filternetworkticketGeoJson;
-           
+
             return new GeoJsonLayer({
                 id: 'networkticket',
-                data: app.filterDataWithProvince(networkTicketJson, "FeatureCollection"), //app.networkticketGeoJson,
+                data: app.filterDataWithProvinceGeom(networkTicketJson, "FeatureCollection", "NT"), //app.networkticketGeoJson,
                 pickable: true,
                 stroked: true,
                 filled: true,
@@ -1300,7 +1324,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: 'dsa',
-                data: app.filterDataWithProvince(app.dsaGeoJson, "FeatureCollection"), //app.dsaGeoJson,
+                data: app.filterDataWithProvinceGeom(app.dsaGeoJson, "FeatureCollection", "DSA"), //app.dsaGeoJson,
                 pickable: true,
                 stroked: true,
                 filled: true,
@@ -1327,7 +1351,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: 'csa',
-                data: app.filterDataWithProvince(app.csaGeoJson, "FeatureCollection"), //app.csaGeoJson,
+                data: app.filterDataWithProvinceGeom(app.csaGeoJson, "FeatureCollection", "CSA"), //app.csaGeoJson,
                 pickable: true,
                 stroked: true,
                 filled: true,
@@ -1356,7 +1380,7 @@ var Main = function () {
             });
             return new deck.TextLayer({
                 id: 'csa-text',
-                data: app.filterDataWithProvince(app.csaLabelData, "JsonArray"), //app.csaLabelData,
+                data: app.filterDataWithProvinceGeom(app.csaLabelData, "JsonArray", "CSA"), //app.csaLabelData,
                 pickable: false,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 visible: app.isVectorLayerLabelEnabled("CSA"),
@@ -1377,7 +1401,7 @@ var Main = function () {
             });
             return new deck.TextLayer({
                 id: 'dsa-text',
-                data: app.filterDataWithProvince(app.dsaLabelData, "JsonArray"), //app.dsaLabelData,
+                data: app.filterDataWithProvinceGeom(app.dsaLabelData, "JsonArray", "DSA"), //app.dsaLabelData,
                 pickable: false,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 visible: app.isVectorLayerLabelEnabled("DSA"),
@@ -1394,35 +1418,13 @@ var Main = function () {
             });
         }
 
-        //this.getNetworkTicketTextLayer = function () {
-        //    debugger;
-        //    var styleObj = LayerStyles.filter(function (item) {
-        //        return item.layer_name == "Network_Ticket";
-        //    });
-        //    return new deck.TextLayer({
-        //        id: 'networkticket-text',
-        //        data: app.filterDataWithProvince(app.networkTicketLabelData, "JsonArray"), 
-        //        pickable: false,
-        //        useDevicePixels: app.useDevicePixelsInVectorLayer,
-        //        visible: true,
-        //        getPosition: (d) => d.position,
-        //        getText: (d) => d.text,
-        //        getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-        //        getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-        //        extensions: [new CollisionFilterExtension()],
-        //        collisionGroup: 'Label',
-        //        getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-        //        background: true,
-        //    });
-        //}
-
         this.getSubAreaTextLayer = function () {
             var styleObj = app.LayerStyles.filter(function (item) {
                 return item.layer_name == "SubArea";
             });
             return new deck.TextLayer({
                 id: 'subarea-text',
-                data: app.filterDataWithProvince(app.subAreaLabelData, "JsonArray"), //app.subAreaLabelData,
+                data: app.filterDataWithProvinceGeom(app.subAreaLabelData, "JsonArray", "SBA"), //app.subAreaLabelData,
                 pickable: false,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 visible: app.isVectorLayerLabelEnabled("SBA"),
@@ -1443,7 +1445,7 @@ var Main = function () {
             });
             return new deck.TextLayer({
                 id: 'area-text',
-                data: app.filterDataWithProvince(app.areaLabelData, "JsonArray"), //app.areaLabelData,
+                data: app.filterDataWithProvinceGeom(app.areaLabelData, "JsonArray", "ARA"), //app.areaLabelData,
                 pickable: false,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 visible: app.isVectorLayerLabelEnabled("ARA"),
@@ -1465,7 +1467,7 @@ var Main = function () {
             });
             return new deck.TextLayer({
                 id: 'SurveyArea-text',
-                data: app.filterDataWithProvince(app.surveyAreaLabelData, "JsonArray"), //app.areaLabelData,
+                data: app.filterDataWithProvinceGeom(app.surveyAreaLabelData, "JsonArray", "SVA"), //app.areaLabelData,
                 pickable: false,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 visible: app.isVectorLayerLabelEnabled("SVA"),
@@ -1486,7 +1488,7 @@ var Main = function () {
             });
             return new deck.TextLayer({
                 id: 'CableCore-text',
-                data: app.filterDataWithProvince(app.cableCoreLabelDataFiltered, "JsonArray"),// app.cableCoreLabelDataFiltered,
+                data: app.filterDataWithProvinceGeom(app.cableCoreLabelDataFiltered, "JsonArray", "CBL"),// app.cableCoreLabelDataFiltered,
                 pickable: false,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 visible: app.isVectorLayerActive("CBL") && !app.isVectorLayerLabelEnabled("CBL"),
@@ -1517,7 +1519,7 @@ var Main = function () {
             });
             return new deck.TextLayer({
                 id: 'CableLabel-text',
-                data: app.filterDataWithProvince(app.cableLabelDataFiltered, "JsonArray"), //app.cableLabelDataFiltered,
+                data: app.filterDataWithProvinceGeom(app.cableLabelDataFiltered, "JsonArray", "CBL"), //app.cableLabelDataFiltered,
                 pickable: false,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 visible: app.isVectorLayerLabelEnabled("CBL"),
@@ -1546,7 +1548,7 @@ var Main = function () {
             });
             return new deck.TextLayer({
                 id: 'TrenchLabel-text',
-                data: app.filterDataWithProvince(app.trenchLabelData, "JsonArray"), //app.trenchLabelData,
+                data: app.filterDataWithProvinceGeom(app.trenchLabelData, "JsonArray", "TRH"), //app.trenchLabelData,
                 pickable: false,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 visible: app.isVectorLayerLabelEnabled("TRH"),
@@ -1575,7 +1577,7 @@ var Main = function () {
             });
             return new deck.TextLayer({
                 id: 'DuctLabel-text',
-                data: app.filterDataWithProvince(app.ductLabelData, "JsonArray"), //app.trenchLabelData,
+                data: app.filterDataWithProvinceGeom(app.ductLabelData, "JsonArray", "DCT"), //app.trenchLabelData,
                 pickable: false,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 visible: app.isVectorLayerLabelEnabled("DCT"),
@@ -1605,7 +1607,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: "pole",
-                data: app.filterDataWithProvince(app.poleGeoJson, "FeatureCollection"), //app.poleGeoJson,
+                data: app.filterDataWithProvinceGeom(app.poleGeoJson, "FeatureCollection", "POL"), //app.poleGeoJson,
                 filled: true,
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -1668,7 +1670,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: "manhole",
-                data: app.filterDataWithProvince(app.manholeGeoJson, "FeatureCollection"), //app.manholeGeoJson,
+                data: app.filterDataWithProvinceGeom(app.manholeGeoJson, "FeatureCollection", "MH"), //app.manholeGeoJson,
                 filled: true,
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -1731,7 +1733,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: "wallmount",
-                data: app.filterDataWithProvince(app.wallmountGeoJson, "FeatureCollection"), //app.wallmountGeoJson,
+                data: app.filterDataWithProvinceGeom(app.wallmountGeoJson, "FeatureCollection", "WMT"), //app.wallmountGeoJson,
                 filled: true,
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -1794,7 +1796,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: "fms",
-                data: app.filterDataWithProvince(app.fmsGeoJson, "FeatureCollection"), //app.fmsGeoJson,
+                data: app.filterDataWithProvinceGeom(app.fmsGeoJson, "FeatureCollection", "FMS"), //app.fmsGeoJson,
                 filled: true,
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -1856,7 +1858,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: "ont",
-                data: app.filterDataWithProvince(app.ontGeoJson, "FeatureCollection"), //app.ontGeoJson,
+                data: app.filterDataWithProvinceGeom(app.ontGeoJson, "FeatureCollection", "ONT"), //app.ontGeoJson,
                 filled: true,
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -1918,7 +1920,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: "tree",
-                data: app.filterDataWithProvince(app.treeGeoJson, "FeatureCollection"), //app.treeGeoJson,
+                data: app.filterDataWithProvinceGeom(app.treeGeoJson, "FeatureCollection", "TRE"), //app.treeGeoJson,
                 filled: true,
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -1981,18 +1983,18 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: "building",
-                data: app.filterDataWithProvince(app.buildingGeoJson, "FeatureCollection"), //app.buildingGeoJson,
+                data: app.filterDataWithProvinceGeom(app.buildingGeoJson, "FeatureCollection", "BLDP,BLD,BLDC"), //app.buildingGeoJson,
                 filled: true,
                 stroked: true,
                 opacity: .2,
                 getLineWidth: 0,
-                getFillColor: "#e4f21c",                
+                getFillColor: "#e4f21c",
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 pointType: (app.isVectorLayerLabelEnabled("BLDP,BLD,BLDC") ? 'icon+text' : 'icon'),
                 getText: f => app.GetLabelText(f),
                 getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',                
+                getTextAnchor: 'start',
                 getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
                 getTextPixelOffset: [10, 10],
                 getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
@@ -2048,7 +2050,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: "pod",
-                data: app.filterDataWithProvince(app.podGeoJson, "FeatureCollection"), //app.podGeoJson,
+                data: app.filterDataWithProvinceGeom(app.podGeoJson, "FeatureCollection", "POD"), //app.podGeoJson,
                 filled: true,
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -2113,7 +2115,7 @@ var Main = function () {
             app.filterSplitterGeoJsonData();
             return new GeoJsonLayer({
                 id: "splitter",
-                data: app.filterDataWithProvince(app.splitterFilteredGeoJson, "FeatureCollection"), //app.splitterFilteredGeoJson,
+                data: app.filterDataWithProvinceGeom(app.splitterFilteredGeoJson, "FeatureCollection", "SPL"), //app.splitterFilteredGeoJson,
                 filled: true,
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -2176,7 +2178,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: "fdb",
-                data: app.filterDataWithProvince(app.fdbGeoJson, "FeatureCollection"), //app.fdbGeoJson,
+                data: app.filterDataWithProvinceGeom(app.fdbGeoJson, "FeatureCollection", "FDB"), //app.fdbGeoJson,
                 filled: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 pointType: (app.isVectorLayerLabelEnabled("FDB") ? 'icon+text' : 'icon'),
@@ -2239,7 +2241,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: "bdb",
-                data: app.filterDataWithProvince(app.bdbGeoJson, "FeatureCollection"), //app.bdbGeoJson,
+                data: app.filterDataWithProvinceGeom(app.bdbGeoJson, "FeatureCollection", "BDB"), //app.bdbGeoJson,
                 filled: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 pointType: (app.isVectorLayerLabelEnabled("BDB") ? 'icon+text' : 'icon'),
@@ -2302,7 +2304,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: "adb",
-                data: app.filterDataWithProvince(app.adbGeoJson, "FeatureCollection"), //app.adbGeoJson,
+                data: app.filterDataWithProvinceGeom(app.adbGeoJson, "FeatureCollection", "ADB"), //app.adbGeoJson,
                 filled: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 pointType: (app.isVectorLayerLabelEnabled("ADB") ? 'icon+text' : 'icon'),
@@ -2365,7 +2367,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: "spliceclosure",
-                data: app.filterDataWithProvince(app.spliceclosureGeoJson, "FeatureCollection"), //app.spliceclosureGeoJson,
+                data: app.filterDataWithProvinceGeom(app.spliceclosureGeoJson, "FeatureCollection", "SC"), //app.spliceclosureGeoJson,
                 filled: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 pointType: (app.isVectorLayerLabelEnabled("SC") ? 'icon+text' : 'icon'),
@@ -2430,7 +2432,7 @@ var Main = function () {
             return new GeoJsonLayer({
                 id: 'cable',
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
-                data: app.filterDataWithProvince(app.cableFilteredGeoJson, "FeatureCollection"), //app.cableFilteredGeoJson,
+                data: app.filterDataWithProvinceGeom(app.cableFilteredGeoJson, "FeatureCollection","CBL"), //app.cableFilteredGeoJson,
                 lineWidthScale: 1,
                 lineWidthUnits: 'pixels',
                 lineWidthMinPixels: 1,
@@ -2485,7 +2487,7 @@ var Main = function () {
             return new GeoJsonLayer({
                 id: 'trench',
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
-                data: app.filterDataWithProvince(app.trenchGeoJson, "FeatureCollection"), //app.trenchGeoJson,
+                data: app.filterDataWithProvinceGeom(app.trenchGeoJson, "FeatureCollection", "TRH"), //app.trenchGeoJson,
                 lineWidthScale: 1,
                 lineWidthUnits: 'pixels',
                 lineWidthMinPixels: 1,
@@ -2542,7 +2544,7 @@ var Main = function () {
             return new GeoJsonLayer({
                 id: 'duct',
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
-                data: app.filterDataWithProvince(app.ductGeoJson, "FeatureCollection"), //app.trenchGeoJson,
+                data: app.filterDataWithProvinceGeom(app.ductGeoJson, "FeatureCollection", "DCT"), //app.trenchGeoJson,
                 lineWidthScale: 1,
                 lineWidthUnits: 'pixels',
                 lineWidthMinPixels: 1,
@@ -2590,14 +2592,14 @@ var Main = function () {
                     app.ShowWhatIsHere(info);
                 }
             })
-        }       
+        }
         this.getCustomerLayer = function () {
             var styleObj = app.LayerStyles.filter(function (item) {
                 return item.layer_name == "Customer";
             });
             return new GeoJsonLayer({
                 id: "cus",
-                data: app.filterDataWithProvince(app.customerGeoJson, "FeatureCollection"), //app.ontGeoJson,
+                data: app.filterDataWithProvinceGeom(app.customerGeoJson, "FeatureCollection", "CUS"), //app.ontGeoJson,
                 filled: true,
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -2659,7 +2661,7 @@ var Main = function () {
             });
             return new GeoJsonLayer({
                 id: 'row',
-                data: app.filterDataWithProvince(app.rowGeoJson, "FeatureCollection"),
+                data: app.filterDataWithProvinceGeom(app.rowGeoJson, "FeatureCollection", "ROW,ROWL,PIT"),
                 pickable: true,
                 stroked: true,
                 filled: true,
@@ -2687,7 +2689,7 @@ var Main = function () {
             });
             return new deck.TextLayer({
                 id: 'row-text',
-                data: app.filterDataWithProvince(app.rowLabelData, "JsonArray"), //app.csaLabelData,
+                data: app.filterDataWithProvinceGeom(app.rowLabelData, "JsonArray", "ROW,ROWL,PIT"), //app.csaLabelData,
                 pickable: false,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
                 visible: app.isVectorLayerLabelEnabled("ROW,ROWL,PIT"),
@@ -2704,12 +2706,12 @@ var Main = function () {
 
         this.getHandholeLayer = function () {
             var styleObj = app.LayerStyles.filter(function (item) {
-                console.log("Handhole called");
+                //console.log("Handhole called");
                 return item.layer_name == "Handhole";
             });
             return new GeoJsonLayer({
                 id: "HH",
-                data: app.filterDataWithProvince(app.handholeGeoJson, "FeatureCollection"), //app.ontGeoJson,
+                data: app.filterDataWithProvinceGeom(app.handholeGeoJson, "FeatureCollection", "HH"), //app.ontGeoJson,
                 filled: true,
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -2767,12 +2769,12 @@ var Main = function () {
         };
         this.getStructureLayer = function () {
             var styleObj = app.LayerStyles.filter(function (item) {
-                console.log("Handhole called");
+                //console.log("Handhole called");
                 return item.layer_name == "Structure";
             });
             return new GeoJsonLayer({
                 id: "structure",
-                data: app.filterDataWithProvince(app.structureGeoJson, "FeatureCollection"), //app.ontGeoJson,
+                data: app.filterDataWithProvinceGeom(app.structureGeoJson, "FeatureCollection", "STRP,STR,STRC"), //app.ontGeoJson,
                 filled: true,
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -2831,12 +2833,12 @@ var Main = function () {
 
         this.getCabinetLayer = function () {
             var styleObj = app.LayerStyles.filter(function (item) {
-                console.log("Handhole called");
+                //console.log("Handhole called");
                 return item.layer_name == "Cabinet";
             });
             return new GeoJsonLayer({
-                id: "structure",
-                data: app.filterDataWithProvince(app.cabinetGeoJson, "FeatureCollection"), //app.ontGeoJson,
+                id: "cabinet",
+                data: app.filterDataWithProvinceGeom(app.cabinetGeoJson, "FeatureCollection", "CBT"), //app.ontGeoJson,
                 filled: true,
                 pickable: true,
                 useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -2891,8 +2893,248 @@ var Main = function () {
                     progress.done(); // hides progress bar
                 },
             })
-        };
+    };
 
+    this.getRackLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {            
+            return item.layer_name == "Rack";
+        });
+        return new GeoJsonLayer({
+            id: "rack",
+            data: app.filterDataWithProvinceGeom(app.rackGeoJson, "FeatureCollection", "RCK"), //app.ontGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("RCK") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),           
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,           
+            visible: app.isVectorLayerActive("RCK"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("RCK"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
+
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
+
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
+    this.getPatchPanelLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "PatchPanel";
+        });
+        return new GeoJsonLayer({
+            id: "PatchPanel",
+            data: app.filterDataWithProvinceGeom(app.patchpanelGeoJson, "FeatureCollection", "PATCHP"), //app.ontGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("PATCHP") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            visible: app.isVectorLayerActive("PATCHP"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("PATCHP"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
+
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
+
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
+    this.getHTBLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "HTB";
+        });
+        return new GeoJsonLayer({
+            id: "HTB",
+            data: app.filterDataWithProvinceGeom(app.htbGeoJson, "FeatureCollection", "HTB"), //app.ontGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("HTB") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            visible: app.isVectorLayerActive("HTB"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("HTB"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
+
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
+
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
+    this.getEquipmentLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Equipment";
+        });
+        return new GeoJsonLayer({
+            id: "EQPMNT",
+            data: app.filterDataWithProvinceGeom(app.equipmentGeoJson, "FeatureCollection", "EQPMNT"), //app.ontGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("EQPMNT") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            visible: app.isVectorLayerActive("EQPMNT"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("EQPMNT"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
+
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
+
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
         this.getFilteValuesByNetworkStatus = function (networkStatusVal) {
             return networkStatusVal == 'A' ? 1 : 2;
         }
@@ -2939,240 +3181,7 @@ var Main = function () {
                 return retRangeVal;
             }
         }
-
-        this.RenderVectorLayer_NotInUseNow = function (lIndex) {
-            //this.SetZoomLevelForLayers = false;
-            app.ActivePlannedVectorlayers = app.getActiveNetworkLayers('P', false);
-            app.ActiveAsBuiltVectorlayers = app.getActiveNetworkLayers('A', false);
-            app.PolygonVectorlayers = app.getActivePolygonlayer();
-            app.ActivePlannedVectorlayersWithLabels = app.getActiveNetworkLayers('P', true);
-            app.ActiveAsBuiltVectorlayersWithLabels = app.getActiveNetworkLayers('A', true);
-            app.PolygonVectorlayersWithLabel = app.getActivePolygonlayer(true);
-
-            //this.SetZoomLevelForLayers = true;
-            /*if ((app.layestList.indexOf("Area") == lIndex || lIndex == 0) && app.areaGeoJson.features) {
-                if (app.areaVectorLayer) {
-                    app.areaVectorLayer.setProps({ layers: app.getAreaLayer() });
-                } else {
-                    app.areaVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getAreaLayer()
-                    });
-                }
-                app.areaVectorLayer.setMap(app.map);
-            }*/
-            if ((app.layestList.indexOf("SubArea") == lIndex || app.layestList.indexOf("Area") == lIndex || app.layestList.indexOf("DSA") == lIndex || lIndex == 0)) {
-                let layerList = [];
-                layerList.push(app.areaGeoJson.features ? app.getAreaLayer() : null);
-                //layerList.push(app.subareaGeoJson.features ? app.getSubAreaLayer() : null);
-                //layerList.push(app.subareaGeoJson.features ? app.getSubAreaTextLayer() : null);
-                layerList.push(app.dsaGeoJson.features ? app.getDSALayer() : null);
-                layerList.push(app.dsaGeoJson.features ? app.getDSATextLayer() : null);
-                if (app.subareaVectorLayer) {
-                    app.subareaVectorLayer.setProps({ layers: layerList });
-                } else {
-                    app.subareaVectorLayer = new GoogleMapsOverlay({
-                        layers: layerList
-                    });
-                }
-                app.subareaVectorLayer.setMap(app.map);
-            }
-            if ((app.layestList.indexOf("DSA") == lIndex || lIndex == 0) && app.dsaGeoJson.features) {
-                if (app.dsaVectorLayer) {
-                    app.dsaVectorLayer.setProps({ layers: app.getDSALayer() });
-                } else {
-                    app.dsaVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getDSALayer()
-                    });
-                }
-                app.dsaVectorLayer.setMap(app.map);
-            }
-            if ((app.layestList.indexOf("CSA") == lIndex || lIndex == 0) && app.csaGeoJson.features) {
-                if (app.csaVectorLayer) {
-                    app.csaVectorLayer.setProps({ layers: [app.getCSALayer(), app.getCSATextLayer()] });
-                } else {
-                    app.csaVectorLayer = new GoogleMapsOverlay({
-                        layers: [app.getCSALayer(), app.getCSATextLayer()]
-                    });
-                }
-                app.csaVectorLayer.setMap(app.map);
-            }
-            if ((app.layestList.indexOf("Pole") == lIndex || lIndex == 0) && app.poleGeoJson.features) {
-                if (app.poleVectorLayer) {
-                    app.poleVectorLayer.setProps({ layers: app.getPoleLayer() });
-                }
-                else {
-                    app.poleVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getPoleLayer()
-                    });
-                }
-                app.poleVectorLayer.setMap(app.map);
-
-            }
-            if ((app.layestList.indexOf("Manhole") == lIndex || lIndex == 0) && app.manholeGeoJson.features) {
-                if (app.manholeVectorLayer) {
-                    app.manholeVectorLayer.setProps({ layers: app.getManholeLayer() });
-                }
-                else {
-                    app.manholeVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getManholeLayer()
-                    });
-                }
-                app.manholeVectorLayer.setMap(app.map);
-            }
-            if ((app.layestList.indexOf("WallMount") == lIndex || lIndex == 0) && app.wallmountGeoJson.features) {
-                if (app.wallmountVectorLayer) {
-                    app.wallmountVectorLayer.setProps({ layers: app.getWallmountLayer() });
-                } else {
-                    app.wallmountVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getWallmountLayer()
-                    });
-                }
-                app.wallmountVectorLayer.setMap(app.map);
-            }
-            if ((app.layestList.indexOf("FDB") == lIndex || lIndex == 0) && app.fdbGeoJson.features) {
-                if (app.fdbVectorLayer) {
-                    app.fdbVectorLayer.setProps({ layers: app.getFDBLayer() });
-                } else {
-                    app.fdbVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getFDBLayer()
-                    });
-                }
-
-                app.fdbVectorLayer.setMap(app.map);
-            }
-            if ((app.layestList.indexOf("BDB") == lIndex || lIndex == 0) && app.bdbGeoJson.features) {
-                if (app.bdbVectorLayer) {
-                    app.bdbVectorLayer.setProps({ layers: app.getBDBLayer() });
-                } else {
-                    app.bdbVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getBDBLayer()
-                    });
-                }
-                app.bdbVectorLayer.setMap(app.map);
-            }
-            if ((app.layestList.indexOf("Splitter") == lIndex || lIndex == 0) && app.splitterGeoJson.features) {
-                if (app.splitterVectorLayer) {
-                    app.splitterVectorLayer.setProps({ layers: app.getSplitterLayer() });
-                } else {
-                    app.splitterVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getSplitterLayer()
-                    });
-                }
-                app.splitterVectorLayer.setMap(app.map);
-            }
-            if ((app.layestList.indexOf("ADB") == lIndex || lIndex == 0) && app.adbGeoJson.features) {
-                if (app.adbVectorLayer) {
-                    app.adbVectorLayer.setProps({ layers: app.getADBLayer() });
-                } else {
-                    app.adbVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getADBLayer()
-                    });
-                }
-                app.adbVectorLayer.setMap(app.map);
-            }
-            if ((app.layestList.indexOf("SpliceClosure") == lIndex || lIndex == 0) && app.spliceclosureGeoJson.features) {
-                if (app.spliceclosureVectorLayer) {
-                    app.spliceclosureVectorLayer.setProps({ layers: app.getSpliceClosureLayer() });
-                } else {
-                    app.spliceclosureVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getSpliceClosureLayer()
-                    });
-                }
-                app.spliceclosureVectorLayer.setMap(app.map);
-            }
-            if ((app.layestList.indexOf("Cable") == lIndex || app.layestList.indexOf("Trench") == lIndex || lIndex == 0)) {
-                let layerList = [];
-                layerList.push(app.cableGeoJson.features ? app.getCableLayer() : null);
-                layerList.push(app.cableGeoJson.features ? app.getCableCoreTextLayer() : null);
-                layerList.push(app.cableGeoJson.features ? app.getCableLabelTextLayer() : null);
-                layerList.push(app.trenchGeoJson.features ? app.getTrenchLayer() : null);
-                layerList.push(app.trenchGeoJson.features ? app.getTrenchLabelTextLayer() : null);
-                if (app.cableVectorLayer) {
-                    app.cableVectorLayer.setProps({ layers: layerList });
-                } else {
-                    app.cableVectorLayer = new GoogleMapsOverlay({
-                        layers: layerList
-                    });
-                }
-                app.cableVectorLayer.setMap(app.map);
-            }
-
-            /* if ((app.layestList.indexOf("Trench") == lIndex || lIndex == 0) && app.trenchGeoJson.features) {
-                 if (app.trenchVectorLayer) {
-                     app.trenchVectorLayer.setProps({ layers: app.getTrenchLayer() });
-                 } else {
-                     app.trenchVectorLayer = new GoogleMapsOverlay({
-                         layers: app.getTrenchLayer()
-                     });
-                 }
-                 app.trenchVectorLayer.setMap(app.map);
-             }*/
-
-            if ((app.layestList.indexOf("ONT") == lIndex || lIndex == 0) && app.ontGeoJson.features) {
-                if (app.ontVectorLayer) {
-                    app.ontVectorLayer.setProps({ layers: app.getONTLayer() });
-                } else {
-                    app.ontVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getONTLayer()
-                    });
-                }
-                app.ontVectorLayer.setMap(app.map);
-            }
-
-            if ((app.layestList.indexOf("Tree") == lIndex || lIndex == 0) && app.treeGeoJson.features) {
-                if (app.treeVectorLayer) {
-                    app.treeVectorLayer.setProps({ layers: app.getTreeLayer() });
-                } else {
-                    app.treeVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getTreeLayer()
-                    });
-                }
-                app.treeVectorLayer.setMap(app.map);
-            }
-
-            if ((app.layestList.indexOf("Building") == lIndex || lIndex == 0) && app.buildingGeoJson.features) {
-
-                if (app.buildingVectorLayer) {
-                    app.buildingVectorLayer.setProps({ layers: app.getBuildingLayer() });
-                } else {
-                    app.buildingVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getBuildingLayer()
-                    });
-                }
-                app.buildingVectorLayer.setMap(app.map);
-            }
-
-            if ((app.layestList.indexOf("POD") == lIndex || app.layestList.indexOf("FMS") == lIndex || lIndex == 0)) {
-                if (app.podVectorLayer) {
-                    app.podVectorLayer.setProps({ layers: [(app.podGeoJson.features ? app.getPODLayer() : null), (app.fmsGeoJson.features ? app.getFMSLayer() : null)] });
-                } else {
-                    app.podVectorLayer = new GoogleMapsOverlay({
-                        layers: [(app.podGeoJson.features ? app.getPODLayer() : null), (app.fmsGeoJson.features ? app.getFMSLayer() : null)]
-                    });
-                }
-                app.podVectorLayer.setMap(app.map);
-            }
-
-
-            /*if ((app.layestList.indexOf("FMS") == lIndex || lIndex == 0) && app.fmsGeoJson.features) {
-                if (app.fmsVectorLayer) {
-                    app.fmsVectorLayer.setProps({ layers: app.getFMSLayer() });
-                } else {
-                    app.fmsVectorLayer = new GoogleMapsOverlay({
-                        layers: app.getFMSLayer()
-                    });
-                }
-                app.fmsVectorLayer.setMap(app.map);
-            }*/
-
-
-            app.minLayerIndex = 99;
-        }
-        window.addEventListener("contextmenu", e => e.preventDefault());
-        app.RenderVectorLayer(0);
-        $("#dvProgress").hide();
-        $('#dvProgress').css('display', 'none');
-    }
+   // }
     this.filterCableGeoJsonData = function () {
         let sCable_Type = '';
         let sCable_Category = '';
@@ -3226,14 +3235,19 @@ var Main = function () {
             }, [])
         };
     }
-    this.fetchVectorLayerData = function (vectorPrvinceSelected) {
+    this.fetchVectorLayerData = function (vectorPrvinceSelected, _entityName) {
         //console.log("Request Fetch Time:" + app.vectorFetchTime);
-        //app.LoadLayerIconMapping();          
+        //app.LoadLayerIconMapping();
+        $(app.DE.lyrRefresh).addClass('eaSpin');
         let requestResult = new Promise(function (resolve, reject) {
-            ajaxReq('VectorLayer/GetVectorGeojson', { vectorPrvinceIds: vectorPrvinceSelected }, false, function (resp) {
+            ajaxReq('VectorLayer/GetVectorGeojson', { vectorPrvinceIds: vectorPrvinceSelected, entityType: _entityName}, true, function (resp) {
                 if (resp.status == 'OK') {
-                    console.log(resp);
+                    //console.log(resp);
                     let layersData = resp.results.LayersData;
+                    if (layersData.length == 0) {
+                        app.updateLayerLoadingStatus(_entityName);
+                        //app.RenderVectorLayer(app.layestList.indexOf(_entityName));
+                    }
                     app.vectorFetchTime = resp.results.FetchDateTime;
                     const provinceArray = vectorPrvinceSelected.split(',');
                     for (let index = 0; index < provinceArray.length; index++) {
@@ -3249,56 +3263,73 @@ var Main = function () {
                     }, {});
                     if (app.poleGeoJson.features) {
                         app.poleGeoJson = { "type": "FeatureCollection", "features": app.poleGeoJson.features.concat(allLayerVector.Pole ? allLayerVector.Pole : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Pole"));
                     } else {
                         app.poleGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Pole };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Pole"));
                     }
 
                     if (app.manholeGeoJson.features) {
                         app.manholeGeoJson = { "type": "FeatureCollection", "features": app.manholeGeoJson.features.concat(allLayerVector.Manhole ? allLayerVector.Manhole : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Manhole"));
                     } else {
                         app.manholeGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Manhole };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Manhole"));
                     }
 
                     if (app.wallmountGeoJson.features) {
                         app.wallmountGeoJson = { "type": "FeatureCollection", "features": app.wallmountGeoJson.features.concat(allLayerVector.WallMount ? allLayerVector.WallMount : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("WallMount"));
                     } else {
                         app.wallmountGeoJson = { "type": "FeatureCollection", "features": allLayerVector.WallMount };
+                        //app.RenderVectorLayer(app.layestList.indexOf("WallMount"));
                     }
 
                     if (app.fdbGeoJson.features) {
                         app.fdbGeoJson = { "type": "FeatureCollection", "features": app.fdbGeoJson.features.concat(allLayerVector.FDB ? allLayerVector.FDB : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("FDB"));
                     } else {
                         app.fdbGeoJson = { "type": "FeatureCollection", "features": allLayerVector.FDB };
+                        //app.RenderVectorLayer(app.layestList.indexOf("FDB"));
                     }
 
                     if (app.bdbGeoJson.features) {
                         app.bdbGeoJson = { "type": "FeatureCollection", "features": app.bdbGeoJson.features.concat(allLayerVector.BDB ? allLayerVector.BDB : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("BDB"));
                     } else {
                         app.bdbGeoJson = { "type": "FeatureCollection", "features": allLayerVector.BDB };
+                        //app.RenderVectorLayer(app.layestList.indexOf("BDB"));
                     }
 
                     if (app.adbGeoJson.features) {
                         app.adbGeoJson = { "type": "FeatureCollection", "features": app.adbGeoJson.features.concat(allLayerVector.ADB ? allLayerVector.ADB : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("ADB"));
                     } else {
                         app.adbGeoJson = { "type": "FeatureCollection", "features": allLayerVector.ADB };
+                        //app.RenderVectorLayer(app.layestList.indexOf("ADB"));
                     }
 
                     if (app.spliceclosureGeoJson.features) {
                         app.spliceclosureGeoJson = { "type": "FeatureCollection", "features": app.spliceclosureGeoJson.features.concat(allLayerVector.SpliceClosure ? allLayerVector.SpliceClosure : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("SpliceClosure"));
                     } else {
                         app.spliceclosureGeoJson = { "type": "FeatureCollection", "features": allLayerVector.SpliceClosure };
+                        //app.RenderVectorLayer(app.layestList.indexOf("SpliceClosure"));
                     }
 
                     if (app.splitterGeoJson.features) {
                         app.splitterGeoJson = { "type": "FeatureCollection", "features": app.splitterGeoJson.features.concat(allLayerVector.Splitter ? allLayerVector.Splitter : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Splitter"));
                     } else {
                         app.splitterGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Splitter };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Splitter"));
                     }
 
                     if (app.areaGeoJson.features) {
                         app.areaGeoJson = { "type": "FeatureCollection", "features": app.areaGeoJson.features.concat(allLayerVector.Area ? allLayerVector.Area : []) };
+                      
                     } else {
-                        app.areaGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Area };
+                        app.areaGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Area };                       
                     }
                     if (app.areaGeoJson.features) {
                         app.areaLabelData = [];
@@ -3311,8 +3342,10 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
+                                feature: feature
                             });
                         });
+                        //app.RenderVectorLayer(app.layestList.indexOf("Area"));
                     }
 
                     if (app.subareaGeoJson.features) {
@@ -3332,8 +3365,10 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
+                                feature: feature
                             });
                         });
+                        //app.RenderVectorLayer(app.layestList.indexOf("SubArea"));
                     }
                     if (app.networkticketGeoJson.features) {
                         app.networkticketGeoJson = { "type": "FeatureCollection", "features": app.networkticketGeoJson.features.concat(allLayerVector.Network_Ticket ? allLayerVector.Network_Ticket : []) };
@@ -3352,8 +3387,10 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
+                                feature: feature
                             });
                         });
+                        //app.RenderVectorLayer(app.layestList.indexOf("Network_Ticket"));
                     }
 
                     if (app.dsaGeoJson.features) {
@@ -3373,8 +3410,10 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
+                                feature: feature
                             });
                         });
+                        //app.RenderVectorLayer(app.layestList.indexOf("DSA"));
                     }
 
                     if (app.csaGeoJson.features) {
@@ -3393,9 +3432,11 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
-                                entity_category: feature.properties.entity_category
+                                entity_category: feature.properties.entity_category,
+                                feature: feature
                             });
                         });
+                        //app.RenderVectorLayer(app.layestList.indexOf("CSA"));
                     }
 
                     if (app.cableGeoJson.features) {
@@ -3406,6 +3447,7 @@ var Main = function () {
 
                     if (app.cableGeoJson.features) {
                         app.ProcessvectorDataForLabel('Cable', 1500);
+                        //app.RenderVectorLayer(app.layestList.indexOf("Cable"));
                     }
 
 
@@ -3417,82 +3459,97 @@ var Main = function () {
 
                     if (app.trenchGeoJson.features) {
                         app.ProcessvectorDataForLabel('Trench', 1500);
+                        //app.RenderVectorLayer(app.layestList.indexOf("Trench"));
                     }
 
                     if (app.fmsGeoJson.features) {
                         app.fmsGeoJson = { "type": "FeatureCollection", "features": app.fmsGeoJson.features.concat(allLayerVector.FMS ? allLayerVector.FMS : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("FMS"));
                     } else {
                         app.fmsGeoJson = { "type": "FeatureCollection", "features": allLayerVector.FMS };
+                        //app.RenderVectorLayer(app.layestList.indexOf("FMS"));
                     }
 
                     if (app.ontGeoJson.features) {
                         app.ontGeoJson = { "type": "FeatureCollection", "features": app.ontGeoJson.features.concat(allLayerVector.ONT ? allLayerVector.ONT : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("ONT"));
                     } else {
                         app.ontGeoJson = { "type": "FeatureCollection", "features": allLayerVector.ONT };
+                        //app.RenderVectorLayer(app.layestList.indexOf("ONT"));
                     }
 
                     if (app.treeGeoJson.features) {
                         app.treeGeoJson = { "type": "FeatureCollection", "features": app.treeGeoJson.features.concat(allLayerVector.Tree ? allLayerVector.Tree : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Tree"));
                     } else {
                         app.treeGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Tree };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Tree"));
                     }
 
                     if (app.buildingGeoJson.features) {
                         app.buildingGeoJson = { "type": "FeatureCollection", "features": app.buildingGeoJson.features.concat(allLayerVector.Building ? allLayerVector.Building : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Building"));
                     } else {
                         app.buildingGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Building };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Building"));
                     }
 
                     if (app.podGeoJson.features) {
                         app.podGeoJson = { "type": "FeatureCollection", "features": app.podGeoJson.features.concat(allLayerVector.POD ? allLayerVector.POD : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("POD"));
                     } else {
                         app.podGeoJson = { "type": "FeatureCollection", "features": allLayerVector.POD };
+                        //app.RenderVectorLayer(app.layestList.indexOf("POD"));
                     }
 
                     if (app.ductGeoJson.features) {
                         app.ductGeoJson = { "type": "FeatureCollection", "features": app.ductGeoJson.features.concat(allLayerVector.Duct ? allLayerVector.Duct : []) };
+                      
                     } else {
-                        app.ductGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Duct };
+                        app.ductGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Duct };                        
                     }
 
                     if (app.ductGeoJson.features) {
                         app.ProcessvectorDataForLabel('Duct', 1500);
+                        //app.RenderVectorLayer(app.layestList.indexOf("Duct"));
                     }
 
                     if (app.customerGeoJson.features) {
                         app.customerGeoJson = { "type": "FeatureCollection", "features": app.customerGeoJson.features.concat(allLayerVector.Customer ? allLayerVector.Customer : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Customer"));
                     } else {
                         app.customerGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Customer };
-                    }
-
-                    if (app.rowGeoJson.features) {
-                        app.rowGeoJson = { "type": "FeatureCollection", "features": app.rowGeoJson.features.concat(allLayerVector.ROW ? allLayerVector.ROW : []) };
-                    } else {
-                        app.rowGeoJson = { "type": "FeatureCollection", "features": allLayerVector.ROW };
-                    }
+                        //app.RenderVectorLayer(app.layestList.indexOf("Customer"));
+                    }                   
 
                     if (app.handholeGeoJson.features) {
                         app.handholeGeoJson = { "type": "FeatureCollection", "features": app.handholeGeoJson.features.concat(allLayerVector.Handhole ? allLayerVector.Handhole : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Handhole"));
                     } else {
                         app.handholeGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Handhole };
+                       // app.RenderVectorLayer(app.layestList.indexOf("Handhole"));
                     }
 
                     if (app.structureGeoJson.features) {
                         app.structureGeoJson = { "type": "FeatureCollection", "features": app.structureGeoJson.features.concat(allLayerVector.Structure ? allLayerVector.Structure : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Structure"));
                     } else {
                         app.structureGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Structure };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Structure"));
                     }
 
                     if (app.cabinetGeoJson.features) {
                         app.cabinetGeoJson = { "type": "FeatureCollection", "features": app.cabinetGeoJson.features.concat(allLayerVector.Cabinet ? allLayerVector.Cabinet : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Cabinet"));
                     } else {
                         app.cabinetGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Cabinet };
+                        //app.RenderVectorLayer(app.layestList.indexOf("Cabinet"));
                     }
 
                     if (app.surveyAreaGeoJson.features) {
                         app.surveyAreaGeoJson = { "type": "FeatureCollection", "features": app.surveyAreaGeoJson.features.concat(allLayerVector.SurveyArea ? allLayerVector.SurveyArea : []) };
                     } else {
-                        app.surveyAreaGeoJson = { "type": "FeatureCollection", "features": allLayerVector.SurveyArea };
+                        app.surveyAreaGeoJson = { "type": "FeatureCollection", "features": allLayerVector.SurveyArea };                        
                     }
 
                     if (app.surveyAreaGeoJson.features) {
@@ -3506,11 +3563,19 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
-                                entity_category: feature.properties.entity_category
+                                entity_category: feature.properties.entity_category,
+                                feature: feature
                             });
                         });
+                        //app.RenderVectorLayer(app.layestList.indexOf("SurveyArea"));
                     }
 
+                    if (app.rowGeoJson.features) {
+                        app.rowGeoJson = { "type": "FeatureCollection", "features": app.rowGeoJson.features.concat(allLayerVector.ROW ? allLayerVector.ROW : []) };
+
+                    } else {
+                        app.rowGeoJson = { "type": "FeatureCollection", "features": allLayerVector.ROW };
+                    }
                     if (app.rowGeoJson.features) {
                         app.rowLabelData = [];
                         app.rowGeoJson.features.forEach((feature) => {
@@ -3522,29 +3587,60 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
-                                entity_category: feature.properties.entity_category
+                                entity_category: feature.properties.entity_category,
+                                feature: feature
                             });
                         });
+                        //app.RenderVectorLayer(app.layestList.indexOf("ROW"));
+                    }     
+
+
+                    if (app.rackGeoJson.features) {
+                        app.rackGeoJson = { "type": "FeatureCollection", "features": app.rackGeoJson.features.concat(allLayerVector.Rack ? allLayerVector.Rack : []) };                
+                    } else {
+                        app.rackGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Rack };             
                     }
-                    
+
+                    if (app.patchpanelGeoJson.features) {
+                        app.patchpanelGeoJson = { "type": "FeatureCollection", "features": app.patchpanelGeoJson.features.concat(allLayerVector.PatchPanel ? allLayerVector.PatchPanel : []) };
+                    } else {
+                        app.patchpanelGeoJson = { "type": "FeatureCollection", "features": allLayerVector.PatchPanel };
+                    }
+
+                    if (app.htbGeoJson.features) {
+                        app.htbGeoJson = { "type": "FeatureCollection", "features": app.htbGeoJson.features.concat(allLayerVector.HTB ? allLayerVector.HTB : []) };
+                    } else {
+                        app.htbGeoJson = { "type": "FeatureCollection", "features": allLayerVector.HTB };
+                    }
+
+                    if (app.equipmentGeoJson.features) {
+                        app.equipmentGeoJson = { "type": "FeatureCollection", "features": app.equipmentGeoJson.features.concat(allLayerVector.Equipment ? allLayerVector.Equipment : []) };
+                    } else {
+                        app.equipmentGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Equipment };
+                    }
 
                     resolve("Data Loading work completed");
                 }
                 else {
+                    app.updateLayerLoadingStatus(_entityName);
                     console.log('error');
                     reject("There is some error");
                 }
 
             }, true, true);
         });
-        requestResult.then(function successValue(result) {
-            //console.log(result);
-            Array.prototype.push.apply(app.provinceListData, app.ActiveProvincelayers);
-            //console.log("Data loaded for below province:");
-            //console.log(app.provinceListData);
-            app.LoadVectorLayers();
+        requestResult.then(function successValue(result) {            
+            //Array.prototype.push.apply(app.provinceListData, app.ActiveProvincelayers); 
+            app.provinceListData = app.provinceListData.concat(
+                app.ActiveProvincelayers.filter(item =>
+                    !app.provinceListData.some(existingItem => existingItem === item)
+                )
+            );
+            app.RenderVectorLayer(app.layestList.indexOf(_entityName));
+            $(app.DE.lyrRefresh).removeClass('eaSpin');
         });
     }
+
     this.fetchVectorProvinceData = function () {
         let ProvinceRequestResult = new Promise(function (resolve, reject) {
             ajaxReq('VectorLayer/GetVectorProvinceData', {}, true, function (resp) {
@@ -3593,6 +3689,7 @@ var Main = function () {
     this.filterDataWithProvince = function (layerData, dataType) {
         app.ActiveProvincelayers = app.getActiveProvinceLayers();
         var filteredData = {};
+       
         if (dataType == "JsonArray") { //LabelData //FeatureData
             return layerData.filter((feature) =>
                 app.ActiveProvincelayers.includes(feature.province_id.toString())
@@ -3607,20 +3704,71 @@ var Main = function () {
             };
         }
     }
-    this.fetchVectorDelta = function () {
-        /*if (app.VectorDeltaRequestInProcess) {
-            return true;
-        }*/
-        let intersectingProvince = app.GetIntersectedProvince();
-        //console.log('intersectingProvince:');
-        //console.log(intersectingProvince);
+    this.getRandomFeatures = function(geojson, percentage) {
+        const features = [...geojson.features];
+        const numberOfFeatures = Math.ceil((percentage / 100) * features.length);
+        // Fisher-Yates shuffle
+        for (let i = features.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [features[i], features[j]] = [features[j], features[i]];
+        }
+        return features.slice(0, numberOfFeatures);
+    }
+    this.filterDataWithProvinceGeom_old = function (layerData, dataType) {    
+        var _data_per = si.map.getZoom() > 13 ? 10 : 5; 
+        var _bbox = [app.BBOXPointForVectorlayer[0], app.BBOXPointForVectorlayer[1], app.BBOXPointForVectorlayer[2], app.BBOXPointForVectorlayer[3]];
+        var _bboxPolygon = turf.bboxPolygon(_bbox);
+        app.ActiveProvincelayers = app.getActiveProvinceLayers();
+        var filteredData = {};
+
+        if (dataType == "JsonArray") { //LabelData //FeatureData
+            return layerData.filter((feature) =>
+                app.ActiveProvincelayers.includes(feature.province_id.toString()) && si.map.getZoom() >= 16 && turf.booleanIntersects(feature.feature.geometry, _bboxPolygon)
+            );
+        } else {
+            const filteredFeatures = layerData.features.filter((feature) =>
+                app.ActiveProvincelayers.includes(String(feature.properties.province_id)) && turf.booleanIntersects(feature.geometry, _bboxPolygon)
+            );
+            //console.log("Filtered Cable Length" + filteredFeatures.length);            
+            return {
+                type: "FeatureCollection",
+                //features: filteredFeatures,
+                features: si.map.getZoom() < 16 ? app.getRandomFeatures({ features: filteredFeatures }, _data_per) : filteredFeatures
+            };
+        }
+    }
+    this.filterDataWithProvinceGeom = function (layerData, dataType, entityName) {        
+        var _bbox = [app.BBOXPointForVectorlayer[0], app.BBOXPointForVectorlayer[1], app.BBOXPointForVectorlayer[2], app.BBOXPointForVectorlayer[3]];
+        var _bboxPolygon = turf.bboxPolygon(_bbox);
+        var _isLayerActive = true
+        if (entityName != "") {
+           _isLayerActive = app.isVectorLayerActive(entityName);
+        }
+        app.ActiveProvincelayers = app.getActiveProvinceLayers();
+        var filteredData = {};
+
+        if (dataType == "JsonArray") { //LabelData //FeatureData
+            return layerData.filter((feature) =>
+                _isLayerActive && app.ActiveProvincelayers.includes(feature.province_id.toString()) && turf.booleanIntersects(feature.feature.geometry, _bboxPolygon)
+            );
+        } else {
+            const filteredFeatures = layerData.features.filter((feature) =>
+                _isLayerActive && app.ActiveProvincelayers.includes(String(feature.properties.province_id)) && turf.booleanIntersects(feature.geometry, _bboxPolygon)
+            );
+            //console.log("Filtered Cable Length" + filteredFeatures.length);
+            return {
+                type: "FeatureCollection",
+                features: filteredFeatures,                
+            };
+        }
+    }
+    this.fetchVectorDelta = function () {      
+        let intersectingProvince = app.GetIntersectedProvince();        
         app.ActiveProvincelayers = app.getActiveProvinceLayers();
         app.ActiveProvincelayers = app.ActiveProvincelayers.filter(item => intersectingProvince.includes(item));
         //Added this Patch get the Delta of a single province(DB function is ready to handle multiple provine)
         app.ActiveProvincelayers = app.ActiveProvincelayers.slice(0, 1);
-        let vectorPrvinceSelected = app.ActiveProvincelayers.join(",");
-        //console.log('vectorPrvinceSelected:' + vectorPrvinceSelected);
-        //console.log("Request Fetch Time:" + app.vectorFetchTime);
+        let vectorPrvinceSelected = app.ActiveProvincelayers.join(",");       
         if (app.ActiveProvincelayers.length == 0) {
             console.log("Selected Layres are out of BBOX so no need to check delta");
             return false;
@@ -3667,6 +3815,7 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
+                                feature: feature
                             });
                         });
                     }
@@ -3687,6 +3836,7 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
+                                feature: feature
                             });
                         });
                     }
@@ -3707,6 +3857,7 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
+                                feature: feature
                             });
                         });
                     }
@@ -3727,7 +3878,8 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
-                                entity_category: feature.properties.entity_category
+                                entity_category: feature.properties.entity_category,
+                                feature: feature
                             });
                         });
                     }
@@ -3865,7 +4017,8 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
-                                entity_category: feature.properties.entity_category
+                                entity_category: feature.properties.entity_category,
+                                feature: feature
                             });
                         });
                     }
@@ -3887,13 +4040,35 @@ var Main = function () {
                                 province_id: feature.properties.province_id,
                                 position: centroidCoords,
                                 text: labelText,
-                                entity_category: feature.properties.entity_category
+                                entity_category: feature.properties.entity_category,
+                                feature: feature
                             });
                         });
                     }
                     app.RenderVectorLayer(app.layestList.indexOf("SurveyArea"));
                 }
 
+                if (allLayerVector.HTB) {
+                    app.htbGeoJson = { "type": "FeatureCollection", "features": allLayerVector.HTB };
+                    isDelta = true;
+                    app.RenderVectorLayer(app.layestList.indexOf("HTB"));
+                }
+
+                if (allLayerVector.Rack) {
+                    app.rackGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Rack };
+                    isDelta = true;
+                    app.RenderVectorLayer(app.layestList.indexOf("Rack"));
+                }
+                if (allLayerVector.PatchPanel) {
+                    app.patchpanelGeoJson = { "type": "FeatureCollection", "features": allLayerVector.PatchPanel };
+                    isDelta = true;
+                    app.RenderVectorLayer(app.layestList.indexOf("PatchPanel"));
+                }
+                if (allLayerVector.Equipment) {
+                    app.equipmentGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Equipment };
+                    isDelta = true;
+                    app.RenderVectorLayer(app.layestList.indexOf("Equipment"));
+                }
                 //console.log("app.minLayerIndex-" + app.minLayerIndex);
                 //alert(app.minLayerIndex);
                 if (isDelta && app.minLayerIndex != 99) {
@@ -3910,7 +4085,8 @@ var Main = function () {
 
         }, true, false);
     }
-    this.RefreshVectorDataAndLayer = function () {
+    this.RefreshVectorDataAndLayer = async function () {
+        $(app.DE.lyrRefresh).addClass('eaSpin');
         //Get All selected Province Layers
         app.ActiveProvincelayers = app.getActiveProvinceLayers();
         //Check if new Province Selected
@@ -3919,11 +4095,15 @@ var Main = function () {
         if (app.ActiveProvincelayers.length > 0) {
             app.ClearOldVectorData();
             let vectorPrvinceSelected = app.ActiveProvincelayers.join(",");
-            console.log(vectorPrvinceSelected);
-            app.fetchVectorLayerData(vectorPrvinceSelected);
+            console.log(vectorPrvinceSelected);            
+            app.layestList.forEach(function (_element) { 
+                app.LayerLoadingStatusMap[_element] = "Pending";
+                app.fetchVectorLayerData(vectorPrvinceSelected, _element);
+            });
         } else {
-            app.LoadVectorLayers();
+            app.RenderVectorLayer(-1);
         }
+        $(app.DE.lyrRefresh).removeClass('eaSpin');
     }
     this.ClearOldVectorData = function () {
         if (app.provinceListData.length == app.provinceLimitToStoreDatainBrowser) {
@@ -4372,6 +4552,7 @@ var Main = function () {
         google.maps.event.addListener(app.map, 'dragend', function () {
             if (app.IsVecorLayerEnabled) {
                 app.fetchVectorDelta();
+                app.RenderVectorLayer(-1);
             }
         });
 
@@ -4678,10 +4859,10 @@ var Main = function () {
                 });
             return false;
         });
-        $(app.DE.txtEntitySearch).on('keyup', function (e) {            
+        $(app.DE.txtEntitySearch).on('keyup', function (e) {
             app.loadSearchEngine();
         });
-        
+
         $(app.DE.InfoDiv).draggable({ scroll: false, handle: ".info_header_bg", containment: "window" });
         $(app.DE.SplicingDiv).draggable({ scroll: false, handle: ".info_header_bg", containment: "window" });
 
@@ -7118,7 +7299,7 @@ var Main = function () {
                 $("#landbaselayerSearch").addClass('spnLandbaseNot');
                 $("#landbaselayerSearch").removeClass('LandbaseNot');
                 $("#entitySearch").addClass('spnEntityNot');
-                $("#entitySearch").removeClass('spnEntity');                
+                $("#entitySearch").removeClass('spnEntity');
                 $("#googleSearch").addClass('spnGoogle');
                 $("#googleSearch").removeClass('spnGoogleNot');
                 $('.logout').fadeOut(500); // slide up logout menu
@@ -7256,9 +7437,9 @@ var Main = function () {
 
         return gmarkernew;
     }
-    
+
     this.loadSearchEngine = function () {
-        //;        
+        //;
         $(app.DE.txtEntitySearch).autocomplete({
 
             //source: function (request, response) {
@@ -7315,13 +7496,13 @@ var Main = function () {
                     event.preventDefault();
                     $(app.DE.txtEntitySearch).removeClass('ui-autocomplete-loading');
                 }
-                else {                    
+                else {
                     event.preventDefault();
                     app.gtype = ui.item.geomType;
                     if (ui.item.entityName != null) {
                         $(app.DE.txtEntitySearch).val(ui.item.entityTitle + ':' + ui.item.label);
                         app.ShowEntityOnMap(ui.item.systemID, ui.item.entityName, ui.item.geomType);
-                        $(app.DE.txtEntitySearch).removeClass('ui-autocomplete-loading');                        
+                        $(app.DE.txtEntitySearch).removeClass('ui-autocomplete-loading');
                     }
                     else {
                         $(app.DE.txtEntitySearch).val(ui.item.label + ':');
@@ -7697,7 +7878,7 @@ var Main = function () {
         });
     }
 
-    this.ShowLandbaseEntityOnMap = function (systemID, eType, gType) {        
+    this.ShowLandbaseEntityOnMap = function (systemID, eType, gType) {
         ajaxReq('LandBaseLayer/getLandbaseGeometryDetail', { systemId: systemID, geomType: gType, entityType: eType }, true, function (resp) {
             ////;
             if (resp.status = 'OK') {
@@ -8364,12 +8545,12 @@ var Main = function () {
                             app.IsCollisionEnabled = false;
                         }
                         if (app.IsVecorLayerEnabled) {
-                            app.RefreshVectorDataAndLayer();
+                           app.RefreshVectorDataAndLayer();
                         }
                     }
                     //-----------------//
 
-                    app.LoadLayersOnMap();
+                   app.LoadLayersOnMap();
                     //START: Clear Markings & Load Markings according to workspace
 
                     for (k = 0; k < app.gpolyline.length; k++) {
@@ -8415,7 +8596,7 @@ var Main = function () {
         }
     }
 
-    this.OpenWorkspace = function (wrkspcID) {
+    this.OpenWorkspace = async function (wrkspcID) {
         if (app.OldWorkSpaceId==0)
             OpenNewWorkspace(wrkspcID);
         else {
@@ -10839,7 +11020,7 @@ var Main = function () {
         $(document).off("click", ".tool_bar  [id^=Entity]");
         $(document).on('click', ".tool_bar  [id^=Entity]", function (e) {
 
-            
+
             var $iconElement = $(this);
             if (!$iconElement.hasClass("dvdisabled") && !$iconElement.hasClass("roledisabled")) {
                 var actionName = $iconElement.data("action")
@@ -12823,7 +13004,7 @@ var Main = function () {
             }, true, true);
     }
     this.ShowLandbaseDetailFromInfo = function (_data) {
-        //;        
+        //;
         var ntkIdType = "A";
         var modelClass = getPopUpModelClass(_data.entityType);
         // var lyrDetail = getLayerDetail(_data.entityType);
@@ -12837,7 +13018,7 @@ var Main = function () {
 
     this.ShowDetailFromInfo = function (_data) {
         //systemId, entityType, geomType
-        //;        
+        //;
         var modelClass = getPopUpModelClass(_data.entityType);
         var lyrDetail = getLayerDetail(_data.entityType);
         var nwId = _data.entityType.toUpperCase() == "NETWORK_TICKET" ? "?ticket_id=" + _data.systemId + "&source='nwelem'" : "";
@@ -16048,7 +16229,7 @@ var Main = function () {
             app.filterSplitterType = "";
             $('#btnclrFilter').hide();
             app.LoadLayersOnMap();
-            app.RenderVectorLayer(0);
+            app.RenderVectorLayer(-1);
         });
     }
 
@@ -16072,6 +16253,11 @@ var Main = function () {
             alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_115); //Please select an option to Applied the filter
             return false;
         }
+        $('#btnclrFilter').show();
+        app.filterprojectvalue = "";
+        app.LoadLayersOnMap();
+        app.RenderVectorLayer(-1);
+        $(popup.DE.MinimizeModel).trigger("click");
 
     }
 
@@ -18640,7 +18826,7 @@ var Main = function () {
         }, titleText, 'modal-lg');
     }
 
-    this.showLandbaseHistory = function (_systemId, _entityType, layer_id) {        
+    this.showLandbaseHistory = function (_systemId, _entityType, layer_id) {
         var formURL = "Audit/GetLandBaseLayerHistory";
         var layerTitle = getLayerTltle(_entityType);
         var titleText = layerTitle + " History";
@@ -23293,7 +23479,7 @@ var Main = function () {
                 eType: ''
             }, "Export Report Log", 'modal-lg');
         },
-        initiateDrawingsExportReport: function (obj, shapeFlag) {            
+        initiateDrawingsExportReport: function (obj, shapeFlag) {
             if (si.PointentityOBJ.length > 0) {
                 for (var k = 0; k < si.PointentityOBJ.length; k++) {
                     si.PointentityOBJ[k].setMap(null);
@@ -26585,7 +26771,7 @@ var Main = function () {
         }, true, true);
 
     };
-   
+
     var clickListener;
     function handleMapClick(evt) {
         console.log("Clicked on Map");
