@@ -85,7 +85,7 @@
         @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
         //Add the other_info as hidden field for additional attributes
         @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
-        @Html.HiddenFor(m => m.duct_name, new { @id = "hdnProvinceAbbr" })
+        //@Html.HiddenFor(m => m.duct_name, new { @id = "hdnProvinceAbbr" })
 
         <!-- Message Pop-up -->
         @pageMessage()
@@ -116,6 +116,11 @@
                                 <a class="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_006 @(Model.lstUserModule.Contains("ENT-DTL-GRF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GRF") ? "" : "block;")"
                                    href="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"#dvRefrence":"")" onclick="si.getEntityReference('@Model.system_id','@EntityType.Duct.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a>
                             </li>
+                        }
+                        @if (Model.system_id > 0)
+                        {
+                            <li><a title="Slack Detail" style="display:block;" href="#SlackDetails" onclick="si.getSlackDetailsForDuct('@Model.system_id');" data-toggle="tab">Slack Details</a></li>
+
                         }
                         @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_barcode_enabled)
                         {
@@ -148,13 +153,14 @@
                                href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a>
                         </li>
                         <!--End Reigon Additional Attribute-->
-                        @if (Model.system_id > 0 && layerDetail != null)
+                        @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_reference_allowed == true)
                         {
                             <li>
                                 <a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")"
                                    href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a>
                             </li>
                         }
+
                     </ul>
                 </div>
                 <div id="divRightMenu" style="display:none;">
@@ -185,6 +191,11 @@
                                     <a class="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_006 @(Model.lstUserModule.Contains("ENT-DTL-GRF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GRF") ? "" : "block;")"
                                        href="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"#dvRefrence":"")" onclick="si.getEntityReference('@Model.system_id','@EntityType.Duct.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a>
                                 </li>
+                            }
+                            @if (Model.system_id > 0)
+                            {
+                                <li><a title="Slack Detail" style="display:block;" href="#SlackDetails" onclick="si.getSlackDetailsForDuct('@Model.system_id');" data-toggle="tab">Slack Details</a></li>
+
                             }
                             @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_barcode_enabled)
                             {
@@ -217,7 +228,7 @@
                                    href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a>
                             </li>
                             <!--End Reigon Additional Attribute-->
-                            @if (Model.system_id > 0 && layerDetail != null)
+                            @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_reference_allowed == true)
                             {
                                 <li>
                                     <a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")"
@@ -260,6 +271,7 @@
                                     SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(
                                new
                                {
+                                   autocomplete = "do-not-show-ac",
                                    @class = "form-control",
                                    @id = "txtDuctName",
                                    @maxlength = "100"
@@ -276,35 +288,36 @@
                             <div class="col-md-4 col-sm-4  mrgn_btm">
                                 @Html.TextBoxFor(m => m.b_location, new { @class = "form-control clsReadOnly", @readonly = true })
                             </div>
-                            <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">Start Location Lat/Lon:</label>
+                            <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">Start Lat/Long:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
-                                @Html.TextBoxFor(m => m.a_latitude, new { @class = "form-control clsReadOnly", @readonly = true })
+                                @Html.TextBoxFor(m => m.a_latitude, new { @class = "form-control clsReadOnly", @readonly = true, autocomplete = "off" })
                             </div>
 
-                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">End Location Lat/Lon:</label>
+                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">End Lat/Long:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
-                                @Html.TextBoxFor(m => m.b_longitude, new { @class = "form-control clsReadOnly", @readonly = true })
+                                @Html.TextBoxFor(m => m.b_longitude, new { @class = "form-control clsReadOnly", @readonly = true, autocomplete = "off" })
                             </div>
                             <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">A Region Name:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
                                 @Html.TextBoxFor(m => m.a_region, new
-                                {
+                           {
+                                     autocomplete = "off",
                                     @class = "form-control clsReadOnly",
-                                    @readonly = true@*, @id = "txtlocationName"*@})
+                               @readonly = true@*, @id = "txtlocationName"*@})
                             </div>
 
                             <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">B Region Name:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
-                                @Html.TextBoxFor(m => m.b_region, new { @class = "form-control clsReadOnly", @readonly = true })
+                                @Html.TextBoxFor(m => m.b_region, new { @class = "form-control clsReadOnly", @readonly = true, autocomplete = "do-not-show-ac" })
                             </div>
                             <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">A City Name:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
-                                @Html.TextBoxFor(m => m.a_city, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtProvinceName" })
+                                @Html.TextBoxFor(m => m.a_city, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtProvinceName", autocomplete = "do-not-show-ac" })
                             </div>
 
-                            <label class="control-label col-md-2 col-sm-2" for="b_city">B city Name:</label>
+                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">B city Name:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
-                                @Html.TextBoxFor(m => m.b_city, new { @class = "form-control clsReadOnly", @readonly = true })
+                                @Html.TextBoxFor(m => m.b_city, new { @class = "form-control clsReadOnly", @readonly = true, autocomplete = "do-not-show-ac" })
                             </div>
 
                             <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_GBL_GBL_GBL_009:</label>
@@ -318,11 +331,11 @@
                                 @Html.TextBoxFor(m => m.no_of_cables, new { @class = "form-control clsReadOnly", @readonly = true })
 
                             </div>
-                            <label class="control-label col-md-2 col-sm-2 " for="manual_length">@Resources.Resources.SI_OSP_DUC_NET_FRM_005:</label>
+                            <label class="control-label col-md-2 col-sm-2 " for="txtSubAreaName">@Resources.Resources.SI_OSP_DUC_NET_FRM_005:</label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
                                 @Html.TextBoxFor(m => m.manual_length, new { @class = "form-control clsReadOnly", @onkeypress = "return si.allowNumberwithOneDot(event,'calculated_length');", @readonly = true, @maxlength = "10" })
                             </div>
-                            <label class="control-label col-md-2 col-sm-2 " for="calculated_length">@Resources.Resources.SI_OSP_DUC_NET_FRM_006:</label>
+                            <label class="control-label col-md-2 col-sm-2 " for="txtSubAreaName">@Resources.Resources.SI_OSP_DUC_NET_FRM_006:</label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
                                 @Html.TextBoxFor(m => m.calculated_length, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
                             </div>
@@ -333,6 +346,14 @@
                                     @Html.DropDownListFor(m => m.no_of_ducts_created, new SelectList(Model.NoofDuctsCreated.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
                                 </div>
                             }
+                            <label class="control-label col-md-2 col-sm-2 " for="txtSubAreaName">Slack Count:</label>
+                            <div class="col-md-4 col-sm-4  mrgn_btm">
+                                @Html.TextBoxFor(m => m.total_slack_count, new { @class = "form-control clsReadOnly", @onkeypress = "return si.allowNumberwithOneDot(event,'calculated_length');", @readonly = true, @maxlength = "10" })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2 " for="txtSubAreaName">Slack Length (Mtr):</label>
+                            <div class="col-md-4 col-sm-4  mrgn_btm">
+                                @Html.TextBoxFor(m => m.total_slack_length, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
+                            </div>
                             @if (innserOuterDimension != null)
                             {
                                 <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_DUC_NET_FRM_008:</label>
@@ -356,6 +377,14 @@
                                 <label class="control-label col-md-2 col-sm-2 ">@layerDetail.layer_title @Resources.Resources.SI_OSP_DUC_NET_RPT_009:</label>
                                 <div class="col-md-4 col-sm-4  mrgn_btm">
                                     @Html.DropDownListFor(m => m.color_code, new SelectList(Model.DuctColorIn.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
+                                </div>
+                            }
+                            @if (Model.system_id == 0)
+                            {
+                                <label class="control-label col-md-2 col-sm-2 ">@layerDetail.layer_title Count:</label>
+                                <div class="col-md-4 col-sm-4  mrgn_btm">
+                                    @Html.DropDownListFor(m => m.duct_count, new SelectList(Model.DuctCount.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
+
                                 </div>
                             }
                         </div>
@@ -385,10 +414,13 @@
                         </div>
 
                     </fieldset>
-                    <fieldset class="the-fieldset">
-                        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_001</legend>
-                        @ProjectSpecifications()
-                    </fieldset>
+                    @if (Model.lstUserModule.Contains("PROJ"))
+                    {
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_001</legend>
+                            @ProjectSpecifications()
+                        </fieldset>
+                    }
                     <div>
                         @GeographicDetails()
                     </div>
@@ -397,6 +429,7 @@
                     @CableTemplateMaster()
                 </div>
                 <div id="dvRefrence" class="tab-pane"></div>
+                <div id="SlackDetails" class="tab-pane">  </div>
                 <div class="tab-pane" id="PODAssoctn"></div>
                 <div class="tab-pane" id="BarCodeInfo"></div>
                 <div class="tab-pane" id="dvAT"></div>
@@ -484,6 +517,10 @@
         //    preferredFormat: "hex"
         //});
         $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+        @*if (@Model.system_id> 0 ) {
+            $('#duct_count').prop('disabled', true).trigger("chosen:updated");
+        }*@
+
     });
     function formPost() {
 

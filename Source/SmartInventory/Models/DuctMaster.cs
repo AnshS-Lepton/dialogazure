@@ -203,8 +203,6 @@ namespace Models
             lstTP = new List<NetworkDtl>();
             a_system_id = 0;
             b_system_id = 0;
-            total_slack_count = 0;
-            total_slack_length = 0;
             lstBindProjectCode = new List<ProjectCodeMaster>();
             lstBindPlanningCode = new List<PlanningCodeMaster>();
             lstBindWorkorderCode = new List<WorkorderCodeMaster>();
