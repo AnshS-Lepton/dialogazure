@@ -190,13 +190,21 @@ namespace Models
         public int total_slack_count { get; set; }
         public int total_slack_length { get; set; }
 
+        [NotMapped]
+        public int structure_id { get; set; }
+        [NotMapped]
+        public string ispLineGeom { get; set; }
+        [NotMapped]
+        public string cable_type { get; set; }
+
         public DuctMaster()
         {
             objPM = new PageMessage();
             lstTP = new List<NetworkDtl>();
             a_system_id = 0;
             b_system_id = 0;
-
+            total_slack_count = 0;
+            total_slack_length = 0;
             lstBindProjectCode = new List<ProjectCodeMaster>();
             lstBindPlanningCode = new List<PlanningCodeMaster>();
             lstBindWorkorderCode = new List<WorkorderCodeMaster>();
