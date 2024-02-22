@@ -194,6 +194,7 @@ namespace Models
         public string area_id { get; set; }
         public string dsa_id { get; set; }
         public string csa_id { get; set; }
+        [Required]
         public string gis_design_id { get; set; }
         [NotMapped]
         public string geographic_id { get; set; }
