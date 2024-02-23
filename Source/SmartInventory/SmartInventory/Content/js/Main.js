@@ -16257,7 +16257,7 @@ var Main = function () {
         app.filterprojectvalue = "";
         app.LoadLayersOnMap();
         app.RenderVectorLayer(-1);
-        $(popup.DE.MinimizeModel).trigger("click");
+       /* $(popup.DE.MinimizeModel).trigger("click");*/
 
     }
 

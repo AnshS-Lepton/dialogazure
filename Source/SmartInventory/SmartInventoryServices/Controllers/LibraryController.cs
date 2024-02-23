@@ -14588,7 +14588,7 @@ namespace SmartInventoryServices.Controllers
 						objSurveyArea.network_status = "P";
 					}
 					var resultItem = new BLSurveyArea().SaveSurveyArea(objSurveyArea, objSurveyArea.user_id);
-					if (!objSurveyArea.isSurveyModuleAssigned && isNew)
+					if (objSurveyArea.isSurveyModuleAssigned && isNew)
 					{
 						new BLSurveyArea().SaveMobileSurveyAreaAssigned(objSurveyArea.user_id, objSurveyArea.system_id);
 					}
