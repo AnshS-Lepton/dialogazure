@@ -4488,6 +4488,49 @@ namespace SmartInventoryServices.Controllers
         }
         #endregion
 
+        #region GetRouteAssociation
+        /// <summary>
+        /// GetEntityAssociation
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>boolean</returns>
+        ///  <Created By>Arabind</returns>
+        [HttpPost]
+        public ApiResponse<AssociateRoute> GetRouteAssociation(ReqInput data)
+        {
+            var response = new ApiResponse<AssociateRoute>();
+            try
+            {
+                AssociateRouteRequest objIn = ReqHelper.GetRequestData<AssociateRouteRequest>(data);
+                AssociateRoute objLineAssociate = new AssociateRoute();
+                objLineAssociate.parent_system_id = objIn.systemId;
+                objLineAssociate.parent_entity_type = objIn.entityType;
+                objLineAssociate.parent_network_id = objIn.networkId;
+                var layerDetails = new BLLayer().getLayer(objIn.entityType);
+                objLineAssociate.parent_multi_association = layerDetails.is_multi_association;
+                objLineAssociate.listrouteInfo = new BLMisc().getRouteEntityInLineBuffer(objIn.systemId,EntityType.Pole.ToString());
+                if (objIn.systemId > 0)
+                {
+                    var buried = new BLMisc().checkIsBuried(objIn.systemId, objIn.entityType);
+                    if (buried != null)
+                    {
+                        objLineAssociate.parent_is_buried = buried.status;
+                    }
+                }
+                response.status = ResponseStatus.OK.ToString();
+                response.results = objLineAssociate;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("GetRouteAssociation()", "Main Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.ToString();
+            }
+            return response;
+        }
+        #endregion
+
         #region ViewOtherEntityAssociation
         /// <summary>
         /// ViewOtherEntityAssociation
@@ -4547,6 +4590,38 @@ namespace SmartInventoryServices.Controllers
             {
                 ErrorLogHelper logHelper = new ErrorLogHelper();
                 logHelper.ApiLogWriter("SaveEntityAssociate()", "Main Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
+
+        #region SaveRouteAssociate
+        /// <summary>
+        /// SaveEntityAssociate
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>boolean</returns>
+        ///  <Created By>Arabind</returns>
+        [HttpPost]
+        public ApiResponse<AssociateRoute> SaveRouteAssociate(ReqInput data)
+        {
+            var response = new ApiResponse<AssociateRoute>();
+            try
+            {
+                AssociateRoute objRoute = ReqHelper.GetRequestData<AssociateRoute>(data);
+                var res = new BLMisc().saveRouteAssocition(JsonConvert.SerializeObject(objRoute.listrouteInfo), objRoute.parent_system_id, objRoute.parent_entity_type, objRoute.userId);
+                objRoute.pageMsg.status = ResponseStatus.OK.ToString();
+                objRoute.pageMsg.message = Resources.Resources.SI_OSP_GBL_NET_FRM_169;
+                response.status = ResponseStatus.OK.ToString();
+                response.error_message = Resources.Resources.SI_OSP_GBL_NET_FRM_169;
+                response.results = objRoute;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("SaveRouteAssociate()", "Main Controller", data.data, ex);
                 response.status = StatusCodes.UNKNOWN_ERROR.ToString();
                 response.error_message = ex.Message.ToString();
             }

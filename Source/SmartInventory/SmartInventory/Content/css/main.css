@@ -4419,6 +4419,9 @@ div.slider-nav span.left {
 .tool_bar .itemAssociate {
     background-position: -90px -122px;
 }
+.tool_bar .routeAssociate {
+    background-position: -81px -395px;
+}
 .tool_bar .BulkItemAssociate {
     background-position: -90px -122px;
 }

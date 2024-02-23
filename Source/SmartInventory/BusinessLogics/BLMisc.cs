@@ -485,6 +485,10 @@ namespace BusinessLogics
         {
             return new DAMisc().getLineEntityInLineBuffer(systemId, entityType, pSystemId, pEntityType, pParentGeom, pParentGeomType);
         }
+        public List<RouteInfo> getRouteEntityInLineBuffer(int systemId, string entityType)
+        {
+            return new DAMisc().getRouteEntityInLineBuffer(systemId, entityType);
+        }
         public List<LineEntityInfo> getAutoLineEntityInLineBuffer(int systemId, string entityType, int pSystemId, string pEntityType, string pParentGeom, string pParentGeomType)
         {
             return new DAMisc().getAutoLineEntityInLineBuffer(systemId, entityType, pSystemId, pEntityType, pParentGeom, pParentGeomType);
@@ -509,7 +513,11 @@ namespace BusinessLogics
         {
             return new DAMisc().saveLineEntityAssocition(lineEnAssociteInfo, pSystemId, pEntityType, userId);
         }
-        
+        public DbMessage saveRouteAssocition(string routeAssociteInfo, int pSystemId, string pEntityType, int userId)
+        {
+            return new DAMisc().saveRouteAssocition(routeAssociteInfo, pSystemId, pEntityType, userId);
+        }
+
         public DbMessage saveLineEntityAutoAssocition(int pSystemId, string pEntityType, int userId)
         {
             return new DAMisc().saveLineEntityAutoAssocition(pSystemId, pEntityType, userId);
@@ -541,6 +549,10 @@ namespace BusinessLogics
         public List<T> GetAssociationExportData<T>(int systemId, string entityType) where T : new()
         {
             return objDAMisc.GetAssociationExportData<T>(systemId, entityType);
+        }
+        public List<T> GetRouteAssociationExportData<T>(int systemId, string entityType) where T : new()
+        {
+            return objDAMisc.GetRouteAssociationExportData<T>(systemId, entityType);
         }
         public List<T> DownloadBulkAssociationLog<T>(int systemId, int userId) where T : new()
         {

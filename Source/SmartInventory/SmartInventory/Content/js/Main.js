@@ -9572,7 +9572,7 @@ var Main = function () {
     this.setDateTimeCalendar_ExportEntities = function (startdateid, enddateid, startdateimgid, enddateimgid, isFutureDateAllowed) {
 
 
-
+        debugger;
 
         //calendar.refresh();
         //var setup1 = showtime;
@@ -10985,6 +10985,10 @@ var Main = function () {
                     case "ITEMASSOCIATE":
                         //;
                         app.associateLineEntity(systemId, entityType, networkId);
+                        break;
+                    case "ROUTEASSOCIATE":
+                        //;
+                        app.associateRoute(systemId, entityType, networkId);
                         break;
                     case "BULKITEMASSOCIATE":
                         ;
@@ -12555,6 +12559,21 @@ var Main = function () {
         });
     }
 
+    this.associateRoute = function (systemId, entityType, networkId) {
+        debugger;
+        var modelClass = getPopUpModelClass('');
+
+        var titleText = $.validator.format(MultilingualKey.SI_OSP_GBL_JQ_GBL_116, getLayerTltle(entityType), $('#hdnAssociateEntityBuffer').val()) //entityType + " " + Res_elm;
+        //+ MultilingualKey.SI_GBL_GBL_JQ_FRM_001 + ' (' + MultilingualKey.SI_OSP_GBL_GBL_GBL_039 + " " + $('#hdnAssociateEntityBuffer').val() + "" + MultilingualKey.SI_OSP_GBL_GBL_GBL_034 + ' )';
+        var formURL = 'Library/getRouteAssociation';
+        popup.LoadModalDialog(app.ParentModel, formURL, { systemId: systemId, entityType: entityType, networkId: networkId }, titleText, modelClass, function () {
+            attachUnAttachEvt($('#btnRouteExportAssociation'), 'click', function () {
+
+                app.ExportRoutAssociation(systemId, entityType, networkId);
+            });
+        });
+    }
+
     bulkassociatecheckStatus = function (systemId) {
         app.IsActionEnabled = false;
         clearInterval();
@@ -12712,6 +12731,32 @@ var Main = function () {
             $('#frmAssociateLineEntity').submit();
         }
     }
+
+    this.saveRouteAssociation = function () {
+        debugger;
+        var isChanged = false;
+        var messageHTML = '<table border="1" class="alertgrid"><tr><td><b>Route Id<b/></td><td><b>Route Name</b></tr>';
+        $('#tblLineEnLstInfo input:checkbox:not(:checked)').each(function () {
+            var entityType = $(this).attr('entityType');
+            if (entityType != undefined || entityType != null) { var layerTitle = getLayerTltle(entityType); }
+            var systemId = $(this).attr('systemId');
+            var routeId = $(this).attr('routeId');
+            var routeName = $(this).attr('routeName');
+            if ($('#hdnIsAssociate_' + entityType + '_' + systemId).val() == 'True') {
+                isChanged = true;
+                messageHTML += '<tr><td> ' + routeId + '</td><td> ' + routeName + '</td></tr>';
+            }
+        });
+        messageHTML += '</table>';
+        if (isChanged) {
+
+            confirm($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_094, messageHTML), function () {
+                $('#frmAssociateRoute').submit();
+            });
+        } else {
+            $('#frmAssociateRoute').submit();
+        }
+    }
     this.checkAllAssociation = function () {
         if ($('#checkAllAssociation').is(':checked')) {
             if ($('#parent_multi_association').val() == 'False') {
@@ -12732,6 +12777,9 @@ var Main = function () {
     }
     this.ExportAssociation = function (systemId, entityType, networkId) {
         window.location = appRoot + 'Library/ExportAssociation?systemId=' + systemId + '&entityType=' + entityType + '&networkId=' + networkId;
+    }
+    this.ExportRoutAssociation = function (systemId, entityType, networkId) {
+        window.location = appRoot + 'Library/ExportRouteAssociation?systemId=' + systemId + '&entityType=' + entityType + '&networkId=' + networkId;
     }
     this.createParallelCable = function (systemId) {
         app.clearTempNewEntity();
@@ -20207,6 +20255,14 @@ var Main = function () {
                 $('#checkAllAssociation').prop("checked", false);
             }
         },
+        //checkAssociation: function (obj, pEntityType) {
+        //    debugger;
+        //    if ($('#tblRoutLstInfo tbody :checkbox:checked').length == $('#tblRoutLstInfo tbody tr:not(.entityCount)').length) {
+        //        $('#checkAllAssociation').prop("checked", true);
+        //    } else {
+        //        $('#checkAllAssociation').prop("checked", false);
+        //    }
+        //},
         getActualTotalAmount: function () {
             var accessCharge = parseFloat($('#txtActualAccessCharge').val());
             var actualRIAmount = parseFloat($('#txtActualRIAmount').val());

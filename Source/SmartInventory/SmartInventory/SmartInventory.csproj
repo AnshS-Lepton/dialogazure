@@ -2284,6 +2284,7 @@
     <Content Include="Views\Main\_DesignValidationDashboard.cshtml" />
     <Content Include="Views\BOMBOQ\_FSAlockedDetails.cshtml" />
     <Content Include="Views\NetworkTicket\_ManualMeterReading.cshtml" />
+    <Content Include="Views\Library\_RouteAssociation.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
