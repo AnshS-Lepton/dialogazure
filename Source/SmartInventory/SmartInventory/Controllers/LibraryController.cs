@@ -8484,7 +8484,13 @@ namespace SmartInventory.Controllers
 			var response = WebAPIRequest.PostIntegrationAPIRequest<AssociateLineEntity>(url, objLineAssociate, "", "");
 			return PartialView("_LineEntityAssociation", response.results);
 		}
-		public PartialViewResult viewEntityAssociation(AssociateEntityRequest objLineAssociate)
+        public PartialViewResult getRouteAssociation(AssociateEntityRequest objLineAssociate)
+        {          
+            string url = "api/main/getRouteAssociation";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<AssociateRoute>(url, objLineAssociate, "", "");
+            return PartialView("_RouteAssociation", response.results);
+        }
+        public PartialViewResult viewEntityAssociation(AssociateEntityRequest objLineAssociate)
 		{
 			//AssociateLineEntity objLineAssociate = new AssociateLineEntity();
 			//List<LineEntityInfo> objLineEntity = new List<LineEntityInfo>();
@@ -8511,7 +8517,14 @@ namespace SmartInventory.Controllers
 			var response = WebAPIRequest.PostIntegrationAPIRequest<AssociateLineEntity>(url, objLineEntity, "", "");
 			return PartialView("_LineEntityAssociation", response.results);
 		}
-		public JsonResult getEntityInBuffer(int systemId, string entityType, string pEntityType, string pgeomType)
+        public PartialViewResult SaveRouteAssociate(AssociateRoute objRoute)
+        {
+            objRoute.userId = Convert.ToInt32(Session["user_id"]);
+            string url = "api/main/SaveRouteAssociate";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<AssociateRoute>(url, objRoute, "", "");
+            return PartialView("_RouteAssociation", response.results);
+        }
+        public JsonResult getEntityInBuffer(int systemId, string entityType, string pEntityType, string pgeomType)
 		{
 			var bufferEntity = new BLMisc().getEntityInBuffer(systemId, entityType, pEntityType, pgeomType);
 			return Json(bufferEntity, JsonRequestBehavior.AllowGet);
@@ -8526,7 +8539,21 @@ namespace SmartInventory.Controllers
 			ExportData(dtlogs, "ExportAssociationReport_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));
 		}
 
-		public void DownloadBulkAssociationLog(int systemId)
+        public void ExportRouteAssociation(int systemId, string entityType, string networkId)
+        {
+            var listRouteInfo = new BLMisc().GetRouteAssociationExportData<Dictionary<string, string>>(systemId, entityType);
+            listRouteInfo = BLConvertMLanguage.ExportMultilingualConvert(listRouteInfo);
+            DataTable dtlogs = Utility.MiscHelper.GetDataTableFromDictionaries(listRouteInfo);
+			dtlogs.Columns.Remove("cable_id");
+            dtlogs.Columns.Remove("entity_type");
+            dtlogs.Columns.Remove("entity_id");
+
+            dtlogs.Columns["entity_network_id"].ColumnName = "Cable_Id";
+            //dtlogs.Columns["old_column_name2"].ColumnName = "new_column_name2";
+            ExportData(dtlogs, "ExportRouteAssociationReport_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));
+        }
+
+        public void DownloadBulkAssociationLog(int systemId)
 		{
 			int userId = Convert.ToInt32(Session["user_id"]);
 			var bulkAssociationLog = new BLMisc().DownloadBulkAssociationLog<Dictionary<string, string>>(systemId, userId);

@@ -2286,6 +2286,7 @@
     <Content Include="Views\NetworkTicket\_ManualMeterReading.cshtml" />
     <Content Include="Views\Library\_AddSlack.cshtml" />
     <Content Include="Views\Library\_SlackDetailsForDuct.cshtml" />
+    <Content Include="Views\Library\_RouteAssociation.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2818,7 +2819,6 @@
     <Folder Include="Content\UploadedFiles\Fiber\" />
     <Folder Include="Content\UploadedFiles\Resources\" />
     <Folder Include="Content\UploadedFiles\VendorSpecifications\" />
-    <Folder Include="ErrorLogs\" />
     <Folder Include="MigrationScripts\" />
     <Folder Include="shp2kml_convertor\" />
     <Folder Include="Uploads\ExternalData\KMZ\" />
