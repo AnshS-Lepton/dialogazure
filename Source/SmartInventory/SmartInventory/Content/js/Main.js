@@ -9752,9 +9752,6 @@ var Main = function () {
 
     this.setDateTimeCalendar_ExportEntities = function (startdateid, enddateid, startdateimgid, enddateimgid, isFutureDateAllowed) {
 
-
-        debugger;
-
         //calendar.refresh();
         //var setup1 = showtime;
         Calendar.setup({
@@ -20449,15 +20446,7 @@ var Main = function () {
             } else {
                 $('#checkAllAssociation').prop("checked", false);
             }
-        },
-        //checkAssociation: function (obj, pEntityType) {
-        //    debugger;
-        //    if ($('#tblRoutLstInfo tbody :checkbox:checked').length == $('#tblRoutLstInfo tbody tr:not(.entityCount)').length) {
-        //        $('#checkAllAssociation').prop("checked", true);
-        //    } else {
-        //        $('#checkAllAssociation').prop("checked", false);
-        //    }
-        //},
+        },      
         getActualTotalAmount: function () {
             var accessCharge = parseFloat($('#txtActualAccessCharge').val());
             var actualRIAmount = parseFloat($('#txtActualRIAmount').val());
