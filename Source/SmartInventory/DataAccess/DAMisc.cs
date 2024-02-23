@@ -1678,7 +1678,19 @@ namespace DataAccess
             }
             catch { throw; }
         }
-       
+
+        public UserRegionProvince GetRegionProvinceBasedOnLocation(string geom, int userId)
+        {
+            UserRegionProvince objUserRegionProvince = new UserRegionProvince();
+            try
+            {
+                objUserRegionProvince = repo.ExecuteProcedure<UserRegionProvince>("fn_get_GetRegionProvinceBasedOnLocation", new { p_geom = geom, p_userId = userId }).FirstOrDefault();
+                return objUserRegionProvince;
+
+            }
+            catch { throw; }
+        }
+
     }
 
     public class DAMisce : Repository<EmailSettingsModel>
