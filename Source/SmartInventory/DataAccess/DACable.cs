@@ -164,6 +164,8 @@ namespace DataAccess
                     objCable.origin_from = cableInfo.origin_from;
                     objCable.origin_ref_code = cableInfo.origin_ref_code;
                     objCable.bom_sub_category = cableInfo.bom_sub_category;
+                    objCable.route_name = cableInfo.route_name;
+                    objCable.gis_design_id = cableInfo.gis_design_id;
                     ////objCable.served_by_ring= cableInfo.served_by_ring;
                     var response = repo.Update(objCable);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(response.system_id, Models.EntityType.Cable.ToString(), response.province_id, 1);

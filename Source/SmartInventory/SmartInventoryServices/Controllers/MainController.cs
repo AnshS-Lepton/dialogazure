@@ -6252,6 +6252,46 @@ namespace SmartInventoryServices.Controllers
             }
             return response;
         }
+
+        #region GetRegionProvinceBasedOnLocation
+        /// <summary>
+        /// GetRegionProvinceBasedOnLocation
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>boolean</returns>
+        ///  <Created By>Rahul Sharma</returns>
+        [HttpPost]
+        public ApiResponse<UserRegionProvince> GetRegionProvinceBasedOnLocation(ReqInput data)
+        {
+            var response = new ApiResponse<UserRegionProvince>();
+            try
+            {
+                response.status = ResponseStatus.OK.ToString();
+                UserRegionProvinceFilter obj = ReqHelper.GetRequestData<UserRegionProvinceFilter>(data);
+                string txtGeom = obj.lng + " " + obj.lat;
+
+
+                var objUserRegionProvince = new BLMisc().GetRegionProvinceBasedOnLocation(txtGeom, obj.userId);
+                if (objUserRegionProvince != null && !string.IsNullOrEmpty(objUserRegionProvince.provincename))
+                {
+                    response.status = ResponseStatus.OK.ToString();
+                    //response.error_message = BLConvertMLanguage.MultilingualMessageConvert(objAreaValid.message); //objAreaValid.message;
+                    response.results = objUserRegionProvince;
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                // logHelper.ApiLogWriter("ValidateEntityGeom()", "Main Controller", data.data, ex);
+                logHelper.ApiLogWriter("GetRegionProvinceBasedOnLocation()", "Main Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
+
     }
 
 }

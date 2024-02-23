@@ -12610,7 +12610,76 @@ namespace SmartInventory.Controllers
 		}
 
 
-		#endregion
+        #endregion
 
-	}
+        #region SLACK Entity BY ANTRA
+        public PartialViewResult AddSlack(string networkIdType, int systemId = 0, string geom = "")
+        {
+            SlackMaster obj = new SlackMaster();
+            obj.networkIdType = networkIdType;
+            obj.system_id = systemId;
+            obj.geom = geom;
+            obj.user_id = Convert.ToInt32(Session["user_id"]);
+            string url = "api/Library/EntityOperations";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<SlackMaster>(url, obj, EntityType.Slack.ToString(), EntityAction.Get.ToString());
+            return PartialView("_AddSlack", response.results);
+        }
+        public ActionResult SaveSlack(SlackMaster objSlack, bool isDirectSave = false)
+        {
+            objSlack.isDirectSave = isDirectSave;
+            objSlack.user_id = Convert.ToInt32(Session["user_id"]);
+            string url = "api/Library/EntityOperations";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<SlackMaster>(url, objSlack, EntityType.Slack.ToString(), EntityAction.Save.ToString());
+            if (isDirectSave)
+            {
+                return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
+            }
+            return PartialView("_AddSlack", response.results);
+        }
+
+        public PartialViewResult GetSlackDetailsForDuct(SlackMaster obj)
+        {
+            List<SlackMaster> lstSlack = BLSlack.Instance.GetSlackDetailsForDuct(obj.duct_system_id);
+            return PartialView("_SlackDetailsForDuct", lstSlack);
+
+        }
+
+        [HttpPost]
+        public JsonResult DeleteSlackDetailById(int Slack_system_id)
+        {
+            JsonResponse<string> objResp = new JsonResponse<string>();
+            try
+            {
+
+
+                if (BLSlack.Instance.DeleteSlackDetailById(Slack_system_id) > 0)
+                {
+                    objResp.status = ResponseStatus.OK.ToString();
+                    objResp.message = "Slack Detail Deleted successfully!";
+                }
+                else
+                {
+                    objResp.status = ResponseStatus.FAILED.ToString();
+					objResp.message = "Something went wrong while deleting Slack!";
+                }
+
+            }
+            catch
+            {
+                objResp.status = ResponseStatus.ERROR.ToString();
+                objResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_289;
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetDuctNameAndLengthForSlack(int DuctId)
+        {
+            DuctMaster obj = new DuctMaster();
+            obj = new BLDuct().GetDuctNameAndLengthForSlack(DuctId);
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+    }
 }

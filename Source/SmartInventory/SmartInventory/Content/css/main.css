@@ -2075,7 +2075,7 @@ body {
 }
 
 .spnLandbaseNot {
-    background: url(/Content/images/split_img.png) no-repeat -245px -263px;
+    background: #EEEEEE url(../images/split_img.png) no-repeat -245px -263px;
 }
 
 .spnAdvSrch {
