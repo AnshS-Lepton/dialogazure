@@ -943,6 +943,11 @@ namespace BusinessLogics
         {
             return new DAMisce().updateEmailSettings(obj, id);
         }
+
+        public UserRegionProvince GetRegionProvinceBasedOnLocation(string geom, int userId)
+        {
+            return new DAMisc().GetRegionProvinceBasedOnLocation(geom, userId);
+        }
     }
 
     //public class BLUserModule
