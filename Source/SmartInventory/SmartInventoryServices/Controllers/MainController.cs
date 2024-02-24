@@ -4506,17 +4506,10 @@ namespace SmartInventoryServices.Controllers
                 objLineAssociate.parent_system_id = objIn.systemId;
                 objLineAssociate.parent_entity_type = objIn.entityType;
                 objLineAssociate.parent_network_id = objIn.networkId;
-                var layerDetails = new BLLayer().getLayer(objIn.entityType);
-                objLineAssociate.parent_multi_association = layerDetails.is_multi_association;
-                objLineAssociate.listrouteInfo = new BLMisc().getRouteEntityInLineBuffer(objIn.systemId,EntityType.Pole.ToString());
-                if (objIn.systemId > 0)
-                {
-                    var buried = new BLMisc().checkIsBuried(objIn.systemId, objIn.entityType);
-                    if (buried != null)
-                    {
-                        objLineAssociate.parent_is_buried = buried.status;
-                    }
-                }
+               
+                objLineAssociate.parent_multi_association = true;
+                objLineAssociate.listrouteInfo = new BLMisc().getRouteEntityInLineBuffer(objIn.systemId, objIn.entityType);
+                
                 response.status = ResponseStatus.OK.ToString();
                 response.results = objLineAssociate;
             }

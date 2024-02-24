@@ -68,6 +68,7 @@ namespace DataAccess
                         objitem.email_id = objCustomer.email_id;
                         objitem.mobile_no = objCustomer.mobile_no;
                         objitem.phone_no = objCustomer.phone_no;
+                        objitem.gis_design_id = objCustomer.gis_design_id;
                     }
                     else
                     {

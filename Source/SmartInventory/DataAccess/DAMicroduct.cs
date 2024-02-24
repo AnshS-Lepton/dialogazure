@@ -99,6 +99,7 @@ namespace DataAccess
                     objMicroduct.origin_from = objMicroductMaster.origin_from;
                     objMicroduct.origin_ref_code = objMicroductMaster.origin_ref_code;
                     objMicroduct.bom_sub_category=objMicroductMaster.bom_sub_category;
+                    objMicroduct.gis_design_id = objMicroductMaster.gis_design_id;
                     //objMicroduct.served_by_ring=objMicroductMaster.served_by_ring;
                     resultItem = repo.Update(objMicroduct);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(resultItem.system_id, Models.EntityType.Microduct.ToString(), resultItem.province_id, 1);

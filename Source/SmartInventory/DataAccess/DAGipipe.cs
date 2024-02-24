@@ -90,6 +90,7 @@ namespace DataAccess
                     objGipipe.origin_ref_code = GipipeInfo.origin_ref_code;
                     objGipipe.bom_sub_category= GipipeInfo.bom_sub_category;
                     objGipipe.calculated_length = GipipeInfo.calculated_length;
+                    objGipipe.gis_design_id = GipipeInfo.gis_design_id;
                     var GipipeResp = repo.Update(objGipipe);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(GipipeResp.system_id, Models.EntityType.Gipipe.ToString(), GipipeResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Gipipe.ToString(), GipipeResp.province_id);
