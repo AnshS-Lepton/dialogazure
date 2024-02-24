@@ -4794,11 +4794,11 @@ namespace Models
         [NotMapped]
         public double? duct_calculated_length { get; set; }
         [NotMapped]
-        public int total_slack_count { get; set; }
+        public int? total_slack_count { get; set; }
         [NotMapped]
         public double? available_calculated_length { get; set; }
         [NotMapped]
-        public int total_slack_length { get; set; }
+        public int? total_slack_length { get; set; }
         [NotMapped]
         public int user_id { get; set; }
         [NotMapped]
