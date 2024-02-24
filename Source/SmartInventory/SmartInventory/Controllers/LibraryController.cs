@@ -3205,8 +3205,8 @@ namespace SmartInventory.Controllers
 
 		#region Pole
 
-		public PartialViewResult AddPole(string networkIdType, int systemId = 0, string geom = "")
-		{
+		public PartialViewResult AddPole(string networkIdType, int systemId = 0, string geom = "", int pSystemId = 0, string pEntityType = "", string pNetworkId = "")
+        {
 			//PoleMaster objPoleMaster = GetPoleDetail(networkIdType, system_id,geom);
 			//BindPoleDropDown(objPoleMaster);
 			// BLItemTemplate.Instance.BindItemDropdowns(objPoleMaster, EntityType.Pole.ToString());
@@ -3217,6 +3217,8 @@ namespace SmartInventory.Controllers
 			obj.networkIdType = networkIdType;
 			obj.system_id = systemId;
 			obj.geom = geom;
+			obj.pSystemId = pSystemId;
+			obj.pEntityType = pEntityType;
 			obj.user_id = Convert.ToInt32(Session["user_id"]);
 			string url = "api/Library/EntityOperations";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<PoleMaster>(url, obj, EntityType.Pole.ToString(), EntityAction.Get.ToString());
@@ -3355,8 +3357,8 @@ namespace SmartInventory.Controllers
 
 		#region Tree
 
-		public PartialViewResult AddTree(string networkIdType, int systemId = 0, string geom = "")
-		{
+		public PartialViewResult AddTree(string networkIdType, int systemId = 0, string geom = "", int pSystemId = 0, string pEntityType = "", string pNetworkId = "")
+        {
 			//TreeMaster objTreeMaster = GetTreeDetail(networkIdType, systemId, geom);
 			//BLItemTemplate.Instance.BindItemDropdowns(objTreeMaster, EntityType.Tree.ToString());
 			//fillProjectSpecifications(objTreeMaster);
@@ -3366,7 +3368,9 @@ namespace SmartInventory.Controllers
 			obj.networkIdType = networkIdType;
 			obj.system_id = systemId;
 			obj.geom = geom;
-			obj.user_id = Convert.ToInt32(Session["user_id"]);
+			obj.pEntityType = pEntityType;
+			obj.pSystemId = pSystemId;
+            obj.user_id = Convert.ToInt32(Session["user_id"]);
 			string url = "api/Library/EntityOperations";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<TreeMaster>(url, obj, EntityType.Tree.ToString(), EntityAction.Get.ToString());
 			return PartialView("_AddTree", response.results);
@@ -3496,20 +3500,22 @@ namespace SmartInventory.Controllers
 		#endregion
 
 		#region Manhole
-		public PartialViewResult AddManhole(string networkIdType, int systemId = 0, string geom = "")
+		public PartialViewResult AddManhole(string networkIdType, int systemId = 0, string geom = "", string pEntityType = "", string pNetworkId = "", int pSystemId=0)
 		{
-			//ManholeMaster objManholeMaster = GetManholeDetail(networkIdType, systemId, geom);
-			//BLItemTemplate.Instance.BindItemDropdowns(objManholeMaster, EntityType.Manhole.ToString());
-			//fillProjectSpecifications(objManholeMaster);
-			//BindManholeDropDown(objManholeMaster);
-			//objManholeMaster.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Manhole.ToString()).ToList();
-			//return PartialView("_AddManhole", objManholeMaster);
+            //ManholeMaster objManholeMaster = GetManholeDetail(networkIdType, systemId, geom);
+            //BLItemTemplate.Instance.BindItemDropdowns(objManholeMaster, EntityType.Manhole.ToString());
+            //fillProjectSpecifications(objManholeMaster);
+            //BindManholeDropDown(objManholeMaster);
+            //objManholeMaster.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Manhole.ToString()).ToList();
+            //return PartialView("_AddManhole", objManholeMaster);
 
-			ManholeMaster obj = new ManholeMaster();
+            ManholeMaster obj = new ManholeMaster();
 			obj.networkIdType = networkIdType;
 			obj.system_id = systemId;
 			obj.geom = geom;
 			obj.user_id = Convert.ToInt32(Session["user_id"]);
+			obj.pEntityType = pEntityType;
+			obj.pSystemId = pSystemId;
 			string url = "api/Library/EntityOperations";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<ManholeMaster>(url, obj, EntityType.Manhole.ToString(), EntityAction.Get.ToString());
 			return PartialView("_AddManhole", response.results);
@@ -7773,8 +7779,8 @@ namespace SmartInventory.Controllers
 
 		#region WallMount
 
-		public PartialViewResult AddWallMount(string networkIdType, int systemId = 0, string geom = "")
-		{
+		public PartialViewResult AddWallMount(string networkIdType, int systemId = 0, string geom = "", int pSystemId = 0, string pEntityType = "", string pNetworkId = "")
+        {
 			//WallMountMaster objWallMountMaster = GetWallMountDetail(networkIdType, systemId, geom);
 			//BLItemTemplate.Instance.BindItemDropdowns(objWallMountMaster, EntityType.WallMount.ToString());
 			//BindWallMountDropDown(objWallMountMaster);
@@ -7786,6 +7792,8 @@ namespace SmartInventory.Controllers
 			obj.system_id = systemId;
 			obj.geom = geom;
 			obj.user_id = Convert.ToInt32(Session["user_id"]);
+			obj.pEntityType = pEntityType;
+			obj.pSystemId = pSystemId;
 			string url = "api/Library/EntityOperations";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<WallMountMaster>(url, obj, EntityType.WallMount.ToString(), EntityAction.Get.ToString());
 			return PartialView("_AddWallMount", response.results);
@@ -11672,13 +11680,15 @@ namespace SmartInventory.Controllers
 		//HANDHOLE BY ANTRA
 
 		#region Handhole
-		public PartialViewResult AddHandhole(string networkIdType, int systemId = 0, string geom = "")
-		{
+		public PartialViewResult AddHandhole(string networkIdType, int systemId = 0, string geom = "", int pSystemId = 0, string pEntityType = "", string pNetworkId = "")
+        {
 			HandholeMaster obj = new HandholeMaster();
 			obj.networkIdType = networkIdType;
 			obj.system_id = systemId;
 			obj.geom = geom;
 			obj.user_id = Convert.ToInt32(Session["user_id"]);
+			obj.pEntityType = pEntityType;
+			obj.pSystemId = pSystemId;
 			string url = "api/Library/EntityOperations";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<HandholeMaster>(url, obj, EntityType.Handhole.ToString(), EntityAction.Get.ToString());
 			return PartialView("_AddHandhole", response.results);
