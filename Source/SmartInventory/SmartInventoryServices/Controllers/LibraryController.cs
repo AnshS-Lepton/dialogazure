@@ -1203,7 +1203,7 @@ namespace SmartInventoryServices.Controllers
 				if (objPoleMaster.networkIdType == NetworkIdType.A.ToString() && objPoleMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Pole.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPoleMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Pole.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPoleMaster.geom, parent_eType = objPoleMaster.pEntityType, parent_sysId = objPoleMaster.pSystemId });                
 					if (objPoleMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -1367,7 +1367,7 @@ namespace SmartInventoryServices.Controllers
 				if (objManholeMaster.networkIdType == NetworkIdType.A.ToString() && objManholeMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Manhole.ToString(), gType = GeometryType.Point.ToString(), eGeom = objManholeMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Manhole.ToString(), gType = GeometryType.Point.ToString(), eGeom = objManholeMaster.geom, parent_eType = objManholeMaster.pEntityType, parent_sysId = objManholeMaster.pSystemId });
 					if (objManholeMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -1607,7 +1607,7 @@ namespace SmartInventoryServices.Controllers
 				if (objTreeMaster.networkIdType == NetworkIdType.A.ToString() && objTreeMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Tree.ToString(), gType = GeometryType.Point.ToString(), eGeom = objTreeMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Tree.ToString(), gType = GeometryType.Point.ToString(), eGeom = objTreeMaster.geom, parent_eType = objTreeMaster.pEntityType, parent_sysId = objTreeMaster.pSystemId });
 					if (objTreeMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -1799,7 +1799,7 @@ namespace SmartInventoryServices.Controllers
 				if (objWallMountMaster.networkIdType == NetworkIdType.A.ToString() && objWallMountMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.WallMount.ToString(), gType = GeometryType.Point.ToString(), eGeom = objWallMountMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.WallMount.ToString(), gType = GeometryType.Point.ToString(), eGeom = objWallMountMaster.geom, parent_eType = objWallMountMaster.pEntityType, parent_sysId = objWallMountMaster.pSystemId });
 					if (objWallMountMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -2044,7 +2044,7 @@ namespace SmartInventoryServices.Controllers
 				if (objPODMaster.networkIdType == NetworkIdType.A.ToString() && objPODMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.POD.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPODMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.POD.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPODMaster.geom, parent_eType = objPODMaster.pEntityType, parent_sysId = objPODMaster.pSystemId });
 					if (objPODMaster.isDirectSave == true)
 					{
 						if (objPODMaster.parent_entity_type.ToLower() == EntityType.Structure.ToString().ToLower())
@@ -2359,7 +2359,7 @@ namespace SmartInventoryServices.Controllers
 				if (objMPODMaster.networkIdType == NetworkIdType.A.ToString() && objMPODMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.MPOD.ToString(), gType = GeometryType.Point.ToString(), eGeom = objMPODMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.MPOD.ToString(), gType = GeometryType.Point.ToString(), eGeom = objMPODMaster.geom, parent_eType = objMPODMaster.pEntityType, parent_sysId = objMPODMaster.pSystemId });
 					if (objMPODMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -3755,7 +3755,7 @@ namespace SmartInventoryServices.Controllers
 						objADBMaster.geom = GetPointTypeParentGeom(objADBMaster.pSystemId, objADBMaster.pEntityType);
 					}
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.ADB.ToString(), gType = GeometryType.Point.ToString(), eGeom = objADBMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.ADB.ToString(), gType = GeometryType.Point.ToString(), eGeom = objADBMaster.geom, parent_eType = objADBMaster.pEntityType, parent_sysId = objADBMaster.pSystemId });
 					if (objADBMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -3779,7 +3779,13 @@ namespace SmartInventoryServices.Controllers
 				//ADBTemplateMaster objItem = new ADBTemplateMaster();
 
 				this.Validate(objADBMaster);
-				if (ModelState.IsValid)
+                if (objADBMaster.pSystemId > 0 && !String.IsNullOrEmpty(objADBMaster.pNetworkId))
+                {
+                    objADBMaster.parent_system_id = objADBMaster.pSystemId;
+                    objADBMaster.parent_network_id = objADBMaster.pNetworkId;
+                    objADBMaster.parent_entity_type = objADBMaster.pEntityType;
+                }
+                if (ModelState.IsValid)
 				{
 					var isNew = objADBMaster.system_id > 0 ? false : true;
 					objADBMaster.is_new_entity = (isNew && objADBMaster.source_ref_id != "0" && objADBMaster.source_ref_id != "");
@@ -5311,9 +5317,9 @@ namespace SmartInventoryServices.Controllers
 					{
 						objCDBMaster.geom = GetPointTypeParentGeom(objCDBMaster.pSystemId, objCDBMaster.pEntityType);
 					}
-					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.CDB.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCDBMaster.geom });
-					if (objCDBMaster.isDirectSave == true)
+                    //GET AUTO NETWORK CODE...
+                    var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.CDB.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCDBMaster.geom, parent_eType = objCDBMaster.pEntityType, parent_sysId = objCDBMaster.pSystemId });
+                    if (objCDBMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
 						objCDBMaster = GetCDBDetail(objCDBMaster);
@@ -5333,7 +5339,13 @@ namespace SmartInventoryServices.Controllers
 				{
 					objCDBMaster.cdb_name = objCDBMaster.network_id;
 				}
-				this.Validate(objCDBMaster);
+                if (objCDBMaster.pSystemId > 0 && !String.IsNullOrEmpty(objCDBMaster.pNetworkId))
+                {
+                    objCDBMaster.parent_system_id = objCDBMaster.pSystemId;
+                    objCDBMaster.parent_network_id = objCDBMaster.pNetworkId;
+                    objCDBMaster.parent_entity_type = objCDBMaster.pEntityType;
+                }
+                this.Validate(objCDBMaster);
 				if (ModelState.IsValid)
 				{
 					var isNew = objCDBMaster.system_id > 0 ? false : true;
@@ -12627,7 +12639,7 @@ namespace SmartInventoryServices.Controllers
 				if (objCabinetMaster.networkIdType == NetworkIdType.A.ToString() && objCabinetMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Cabinet.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCabinetMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Cabinet.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCabinetMaster.geom, parent_eType = objCabinetMaster.pEntityType, parent_sysId = objCabinetMaster.pSystemId });
 					if (objCabinetMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -13089,7 +13101,7 @@ namespace SmartInventoryServices.Controllers
 				if (objVaultMaster.networkIdType == NetworkIdType.A.ToString() && objVaultMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Vault.ToString(), gType = GeometryType.Point.ToString(), eGeom = objVaultMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Vault.ToString(), gType = GeometryType.Point.ToString(), eGeom = objVaultMaster.geom, parent_eType = objVaultMaster.pEntityType, parent_sysId = objVaultMaster.pSystemId });
 					if (objVaultMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -13733,7 +13745,7 @@ namespace SmartInventoryServices.Controllers
 				if (objHandholeMaster.networkIdType == NetworkIdType.A.ToString() && objHandholeMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Handhole.ToString(), gType = GeometryType.Point.ToString(), eGeom = objHandholeMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Handhole.ToString(), gType = GeometryType.Point.ToString(), eGeom = objHandholeMaster.geom, parent_eType = objHandholeMaster.pEntityType, parent_sysId = objHandholeMaster.pSystemId });
 					if (objHandholeMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..

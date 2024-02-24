@@ -1096,7 +1096,7 @@ namespace SmartInventory.Controllers
 				if (rptType.ToUpper() == "BOQ")
 				{
 					NPOIExcelHelper.CreateCustomCell(rowHd2, colCount, String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_014.Replace("<br>", ""), ApplicationSettings.Currency), headerStyle); colCount++;
-					NPOIExcelHelper.CreateCustomCell(rowHd2, colCount, Resources.Resources.SI_OSP_GBL_NET_RPT_017 + " " + string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency), headerStyle); colCount++;
+					NPOIExcelHelper.CreateCustomCell(rowHd2, colCount, String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_017.Replace("<br>", ""), ApplicationSettings.Currency), headerStyle); colCount++;
 
 				}
 				NPOIExcelHelper.CreateCustomCell(rowHd2, colCount, Resources.Resources.SI_OSP_GBL_NET_GBL_226, headerStyle); colCount++;
