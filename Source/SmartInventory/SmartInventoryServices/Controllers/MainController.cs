@@ -4508,7 +4508,7 @@ namespace SmartInventoryServices.Controllers
                 objLineAssociate.parent_network_id = objIn.networkId;
                 var layerDetails = new BLLayer().getLayer(objIn.entityType);
                 objLineAssociate.parent_multi_association = layerDetails.is_multi_association;
-                objLineAssociate.listrouteInfo = new BLMisc().getRouteEntityInLineBuffer(objIn.systemId,EntityType.Pole.ToString());
+                objLineAssociate.listrouteInfo = new BLMisc().getRouteEntityInLineBuffer(objIn.systemId, objLineAssociate.parent_entity_type);
                 if (objIn.systemId > 0)
                 {
                     var buried = new BLMisc().checkIsBuried(objIn.systemId, objIn.entityType);

@@ -39,11 +39,11 @@
             }
             @if (Model.entityType.ToLower() == "cable")
             {
-                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control",@required = true })
+                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control",@required = true, @maxlength = "10" })
             }
             else
             {
-                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control", @readonly = true })
+                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control", @readonly = true, @maxlength = "100" })
             }
         </div>
     </div>
