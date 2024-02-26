@@ -3460,5 +3460,34 @@ LAYER
             			
 		END	
 	END	
+	
+	#===================================Slack==================================
+	LAYER
+		NAME 'SLK'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_slack_map USING UNIQUE system_id USING srid=4326'	
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) and (%NetworkFilter%))	
+		VALIDATION		
+			'provinceFilter'   '.*'
+            'layerFilter'   '.*'	
+			'prjectspecificationFilter'   '.*'
+			'NetworkFilter' '.*'			
+		END 
+		METADATA
+			'ows_title' 'Slack'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'Loop' 							
+			STYLE
+				SYMBOL "icons/slack.png" 
+				SIZE 20			
+			END	  
+		END		
+	END	
 
 END

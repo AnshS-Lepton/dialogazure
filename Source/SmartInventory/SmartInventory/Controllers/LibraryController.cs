@@ -3205,8 +3205,8 @@ namespace SmartInventory.Controllers
 
 		#region Pole
 
-		public PartialViewResult AddPole(string networkIdType, int systemId = 0, string geom = "")
-		{
+		public PartialViewResult AddPole(string networkIdType, int systemId = 0, string geom = "", int pSystemId = 0, string pEntityType = "", string pNetworkId = "")
+        {
 			//PoleMaster objPoleMaster = GetPoleDetail(networkIdType, system_id,geom);
 			//BindPoleDropDown(objPoleMaster);
 			// BLItemTemplate.Instance.BindItemDropdowns(objPoleMaster, EntityType.Pole.ToString());
@@ -3217,6 +3217,8 @@ namespace SmartInventory.Controllers
 			obj.networkIdType = networkIdType;
 			obj.system_id = systemId;
 			obj.geom = geom;
+			obj.pSystemId = pSystemId;
+			obj.pEntityType = pEntityType;
 			obj.user_id = Convert.ToInt32(Session["user_id"]);
 			string url = "api/Library/EntityOperations";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<PoleMaster>(url, obj, EntityType.Pole.ToString(), EntityAction.Get.ToString());
@@ -3355,8 +3357,8 @@ namespace SmartInventory.Controllers
 
 		#region Tree
 
-		public PartialViewResult AddTree(string networkIdType, int systemId = 0, string geom = "")
-		{
+		public PartialViewResult AddTree(string networkIdType, int systemId = 0, string geom = "", int pSystemId = 0, string pEntityType = "", string pNetworkId = "")
+        {
 			//TreeMaster objTreeMaster = GetTreeDetail(networkIdType, systemId, geom);
 			//BLItemTemplate.Instance.BindItemDropdowns(objTreeMaster, EntityType.Tree.ToString());
 			//fillProjectSpecifications(objTreeMaster);
@@ -3366,7 +3368,9 @@ namespace SmartInventory.Controllers
 			obj.networkIdType = networkIdType;
 			obj.system_id = systemId;
 			obj.geom = geom;
-			obj.user_id = Convert.ToInt32(Session["user_id"]);
+			obj.pEntityType = pEntityType;
+			obj.pSystemId = pSystemId;
+            obj.user_id = Convert.ToInt32(Session["user_id"]);
 			string url = "api/Library/EntityOperations";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<TreeMaster>(url, obj, EntityType.Tree.ToString(), EntityAction.Get.ToString());
 			return PartialView("_AddTree", response.results);
@@ -3496,20 +3500,22 @@ namespace SmartInventory.Controllers
 		#endregion
 
 		#region Manhole
-		public PartialViewResult AddManhole(string networkIdType, int systemId = 0, string geom = "")
+		public PartialViewResult AddManhole(string networkIdType, int systemId = 0, string geom = "", string pEntityType = "", string pNetworkId = "", int pSystemId=0)
 		{
-			//ManholeMaster objManholeMaster = GetManholeDetail(networkIdType, systemId, geom);
-			//BLItemTemplate.Instance.BindItemDropdowns(objManholeMaster, EntityType.Manhole.ToString());
-			//fillProjectSpecifications(objManholeMaster);
-			//BindManholeDropDown(objManholeMaster);
-			//objManholeMaster.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Manhole.ToString()).ToList();
-			//return PartialView("_AddManhole", objManholeMaster);
+            //ManholeMaster objManholeMaster = GetManholeDetail(networkIdType, systemId, geom);
+            //BLItemTemplate.Instance.BindItemDropdowns(objManholeMaster, EntityType.Manhole.ToString());
+            //fillProjectSpecifications(objManholeMaster);
+            //BindManholeDropDown(objManholeMaster);
+            //objManholeMaster.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Manhole.ToString()).ToList();
+            //return PartialView("_AddManhole", objManholeMaster);
 
-			ManholeMaster obj = new ManholeMaster();
+            ManholeMaster obj = new ManholeMaster();
 			obj.networkIdType = networkIdType;
 			obj.system_id = systemId;
 			obj.geom = geom;
 			obj.user_id = Convert.ToInt32(Session["user_id"]);
+			obj.pEntityType = pEntityType;
+			obj.pSystemId = pSystemId;
 			string url = "api/Library/EntityOperations";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<ManholeMaster>(url, obj, EntityType.Manhole.ToString(), EntityAction.Get.ToString());
 			return PartialView("_AddManhole", response.results);
@@ -7773,8 +7779,8 @@ namespace SmartInventory.Controllers
 
 		#region WallMount
 
-		public PartialViewResult AddWallMount(string networkIdType, int systemId = 0, string geom = "")
-		{
+		public PartialViewResult AddWallMount(string networkIdType, int systemId = 0, string geom = "", int pSystemId = 0, string pEntityType = "", string pNetworkId = "")
+        {
 			//WallMountMaster objWallMountMaster = GetWallMountDetail(networkIdType, systemId, geom);
 			//BLItemTemplate.Instance.BindItemDropdowns(objWallMountMaster, EntityType.WallMount.ToString());
 			//BindWallMountDropDown(objWallMountMaster);
@@ -7786,6 +7792,8 @@ namespace SmartInventory.Controllers
 			obj.system_id = systemId;
 			obj.geom = geom;
 			obj.user_id = Convert.ToInt32(Session["user_id"]);
+			obj.pEntityType = pEntityType;
+			obj.pSystemId = pSystemId;
 			string url = "api/Library/EntityOperations";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<WallMountMaster>(url, obj, EntityType.WallMount.ToString(), EntityAction.Get.ToString());
 			return PartialView("_AddWallMount", response.results);
@@ -8484,7 +8492,13 @@ namespace SmartInventory.Controllers
 			var response = WebAPIRequest.PostIntegrationAPIRequest<AssociateLineEntity>(url, objLineAssociate, "", "");
 			return PartialView("_LineEntityAssociation", response.results);
 		}
-		public PartialViewResult viewEntityAssociation(AssociateEntityRequest objLineAssociate)
+        public PartialViewResult getRouteAssociation(AssociateEntityRequest objLineAssociate)
+        {          
+            string url = "api/main/getRouteAssociation";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<AssociateRoute>(url, objLineAssociate, "", "");
+            return PartialView("_RouteAssociation", response.results);
+        }
+        public PartialViewResult viewEntityAssociation(AssociateEntityRequest objLineAssociate)
 		{
 			//AssociateLineEntity objLineAssociate = new AssociateLineEntity();
 			//List<LineEntityInfo> objLineEntity = new List<LineEntityInfo>();
@@ -8511,7 +8525,14 @@ namespace SmartInventory.Controllers
 			var response = WebAPIRequest.PostIntegrationAPIRequest<AssociateLineEntity>(url, objLineEntity, "", "");
 			return PartialView("_LineEntityAssociation", response.results);
 		}
-		public JsonResult getEntityInBuffer(int systemId, string entityType, string pEntityType, string pgeomType)
+        public PartialViewResult SaveRouteAssociate(AssociateRoute objRoute)
+        {
+            objRoute.userId = Convert.ToInt32(Session["user_id"]);
+            string url = "api/main/SaveRouteAssociate";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<AssociateRoute>(url, objRoute, "", "");
+            return PartialView("_RouteAssociation", response.results);
+        }
+        public JsonResult getEntityInBuffer(int systemId, string entityType, string pEntityType, string pgeomType)
 		{
 			var bufferEntity = new BLMisc().getEntityInBuffer(systemId, entityType, pEntityType, pgeomType);
 			return Json(bufferEntity, JsonRequestBehavior.AllowGet);
@@ -8526,7 +8547,21 @@ namespace SmartInventory.Controllers
 			ExportData(dtlogs, "ExportAssociationReport_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));
 		}
 
-		public void DownloadBulkAssociationLog(int systemId)
+        public void ExportRouteAssociation(int systemId, string entityType, string networkId)
+        {
+            var listRouteInfo = new BLMisc().GetRouteAssociationExportData<Dictionary<string, string>>(systemId, entityType);
+            listRouteInfo = BLConvertMLanguage.ExportMultilingualConvert(listRouteInfo);
+            DataTable dtlogs = Utility.MiscHelper.GetDataTableFromDictionaries(listRouteInfo);
+			dtlogs.Columns.Remove("cable_id");
+            dtlogs.Columns.Remove("entity_type");
+            dtlogs.Columns.Remove("entity_id");
+
+            dtlogs.Columns["entity_network_id"].ColumnName = "Cable_Id";
+            //dtlogs.Columns["old_column_name2"].ColumnName = "new_column_name2";
+            ExportData(dtlogs, "ExportRouteAssociationReport_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));
+        }
+
+        public void DownloadBulkAssociationLog(int systemId)
 		{
 			int userId = Convert.ToInt32(Session["user_id"]);
 			var bulkAssociationLog = new BLMisc().DownloadBulkAssociationLog<Dictionary<string, string>>(systemId, userId);
@@ -11645,13 +11680,15 @@ namespace SmartInventory.Controllers
 		//HANDHOLE BY ANTRA
 
 		#region Handhole
-		public PartialViewResult AddHandhole(string networkIdType, int systemId = 0, string geom = "")
-		{
+		public PartialViewResult AddHandhole(string networkIdType, int systemId = 0, string geom = "", int pSystemId = 0, string pEntityType = "", string pNetworkId = "")
+        {
 			HandholeMaster obj = new HandholeMaster();
 			obj.networkIdType = networkIdType;
 			obj.system_id = systemId;
 			obj.geom = geom;
 			obj.user_id = Convert.ToInt32(Session["user_id"]);
+			obj.pEntityType = pEntityType;
+			obj.pSystemId = pSystemId;
 			string url = "api/Library/EntityOperations";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<HandholeMaster>(url, obj, EntityType.Handhole.ToString(), EntityAction.Get.ToString());
 			return PartialView("_AddHandhole", response.results);
@@ -12583,7 +12620,76 @@ namespace SmartInventory.Controllers
 		}
 
 
-		#endregion
+        #endregion
 
-	}
+        #region SLACK Entity BY ANTRA
+        public PartialViewResult AddSlack(string networkIdType, int systemId = 0, string geom = "")
+        {
+            SlackMaster obj = new SlackMaster();
+            obj.networkIdType = networkIdType;
+            obj.system_id = systemId;
+            obj.geom = geom;
+            obj.user_id = Convert.ToInt32(Session["user_id"]);
+            string url = "api/Library/EntityOperations";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<SlackMaster>(url, obj, EntityType.Slack.ToString(), EntityAction.Get.ToString());
+            return PartialView("_AddSlack", response.results);
+        }
+        public ActionResult SaveSlack(SlackMaster objSlack, bool isDirectSave = false)
+        {
+            objSlack.isDirectSave = isDirectSave;
+            objSlack.user_id = Convert.ToInt32(Session["user_id"]);
+            string url = "api/Library/EntityOperations";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<SlackMaster>(url, objSlack, EntityType.Slack.ToString(), EntityAction.Save.ToString());
+            if (isDirectSave)
+            {
+                return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
+            }
+            return PartialView("_AddSlack", response.results);
+        }
+
+        public PartialViewResult GetSlackDetailsForDuct(SlackMaster obj)
+        {
+            List<SlackMaster> lstSlack = BLSlack.Instance.GetSlackDetailsForDuct(obj.duct_system_id);
+            return PartialView("_SlackDetailsForDuct", lstSlack);
+
+        }
+
+        [HttpPost]
+        public JsonResult DeleteSlackDetailById(int Slack_system_id)
+        {
+            JsonResponse<string> objResp = new JsonResponse<string>();
+            try
+            {
+
+
+                if (BLSlack.Instance.DeleteSlackDetailById(Slack_system_id) > 0)
+                {
+                    objResp.status = ResponseStatus.OK.ToString();
+                    objResp.message = "Slack Detail Deleted successfully!";
+                }
+                else
+                {
+                    objResp.status = ResponseStatus.FAILED.ToString();
+					objResp.message = "Something went wrong while deleting Slack!";
+                }
+
+            }
+            catch
+            {
+                objResp.status = ResponseStatus.ERROR.ToString();
+                objResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_289;
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetDuctNameAndLengthForSlack(int DuctId)
+        {
+            DuctMaster obj = new DuctMaster();
+            obj = new BLDuct().GetDuctNameAndLengthForSlack(DuctId);
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+    }
 }

@@ -89,6 +89,7 @@ namespace DataAccess
                     objDuct.origin_ref_code = DuctInfo.origin_ref_code;
                     objDuct.bom_sub_category= DuctInfo.bom_sub_category;
                     objDuct.calculated_length = DuctInfo.calculated_length;
+                    objDuct.gis_design_id = DuctInfo.gis_design_id;
                     //DuctInfo.served_by_ring = DuctInfo.served_by_ring;
                     var DuctResp =  repo.Update(objDuct);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctResp.system_id, Models.EntityType.Duct.ToString(), DuctResp.province_id, 1);
@@ -282,6 +283,18 @@ namespace DataAccess
                 }).FirstOrDefault();
             }
             catch { throw; }
+        }
+        public DuctMaster GetDuctNameAndLengthForSlack(int DuctId)
+        {
+            try
+            {
+                var result = repo.GetById(m => m.system_id == DuctId);
+                return result != null ? result : new DuctMaster();
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

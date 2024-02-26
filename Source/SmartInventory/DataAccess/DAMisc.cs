@@ -994,6 +994,14 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<RouteInfo> getRouteEntityInLineBuffer(int systemId, string entityType)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<RouteInfo>("fn_get_near_by_route", new { p_system_id = systemId, p_entity_type = entityType }, true).ToList();
+            }
+            catch { throw; }
+        }
         public List<LineEntityInfo> getAutoLineEntityInLineBuffer(int systemId, string entityType, int pSystemId, string pEntityType, string pParentGeom, string pParentGeomType)
         {
             try
@@ -1026,7 +1034,15 @@ namespace DataAccess
             }
             catch { throw; }
         }
-       
+        public DbMessage saveRouteAssocition(string objRouteAssocite, int pSystemId, string pEntityType, int userId)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DbMessage>("fn_save_Route_Assocition", new { p_route_associate_info = objRouteAssocite, p_parent_system_id = pSystemId, p_parent_entity_type = pEntityType, p_user_id = userId }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+
         public DbMessage saveLineEntityAutoAssocition(int pSystemId, string pEntityType, int userId)
         {
             try
@@ -1086,6 +1102,15 @@ namespace DataAccess
             try
             {
                 var lstItems = repo.ExecuteProcedure<T>("fn_get_export_associate_entity", new { p_system_id = systemId, p_entity_type = entityType }, true).ToList();
+                return lstItems != null ? lstItems : new List<T>();
+            }
+            catch { throw; }
+        }
+        public List<T> GetRouteAssociationExportData<T>(int systemId, string entityType) where T : new()
+        {
+            try
+            {
+                var lstItems = repo.ExecuteProcedure<T>("fn_get_near_by_route", new { p_system_id = systemId, p_entity_type = entityType }, true).ToList();
                 return lstItems != null ? lstItems : new List<T>();
             }
             catch { throw; }
@@ -1678,7 +1703,19 @@ namespace DataAccess
             }
             catch { throw; }
         }
-       
+
+        public UserRegionProvince GetRegionProvinceBasedOnLocation(string geom, int userId)
+        {
+            UserRegionProvince objUserRegionProvince = new UserRegionProvince();
+            try
+            {
+                objUserRegionProvince = repo.ExecuteProcedure<UserRegionProvince>("fn_get_GetRegionProvinceBasedOnLocation", new { p_geom = geom, p_userId = userId }).FirstOrDefault();
+                return objUserRegionProvince;
+
+            }
+            catch { throw; }
+        }
+
     }
 
     public class DAMisce : Repository<EmailSettingsModel>
