@@ -1073,11 +1073,29 @@ namespace SmartInventoryServices.Controllers
 								return response;
 							}
 						}
-						#endregion
-						//
+                        #endregion
+                        //
+						//SLACK BY ANTRA
 
+                        else if (headerAttribute.entity_type.ToUpper() == EntityType.Slack.ToString().ToUpper())
+                        {
+                            if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
+                            {
+                                return AddSlack(data);
+                            }
+                            else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
+                            {
+                                return SaveSlack(data);
+                            }
+                            else
+                            {
+                                response.status = ResponseStatus.FAILED.ToString();
+                                response.error_message = "Entity_Action not matched";
+                                return response;
+                            }
+                        }
 
-					}
+                    }
 				}
 				else if (objEntityInfo.system_id > 0)// headerAttribute.entity_action.ToUpper() == EntityAction.Update.ToString().ToUpper())
 				{
@@ -11869,7 +11887,8 @@ namespace SmartInventoryServices.Controllers
 				objLib.parent_entity_type = networkCodeDetail.parent_entity_type;
 				objLib.parent_network_id = networkCodeDetail.parent_network_id;
 				objLib.parent_system_id = networkCodeDetail.parent_system_id;
-			}
+                objLib.sequence_id = networkCodeDetail.sequence_id;
+            }
 		}
 		#endregion
 
@@ -14756,9 +14775,167 @@ namespace SmartInventoryServices.Controllers
 			}
 			return response;
 		}
-		#endregion
+        #endregion
+
+        #region SLACK BY ANTRA
+        #region Add Slack
+        public ApiResponse<SlackMaster> AddSlack(ReqInput data)
+        {
+            var response = new ApiResponse<SlackMaster>();
+            try
+            {
+                SlackMaster objRequestIn = ReqHelper.GetRequestData<SlackMaster>(data);
+                SlackMaster objSlack = GetSlackDetail(objRequestIn);
+                objSlack.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.Duct.ToString()).ToList();
+                response.status = StatusCodes.OK.ToString();
+                response.results = objSlack;
+
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("AddSlack()", "Library Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
+
+        #region Slack Details
+        public SlackMaster GetSlackDetail(SlackMaster objSlack)
+        {
+            if (objSlack.system_id == 0)
+            {
+                objSlack.longitude = Convert.ToDouble(objSlack.geom.Split(' ')[0]);
+                objSlack.latitude = Convert.ToDouble(objSlack.geom.Split(' ')[1]);
+                objSlack.lstSlack = BLSlack.Instance.GetSlackDetails(objSlack.longitude, objSlack.latitude, objSlack.associated_system_id, "Duct", objSlack.structure_id);
+                //NEW ENTITY->Fill Region and Province Detail..
+                fillRegionProvinceDetail(objSlack, GeometryType.Point.ToString(), objSlack.geom);
+                //Fill Parent detail...              
+                fillParentDetail(objSlack, new NetworkCodeIn() { eType = EntityType.Slack.ToString(), gType = GeometryType.Point.ToString(), eGeom = objSlack.geom }, objSlack.networkIdType);
+            }
+            else
+            {
+                // Get entity detail by Id...
+                objSlack = new BLMisc().GetEntityDetailById<SlackMaster>(objSlack.system_id, EntityType.Slack, objSlack.user_id);
+                objSlack.lstSlack = BLSlack.Instance.GetSlackDetails(objSlack.longitude, objSlack.latitude, objSlack.associated_system_id, objSlack.associated_entity_type, objSlack.structure_id);
+                DuctMaster obj = new DuctMaster();
+                int DuctId = Convert.ToInt32(objSlack.duct_id);
+                obj = new BLDuct().GetDuctNameAndLengthForSlack(DuctId);
+                objSlack.duct_name = obj.duct_name;
+                objSlack.duct_calculated_length = obj.calculated_length;
+                objSlack.total_slack_count = obj.total_slack_count;
+                objSlack.available_calculated_length = (obj.calculated_length - obj.total_slack_length);
+                objSlack.total_slack_length = obj.total_slack_length;
+                objSlack.associated_network_id = obj.network_id;
+                fillRegionProvAbbr(objSlack);
+            }
+            return objSlack;
+        }
+        #endregion
+
+        #region Save Slack
+        public ApiResponse<SlackMaster> SaveSlack(ReqInput data)
+        {
+            var response = new ApiResponse<SlackMaster>();
+            SlackMaster objSlack = ReqHelper.GetRequestData<SlackMaster>(data);
+            try
+            {
+                ModelState.Clear();
+                if (objSlack.system_id == 0)
+                {
+                    objSlack.created_by = objSlack.user_id;
+                    objSlack.created_on = DateTimeHelper.Now;
+                    objSlack.associated_entity_type = "Duct";
+                    objSlack.longitude = Convert.ToDouble(objSlack.geom.Split(' ')[0]);
+                    objSlack.latitude = Convert.ToDouble(objSlack.geom.Split(' ')[1]);
+                    objSlack.associated_system_id = Convert.ToInt32(objSlack.duct_id);
+                    objSlack.duct_system_id = Convert.ToInt32(objSlack.duct_id);
+                    NetworkCodeIn objIn = new NetworkCodeIn();
+                    objIn.eType = "Slack"; objIn.eGeom = objSlack.geom; objIn.gType = "Point";
+                    var networkCodeDetail = new BLMisc().GetNetworkCodeDetail(objIn);
+                    objSlack.parent_entity_type = networkCodeDetail.parent_entity_type;
+                    objSlack.parent_network_id = networkCodeDetail.parent_network_id;
+                    objSlack.parent_system_id = networkCodeDetail.parent_system_id;
+                    objSlack.network_id = networkCodeDetail.network_code;
+                    objSlack.sequence_id = networkCodeDetail.sequence_id;
+                }
+                else
+                {
+                    objSlack.modified_by = objSlack.user_id;
+                    objSlack.modified_on = DateTimeHelper.Now;
+                }
+                objSlack.objPM = null;
+                objSlack.lstSlack = null;
+                this.Validate(objSlack);
+                if (ModelState.IsValid)
+                {
+                    var isNew = objSlack.system_id > 0 ? false : true;
+                    var resultItem = new BLSlack().SaveEntitySlack(JsonConvert.SerializeObject(objSlack));
+                    objSlack.system_id = resultItem.systemId;
+                    objSlack.objPM = new PageMessage();
+                    string[] LayerName = { EntityType.Slack.ToString() };
+                    if (resultItem.systemId > 0)
+                    {
+                        if (isNew)
+                        {
+                            objSlack.objPM.status = ResponseStatus.OK.ToString();
+                            objSlack.objPM.isNewEntity = isNew;
+                            objSlack.objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName); ;
+                            response.error_message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);
+                            response.status = ResponseStatus.OK.ToString();
+                        }
+                        else
+                        {
+                            objSlack.objPM.status = ResponseStatus.OK.ToString();
+                            objSlack.objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+                            response.error_message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+                            response.status = ResponseStatus.OK.ToString();
+                        }
+                    }
+                    else
+                    {
+                        objSlack.objPM.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                        objSlack.objPM.message = resultItem.message;
+                        response.error_message = resultItem.message;
+                        response.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                    }
+
+                }
+                else
+                {
+                    objSlack.objPM.status = ResponseStatus.FAILED.ToString();
+                    objSlack.objPM.message = getFirstErrorFromModelState();
+                    response.error_message = getFirstErrorFromModelState();
+                    response.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                }
+                if (objSlack.isDirectSave == true)
+                {
+                    //RETURN MESSAGE AS JSON FOR DIRECT SAVE
+                    response.results = objSlack;
+                    response.status = ResponseStatus.OK.ToString();
+                }
+                else
+                {
+                    objSlack.lstSlack = BLSlack.Instance.GetSlackDetails(objSlack.longitude, objSlack.latitude, objSlack.associated_system_id, "Duct", objSlack.structure_id);
+                    objSlack.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.Duct.ToString()).ToList();
+                    response.results = objSlack;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("SaveSlack()", "Library Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
+        #endregion
 
 
-	}
+    }
 }
 

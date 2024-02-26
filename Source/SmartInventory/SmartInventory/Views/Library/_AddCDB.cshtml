@@ -81,6 +81,7 @@
         @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
         //Add the other_info as hidden field for additional attributes
         @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
+        @Html.HiddenFor(m => m.sequence_id)
         <!-- Message Pop-up -->
         @pageMessage()
         <div class="libTabs">
