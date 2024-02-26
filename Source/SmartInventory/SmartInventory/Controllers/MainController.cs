@@ -1556,8 +1556,7 @@ namespace SmartInventory.Controllers
 
             var exportData = new BLMisc().GetEntityExportData<Dictionary<string, string>>(systemId, entityType, networkStage);            
             exportData = BLConvertMLanguage.ExportMultilingualConvert(exportData);
-
-            DataTable dtlogs = Utility.MiscHelper.GetDataTableFromDictionaries(exportData, true, ApplicationSettings.numberFormatType, new string[] { "Longitude", "Latitude","Created By","Modified By", "Created By ID", "Item_Code","item code", "PTS_code" });
+            DataTable dtlogs = Utility.MiscHelper.GetDataTableFromDictionaries(exportData, (entityType == "Cable" || entityType == "Trench" || entityType == "Duct" )? false:true, ApplicationSettings.numberFormatType, new string[] { "Longitude", "Latitude", "Created By", "Modified By", "Created By ID", "Item_Code", "item code", "PTS_code" });
             dtlogs.TableName = layerDetail.layer_title;
             //if (entityType == "Cable")
             //  dtlogs = Utility.CommonUtility.GetFormattedDataTable(dtlogs, ApplicationSettings.numberFormatType);                  
