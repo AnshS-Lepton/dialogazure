@@ -237,6 +237,7 @@
     <Compile Include="TempUpload\TempPOI.cs" />
     <Compile Include="TempUpload\TempPole.cs" />
     <Compile Include="TempUpload\TempRoom.cs" />
+    <Compile Include="TempUpload\TempRow.cs" />
     <Compile Include="TempUpload\TempSector.cs" />
     <Compile Include="TempUpload\TempSpliceClosure.cs" />
     <Compile Include="TempUpload\TempSplitter.cs" />

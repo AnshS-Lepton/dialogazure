@@ -86,6 +86,7 @@
     <Compile Include="TempUploadObjects\UploadTempOpticalrepeater.cs" />
     <Compile Include="TempUploadObjects\UploadTempPatchPanel.cs" />
     <Compile Include="TempUploadObjects\UploadTempRoom.cs" />
+    <Compile Include="TempUploadObjects\UploadTempRow.cs" />
     <Compile Include="TempUploadObjects\UploadTempSector.cs" />
     <Compile Include="Classes\ItemSpecification.cs" />
     <Compile Include="Classes\KMLUploader.cs" />
