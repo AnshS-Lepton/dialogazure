@@ -722,7 +722,7 @@ namespace SmartInventory.Controllers
                 string subject = "BIM" + ":" + "JFP" + ":" + CatagoryName;
 
                 string[] aarReceiver = ApplicationSettings.TicketReceiverMailId.Split(',');
-                commonUtil.SendEmail(aarReceiver, subject, objHPSMTicket.ticket_description, totalFiles, out mailsentmsg, BLMisc.EmailSettingsModel, user_email);
+                commonUtil.SendEmail(aarReceiver, subject, objHPSMTicket.ticket_description, totalFiles, out mailsentmsg, EmailSettings.AllEmailSettings, user_email);
 
             }
             catch (Exception ex)

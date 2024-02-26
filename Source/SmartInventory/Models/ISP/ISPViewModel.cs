@@ -130,7 +130,7 @@ namespace Models.ISP
         public double latitude { get; set; }
         public string parent_network_id { get; set; }
         public int parent_system_id { get; set; }
-        public int sequence_id { get; set; }
+        public int? sequence_id { get; set; }
         [NotMapped]
         public PageMessage objPM { get; set; }
         public string origin_from { get; set; }

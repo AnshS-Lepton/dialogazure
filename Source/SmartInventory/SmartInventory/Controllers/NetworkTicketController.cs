@@ -709,12 +709,12 @@ namespace SmartInventory.Controllers
 
 							BLUser objBLuser = new BLUser();
 							List<EventEmailTemplateDetail> objEventEmailTemplateDetail = objBLuser.GetEventEmailTemplateDetail(EventName);
-                            System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, null, objTicketMaster[0].projectname, EventName));
+                            System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, EmailSettings.AllEmailSettings, null, objTicketMaster[0].projectname, EventName));
                             //commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, null, objTicketMaster[0].projectname);
 							if (objTicketMaster[0].ticketcategory.ToLower() == "construction")
 								EventName = EmailEventList.ProjectClosure.ToString();
 							objEventEmailTemplateDetail = objBLuser.GetEventEmailTemplateDetail(EventName);
-                            System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, null, objTicketMaster[0].projectname, EventName));
+                            System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, EmailSettings.AllEmailSettings, null, objTicketMaster[0].projectname, EventName));
                             //commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, null, objTicketMaster[0].projectname);
 						}
 

@@ -38,9 +38,6 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
       <HintPath>..\packages\Portable.BouncyCastle.1.8.6\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
-    <Reference Include="BusinessLogics">
-      <HintPath>..\SmartInventory\bin\BusinessLogics.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -150,10 +147,6 @@
     <Compile Include="LogHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MapPrinter\MapPrintManager.cs" />
-    <Compile Include="MapPrinter\MapReport.cs" />
-    <Compile Include="MapPrinter\MapTile.cs" />
-    <Compile Include="MapPrinter\ReportSheet.cs" />
     <Compile Include="MiscHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SmartInventoryHub.cs" />
@@ -182,6 +175,7 @@
       <Name>Resources</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -3810,14 +3810,12 @@ function AddNewAccessoriesMapping(_id) {
     popup.LoadModalDialog('Miscellaneous/AddNewAccessoriesMapping', { id: _id }, 'Add Accessories Entity', 'modal-md');
 }
 function DeleteAssociateEntityById(id) {
-     
-
     confirm("Are you sure you want to delete this record?", function () {
         ajaxReq('Miscellaneous/DeleteAssociateEntityById', { id: id }, false, function (resp) {
             if (resp.status == "OK") {
                 alert(resp.message, 'Success', 'success');
                 setTimeout(function () {
-                    $("#frmViewAccessories).submit()");
+                    $("#frmViewAccessories").submit();
                 }, 3000);
 
             }

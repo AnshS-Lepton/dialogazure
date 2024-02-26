@@ -20,7 +20,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Utility;
-using Utility.MapPrinter;
+using BusinessLogics.MapPrinter;
 
 namespace SmartInventory.Controllers
 {

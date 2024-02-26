@@ -17,7 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Utility;
-using Utility.MapPrinter;
+using BusinessLogics.MapPrinter;
 namespace SmartInventory.Helper
 {
     public class PDFHelper
@@ -413,7 +413,7 @@ namespace SmartInventory.Helper
                     if (rptType.ToUpper() == "BOQ")
                     {
                         tblPDF.AddCell(GetCusotmPDFCell(String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_014.Replace("<br>", ""), ApplicationSettings.Currency), _isHeaderFooter: true));
-                        tblPDF.AddCell(GetCusotmPDFCell(Resources.Resources.SI_OSP_GBL_NET_RPT_017 + " " + string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency), _isHeaderFooter: true));
+                        tblPDF.AddCell(GetCusotmPDFCell(String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_017.Replace("<br>", ""), ApplicationSettings.Currency), _isHeaderFooter: true));
                     }
                     tblPDF.AddCell(GetCusotmPDFCell(Resources.Resources.SI_OSP_GBL_NET_GBL_226, _isHeaderFooter: true));
                     if (rptType.ToUpper() == "BOQ")

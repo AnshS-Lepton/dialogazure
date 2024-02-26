@@ -543,7 +543,9 @@ namespace Models
 		public string partner_name { get; set; }
 		[NotMapped]
 		public List<string> lstUserModule { get; set; }
-		public PoleMaster()
+        [NotMapped]
+        public int pSystemId { get; set; }
+        public PoleMaster()
 		{
 			objPM = new PageMessage();
 
@@ -833,7 +835,9 @@ namespace Models
 		public string partner_name { get; set; }
 		[NotMapped]
 		public List<string> lstUserModule { get; set; }
-		public TreeMaster()
+        [NotMapped]
+        public int pSystemId { get; set; }
+        public TreeMaster()
 		{
 			objPM = new PageMessage();
 			lstBindProjectCode = new List<ProjectCodeMaster>();
@@ -986,6 +990,8 @@ namespace Models
 		public string partner_name { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
+        [NotMapped]
+        public int pSystemId { get; set; }
         public ManholeMaster()
 		{
 			objPM = new PageMessage();
@@ -2451,8 +2457,10 @@ namespace Models
 		public string partner_name { get; set; }
 		[NotMapped]
 		public List<string> lstUserModule { get; set; }
+        [NotMapped]
+        public int pSystemId { get; set; }
 
-		public WallMountMaster()
+        public WallMountMaster()
 		{
 			objPM = new PageMessage();
 			lstBindProjectCode = new List<ProjectCodeMaster>();
@@ -3877,7 +3885,9 @@ namespace Models
 		public string mzone_id { get; set; }
 		[NotMapped]
 		public string pEntityType { get; set; }
-		[NotMapped]
+        [NotMapped]
+        public int pSystemId { get; set; }
+        [NotMapped]
 		public string partner_name { get; set; }
         [NotMapped]
         public vm_dynamic_form objDynamicControls { get; set; }
@@ -4735,6 +4745,113 @@ namespace Models
 
         }
 
+    }
+	public class SlackMaster : IReference, IGeographicDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int system_id { get; set; }
+        public string network_id { set; get; }
+        public double? slack_length { set; get; }
+        public int associated_system_id { get; set; }
+        public string associated_network_id { get; set; }
+        public string associated_entity_type { get; set; }
+        public int duct_system_id { set; get; }
+        public int province_id { get; set; }
+        public int region_id { get; set; }
+        public int parent_system_id { get; set; }
+        public string parent_network_id { get; set; }
+        public string parent_entity_type { get; set; }
+        public int sequence_id { get; set; }
+        public int? created_by { set; get; }
+        public DateTime? created_on { set; get; }
+        public int? modified_by { set; get; }
+        public DateTime? modified_on { set; get; }
+        [NotMapped]
+        public string duct_id { set; get; }
+        public string network_status { get; set; }
+        [NotMapped]
+        public string duct_name { get; set; }
+        [NotMapped]
+        public string region_name { get; set; }
+        [NotMapped]
+        public string province_name { get; set; }
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+        [NotMapped]
+        public string associated_System_Type { get; set; }
+        [NotMapped]
+        public PageMessage objPM { get; set; }
+        [NotMapped]
+        public int structure_id { get; set; }
+        [NotMapped]
+        public string geom { get; set; }
+        [NotMapped]
+        public string networkIdType { get; set; }
+        [NotMapped]
+        public List<SlackMaster> lstSlack { get; set; }
+        public string status_remark { get; set; }
+        [NotMapped]
+        public double? duct_calculated_length { get; set; }
+        [NotMapped]
+        public int? total_slack_count { get; set; }
+        [NotMapped]
+        public double? available_calculated_length { get; set; }
+        [NotMapped]
+        public int? total_slack_length { get; set; }
+        [NotMapped]
+        public int user_id { get; set; }
+        [NotMapped]
+        public bool isDirectSave { get; set; }
+        public bool is_new_entity { get; set; }
+        [NotMapped]
+        public List<FormInputSettings> formInputSettings { get; set; }
+        public string origin_from { get; set; }
+        public string origin_ref_id { get; set; }
+        public string origin_ref_code { get; set; }
+        public string origin_ref_description { get; set; }
+        public string request_ref_id { get; set; }
+        public string requested_by { get; set; }
+        public string request_approved_by { get; set; }
+        public string subarea_id { get; set; }
+        public string area_id { get; set; }
+        public string dsa_id { get; set; }
+        public string csa_id { get; set; }
+        public string gis_design_id { get; set; }
+        [NotMapped]
+        public string geographic_id { get; set; }
+        [NotMapped]
+        public string region_abbreviation { get; set; }
+        [NotMapped]
+        public string province_abbreviation { get; set; }
+        public string ne_id { get; set; }
+        public string prms_id { get; set; }
+        public string jc_id { get; set; }
+        public string mzone_id { get; set; }
+        [NotMapped]
+        public string entityType { get; set; }
+        [NotMapped]
+        public string partner_name { get; set; }
+        public SlackMaster()
+        {
+            objPM = new PageMessage();
+            structure_id = 0;
+            lstSlack = new List<SlackMaster>();
+            entityType = "Slack";
+        }
+    }
+    public class NEDuctDetails
+    {
+        public string network_id { set; get; }
+        public int duct_system_id { set; get; }
+        public string created_on { set; get; }
+        public string duct_id { set; get; }
+        public string duct_name { get; set; }
+        public string duct_type { get; set; }
+        public float? duct_calculated_length { get; set; }
+        public int total_slack_length { get; set; }
+        public int total_slack_count { get; set; }
+        public float? available_duct_length { get; set; }
     }
 }
 
