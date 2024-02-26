@@ -447,7 +447,7 @@ var NetworkPlanning = function () {
             $('#ddledit_path').val('google').trigger("chosen:updated");
             $('#trenchduct').show();
             $('#ddledit_path').attr('disabled', false).trigger("chosen:updated");
-            $('#txtdistance').append("Manhole Span(m)<i class='clsMandatory'>*</i>:");
+            $('#txtdistance').append("Chamber Span(m)<i class='clsMandatory'>*</i>:");
         }
         else if (cabletype == "Overhead") {
             $('#ddledit_path').val('manually');
