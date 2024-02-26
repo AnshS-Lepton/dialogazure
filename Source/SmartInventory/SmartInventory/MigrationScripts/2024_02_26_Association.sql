@@ -72,11 +72,15 @@ V_IS_VALID=FALSE;
 V_MESSAGE:=Concat(V_LAYER_TITLE,' [SI_GBL_GBL_GBL_GBL_052]');--(V_LAYER_TITLE||' can not be deleted as it is spliced with some entity!'); 
 
 end if; 
---CHECK THE ENTITY ASSOCIATION FIRST
+--CHECK THE ROUTE ENTITY ASSOCIATION FIRST
 elsif exists(select 1 from  ASSOCIATE_ROUTE_INFO asso where asso.entity_id=p_system_id and upper(entity_type)=upper(p_entity_type))
 then 
-V_IS_VALID=FALSE;
-V_MESSAGE:=Concat(V_LAYER_TITLE,' can not be deleted as route is associated with some entity!');
+delete from ASSOCIATE_ROUTE_INFO where asso.entity_id=p_system_id and upper(entity_type)=upper(p_entity_type);
+
+-- elsif exists(select 1 from  ASSOCIATE_ROUTE_INFO asso where asso.entity_id=p_system_id and upper(entity_type)=upper(p_entity_type))
+-- then 
+-- V_IS_VALID=FALSE;
+-- V_MESSAGE:=Concat(V_LAYER_TITLE,' can not be deleted as route is associated with some entity!');
 
 
 --CHECK THE ENTITY ASSOCIATION FIRST
