@@ -1552,19 +1552,11 @@ namespace SmartInventory.Controllers
         public void ExportInfoEntity(int systemId, string entityType, string networkStage)
         {
             //Filter the Layer Detail
-            DataTable dtlogs = new DataTable();
             var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == entityType.ToUpper()).FirstOrDefault();
 
             var exportData = new BLMisc().GetEntityExportData<Dictionary<string, string>>(systemId, entityType, networkStage);            
             exportData = BLConvertMLanguage.ExportMultilingualConvert(exportData);
-
-            if (entityType == "Cable")
-            {
-                dtlogs = Utility.MiscHelper.GetDataTableFromDictionaries(exportData, false, ApplicationSettings.numberFormatType, new string[] { "Longitude", "Latitude", "Created By", "Modified By", "Created By ID", "Item_Code", "item code", "PTS_code" });
-            }
-            else {
-                dtlogs = Utility.MiscHelper.GetDataTableFromDictionaries(exportData, true, ApplicationSettings.numberFormatType, new string[] { "Longitude", "Latitude", "Created By", "Modified By", "Created By ID", "Item_Code", "item code", "PTS_code" });
-            }
+            DataTable dtlogs = Utility.MiscHelper.GetDataTableFromDictionaries(exportData, (entityType == "Cable" || entityType == "Trench" || entityType == "Duct" )? false:true, ApplicationSettings.numberFormatType, new string[] { "Longitude", "Latitude", "Created By", "Modified By", "Created By ID", "Item_Code", "item code", "PTS_code" });
             dtlogs.TableName = layerDetail.layer_title;
             //if (entityType == "Cable")
             //  dtlogs = Utility.CommonUtility.GetFormattedDataTable(dtlogs, ApplicationSettings.numberFormatType);                  
