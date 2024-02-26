@@ -608,7 +608,8 @@ namespace SmartInventory.Controllers
                                 {
                                     if (obj.surveyarea_status == "New")
                                     {
-                                        deleteChk = new BLSurveyArea().DeleteSurveyAreaById(systemId);
+                                        response = new BLMisc().deleteEntity(systemId, EntityType.SurveyArea.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
+                                        deleteChk = response.status == true ? 1 : 0;
                                     }
                                     else
                                     {

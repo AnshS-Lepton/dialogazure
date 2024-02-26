@@ -5,13 +5,18 @@ using Newtonsoft.Json;
 using SmartInventory.Filters;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
+using Utility;
 using static Mono.Security.X509.X520;
 
 namespace SmartInventory.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class VectorLayerController : Controller
     {
         // GET: VectorLayer
@@ -20,10 +25,18 @@ namespace SmartInventory.Controllers
             return View();
         }
         [Compression]
-        public string GetVectorGeojson(string vectorPrvinceIds)
+       
+        public string GetVectorGeojson(string vectorPrvinceIds, string entityType)
         {
+            DateTime requestTime = DateTimeHelper.Now;
+            string _logFolderPaths = ConfigurationManager.AppSettings["logFolderPath"].ToString();
             string url = "api/VectorLayer/GetVectorData";
-            var response = JsonConvert.SerializeObject(WebAPIRequest.PostIntegrationAPIRequest<dynamic>(url, new VectorDataIn { PrvinceIds = vectorPrvinceIds }));
+            var response = JsonConvert.SerializeObject(WebAPIRequest.PostIntegrationAPIRequest<dynamic>(url, new VectorDataIn { PrvinceIds = vectorPrvinceIds, entityType = entityType }));
+           /* using (StreamWriter sw = System.IO.File.AppendText(System.Web.Hosting.HostingEnvironment.MapPath(_logFolderPaths + "VectorAPILog-" + DateTimeHelper.Now.ToString("dd-MM-yyyy") + ".txt")))
+            {
+                sw.WriteLine("\r\n VectorLayer:==========>");
+                sw.WriteLine("WEB Request Time:{0}, Response Time:{1}", requestTime, DateTimeHelper.Now);
+            }*/
             return response;
            /* var response = WebAPIRequest.GetAPIRequest(url);
             return response;*/

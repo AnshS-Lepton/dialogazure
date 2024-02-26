@@ -2243,7 +2243,6 @@
     }
 
     this.showPath = function () {
-         
         //alert('Entry Splice without osp');
         ajaxReq('Splicing/GetCPFelementPath', {}, true, function (resp) {
             if (resp.status = 'OK') {
@@ -2323,10 +2322,10 @@
                             //IE Solution
                             var ptObj = null;
                             if (resp.result[i].entity_category != null && resp.result[i].entity_category != '') {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.result[i].entity_category + '_' + resp.result[i].en_type.toUpperCase() + '.png', system_id, en_type, port_no, display_name, is_virtual_port_allowed);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.result[i].entity_category + '_' + resp.result[i].en_type.toUpperCase() + '.png', system_id, en_type, port_no,network_id,display_name, is_virtual_port_allowed);
                             }
                             else {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result[i].is_virtual ? 'v_' : '') + resp.result[i].en_type + '.png', system_id, en_type, port_no, display_name, is_virtual_port_allowed);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result[i].is_virtual ? 'v_' : '') + resp.result[i].en_type + '.png', system_id, en_type, port_no,network_id,display_name, is_virtual_port_allowed);
                             }
                             var SourceEquipmentId = $('#equipment_id').val().split(" ")[0];
                             //JIRA- SSSI-452 bug fix change done by Ram
