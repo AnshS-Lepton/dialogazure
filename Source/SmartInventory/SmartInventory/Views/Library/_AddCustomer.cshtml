@@ -302,8 +302,9 @@
                 $(document).ready(function () {
                      
                     callFormValidator("frmAddCustomer");
-                    si.setDateTimeCalendar("activation_date", "imgActvDate");
-                    si.setDateTimeCalendar("deactivation_date", "imgDeactDate");
+                    si.setSurveyDateTimeCalendar("activation_date", "imgActvDate", "0", false);
+                    si.setSurveyDateTimeCalendar("deactivation_date", "imgDeactDate", "0", false);
+
                     $('.chosen-select').chosen({ width: '100%' });
                     EnableDisableUpdateButton("frmAddCustomer", '@Model.system_id' > 0 ? "btnUpdateArea" : "btnSaveArea");
 
