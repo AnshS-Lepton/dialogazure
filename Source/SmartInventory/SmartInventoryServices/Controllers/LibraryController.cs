@@ -13322,6 +13322,7 @@ namespace SmartInventoryServices.Controllers
 					objLoop.parent_system_id = networkCodeDetail.parent_system_id;
 					objLoop.network_id = networkCodeDetail.network_code;
 					objLoop.sequence_id = networkCodeDetail.sequence_id;
+					
 				}
 				else
 				{
@@ -13334,8 +13335,8 @@ namespace SmartInventoryServices.Controllers
 				if (ModelState.IsValid)
 				{
 					var isNew = objLoop.system_id > 0 ? false : true;
-					var resultItem = new BLLoop().SaveEntityLoop(JsonConvert.SerializeObject(objLoop));
-					objLoop.system_id = resultItem.systemId;
+					var resultItem = new BLLoop().SaveEntityLoop(JsonConvert.SerializeObject(objLoop), objLoop.province_id);
+                    objLoop.system_id = resultItem.systemId;
 					objLoop.objPM = new PageMessage();
 					string[] LayerName = { EntityType.Loop.ToString() };
 					if (resultItem.systemId > 0)
