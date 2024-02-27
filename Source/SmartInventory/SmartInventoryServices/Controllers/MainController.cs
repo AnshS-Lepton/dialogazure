@@ -6297,6 +6297,47 @@ namespace SmartInventoryServices.Controllers
         }
         #endregion
 
+        [HttpPost]
+
+        public ApiResponse<List<NEDuctDetails>> GetNearByDucts(ReqInput data)
+        {
+            var response = new ApiResponse<List<NEDuctDetails>>();
+            try
+            {
+
+                NearByCables objCable = ReqHelper.GetRequestData<NearByCables>(data);
+                if (objCable.bufferInMtrs <= 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Invalid buffer!";
+                    return response;
+                }
+                else if (objCable.latitude == 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Invalid latitude!";
+                    return response;
+                }
+                else if (objCable.longitude == 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Invalid longitude!";
+                    return response;
+                }
+                response.status = StatusCodes.OK.ToString();
+                response.results = BLSlack.Instance.GetNearByDuctDetails(objCable.longitude, objCable.latitude, objCable.bufferInMtrs);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("GetNearByDucts()", "Main Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = "Error While Processing  Request.";
+            }
+
+            return response;
+        }
+
     }
 
 }
