@@ -203,12 +203,9 @@ var Main = function () {
     this.patchpanelGeoJson = {};
     this.htbGeoJson = {};
     this.equipmentGeoJson = {};
-    this.slackGeoJson = {};
-    this.sectorGeoJson = {};
-    this.towerGeoJson = {};
-
-
-
+    this.loopGeoJson = {};
+    this.antennaGeoJson = {}; 
+    this.faultGeoJson = {}; 
     this.LayerStyles = [];
     this.ActivePlannedVectorlayers = [];
     this.ActiveAsBuiltVectorlayers = [];
@@ -336,8 +333,8 @@ var Main = function () {
         "txtNEBuffer": "#txtNEBuffer",
         "frtUserId": "#frtUserId",
     }
-    this.layestList = ['Network_Ticket', 'Area', 'SubArea', 'DSA', 'CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD', 'Duct', 'Customer', 'ROW', 'Handhole', 'Structure', 'SurveyArea', 'Cabinet', 'HTB', 'Equipment', 'Rack', 'PatchPanel','Tower','Slack','Sector'];
-    this.layerListAbbr = ['NT', 'ARA', 'SBA', 'DSA', 'CSA', 'POL', 'MH', 'WMT', 'FDB', 'BDB', 'SPL', 'ADB', 'SC', 'CBL', 'TRH', 'FMS', 'ONT', 'TRE', 'BLDP,BLD,BLDC', 'POD', 'DCT', 'CUS', 'ROW,ROWL,PIT', 'HH', 'STRC', 'SVA', 'CBT', 'HTB', 'EQPMNT', 'RCK','PATCHP','TWR','SLK','SCT'];
+    this.layestList = ['Network_Ticket', 'Area', 'SubArea', 'DSA', 'CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD', 'Duct', 'Customer', 'ROW', 'Handhole', 'Structure', 'SurveyArea', 'Cabinet', 'HTB', 'Equipment', 'Rack', 'PatchPanel', 'Loop','Antenna','Fault'];
+    this.layerListAbbr = ['NT', 'ARA', 'SBA', 'DSA', 'CSA', 'POL', 'MH', 'WMT', 'FDB', 'BDB', 'SPL', 'ADB', 'SC', 'CBL', 'TRH', 'FMS', 'ONT', 'TRE', 'BLDP,BLD,BLDC', 'POD', 'DCT', 'CUS', 'ROW,ROWL,PIT', 'HH', 'STRC', 'SVA', 'CBT', 'HTB', 'EQPMNT', 'RCK', 'PATCHP', 'LOP','ANT','FAU'];
     this.layerListArranged = [];
     //'Area', 'SubArea', 'DSA','CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD'
     this.vectorLayerConfiguration =
@@ -373,9 +370,9 @@ var Main = function () {
         "Equipment": { "entityName": "Equipment", "DataObject": "equipmentGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getEquipmentLayer'] },
         "Rack": { "entityName": "Rack", "DataObject": "rackGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getRackLayer'] },
         "PatchPanel": { "entityName": "PatchPanel", "DataObject": "patchpanelGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getPatchPanelLayer'] },
-        "Tower": { "entityName": "Tower", "DataObject": "towerGeoJson", "LayerInstance": "TowerInstance", "layerList": ['getTowerLayer'] },
-        "Slack": { "entityName": "Slack", "DataObject": "slackGeoJson", "LayerInstance": "SlackInstance", "layerList": ['getSlackLayer'] },
-        "Sector": { "entityName": "Sector", "DataObject": "sectorGeoJson", "LayerInstance": "SectorInstance", "layerList": ['getSectorLayer'] },
+        "Loop": { "entityName": "Loop", "DataObject": "loopGeoJson", "LayerInstance": "LoopInstance", "layerList": ['getLoopLayer'] },
+        "Antenna": { "entityName": "Antenna", "DataObject": "antennaGeoJson", "LayerInstance": "AntennaInstance", "layerList": ['getAntennaLayer'] },
+        "Fault": { "entityName": "Fault", "DataObject": "faultGeoJson", "LayerInstance": "FaultInstance", "layerList": ['getFaultLayer'] },
     };
     
     //this.layerOverlayInstance = ['SubAreaInstance'];
@@ -2430,7 +2427,7 @@ var Main = function () {
             });
         }
         //Line Layers
-        this.getCableLayer = function () {
+    this.getCableLayer = function () {      
             var styleObj = app.LayerStyles.filter(function (item) {
                 return item.layer_name == "Cable";
             });
@@ -3021,186 +3018,6 @@ var Main = function () {
             },
         })
     };
-    this.getTowerLayer = function () {
-        var styleObj = app.LayerStyles.filter(function (item) {
-            return item.layer_name == "Tower";
-        });
-        return new GeoJsonLayer({
-            id: "Tower",
-            data: app.filterDataWithProvinceGeom(app.towerGeoJson, "FeatureCollection", "TWR"),
-            filled: true,
-            pickable: true,
-            useDevicePixels: app.useDevicePixelsInVectorLayer,
-            pointType: (app.isVectorLayerLabelEnabled("TWR") ? 'icon+text' : 'icon'),
-            getText: f => app.GetLabelText(f),
-            getTextAlignmentBaseline: 'center',
-            getTextAnchor: 'start',
-            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-            getTextPixelOffset: [10, 10],
-            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-            textBackground: true,
-            getIcon: (f) => (app.GetIcon(f)),
-            getIconSize: (f) => app.getIconSize(f.properties.network_status),
-            iconSizeScale: 1,
-            visible: app.isVectorLayerActive("TWR"),
-            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-            filterRange: app.GetVectorLayerFilterRange("TWR"),
-            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-            collisionGroup: 'Label',
-            collisionEnabled: app.IsCollisionEnabled,
-            onHover: ({ object, x, y }) => {
-                const tooltip = object && object.properties.display_name;
-
-                // Remove existing tooltip
-                const existingTooltip = document.getElementById('tooltip');
-                if (existingTooltip) {
-                    document.body.removeChild(existingTooltip);
-                }
-
-                // Create new tooltip
-                if (tooltip) {
-                    const newTooltip = document.createElement('div');
-                    newTooltip.id = 'tooltip';
-                    newTooltip.style.position = 'absolute';
-                    newTooltip.style.left = x + 'px';
-                    newTooltip.style.top = (y + 20) + 'px';
-                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                    newTooltip.style.color = '#fff';
-                    newTooltip.style.padding = '5px';
-                    newTooltip.innerText = tooltip;
-                    document.body.appendChild(newTooltip);
-                }
-                app.HandleVectorHoverEvent(object);
-            },
-            onClick: function (info) {
-                app.ShowWhatIsHere(info);
-            },
-            onDataLoad: () => {
-                progress.done(); // hides progress bar
-            },
-        })
-    };
-    this.getSlackLayer = function () {
-        var styleObj = app.LayerStyles.filter(function (item) {
-            return item.layer_name == "Slack";
-        });
-        return new GeoJsonLayer({
-            id: "Slack",
-            data: app.filterDataWithProvinceGeom(app.slackGeoJson, "FeatureCollection", "SLK"),
-            filled: true,
-            pickable: true,
-            useDevicePixels: app.useDevicePixelsInVectorLayer,
-            pointType: (app.isVectorLayerLabelEnabled("SLK") ? 'icon+text' : 'icon'),
-            getText: f => app.GetLabelText(f),
-            getTextAlignmentBaseline: 'center',
-            getTextAnchor: 'start',
-            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-            getTextPixelOffset: [10, 10],
-            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-            textBackground: true,
-            getIcon: (f) => (app.GetIcon(f)),
-            getIconSize: (f) => app.getIconSize(f.properties.network_status),
-            iconSizeScale: 1,
-            visible: app.isVectorLayerActive("SLK"),
-            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-            filterRange: app.GetVectorLayerFilterRange("SLK"),
-            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-            collisionGroup: 'Label',
-            collisionEnabled: app.IsCollisionEnabled,
-            onHover: ({ object, x, y }) => {
-                const tooltip = object && object.properties.display_name;
-
-                // Remove existing tooltip
-                const existingTooltip = document.getElementById('tooltip');
-                if (existingTooltip) {
-                    document.body.removeChild(existingTooltip);
-                }
-
-                // Create new tooltip
-                if (tooltip) {
-                    const newTooltip = document.createElement('div');
-                    newTooltip.id = 'tooltip';
-                    newTooltip.style.position = 'absolute';
-                    newTooltip.style.left = x + 'px';
-                    newTooltip.style.top = (y + 20) + 'px';
-                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                    newTooltip.style.color = '#fff';
-                    newTooltip.style.padding = '5px';
-                    newTooltip.innerText = tooltip;
-                    document.body.appendChild(newTooltip);
-                }
-                app.HandleVectorHoverEvent(object);
-            },
-            onClick: function (info) {
-                app.ShowWhatIsHere(info);
-            },
-            onDataLoad: () => {
-                progress.done(); // hides progress bar
-            },
-        })
-    };
-    this.getSectorLayer = function () {
-        var styleObj = app.LayerStyles.filter(function (item) {
-            return item.layer_name == "Sector";
-        });
-        return new GeoJsonLayer({
-            id: "Sector",
-            data: app.filterDataWithProvinceGeom(app.sectorGeoJson, "FeatureCollection", "SCT"),
-            filled: true,
-            pickable: true,
-            useDevicePixels: app.useDevicePixelsInVectorLayer,
-            pointType: (app.isVectorLayerLabelEnabled("SCT") ? 'icon+text' : 'icon'),
-            getText: f => app.GetLabelText(f),
-            getTextAlignmentBaseline: 'center',
-            getTextAnchor: 'start',
-            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-            getTextPixelOffset: [10, 10],
-            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-            textBackground: true,
-            getIcon: (f) => (app.GetIcon(f)),
-            getIconSize: (f) => app.getIconSize(f.properties.network_status),
-            iconSizeScale: 1,
-            visible: app.isVectorLayerActive("SCT"),
-            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-            filterRange: app.GetVectorLayerFilterRange("SCT"),
-            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-            collisionGroup: 'Label',
-            collisionEnabled: app.IsCollisionEnabled,
-            onHover: ({ object, x, y }) => {
-                const tooltip = object && object.properties.display_name;
-
-                // Remove existing tooltip
-                const existingTooltip = document.getElementById('tooltip');
-                if (existingTooltip) {
-                    document.body.removeChild(existingTooltip);
-                }
-
-                // Create new tooltip
-                if (tooltip) {
-                    const newTooltip = document.createElement('div');
-                    newTooltip.id = 'tooltip';
-                    newTooltip.style.position = 'absolute';
-                    newTooltip.style.left = x + 'px';
-                    newTooltip.style.top = (y + 20) + 'px';
-                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                    newTooltip.style.color = '#fff';
-                    newTooltip.style.padding = '5px';
-                    newTooltip.innerText = tooltip;
-                    document.body.appendChild(newTooltip);
-                }
-                app.HandleVectorHoverEvent(object);
-            },
-            onClick: function (info) {
-                app.ShowWhatIsHere(info);
-            },
-            onDataLoad: () => {
-                progress.done(); // hides progress bar
-            },
-        })
-    };
     this.getHTBLayer = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "HTB";
@@ -3286,6 +3103,189 @@ var Main = function () {
             visible: app.isVectorLayerActive("EQPMNT"),
             getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
             filterRange: app.GetVectorLayerFilterRange("EQPMNT"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
+
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
+
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
+    this.getLoopLayer = function () {       
+        var styleObj = app.LayerStyles.filter(function (item) {          
+            return item.layer_name == "Loop";
+        });
+        return new GeoJsonLayer({
+            id: "LOP",
+            data: app.filterDataWithProvinceGeom(app.loopGeoJson, "FeatureCollection", "LOP"), //app.ontGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("LOP") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            visible: app.isVectorLayerActive("LOP"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("LOP"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
+
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
+
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
+    this.getAntennaLayer = function () {
+        debugger;
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Antenna";
+        });
+        return new GeoJsonLayer({
+            id: "ANT",
+            data: app.filterDataWithProvinceGeom(app.antennaGeoJson, "FeatureCollection", "ANT"), //app.ontGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("ANT") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            visible: app.isVectorLayerActive("ANT"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("ANT"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
+
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
+
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
+
+    this.getFaultLayer = function () {
+        debugger;
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Fault";
+        });
+        return new GeoJsonLayer({
+            id: "FAU",
+            data: app.filterDataWithProvinceGeom(app.faultGeoJson, "FeatureCollection", "FAU"), //app.ontGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("FAU") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            visible: app.isVectorLayerActive("FAU"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("FAU"),
             extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
             collisionGroup: 'Label',
             collisionEnabled: app.IsCollisionEnabled,
@@ -3804,22 +3804,23 @@ var Main = function () {
                     } else {
                         app.equipmentGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Equipment };
                     }
-                    if (app.towerGeoJson.features) {
-                        app.towerGeoJson = { "type": "FeatureCollection", "features": app.towerGeoJson.features.concat(allLayerVector.Tower ? allLayerVector.Tower : []) };
+                    
+                    if (app.loopGeoJson.features) {
+                        app.loopGeoJson = { "type": "FeatureCollection", "features": app.loopGeoJson.features.concat(allLayerVector.Loop ? allLayerVector.Loop : []) };
                     } else {
-                        app.towerGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Tower };
+                        app.loopGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Loop };
                     }
-                    if (app.slackGeoJson.features) {
-                        app.slackGeoJson = { "type": "FeatureCollection", "features": app.slackGeoJson.features.concat(allLayerVector.Slack ? allLayerVector.Slack : []) };
+                    
+                    if (app.antennaGeoJson.features) {
+                        app.antennaGeoJson = { "type": "FeatureCollection", "features": app.antennaGeoJson.features.concat(allLayerVector.Antenna ? allLayerVector.Antenna : []) };
                     } else {
-                        app.slackGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Slack };
+                        app.antennaGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Antenna };
                     }
-                    if (app.sectorGeoJson.features) {
-                        app.sectorGeoJson = { "type": "FeatureCollection", "features": app.sectorGeoJson.features.concat(allLayerVector.Sector ? allLayerVector.Sector : []) };
+                    if (app.faultGeoJson.features) {
+                        app.faultGeoJson = { "type": "FeatureCollection", "features": app.faultGeoJson.features.concat(allLayerVector.Fault ? allLayerVector.Fault : []) };
                     } else {
-                        app.sectorGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Sector };
+                        app.faultGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Fault };
                     }
-
                     resolve("Data Loading work completed");
                 }
                 else {
@@ -4270,20 +4271,10 @@ var Main = function () {
                     isDelta = true;
                     app.RenderVectorLayer(app.layestList.indexOf("Equipment"));
                 }
-                if (allLayerVector.Tower) {
-                    app.towerGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Tower };
+                if (allLayerVector.Loop) {
+                    app.equipmentGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Loop };
                     isDelta = true;
-                    app.RenderVectorLayer(app.layestList.indexOf("Tower"));
-                }
-                if (allLayerVector.Slack) {
-                    app.slackGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Slack };
-                    isDelta = true;
-                    app.RenderVectorLayer(app.layestList.indexOf("Slack"));
-                }
-                if (allLayerVector.Sector) {
-                    app.sectorGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Sector };
-                    isDelta = true;
-                    app.RenderVectorLayer(app.layestList.indexOf("Sector"));
+                    app.RenderVectorLayer(app.layestList.indexOf("Loop"));
                 }
                 //console.log("app.minLayerIndex-" + app.minLayerIndex);
                 //alert(app.minLayerIndex);
