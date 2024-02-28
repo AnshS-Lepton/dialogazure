@@ -655,3 +655,17 @@ $BODY$;
 ALTER FUNCTION public.fn_trg_audit_att_details_microduct()
     OWNER TO postgres;
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO public.legend_details(
+	 layer_id, group_name, sub_layer, icon_path, created_by, created_on,  type, layer_sub_column,  is_active, sequence_id)
+	VALUES ((select layer_id from layer_details where layer_name='Microduct'), 
+			'Microduct','As-Built', 'Microduct.svg', 1,now(), 'Web', 'Microduct',   true, 8);
+			
+	INSERT INTO public.legend_details(
+	 layer_id, group_name, sub_layer, icon_path, created_by, created_on,  type, layer_sub_column,  is_active, sequence_id)
+	VALUES ((select layer_id from layer_details where layer_name='Microduct'), 
+			'Microduct','Dormant', 'Microduct.svg', 1,now(), 'Web', 'Microduct',   true, 8);
+			
+update legend_details set group_name='Microduct',sub_layer='Planned'
+where layer_id in(select layer_id from layer_details where layer_name='Microduct');
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
