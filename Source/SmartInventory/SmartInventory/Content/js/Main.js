@@ -34,6 +34,7 @@ var Main = function () {
     this.LBPointFilterWithLabel = '';
     this.treeObj = {};
     this.DuctType = "";
+    this.MicroductType = "";
     this.ConduitType = "";
     this.PlannedLayerArr = {};
     this.AsBuildLayerArr = {};
@@ -160,6 +161,7 @@ var Main = function () {
     this.splitterGeoJson = {};
     this.splitterFilteredGeoJson = {};
     this.bdbGeoJson = {};
+    this.cdbGeoJson = {};
     this.adbGeoJson = {};
     this.spliceclosureGeoJson = {};
 
@@ -176,6 +178,7 @@ var Main = function () {
     this.surveyAreaGeoJson = {};
     this.surveyAreaLabelData = [];    
     this.ductGeoJson = {};
+    this.microductGeoJson = {};
     this.ductLabelData = [];
 
     this.areaGeoJson = {};
@@ -282,7 +285,7 @@ var Main = function () {
         "SubArea": ".SubArea",
         "SubArea": ".SubArea",
         //"ADB": ".ADB",
-        "CDB": ".CDB",
+       // "CDB": ".CDB",
         "ItemTemplate": ".clsTemplateIcon:not(.dvdisabled)",
         //"ItemTemplate": ".clsTemplateIcon:not(.dvdisabled), .tool_bar .infoTemplate, #BDBTemplate",
         "Structure": ".Structure",
@@ -339,8 +342,8 @@ var Main = function () {
         "txtNEBuffer": "#txtNEBuffer",
         "frtUserId": "#frtUserId",
     }
-    this.layestList = ['Network_Ticket', 'Area', 'SubArea', 'DSA', 'CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD', 'Duct', 'Customer', 'ROW', 'Handhole', 'Structure', 'SurveyArea', 'Cabinet', 'HTB', 'Equipment', 'Rack', 'PatchPanel', 'Tower', 'Slack', 'Sector', 'Loop', 'Antenna', 'Fault'];
-    this.layerListAbbr = ['NT', 'ARA', 'SBA', 'DSA', 'CSA', 'POL', 'MH', 'WMT', 'FDB', 'BDB', 'SPL', 'ADB', 'SC', 'CBL', 'TRH', 'FMS', 'ONT', 'TRE', 'BLDP,BLD,BLDC', 'POD', 'DCT', 'CUS', 'ROW,ROWL,PIT', 'HH', 'STRC', 'SVA', 'CBT', 'HTB', 'EQPMNT', 'RCK', 'PATCHP', 'TWR', 'SLK', 'SCT', 'LOP', 'ANT', 'FAU'];
+    this.layestList = ['Network_Ticket', 'Area', 'SubArea', 'DSA', 'CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD', 'Duct', 'Customer', 'ROW', 'Handhole', 'Structure', 'SurveyArea', 'Cabinet', 'HTB', 'Equipment', 'Rack', 'PatchPanel', 'Tower', 'Slack', 'Sector', 'Loop', 'Antenna', 'Fault','Microduct','CDB'];
+    this.layerListAbbr = ['NT', 'ARA', 'SBA', 'DSA', 'CSA', 'POL', 'MH', 'WMT', 'FDB', 'BDB', 'SPL', 'ADB', 'SC', 'CBL', 'TRH', 'FMS', 'ONT', 'TRE', 'BLDP,BLD,BLDC', 'POD', 'DCT', 'CUS', 'ROW,ROWL,PIT', 'HH', 'STRC', 'SVA', 'CBT', 'HTB', 'EQPMNT', 'RCK', 'PATCHP', 'TWR', 'SLK', 'SCT', 'LOP', 'ANT', 'FAU','CDB','Microduct'];
     this.layerListArranged = [];
     //'Area', 'SubArea', 'DSA','CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD'
     this.vectorLayerConfiguration =
@@ -355,6 +358,7 @@ var Main = function () {
         "WallMount": { "entityName": "WallMount", "DataObject": "wallmountGeoJson", "LayerInstance": "WallMountInstance", "layerList": ['getWallmountLayer'] },
         "FDB": { "entityName": "FDB", "DataObject": "fdbGeoJson", "LayerInstance": "FDBInstance", "layerList": ['getFDBLayer'] },
         "BDB": { "entityName": "BDB", "DataObject": "bdbGeoJson", "LayerInstance": "BDBInstance", "layerList": ['getBDBLayer'] },
+        "CDB": { "entityName": "CDB", "DataObject": "cdbGeoJson", "LayerInstance": "CDBInstance", "layerList": ['getCDBLayer'] },
         "Splitter": { "entityName": "Splitter", "DataObject": "splitterGeoJson", "LayerInstance": "SplitterInstance", "layerList": ['getSplitterLayer'] },
         "ADB": { "entityName": "ADB", "DataObject": "adbGeoJson", "LayerInstance": "ADBInstance", "layerList": ['getADBLayer'] },
         "SpliceClosure": { "entityName": "SpliceClosure", "DataObject": "spliceclosureGeoJson", "LayerInstance": "SpliceClosureInstance", "layerList": ['getSpliceClosureLayer'] },
@@ -366,6 +370,7 @@ var Main = function () {
         "POD": { "entityName": "POD", "DataObject": "podGeoJson", "LayerInstance": "PODInstance", "layerList": ['getPODLayer'] },
         "FMS": { "entityName": "FMS", "DataObject": "fmsGeoJson", "LayerInstance": "PODInstance", "layerList": ['getFMSLayer'] },
         "Duct": { "entityName": "Duct", "DataObject": "ductGeoJson", "LayerInstance": "CableInstance", "layerList": ['getDuctLayer', 'getDuctLabelTextLayer'] },
+        "Microduct": { "entityName": "Microduct", "DataObject": "microductGeoJson", "LayerInstance": "CableInstance", "layerList": ['getMicroductLayer', 'getMicroductLabelTextLayer'] },
         "Customer": { "entityName": "Customer", "DataObject": "customerGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getCustomerLayer'] },
         "ROW": { "entityName": "ROW", "DataObject": "rowGeoJson", "LayerInstance": "CableInstance", "layerList": ['getROWLayer', 'getROWTextLayer'] },
         "Handhole": { "entityName": "Handhole", "DataObject": "handholeGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getHandholeLayer'] },
@@ -832,6 +837,12 @@ var Main = function () {
             });
             clr = app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex)
         }
+        else if (_entityType == "Microduct") {
+            var styleObj = app.LayerStyles.filter(function (item) {
+                return item.layer_name == 'Microduct';
+            });
+            clr = app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex)
+        }
         return clr;
     }
     this.GetLineWidth = function (feature) {
@@ -877,6 +888,14 @@ var Main = function () {
         } else if (_entityType == "Duct") {
             var styleObj = app.LayerStyles.filter(function (item) {
                 return item.layer_name == 'Duct';
+            });
+            if (styleObj && styleObj.length > 0) {
+                iWidth = styleObj[0].LayerStyle[0].line_width
+            }
+        }
+        else if (_entityType == "Microduct") {
+            var styleObj = app.LayerStyles.filter(function (item) {
+                return item.layer_name == 'Microduct';
             });
             if (styleObj && styleObj.length > 0) {
                 iWidth = styleObj[0].LayerStyle[0].line_width
@@ -1071,6 +1090,47 @@ var Main = function () {
                                 let angle = 90 - turf.rhumbBearing(coordinates, next);
                                 if (Math.abs(angle) > 90) angle += 180;
                                 app.ductLabelData.push({
+                                    region_id: feature.properties.region_id,
+                                    province_id: feature.properties.province_id,
+                                    position: pointOnLine.geometry.coordinates,
+                                    feature: feature,
+                                    text: app.GetLabelText(feature),
+                                    network_status: feature.properties.network_status,
+                                    entity_category: feature.properties.entity_category,
+                                    angle,
+                                    priority
+                                });
+                            }
+                        }
+                        depth++;
+                        delta /= 2;
+                    }
+                }
+            });
+        }
+        else if (_entity_type == 'Microduct' && app.microductGeoJson.features) {
+            app.microductLabelData = [];
+            //Loop through the every Trench
+            app.microductGeoJson.features.forEach((feature) => {
+                if (feature.geometry) {
+                    const lineLength = turf.length(feature, { units: 'meters' });
+                    let delta = 0.5 * lineLength;
+                    let depth = 1;
+                    let pointSpacing = (lineLength < _distanceBetweenPoints ? ((lineLength * .4)) : _distanceBetweenPoints);
+                    while (delta > pointSpacing) {
+                        for (let i = 1; i < 2 ** depth; i += 2) {
+                            let priority = 100 - depth;
+                            let dAlong = i * delta;
+                            let offset = 3;
+                            if (dAlong > 0.5 * lineLength) offset *= -1;
+                            const pointOnLine = turf.along(feature, dAlong, { units: 'meters' });
+                            const nextFeature = turf.along(feature, dAlong + offset, { units: 'meters' });
+                            const { coordinates } = pointOnLine.geometry;
+                            const next = nextFeature.geometry.coordinates;
+                            if (!(coordinates[0] === next[0] && coordinates[1] === next[1])) {
+                                let angle = 90 - turf.rhumbBearing(coordinates, next);
+                                if (Math.abs(angle) > 90) angle += 180;
+                                app.microductLabelData.push({
                                     region_id: feature.properties.region_id,
                                     province_id: feature.properties.province_id,
                                     position: pointOnLine.geometry.coordinates,
@@ -1611,7 +1671,36 @@ var Main = function () {
                 background: true,
                 backgroundPadding: [4, 1]
             });
-        }
+    }
+    this.getMicroductLabelTextLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Microduct";
+        });
+        return new deck.TextLayer({
+            id: 'MicroductLabel-text',
+            data: app.filterDataWithProvinceGeom(app.microductLabelData, "JsonArray", "MD"), //app.trenchLabelData,
+            pickable: false,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            visible: app.isVectorLayerLabelEnabled("MD"),
+            getPosition: (d) => d.position,
+            getText: (d) => d.text,
+            getAngle: d => d.angle,
+            getTextAnchor: 'middle',
+            getAlignmentBaseline: 'center',
+            getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getFilterValue: d => (app.getFilteValuesByNetworkStatus(d.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("MD"),
+            filterEnabled: app.DeckfilterEnabled,
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            getCollisionPriority: d => d.priority,
+            collisionTestProps: { radiusScale: 2 },
+            getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            background: true,
+            backgroundPadding: [4, 1]
+        });
+    }
         //Structure Layers
         this.getPoleLayer = function () {
             var styleObj = app.LayerStyles.filter(function (item) {
@@ -2183,7 +2272,8 @@ var Main = function () {
                     progress.done(); // hides progress bar
                 },
             })
-        }
+    }
+
         this.getFDBLayer = function () {
             var styleObj = app.LayerStyles.filter(function (item) {
                 return item.layer_name == "FDB";
@@ -2308,7 +2398,70 @@ var Main = function () {
                     app.ShowWhatIsHere(info);
                 },
             });
-        }
+    }
+    this.getCDBLayer = function () {
+        debugger;
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "CDB";
+        });
+        return new GeoJsonLayer({
+            id: "cdb",
+            data: app.filterDataWithProvinceGeom(app.cdbGeoJson, "FeatureCollection", "CDB"), //app.bdbGeoJson,
+            filled: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("CDB") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'end',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [-10, 5],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            pickable: true,
+            //getIconSize: (f) => (f.properties.network_status == 'A' ? 16 : 20),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("CDB"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("CDB"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onDataLoad: () => {
+                progress.done(); // hides progress bar                   
+            },
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
+
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
+
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+        });
+    }
 
         this.getADBLayer = function () {
             var styleObj = app.LayerStyles.filter(function (item) {
@@ -2604,7 +2757,63 @@ var Main = function () {
                     app.ShowWhatIsHere(info);
                 }
             })
-        }
+    }
+    this.getMicroductLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Microduct";
+        });
+        return new GeoJsonLayer({
+            id: 'microduct',
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            data: app.filterDataWithProvinceGeom(app.microductGeoJson, "FeatureCollection", "MD"), //app.trenchGeoJson,
+            lineWidthScale: 1,
+            lineWidthUnits: 'pixels',
+            lineWidthMinPixels: 1,
+            lineWidthMaxPixels: 10,
+            getLineColor: f => app.GetLineColor(f),
+            getLineWidth: feature => app.GetLineWidth(feature),
+            opacity: styleObj[0].LayerStyle[0].opacity,
+            autoHighlight: true,
+            pickable: true,
+            visible: app.isVectorLayerActive("MD"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("MD"),
+            getDashArray: f => (app.GetDashArray(f.properties.network_status)),//dashSize,Gap
+            dashJustified: false,
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new PathStyleExtension({ highPrecisionDash: true })],
+            collisionEnabled: app.IsCollisionEnabled,
+            onDataLoad: () => {
+                progress.done(); // hides progress bar                   
+            },
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
+
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
+
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            }
+        })
+    }
         this.getCustomerLayer = function () {
             var styleObj = app.LayerStyles.filter(function (item) {
                 return item.layer_name == "Customer";
@@ -3610,6 +3819,8 @@ var Main = function () {
             }, [])
         };
     }
+
+
     this.fetchVectorLayerData = function (vectorPrvinceSelected, _entityName) {
         //console.log("Request Fetch Time:" + app.vectorFetchTime);
         //app.LoadLayerIconMapping();
@@ -3673,6 +3884,14 @@ var Main = function () {
                         //app.RenderVectorLayer(app.layestList.indexOf("BDB"));
                     } else {
                         app.bdbGeoJson = { "type": "FeatureCollection", "features": allLayerVector.BDB };
+                        //app.RenderVectorLayer(app.layestList.indexOf("BDB"));
+                    }
+
+                    if (app.cdbGeoJson.features) {
+                        app.cdbGeoJson = { "type": "FeatureCollection", "features": app.cdbGeoJson.features.concat(allLayerVector.CDB ? allLayerVector.CDB : []) };
+                        //app.RenderVectorLayer(app.layestList.indexOf("CDB"));
+                    } else {
+                        app.cdbGeoJson = { "type": "FeatureCollection", "features": allLayerVector.CDB };
                         //app.RenderVectorLayer(app.layestList.indexOf("BDB"));
                     }
 
@@ -3884,8 +4103,22 @@ var Main = function () {
                         app.ductGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Duct };                        
                     }
 
+
                     if (app.ductGeoJson.features) {
                         app.ProcessvectorDataForLabel('Duct', 1500);
+                        //app.RenderVectorLayer(app.layestList.indexOf("Duct"));
+                    }
+
+                    if (app.microductGeoJson.features) {
+                        app.microductGeoJson = { "type": "FeatureCollection", "features": app.microductGeoJson.features.concat(allLayerVector.Microduct ? allLayerVector.Microduct : []) };
+
+                    } else {
+                        app.microductGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Microduct };
+                    }
+
+
+                    if (app.microductGeoJson.features) {
+                        app.ProcessvectorDataForLabel('Microduct', 1500);
                         //app.RenderVectorLayer(app.layestList.indexOf("Duct"));
                     }
 
@@ -4321,6 +4554,11 @@ var Main = function () {
                     isDelta = true;
                     app.RenderVectorLayer(app.layestList.indexOf("BDB"));
                 }
+                if (allLayerVector.CDB) {
+                    app.cdbGeoJson = { "type": "FeatureCollection", "features": allLayerVector.CDB };
+                    isDelta = true;
+                    app.RenderVectorLayer(app.layestList.indexOf("CDB"));
+                }
                 if (allLayerVector.Splitter) {
                     app.splitterGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Splitter };
                     isDelta = true;
@@ -4386,6 +4624,14 @@ var Main = function () {
                     }
                     isDelta = true;
                     app.RenderVectorLayer(app.layestList.indexOf("Duct"));
+                }
+                if (allLayerVector.Microduct) {
+                    app.microductGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Microduct };
+                    if (app.microductGeoJson.features) {
+                        app.ProcessvectorDataForLabel('Microduct', 1500);
+                    }
+                    isDelta = true;
+                    app.RenderVectorLayer(app.layestList.indexOf("Microduct"));
                 }
                 if (allLayerVector.Customer) {
                     app.customerGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Customer };
@@ -4550,6 +4796,9 @@ var Main = function () {
             }
             if (app.bdbGeoJson.features) {
                 app.bdbGeoJson = { "type": "FeatureCollection", "features": app.bdbGeoJson.features.filter(feature => feature.properties.province_id != iOldestProvinceId) };
+            }
+            if (app.cdbGeoJson.features) {
+                app.cdbGeoJson = { "type": "FeatureCollection", "features": app.cdbGeoJson.features.filter(feature => feature.properties.province_id != iOldestProvinceId) };
             }
             if (app.adbGeoJson.features) {
                 app.adbGeoJson = { "type": "FeatureCollection", "features": app.adbGeoJson.features.filter(feature => feature.properties.province_id != iOldestProvinceId) };
@@ -7179,6 +7428,7 @@ var Main = function () {
             app.filterSplitterType = "1 = 1";
         }
     }
+   
     this.SetPODFilters = function () {
         app.filterPODvalue = "";
         app.primary_pod_system_id = $("#ddlPrimaryPOD").val();
@@ -11696,6 +11946,9 @@ var Main = function () {
                     case "SPLITDUCT":
                         app.splitDuct({ systemId: systemId, entityType: entityType });
                         break;
+                    case "SPLITMICRODUCT":
+                        app.splitMicroduct({ systemId: systemId, entityType: entityType });
+                        break;
                     case "SPLITTRENCH":
                         app.splitTrench({ systemId: systemId, entityType: entityType });
                         break;
@@ -13607,6 +13860,11 @@ var Main = function () {
     this.splitDuct = function (_data) {
         var modelClass = getPopUpModelClass(_data.entityType);
         var formURL = 'Library/getSplitDuct';
+        popup.LoadModalDialog(app.ParentModel, formURL, _data, MultilingualKey.SI_OSP_TRE_JQ_FRM_002, modelClass);
+    }
+    this.splitMicroduct = function (_data) {
+        var modelClass = getPopUpModelClass(_data.entityType);
+        var formURL = 'Library/getSplitMicroduct';
         popup.LoadModalDialog(app.ParentModel, formURL, _data, MultilingualKey.SI_OSP_TRE_JQ_FRM_002, modelClass);
     }
     //start ycode
@@ -16973,6 +17231,61 @@ var Main = function () {
                     $('#duct_two_calculated_length').valid();
                     $('#duct_two_measured_length').rules('remove', 'required');
                     $('#duct_two_measured_length').valid();
+
+                }
+                else {
+
+                    alert(resp.message);
+                }
+            }, true, false);
+        }
+    }
+    this.getNewMicroductDetails = function () {
+        var splitductsystemid = $("input[name='Microduct']:checked").attr('s_id');
+        $('#split_microduct_system_id').val(splitductsystemid);
+        var splitEnityNetworkId = $('#split_entity_networkId').val();
+        var splitEntitytype = $('#split_entity_type').val();
+        var splitEntitySystem_id = $('#split_entity_system_id').val();
+
+        var ductValue = $("input[name='Microduct']:checked").val();
+
+        if (ductValue == undefined) {
+            alert(MultilingualKey.SI_OSP_DUC_JQ_FRM_002);
+        }
+        else {
+            ajaxReq('Library/getNearMicroductDetail', { split_entity_system_id: splitEntitySystem_id, split_entity_type: splitEntitytype, splitEnityNetworkId: splitEnityNetworkId, split_duct_system_id: splitductsystemid }, false, function (resp) {
+                if (resp.status == 'OK') {
+                    $('#microduct_one_calculated_length').val(resp.result.duct1CalculatedLength);
+                    $('#microduct_two_calculated_length').val(resp.result.duct2CalculatedLength);
+                    $('#microduct_one_measured_length').val(resp.result.duct1Length);
+                    $('#microduct_two_measured_length').val(resp.result.duct2Length);
+
+                    var parentduct = resp.result.parentDuctNetworkId;
+                    //if (parentduct.split('_').length <= 10) {                        		
+                    var firstductNetworkId = parentduct + '_01';
+                    $('#microduct_one_network_id').val(firstductNetworkId);
+                    $('#microduct_one_name').val(firstductNetworkId);
+                    $('#microduct_one_a_location').val(resp.result.duct_one_a_location);
+                    $('#microduct_one_b_location').val(resp.result.duct_one_b_location);
+
+                    var secondductNetworkId = parentduct + '_02';
+                    $('#microduct_two_network_id').val(secondductNetworkId);
+                    $('#microduct_two_name').val(secondductNetworkId);
+                    $('#microduct_two_a_location').val(resp.result.duct_two_a_location);
+                    $('#microduct_two_b_location').val(resp.result.duct_two_b_location);
+
+                    $('#microduct_one_name').rules('remove', 'required');
+                    $('#microduct_one_name').valid();
+                    $('#microduct_one_calculated_length').rules('remove', 'required');
+                    $('#microduct_one_calculated_length').valid();
+                    $('#microduct_one_measured_length').rules('remove', 'required');
+                    $('#microduct_one_measured_length').valid();
+                    $('#microduct_two_name').rules('remove', 'required');
+                    $('#microduct_two_name').valid();
+                    $('#microduct_two_calculated_length').rules('remove', 'required');
+                    $('#microduct_two_calculated_length').valid();
+                    $('#microduct_two_measured_length').rules('remove', 'required');
+                    $('#microduct_two_measured_length').valid();
 
                 }
                 else {

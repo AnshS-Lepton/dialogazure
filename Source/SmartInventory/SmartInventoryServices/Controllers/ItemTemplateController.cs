@@ -2521,7 +2521,7 @@ namespace SmartInventoryServices.Controllers
 				ItemTemplateIn objItemTemplateIn = ReqHelper.GetRequestData<ItemTemplateIn>(data);
 				MicroductItemMaster objMicroductItemMaster = BLItemTemplate.Instance.GetTemplateDetail<MicroductItemMaster>(objItemTemplateIn.userId, EntityType.Microduct);
 				BLItemTemplate.Instance.BindItemDropdowns(objMicroductItemMaster, EntityType.Microduct.ToString());
-                objMicroductItemMaster.lstNoOfWays = BLItemTemplate.Instance.GetMicroDuctData();
+                objMicroductItemMaster.lstNoOfWays = BLItemTemplate.Instance.GetMicroDuctData().ToList();
                 response.status = StatusCodes.OK.ToString();
 				response.results = objMicroductItemMaster;
 			}
@@ -2545,54 +2545,56 @@ namespace SmartInventoryServices.Controllers
 		public ApiResponse<MicroductItemMaster> SaveMicroductTemplate(ReqInput data)
 		{
 			var response = new ApiResponse<MicroductItemMaster>();
-			try
-			{
-				MicroductItemMaster objDuctItem = ReqHelper.GetRequestData<MicroductItemMaster>(data);
-				if (ModelState.IsValid)
-				{
-					var itemid = objDuctItem.id;
-                    var resultItem = new BLMicroductItemMaster().SaveMicroductItemTemplate(objDuctItem, objDuctItem.userId);
+            try
+            {
+                MicroductItemMaster objDuctItem = ReqHelper.GetRequestData<MicroductItemMaster>(data);
+                if (ModelState.IsValid)
+                {
+                    var itemid = objDuctItem.id;
+                    var resultItem = new BLMicroductItemMaster().SaveMicroductItemTemplate(objDuctItem, objDuctItem.user_Id);
 
-					if (itemid > 0)  // Update 
-					{
-						objDuctItem.objPM.status = ResponseStatus.OK.ToString();
+                    if (itemid > 0)  // Update 
+                    {
+                        objDuctItem.objPM.status = ResponseStatus.OK.ToString();
                         //objDuctItem.objPM.message = Resources.Resources.SI_OSP_DUC_NET_FRM_017;
                         objDuctItem.objPM.message = Resources.Resources.SI_OSP_GBL_NET_FRM_492;// "Microduct Template Updated successfully";
-						response.status = ResponseStatus.OK.ToString();
+                        response.status = ResponseStatus.OK.ToString();
                         //response.error_message = Resources.Resources.SI_OSP_DUC_NET_FRM_017;
                         response.error_message = Resources.Resources.SI_OSP_GBL_GBL_FRM_076;// "There is some issue while updating Microduct";
-					}
-					else
-					{
-						objDuctItem.objPM.status = ResponseStatus.OK.ToString();
+                    }
+                    else
+                    {
+                        objDuctItem.objPM.status = ResponseStatus.OK.ToString();
                         //objDuctItem.objPM.message = Resources.Resources.SI_OSP_DUC_NET_FRM_018;
                         objDuctItem.objPM.message = Resources.Resources.SI_GBL_GBL_GBL_FRM_040;// "Microduct Template Saved successfully";
-						response.status = ResponseStatus.OK.ToString();
+                        response.status = ResponseStatus.OK.ToString();
                         response.error_message = Resources.Resources.SI_GBL_GBL_GBL_FRM_041;// "There is some issue while saving Microduct";
-						objDuctItem = resultItem;
-					}
-				}
-				else
-				{
-					objDuctItem.objPM.status = ResponseStatus.FAILED.ToString();
-					objDuctItem.objPM.message = Resources.Resources.SI_GBL_GBL_NET_FRM_001;
-					response.status = ResponseStatus.FAILED.ToString();
-					response.error_message = Resources.Resources.SI_GBL_GBL_NET_FRM_001;
-					response.results = objDuctItem;
-				}
+                        objDuctItem = resultItem;
+                    }
+                }
+                else
+                {
+                    objDuctItem.objPM.status = ResponseStatus.FAILED.ToString();
+                    objDuctItem.objPM.message = Resources.Resources.SI_GBL_GBL_NET_FRM_001;
+                    response.status = ResponseStatus.FAILED.ToString();
+                    response.error_message = Resources.Resources.SI_GBL_GBL_NET_FRM_001;
+                    response.results = objDuctItem;
+                }
                 //fill dropdown
                 var objDDL = new BLMisc().GetDropDownList(EntityType.Microduct.ToString());
                 objDuctItem.lstNoOfWays = objDDL.Where(x => x.dropdown_type == DropDownType.Number_of_Ways.ToString()).ToList();
                 BLItemTemplate.Instance.BindItemDropdowns(objDuctItem, EntityType.Microduct.ToString());
-				response.results = objDuctItem;
-			}
-			catch (Exception ex)
-			{
-				ErrorLogHelper logHelper = new ErrorLogHelper();
-				logHelper.ApiLogWriter("SaveDuctTemplate()", "Item Template Controller", data.data, ex);
-				response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-				response.error_message = "Error While Processing  Request.";
-			}
+                response.results = objDuctItem;
+            }
+
+
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("SaveMicroductTemplate()", "Item Template Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = "Error While Processing  Request.";
+            }
 			return response;
 		}
         #endregion

@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class DuctMaster : DuctTemplateMaster, IProjectSpecification,IOwnershipInfo,IAcquireFrom,IReference,IGeographicDetails,IAdditionalFields
+    public class MicroductMaster : MicroductTemplateMaster, IProjectSpecification,IOwnershipInfo,IAcquireFrom,IReference,IGeographicDetails,IAdditionalFields
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int system_id { get; set; }
         public string network_id { get; set; }
        
-        public string duct_name { get; set; }
+        public string microduct_name { get; set; }
         public int a_system_id { get; set; }
        // [Required]
         public string a_location { get; set; }
@@ -45,7 +45,7 @@ namespace Models
         public double offset_value { get; set; }
         public double inner_dimension { get; set; }
         public double outer_dimension { get; set; }
-        public string duct_type { get; set; }
+        public string microduct_type { get; set; }
         public string color_code { get; set; }
         public string acquire_from { get; set; }
         public string remarks { get; set; }
@@ -53,7 +53,6 @@ namespace Models
         public int parent_system_id { get; set; }
         public string parent_network_id { get; set; }
         public string parent_entity_type { get; set; }
-        [NotMapped]
         public DateTime created_on { get; set; }
         public int? modified_by { get; set; }
         public DateTime? modified_on { get; set; }
@@ -72,7 +71,8 @@ namespace Models
         public string networkIdType { get; set; }
         [NotMapped]
         public List<NetworkDtl> lstTP { get; set; }
-         public int? no_of_ducts_created { get; set; }
+        [NotMapped]
+        public int? no_of_microducts_created { get; set; }
 
         public int? project_id { get; set; }
         public int? planning_id { get; set; }
@@ -110,12 +110,12 @@ namespace Models
         public List<PurposeCodeMaster> lstBindPurposeCode { get; set; }
 
         [NotMapped]
-        public IList<DropDownMaster> NoofDuctsCreated { get; set; }
+        public IList<DropDownMaster> NoofMicroductsCreated { get; set; }
 
         [NotMapped]
-        public IList<DropDownMaster> DuctTypeIn { get; set; }
+        public IList<DropDownMaster> MicroductTypeIn { get; set; }
         [NotMapped]
-        public IList<DropDownMaster> DuctColorIn { get; set; }
+        public IList<DropDownMaster> MicroductColorIn { get; set; }
         [NotMapped]
         public EntityReference EntityReference { get; set; }
 
@@ -176,21 +176,38 @@ namespace Models
         public string partner_name { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
+        [NotMapped]
         public string a_latitude { get; set; }
+        [NotMapped]
         public string b_longitude { get; set; }
+        [NotMapped]
         public string a_region { get; set; }
+        [NotMapped]
         public string b_region { get; set; }
+        [NotMapped]
         public string a_city { get; set; }
+        [NotMapped]
         public string b_city { get; set; }
         [NotMapped]
-        public IList<DropDownMaster> DuctCount { get; set; }
+        public IList<DropDownMaster> MicroductCount { get; set; }
+        public string material_type { get; set; }
+        public string internal_diameter { get; set; }
+        public string external_diameter { get; set; }
         [NotMapped]
-        public int duct_count { get; set; }    
-        public string duct_color { get; set; }
-        public int? total_slack_count { get; set; }
-        public int? total_slack_length { get; set; }
-
-        public DuctMaster()
+        public IList<DropDownMaster> lstInternalDiameter { get; set; }
+        [NotMapped]
+        public IList<DropDownMaster> lstExternalDiameter { get; set; }
+        [NotMapped]
+        public int microduct_count { get; set; }
+        [NotMapped]
+        public string microduct_color { get; set; }
+        [NotMapped]
+        public int total_slack_count { get; set; }
+        [NotMapped]
+        public int total_slack_length { get; set; }
+        [NotMapped]
+        public IList<DropDownMaster> lstMaterialType { get; set; }
+        public MicroductMaster()
         {
             objPM = new PageMessage();
             lstTP = new List<NetworkDtl>();
