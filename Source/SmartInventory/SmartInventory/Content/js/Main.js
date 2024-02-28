@@ -376,12 +376,12 @@ var Main = function () {
         "Equipment": { "entityName": "Equipment", "DataObject": "equipmentGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getEquipmentLayer'] },
         "Rack": { "entityName": "Rack", "DataObject": "rackGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getRackLayer'] },
         "PatchPanel": { "entityName": "PatchPanel", "DataObject": "patchpanelGeoJson", "LayerInstance": "ONTInstance", "layerList": ['getPatchPanelLayer'] },
-        "Tower": { "entityName": "Tower", "DataObject": "towerGeoJson", "LayerInstance": "TowerInstance", "layerList": ['getTowerLayer'] },
-        "Slack": { "entityName": "Slack", "DataObject": "slackGeoJson", "LayerInstance": "SlackInstance", "layerList": ['getSlackLayer'] },
-        "Sector": { "entityName": "Sector", "DataObject": "sectorGeoJson", "LayerInstance": "SectorInstance", "layerList": ['getSectorLayer'] },
-        "Loop": { "entityName": "Loop", "DataObject": "loopGeoJson", "LayerInstance": "LoopInstance", "layerList": ['getLoopLayer'] },
-        "Antenna": { "entityName": "Antenna", "DataObject": "antennaGeoJson", "LayerInstance": "AntennaInstance", "layerList": ['getAntennaLayer'] },
-        "Fault": { "entityName": "Fault", "DataObject": "faultGeoJson", "LayerInstance": "FaultInstance", "layerList": ['getFaultLayer'] },
+        "Tower": { "entityName": "Tower", "DataObject": "towerGeoJson", "LayerInstance": "FDBInstance", "layerList": ['getTowerLayer'] },
+        "Slack": { "entityName": "Slack", "DataObject": "slackGeoJson", "LayerInstance": "BDBInstance", "layerList": ['getSlackLayer'] },
+        "Sector": { "entityName": "Sector", "DataObject": "sectorGeoJson", "LayerInstance": "TreeInstance", "layerList": ['getSectorLayer'] },
+        "Loop": { "entityName": "Loop", "DataObject": "loopGeoJson", "LayerInstance": "PODInstance", "layerList": ['getLoopLayer'] },
+        "Antenna": { "entityName": "Antenna", "DataObject": "antennaGeoJson", "LayerInstance": "ADBInstance", "layerList": ['getAntennaLayer'] },
+        "Fault": { "entityName": "Fault", "DataObject": "faultGeoJson", "LayerInstance": "ADBInstance", "layerList": ['getFaultLayer'] },
     };
     
     //this.layerOverlayInstance = ['SubAreaInstance'];
