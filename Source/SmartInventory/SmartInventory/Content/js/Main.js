@@ -342,7 +342,7 @@ var Main = function () {
         "txtNEBuffer": "#txtNEBuffer",
         "frtUserId": "#frtUserId",
     }
-    this.layestList = ['Network_Ticket', 'Area', 'SubArea', 'DSA', 'CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD', 'Duct', 'Customer', 'ROW', 'Handhole', 'Structure', 'SurveyArea', 'Cabinet', 'HTB', 'Equipment', 'Rack', 'PatchPanel', 'Tower', 'Slack', 'Sector', 'Loop', 'Antenna', 'Fault'];
+    this.layestList = ['Network_Ticket', 'Area', 'SubArea', 'DSA', 'CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD', 'Duct', 'Customer', 'ROW', 'Handhole', 'Structure', 'SurveyArea', 'Cabinet', 'HTB', 'Equipment', 'Rack', 'PatchPanel', 'Tower', 'Slack', 'Sector', 'Loop', 'Antenna', 'Fault','Microduct'];
     this.layerListAbbr = ['NT', 'ARA', 'SBA', 'DSA', 'CSA', 'POL', 'MH', 'WMT', 'FDB', 'BDB', 'SPL', 'ADB', 'SC', 'CBL', 'TRH', 'FMS', 'ONT', 'TRE', 'BLDP,BLD,BLDC', 'POD', 'DCT', 'CUS', 'ROW,ROWL,PIT', 'HH', 'STRC', 'SVA', 'CBT', 'HTB', 'EQPMNT', 'RCK', 'PATCHP', 'TWR', 'SLK', 'SCT', 'LOP', 'ANT', 'FAU'];
     this.layerListArranged = [];
     //'Area', 'SubArea', 'DSA','CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD'
