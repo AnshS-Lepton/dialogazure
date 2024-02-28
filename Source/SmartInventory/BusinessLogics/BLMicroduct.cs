@@ -6,32 +6,49 @@ namespace BusinessLogics
 {
     public class BLMicroduct
     {
-        private readonly DAMicroduct objDAMicroduct;
-        public BLMicroduct()
+
+
+        private static BLMicroduct objMicroduct = null;
+        private static readonly object lockObject = new object();
+        public static BLMicroduct Instance
         {
-            objDAMicroduct = new DAMicroduct();
+            get
+            {
+                lock (lockObject)
+                {
+                    if (objMicroduct == null)
+                    {
+                        objMicroduct = new BLMicroduct();
+                    }
+                }
+                return objMicroduct;
+            }
         }
         public MicroductMaster Save(MicroductMaster objMicrowaveLinkMaster, int userId)
         {
-            return objDAMicroduct.Save(objMicrowaveLinkMaster, userId);
+            return DAMicroduct.Instance.Save(objMicrowaveLinkMaster, userId);
         }
         public int DeleteMicrowaveLinkById(int systemId)
         {
-            return objDAMicroduct.Delete(systemId);
+            return DAMicroduct.Instance.Delete(systemId);
         }
         public MicroductMaster getMicrowaveLinkDetails(int systemId)
         {
-            return objDAMicroduct.Get(systemId);
+            return DAMicroduct.Instance.Get(systemId);
         }
         public DbMessage Validate(int systemId)
         {
-            return objDAMicroduct.Validate(systemId);
+            return DAMicroduct.Instance.Validate(systemId);
         }
 
         #region Additional-Attributes
         public string GetOtherInfoMicroduct(int systemId)
         {
-            return objDAMicroduct.GetOtherInfoMicroduct(systemId);
+            return DAMicroduct.Instance.GetOtherInfoMicroduct(systemId);
+        }
+        public int getMicroductCount(int microduct_Id)
+        {
+            return DAMicroduct.Instance.getMicroDuctCount(microduct_Id);
         }
         #endregion
     }

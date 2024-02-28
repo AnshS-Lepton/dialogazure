@@ -492,6 +492,14 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<EntityDetail> getNearByMicroducts(int systemId, string entityType)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<EntityDetail>("fn_get_near_microducts", new { P_systemId = systemId, P_entityType = entityType });
+            }
+            catch { throw; }
+        }
         #region ycode
         public List<EntityDetail> getNearByTrenchs(int systemId, string entityType)
         {
@@ -527,6 +535,16 @@ namespace DataAccess
             {
                 var lstSplitDuct = repo.ExecuteProcedure<SplitDuctEntity>("fn_get_split_duct_details", new { P_splitEntitySystemId = splitEntitySystemId, P_splitEntityType = splitEntityType, p_split_entity_networkId = splitEnityNetworkId, P_ductId = ductId, P_entity_type = entity_type });
                 return lstSplitDuct != null && lstSplitDuct.Count > 0 ? lstSplitDuct[0] : new SplitDuctEntity();
+            }
+            catch { throw; }
+        }
+        public SplitMicroductEntity getSplitMicroductEntity(int splitEntitySystemId, string splitEntityType, string splitEnityNetworkId, int microductId, string entity_type)
+        {
+
+            try
+            {
+                var lstSplitMicroduct = repo.ExecuteProcedure<SplitMicroductEntity>("fn_get_split_duct_details", new { P_splitEntitySystemId = splitEntitySystemId, P_splitEntityType = splitEntityType, p_split_entity_networkId = splitEnityNetworkId, P_microductId = microductId, P_entity_type = entity_type });
+                return lstSplitMicroduct != null && lstSplitMicroduct.Count > 0 ? lstSplitMicroduct[0] : new SplitMicroductEntity();
             }
             catch { throw; }
         }

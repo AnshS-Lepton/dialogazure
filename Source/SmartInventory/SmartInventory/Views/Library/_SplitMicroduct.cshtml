@@ -1,0 +1,226 @@
+﻿@model Models.SplitMicroduct
+@using SmartInventory.Settings;
+@using Models;
+@helper pageMessage()
+{
+    Html.RenderPartial("_PageMessage", Model.objPM);
+}
+
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("saveSplitMicroduct", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        OnBegin = "return isFormValid();",
+        LoadingElementId = "dvProgress",
+        Confirm = @Resources.Resources.SI_GBL_GBL_NET_FRM_002
+    },
+                    new { id = "frmShowSplitMicroduct", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal", isConfirm = "1" }))
+    {
+        @Html.HiddenFor(m => m.split_entity_networkId)
+        @Html.HiddenFor(m => m.split_entity_type)
+        @Html.HiddenFor(m => m.split_entity_system_id)
+        @Html.HiddenFor(m => m.split_microduct_system_id)
+        @Html.HiddenFor(m => m.split_entity_network_status)
+        @pageMessage()
+        <div class="TabContent--max-over">
+            @if (Model.microducts.Count > 0)
+            {
+                <fieldset class="the-fieldset">
+                    @{
+
+                    }
+                    @*@Resources.Resources.SI_OSP_TRE_NET_FRM_008,(@Resources.Resources.SI_OSP_ONT_NET_FRM_005 @ApplicationSettings.SplitDuctBuffer @Resources.Resources.SI_OSP_GBL_GBL_GBL_034)*@
+                    <legend class="the-legend">@String.Format(Resources.Resources.SI_OSP_TRE_NET_FRM_008, ApplicationSettings.SplitMicroductBuffer)</legend>
+
+                    <div>
+                        <table id="infoTable" border="0" cellspacing="0" cellpadding="5" class="ElementsList grid">
+                            <tbody>
+                                @if (Model.ducts != null && Model.microducts.Count > 0)
+                                {
+                                    foreach (var item in Model.microducts)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input type="radio"  class="Microduct_address" name="Duct" value="@item.common_name" s_id="@item.system_id" data-network-status="@item.network_status" />
+                                            </td>
+                                            <td>@item.common_name</td>
+                                            <td>
+                                                <a href="#" onclick="si.ShowEntityOnMap('@item.system_id','@item.entity_type','@item.geom_type');$(popup.DE.MinimizeModel).trigger('click');" class="dropdown-toggle" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036">
+                                                    <i class="fa fa-globe fa-fw m-r-xs"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_TRE_NET_FRM_009</legend>
+                    <div class="form-group" style="text-align: center;">
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_TRE_NET_FRM_010</legend>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="txtductCode">
+                                    @Resources.Resources.SI_OSP_GBL_GBL_GBL_001 <i class="clsMandatory">*</i>:
+                                </label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.microduct_one_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
+                                    @Html.ValidationMessageFor(model => model.duct_one_network_id)
+                                </div>
+                                <label class="control-label col-sm-2" for="txtductName">@Resources.Resources.SI_OSP_DUC_NET_FRM_004<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.microduct_one_name, new { @class = "form-control clsReadOnly" })
+                                    @Html.ValidationMessageFor(model => model.microduct_one_name)
+                                </div>
+                            </div>
+                            @if (ApplicationSettings.isterminationpointenable)
+                            {
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="txtStartPoint">@Resources.Resources.SI_OSP_GBL_NET_FRM_035<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.microduct_one_a_location, new { @class = "form-control clsReadOnly", @readonly = true })
+                                        @Html.ValidationMessageFor(model => model.microduct_one_a_location)
+                                    </div>
+
+                                    <label class="control-label col-sm-2" for="txtEndPoint">@Resources.Resources.SI_OSP_GBL_NET_FRM_036<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.microduct_one_b_location, new { @class = "form-control clsReadOnly", @readonly = true })
+                                        @Html.ValidationMessageFor(model => model.microduct_one_b_location)
+                                    </div>
+
+                                </div>
+                            }
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="txtSubAreaName">@Html.Raw(Resources.Resources.SI_OSP_TRE_NET_FRM_011)<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.microduct_one_measured_length, new { @class = "form-control clsReadOnly", @readonly = true })
+                                    @Html.ValidationMessageFor(model => model.microduct_one_measured_length)
+                                </div>
+                                <label class="control-label col-sm-2" for="txtRemarks">@Html.Raw(Resources.Resources.SI_OSP_TRE_NET_FRM_011)<i class="clsMandatory" id="icnductonecalclength">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.microduct_one_calculated_length,
+                                                        SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                                        {
+                                                            @class = "form-control",
+                                                            @onkeypress = "return allowNumberwithOneDot(event,'microduct_one_calculated_length');",
+                                                            @maxlength = "10"
+                                                        }, null))
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="the-fieldset">
+                            <legend class="the-legend">@Resources.Resources.SI_OSP_TRE_NET_FRM_013</legend>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="txtmicroductCode">
+                                    @Resources.Resources.SI_OSP_GBL_GBL_GBL_001 <i class="clsMandatory">*</i>:
+                                </label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.microduct_two_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
+                                    @Html.ValidationMessageFor(model => model.microduct_two_network_id)
+                                </div>
+                                <label class="control-label col-sm-2" for="txtmicroductTwoName">@Resources.Resources.SI_OSP_DUC_NET_FRM_004<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.microduct_two_name, new { @class = "form-control clsReadOnly" })
+                                    @Html.ValidationMessageFor(model => model.microduct_two_name)
+                                </div>
+                            </div>
+                            @if (ApplicationSettings.isterminationpointenable)
+                            {
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="txtStartPoint">@Resources.Resources.SI_OSP_GBL_NET_FRM_035<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.microduct_two_a_location, new { @class = "form-control clsReadOnly", @readonly = true })
+                                        @Html.ValidationMessageFor(model => model.microduct_two_a_location)
+                                    </div>
+
+                                    <label class="control-label col-sm-2" for="txtEndPointe">@Resources.Resources.SI_OSP_GBL_NET_FRM_036<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-sm-45">
+                                        @Html.TextBoxFor(m => m.microduct_two_b_location, new { @class = "form-control clsReadOnly", @readonly = true })
+                                        @Html.ValidationMessageFor(model => model.microduct_two_b_location)
+                                    </div>
+                                </div>
+                            }
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="txtSubAreaName">@Html.Raw(Resources.Resources.SI_OSP_TRE_NET_FRM_011)<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.microduct_two_measured_length, new { @class = "form-control clsReadOnly", @readonly = true })
+                                    @Html.ValidationMessageFor(model => model.microduct_two_measured_length)
+                                </div>
+                                <label class="control-label col-sm-2" for="txtRemarks">@Html.Raw(Resources.Resources.SI_OSP_TRE_NET_FRM_012)<i class="clsMandatory" id="icnducttwocalclength">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.microduct_two_calculated_length,
+                                                        SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                                        {
+                                                            @class = "form-control",
+                                                            @onkeypress = "return allowNumberwithOneDot(event,'microduct_two_calculated_length');",
+                                                            @maxlength = "10"
+                                                        }, null))
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </fieldset>
+            }
+            else
+            {
+
+                @*@Resources.Resources.SI_OSP_TRE_NET_FRM_014,(@Resources.Resources.SI_OSP_ONT_NET_FRM_005  @ApplicationSettings.SplitDuctBuffer @Resources.Resources.SI_OSP_GBL_GBL_GBL_034) !!*@
+                <div style="text-align:center; margin:50px;"><b>@String.Format(Resources.Resources.SI_OSP_TRE_NET_FRM_014, ApplicationSettings.SplitCableBuffer)</b></div>
+
+            }
+
+
+        </div>
+        if (Model.microducts.Count > 0)
+        {
+            <div class="d-flex ModalFooter" id="dvBtnAction">
+                <input type="submit" class="btn btn-small btn-primary ml-auto mr-01" name="btnaction" id="btnSplitduct" value="@Resources.Resources.SI_OSP_TRE_NET_FRM_007" />
+                <input class="btn btn-small btn-danger" type="Button" id="btnmicroductProcess" value="@Resources.Resources.SI_OSP_TRE_NET_FRM_015" onclick="si.getNewMicroductDetails()">
+            </div>
+        }
+        <div class="clearfix"></div>
+    }
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        callFormValidator("frmShowSplitDuct");
+    });
+    function isFormValid() {
+
+        if ($('#microduct_one_network_id').val() == "" && $('#microduct_one_network_id').val() == "") {
+            alert('Please click on process duct !');
+        }
+        else {
+            if ((parseFloat($('#microduct_one_calculated_length').val()) != 0)) {
+                var cabelOneStatus = ValidateDuctLenght('#microduct_one_measured_length', '#microduct_one_calculated_length', 'microduct 1');
+                if (cabelOneStatus == false) {
+                    return false;
+                }
+            }
+            if ((parseFloat($('#microduct_two_calculated_length').val()) != 0)) {
+                var microducttwoStatus = ValidateDuctLenght('#microduct_two_measured_length', '#microduct_two_calculated_length', 'microduct 2');
+                if (microducttwoStatus == false) {
+                    return false;
+                }
+            }
+        }
+    }
+    $('.Microduct_address').click(function () {
+         
+        $('#microduct_one_network_id').val('');
+        $('#microduct_one_name').val('');
+        $('#microduct_one_measured_length').val('');
+        $('#microduct_one_calculated_length').val('');
+        $('#microduct_two_network_id').val('');
+        $('#microduct_two_name').val('');
+        $('#microduct_two_measured_length').val('');
+        $('#microduct_two_calculated_length').val('');
+    });
+</script>
+

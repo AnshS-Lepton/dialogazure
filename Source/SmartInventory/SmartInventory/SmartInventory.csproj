@@ -1343,6 +1343,24 @@
     <Content Include="Content\images\icons\map\Cabinet\D\Cabinet.svg" />
     <Content Include="Content\images\icons\map\Cabinet\P\Cabinet.png" />
     <Content Include="Content\images\icons\map\Cabinet\P\Cabinet.svg" />
+    <Content Include="Content\images\icons\map\CDB\A\CDB.png" />
+    <Content Include="Content\images\icons\map\CDB\A\CDB.svg" />
+    <Content Include="Content\images\icons\map\CDB\A\Primary\PCDB.png" />
+    <Content Include="Content\images\icons\map\CDB\A\Primary\PCDB.svg" />
+    <Content Include="Content\images\icons\map\CDB\A\Secondary\CDB.png" />
+    <Content Include="Content\images\icons\map\CDB\A\Secondary\CDB.svg" />
+    <Content Include="Content\images\icons\map\CDB\D\CDB.png" />
+    <Content Include="Content\images\icons\map\CDB\D\CDB.svg" />
+    <Content Include="Content\images\icons\map\CDB\D\Primary\PCDB.png" />
+    <Content Include="Content\images\icons\map\CDB\D\Primary\PCDB.svg" />
+    <Content Include="Content\images\icons\map\CDB\D\Secondary\CDB.png" />
+    <Content Include="Content\images\icons\map\CDB\D\Secondary\CDB.svg" />
+    <Content Include="Content\images\icons\map\CDB\P\CDB.png" />
+    <Content Include="Content\images\icons\map\CDB\P\CDB.svg" />
+    <Content Include="Content\images\icons\map\CDB\P\Primary\PCDB.png" />
+    <Content Include="Content\images\icons\map\CDB\P\Primary\PCDB.svg" />
+    <Content Include="Content\images\icons\map\CDB\P\Secondary\CDB.png" />
+    <Content Include="Content\images\icons\map\CDB\P\Secondary\CDB.svg" />
     <Content Include="Content\images\icons\map\Customer\A\customer.svg" />
     <Content Include="Content\images\icons\map\Customer\D\Customer.svg" />
     <Content Include="Content\images\icons\map\Customer\P\Customer.svg" />
@@ -2287,6 +2305,7 @@
     <Content Include="Views\Library\_AddSlack.cshtml" />
     <Content Include="Views\Library\_SlackDetailsForDuct.cshtml" />
     <Content Include="Views\Library\_RouteAssociation.cshtml" />
+    <Content Include="Views\Library\_SplitMicroduct.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
