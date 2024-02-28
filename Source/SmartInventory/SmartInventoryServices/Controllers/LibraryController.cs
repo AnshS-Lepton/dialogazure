@@ -880,8 +880,27 @@ namespace SmartInventoryServices.Controllers
 								return response;
 							}
 						}
-						#endregion
-						else if (headerAttribute.entity_type.ToUpper() == EntityType.Gipipe.ToString().ToUpper())
+                        #endregion
+                        #region Microductuct
+                        else if (headerAttribute.entity_type.ToUpper() == EntityType.Microduct.ToString().ToUpper())
+                        {
+                            if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
+                            {
+                                return AddMicroduct(data);
+                            }
+                            else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
+                            {
+                                return SaveMicroduct(data);
+                            }
+                            else
+                            {
+                                response.status = ResponseStatus.FAILED.ToString();
+                                response.error_message = "Entity_Action not matched";
+                                return response;
+                            }
+                        }
+                        #endregion
+                        else if (headerAttribute.entity_type.ToUpper() == EntityType.Gipipe.ToString().ToUpper())
 						{
 							if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
 							{
@@ -5555,7 +5574,6 @@ namespace SmartInventoryServices.Controllers
 
 		#endregion
 
-		#region DUCT
 		#region Add DUCT
 		/// <summary> Add DUCT </summary>
 		/// <param name="data">networkIdType,systemId,geom,userId</param>
@@ -5594,8 +5612,49 @@ namespace SmartInventoryServices.Controllers
 			}
 			return response;
 		}
-		#endregion
-		public ApiResponse<GipipeMaster> AddGipipe(ReqInput data)
+        #endregion
+        #region DUCT
+        #region Add Microduct
+        /// <summary> Add DUCT </summary>
+        /// <param name="data">networkIdType,systemId,geom,userId</param>
+        /// <returns>DUCT Details</returns>
+        /// <CreatedBy>Antra Mathur</CreatedBy>
+
+        public ApiResponse<MicroductMaster> AddMicroduct(ReqInput data)
+        {
+            var response = new ApiResponse<MicroductMaster>();
+            try
+            {
+                LineEntityIn objIn = ReqHelper.GetRequestData<LineEntityIn>(data);
+                MicroductMaster objDuct = GetMicroductDetail(objIn);
+                if (objIn.system_id == 0)
+                {
+                    //Fill Location detail...    
+                    GetLineNetworkDetail(objDuct, objIn, EntityType.Microduct.ToString(), false);
+                }
+                BLItemTemplate.Instance.BindItemDropdowns(objDuct, EntityType.Microduct.ToString());
+                fillProjectSpecifications(objDuct);
+                BindMicroductDropDown(objDuct);
+                objDuct.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Microduct.ToString()).ToList();
+                //Get the layer details to bind additional attributes Duct
+                var layerdetails = new BLLayer().getLayer(EntityType.Microduct.ToString());
+                objDuct.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
+                //End for additional attributes Duct
+                response.status = StatusCodes.OK.ToString();
+                response.results = objDuct;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("AddDuct()", "Library Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
+
+        public ApiResponse<GipipeMaster> AddGipipe(ReqInput data)
 		{
 			var response = new ApiResponse<GipipeMaster>();
 			try
@@ -5676,9 +5735,59 @@ namespace SmartInventoryServices.Controllers
 
 			return objDuct;
 		}
-		#endregion
-		#region Get GIPIPE Details
-		public GipipeMaster GetGipipeDetail(LineEntityIn objIn)
+        #endregion
+        #region Get Microduct Details
+        /// <summary> GetMicroductDetail</summary>
+        /// <param >objIn</param>
+        /// <returns>Microduct Details</returns>
+        /// <CreatedBy>Arabind</CreatedBy>
+        public MicroductMaster GetMicroductDetail(LineEntityIn objIn)
+        {
+            MicroductMaster objMicroduct = new MicroductMaster();
+            int id = objIn.user_id;
+            if (objIn.system_id == 0)
+            {
+                objMicroduct.geom = objIn.geom;
+                if (!string.IsNullOrEmpty(objIn.geom))
+                    objMicroduct.calculated_length = Math.Round((double)new BLMisc().GetCableLength(objIn.geom), 3);
+
+                objMicroduct.manual_length = objMicroduct.calculated_length;
+                objMicroduct.networkIdType = objIn.networkIdType;
+                objMicroduct.ownership_type = "Own";
+                objMicroduct.isDirectSave = objIn.isDirectSave;
+                objMicroduct.user_id = objIn.user_id;
+                //NEW ENTITY->Fill Region and Province Detail..
+                fillRegionProvinceDetail(objMicroduct, GeometryType.Line.ToString(), objIn.geom);
+                var a = new BLMisc().GetEndPoints(objIn.geom);
+                objMicroduct.a_latitude = a[0].a_latitude.Replace("POINT(", "").Replace(")", "");
+                objMicroduct.b_longitude = a[0].b_longitude.Replace("POINT(", "").Replace(")", "");
+                objMicroduct.a_region = a[0].tstart_region;
+                objMicroduct.b_region = a[0].tEnd_region;
+                objMicroduct.a_city = a[0].tstrat_province;
+                objMicroduct.b_city = a[0].tEnd_province;
+                if (ApplicationSettings.IsEntityNamePrefixAllow)
+                {
+                    objMicroduct.microduct_name = "R/OWN/" + a[0].province_abbr;
+                }
+                // Item template binding
+                var objItem = BLItemTemplate.Instance.GetTemplateDetail<MicroductTemplateMaster>(objMicroduct.user_id, EntityType.Microduct);
+                Utility.MiscHelper.CopyMatchingProperties(objItem, objMicroduct);
+                objMicroduct.other_info = null;  //for additional-attributes
+            }
+            else
+            {
+                objMicroduct = new BLMisc().GetEntityDetailById<MicroductMaster>(objIn.system_id, EntityType.Microduct, objIn.user_id);
+                //for additional-attributes
+                objMicroduct.other_info = new BLMicroduct().GetOtherInfoMicroduct(objMicroduct.system_id);
+                fillRegionProvAbbr(objMicroduct);
+            }
+            objMicroduct.lstUserModule = new BLLayer().GetUserModuleAbbrList(id, UserType.Web.ToString());
+
+            return objMicroduct;
+        }
+        #endregion
+        #region Get GIPIPE Details
+        public GipipeMaster GetGipipeDetail(LineEntityIn objIn)
 		{
 			GipipeMaster objGipipe = new GipipeMaster();
 			int id = objIn.user_id;
@@ -5895,6 +6004,187 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
         #endregion
+
+        #region Save Microduct
+        /// <summary> Microduct </summary>
+        /// <param name="data">ReqInput</param>
+        /// <CreatedBy>Arabind</CreatedBy>
+        public ApiResponse<MicroductMaster> SaveMicroduct(ReqInput data)
+        {
+            var response = new ApiResponse<MicroductMaster>();
+            var ductOffsetVal = Convert.ToDecimal(0.00001) * Convert.ToDecimal(ApplicationSettings.DuctOffset);
+            MicroductMaster objnewDuct = ReqHelper.GetRequestData<MicroductMaster>(data);
+            // get duct count for already added duct in trench loaction
+            int CheckductCount = BLMicroduct.Instance.getMicroductCount(objnewDuct.pSystemId);
+            try
+            {
+                var OffsetDir = "leftOffset";
+                decimal leftdistance = ductOffsetVal;
+                decimal rightdistance = ductOffsetVal;
+                string finalDistance;
+                int ductCount = objnewDuct.system_id > 0 ? ductCount = 1 : objnewDuct.microduct_count == 0 ? 1 : objnewDuct.microduct_count;
+                // set left or right distance that already existed duct for same the trench loaction
+                if (CheckductCount > 0)
+                {
+                    if (CheckductCount % 2 == 0)
+                    {
+                        rightdistance = ductOffsetVal * ((CheckductCount / 2));
+                        leftdistance = ductOffsetVal + rightdistance;
+                        OffsetDir = "rightOffset";
+                    }
+                    else
+                    {
+                        leftdistance = ductOffsetVal * ((CheckductCount / 2) + 1);
+                        rightdistance = leftdistance;
+                        OffsetDir = "leftOffset";
+                    }
+                }
+                for (int i = 1; i <= ductCount; i++)
+                {
+                    // set final distance for left or right offset
+                    finalDistance = OffsetDir == "leftOffset" ? "-" + leftdistance.ToString() : rightdistance.ToString();
+                    MicroductMaster objDuct = ReqHelper.GetRequestData<MicroductMaster>(data);
+                    if (objDuct.networkIdType == NetworkIdType.A.ToString() && objDuct.system_id == 0)
+                    {
+                        if (objDuct.isDirectSave == false)
+                        {
+                            objDuct.lstTP.Add(new NetworkDtl { system_id = objDuct.a_system_id, network_id = objDuct.a_location, network_name = objDuct.a_entity_type });
+                            objDuct.lstTP.Add(new NetworkDtl { system_id = objDuct.b_system_id, network_id = objDuct.b_location, network_name = objDuct.b_entity_type });
+                        }
+                        var objLineEntity = new LineEntityIn() { geom = objDuct.geom, systemId = objDuct.system_id, networkIdType = objDuct.networkIdType, lstTP = objDuct.lstTP, user_id = objDuct.user_id, isDirectSave = objDuct.isDirectSave };
+                        if (objDuct.isDirectSave == true)
+                        {
+                            //GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
+                            int trenchId = objDuct.pSystemId;
+                            string pentityType = objDuct.pEntityType;
+                            objDuct = GetMicroductDetail(objLineEntity);
+                            objDuct.pSystemId = trenchId;//it's due to pSystemId lost when call above function i.e. GetDuctDetail.
+                            objDuct.trench_id = objDuct.pSystemId;
+                            objDuct.pEntityType = pentityType;
+                            var objBOMDDL = new BLMisc().GetDropDownList("", "bom_sub_category");
+                            // var objSubCatDDL = new BLMisc().GetDropDownList("", "served_by_ring");
+                            objDuct.bom_sub_category = objBOMDDL[0].dropdown_value;
+                            //objDuct.served_by_ring = objSubCatDDL[0].dropdown_value;
+                        }
+                        GetLineNetworkDetail(objDuct, objLineEntity, EntityType.Microduct.ToString(), true);
+                        if (objDuct.isDirectSave == true)
+                            objDuct.microduct_name = objDuct.network_id;
+                    }
+                    if (string.IsNullOrEmpty(objDuct.microduct_name))
+                    {
+                        objDuct.microduct_name = objDuct.network_id;
+                    }
+                    this.Validate(objDuct);
+                    if (ModelState.IsValid)
+                    {
+
+                        var isNew = objDuct.system_id > 0 ? false : true;
+                        objDuct.is_new_entity = (isNew && objDuct.source_ref_id != "0" && objDuct.source_ref_id != "");
+                        objDuct.trench_id = objDuct.pSystemId;
+                        var resultItem = BLMicroduct.Instance.Save(objDuct, objDuct.user_id);
+                        // update duct geometry                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                        if (i != ductCount || CheckductCount > 0)
+                        {
+                            if (objnewDuct.system_id == 0)
+                            {
+                                BASaveEntityGeometry.Instance.UpdateMicroductLocation(resultItem.system_id, finalDistance, OffsetDir);
+                            }
+                        }
+                        // update duct color code 
+                        if (objnewDuct.system_id == 0 && string.IsNullOrEmpty(objnewDuct.microduct_color))
+                        {
+                            BASaveEntityGeometry.Instance.UpdateMicroductColorCode(resultItem.system_id, objDuct.trench_id, i);
+                        }
+                        if (string.IsNullOrEmpty(resultItem.objPM.message))
+                        {
+                            string[] LayerName = { EntityType.Microduct.ToString() };
+
+                            //Save Reference
+                            if (objDuct.EntityReference != null && resultItem.system_id > 0)
+                            {
+                                SaveReference(objDuct.EntityReference, resultItem.system_id);
+                            }
+                            if (isNew)
+                            {
+                                objDuct.objPM.status = ResponseStatus.OK.ToString();
+                                objDuct.objPM.isNewEntity = isNew;
+                                objDuct.objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);
+                                response.status = ResponseStatus.OK.ToString();
+                                response.error_message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);
+                            }
+                            else
+                            {
+                                objDuct.objPM.status = ResponseStatus.OK.ToString();
+                                objDuct.objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+                                BLItemTemplate.Instance.BindItemDropdowns(objDuct, EntityType.Microduct.ToString());
+                                response.status = ResponseStatus.OK.ToString();
+                                response.error_message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+                            }
+                        }
+                        else
+                        {
+                            objDuct.objPM.status = ResponseStatus.FAILED.ToString();
+                            objDuct.objPM.message = resultItem.objPM.message;
+                            response.error_message = resultItem.objPM.message;
+                            response.status = ResponseStatus.FAILED.ToString();
+                        }
+
+                        //save AT Status                        
+                        if (objDuct.ATAcceptance != null && objDuct.system_id > 0)
+                        {
+                            SaveATAcceptance(objDuct.ATAcceptance, objDuct.system_id, objDuct.user_id);
+                        }
+
+                    }
+                    else
+                    {
+                        objDuct.objPM.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                        objDuct.objPM.message = getFirstErrorFromModelState();
+                        response.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                        response.error_message = getFirstErrorFromModelState();
+                    }
+                    if (objDuct.isDirectSave == true)
+                    {
+                        //RETURN MESSAGE AS JSON FOR DIRECT SAVE
+                        objDuct.objPM.status = ResponseStatus.OK.ToString();
+                        response.status = ResponseStatus.OK.ToString();
+                        response.results = objDuct;
+                    }
+                    else
+                    {
+                        BLItemTemplate.Instance.BindItemDropdowns(objDuct, EntityType.Microduct.ToString());
+                        // RETURN PARTIAL VIEW WITH MODEL DATA
+                        fillProjectSpecifications(objDuct);
+                        BindMicroductDropDown(objDuct);
+                        objDuct.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Microduct.ToString()).ToList();
+                        //Get the layer details to bind additional attributes Duct
+                        var layerdetails = new BLLayer().getLayer(EntityType.Microduct.ToString());
+                        objDuct.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
+                        //End for additional attributes Duct
+                        response.results = objDuct;
+                    }
+                    if (OffsetDir == "leftOffset")
+                    {
+                        leftdistance = leftdistance + ductOffsetVal;
+                        OffsetDir = "rightOffset";
+                    }
+                    else
+                    {
+                        rightdistance = rightdistance + ductOffsetVal;
+                        OffsetDir = "leftOffset";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("SaveDuct()", "Library Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
         public ApiResponse<GipipeMaster> SaveGipipe(ReqInput data)
 		{
 			var response = new ApiResponse<GipipeMaster>();
@@ -6034,11 +6324,29 @@ namespace SmartInventoryServices.Controllers
 			// objDuctIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
 		
 		}
+        private void BindMicroductDropDown(MicroductMaster objMicroductIn)
+        {
+            var objDDL = new BLMisc().GetDropDownList(EntityType.Microduct.ToString());
+            objMicroductIn.NoofMicroductsCreated = objDDL.Where(x => x.dropdown_type == DropDownType.No_of_Ducts_Created.ToString()).ToList();
+            objMicroductIn.MicroductTypeIn = objDDL.Where(x => x.dropdown_type == DropDownType.Duct_Type.ToString()).ToList();
+            objMicroductIn.MicroductCount = objDDL.Where(x => x.dropdown_type == DropDownType.Duct_Count.ToString()).ToList();
+            objMicroductIn.MicroductColorIn = objDDL.Where(x => x.dropdown_type == DropDownType.Duct_Color.ToString()).ToList();
+            objMicroductIn.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
+            objMicroductIn.lstNoOfWays = objDDL.Where(x => x.dropdown_type == DropDownType.Number_of_Ways.ToString()).ToList();
+            objMicroductIn.lstInternalDiameter = objDDL.Where(x => x.dropdown_type == DropDownType.Internal_Diameter.ToString()).ToList();
+            objMicroductIn.lstExternalDiameter = objDDL.Where(x => x.dropdown_type == DropDownType.External_Diameter.ToString()).ToList();
+            objMicroductIn.lstMaterialType = objDDL.Where(x => x.dropdown_type == DropDownType.Material_Type.ToString()).ToList();
+			var _objDDL = new BLMisc().GetDropDownList("");
+            objMicroductIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
+            objMicroductIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+            
 
-		#endregion
+        }
 
-		#endregion
-		private void BindGipipeDropDown(GipipeMaster objGipipeIn)
+        #endregion
+
+        #endregion
+        private void BindGipipeDropDown(GipipeMaster objGipipeIn)
 		{
 			var objDDL = new BLMisc().GetDropDownList(EntityType.Gipipe.ToString());
 			objGipipeIn.GipipeTypeIn = objDDL.Where(x => x.dropdown_type == DropDownType.Gipipe_Type.ToString()).ToList();
@@ -14790,7 +15098,7 @@ namespace SmartInventoryServices.Controllers
 		}
         #endregion
 
-        #region SLACK BY ANTRA
+
         #region Add Slack
         public ApiResponse<SlackMaster> AddSlack(ReqInput data)
         {
@@ -14945,7 +15253,6 @@ namespace SmartInventoryServices.Controllers
             }
             return response;
         }
-        #endregion
         #endregion
 
 

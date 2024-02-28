@@ -102,6 +102,10 @@ namespace BusinessLogics
         {
             return objDAMisc.getNearByDucts(systemId, entityType);
         }
+        public List<EntityDetail> getNearByMicroducts(int systemId, string entityType)
+        {
+            return objDAMisc.getNearByMicroducts(systemId, entityType);
+        }
         public List<EntityDetail> getNearByTrenchs(int systemId, string entityType)
         {
             return objDAMisc.getNearByTrenchs(systemId, entityType);
@@ -117,6 +121,10 @@ namespace BusinessLogics
         public SplitDuctEntity getSplitDuctEntity(int splitEntitySystemId, string splitEntityType, string splitEnityNetworkId, int ductId, string entity_type)
         {
             return objDAMisc.getSplitDuctEntity(splitEntitySystemId, splitEntityType, splitEnityNetworkId, ductId, entity_type);
+        }
+        public SplitMicroductEntity getSplitMicroductEntity(int splitEntitySystemId, string splitEntityType, string splitEnityNetworkId, int microductId, string entity_type)
+        {
+            return objDAMisc.getSplitMicroductEntity(splitEntitySystemId, splitEntityType, splitEnityNetworkId, microductId, entity_type);
         }
         public SplitTrenchEntity getSplitTrenchEntity(int splitEntitySystemId, string splitEntityType, string splitEnityNetworkId, int trenchId, string entity_type)
         {
