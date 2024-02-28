@@ -187,8 +187,8 @@ namespace Models
         [NotMapped]
         public int duct_count { get; set; }    
         public string duct_color { get; set; }
-        public int total_slack_count { get; set; }
-        public int total_slack_length { get; set; }
+        public int? total_slack_count { get; set; }
+        public int? total_slack_length { get; set; }
 
         public DuctMaster()
         {

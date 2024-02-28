@@ -543,7 +543,9 @@ namespace Models
 		public string partner_name { get; set; }
 		[NotMapped]
 		public List<string> lstUserModule { get; set; }
-		public PoleMaster()
+        [NotMapped]
+        public int pSystemId { get; set; }
+        public PoleMaster()
 		{
 			objPM = new PageMessage();
 
@@ -833,7 +835,9 @@ namespace Models
 		public string partner_name { get; set; }
 		[NotMapped]
 		public List<string> lstUserModule { get; set; }
-		public TreeMaster()
+        [NotMapped]
+        public int pSystemId { get; set; }
+        public TreeMaster()
 		{
 			objPM = new PageMessage();
 			lstBindProjectCode = new List<ProjectCodeMaster>();
@@ -986,6 +990,8 @@ namespace Models
 		public string partner_name { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
+        [NotMapped]
+        public int pSystemId { get; set; }
         public ManholeMaster()
 		{
 			objPM = new PageMessage();
@@ -2451,8 +2457,10 @@ namespace Models
 		public string partner_name { get; set; }
 		[NotMapped]
 		public List<string> lstUserModule { get; set; }
+        [NotMapped]
+        public int pSystemId { get; set; }
 
-		public WallMountMaster()
+        public WallMountMaster()
 		{
 			objPM = new PageMessage();
 			lstBindProjectCode = new List<ProjectCodeMaster>();
@@ -3877,7 +3885,9 @@ namespace Models
 		public string mzone_id { get; set; }
 		[NotMapped]
 		public string pEntityType { get; set; }
-		[NotMapped]
+        [NotMapped]
+        public int pSystemId { get; set; }
+        [NotMapped]
 		public string partner_name { get; set; }
         [NotMapped]
         public vm_dynamic_form objDynamicControls { get; set; }
@@ -4784,11 +4794,11 @@ namespace Models
         [NotMapped]
         public double? duct_calculated_length { get; set; }
         [NotMapped]
-        public int total_slack_count { get; set; }
+        public int? total_slack_count { get; set; }
         [NotMapped]
         public double? available_calculated_length { get; set; }
         [NotMapped]
-        public int total_slack_length { get; set; }
+        public int? total_slack_length { get; set; }
         [NotMapped]
         public int user_id { get; set; }
         [NotMapped]
