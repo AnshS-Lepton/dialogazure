@@ -2307,6 +2307,7 @@
     <Content Include="Views\Library\_SlackDetailsForDuct.cshtml" />
     <Content Include="Views\Library\_RouteAssociation.cshtml" />
     <Content Include="Views\Library\_SplitMicroduct.cshtml" />
+    <Content Include="Views\Library\_CDBAttributes.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

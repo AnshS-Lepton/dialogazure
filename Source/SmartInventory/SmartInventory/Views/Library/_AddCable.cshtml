@@ -43,6 +43,10 @@
 {
     { Html.RenderPartial("~/Views/Library/_AdditionalFields.cshtml", (IAdditionalFields)Model); }
 }
+@helper CDBAttribute()
+{
+    { Html.RenderPartial("~/Views/Library/_CDBAttributes.cshtml", (CableMaster)Model); }
+}
 @{
     var startEndReading = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.start_end_reading.ToString() && m.form_feature_type.ToLower() == formFeatureType.feature.ToString() && m.is_active == true).FirstOrDefault() : null;
     var subCategory = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.sub_category.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
@@ -86,7 +90,7 @@
         @Html.HiddenFor(m => m.calculated_length_remark, new { @id = "hdncblComment" })
         @Html.HiddenFor(m => m.audit_item_master_id)
         @Html.HiddenFor(m => m.cable_calculated_length, new { @id = "hdncblCalLen" })
-       // @Html.HiddenFor(m => m.cable_name, new { @id = "hdnProvinceAbbr" })
+        // @Html.HiddenFor(m => m.cable_name, new { @id = "hdnProvinceAbbr" })
 
 
 
@@ -145,7 +149,13 @@
                                href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a>
                         </li>
                         <!--End Reigon Additional Attribute-->
-                    </ul>
+                            @if (ApplicationSettings.isCDBAttributeEnabled == 1)
+                            {
+                            <li>
+                                <a title="CDBAttribute" style="display:block;" href="#CDBAttributes" data-toggle="tab">CDB Attribute</a>
+                            </li>
+                            }
+                        </ul>
                 </div>
                 <div id="divRightMenu" style="display:none;">
                     <span class="spanSide go-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
@@ -194,6 +204,12 @@
                             <!--Reigon Additional Attribute to show the partial view-->
                             <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_222 @(Model.lstUserModule.Contains("ENT-DTL-ADA")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ADA") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
                             <!--End Reigon Additional Attribute-->
+                            @if (ApplicationSettings.isCDBAttributeEnabled == 1)
+                            {
+                                <li>
+                                    <a title="CDBAttribute" style="display:block;" href="#CDBAttributes" data-toggle="tab">CDB Attribute</a>
+                                </li>
+                            }
                         </ul>
                     </div>
                 </div>
@@ -250,7 +266,7 @@
                             </div>
 
                             @*@if (ApplicationSettings.isterminationpointenable)
-                {*@
+                    {*@
                             <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">@Resources.Resources.SI_OSP_ROW_NET_FRM_009:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
                                 @Html.TextBoxFor(m => m.a_location, new { @class = "form-control clsReadOnly", @readonly = true })
@@ -280,7 +296,7 @@
 
                             <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">B Region Name:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
-                                @Html.TextBoxFor(m => m.b_region, new { @class = "form-control clsReadOnly", @readonly = true, autocomplete = "do-not-show-ac"})
+                                @Html.TextBoxFor(m => m.b_region, new { @class = "form-control clsReadOnly", @readonly = true, autocomplete = "do-not-show-ac" })
                             </div>
                             <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">A City Name:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
@@ -301,9 +317,9 @@
                                 @Html.DropDownListFor(m => m.cable_type, new SelectList(Model.listcableType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
                             </div>
                             @*<label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">Cable Type<i class="clsMandatory">*</i>:</label>
-                <div class="col-md-4 col-sm-4 mrgn_btm ">
-                    @Html.TextBoxFor(m => m.cable_type, new { @class = "form-control", @readonly = true })
-                </div>*@
+                    <div class="col-md-4 col-sm-4 mrgn_btm ">
+                        @Html.TextBoxFor(m => m.cable_type, new { @class = "form-control", @readonly = true })
+                    </div>*@
 
 
                             @if (startEndReading != null)
@@ -396,13 +412,13 @@
 
 
                             @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-                <div class="col-md-4 col-sm-4 mrgn_btm">
-                    @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
-                </div>*@
+                    <div class="col-md-4 col-sm-4 mrgn_btm">
+                        @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+                    </div>*@
                             @*<label class="control-label col-md-2 col-sm-2" for="txtAcquireFrom">@Resources.Resources.SI_GBL_GBL_GBL_GBL_010:</label>
-                <div class="col-md-4 col-sm-4 mrgn_btm">
-                    @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
-                </div>*@
+                    <div class="col-md-4 col-sm-4 mrgn_btm">
+                        @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
+                    </div>*@
 
                         </div>
                         <div id="dvOwnerShip">
@@ -491,6 +507,12 @@
                 <div class="tab-pane" id="Reference">
                     @Reference()
                 </div>
+                @if (ApplicationSettings.isCDBAttributeEnabled == 1)
+                {
+                    <div class="tab-pane" id="CDBAttributes">
+                        @CDBAttribute()
+                    </div>
+                }
             </div>
         </div>
         <div class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"d-flex ModalFooter":"d-flex ModalFooter dvdisabled")" id="dvBtnAction">
@@ -528,7 +550,7 @@
 
 <script type="text/javascript">
     $("#btnSaveCable").on("click", function() {
-         
+
         var ddlFiberCount = $("#ddlIOP_chosen").children('a').text().trim();
         var tubeCount = parseInt($('#no_of_tube').val());
         var corePerTubeCount = parseInt($('#no_of_core_per_tube').val());
@@ -589,7 +611,7 @@
 
 
         else {
-             
+
             $('#hdncblCalLen').val($('#cable_calculated_length').val());
             $("#frmAddCable").submit();
         }
@@ -657,7 +679,7 @@
     });
 
     function SaveLMCInfo(objLMCInfo) {
-         
+
         if (objLMCInfo.ActionTab == "LMCInfoTab") {
             if (objLMCInfo.objPM.status != "OK") {
                 alert(objLMCInfo.objPM.message);
@@ -671,7 +693,7 @@
     }
 
     $("#ulCableTabs li a").on("click", function () {
-         
+
         var url = $(this).attr('href'); //
         if (url == '#dvLMCInfo') {
             // $('#dvBtnAction').hide();
@@ -683,7 +705,7 @@
         }
     });
     $("#divRightMenu .dropMenu ul li a").on("click", function () {
-         
+
         var url = $(this).attr('href'); //
         if (url == '#dvLMCInfo') {
             // $('#dvBtnAction').hide();

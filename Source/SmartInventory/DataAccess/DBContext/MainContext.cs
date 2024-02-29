@@ -640,6 +640,7 @@ namespace DataAccess.DBContext
             #endregion
 
             modelBuilder.Entity<ViewSpecificationServiceList>().ToTable("item_template_service_master", dbschema);
+            modelBuilder.Entity<CDBAttribute>().ToTable("att_details_cable_cdb", dbschema);
         }
 
     }

@@ -2953,7 +2953,12 @@ namespace SmartInventoryServices.Controllers
 				//for additional-attributes
 				objCbl.other_info = new BLCable().GetOtherInfoCable(objCbl.system_id);
 				fillRegionProvAbbr(objCbl);
-			}
+                var objCDB = BLCable.Instance.GetDetailsCDBAttribute(objCbl.system_id.ToString());
+                if (objCDB != null)
+                {
+                    objCbl.LstCDBAttribute = objCDB;
+                }
+            }
 			objCbl.lstUserModule = new BLLayer().GetUserModuleAbbrList(objIn.user_id, UserType.Web.ToString());
 			return objCbl;
 		}
@@ -3028,7 +3033,10 @@ namespace SmartInventoryServices.Controllers
 			objCableIn.listExecutionMethod = objDDL.Where(x => x.dropdown_type == DropDownType.Execution_Method.ToString()).ToList();
 			objCableIn.listcableType = objDDL.Where(x => x.dropdown_type == DropDownType.Cable_Type.ToString()).ToList();
 			objCableIn.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			var _objDDL = new BLMisc().GetDropDownList("");
+            objCableIn.LstCDBAttribute.lstRoute = objDDL.Where(x => x.dropdown_type == DropDownType.Route_Type.ToString()).ToList();
+            objCableIn.LstCDBAttribute.lstFiber = objDDL.Where(x => x.dropdown_type == DropDownType.Fiber_Type_LOV.ToString()).ToList();
+            objCableIn.LstCDBAttribute.lstOperator = objDDL.Where(x => x.dropdown_type == DropDownType.Operator_Type_LOV.ToString()).ToList();
+            var _objDDL = new BLMisc().GetDropDownList("");
 			objCableIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objCableIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
 		}

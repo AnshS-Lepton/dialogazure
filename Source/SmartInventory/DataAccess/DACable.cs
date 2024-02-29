@@ -38,6 +38,7 @@ namespace DataAccess
             try
             {
                 var objCable = repo.Get(u => u.system_id == cableInfo.system_id);
+                var objcdb = DACDBAttribute.Instance.Get(cableInfo.system_id.ToString());
                 if (objCable != null)
                 {
                     PageMessage objPageValidate = DAUtility.ValidateModifiedDate(cableInfo.modified_on, objCable.modified_on, cableInfo.modified_by, objCable.modified_by);
@@ -183,7 +184,15 @@ namespace DataAccess
                     {
                         DAIspLine.Instance.setCableEndPoint(response.system_id);
                     }
-
+                    // update cdb attributes if cdb null then update it otherwise insert new record
+                    if (objcdb != null)
+                    {
+                        DACDBAttribute.Instance.UpdateBulkTempCable(objcdb, cableInfo);
+                    }
+                    else
+                    {
+                        DACDBAttribute.Instance.SaveCDBAttribute(cableInfo);
+                    }
                     return response;
                 }
                 else
@@ -220,7 +229,9 @@ namespace DataAccess
                     var CableResp = repo.Insert(cableInfo);
                    
                     SetCableColorDetails(cableInfo.system_id, cableInfo.no_of_tube, cableInfo.no_of_core_per_tube, userId);
-                    // Save geometry
+                    // save cdb attributes
+                    DACDBAttribute.Instance.SaveCDBAttribute(cableInfo);
+                    // Save geometry                    
                     if (cableInfo.cable_type != "ISP" && latLong != "" && latLong != "0")
                     {
                        
@@ -816,6 +827,117 @@ namespace DataAccess
         public void InsertCableIntoMainTable(UploadSummary summary)
         {
             repo.ExecuteSQLCommand(string.Format("select * from fn_bulkupload_cable({0},{1})", summary.id, "''"));
+        }
+    }
+    public class DACDBAttribute : Repository<CDBAttribute>
+    {
+        private static DACDBAttribute objLine = null;
+        private static readonly object lockObject = new object();
+        public static DACDBAttribute Instance
+        {
+            get
+            {
+                lock (lockObject)
+                {
+                    if (objLine == null)
+                    {
+                        objLine = new DACDBAttribute();
+                    }
+                }
+                return objLine;
+            }
+        }
+        public void SaveCDBAttribute(CableMaster cableInfo)
+        {
+            CDBAttribute cdbAttribute = new CDBAttribute();
+            cdbAttribute.cable_id = cableInfo.system_id.ToString();
+            cdbAttribute.circle_name = cableInfo.LstCDBAttribute.circle_name;
+            cdbAttribute.major_route_name = cableInfo.LstCDBAttribute.major_route_name;
+            cdbAttribute.route_id = cableInfo.LstCDBAttribute.route_id;
+            cdbAttribute.section_name = cableInfo.LstCDBAttribute.section_name;
+            cdbAttribute.section_id = cableInfo.LstCDBAttribute.section_id;
+            cdbAttribute.route_type = cableInfo.LstCDBAttribute.route_type;
+            cdbAttribute.operator_type = cableInfo.LstCDBAttribute.operator_type;
+            cdbAttribute.route_category = cableInfo.LstCDBAttribute.route_category;
+            cdbAttribute.distance = cableInfo.LstCDBAttribute.distance;
+            cdbAttribute.fiber_type = cableInfo.LstCDBAttribute.fiber_type;
+            cdbAttribute.fiber_pairs_laid = cableInfo.LstCDBAttribute.fiber_pairs_laid;
+            cdbAttribute.total_used_pair = cableInfo.LstCDBAttribute.total_used_pair;
+            cdbAttribute.fiber_pairs_used_by_vil = cableInfo.LstCDBAttribute.fiber_pairs_used_by_vil;
+            cdbAttribute.fiber_pairs_given_to_airtel = cableInfo.LstCDBAttribute.fiber_pairs_given_to_airtel;
+            cdbAttribute.fiber_pairs_given_to_others = cableInfo.LstCDBAttribute.fiber_pairs_given_to_others;
+            cdbAttribute.fiber_pairs_free = cableInfo.LstCDBAttribute.fiber_pairs_free;
+            cdbAttribute.faulty_fiber_pairs = cableInfo.LstCDBAttribute.faulty_fiber_pairs;
+            cdbAttribute.start_latitude = cableInfo.LstCDBAttribute.start_latitude;
+            cdbAttribute.start_longitude = cableInfo.LstCDBAttribute.start_longitude;
+            cdbAttribute.end_latitude = cableInfo.LstCDBAttribute.end_latitude;
+            cdbAttribute.end_longitude = cableInfo.LstCDBAttribute.end_longitude;
+            cdbAttribute.count_non_vil_tenancies_on_route = cableInfo.LstCDBAttribute.count_non_vil_tenancies_on_route;
+            cdbAttribute.route_lit_up_date = Convert.ToDateTime(cableInfo.LstCDBAttribute.route_lit_up_date);
+            cdbAttribute.aerial_km = cableInfo.LstCDBAttribute.aerial_km;
+            cdbAttribute.avg_loss_per_km = cableInfo.LstCDBAttribute.avg_loss_per_km;
+            cdbAttribute.avg_last_six_months_fiber_cut = cableInfo.LstCDBAttribute.avg_last_six_months_fiber_cut;
+            cdbAttribute.row = cableInfo.LstCDBAttribute.row;
+            cdbAttribute.material = cableInfo.LstCDBAttribute.material;
+            cdbAttribute.execution = cableInfo.LstCDBAttribute.execution;
+            cdbAttribute.row_availablity = cableInfo.LstCDBAttribute.row_availablity;
+            cdbAttribute.iru_given_airtel = cableInfo.LstCDBAttribute.iru_given_airtel;
+            cdbAttribute.iru_given_jio = cableInfo.LstCDBAttribute.iru_given_jio;
+            cdbAttribute.iru_given_ttsl_or_ttml = cableInfo.LstCDBAttribute.iru_given_ttsl_or_ttml;
+            cdbAttribute.iru_given_tcl = cableInfo.LstCDBAttribute.iru_given_tcl;
+            cdbAttribute.iru_given_others = cableInfo.LstCDBAttribute.iru_given_others;
+            cdbAttribute.network_category = cableInfo.LstCDBAttribute.network_category;
+            cdbAttribute.row_valid_or_exp = Convert.ToDateTime(cableInfo.LstCDBAttribute.row_valid_or_exp);
+            cdbAttribute.remarks = cableInfo.LstCDBAttribute.remarks;
+            cdbAttribute.cable_owner = cableInfo.LstCDBAttribute.cable_owner;
+            repo.Insert(cdbAttribute);
+        }
+        public void UpdateBulkTempCable(CDBAttribute objcdb, CableMaster cableInfo)
+        {
+            objcdb.circle_name = cableInfo.LstCDBAttribute.circle_name;
+            objcdb.major_route_name = cableInfo.LstCDBAttribute.major_route_name;
+            objcdb.route_id = cableInfo.LstCDBAttribute.route_id;
+            objcdb.section_name = cableInfo.LstCDBAttribute.section_name;
+            objcdb.section_id = cableInfo.LstCDBAttribute.section_id;
+            objcdb.route_type = cableInfo.LstCDBAttribute.route_type;
+            objcdb.operator_type = cableInfo.LstCDBAttribute.operator_type;
+            objcdb.route_category = cableInfo.LstCDBAttribute.route_category;
+            objcdb.distance = cableInfo.LstCDBAttribute.distance;
+            objcdb.fiber_type = cableInfo.LstCDBAttribute.fiber_type;
+            objcdb.fiber_pairs_laid = cableInfo.LstCDBAttribute.fiber_pairs_laid;
+            objcdb.total_used_pair = cableInfo.LstCDBAttribute.total_used_pair;
+            objcdb.fiber_pairs_used_by_vil = cableInfo.LstCDBAttribute.fiber_pairs_used_by_vil;
+            objcdb.fiber_pairs_given_to_airtel = cableInfo.LstCDBAttribute.fiber_pairs_given_to_airtel;
+            objcdb.fiber_pairs_given_to_others = cableInfo.LstCDBAttribute.fiber_pairs_given_to_others;
+            objcdb.fiber_pairs_free = cableInfo.LstCDBAttribute.fiber_pairs_free;
+            objcdb.faulty_fiber_pairs = cableInfo.LstCDBAttribute.faulty_fiber_pairs;
+            objcdb.start_latitude = cableInfo.LstCDBAttribute.start_latitude;
+            objcdb.start_longitude = cableInfo.LstCDBAttribute.start_longitude;
+            objcdb.end_latitude = cableInfo.LstCDBAttribute.end_latitude;
+            objcdb.end_longitude = cableInfo.LstCDBAttribute.end_longitude;
+            objcdb.count_non_vil_tenancies_on_route = cableInfo.LstCDBAttribute.count_non_vil_tenancies_on_route;
+            objcdb.route_lit_up_date = cableInfo.LstCDBAttribute.route_lit_up_date;
+            objcdb.aerial_km = cableInfo.LstCDBAttribute.aerial_km;
+            objcdb.avg_loss_per_km = cableInfo.LstCDBAttribute.avg_loss_per_km;
+            objcdb.avg_last_six_months_fiber_cut = cableInfo.LstCDBAttribute.avg_last_six_months_fiber_cut;
+            objcdb.row = cableInfo.LstCDBAttribute.row;
+            objcdb.material = cableInfo.LstCDBAttribute.material;
+            objcdb.execution = cableInfo.LstCDBAttribute.execution;
+            objcdb.row_availablity = cableInfo.LstCDBAttribute.row_availablity;
+            objcdb.iru_given_airtel = cableInfo.LstCDBAttribute.iru_given_airtel;
+            objcdb.iru_given_jio = cableInfo.LstCDBAttribute.iru_given_jio;
+            objcdb.iru_given_ttsl_or_ttml = cableInfo.LstCDBAttribute.iru_given_ttsl_or_ttml;
+            objcdb.iru_given_tcl = cableInfo.LstCDBAttribute.iru_given_tcl;
+            objcdb.iru_given_others = cableInfo.LstCDBAttribute.iru_given_others;
+            objcdb.network_category = cableInfo.LstCDBAttribute.network_category;
+            objcdb.row_valid_or_exp = cableInfo.LstCDBAttribute.row_valid_or_exp;
+            objcdb.remarks = cableInfo.LstCDBAttribute.remarks;
+            objcdb.cable_owner = cableInfo.LstCDBAttribute.cable_owner;
+            repo.Update(objcdb);
+        }
+        public CDBAttribute Get(string system_id)
+        {
+            return repo.Get(u => u.cable_id == system_id);
         }
     }
 }
