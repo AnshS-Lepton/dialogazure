@@ -187,7 +187,7 @@ namespace DataAccess
                     // update cdb attributes if cdb null then update it otherwise insert new record
                     if (objcdb != null)
                     {
-                        DACDBAttribute.Instance.UpdateBulkTempCable(objcdb, cableInfo);
+                        DACDBAttribute.Instance.UpdateCDBAttribute(objcdb, cableInfo);
                     }
                     else
                     {
@@ -892,7 +892,7 @@ namespace DataAccess
             cdbAttribute.cable_owner = cableInfo.LstCDBAttribute.cable_owner;
             repo.Insert(cdbAttribute);
         }
-        public void UpdateBulkTempCable(CDBAttribute objcdb, CableMaster cableInfo)
+        public void UpdateCDBAttribute(CDBAttribute objcdb, CableMaster cableInfo)
         {
             objcdb.circle_name = cableInfo.LstCDBAttribute.circle_name;
             objcdb.major_route_name = cableInfo.LstCDBAttribute.major_route_name;
