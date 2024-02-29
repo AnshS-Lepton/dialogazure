@@ -241,7 +241,7 @@ namespace SmartInventory.Settings
         static string originator = "";
         static string smsapi = "";
         public static int MaxLineEntityLength = 0;
-
+        public static int isCDBAttributeEnabled = 0;
 
         public static void InitializeGlobalSettings()
         {            
@@ -835,7 +835,10 @@ namespace SmartInventory.Settings
                 {
                     MaxLineEntityLength = Convert.ToInt32(objSetting.value);
                 }
-
+                if (objSetting.key == "isCDBAttributeEnabled")
+                {
+                    isCDBAttributeEnabled = Convert.ToInt32(objSetting.value);
+                }
 
             }
         }
