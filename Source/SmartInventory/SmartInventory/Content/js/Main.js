@@ -385,6 +385,8 @@ var Main = function () {
         "Loop": { "entityName": "Loop", "DataObject": "loopGeoJson", "LayerInstance": "Instance11", "layerList": ['getLoopLayer'] },
         "Antenna": { "entityName": "Antenna", "DataObject": "antennaGeoJson", "LayerInstance": "Instance11", "layerList": ['getAntennaLayer'] },
         "Fault": { "entityName": "Fault", "DataObject": "faultGeoJson", "LayerInstance": "Instance11", "layerList": ['getFaultLayer'] },
+        "CDB": { "entityName": "CDB", "DataObject": "cdbGeoJson", "LayerInstance": "Instance12", "layerList": ['getCDBLayer'] },
+        "Microduct": { "entityName": "Microduct", "DataObject": "microductGeoJson", "LayerInstance": "Instance12", "layerList": ['getMicroductLayer', 'getMicroductLabelTextLayer'] }
     };
     
     //this.layerOverlayInstance = ['SubAreaInstance'];
