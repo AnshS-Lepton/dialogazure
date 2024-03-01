@@ -38,7 +38,7 @@ namespace DataAccess
             try
             {
                 var objCable = repo.Get(u => u.system_id == cableInfo.system_id);
-                var objcdb = DACDBAttribute.Instance.Get(cableInfo.system_id.ToString());
+                var objcdb = DACDBAttribute.Instance.Get(cableInfo.system_id);
                 if (objCable != null)
                 {
                     PageMessage objPageValidate = DAUtility.ValidateModifiedDate(cableInfo.modified_on, objCable.modified_on, cableInfo.modified_by, objCable.modified_by);
@@ -850,7 +850,7 @@ namespace DataAccess
         public void SaveCDBAttribute(CableMaster cableInfo)
         {
             CDBAttribute cdbAttribute = new CDBAttribute();
-            cdbAttribute.cable_id = cableInfo.system_id.ToString();
+            cdbAttribute.cable_id = cableInfo.system_id;
             cdbAttribute.circle_name = cableInfo.LstCDBAttribute.circle_name;
             cdbAttribute.major_route_name = cableInfo.LstCDBAttribute.major_route_name;
             cdbAttribute.route_id = cableInfo.LstCDBAttribute.route_id;
@@ -935,7 +935,7 @@ namespace DataAccess
             objcdb.cable_owner = cableInfo.LstCDBAttribute.cable_owner;
             repo.Update(objcdb);
         }
-        public CDBAttribute Get(string system_id)
+        public CDBAttribute Get(int system_id)
         {
             return repo.Get(u => u.cable_id == system_id);
         }

@@ -4858,7 +4858,7 @@ namespace Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
-        public string cable_id { get; set; }
+        public int cable_id { get; set; }
         public double execution { get; set; }
         public double row_availablity { get; set; }
         public double iru_given_airtel { get; set; }
@@ -4879,7 +4879,7 @@ namespace Models
         public double start_longitude { get; set; }
         public double end_latitude { get; set; }
         public double end_longitude { get; set; }
-        public int count_non_vil_tenancies_on_route { get; set; }
+        public string count_non_vil_tenancies_on_route { get; set; }
         public DateTime route_lit_up_date { get; set; }
         public double aerial_km { get; set; }
         public double avg_loss_per_km { get; set; }
