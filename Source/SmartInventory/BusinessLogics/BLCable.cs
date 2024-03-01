@@ -157,7 +157,7 @@ namespace BusinessLogics
             return DACable.Instance.GetOtherInfoCable(systemId);
         }
         #endregion
-        public CDBAttribute GetDetailsCDBAttribute(string SystemId)
+        public CDBAttribute GetDetailsCDBAttribute(int SystemId)
         {
             return DACDBAttribute.Instance.Get(SystemId);
         }

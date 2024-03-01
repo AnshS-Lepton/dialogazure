@@ -2953,7 +2953,7 @@ namespace SmartInventoryServices.Controllers
 				//for additional-attributes
 				objCbl.other_info = new BLCable().GetOtherInfoCable(objCbl.system_id);
 				fillRegionProvAbbr(objCbl);
-                var objCDB = BLCable.Instance.GetDetailsCDBAttribute(objCbl.system_id.ToString());
+                var objCDB = BLCable.Instance.GetDetailsCDBAttribute(objCbl.system_id);
                 if (objCDB != null)
                 {
                     objCbl.LstCDBAttribute = objCDB;
