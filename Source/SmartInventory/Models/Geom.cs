@@ -39,7 +39,7 @@ namespace Models
         public string centerLineGeom { get; set; }
         public List<EditLineTPIn> tpDetail { get; set; }
         public string source_ref_type { get; set; }
-        public int source_ref_id { get; set; }
+        public string source_ref_id { get; set; }
         public EditGeomIn()
         {
             networkStatus = "P";

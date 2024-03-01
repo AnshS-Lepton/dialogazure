@@ -1,0 +1,175 @@
+﻿@model  Models.AssociateRoute
+@using Models;
+
+@helper pageMessage()
+{
+
+    { Html.RenderPartial("_PageMessage", Model.pageMsg); }
+
+}
+
+<style>
+    .disabledCheckbox {
+        background: #ccc !important;
+        color: #ccc !important;
+        cursor: no-drop !important;
+        pointer-events: none !important;
+        opacity: 0.5 !important;      
+    }
+   
+    .disableRow {
+        background-color: #ffff0042;
+    }
+
+    .table-responsive {
+        min-height: .01%;
+        overflow: auto;
+        max-height: 342px;
+    }
+
+    .RouteIdnotFound {
+        background-color: #f7eae4;
+    }
+</style>
+<!DOCTYPE html>
+<div>
+    @using (Ajax.BeginForm("SaveRouteAssociate", "Library", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody"
+    },
+            new { id = "frmAssociateRoute", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.parent_multi_association)
+        <!-- Message Pop-up -->
+        @pageMessage()
+        if (Model.listrouteInfo.Count() > 0)
+        {
+    <div class="d-flex tablePad-bn jc-sb">
+        <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp; @Model.listrouteInfo.Count()</b>
+        <div class="d-flex">
+            <div class="asso--box RouteIdnotFound">
+            </div>
+            <b class="ml-10">Route Id not found</b>
+        </div>
+        <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_001:&nbsp;&nbsp;@Model.parent_network_id</b>
+    </div>
+            <div class="TabContent--max-over">
+                <div class="table-responsive">
+                    <table id="tblLineEnLstInfo" class="grid" cellpadding="0" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    <input type="checkbox" style="opacity: 1;  position: inherit;" id="checkAllAssociation" onchange="si.checkAllAssociation();">
+                                    <span class="ml-05">@Resources.Resources.SI_OSP_GBL_GBL_GBL_037</span>
+                                </th>
+                                <th scope="col">Cable Id</th>
+                                <th scope="col">Route Id</th>
+                                <th scope="col">Route Name</th>
+                                <th scope="col">Associated By</th>
+                                <th scope="col">Associated On</th>
+                                <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.listrouteInfo.Count; i++)
+                            {
+                                string rowStyle = string.IsNullOrEmpty(Model.listrouteInfo[i].route_id) ? "background-color: #f7eae4;" : "";
+                                string title = string.IsNullOrEmpty(Model.listrouteInfo[i].route_id) ? "Route Id not found" : "";
+
+                                <tr style="@rowStyle">
+                                   
+                                   <td><div title="@title">
+                                        @Html.CheckBoxFor(m => Model.listrouteInfo[i].is_associated, new
+                                   {
+                                       systemId = Model.listrouteInfo[i].cable_id,
+                                       network_Id = Model.listrouteInfo[i].entity_network_id,
+                                       entityType = Model.listrouteInfo[i].entity_type,
+                                       routeId = Model.listrouteInfo[i].route_id,
+                                       routeName = Model.listrouteInfo[i].route_name,
+
+                                       onchange = "si.checkAssociation(this,'" + Model.parent_entity_type + "','" + Model.listrouteInfo[i].is_multi_association + "')",
+                                       id = "chk_" + (Model.listrouteInfo[i].cable_id) + "_" + Model.listrouteInfo[i].entity_type + "",
+                                       @class = (string.IsNullOrEmpty(Model.listrouteInfo[i].route_id)) ? "disabledcheckbox" : "",
+
+                                   })
+                                        @Html.HiddenFor(m => m.listrouteInfo[i].is_associated, new { id = "hdnIsAssociate_" + Model.listrouteInfo[i].entity_type + "_" + Model.listrouteInfo[i].cable_id, entityType = Model.listrouteInfo[i].entity_type })
+                                    </div></td>
+                                   <td>
+                                       @Html.HiddenFor(m => m.listrouteInfo[i].entity_network_id)
+                                       <span>@(Model.listrouteInfo[i].entity_network_id)</span>
+                                   </td>
+                                    <td>
+                                        @Html.HiddenFor(m => m.listrouteInfo[i].route_id)
+                                        @Html.HiddenFor(m => m.listrouteInfo[i].cable_id)
+                                        @Html.HiddenFor(m => m.listrouteInfo[i].entity_id)
+                                        @Html.HiddenFor(m => m.listrouteInfo[i].entity_type)
+                                        <span>@(Model.listrouteInfo[i].route_id)</span>
+                                    </td>
+                                    <td>
+                                        @Html.HiddenFor(m => m.listrouteInfo[i].route_name)
+                                        <span>@(Model.listrouteInfo[i].route_name)</span>
+                                    </td>
+                                    <td>
+                                        <span>@(Model.listrouteInfo[i].created_by)</span>
+                                    </td>
+                                    <td>
+                                        <span>@(Model.listrouteInfo[i].created_on)</span>
+
+                                    </td>
+                                    <td>
+                                        <a href="#" onclick="si.ShowEntityOnMap('@Model.listrouteInfo[i].cable_id','Cable','Line');$(popup.DE.MinimizeModel).trigger('click');" class="dropdown-toggle" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036">
+                                            <i class="fa fa-globe fa-fw m-r-xs"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="d-flex ModalFooter --gap10" id="dvBtnAction">
+                <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                <button type="button" class="btn btn-primary" style="display:none;" id="btnRouteExportAssociation">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010</button>
+                <button type="button" class="btn btn-primary @(Model.parent_is_buried?"dvdisabled":"")" id="btnSaveAssociation" onclick="si.saveRouteAssociation();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+
+            </div>
+        }
+        else
+        {
+            <div class="nr-found">
+                <span> @Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+            </div>
+        }
+    }
+</div>
+<script>
+    $(function () {
+        if ('@Model.listrouteInfo.Count()' > 0 && $('#tblLineEnLstInfo input:checkbox:not(".disabledcheckbox"):checked').length == '@Model.listrouteInfo.Where(m=>m.is_disabled==false).Count()') {
+            $('#tblLineEnLstInfo #checkAllAssociation').prop("checked", true);
+        }
+        if ('@Model.listrouteInfo.Count()' == 0) {
+            $('#tblLineEnLstInfo').hide();
+        }
+        else {
+            $('#tblLineEnLstInfo').show();
+            //setTimeout(function () {
+            $('#tblLineEnLstInfo tbody tr').each(function (i, val) {
+                //$("#lstShaftInfo_" + i + "__shaft_position").val($("#shaft_position_" + i + "_Info").val());
+            });
+            // }, 500);
+        }
+        if ($('#tblLineEnLstInfo input:checkbox:checked').length > 0) {
+            $('#btnRouteExportAssociation').show();
+        }
+        $('#closeModalPopup').on('click', function () {
+            si.removeSrchHoverItem();
+        });
+        if ($('#tblLineEnLstInfo tbody :checkbox:checked').length > 0 && (($('#tblLineEnLstInfo tbody :checkbox:checked:not(".disabledcheckbox")').length) + ($('#tblLineEnLstInfo tbody .disabledcheckbox').length)) == $('#tblLineEnLstInfo tbody tr').length) {
+            $('#checkAllAssociation').prop("checked", true);
+        }
+    });
+
+</script>

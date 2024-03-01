@@ -178,25 +178,7 @@
         //{ isp.bindCableRightPop(); }
         /*if (si != null) { si.ClearAdvanceFilter(); }*/
     }
-
     this.resetToolBar = function () { if ($('#dvROWReport').hasClass('activeToolBar')) { $('#dvROWReport').trigger("click"); $('#reportToolBar div,#reportToolBar div a').removeClass('activeToolBar'); } }
-
-
-    function resetActiveClassFromMenuItem() {
-
-        $('.myMenu ul li a').each(function () {
-            $(this).removeClass("activeToolBar");
-        });
-        $('.iconBaricomoonfooter a').each(function () {
-            $(this).removeClass("activeToolBar");
-        });
-
-        $('.iconBaricomoonfooter').removeClass("activeToolBar");
-
-    }
-
-
-
     //this.hideButtonsWhenLayerDisabled = function () {
     //    var editEnabled = $("#LayerEditPermission").val();
     //    var buttonList = " .floorRowDelete,.shaftRowDelete,.floorRowAdd,.shaftRowAdd,.icon-close,.referenceRowAdd,#dvAddMaintenanceCharge1";
@@ -226,7 +208,6 @@
             $(hideButtonList).show();
         }
     }
-
     this.LoadModalDialog = function (popUpType, url, params, titleText, modalDialogClass, callback, isasync) {
          
         $(app.DE.ModalPopUp).removeClass('ModalPopUpPosition');

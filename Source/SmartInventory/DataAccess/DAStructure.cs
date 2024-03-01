@@ -95,6 +95,7 @@ namespace DataAccess
                     objStructure.origin_ref_description = structureInfo.origin_ref_description;
                     objStructure.origin_from = structureInfo.origin_from;
                     objStructure.origin_ref_code = structureInfo.origin_ref_code;
+                    objStructure.gis_design_id = structureInfo.gis_design_id;
                     var result = repo.Update(objStructure);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.Structure.ToString(), result.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Structure.ToString(), result.province_id);

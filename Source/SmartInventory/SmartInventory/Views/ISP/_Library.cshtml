@@ -18,7 +18,6 @@
         @if (isCableActive != null)
         {
             <li id="liCable"><a href="#divCableEntity" data-tabName="Cable" data-toggle="tab" onclick="isp.ManageLibraryEvents(this);">@Resources.Resources.SI_ISP_GBL_NET_FRM_013</a></li>
-            <li id="liDuct"><a href="#divDuctEntity" data-tabName="Cable" data-toggle="tab" onclick="isp.ManageLibraryEvents(this);">@Resources.Resources.SI_OSP_DUC_JQ_FRM_001</a></li>
         }
     </ul>
     <div class="panel-body lib-overFlow">
@@ -88,9 +87,6 @@
 
                 </div>
             }
-            <div id="divDuctEntity" class="tab-pane">
-                @Html.Partial("_AddDuctTP")
-            </div>
         </div>
     </div>
 </div>

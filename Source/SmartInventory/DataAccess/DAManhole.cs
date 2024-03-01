@@ -82,6 +82,7 @@ namespace DataAccess
                     objManholeItem.origin_ref_code = objManholeMaster.origin_ref_code;
                     //objManholeItem.served_by_ring = objManholeMaster.served_by_ring;
                     objManholeItem.bom_sub_category=objManholeMaster.bom_sub_category;
+                    objManholeItem.gis_design_id = objManholeMaster.gis_design_id;
                     var ManholeResp = repo.Update(objManholeItem);
                     DbMessage entityObj =new DAMisc(). updateGeojsonEntityAttribute(ManholeResp.system_id, Models.EntityType.Manhole.ToString(), ManholeResp.province_id, 1);
                     //DbMessage geojsonObj = updateGeojsonMetadata(Models.EntityType.Manhole.ToString(), ManholeResp.province_id);
