@@ -3502,16 +3502,29 @@ namespace SmartInventoryServices.Controllers
             {
                 NetworkStage objIn = ReqHelper.GetRequestData<NetworkStage>(data);
                 HeaderAttributes headerAttribute = ReqHelper.getHeaderValue(Request.Headers.ToList());
+                var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objIn.entity_type.ToUpper()).FirstOrDefault() : null;
                 if (headerAttribute.source_ref_id != "0" && headerAttribute.source_ref_type.ToUpper() != "NETWORK_TICKET")
                 {
                     var updatenetwork = new BLNetworkStatus().UpdateNetworkStatus(objIn.systemid, objIn.entity_type, objIn.curr_status, objIn.user_id);
                     updatenetwork.message = BLConvertMLanguage.MultilingualMessageConvert(updatenetwork.message);
-
+                    switch (objIn.old_status)
+                    {
+                        case "P": objIn.old_status = "Planned"; break;
+                        case "A": objIn.old_status = "As Built"; break;
+                        case "D": objIn.old_status = "Dormant"; break;
+                    }
+                    switch (objIn.curr_status)
+                    {
+                        case "P": objIn.curr_status = "Planned"; break;
+                        case "A": objIn.curr_status = "As Built"; break;
+                        case "D": objIn.curr_status = "Dormant"; break;
+                    };
                     if (updatenetwork.status)
                     {
                         response.results = updatenetwork;
                         response.status = StatusCodes.OK.ToString();
-                        response.error_message = Convert.ToString(updatenetwork.message);
+                        //response.error_message = Convert.ToString(updatenetwork.message);
+                        response.error_message = string.Format(BLConvertMLanguage.MultilingualMessageConvert(Resources.Resources.SI_ISP_GBL_JQ_GBL_021), layerDetail.layer_title, objIn.old_status, objIn.curr_status);
 
                     }
                     else
@@ -3531,7 +3544,6 @@ namespace SmartInventoryServices.Controllers
                     objEntityInfo.entity_type = objIn.entity_type;
                     objEntityInfo.source_ref_id = headerAttribute.source_ref_id;
                     objEntityInfo.source_ref_type = headerAttribute.source_ref_type.ToUpper();
-                    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objIn.entity_type.ToUpper()).FirstOrDefault() : null;
                     switch (objIn.old_status)
                     {
                         case "P": objIn.old_status = "Planned"; break;
@@ -6284,6 +6296,47 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
         #endregion
+
+        [HttpPost]
+
+        public ApiResponse<List<NEDuctDetails>> GetNearByDucts(ReqInput data)
+        {
+            var response = new ApiResponse<List<NEDuctDetails>>();
+            try
+            {
+
+                NearByCables objCable = ReqHelper.GetRequestData<NearByCables>(data);
+                if (objCable.bufferInMtrs <= 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Invalid buffer!";
+                    return response;
+                }
+                else if (objCable.latitude == 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Invalid latitude!";
+                    return response;
+                }
+                else if (objCable.longitude == 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Invalid longitude!";
+                    return response;
+                }
+                response.status = StatusCodes.OK.ToString();
+                response.results = BLSlack.Instance.GetNearByDuctDetails(objCable.longitude, objCable.latitude, objCable.bufferInMtrs);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("GetNearByDucts()", "Main Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = "Error While Processing  Request.";
+            }
+
+            return response;
+        }
 
     }
 
