@@ -38,7 +38,7 @@ namespace DataAccess
                         item_code = objPatchPanelMaster.item_code,
                         no_of_input_port = objPatchPanelMaster.no_of_input_port,
                         no_of_output_port = objPatchPanelMaster.no_of_output_port,
-                        no_of_port = objPatchPanelMaster.no_of_port
+                        no_of_port = objPatchPanelMaster.no_of_port                          
                     }, false);
 
                     if (!string.IsNullOrEmpty(objMessage.message))
@@ -112,6 +112,7 @@ namespace DataAccess
                     objPatchPanelItem.origin_from = objPatchPanelMaster.origin_from;
                     objPatchPanelItem.origin_ref_code = objPatchPanelMaster.origin_ref_code;
                     objPatchPanelItem.bom_sub_category=objPatchPanelMaster.bom_sub_category;
+                    objPatchPanelItem.gis_design_id = objPatchPanelMaster.gis_design_id;
                     // objPatchPanelItem.served_by_ring=objPatchPanelMaster.served_by_ring;
                     var PPResp = repo.Update(objPatchPanelItem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(PPResp.system_id, Models.EntityType.PatchPanel.ToString(), PPResp.province_id, 1);

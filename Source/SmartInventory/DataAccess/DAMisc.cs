@@ -86,6 +86,9 @@ namespace DataAccess
                 case EntityType.Sector:
                     dt = repo.GetDataTable("select count(*) from polygon_master where upper(entity_type)= '" + entityType.ToString().ToUpper() + "' and db_flag=" + summary.id);
                     break;
+                case EntityType.ROW:
+                    dt = repo.GetDataTable("select count(*) from polygon_master where upper(entity_type)= '" + entityType.ToString().ToUpper() + "' and db_flag=" + summary.id);
+                    break;
                 case EntityType.LandBase:
                     dt = repo.GetDataTable("select count(*) from att_details_landbase where db_flag=" + summary.id);
                     break;
@@ -492,6 +495,14 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<EntityDetail> getNearByMicroducts(int systemId, string entityType)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<EntityDetail>("fn_get_near_microducts", new { P_systemId = systemId, P_entityType = entityType });
+            }
+            catch { throw; }
+        }
         #region ycode
         public List<EntityDetail> getNearByTrenchs(int systemId, string entityType)
         {
@@ -527,6 +538,16 @@ namespace DataAccess
             {
                 var lstSplitDuct = repo.ExecuteProcedure<SplitDuctEntity>("fn_get_split_duct_details", new { P_splitEntitySystemId = splitEntitySystemId, P_splitEntityType = splitEntityType, p_split_entity_networkId = splitEnityNetworkId, P_ductId = ductId, P_entity_type = entity_type });
                 return lstSplitDuct != null && lstSplitDuct.Count > 0 ? lstSplitDuct[0] : new SplitDuctEntity();
+            }
+            catch { throw; }
+        }
+        public SplitMicroductEntity getSplitMicroductEntity(int splitEntitySystemId, string splitEntityType, string splitEnityNetworkId, int microductId, string entity_type)
+        {
+
+            try
+            {
+                var lstSplitMicroduct = repo.ExecuteProcedure<SplitMicroductEntity>("fn_get_split_duct_details", new { P_splitEntitySystemId = splitEntitySystemId, P_splitEntityType = splitEntityType, p_split_entity_networkId = splitEnityNetworkId, P_microductId = microductId, P_entity_type = entity_type });
+                return lstSplitMicroduct != null && lstSplitMicroduct.Count > 0 ? lstSplitMicroduct[0] : new SplitMicroductEntity();
             }
             catch { throw; }
         }
@@ -994,6 +1015,14 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<RouteInfo> getRouteEntityInLineBuffer(int systemId, string entityType)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<RouteInfo>("fn_get_near_by_route", new { p_system_id = systemId, p_entity_type = entityType }, true).ToList();
+            }
+            catch { throw; }
+        }
         public List<LineEntityInfo> getAutoLineEntityInLineBuffer(int systemId, string entityType, int pSystemId, string pEntityType, string pParentGeom, string pParentGeomType)
         {
             try
@@ -1026,7 +1055,15 @@ namespace DataAccess
             }
             catch { throw; }
         }
-       
+        public DbMessage saveRouteAssocition(string objRouteAssocite, int pSystemId, string pEntityType, int userId)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DbMessage>("fn_save_Route_Assocition", new { p_route_associate_info = objRouteAssocite, p_parent_system_id = pSystemId, p_parent_entity_type = pEntityType, p_user_id = userId }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+
         public DbMessage saveLineEntityAutoAssocition(int pSystemId, string pEntityType, int userId)
         {
             try
@@ -1086,6 +1123,15 @@ namespace DataAccess
             try
             {
                 var lstItems = repo.ExecuteProcedure<T>("fn_get_export_associate_entity", new { p_system_id = systemId, p_entity_type = entityType }, true).ToList();
+                return lstItems != null ? lstItems : new List<T>();
+            }
+            catch { throw; }
+        }
+        public List<T> GetRouteAssociationExportData<T>(int systemId, string entityType) where T : new()
+        {
+            try
+            {
+                var lstItems = repo.ExecuteProcedure<T>("fn_get_near_by_route", new { p_system_id = systemId, p_entity_type = entityType }, true).ToList();
                 return lstItems != null ? lstItems : new List<T>();
             }
             catch { throw; }
@@ -1678,7 +1724,19 @@ namespace DataAccess
             }
             catch { throw; }
         }
-       
+
+        public UserRegionProvince GetRegionProvinceBasedOnLocation(string geom, int userId)
+        {
+            UserRegionProvince objUserRegionProvince = new UserRegionProvince();
+            try
+            {
+                objUserRegionProvince = repo.ExecuteProcedure<UserRegionProvince>("fn_get_GetRegionProvinceBasedOnLocation", new { p_geom = geom, p_userId = userId }).FirstOrDefault();
+                return objUserRegionProvince;
+
+            }
+            catch { throw; }
+        }
+
     }
 
     public class DAMisce : Repository<EmailSettingsModel>

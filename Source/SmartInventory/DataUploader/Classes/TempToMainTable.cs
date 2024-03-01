@@ -209,6 +209,11 @@ namespace DataUploader
                         blTemplateOpticalrepeater.DataUploaderNotifyEventHandler += NotifyUploadStatus;
                         summary.lstErrorMessage = blTemplateOpticalrepeater.InsertOpticalRepeaterIntoMainTable(summary);
                         break;
+                    case EntityType.ROW:
+                        var blTemplateROW = new BLTempRow();
+                        blTemplateROW.DataUploaderNotifyEventHandler += NotifyUploadStatus;
+                        summary.lstErrorMessage = blTemplateROW.InsertROWIntoMainTable(summary);
+                        break;
                 } 
             summary.success_record = bLDataUploader.GetSuccessCount(entityType, summary);
             summary.failed_record = summary.total_record - summary.success_record;

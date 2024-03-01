@@ -75,6 +75,7 @@ namespace DataAccess
                     objWallMountItem.origin_from = objWallMountMaster.origin_from;
                     objWallMountItem.origin_ref_code = objWallMountMaster.origin_ref_code;
                     objWallMountItem.bom_sub_category = objWallMountMaster.bom_sub_category;
+                    objWallMountItem.gis_design_id = objWallMountMaster.gis_design_id;
                     //  objWallMountItem.served_by_ring = objWallMountMaster.served_by_ring;
                     var WallMountResp = repo.Update(objWallMountItem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(WallMountResp.system_id, Models.EntityType.WallMount.ToString(), WallMountResp.province_id, 1);

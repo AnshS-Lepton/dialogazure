@@ -37,6 +37,7 @@ namespace DataAccess
                     objitem.origin_ref_description = objCompetitor.origin_ref_description;
                     objitem.origin_from = objCompetitor.origin_from;
                     objitem.origin_ref_code = objCompetitor.origin_ref_code;
+                    objitem.gis_design_id = objCompetitor.gis_design_id;
                     var CompetitorResp = repo.Update(objitem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(CompetitorResp.system_id, Models.EntityType.Competitor.ToString(), CompetitorResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Competitor.ToString(), CompetitorResp.province_id);

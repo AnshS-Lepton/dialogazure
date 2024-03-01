@@ -24,7 +24,8 @@ function checkLastZoom() {
                     si.LoadLayersOnMap(false);
                     if (si.IsVecorLayerEnabled) {
                         si.fetchVectorDelta();
-                        si.ShowHideVectorLayerByZoomSetting();
+                        si.RenderVectorLayer(-1);
+                        //si.ShowHideVectorLayerByZoomSetting();
                     }
                 }
             }
