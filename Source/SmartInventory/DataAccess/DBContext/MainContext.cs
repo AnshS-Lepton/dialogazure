@@ -353,6 +353,7 @@ namespace DataAccess.DBContext
             modelBuilder.Entity<TempGipipe>().ToTable("temp_du_gipipe", dbschema);
 
             modelBuilder.Entity<TempCable>().ToTable("temp_du_cable", dbschema);
+            modelBuilder.Entity<TempRow>().ToTable("temp_du_row", dbschema);
             modelBuilder.Entity<TempTower>().ToTable("temp_du_tower", dbschema);
             modelBuilder.Entity<TempRoom>().ToTable("temp_du_room", dbschema);
 

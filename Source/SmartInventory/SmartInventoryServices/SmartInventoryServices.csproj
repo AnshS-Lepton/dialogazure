@@ -717,7 +717,7 @@
       <Name>ApplicationConfig</Name>
     </ProjectReference>
     <ProjectReference Include="..\BusinessLogics\BusinessLogics.csproj">
-      <Project>{1fd26f85-e70f-4e77-8234-2769f4051c24}</Project>
+      <Project>{1FD26F85-E70F-4E77-8234-2769F4051C24}</Project>
       <Name>BusinessLogics</Name>
     </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">

@@ -1586,6 +1586,7 @@
     <Content Include="Content\sort_asc.png" />
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="MigrationScripts\2024_02_27_vodafone_issues.sql" />
+    <Content Include="MigrationScripts\2024_02_25_vodafone_issues.sql" />
     <Content Include="MultilingualJunkKeys\Content\Js\Alert.js" />
     <Content Include="Scripts\APIHandler.js" />
     <Content Include="Content\js\canvg.min.js" />
@@ -2840,6 +2841,8 @@
     <Folder Include="Content\UploadedFiles\Fiber\" />
     <Folder Include="Content\UploadedFiles\Resources\" />
     <Folder Include="Content\UploadedFiles\VendorSpecifications\" />
+    <Folder Include="MigrationScripts\" />
+    <Folder Include="ErrorLogs\" />
     <Folder Include="shp2kml_convertor\" />
     <Folder Include="Uploads\ExternalData\KMZ\" />
     <Folder Include="Uploads\LayerStyleMaster\" />

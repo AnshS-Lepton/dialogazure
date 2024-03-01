@@ -273,6 +273,7 @@
     <Compile Include="TempUpload\DATempPOI.cs" />
     <Compile Include="TempUpload\DATempPole.cs" />
     <Compile Include="TempUpload\DATempRoom.cs" />
+    <Compile Include="TempUpload\DATempRow.cs" />
     <Compile Include="TempUpload\DATempSector.cs" />
     <Compile Include="TempUpload\DATempSpliceClosure.cs" />
     <Compile Include="TempUpload\DATempSplitter.cs" />

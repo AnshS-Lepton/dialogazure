@@ -86,6 +86,9 @@ namespace DataAccess
                 case EntityType.Sector:
                     dt = repo.GetDataTable("select count(*) from polygon_master where upper(entity_type)= '" + entityType.ToString().ToUpper() + "' and db_flag=" + summary.id);
                     break;
+                case EntityType.ROW:
+                    dt = repo.GetDataTable("select count(*) from polygon_master where upper(entity_type)= '" + entityType.ToString().ToUpper() + "' and db_flag=" + summary.id);
+                    break;
                 case EntityType.LandBase:
                     dt = repo.GetDataTable("select count(*) from att_details_landbase where db_flag=" + summary.id);
                     break;
