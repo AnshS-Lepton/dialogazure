@@ -68,6 +68,7 @@ var customD3 = function () {
             var startElementData = app.tempStartDot.parent().data();
 
             $('#ddlCableAEnd option[data-system-id="' + startElementData.systemId + '"][data-entity-type="' + startElementData.entityType + '"]').prop('selected', true);
+            $('#ddlDuctAEnd option[data-system-id="' + startElementData.systemId + '"][data-entity-type="' + startElementData.entityType + '"]').prop('selected', true);
             pathData.aSystemId = startElementData.systemId;
             pathData.aEntityType = startElementData.entityType;
             pathData.aLocation = startElementData.networkId;
@@ -76,6 +77,7 @@ var customD3 = function () {
         }
         else {
             $('#ddlCableAEnd').val(0);
+            $('#ddlDuctAEnd').val(0);
             pathData.aSystemId = "";
             pathData.aEntityType = "";
             pathData.aLocation = "";
@@ -86,6 +88,7 @@ var customD3 = function () {
         if (app.tempEndDot != null) {
             var endElementData = app.tempEndDot.parent().data();
             var objOption = $('#ddlCableBEnd option[data-system-id="' + endElementData.systemId + '"][data-entity-type="' + endElementData.entityType + '"]').prop('selected', true);
+            var objOption1 = $('#ddlDuctBEnd option[data-system-id="' + endElementData.systemId + '"][data-entity-type="' + endElementData.entityType + '"]').prop('selected', true);
             pathData.bSystemId = endElementData.systemId;
             pathData.bEntityType = endElementData.entityType;
             pathData.bLocation = endElementData.networkId;
@@ -94,6 +97,7 @@ var customD3 = function () {
         }
         else {
             $('#ddlCableBEnd').val(0);
+            $('#ddlDuctBEnd').val(0);
             pathData.bSystemId = "";
             pathData.bEntityType = "";
             pathData.bLocation = "";
@@ -102,6 +106,8 @@ var customD3 = function () {
         }
         $('#ddlCableAEnd').trigger("chosen:updated");
         $('#ddlCableBEnd').trigger("chosen:updated");
+        $('#ddlDuctAEnd').trigger("chosen:updated");
+        $('#ddlDuctBEnd').trigger("chosen:updated");
 
         app.focusTempPath();
         setTimeout(app.isDiffEndPoints, 300);
@@ -464,6 +470,120 @@ var customD3 = function () {
 
         app.focusTempPath();
         setTimeout(app.isDiffEndPoints, 300);
+    }
+
+    this.drawDuct = function () {
+
+        if (!$(app.DE.tempPath).data().isEditMode) {
+
+            var _aEndVal, _bEndVal, _aEndData, _BEndData, _objAEndElement,
+                _objBEndElement, _aEndX, _aEndY, _bEndX, _bEndY, _elementWidth, _elementHeight, _aEndDotType, _bEndDotType;
+
+            //GET SELECTED TERMINATION POINT..
+            _aEndVal = $('#ddlDuctAEnd').val();
+            _bEndVal = $('#ddlDuctBEnd').val();
+            _elementWidth = $(".Element").first().width();
+            _elementHeight = $(".Element").first().height();
+
+
+            if (_aEndVal > 0) {
+                _aEndData = $('#ddlDuctAEnd option:selected').data();
+
+                //FIND ELEMENT IN SHAFT AND GET POSITION RESPECTIVE TO MAIN CONTAINER..
+                _objAEndElement = $('.entityInfo[data-system-id="' + _aEndData.systemId + '"][data-entity-type="' + _aEndData.entityType + '"]').first();
+                if (_objAEndElement.length > 0) {
+                    _aEndX = app.getOffsetToParent(_objAEndElement, $(app.DE.mainContainer), "left");
+                    _aEndY = app.getOffsetToParent(_objAEndElement, $(app.DE.mainContainer), "top");
+
+                }
+            }
+
+            if (_bEndVal > 0) {
+                _bEndData = $('#ddlDuctBEnd option:selected').data();
+
+                //FIND ELEMENT IN SHAFT AND GET POSITION RESPECTIVE TO MAIN CONTAINER..
+                _objBEndElement = $('.entityInfo[data-system-id="' + _bEndData.systemId + '"][data-entity-type="' + _bEndData.entityType + '"]').first();
+                if (_objBEndElement.length > 0) {
+                    _bEndX = app.getOffsetToParent(_objBEndElement, $(app.DE.mainContainer), "left");
+                    _bEndY = app.getOffsetToParent(_objBEndElement, $(app.DE.mainContainer), "top");
+
+                }
+            }
+
+            if (_objAEndElement && _objBEndElement) {
+
+                // decide A and B End nodes..
+
+                if ((_aEndY - _bEndY) > (_elementHeight / 2)) // B element is on top..
+                {
+                    _aEndDotType = "top";
+
+                    if ((_aEndX - _bEndX) > (_elementWidth / 2))// B element is on left side..
+                    {
+                        _bEndDotType = "right";
+                    }
+                    else if ((_aEndX - _bEndX) < -(_elementWidth / 2))// B element is on right side..
+                    {
+                        _bEndDotType = "left";
+                    }
+                    else //B element is just at top of  A Element
+                    {
+                        _bEndDotType = "bottom";
+                    }
+                }
+                else if ((_aEndY - _bEndY) < -(_elementHeight / 2)) // A element is on top..
+                {
+                    _bEndDotType = "top";
+
+                    if ((_bEndX - _aEndX) > (_elementWidth / 2))// A element is on left side..
+                    {
+                        _aEndDotType = "right";
+                    }
+                    else if ((_bEndX - _aEndX) < -(_elementWidth / 2))// A element is on right side..
+                    {
+                        _aEndDotType = "left";
+                    }
+                    else //B element is just at top of  A Element
+                    {
+                        _aEndDotType = "bottom";
+                    }
+
+                }
+                else {
+                    if (_bEndX > _aEndX) {
+                        _bEndDotType = "left";
+                        _aEndDotType = "right";
+                    }
+                    else {
+                        _bEndDotType = "right";
+                        _aEndDotType = "left";
+                    }
+                }
+
+                // clean existing path..
+                app.removeTempPath();
+
+                // add start node position...
+                var _objStartDot = _objAEndElement.find('.' + _aEndDotType).first();
+                app.manageTempEndPoints(_objStartDot, true);
+                // update start node type... 
+                app.UpdateCableEndPointDetail(_objStartDot, true); //use same function for duct as well to update end points  Nikhil
+
+                // add end node positions..
+                var _objEndDot = _objBEndElement.find('.' + _bEndDotType).first();
+                app.manageTempEndPoints(_objEndDot, false);
+                // update end node type...
+                app.UpdateCableEndPointDetail(_objEndDot, false); //use same function for duct as well to update end points  Nikhil
+                app.addMidPointToTempPath();
+                app.drawTempPath();
+                app.drawActualMarkers();
+                app.focusTempPath();
+
+            }
+            else {
+                app.removeTempPath();
+            }
+        }
     }
 
     this.drawCable = function () {
@@ -978,6 +1098,8 @@ var customD3 = function () {
                 app.resetFocus();
                 $('#ddlCableAEnd').val(0).trigger("chosen:updated");
                 $('#ddlCableBEnd').val(0).trigger("chosen:updated");
+                $('#ddlDuctAEnd').val(0).trigger("chosen:updated");
+                $('#ddlDuctBEnd').val(0).trigger("chosen:updated");
                 alert( MultilingualKey.SI_ISP_GBL_JQ_GBL_048, 'warning');//Source and destination can not be same.
                 return false;
             }

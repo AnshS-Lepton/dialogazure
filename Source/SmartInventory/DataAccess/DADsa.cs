@@ -37,7 +37,6 @@ namespace DataAccess
                     objitem.origin_ref_code = objDsa.origin_ref_code;
                     objitem.no_of_home_pass = objDsa.no_of_home_pass;
                     objitem.served_by_ring = objDsa.served_by_ring;
-                    objitem.gis_design_id = objDsa.gis_design_id;
                     var DSAResp = repo.Update(objitem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DSAResp.system_id,Models.EntityType.DSA.ToString(), DSAResp.province_id,1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata( Models.EntityType.DSA.ToString(), DSAResp.province_id);

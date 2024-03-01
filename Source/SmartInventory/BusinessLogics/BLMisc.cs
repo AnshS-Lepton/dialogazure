@@ -102,10 +102,6 @@ namespace BusinessLogics
         {
             return objDAMisc.getNearByDucts(systemId, entityType);
         }
-        public List<EntityDetail> getNearByMicroducts(int systemId, string entityType)
-        {
-            return objDAMisc.getNearByMicroducts(systemId, entityType);
-        }
         public List<EntityDetail> getNearByTrenchs(int systemId, string entityType)
         {
             return objDAMisc.getNearByTrenchs(systemId, entityType);
@@ -121,10 +117,6 @@ namespace BusinessLogics
         public SplitDuctEntity getSplitDuctEntity(int splitEntitySystemId, string splitEntityType, string splitEnityNetworkId, int ductId, string entity_type)
         {
             return objDAMisc.getSplitDuctEntity(splitEntitySystemId, splitEntityType, splitEnityNetworkId, ductId, entity_type);
-        }
-        public SplitMicroductEntity getSplitMicroductEntity(int splitEntitySystemId, string splitEntityType, string splitEnityNetworkId, int microductId, string entity_type)
-        {
-            return objDAMisc.getSplitMicroductEntity(splitEntitySystemId, splitEntityType, splitEnityNetworkId, microductId, entity_type);
         }
         public SplitTrenchEntity getSplitTrenchEntity(int splitEntitySystemId, string splitEntityType, string splitEnityNetworkId, int trenchId, string entity_type)
         {
@@ -493,10 +485,6 @@ namespace BusinessLogics
         {
             return new DAMisc().getLineEntityInLineBuffer(systemId, entityType, pSystemId, pEntityType, pParentGeom, pParentGeomType);
         }
-        public List<RouteInfo> getRouteEntityInLineBuffer(int systemId, string entityType)
-        {
-            return new DAMisc().getRouteEntityInLineBuffer(systemId, entityType);
-        }
         public List<LineEntityInfo> getAutoLineEntityInLineBuffer(int systemId, string entityType, int pSystemId, string pEntityType, string pParentGeom, string pParentGeomType)
         {
             return new DAMisc().getAutoLineEntityInLineBuffer(systemId, entityType, pSystemId, pEntityType, pParentGeom, pParentGeomType);
@@ -521,11 +509,7 @@ namespace BusinessLogics
         {
             return new DAMisc().saveLineEntityAssocition(lineEnAssociteInfo, pSystemId, pEntityType, userId);
         }
-        public DbMessage saveRouteAssocition(string routeAssociteInfo, int pSystemId, string pEntityType, int userId)
-        {
-            return new DAMisc().saveRouteAssocition(routeAssociteInfo, pSystemId, pEntityType, userId);
-        }
-
+        
         public DbMessage saveLineEntityAutoAssocition(int pSystemId, string pEntityType, int userId)
         {
             return new DAMisc().saveLineEntityAutoAssocition(pSystemId, pEntityType, userId);
@@ -557,10 +541,6 @@ namespace BusinessLogics
         public List<T> GetAssociationExportData<T>(int systemId, string entityType) where T : new()
         {
             return objDAMisc.GetAssociationExportData<T>(systemId, entityType);
-        }
-        public List<T> GetRouteAssociationExportData<T>(int systemId, string entityType) where T : new()
-        {
-            return objDAMisc.GetRouteAssociationExportData<T>(systemId, entityType);
         }
         public List<T> DownloadBulkAssociationLog<T>(int systemId, int userId) where T : new()
         {
@@ -962,11 +942,6 @@ namespace BusinessLogics
         public EmailSettingsModel updateEmailSettings(EmailSettingsModel obj, int id)
         {
             return new DAMisce().updateEmailSettings(obj, id);
-        }
-
-        public UserRegionProvince GetRegionProvinceBasedOnLocation(string geom, int userId)
-        {
-            return new DAMisc().GetRegionProvinceBasedOnLocation(geom, userId);
         }
     }
 

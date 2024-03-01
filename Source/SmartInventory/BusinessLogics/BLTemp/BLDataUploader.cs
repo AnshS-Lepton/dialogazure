@@ -53,7 +53,7 @@ namespace BusinessLogics
 			}
             //ValidateGeometry(summary, tempTableName, geomtype);
             //ValidateRegionProvince(summary, tempTableName, geomtype);
-            if (summary.entity_type.ToUpper()!="LANDBASE" && summary.entity_type.ToUpper() != "BUILDING" && summary.entity_type.ToUpper() != "UNIT" && summary.entity_type.ToUpper() != "ROW")
+            if (summary.entity_type.ToUpper()!="LANDBASE" && summary.entity_type.ToUpper() != "BUILDING" && summary.entity_type.ToUpper() != "UNIT")
             {
                 ValidateVendorSpecification(summary, tempTableName);
             } 

@@ -366,7 +366,7 @@ namespace SmartInventory.Controllers
             string fname = (string)Session["fileName"];
             List<Mapping> lstMapping = blDataUploader.GetMappings(entityType);
 
-            if (entityType == EntityType.Cable.ToString() || entityType == EntityType.Duct.ToString() || entityType == EntityType.Trench.ToString() || entityType == EntityType.Microduct.ToString() || entityType == EntityType.LandBase.ToString() || entityType == EntityType.ROW.ToString())
+            if (entityType == EntityType.Cable.ToString() || entityType == EntityType.Duct.ToString() || entityType == EntityType.Trench.ToString() || entityType == EntityType.Microduct.ToString() || entityType == EntityType.LandBase.ToString())
             {
                 geomTempColName = lstMapping.Where(m => m.DbColName.ToLower() == "sp_geometry").FirstOrDefault().TemplateColName;
             }

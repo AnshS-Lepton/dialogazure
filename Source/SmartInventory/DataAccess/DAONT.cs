@@ -133,7 +133,6 @@ namespace DataAccess
                     objONT.origin_from = objONTMaster.origin_from;
                     objONT.origin_ref_code = objONTMaster.origin_ref_code;
                     objONT.bom_sub_category = objONTMaster.bom_sub_category;
-                    objONT.gis_design_id = objONTMaster.gis_design_id;
                     // objONT.served_by_ring   = objONTMaster.served_by_ring;
                     var result = repo.Update(objONT);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.ONT.ToString(), result.province_id, 1);

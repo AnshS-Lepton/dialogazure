@@ -28,6 +28,11 @@ namespace BusinessLogics
         {
             return DASlack.Instance.GetSlackDetails(longitude, latitude, associated_SystemId, associated_System_Type, structure_id);
         }
+        public SlackMaster UpdateLoopDetails(int associated_system_id, string associated_entity_type, string associated_network_id, List<SlackMaster> lstLoop, NetworkCodeIn objIn, int userId = 0)
+        {
+
+            return DASlack.Instance.UpdateLoopDetails(associated_system_id, associated_entity_type, associated_network_id, lstLoop, objIn, userId);
+        }
         public int DeleteSlackDetailById(int system_id)
         {
             return DASlack.Instance.DeleteSlackDetailById(system_id);
@@ -40,10 +45,6 @@ namespace BusinessLogics
         public PageMessage SaveEntitySlack(string Loops)
         {
             return new DASlack().SaveEntitySlack(Loops);
-        }
-        public List<NEDuctDetails> GetNearByDuctDetails(double longitude, double latitude, int bufferInMtrs)
-        {
-            return DASlack.Instance.GetNearByDuctDetails(longitude, latitude, bufferInMtrs);
         }
     }
 }

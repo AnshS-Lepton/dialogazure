@@ -97,7 +97,6 @@ namespace Models
             isDirectSave = false;
             no_of_home_pass = 0;
             lstUserModule = new List<string>();
-            entityType = "Area";
         }
 
     }

@@ -156,6 +156,7 @@ namespace DataAccess
                     objTowerMaster.network_status = "P";
                     //objTowerMaster.utilization = "L";
                     var response = repo.Insert(objTowerMaster);
+                    DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(response.system_id, Models.EntityType.Tower.ToString(), response.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Tower.ToString(), response.province_id);
                     //  Save geometry
                     InputGeom geom = new InputGeom();
@@ -171,7 +172,6 @@ namespace DataAccess
                     //else if (objTowerMaster.no_of_port != 0) { geom.ports = objTowerMaster.no_of_port.ToString(); }
                     //string chkGeomInsert = BASaveEntityGeometry.Instance.SaveEntityGeometry(geom);
                     DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
-                    DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(response.system_id, Models.EntityType.Tower.ToString(), response.province_id, 0);
                     //DAIspEntityMapping.Instance.associateEntityInStructure(objTowerMaster.objIspEntityMap.shaft_id, objTowerMaster.objIspEntityMap.floor_id, objTowerMaster.system_id, EntityType.FMS.ToString(), objTowerMaster.pSystemId, objTowerMaster.pEntityType, objTowerMaster.longitude + " " + objTowerMaster.latitude);
                     //var ispMapping = DAISPEntityMapping.Instance.getMappingByEntityId(objTowerMaster.parent_system_id, objTowerMaster.parent_entity_type);
                     //if (ispMapping != null && ispMapping.structure_id != 0 && ispMapping.floor_id != 0)

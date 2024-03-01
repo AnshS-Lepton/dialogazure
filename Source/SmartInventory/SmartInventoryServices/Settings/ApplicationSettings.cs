@@ -61,8 +61,7 @@ namespace SmartInventory.Settings
         public static int splitterTypeForFat = 0;
         public static int splitterTypeForFdc = 0;
         public static string DuctOffset = "";
-        public static string MicroductOffset = "";
-
+        
         public static void InitializeGlobalSettings()
         {
             var globalSettings = new BLGlobalSetting().GetGlobalSettings("WEB");
@@ -226,10 +225,6 @@ namespace SmartInventory.Settings
                 if (objSetting.key == "DuctOffset")
                 {
                     DuctOffset = (objSetting.value);
-                }
-                if (objSetting.key == "MicroductOffset")
-                {
-                    MicroductOffset = (objSetting.value);
                 }
             }
 

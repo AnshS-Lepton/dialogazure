@@ -67,7 +67,6 @@ namespace DataAccess
                     objCabinet.width = objCabinetMaster.width;
                     objCabinet.height = objCabinetMaster.height;
                     objCabinet.is_acquire_from = objCabinetMaster.is_acquire_from;
-                    objCabinet.gis_design_id = objCabinetMaster.gis_design_id;
 
                     if (!string.IsNullOrEmpty(objCabinetMaster.source_ref_type))
                         objCabinet.source_ref_type = objCabinetMaster.source_ref_type;

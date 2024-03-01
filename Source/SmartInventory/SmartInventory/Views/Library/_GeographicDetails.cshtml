@@ -39,11 +39,11 @@
             }
             @if (Model.entityType.ToLower() == "cable")
             {
-                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control",@required = true, @maxlength = "10" })
+                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control",@required = true })
             }
             else
             {
-                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control",  @maxlength = "10" })
+                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control", @readonly = true })
             }
         </div>
     </div>
@@ -92,7 +92,7 @@
         {
             if ((!Model.entityType.ToUpper().Contains("AREA")) && (!Model.entityType.ToUpper().Contains("SUBAREA")) && (!Model.entityType.ToUpper().Contains("DSA")) && (!Model.entityType.ToUpper().Contains("CSA")))
             {
-                <label class="control-label col-sm-2">Source System ID:</label>
+                <label class="control-label col-sm-2">NE ID:</label>
                 <div class="col-md-4 ">
                     @Html.TextBoxFor(m => m.ne_id, new { @class = "form-control", @readonly = true })
                 </div>

@@ -32,9 +32,13 @@
 
                         @foreach (var item in Model.lstStructurCables)
                         {
-                            var dashstyle = item.network_status == "P" ? "10 5" : item.network_status == "D" ? "10,5,2,5" : "6 1";
-
-                            <path style="fill:none;stroke-width: 2px;/* stroke-dasharray: 6 1; */ stroke-dasharray: @dashstyle;stroke: blue;" pointer-events="visibleStroke" d="@item.line_geom" class="entityInfo @item.network_status" id="ispCable_@item.system_id" title="@item.network_id"
+                            var dashstyle = (item.network_status == "P" ? "10 5" : item.network_status == "D" ? "10,5,2,5" : "0 0");
+                            if (item.entity_name == "Duct") { dashstyle = item.network_status == "P" ? "50 5" : item.network_status == "D" ? "50,5,2,5" : "0 0"; }
+                            var entityWidth = item.entity_name == "Cable" ? "2px" : "5px";
+                            var entityColor = item.entity_name == "Cable" ? "blue" : "#74e909";
+                            var entityid = item.entity_name == "Cable" ? "ispCable_" : "ispDuct_";
+                            <path style="fill:none;stroke-width: @entityWidth;/* stroke-dasharray: 6 1; */ stroke-dasharray: @dashstyle;stroke: @entityColor;" pointer-events="visibleStroke" d="@item.line_geom" class="entityInfo @item.network_status"
+                                  id="@entityid@item.system_id" title="@item.network_id"
                                   data-system-id="@item.system_id" data-total-core="@item.total_core" data-entity-type="@item.entity_name" data-entity-title="@item.entity_title" data-entity-geomtype="LINE"
                                   data-network-id="@item.network_id" data-cable-type="@item.cable_type" data-network-status="@item.network_status"
                                   data-a-system-id="@item.a_system_id" data-a-entity-type="@item.a_entity_type"

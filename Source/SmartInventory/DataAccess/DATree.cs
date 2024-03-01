@@ -70,7 +70,6 @@ namespace DataAccess
                     objTreeItem.origin_ref_description = objTreeMaster.origin_ref_description;
                     objTreeItem.origin_from = objTreeMaster.origin_from;
                     objTreeItem.origin_ref_code = objTreeMaster.origin_ref_code;
-                    objTreeItem.gis_design_id = objTreeMaster.gis_design_id;
                     var TreeResp = repo.Update(objTreeItem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(TreeResp.system_id, Models.EntityType.Tree.ToString(), TreeResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Tree.ToString(), TreeResp.province_id);

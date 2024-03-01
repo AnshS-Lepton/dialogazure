@@ -876,34 +876,6 @@ namespace Models
         public string otp { get; set; }
         public string organization { get; set; }
     }
-
-    public class UserRegionProvinceFilter
-    {
-        public string lng { get; set; }
-        public string lat { get; set; }
-
-        public int userId { get; set; }
-
-        public UserRegionProvinceFilter()
-        {
-            userId = 0;
-        }
-
-    }
-
-    public class UserRegionProvince
-    {
-        public bool is_user_permission { get; set; }
-        public int regionid { get; set; }
-        public int provinceid { get; set; }
-
-        public string regionname { get; set; }
-
-        public string provincename { get; set; }
-
-
-
-    }
 }
 
 

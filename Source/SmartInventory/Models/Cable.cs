@@ -219,8 +219,7 @@ namespace Models
         public List<string> lstUserModule { get; set; }
         [Required]
         public string route_name { get; set; }
-        [NotMapped]
-        public CDBAttribute LstCDBAttribute { get; set; }
+
         public CableMaster()
         {
             objPM = new PageMessage();
@@ -235,7 +234,6 @@ namespace Models
             lstBindWorkorderCode = new List<WorkorderCodeMaster>();
             lstBindPurposeCode = new List<PurposeCodeMaster>();
             EntityReference = new EntityReference();
-            LstCDBAttribute = new CDBAttribute();
             purpose_id = 0;
             planning_id = 0;
             workorder_id = 0;

@@ -11,13 +11,12 @@ namespace DataAccess
 {
     public class DALoop : Repository<NELoopDetails>
     {
-        public PageMessage SaveEntityLoop(string Loops, int province_id)
+        public PageMessage SaveEntityLoop(string Loops)
         {
             try
             {
-                var r = repo.ExecuteProcedure<PageMessage>("fn_save_loop_details", new { p_loops = Loops }).FirstOrDefault();
-                DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(r.systemId, Models.EntityType.Loop.ToString(), province_id, 0);
-                return r;
+                return repo.ExecuteProcedure<PageMessage>("fn_save_loop_details", new { p_loops = Loops}).FirstOrDefault(); ;
+                
             }
             catch { throw; }
         }

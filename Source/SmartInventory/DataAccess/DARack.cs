@@ -59,7 +59,6 @@ namespace DataAccess
                     found.audit_item_master_id = input.audit_item_master_id;
                     found.remarks = input.remarks;
                     found.bom_sub_category = input.bom_sub_category;
-                    found.gis_design_id = input.gis_design_id;
                     // found.served_by_ring = input.served_by_ring;
                     var result = repo.Update(found);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.Rack.ToString(), result.province_id, 1);

@@ -720,7 +720,7 @@ namespace SmartInventory.Controllers
 		public ActionResult SaveMicroductTemplate(MicroductItemMaster objMicroductItemMaster)
 		{
 
-			objMicroductItemMaster.user_Id = Convert.ToInt32(Session["user_id"]);
+			objMicroductItemMaster.userId = Convert.ToInt32(Session["user_id"]);
 			string url = "api/ItemTemplate/EntityTemplate";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<MicroductItemMaster>(url, objMicroductItemMaster, EntityType.Microduct.ToString(), EntityAction.Save.ToString());
 			return PartialView("_MicroductTemplate", response.results);

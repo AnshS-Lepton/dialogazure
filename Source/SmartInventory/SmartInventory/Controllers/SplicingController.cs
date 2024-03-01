@@ -29,7 +29,6 @@ using static Mono.Security.X509.X520;
 using NPOI.SS.Formula.Functions;
 using System.Reflection.Emit;
 using System.Data.Entity.Infrastructure;
-using System.Threading.Tasks;
 
 namespace SmartInventory.Controllers
 {
@@ -178,6 +177,7 @@ namespace SmartInventory.Controllers
 
                     System.Threading.Tasks.Task.Factory.StartNew(() =>
                     {
+
                         DbMessage objDbMessage = new BLOSPSplicing().SaveUtilizationNotification(objConection);
                         SmartInventoryHub smartInventoryhub = SmartInventoryHub.Instance;
                         var UnreadNotificationCount = new BLMisc().GetUnreadNotificationCount(userdetatils.user_id, userdetatils.role_id);

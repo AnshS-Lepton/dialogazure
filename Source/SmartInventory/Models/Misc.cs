@@ -628,47 +628,7 @@ namespace Models
 		}
 
 	}
-
-    public class AssociateRoute
-    {
-        public int parent_system_id { get; set; }
-        public string parent_entity_type { get; set; }
-        public bool parent_multi_association { get; set; }
-        public PageMessage pageMsg { get; set; }
-        public List<RouteInfo> listrouteInfo { get; set; }
-        public int userId { get; set; }
-        public string parent_network_id { get; set; }
-        public bool parent_is_buried { get; set; }
-        public AssociateRoute()
-        {
-            listrouteInfo = new List<RouteInfo>();
-            pageMsg = new PageMessage();
-        }
-
-    }
-    public class RouteInfo
-    {
-        public int cable_id { get; set; }
-        public int entity_id { get; set; }
-        public string entity_type { get; set; }
-        public string entity_network_id { get; set; }
-        public string route_id { get; set; }
-        public string route_name { get; set; }
-        public bool is_associated { get; set; }
-        public bool is_multi_association { get; set; }
-        public bool is_disabled { get; set; }
-        public bool is_termination_point { get; set; }
-        public string entity_title { get; set; }
-		public string created_by { get; set; }
-        public string created_on { get; set; }
-
-
-        public RouteInfo()
-        {
-            is_associated = false;
-        }
-    }
-    public class LineEntityInfo
+	public class LineEntityInfo
 	{
 		public int system_id { get; set; }
 		public string entity_type { get; set; }
@@ -2028,17 +1988,8 @@ namespace Models
 		public string parentGeomType { get; set; }
 		public int userId { get; set; }
 	}
-    public class AssociateRouteRequest
-    {
-        public int systemId { get; set; }
-        public string entityType { get; set; }
-        public string networkId { get; set; }
-        public string parentGeom { get; set; }
-        public string parentGeomType { get; set; }
-        public int userId { get; set; }
-    }
 
-    public class TerminationEntityRequest
+	public class TerminationEntityRequest
 	{
 		public string txtGeom { get; set; }
 		public string entityType { get; set; }

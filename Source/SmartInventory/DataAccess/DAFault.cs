@@ -84,7 +84,6 @@ namespace DataAccess
                     objFault.origin_ref_description = faultInfo.origin_ref_description;
                     objFault.origin_from = faultInfo.origin_from;
                     objFault.origin_ref_code = faultInfo.origin_ref_code;
-                    objFault.gis_design_id = faultInfo.gis_design_id;
                     var response = repo.Update(objFault);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(response.system_id, Models.EntityType.Fault.ToString(), response.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Fault.ToString(), response.province_id);

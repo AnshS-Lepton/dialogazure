@@ -65,18 +65,10 @@ namespace BusinessLogics
         public void UpdateDuctLocation(int systemId, string distance , string OffsetDir)
         {
              DASaveEntityGeometry.Instance.UpdateDuctLocation(systemId, distance, OffsetDir);
-        }
-        public void UpdateMicroductLocation(int systemId, string distance, string OffsetDir)
-        {
-            DASaveEntityGeometry.Instance.UpdateMicroductLocation(systemId, distance, OffsetDir);
-        }
+        } 
         public void UpdateDuctColorCode(int systemId, int trench_id, int ductcount)
         {
              DASaveEntityGeometry.Instance.UpdateDuctColorCode(systemId, trench_id, ductcount);
-        }
-        public void UpdateMicroductColorCode(int systemId, int trench_id, int ductcount)
-        {
-            DASaveEntityGeometry.Instance.UpdateMicroductColorCode(systemId, trench_id, ductcount);
         }
 
     }

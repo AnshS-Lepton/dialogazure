@@ -272,7 +272,7 @@
                             @if (Model.system_id == 0)
                             {
                                 <div class="col-sm-4 dvdisabled">
-                                    @Html.DropDownListFor(m => m.objFaultStatusHistory.fault_status, new List<SelectListItem> { new SelectListItem { Text = "Unresolved", Value = "Unresolved" } }, new { @id = "ddlFaultStatus", @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                    @Html.DropDownListFor(m => m.objFaultStatusHistory.fault_status, new List<SelectListItem> { new SelectListItem { Text = "Unresolved", Value = "Unresolved" } }, new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
 
                                 </div>
                             }
@@ -369,7 +369,7 @@
                 });
 
     function formPost() {
-        debugger;
+
         $('#faultEntitySystemId').val($('#ddlSelectEntity').val());
                     if ($('#ddlFaultStatus').val() == "Temporary Resolved" || $('#ddlFaultStatus').val() == "Resolved") {
                         if ($('#txtRCA').val().trim() == "" || $('#txtRCA').val().trim() == undefined) {
@@ -379,7 +379,6 @@
                             return false;
                         }
                         else {
-                            debugger;
                             $("#frmAddFault").submit();
                         }
 
@@ -387,7 +386,7 @@
 
                     else {                        
                         $("#frmAddFault").submit();
-                       // $("#btnCancelFault").trigger("click");
+                        $("#btnCancelFault").trigger("click");
                     }
 
                 }

@@ -447,7 +447,7 @@ var NetworkPlanning = function () {
             $('#ddledit_path').val('google').trigger("chosen:updated");
             $('#trenchduct').show();
             $('#ddledit_path').attr('disabled', false).trigger("chosen:updated");
-            $('#txtdistance').append(MultilingualKey.SI_OSP_GBL_JQ_FRM_217+" Span(m)<i class='clsMandatory'>*</i>:");
+            $('#txtdistance').append("Manhole Span(m)<i class='clsMandatory'>*</i>:");
         }
         else if (cabletype == "Overhead") {
             $('#ddledit_path').val('manually');

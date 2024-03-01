@@ -86,7 +86,6 @@ namespace DataAccess
                     objVault.origin_from = objVaultMaster.origin_from;
                     objVault.origin_ref_code = objVaultMaster.origin_ref_code;
                     objVault.bom_sub_category = objVaultMaster.bom_sub_category;
-                    objVault.gis_design_id = objVaultMaster.gis_design_id;
                     // objVault.served_by_ring = objVaultMaster.served_by_ring;
                     var result = repo.Update(objVault);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.Vault.ToString(), result.province_id, 1);

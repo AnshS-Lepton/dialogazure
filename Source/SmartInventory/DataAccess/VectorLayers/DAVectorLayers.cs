@@ -66,22 +66,7 @@ namespace DataAccess.VectorLayers
                 if (!string.IsNullOrEmpty(vectorDataIn.connectionString))
                     connetionString = vectorDataIn.connectionString;
                 DateTime dbDate = System.DateTime.Now;
-                var allFeatures = repo.ExecuteProcedure<VectorFeatures<dynamic>>("fn_get_vector_layers_data", new { p_prvinceIds = vectorDataIn.PrvinceIds, p_entity_type  = vectorDataIn.entityType}, true);
-                dbDate = repo.ExecuteProcedure<DateTime>("fn_get_DB_date", new { }, false).FirstOrDefault();
-                dbServerDate = dbDate;
-                return allFeatures;
-            }
-            catch { throw; }
-        }
-
-        public List<VectorFeatures<dynamic>> GetAllLayersVectorByGeom(VectorDataIn vectorDataIn, out DateTime dbServerDate)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(vectorDataIn.connectionString))
-                    connetionString = vectorDataIn.connectionString;
-                DateTime dbDate = System.DateTime.Now;
-                var allFeatures = repo.ExecuteProcedure<VectorFeatures<dynamic>>("fn_get_vector_layers_data_by_geom", new { p_prvinceIds = vectorDataIn.PrvinceIds, p_longitude = vectorDataIn.lng, p_latitude = vectorDataIn.lat, p_ticket_id = vectorDataIn.ticketID }, true);
+                var allFeatures = repo.ExecuteProcedure<VectorFeatures<dynamic>>("fn_get_vector_layers_data", new { p_prvinceIds = vectorDataIn.PrvinceIds}, true);
                 dbDate = repo.ExecuteProcedure<DateTime>("fn_get_DB_date", new { }, false).FirstOrDefault();
                 dbServerDate = dbDate;
                 return allFeatures;
@@ -99,21 +84,6 @@ namespace DataAccess.VectorLayers
                     connetionString = vectorDeltaIn.connectionString;
                 DateTime dbDate = System.DateTime.Now;
                 var allFeatures = repo.ExecuteProcedure<VectorFeatures<dynamic>>("fn_get_vector_layers_delta", new { p_lastFetchTime = vectorDeltaIn.LastFetchTime, p_prvinceIds = vectorDeltaIn.PrvinceIds, p_fsaID = vectorDeltaIn.FSAId }, true);
-                dbDate = repo.ExecuteProcedure<DateTime>("fn_get_DB_date", new { }, false).FirstOrDefault();
-                dbServerDate = dbDate;
-                return allFeatures;
-            }
-            catch { throw; }
-        }
-
-        public List<VectorFeatures<dynamic>> GetAllLayersDeltaByGeom(VectorDeltaIn vectorDeltaIn, out DateTime dbServerDate)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(vectorDeltaIn.connectionString))
-                    connetionString = vectorDeltaIn.connectionString;
-                DateTime dbDate = System.DateTime.Now;
-                var allFeatures = repo.ExecuteProcedure<VectorFeatures<dynamic>>("fn_get_vector_layers_delta_by_geom", new { p_lastFetchTime = vectorDeltaIn.LastFetchTime, p_prvinceIds = vectorDeltaIn.PrvinceIds, p_longitude = vectorDeltaIn.lng, p_latitude = vectorDeltaIn.lat, p_ticket_id = vectorDeltaIn.ticketID }, true);
                 dbDate = repo.ExecuteProcedure<DateTime>("fn_get_DB_date", new { }, false).FirstOrDefault();
                 dbServerDate = dbDate;
                 return allFeatures;

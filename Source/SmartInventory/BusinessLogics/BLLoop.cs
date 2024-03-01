@@ -11,9 +11,9 @@ namespace BusinessLogics
 {
     public class BLLoop
     {
-        public PageMessage SaveEntityLoop(string Loops, int province_id)
+        public PageMessage SaveEntityLoop(string Loops)
         {
-              return new DALoop().SaveEntityLoop(Loops, province_id);
+              return new DALoop().SaveEntityLoop(Loops);
         }
     }
 }

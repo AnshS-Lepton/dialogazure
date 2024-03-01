@@ -173,7 +173,7 @@
                                 }:
                             </label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
-                                @Html.TextBoxFor(m => m.microduct_name,
+                                @Html.TextBoxFor(m => m.network_name,
                                    SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(
                               new
                               {
@@ -237,12 +237,12 @@
                         <div class="form-group">
                             <label class="control-label col-md-2 col-sm-2 ">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023:</label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
-                                @Html.DropDownListFor(m => m.microduct_type, new SelectList(Model.MicroductTypeIn.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
+                                @Html.DropDownListFor(m => m.microduct_type, new SelectList(Model.DuctTypeIn.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
                             </div>
 
                             <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_DUC_NET_RPT_009:</label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
-                                @Html.DropDownListFor(m => m.color_code, new SelectList(Model.MicroductColorIn.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
+                                @Html.DropDownListFor(m => m.color_code, new SelectList(Model.DuctColorIn.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
                             </div>
 
                         </div>
@@ -373,21 +373,14 @@
             //end region Additional-Attributes
             if (!entityReferencevalidation())
                 return false;
-            if (!entityMaintainence())
-                return false;
             return true;
         });
-        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" }); 
+        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
     });
     function formPost() {
-        debugger;
         $('#no_of_ways').val($("#ddlNoOfWays").val());
         if ($('#txtbomsubcategory').val() == '') {
             $('#txtbomsubcategory').next().addClass('input-validation-error');
-            return false;
-        }
-        if ($('#ddlNoOfWays').val() == '') {
-            $('#ddlNoOfWays').next().addClass('input-validation-error');
             return false;
         }
         else {

@@ -83,7 +83,6 @@ namespace SmartInventory.Settings
         public static int CableExtraLengthPercentage = 0;
         public static int SplitCableBuffer = 0;
         public static int SplitDuctBuffer = 0;
-        public static int SplitMicroductBuffer = 0;
         public static int SplitTrenchBuffer = 0;
         public static int LoopBuffer = 0;
         public static int AssociateEntityBuffer = 0;
@@ -241,7 +240,7 @@ namespace SmartInventory.Settings
         static string originator = "";
         static string smsapi = "";
         public static int MaxLineEntityLength = 0;
-        public static int isCDBAttributeEnabled = 0;
+
 
         public static void InitializeGlobalSettings()
         {            
@@ -321,8 +320,6 @@ namespace SmartInventory.Settings
                     SplitCableBuffer = Convert.ToInt32(objSetting.value);
                 if (objSetting.key == "SplitDuctBuffer")
                     SplitDuctBuffer = Convert.ToInt32(objSetting.value);
-                if (objSetting.key == "SplitMicroductBuffer")
-                    SplitMicroductBuffer = Convert.ToInt32(objSetting.value);
                 if (objSetting.key == "LoopBuffer")
                     LoopBuffer = Convert.ToInt32(objSetting.value);
                 if (objSetting.key == "AssociateEntityBuffer")
@@ -835,10 +832,7 @@ namespace SmartInventory.Settings
                 {
                     MaxLineEntityLength = Convert.ToInt32(objSetting.value);
                 }
-                if (objSetting.key == "isCDBAttributeEnabled")
-                {
-                    isCDBAttributeEnabled = Convert.ToInt32(objSetting.value);
-                }
+
 
             }
         }

@@ -59,7 +59,7 @@ namespace DataAccess
                     objDuct.construction = DuctInfo.construction;
                     objDuct.activation = DuctInfo.activation;
                     objDuct.accessibility = DuctInfo.accessibility;
-                    objDuct.duct_type = DuctInfo.duct_type;
+                    objDuct.duct_type = DuctInfo.cable_type;
                     objDuct.color_code = DuctInfo.color_code;
                     objDuct.inner_dimension = DuctInfo.inner_dimension;
                     objDuct.outer_dimension = DuctInfo.outer_dimension;
@@ -87,14 +87,11 @@ namespace DataAccess
                     objDuct.origin_ref_description = DuctInfo.origin_ref_description;
                     objDuct.origin_from = DuctInfo.origin_from;
                     objDuct.origin_ref_code = DuctInfo.origin_ref_code;
-                    objDuct.bom_sub_category= DuctInfo.bom_sub_category;
+                    objDuct.bom_sub_category = DuctInfo.bom_sub_category;
                     objDuct.calculated_length = DuctInfo.calculated_length;
-                    objDuct.gis_design_id = DuctInfo.gis_design_id;
                     //DuctInfo.served_by_ring = DuctInfo.served_by_ring;
-                    var DuctResp =  repo.Update(objDuct);
-                    DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctResp.system_id, Models.EntityType.Duct.ToString(), DuctResp.province_id, 1);
-                    //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Duct.ToString(), DuctResp.province_id);
-                    return DuctResp;
+                    return repo.Update(objDuct);
+
                 }
                 else
                 {
@@ -107,18 +104,35 @@ namespace DataAccess
                     DuctInfo.created_by = userId;
                     DuctInfo = repo.Insert(DuctInfo);
                     // Save geometry
-                    InputGeom geom = new InputGeom();
-                    geom.networkStatus = string.IsNullOrEmpty(DuctInfo.network_status) ? "P" : DuctInfo.network_status;
-                    geom.systemId = DuctInfo.system_id;
-                    geom.longLat = latLong;
-                    geom.userId = userId;
-                    geom.entityType = EntityType.Duct.ToString();
-                    geom.commonName = DuctInfo.network_id;
-                    geom.geomType = GeometryType.Line.ToString();
-                    geom.project_id = DuctInfo.project_id;
-                    string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
-                    DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctInfo.system_id, Models.EntityType.Duct.ToString(), DuctInfo.province_id, 0);
-                    //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Duct.ToString(), DuctInfo.province_id);
+                    if (DuctInfo.cable_type != "ISP" && latLong != "" && latLong != "0")
+                    {
+                        InputGeom geom = new InputGeom();
+                        geom.networkStatus = string.IsNullOrEmpty(DuctInfo.network_status) ? "P" : DuctInfo.network_status;
+                        geom.systemId = DuctInfo.system_id;
+                        geom.longLat = latLong;
+                        geom.userId = userId;
+                        geom.entityType = EntityType.Duct.ToString();
+                        geom.commonName = DuctInfo.network_id;
+                        geom.geomType = GeometryType.Line.ToString();
+                        geom.project_id = DuctInfo.project_id;
+                        string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
+                        DAIspLine.Instance.CreateOSPCable(DuctInfo.system_id);
+                        new DADuct().setEndPoint(DuctInfo.system_id);
+                    }
+                    else
+                    {
+                        IspLineMaster objLine = new IspLineMaster();
+                        objLine.entity_id = DuctInfo.system_id;
+                        objLine.entity_type = EntityType.Duct.ToString();
+                        objLine.line_geom = DuctInfo.ispLineGeom;
+                        objLine.structure_id = DuctInfo.structure_id;
+                        objLine.created_by = userId;
+                        objLine.created_on = DateTimeHelper.Now;
+                        objLine.a_node_type = DuctInfo.a_node_type;
+                        objLine.b_node_type = DuctInfo.b_node_type;
+                        DAIspLine.Instance.saveLineGeom(objLine);
+                    }
+
                     if (DuctInfo.a_system_id > 0)
                     {
                         AssociateEntity assStartPt = new AssociateEntity();
@@ -147,27 +161,6 @@ namespace DataAccess
                         assEndPt.created_by = userId;
                         new DAAssociateEntity().SaveAssociation(assEndPt);
                     }
-                    //old code to update number of ducts in trench id..
-                    //if (DuctInfo.trench_id != 0)
-                    //{
-                    //    DAMisc objDAMisc = new DAMisc();
-                    //    var objTrench = objDAMisc.GetEntityDetailById<TrenchMaster>(DuctInfo.trench_id, EntityType.Trench);
-                    //    objTrench.no_of_ducts = (Convert.ToInt32(objTrench.no_of_ducts) + 1).ToString();
-                    //    new DATrench().SaveTrench(objTrench, userId);
-                    //}
-                    //if (DuctInfo.trench_id != 0)
-                    //{
-                    //    AssociateEntity objAsso = new AssociateEntity();
-                    //    objAsso.associated_entity_type = EntityType.Duct.ToString();
-                    //    objAsso.associated_system_id = DuctInfo.system_id;
-                    //    objAsso.associated_network_id = DuctInfo.network_id;
-                    //    objAsso.entity_network_id = DuctInfo.pNetworkId;
-                    //    objAsso.entity_system_id = DuctInfo.trench_id;
-                    //    objAsso.entity_type = EntityType.Trench.ToString();
-                    //    objAsso.created_on = DateTimeHelper.Now;
-                    //    objAsso.created_by = userId;
-                    //    new DAAssociateEntity().SaveAssociation(objAsso);
-                    //}
 
                     if (DuctInfo.pSystemId != 0 && DuctInfo.pEntityType == EntityType.Trench.ToString())
                     {
@@ -188,8 +181,6 @@ namespace DataAccess
                         new DAAssociateEntity().SaveAssociationForEndToEnd(objAsso);
                     }
 
-
-                    new DADuct().setEndPoint(DuctInfo.system_id);
                     return DuctInfo;
                 }
 

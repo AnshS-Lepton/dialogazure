@@ -56,13 +56,14 @@
     }
 </div>
 <script>
-    $(document).ready(function () {     
+    $(document).ready(function () {
+
             callFormValidator("frmItemTemplate");
 
         $('#id').val('@Model.id');
     });
-    //$("#btnUpdateItemTemplate, #btnSaveItemTemplate").on("click", function () {
+    $("#btnUpdateItemTemplate, #btnSaveItemTemplate").on("click", function () {
 
-    //    $('#no_of_ways').val($("#ddlNoOfWays").val());
-    //});
+        $('#no_of_ways').val($("#ddlNoOfWays").val());
+    });
 </script>

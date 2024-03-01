@@ -24302,15 +24302,7 @@ namespace Resources {
                    return resourceProvider.GetResource("SI_OSP_GBL_JQ_GBL_111", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
-
-        public static string SI_OSP_GBL_JQ_GBL_116
-        {
-            get
-            {
-                return resourceProvider.GetResource("SI_OSP_GBL_JQ_GBL_116", CultureInfo.CurrentUICulture.Name) as string;
-            }
-        }
-
+            
         /// <summary>LAND BASE LAYER</summary>
         public static string SI_OSP_GBL_JQ_FRM_188 {
                get {
@@ -27474,13 +27466,6 @@ namespace Resources {
             get
             {
                 return resourceProvider.GetResource("SI_OSP_GBL_JQ_GBL_115", CultureInfo.CurrentUICulture.Name) as string;
-            }
-        }
-        public static string SI_OSP_GBL_JQ_FRM_217
-        {
-            get
-            {
-                return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_217", CultureInfo.CurrentUICulture.Name) as string;
             }
         }
     }        

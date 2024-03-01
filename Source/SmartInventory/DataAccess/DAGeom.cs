@@ -147,29 +147,11 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public void UpdateMicroductLocation(int systemId, string distance, string OffsetDir)
-        {
-            try
-            {
-                repo.ExecuteProcedure("fn_update_microduct_location", new { p_system_id = systemId, p_distance = distance, offsetdir = OffsetDir });
-
-            }
-            catch { throw; }
-        }
         public void UpdateDuctColorCode(int systemId, int trench_id, int ductcount)
         {
             try
             {
                 repo.ExecuteProcedure("fn_update_duct_color_code", new { p_system_id = systemId, trench_system_id = trench_id, ductCount = ductcount });
-
-            }
-            catch { throw; }
-        }
-        public void UpdateMicroductColorCode(int systemId, int trench_id, int ductcount)
-        {
-            try
-            {
-                repo.ExecuteProcedure("fn_update_microduct_color_code", new { p_system_id = systemId, trench_system_id = trench_id, ductCount = ductcount });
 
             }
             catch { throw; }

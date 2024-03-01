@@ -218,7 +218,6 @@ namespace DataAccess
                    // DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Building.ToString(), response.province_id);
                     objBuilding.userid = buildingInfo.userid;
                     objBuilding.user_comments = buildingInfo.user_comments;
-                    objBuilding.gis_design_id = buildingInfo.gis_design_id;
                     saveBuildingStatusComments(objBuilding, oldBuildingStatus);
                     return response;
                 }
