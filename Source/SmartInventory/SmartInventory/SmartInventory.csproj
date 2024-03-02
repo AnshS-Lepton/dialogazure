@@ -705,6 +705,7 @@
     <Content Include="Content\images\icons\lib\Legend\As-build_antenna.png" />
     <Content Include="Content\images\icons\lib\Legend\As-build_tower.png" />
     <Content Include="Content\images\icons\lib\Legend\As-build_tower.svg" />
+    <Content Include="Content\images\icons\lib\Legend\As-built_duct.svg" />
     <Content Include="Content\images\icons\lib\Legend\As-built_sector.png" />
     <Content Include="Content\images\icons\lib\Legend\A_3rdParty.png" />
     <Content Include="Content\images\icons\lib\Legend\A_OH.svg" />
@@ -718,6 +719,7 @@
     <Content Include="Content\images\icons\lib\Legend\conduit.png" />
     <Content Include="Content\images\icons\lib\Legend\CSA.svg" />
     <Content Include="Content\images\icons\lib\Legend\dormant_antenna.png" />
+    <Content Include="Content\images\icons\lib\Legend\Dormant_duct.svg" />
     <Content Include="Content\images\icons\lib\Legend\dormant_sector.png" />
     <Content Include="Content\images\icons\lib\Legend\dormant_tower.png" />
     <Content Include="Content\images\icons\lib\Legend\Dorment.svg" />
@@ -808,6 +810,7 @@
     <Content Include="Content\images\icons\lib\Legend\Planned.png" />
     <Content Include="Content\images\icons\lib\Legend\Planned.svg" />
     <Content Include="Content\images\icons\lib\Legend\planned_antenna.png" />
+    <Content Include="Content\images\icons\lib\Legend\planned_duct.svg" />
     <Content Include="Content\images\icons\lib\Legend\planned_cable.svg" />
     <Content Include="Content\images\icons\lib\Legend\planned_sector.png" />
     <Content Include="Content\images\icons\lib\Legend\planned_tower.png" />
@@ -2309,6 +2312,8 @@
     <Content Include="Views\Library\_RouteAssociation.cshtml" />
     <Content Include="Views\Library\_SplitMicroduct.cshtml" />
     <Content Include="Views\Library\_CDBAttributes.cshtml" />
+    <Content Include="Views\ISP\_AddDuctTP.cshtml" />
+    <Content Include="Views\ISP\_AddISPDuct.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2841,7 +2846,6 @@
     <Folder Include="Content\UploadedFiles\Fiber\" />
     <Folder Include="Content\UploadedFiles\Resources\" />
     <Folder Include="Content\UploadedFiles\VendorSpecifications\" />
-    <Folder Include="MigrationScripts\" />
     <Folder Include="ErrorLogs\" />
     <Folder Include="shp2kml_convertor\" />
     <Folder Include="Uploads\ExternalData\KMZ\" />
