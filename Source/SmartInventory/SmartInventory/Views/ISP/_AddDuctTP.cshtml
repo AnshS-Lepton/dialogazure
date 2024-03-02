@@ -5,7 +5,7 @@
     <div class="form-group">
         <label class="control-label upperCase">@Resources.Resources.SI_ISP_CAB_NET_FRM_010:</label>
         <div>
-            <select name="ddlCableAEnd" id="ddlCableAEnd" class="chosen-select form-control" onchange="objCustomD3.drawCable();">
+            <select name="ddlDuctAEnd" id="ddlDuctAEnd" class="chosen-select form-control" onchange="objCustomD3.drawDuct();">
                 <option value="0">-- Select --</option>
                 @foreach (var item in Model.StructureElements.Where(m => m.is_isp_tp == true))
                 {
@@ -17,32 +17,32 @@
         </div>
     </div>
     <div class="form-group">
-            <label class="control-label upperCase">@Resources.Resources.SI_ISP_CAB_NET_FRM_011:</label>
+        <label class="control-label upperCase">@Resources.Resources.SI_ISP_CAB_NET_FRM_011:</label>
         <div>
-            <select name="ddlCableBEnd" id="ddlCableBEnd" class="chosen-select form-control" onchange="objCustomD3.drawCable();">
+            <select name="ddlDuctBEnd" id="ddlDuctBEnd" class="chosen-select form-control" onchange="objCustomD3.drawDuct();">
                 <option value="0">-- Select --</option>
                 @foreach (var item in Model.StructureElements.Where(m => m.is_isp_tp == true))
                 {
-                    <option value="@item.entity_system_id" data-system-id="@item.entity_system_id" data-entity-type="@item.entity_type" data-network-id="@item.network_id" data-shaft_id="@item.shaft_id" data-floor_id="@item.floor_id"  data-node-type="">@item.network_id</option>
+                    <option value="@item.entity_system_id" data-system-id="@item.entity_system_id" data-entity-type="@item.entity_type" data-network-id="@item.network_id" data-shaft_id="@item.shaft_id" data-floor_id="@item.floor_id" data-node-type="">@item.network_id</option>
                 }
-                } 
-            </select> 
+                }
+            </select>
         </div>
     </div>
-@{
-    var lineEntity = Model.NetworkLayers.Where(n => n.geomType == Models.GeometryType.Line.ToString()).FirstOrDefault();
+    @{
+        var lineEntity = Model.NetworkLayers.Where(n => n.geomType == Models.GeometryType.Line.ToString() && n.layerName == Models.EntityType.Duct.ToString()).FirstOrDefault();
 
-    <div class="d-flex">
-            <button id="btnCableTemplate" type="submit" class="d-flex templateBtn btn-warning">
+        <div class="d-flex">
+            <button id="btnDuctTemplate" type="submit" class="d-flex templateBtn btn-warning">
                 @if (Model.NetworkLayers.Count > 0 && lineEntity != null && lineEntity.isTemplateRequired)
                 {
                     <div class="clsTemplateIcon Ticon mr-01 @(lineEntity.templateId > 0 ? "templateFilled" : "" ) " data-href="@lineEntity.templateFormUrl" data-lyrname="@lineEntity.layerName" data-cable-type="ISP" data-title="@lineEntity.layerTitle" data-roleid="@ViewBag.UserRoleId">T</div>
                 }
-            <span> @Resources.Resources.SI_ISP_CAB_NET_FRM_012</span>
+                <span> @Resources.Resources.SI_ISP_CAB_NET_FRM_012</span>
             </button>
-        <div class="ml-auto"> 
-                <button type="submit" class="btn btn-primary" id="btnCreateISPCable" data-template-id="@lineEntity.templateId" data-is-template-required="@lineEntity.isTemplateRequired" data-entity-type="@lineEntity.layerName" data-is-isp-child-layer="@lineEntity.is_isp_child_layer" data-is-isp-parent-layer="@lineEntity.is_isp_parent_layer">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button> 
+            <div class="ml-auto">
+                <button type="submit" class="btn btn-primary" id="btnCreateISPDuct" data-template-id="@lineEntity.templateId" data-is-template-required="@lineEntity.isTemplateRequired" data-entity-type="@lineEntity.layerName" data-is-isp-child-layer="@lineEntity.is_isp_child_layer" data-is-isp-parent-layer="@lineEntity.is_isp_parent_layer">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            </div>
         </div>
-    </div>
     }
 </div>

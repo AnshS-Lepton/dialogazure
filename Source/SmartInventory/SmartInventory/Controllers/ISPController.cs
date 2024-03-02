@@ -1998,6 +1998,201 @@ namespace SmartInventory.Controllers
         }
         #endregion
 
+        #region Add Duct
+
+        public PartialViewResult AddDuct(LineEntityIn objIn)
+        {
+            DuctMaster objDuct = new DuctMaster();
+            objDuct = GetISPDuctInfo(objIn);
+            var objStructureDetail = new BLMisc().GetEntityDetailById<StructureMaster>(objIn.ModelInfo.structureid, EntityType.Structure);
+
+            if (objIn.systemId == 0)
+            {
+                //For ISP
+                var geom = objStructureDetail.longitude + " " + objStructureDetail.latitude;
+                objIn.geom = geom;
+                GetISPLineNtkDetail(objDuct, objIn, EntityType.Duct.ToString(), false, geom);
+
+            }
+            objDuct.system_id = objIn.systemId;
+            objDuct.manual_length = objDuct.calculated_length;
+            objDuct.user_id = Convert.ToInt32(Session["user_id"]);
+            BLItemTemplate.Instance.BindItemDropdowns(objDuct, EntityType.Duct.ToString());
+            objDuct.structure_id = objIn.ModelInfo.structureid;
+            if (objStructureDetail != null)
+            {
+                objDuct.region_id = objStructureDetail.region_id;
+                objDuct.province_id = objStructureDetail.province_id;
+            }
+
+            fillProjectSpecifications(objDuct);
+            //fillRegionProvinceDetail(objDuct, GeometryType.Line.ToString(), objIn.geom);
+            BindDuctDropDown(objDuct);
+            var layerdetails = new BLLayer().getLayer(EntityType.Duct.ToString());
+            objDuct.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
+            objDuct.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Duct.ToString()).ToList();
+            objDuct.lstUserModule = new BLLayer().GetUserModuleAbbrList(objDuct.user_id, UserType.Web.ToString());
+
+            return PartialView("_AddISPDuct", objDuct);
+        }
+        private void BindDuctDropDown(DuctMaster objDuctIn)
+        {
+            var objDDL = new BLMisc().GetDropDownList(EntityType.Duct.ToString());
+            objDuctIn.NoofDuctsCreated = objDDL.Where(x => x.dropdown_type == DropDownType.No_of_Ducts_Created.ToString()).ToList();
+            objDuctIn.DuctTypeIn = objDDL.Where(x => x.dropdown_type == DropDownType.Duct_Type.ToString()).ToList();
+            objDuctIn.DuctColorIn = objDDL.Where(x => x.dropdown_type == DropDownType.Duct_Color.ToString()).ToList();
+            objDuctIn.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
+            var _objDDL = new BLMisc().GetDropDownList("");
+            objDuctIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
+            // objDuctIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+        }
+
+        private void fillRegionProvinceDetail(dynamic objEntityModel, string enType, string geom)
+        {
+            List<InRegionProvince> objRegionProvince = new List<InRegionProvince>();
+            objRegionProvince = BLBuilding.Instance.GetRegionProvince(geom, enType);
+            if (objRegionProvince != null && objRegionProvince.Count > 0)
+            {
+                objEntityModel.region_id = objRegionProvince[0].region_id;
+                objEntityModel.province_id = objRegionProvince[0].province_id;
+                objEntityModel.region_name = objRegionProvince[0].region_name;
+                objEntityModel.province_name = objRegionProvince[0].province_name;
+            }
+            List<InGeographicDetails> obj = new List<InGeographicDetails>();
+            obj = BLBuilding.Instance.GetGeographicDetails(geom, enType);
+            try
+            {
+                if (obj != null && obj.Count > 0)
+                {
+                    foreach (var item in obj)
+                    {
+                        if (string.IsNullOrEmpty(objEntityModel.area_id))
+                        {
+                            if (item.entity_type.ToUpper() == EntityType.Area.ToString().ToUpper())
+                            {
+                                objEntityModel.area_id = item.entity_network_id;
+                            }
+                        }
+                        if (item.entity_type.ToUpper() == EntityType.SubArea.ToString().ToUpper())
+                        {
+                            objEntityModel.subarea_id = item.entity_network_id;
+                        }
+                        if (item.entity_type.ToUpper() == EntityType.DSA.ToString().ToUpper())
+                        {
+                            objEntityModel.dsa_id = item.entity_network_id;
+                        }
+                        if (item.entity_type.ToUpper() == EntityType.CSA.ToString().ToUpper())
+                        {
+                            objEntityModel.csa_id = item.entity_network_id;
+                        }
+                    }
+                    objEntityModel.region_abbreviation = obj[0].region_abbreviation;
+                    objEntityModel.province_abbreviation = obj[0].province_abbreviation;
+                }
+            }
+            catch (Exception ex)
+            {
+                string exception = ex.Message;
+            }
+        }
+
+        private DuctMaster GetISPDuctInfo(LineEntityIn objIn)
+        {
+            DuctMaster objDuct = new DuctMaster();
+            if (objIn.systemId == 0)
+            {
+                objDuct.duct_type = objIn.cableType;
+                objDuct.networkIdType = objIn.networkIdType;
+                objDuct.ownership_type = "Own";
+                // Item template binding
+                var objItem = BLItemTemplate.Instance.GetTemplateDetail<DuctTemplateMaster>(Convert.ToInt32(Session["user_id"]), EntityType.Duct, objIn.cableType);
+                Utility.MiscHelper.CopyMatchingProperties(objItem, objDuct);
+
+            }
+            else
+            {
+                objDuct = new BLMisc().GetEntityDetailById<DuctMaster>(objIn.systemId, EntityType.Duct);
+                if (objIn.lstTP.Count > 0)
+                {
+                    objDuct.a_location = objIn.lstTP[0].network_id;
+                    objDuct.a_system_id = objIn.lstTP[0].system_id;
+                    objDuct.a_entity_type = objIn.lstTP[0].network_name;
+                    objDuct.a_node_type = objIn.lstTP[0].node_type;
+
+                    objDuct.b_location = objIn.lstTP[1].network_id;
+                    objDuct.b_system_id = objIn.lstTP[1].system_id;
+                    objDuct.b_entity_type = objIn.lstTP[1].network_name;
+                    objDuct.b_node_type = objIn.lstTP[1].node_type;
+                }
+            }
+
+            return objDuct;
+        }
+
+        public ActionResult SaveDuct(DuctMaster objDuct, bool isDirectSave = false)
+        {
+            ModelState.Clear();
+            PageMessage objPM = new PageMessage();
+            bool isValid = true;
+            if (objDuct.networkIdType == NetworkIdType.A.ToString() && objDuct.system_id == 0)
+            {
+                if (isDirectSave == false)
+                {
+                    objDuct.lstTP.Add(new NetworkDtl { system_id = objDuct.a_system_id, network_id = objDuct.a_location, network_name = objDuct.a_entity_type, node_type = objDuct.a_node_type });
+                    objDuct.lstTP.Add(new NetworkDtl { system_id = objDuct.b_system_id, network_id = objDuct.b_location, network_name = objDuct.b_entity_type, node_type = objDuct.b_node_type });
+                }
+                var objLineEntity = new LineEntityIn() { geom = objDuct.geom, systemId = objDuct.system_id, cableType = objDuct.duct_type, networkIdType = objDuct.networkIdType, lstTP = objDuct.lstTP };
+
+                if (isDirectSave == true)
+                {
+
+                    objDuct = GetISPDuctInfo(objLineEntity);
+                    var objBOMDDL = new BLMisc().GetDropDownList("", "bom_sub_category");
+                    objDuct.bom_sub_category = objBOMDDL[0].dropdown_value;
+                }
+                var listStructure = new BLMisc().GetEntityDetailById<StructureMaster>(objDuct.structure_id, EntityType.Structure);
+                objDuct.geom = listStructure.longitude + " " + listStructure.latitude;
+
+                //GET AUTO NETWORK CODE...
+                GetISPLineNtkDetail(objDuct, objLineEntity, EntityType.Cable.ToString(), true, objDuct.geom);
+                if (isDirectSave == true)
+                    objDuct.duct_name = objDuct.network_id;
+                objDuct.geom = listStructure.longitude + " " + listStructure.latitude + "," + listStructure.longitude + " " + listStructure.latitude + "1";
+            }
+
+            objDuct.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Duct.ToString()).ToList();
+            if (TryValidateModel(objDuct) && isValid == true)
+            {
+                var isNew = objDuct.system_id > 0 ? false : true;
+                var resultItem = new BLDuct().SaveDuct(objDuct, Convert.ToInt32(Session["user_id"]));
+                if (string.IsNullOrEmpty(resultItem.objPM.message))
+                {
+                    string[] LayerName = { EntityType.Duct.ToString() };
+                    if (isNew)
+                    {
+                        objPM.status = ResponseStatus.OK.ToString();
+                        objPM.isNewEntity = isNew;
+                        objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);// "Cable saved successfully.";
+                    }
+                    else
+                    {
+                        objPM.status = ResponseStatus.OK.ToString();
+                        objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);// "Cable updated successfully.";
+                    }
+                    objDuct.objPM = objPM;
+                }
+            }
+            else
+            {
+                objPM.status = ResponseStatus.FAILED.ToString();
+                objPM.message = isValid == true ? getFirstErrorFromModelState() : objPM.message;
+                objDuct.objPM = objPM;
+            }
+            return Json(objDuct, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
         #region ONT
 
         public PartialViewResult AddONT(string networkIdType, ElementInfo ModelInfo = null, int systemId = 0, int pSystemId = 0, string pEntityType = "", string pNetworkId = "")
