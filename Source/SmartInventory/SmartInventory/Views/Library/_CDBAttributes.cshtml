@@ -1,11 +1,28 @@
 ﻿@model Models.CableMaster
+    <style>
+        .cdbAttri .col-md-2, .cdbAttri .col-sm-2, .cdbAttri .col-md-4, .cdbAttri .col-sm-4 {
+            padding-right: 0;
+        }
+        .cdbAttri .col-md-2, .cdbAttri .col-sm-2 {
+            width: 24.66666667%;
+        }
+        .cdbAttri .col-md-4, .cdbAttri .col-sm-4 {
+            width: 24.33333333%;
+        }
+        .cdbAttri .form-control {
+            height: 25px;
+        }
+        .cdbAttri .assign-calen {
+            right: 8px;
+        }
+    </style>
 
 
 <div class="tab-content">
     <fieldset class="the-fieldset">
         <legend class="the-legend">CDB Attribute Info</legend>
 
-        <div class="row">
+        <div class="row cdbAttri">
             <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">Circle Name:</label>
             <div class="col-md-4 col-sm-4 mrgn_btm ">
                 @Html.TextBoxFor(m => m.LstCDBAttribute.circle_name, new { @class = "form-control clsReadOnly" })
@@ -100,7 +117,7 @@
             <div class="col-md-4 col-sm-4 mrgn_btm ">
                 @Html.TextBoxFor(m => m.LstCDBAttribute.end_longitude, new { @class = "form-control clsReadOnly" })
             </div>
-            <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">Count of non-VIL tenancies on route:</label>
+            <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">Non-VIL tenancies on route:</label>
             <div class="col-md-4 col-sm-4 mrgn_btm ">
                 @Html.TextBoxFor(m => m.LstCDBAttribute.count_non_vil_tenancies_on_route, new { @class = "form-control clsReadOnly" })
             </div>
@@ -113,7 +130,7 @@
             <div class="col-md-4 col-sm-4 mrgn_btm ">
                 @Html.TextBoxFor(m => m.LstCDBAttribute.avg_loss_per_km, new { @class = "form-control clsReadOnly" })
             </div>
-            <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">Average Last Six Months Fiber Cut:</label>
+            <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">Avg.Last Six Months Fiber Cut:</label>
             <div class="col-md-4 col-sm-4 mrgn_btm ">
                 @Html.TextBoxFor(m => m.LstCDBAttribute.avg_last_six_months_fiber_cut, new { @class = "form-control clsReadOnly" })
             </div>
