@@ -1623,7 +1623,7 @@
     this.ManageLibraryEvents = function (obj) {
         app.layerActions.entity.resetFocus($('.entityInfo'));
         app.clearCableEvents();
-        if ($(obj).attr("data-tabName").toUpperCase() == "CABLE") {
+        if ($(obj).attr("data-tabName").toUpperCase() == "CABLE" || $(obj).attr("data-tabName").toUpperCase() == "DUCT") {
             app.attachCableEvents();
         }
 
