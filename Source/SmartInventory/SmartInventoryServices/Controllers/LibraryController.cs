@@ -15181,6 +15181,7 @@ namespace SmartInventoryServices.Controllers
                     objSlack.latitude = Convert.ToDouble(objSlack.geom.Split(' ')[1]);
                     objSlack.associated_system_id = Convert.ToInt32(objSlack.duct_id);
                     objSlack.duct_system_id = Convert.ToInt32(objSlack.duct_id);
+					objSlack.associated_network_id = objSlack.duct_name;
                     NetworkCodeIn objIn = new NetworkCodeIn();
                     objIn.eType = "Slack"; objIn.eGeom = objSlack.geom; objIn.gType = "Point";
                     var networkCodeDetail = new BLMisc().GetNetworkCodeDetail(objIn);
