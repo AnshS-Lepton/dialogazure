@@ -87,8 +87,8 @@ var customD3 = function () {
 
         if (app.tempEndDot != null) {
             var endElementData = app.tempEndDot.parent().data();
-            var objOption = $('#ddlCableBEnd option[data-system-id="' + endElementData.systemId + '"][data-entity-type="' + endElementData.entityType + '"]').prop('selected', true);
-            var objOption1 = $('#ddlDuctBEnd option[data-system-id="' + endElementData.systemId + '"][data-entity-type="' + endElementData.entityType + '"]').prop('selected', true);
+             $('#ddlCableBEnd option[data-system-id="' + endElementData.systemId + '"][data-entity-type="' + endElementData.entityType + '"]').prop('selected', true);
+             $('#ddlDuctBEnd option[data-system-id="' + endElementData.systemId + '"][data-entity-type="' + endElementData.entityType + '"]').prop('selected', true);
             pathData.bSystemId = endElementData.systemId;
             pathData.bEntityType = endElementData.entityType;
             pathData.bLocation = endElementData.networkId;
