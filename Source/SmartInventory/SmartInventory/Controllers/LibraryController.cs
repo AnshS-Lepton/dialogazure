@@ -12970,6 +12970,8 @@ namespace SmartInventory.Controllers
         {
             DuctMaster obj = new DuctMaster();
             obj = new BLDuct().GetDuctNameAndLengthForSlack(DuctId);
+			obj.total_slack_count = obj.total_slack_count == null ? 0 : obj.total_slack_count;
+            obj.total_slack_length = obj.total_slack_length == null ? 0 : obj.total_slack_length;
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
