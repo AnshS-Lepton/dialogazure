@@ -121,6 +121,7 @@ namespace DataAccess
                         string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
                         DAIspLine.Instance.CreateOSPCable(DuctInfo.system_id);
                         new DADuct().setEndPoint(DuctInfo.system_id);
+                        DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctInfo.system_id, Models.EntityType.Duct.ToString(), DuctInfo.province_id, 0);
                     }
                     else
                     {
@@ -136,7 +137,6 @@ namespace DataAccess
                         DAIspLine.Instance.saveLineGeom(objLine);
                     }
 
-                    //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Duct.ToString(), DuctInfo.province_id);
                     if (DuctInfo.a_system_id > 0)
                     {
                         AssociateEntity assStartPt = new AssociateEntity();
