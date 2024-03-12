@@ -23464,7 +23464,6 @@ var Main = function () {
                 else {
                     ajaxReq('Library/GetGeoTaggedImage_RegionProvince', { SelectedRegionId: regionIds.toString(), SelectedProvinceId: provinceIds.toString() }, true,
                         function (resp) {
-                            debugger;
                             var bounds = new google.maps.LatLngBounds();
 
 
