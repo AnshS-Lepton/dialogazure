@@ -23418,14 +23418,14 @@ var Main = function () {
                         //;
                         var bounds = new google.maps.LatLngBounds();
                         let latLngArray = [];
-                        const gData = new google.maps.LatLng(resp.latitude, resp.longitude);
+                        const gData = new google.maps.LatLng(resp.result.latitude, resp.longitude);
                         latLngArray.push(gData);
 
                         if (si.gMapObj.shapeObj) {
                             $('.CustomMarker').hide();
                         }
 
-                        si.gMapObj.shapeObj = new CustomMarker(new google.maps.LatLng(latLngArray[0]), si.map, resp.Thumbgeotaggedpath, resp)
+                        si.gMapObj.shapeObj = new CustomMarker(new google.maps.LatLng(latLngArray[0]), si.map, resp.result.Thumbgeotaggedpath, resp)
 
                         latLngArray.forEach(function (latlng) {
                             bounds.extend(latlng);
@@ -23437,8 +23437,8 @@ var Main = function () {
                             ;
                             var table = '<div id="GeoTaggedImg" class="docs-main-div">';
                             table += '<div class="img-div">';
-                            table = '<a href="' + resp.Org_geotaggedpath + '" class="example-image-link" data-lightbox="example-set" style="padding:0;" title = "' + resp.file_name + '">'
-                            table += '<img src="' + resp.Thumbgeotaggedpath + '" />';
+                            table = '<a href="' + resp.result.Org_geotaggedpath + '" class="example-image-link" data-lightbox="example-set" style="padding:0;" title = "' + resp.result.file_name + '">'
+                            table += '<img src="' + resp.result.Thumbgeotaggedpath + '" />';
                             table += '</a>';
                             app.infowindow.setContent("<div style='width:auto;'>" + table + "</div>");
                             // position the infowindow on the marker
@@ -23464,6 +23464,7 @@ var Main = function () {
                 else {
                     ajaxReq('Library/GetGeoTaggedImage_RegionProvince', { SelectedRegionId: regionIds.toString(), SelectedProvinceId: provinceIds.toString() }, true,
                         function (resp) {
+                            debugger;
                             var bounds = new google.maps.LatLngBounds();
 
 

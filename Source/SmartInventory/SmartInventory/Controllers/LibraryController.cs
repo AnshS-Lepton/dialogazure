@@ -12343,7 +12343,9 @@ namespace SmartInventory.Controllers
 					});
 				}
 			}
-			return Json(lstImageResult, JsonRequestBehavior.AllowGet);
+			var jsonResult = Json(lstImageResult, JsonRequestBehavior.AllowGet);
+		    jsonResult.MaxJsonLength = int.MaxValue;
+			return jsonResult;
 		}
 
 		private static bool ExistFile(string remoteAddress, string FtpUser, string FtpPass)
