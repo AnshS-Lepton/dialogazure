@@ -503,7 +503,22 @@ namespace SmartInventory.Controllers
             var userLoginHistory = new BLUserLogin().GetUserLoginDetailById(user.user_id,Source);
             UpdateBrowserInfo(userLoginHistory.login_id);
             Session["userLoginHistory"] = userLoginHistory;
-            FormsAuthentication.SetAuthCookie(user.user_name, false);
+
+            //FormsAuthentication.SetAuthCookie(user.user_name, false);
+
+            /* To tightly couple session id with the form auth ticket,
+             adding session ID to Forms Authentication ticket */
+            FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
+                1, 
+                user.user_name, 
+                DateTime.Now, 
+                DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes), 
+                false, // persistent
+                Session.SessionID 
+            );
+            string encryptedTicket = FormsAuthentication.Encrypt(ticket);
+            HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+            Response.Cookies.Add(authCookie);
         }
 
         void SaveLoginHistory(int userId)
