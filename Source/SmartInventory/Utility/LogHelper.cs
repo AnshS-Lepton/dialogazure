@@ -154,12 +154,12 @@ namespace Utility
             // Log error in file...
             if (_isLogRequiredInFile)
             {
-                //using (StreamWriter sw = File.AppendText(System.Web.Hosting.HostingEnvironment.MapPath(_logFolderPath + "DebugLog-" + DateTimeHelper.Now.ToString("dd-MM-yyyy") + ".txt")))
-                //{
-                //    //sw.WriteLine("\r\nLog Entry:==========>");
-                //    //sw.WriteLine("Log on Time: {0}", DateTimeHelper.Now);
-                //    sw.WriteLine(LogMessage);
-                //}
+                using (StreamWriter sw = File.AppendText(System.Web.Hosting.HostingEnvironment.MapPath(_logFolderPath + "DebugLog-" + DateTimeHelper.Now.ToString("dd-MM-yyyy") + ".txt")))
+                {
+                    //sw.WriteLine("\r\nLog Entry:==========>");
+                    //sw.WriteLine("Log on Time: {0}", DateTimeHelper.Now);
+                    sw.WriteLine(LogMessage);
+                }
             }
 
         }
@@ -169,22 +169,22 @@ namespace Utility
 			// Log error in file...
 			if (_isLogRequiredInFile)
 			{
-				//using (StreamWriter sw = File.AppendText(System.Web.Hosting.HostingEnvironment.MapPath(_logFolderPath + fileName + "DebugLog-" + DateTimeHelper.Now.ToString("dd-MM-yyyy") + ".txt")))
-				//{
-				//	//sw.WriteLine("\r\nLog Entry:==========>");
-				//	//sw.WriteLine("Log on Time: {0}", DateTimeHelper.Now);
-				//	sw.WriteLine(LogMessage);
-				//}
-			}
+                using (StreamWriter sw = File.AppendText(System.Web.Hosting.HostingEnvironment.MapPath(_logFolderPath + fileName + "DebugLog-" + DateTimeHelper.Now.ToString("dd-MM-yyyy") + ".txt")))
+                {
+                    sw.WriteLine("\r\nLog Entry:==========>");
+                    sw.WriteLine("Log on Time: {0}", DateTimeHelper.Now);
+                    sw.WriteLine(LogMessage);
+                }
+            }
 
 		}
 		public void WriteApplicationEventLog(string LogMessage)
         {
-            //using (StreamWriter sw = File.AppendText(System.Web.Hosting.HostingEnvironment.MapPath(_logFolderPath + "ApplicationLogs-" + DateTimeHelper.Now.ToString("dd-MM-yyyy") + ".txt")))
-            //{
-            //    sw.WriteLine("Log Message : {0} {1}", LogMessage, DateTimeHelper.Now);
-            //    sw.WriteLine("\r\n----------------------");
-            //}
+            using (StreamWriter sw = File.AppendText(System.Web.Hosting.HostingEnvironment.MapPath(_logFolderPath + "ApplicationLogs-" + DateTimeHelper.Now.ToString("dd-MM-yyyy") + ".txt")))
+            {
+                sw.WriteLine("Log Message : {0} {1}", LogMessage, DateTimeHelper.Now);
+                sw.WriteLine("\r\n----------------------");
+            }
         }
 
     }
