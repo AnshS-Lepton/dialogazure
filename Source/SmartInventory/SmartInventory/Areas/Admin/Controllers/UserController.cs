@@ -60,7 +60,7 @@ namespace SmartInventory.Areas.Admin.Controllers
 
                 }
                 objUser.lstRole = new BLUser().GetAllRole(objLgnUsrDtl.role_id, user_id);
-    objUser.lstRM = GetReportingManagers(objUser.role_id);
+                objUser.lstRM = GetReportingManagers(objUser.role_id);
                 objUser.lstWarehouseCode = new BLUser().BindWarehouseCode();
 
                 objUser.lstUserModule = new BLMisc().GetRoleModule(objUser.role_id);// new BLMisc().GetUserModuleMasterList();
@@ -118,7 +118,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                 GlobalSetting globalSetting = new BLGlobalSetting().getValueFullText("IsMultiManagerAllowed");
                 if (globalSetting != null)
                 {
-                    objUser.is_multi_manager_allowed = globalSetting.value == "1" ? true : false;
+                    objUser.is_multi_manager_allowed = globalSetting.value == "1" ? true : false;                   
                     objUser.multi_manager_ids = Convert.ToString(objUser.manager_id);
                     if (objUser.is_multi_manager_allowed)
                     {
@@ -128,6 +128,14 @@ namespace SmartInventory.Areas.Admin.Controllers
                         {
 
                             objUser.multi_manager_ids = Convert.ToString(objUser.manager_id);
+                        }
+                    }
+                    if (ApplicationSettings.fetoolsenabled)
+                    {
+                        objUser.multi_tool_ids = string.Join(",", new BLUserToolMapping().GetToolMapping(objUser.user_id).Select(x => x.tool_id).ToList());
+                      if (string.IsNullOrEmpty(objUser.multi_tool_ids))
+                        {
+                            objUser.multi_tool_ids = Convert.ToString(objUser.multi_tool_ids);
                         }
                     }
                 }
@@ -142,6 +150,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                 {
                     objUser.user_type = objUser.lstUserType.FirstOrDefault().dropdown_value;
                 }
+                objUser.lstFEtool = new BLUser().BindFETool(user_id);
             }
 
 
@@ -257,10 +266,10 @@ namespace SmartInventory.Areas.Admin.Controllers
             List<UserSeviceFacilityMapping> lstUserSeviceFacilityMapping = null;
             List<UserJoTypeMapping> lstUserJoTypeMapping = null;
             List<UserManagerMapping> lstUserManagerMapping = new List<UserManagerMapping>();
-
+            List<userfetoolmapping> lstUserToolMapping = new List<userfetoolmapping>();
             List<UserJoCategoryMapping> lstUserJoCategoryMapping = null;
             List<UserWarehouseCodeMapping> lstUserWarehouseCodeMapping = new List<UserWarehouseCodeMapping>();
-
+           
             // JsonResponse<string> objResp = new JsonResponse<string>();
             ModelState.Clear();
             PageMessage objMsg = new PageMessage();
@@ -343,6 +352,19 @@ namespace SmartInventory.Areas.Admin.Controllers
                     }
                 }
                 lstUserManagerMapping = new BLUserManagerMapping().SaveUserManagerMapping(lstUserManagerMapping, objUser.user_id);
+
+                if (objUser.multi_tool_ids != null)
+                {
+                    var listToolsId = objUser.multi_tool_ids.Split(',').ToList();
+                    if (listToolsId.Count > 0)
+                    {
+                        foreach (string item in listToolsId)
+                        {
+                            lstUserToolMapping.Add(new userfetoolmapping() { user_id = objUser.user_id, tool_id = Convert.ToInt32(item) });
+                        }
+                    }
+                }
+                lstUserToolMapping = new BLUserToolMapping().SaveUserToolMapping(lstUserToolMapping, objUser.user_id);
                 if (objUser.multi_warhouse_code != null)
                 {
                     var listWarehouseCode = objUser.multi_warhouse_code.Split(',').ToList();
@@ -411,7 +433,8 @@ namespace SmartInventory.Areas.Admin.Controllers
             objUser.lstWarehouseCode = new BLUser().BindWarehouseCode();
 
             objUser.lstUserType = new BLMisc().GetDropDownList("", DropDownType.UserType.ToString());
-
+             objUser.lstFEtool = new BLUser().BindFETool(user_id).OrderBy(m => m.key).ToList();
+            
 
             objUser.role_id = objUser.role_id;
             objUser.manager_id = objUser.manager_id;

@@ -359,6 +359,16 @@ namespace DataAccess
             catch { throw; }
 
         }
+        public List<KeyValueDropDown> BindFETool( int user_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_user_tool_data", new {  p_userId = user_id }, true);
+            }
+            catch { throw; }
+
+        }
+        
 
         public List<KeyValueDropDown> BindWarehouseCode()
         {
@@ -1697,6 +1707,23 @@ namespace DataAccess
            // return repo.GetAll(m => m.manager_id == user_id).ToList();
         }
     }
+    public class DAUserToolMapping : Repository<userfetoolmapping>
+    {
+        public List<userfetoolmapping> SaveUserToolMapping(List<userfetoolmapping> lstUserToolsMapping, int user_id)
+        {
+            List<userfetoolmapping> OldLst = GetToolMapping(user_id);
+            repo.DeleteRange(OldLst);
+            repo.Insert(lstUserToolsMapping);
+            return lstUserToolsMapping;
+        }
+        public List<userfetoolmapping> GetToolMapping(int user_id)
+        {
+            return repo.GetAll(m => m.user_id == user_id).ToList();
+            // return repo.GetAll(m => m.manager_id == user_id).ToList();
+        }
+
+    }
+    
 
     public class DAWarehouseCodeMapping : Repository<UserWarehouseCodeMapping>
     {
