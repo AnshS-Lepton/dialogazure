@@ -339,6 +339,7 @@ namespace Models
     public enum PortStatus
     {
         Vacant,
+        Reserved,
         Connected
     }
     public enum UnitInputType
