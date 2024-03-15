@@ -266,7 +266,7 @@ namespace SmartInventory.Areas.Admin.Controllers
             List<UserSeviceFacilityMapping> lstUserSeviceFacilityMapping = null;
             List<UserJoTypeMapping> lstUserJoTypeMapping = null;
             List<UserManagerMapping> lstUserManagerMapping = new List<UserManagerMapping>();
-            List<userfetoolmapping> lstUserToolMapping = new List<userfetoolmapping>();
+            List<userFeToolMapping> lstUserToolMapping = new List<userFeToolMapping>();
             List<UserJoCategoryMapping> lstUserJoCategoryMapping = null;
             List<UserWarehouseCodeMapping> lstUserWarehouseCodeMapping = new List<UserWarehouseCodeMapping>();
            
@@ -356,13 +356,11 @@ namespace SmartInventory.Areas.Admin.Controllers
                 if (objUser.multi_tool_ids != null)
                 {
                     var listToolsId = objUser.multi_tool_ids.Split(',').ToList();
-                    if (listToolsId.Count > 0)
-                    {
+                   
                         foreach (string item in listToolsId)
                         {
-                            lstUserToolMapping.Add(new userfetoolmapping() { user_id = objUser.user_id, tool_id = Convert.ToInt32(item) });
+                            lstUserToolMapping.Add(new userFeToolMapping() { user_id = objUser.user_id, tool_id = Convert.ToInt32(item) });
                         }
-                    }
                 }
                 lstUserToolMapping = new BLUserToolMapping().SaveUserToolMapping(lstUserToolMapping, objUser.user_id);
                 if (objUser.multi_warhouse_code != null)

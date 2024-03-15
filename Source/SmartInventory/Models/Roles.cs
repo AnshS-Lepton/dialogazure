@@ -305,7 +305,7 @@ namespace Models
         public int user_id { get; set; }
     }
 
-    public class userfetoolmapping
+    public class userFeToolMapping
     {
         public int id { get; set; }
         public int user_id { get; set; }

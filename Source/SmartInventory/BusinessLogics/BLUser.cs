@@ -657,11 +657,11 @@ namespace BusinessLogics
 
     public class BLUserToolMapping
     {
-        public List<userfetoolmapping> SaveUserToolMapping(List<userfetoolmapping> lstUserToolMapping, int user_id)
+        public List<userFeToolMapping> SaveUserToolMapping(List<userFeToolMapping> lstUserToolMapping, int user_id)
         {
             return new DAUserToolMapping().SaveUserToolMapping(lstUserToolMapping, user_id);
         }
-        public List<userfetoolmapping> GetToolMapping(int user_id)
+        public List<userFeToolMapping> GetToolMapping(int user_id)
         {
             return new DAUserToolMapping().GetToolMapping(user_id);
         }

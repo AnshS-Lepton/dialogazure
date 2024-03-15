@@ -1707,16 +1707,16 @@ namespace DataAccess
            // return repo.GetAll(m => m.manager_id == user_id).ToList();
         }
     }
-    public class DAUserToolMapping : Repository<userfetoolmapping>
+    public class DAUserToolMapping : Repository<userFeToolMapping>
     {
-        public List<userfetoolmapping> SaveUserToolMapping(List<userfetoolmapping> lstUserToolsMapping, int user_id)
+        public List<userFeToolMapping> SaveUserToolMapping(List<userFeToolMapping> lstUserToolsMapping, int user_id)
         {
-            List<userfetoolmapping> OldLst = GetToolMapping(user_id);
+            List<userFeToolMapping> OldLst = GetToolMapping(user_id);
             repo.DeleteRange(OldLst);
             repo.Insert(lstUserToolsMapping);
             return lstUserToolsMapping;
         }
-        public List<userfetoolmapping> GetToolMapping(int user_id)
+        public List<userFeToolMapping> GetToolMapping(int user_id)
         {
             return repo.GetAll(m => m.user_id == user_id).ToList();
             // return repo.GetAll(m => m.manager_id == user_id).ToList();
