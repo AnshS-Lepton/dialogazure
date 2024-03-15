@@ -150,7 +150,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                 {
                     objUser.user_type = objUser.lstUserType.FirstOrDefault().dropdown_value;
                 }
-                objUser.lstFEtool = new BLUser().BindFETool(user_id);
+                objUser.lstFEtool = new BLUser().BindFETool(id);
             }
 
 
@@ -356,7 +356,6 @@ namespace SmartInventory.Areas.Admin.Controllers
                 if (objUser.multi_tool_ids != null)
                 {
                     var listToolsId = objUser.multi_tool_ids.Split(',').ToList();
-                   
                         foreach (string item in listToolsId)
                         {
                             lstUserToolMapping.Add(new userFeToolMapping() { user_id = objUser.user_id, tool_id = Convert.ToInt32(item) });
