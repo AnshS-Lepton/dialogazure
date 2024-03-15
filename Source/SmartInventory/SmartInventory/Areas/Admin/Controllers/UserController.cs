@@ -150,10 +150,10 @@ namespace SmartInventory.Areas.Admin.Controllers
                 {
                     objUser.user_type = objUser.lstUserType.FirstOrDefault().dropdown_value;
                 }
-                objUser.lstFEtool = new BLUser().BindFETool(id);
+                objUser.lstFEtool = new BLUser().BindFETool(0);
             }
 
-
+           
 
             return View(objUser);
         }
@@ -430,9 +430,7 @@ namespace SmartInventory.Areas.Admin.Controllers
             objUser.lstWarehouseCode = new BLUser().BindWarehouseCode();
 
             objUser.lstUserType = new BLMisc().GetDropDownList("", DropDownType.UserType.ToString());
-             objUser.lstFEtool = new BLUser().BindFETool(user_id).OrderBy(m => m.key).ToList();
-            
-
+            objUser.lstFEtool = new BLUser().BindFETool(0);//.OrderBy(m => m.key).ToList();
             objUser.role_id = objUser.role_id;
             objUser.manager_id = objUser.manager_id;
             objUser.warehouse_code = objUser.warehouse_code;
@@ -583,7 +581,7 @@ namespace SmartInventory.Areas.Admin.Controllers
             var objLgnUsrDtl = (User)Session["userDetail"];
 
             User objUser = new User();
-            objUser.lstRM = GetReportingManagers(); ;
+            objUser.lstRM = GetReportingManagers(); 
             objUser = new BLUser().GetUserDetailByID(id);
             objUser.password = Convert.ToString(Utility.MiscHelper.DecodeTo64(objUser.password));
             objUser.lstRole = new BLUser().GetAllRole(objLgnUsrDtl.role_id, objLgnUsrDtl.user_id);
