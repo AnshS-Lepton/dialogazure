@@ -33,7 +33,6 @@ namespace Models
         public PageMessage pageMsg { get; set; }
         [NotMapped]
         public int totalRecords { get; set; }
-
         public GlobalSetting()
         {
             pageMsg = new PageMessage();
