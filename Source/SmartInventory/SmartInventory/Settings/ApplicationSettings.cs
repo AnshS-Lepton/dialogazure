@@ -83,6 +83,7 @@ namespace SmartInventory.Settings
         public static int CableExtraLengthPercentage = 0;
         public static int SplitCableBuffer = 0;
         public static int SplitDuctBuffer = 0;
+        public static int SplitMicroductBuffer = 0;
         public static int SplitTrenchBuffer = 0;
         public static int LoopBuffer = 0;
         public static int AssociateEntityBuffer = 0;
@@ -239,8 +240,9 @@ namespace SmartInventory.Settings
         public static string smspassword = "";
         static string originator = "";
         static string smsapi = "";
-
-
+        public static int MaxLineEntityLength = 0;
+        public static int isCDBAttributeEnabled = 0;
+        public static bool fetoolsenabled = true;
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -250,6 +252,8 @@ namespace SmartInventory.Settings
             {
                 if (objSetting.key == "AppVersion")
                     AppVersion = objSetting.value;
+                if (objSetting.key == "fetoolsenabled")
+                    fetoolsenabled =Convert.ToInt32(objSetting.value) == 1 ? true : false;
                 if (objSetting.key == "EntitySearchLength")
                     EntitySearchLength = Convert.ToInt32(objSetting.value);
                 if (objSetting.key == "BldBufferInMtr")
@@ -319,6 +323,8 @@ namespace SmartInventory.Settings
                     SplitCableBuffer = Convert.ToInt32(objSetting.value);
                 if (objSetting.key == "SplitDuctBuffer")
                     SplitDuctBuffer = Convert.ToInt32(objSetting.value);
+                if (objSetting.key == "SplitMicroductBuffer")
+                    SplitMicroductBuffer = Convert.ToInt32(objSetting.value);
                 if (objSetting.key == "LoopBuffer")
                     LoopBuffer = Convert.ToInt32(objSetting.value);
                 if (objSetting.key == "AssociateEntityBuffer")
@@ -827,9 +833,16 @@ namespace SmartInventory.Settings
 				{
 					ExcelReportLimitCount = Convert.ToInt32(objSetting.value);
 				}
+                if (objSetting.key == "MaxLineEntityLength")
+                {
+                    MaxLineEntityLength = Convert.ToInt32(objSetting.value);
+                }
+                if (objSetting.key == "isCDBAttributeEnabled")
+                {
+                    isCDBAttributeEnabled = Convert.ToInt32(objSetting.value);
+                }
 
-
-			}
+            }
         }
     }
 }

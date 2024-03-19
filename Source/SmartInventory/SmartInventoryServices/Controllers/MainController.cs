@@ -3502,16 +3502,29 @@ namespace SmartInventoryServices.Controllers
             {
                 NetworkStage objIn = ReqHelper.GetRequestData<NetworkStage>(data);
                 HeaderAttributes headerAttribute = ReqHelper.getHeaderValue(Request.Headers.ToList());
+                var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objIn.entity_type.ToUpper()).FirstOrDefault() : null;
                 if (headerAttribute.source_ref_id != "0" && headerAttribute.source_ref_type.ToUpper() != "NETWORK_TICKET")
                 {
                     var updatenetwork = new BLNetworkStatus().UpdateNetworkStatus(objIn.systemid, objIn.entity_type, objIn.curr_status, objIn.user_id);
                     updatenetwork.message = BLConvertMLanguage.MultilingualMessageConvert(updatenetwork.message);
-
+                    switch (objIn.old_status)
+                    {
+                        case "P": objIn.old_status = "Planned"; break;
+                        case "A": objIn.old_status = "As Built"; break;
+                        case "D": objIn.old_status = "Dormant"; break;
+                    }
+                    switch (objIn.curr_status)
+                    {
+                        case "P": objIn.curr_status = "Planned"; break;
+                        case "A": objIn.curr_status = "As Built"; break;
+                        case "D": objIn.curr_status = "Dormant"; break;
+                    };
                     if (updatenetwork.status)
                     {
                         response.results = updatenetwork;
                         response.status = StatusCodes.OK.ToString();
-                        response.error_message = Convert.ToString(updatenetwork.message);
+                        //response.error_message = Convert.ToString(updatenetwork.message);
+                        response.error_message = string.Format(BLConvertMLanguage.MultilingualMessageConvert(Resources.Resources.SI_ISP_GBL_JQ_GBL_021), layerDetail.layer_title, objIn.old_status, objIn.curr_status);
 
                     }
                     else
@@ -3531,7 +3544,6 @@ namespace SmartInventoryServices.Controllers
                     objEntityInfo.entity_type = objIn.entity_type;
                     objEntityInfo.source_ref_id = headerAttribute.source_ref_id;
                     objEntityInfo.source_ref_type = headerAttribute.source_ref_type.ToUpper();
-                    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objIn.entity_type.ToUpper()).FirstOrDefault() : null;
                     switch (objIn.old_status)
                     {
                         case "P": objIn.old_status = "Planned"; break;
@@ -4488,6 +4500,42 @@ namespace SmartInventoryServices.Controllers
         }
         #endregion
 
+        #region GetRouteAssociation
+        /// <summary>
+        /// GetEntityAssociation
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>boolean</returns>
+        ///  <Created By>Arabind</returns>
+        [HttpPost]
+        public ApiResponse<AssociateRoute> GetRouteAssociation(ReqInput data)
+        {
+            var response = new ApiResponse<AssociateRoute>();
+            try
+            {
+                AssociateRouteRequest objIn = ReqHelper.GetRequestData<AssociateRouteRequest>(data);
+                AssociateRoute objLineAssociate = new AssociateRoute();
+                objLineAssociate.parent_system_id = objIn.systemId;
+                objLineAssociate.parent_entity_type = objIn.entityType;
+                objLineAssociate.parent_network_id = objIn.networkId;
+               
+                objLineAssociate.parent_multi_association = true;
+                objLineAssociate.listrouteInfo = new BLMisc().getRouteEntityInLineBuffer(objIn.systemId, objIn.entityType);
+                
+                response.status = ResponseStatus.OK.ToString();
+                response.results = objLineAssociate;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("GetRouteAssociation()", "Main Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.ToString();
+            }
+            return response;
+        }
+        #endregion
+
         #region ViewOtherEntityAssociation
         /// <summary>
         /// ViewOtherEntityAssociation
@@ -4547,6 +4595,38 @@ namespace SmartInventoryServices.Controllers
             {
                 ErrorLogHelper logHelper = new ErrorLogHelper();
                 logHelper.ApiLogWriter("SaveEntityAssociate()", "Main Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
+
+        #region SaveRouteAssociate
+        /// <summary>
+        /// SaveEntityAssociate
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>boolean</returns>
+        ///  <Created By>Arabind</returns>
+        [HttpPost]
+        public ApiResponse<AssociateRoute> SaveRouteAssociate(ReqInput data)
+        {
+            var response = new ApiResponse<AssociateRoute>();
+            try
+            {
+                AssociateRoute objRoute = ReqHelper.GetRequestData<AssociateRoute>(data);
+                var res = new BLMisc().saveRouteAssocition(JsonConvert.SerializeObject(objRoute.listrouteInfo), objRoute.parent_system_id, objRoute.parent_entity_type, objRoute.userId);
+                objRoute.pageMsg.status = ResponseStatus.OK.ToString();
+                objRoute.pageMsg.message = Resources.Resources.SI_OSP_GBL_NET_FRM_169;
+                response.status = ResponseStatus.OK.ToString();
+                response.error_message = Resources.Resources.SI_OSP_GBL_NET_FRM_169;
+                response.results = objRoute;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("SaveRouteAssociate()", "Main Controller", data.data, ex);
                 response.status = StatusCodes.UNKNOWN_ERROR.ToString();
                 response.error_message = ex.Message.ToString();
             }
@@ -4997,7 +5077,7 @@ namespace SmartInventoryServices.Controllers
                             objDict.Add("Comments", "Approved");
                             BLUser objBLuser = new BLUser();
                             List<EventEmailTemplateDetail> objEventEmailTemplateDetail = objBLuser.GetEventEmailTemplateDetail(EventName);
-                            System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, null, objTicketMaster[0].projectname, EventName));
+                            System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, EmailSettings.AllEmailSettings, null, objTicketMaster[0].projectname, EventName));
                             //commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, null, null, objTicketMaster[0].projectname);
 
 
@@ -6177,6 +6257,87 @@ namespace SmartInventoryServices.Controllers
             }
             return response;
         }
+
+        #region GetRegionProvinceBasedOnLocation
+        /// <summary>
+        /// GetRegionProvinceBasedOnLocation
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>boolean</returns>
+        ///  <Created By>Rahul Sharma</returns>
+        [HttpPost]
+        public ApiResponse<UserRegionProvince> GetRegionProvinceBasedOnLocation(ReqInput data)
+        {
+            var response = new ApiResponse<UserRegionProvince>();
+            try
+            {
+                response.status = ResponseStatus.OK.ToString();
+                UserRegionProvinceFilter obj = ReqHelper.GetRequestData<UserRegionProvinceFilter>(data);
+                string txtGeom = obj.lng + " " + obj.lat;
+
+
+                var objUserRegionProvince = new BLMisc().GetRegionProvinceBasedOnLocation(txtGeom, obj.userId);
+                if (objUserRegionProvince != null && !string.IsNullOrEmpty(objUserRegionProvince.provincename))
+                {
+                    response.status = ResponseStatus.OK.ToString();
+                    //response.error_message = BLConvertMLanguage.MultilingualMessageConvert(objAreaValid.message); //objAreaValid.message;
+                    response.results = objUserRegionProvince;
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                // logHelper.ApiLogWriter("ValidateEntityGeom()", "Main Controller", data.data, ex);
+                logHelper.ApiLogWriter("GetRegionProvinceBasedOnLocation()", "Main Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
+
+        [HttpPost]
+
+        public ApiResponse<List<NEDuctDetails>> GetNearByDucts(ReqInput data)
+        {
+            var response = new ApiResponse<List<NEDuctDetails>>();
+            try
+            {
+
+                NearByCables objCable = ReqHelper.GetRequestData<NearByCables>(data);
+                if (objCable.bufferInMtrs <= 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Invalid buffer!";
+                    return response;
+                }
+                else if (objCable.latitude == 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Invalid latitude!";
+                    return response;
+                }
+                else if (objCable.longitude == 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Invalid longitude!";
+                    return response;
+                }
+                response.status = StatusCodes.OK.ToString();
+                response.results = BLSlack.Instance.GetNearByDuctDetails(objCable.longitude, objCable.latitude, objCable.bufferInMtrs);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("GetNearByDucts()", "Main Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = "Error While Processing  Request.";
+            }
+
+            return response;
+        }
+
     }
 
 }

@@ -366,7 +366,7 @@ namespace SmartInventory.Controllers
             string fname = (string)Session["fileName"];
             List<Mapping> lstMapping = blDataUploader.GetMappings(entityType);
 
-            if (entityType == EntityType.Cable.ToString() || entityType == EntityType.Duct.ToString() || entityType == EntityType.Trench.ToString() || entityType == EntityType.Microduct.ToString() || entityType == EntityType.LandBase.ToString())
+            if (entityType == EntityType.Cable.ToString() || entityType == EntityType.Duct.ToString() || entityType == EntityType.Trench.ToString() || entityType == EntityType.Microduct.ToString() || entityType == EntityType.LandBase.ToString() || entityType == EntityType.ROW.ToString())
             {
                 geomTempColName = lstMapping.Where(m => m.DbColName.ToLower() == "sp_geometry").FirstOrDefault().TemplateColName;
             }
@@ -875,10 +875,15 @@ namespace SmartInventory.Controllers
             if (dataUploaderModel.lstUserModule.Contains("IMD") && ApplicationSettings.isSmartPlannerEnabled)
             {
                 var planDetail = ImportDataAPIRequest.GetSmartPlannerAPIPlanListRequest();
-                var data = JsonConvert.DeserializeObject<JsonPlannerResponse<List<List<PlanUserList>>>>(planDetail);
-                if (data.results[0] != null)
+
+                if (!string.IsNullOrEmpty(planDetail))
                 {
-                    dataUploaderModel.AllUsers = data.results[0].DistinctBy(x => x.user_name).OrderBy(x => x.user_name).ToList();
+                    var data = JsonConvert.DeserializeObject<JsonPlannerResponse<List<List<PlanUserList>>>>(planDetail);
+
+                    if (data.results != null && data.results.Count > 0 && data.results[0] != null)
+                    {
+                        dataUploaderModel.AllUsers = data.results[0].DistinctBy(x => x.user_name).OrderBy(x => x.user_name).ToList();
+                    }
                 }
             }
             //dataUploaderModel.lstDxfSourceList = new BLDataUploader().getDxfSourceList()

@@ -123,11 +123,13 @@ grid.Column("dormant", "Dormant", format: @<text>@item.dormant</text>)
             $("#txtSearchText").val("");
             $("#btnPrintLogSearch").trigger("click");
         });
+        if (@Model.ExportLog.Count > 0) {
+            addDefaultSortingIcons("tblPrintLog");
+            onGridHeaderClick('tblPrintLog');
+            updateNumberstoFormatedNumber();
+            UpdateFormattedNumbers();
+        }
 
-        addDefaultSortingIcons("tblPrintLog");
-        onGridHeaderClick('tblPrintLog');
-        updateNumberstoFormatedNumber();
-        UpdateFormattedNumbers();
     });
     function updateNumberstoFormatedNumber() {
         $('span[data]').each(function (index) {

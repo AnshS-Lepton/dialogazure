@@ -22,21 +22,21 @@
         $('.chosen-select').chosen({ width: '100%' });
         $('#specification').chosen().change(function (event) {
             var dID = $(this).val();
-            si.bindVendor(dID);
+            bindVendor(dID);
         });
         $('#ddlVendor').chosen().change(function (event) {
             var specfi = $("#specification option:selected").val(); //
             var vandorid = $(this).val();
             var entitytype = $('#entityType').val();
-            si.bindCateSubcat(entitytype,specfi, vandorid);
+            bindCateSubcat(entitytype,specfi, vandorid);
         });
         $('#ddlType').chosen().change(function (event) {
             var dID = $(this).val();
-            si.bindBrand(dID);
+            bindBrand(dID);
         });
         $('#ddlBrand').chosen().change(function (event) {
             var dID = $(this).val();
-            si.bindModel(dID);
+            bisndModel(dID);
         });
     });
 </script>

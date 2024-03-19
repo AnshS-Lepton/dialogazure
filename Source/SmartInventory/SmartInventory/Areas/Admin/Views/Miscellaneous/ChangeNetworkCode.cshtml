@@ -53,7 +53,7 @@
                     </div>
                     <div id="dvoldnetworkid" class="col-md-8">
                         @Html.TextBoxFor(m => Model.old_network_id, new { @class = "form-control displayName", @maxlength = "50", id = "txtoldnetworkcode", @onchange = "networkcodevalidate(this);", style = "width:100%;float:left;text-transform: uppercase;" })
-                        <img style="margin-left: -23px;width:21px;" class="GifImg" id="ImgValidation" />
+                        <img class="GifImg" id="ImgValidation" />
                     </div>
                 </div>
             </div>
@@ -152,9 +152,9 @@
         var layername = $('#lstLayers').val();
         var result = checknetworkidExistence(networkid.value, layername, 'P')
         if ($('#txtMaskedNetworkId').children(".GifImg").length <= 0)
-            $('#txtMaskedNetworkId').append(' <img src="' + baseUrl + appRoot.replace('Admin','') + '/Areas/Admin/Content/images/tick_1.gif" style="margin-top: -25px;;width:21px;" align="right" class="GifImg" id="ImgValidationNew" />')
+            $('#txtMaskedNetworkId').append(' <img src="' + baseUrl + appRoot.replace('Admin','') + '/Areas/Admin/Content/images/tick_1.gif"  align="right" class="GifImg" id="ImgValidationNew" />')
         if ($('#txtMaskedNetworkId').children(".SetCrossimg").length <= 0)
-            $('#txtMaskedNetworkId').append(' <img src="' + baseUrl + appRoot.replace('Admin', '') + '/Areas/Admin/Content/images/cross.gif" style="margin-top: -25px;;width:21px;" align="right" class="SetCrossimg" id="ImgValidationNewCross" />')
+            $('#txtMaskedNetworkId').append(' <img src="' + baseUrl + appRoot.replace('Admin', '') + '/Areas/Admin/Content/images/cross.gif" align="right" class="SetCrossimg GifImg" id="ImgValidationNewCross" />')
         if (result.status != "OK") {
             $('#ImgValidationNewCross').hide();
             $('#ImgValidationNew').show();

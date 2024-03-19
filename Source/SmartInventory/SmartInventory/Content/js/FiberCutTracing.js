@@ -218,7 +218,7 @@ var FiberCutTracing = (function () {
             $(DE.ddlStreamType).empty();
             $(DE.ddlStreamType).append($("<option></option>").val('0').html('--Select--'));
             $.each(resp, function (data, value) {
-                $(DE.ddlStreamType).append($("<option data-geom='" + value.fiber_path_geom + "' data-route-length='" + value.fiber_length.toFixed(2) + "' style='background-color:" + (value.is_backword_path == false ? "rgb(239, 168, 168)" : "rgb(197, 200, 236)") + "'></option>").val(value.is_backword_path).html(value.stream_type + '(' + value.fiber_length.toFixed(2) + ' Meter)'));
+                $(DE.ddlStreamType).append($("<option data-geom='" + value.fiber_path_geom + "' data-route-length='" + value.fiber_length.toFixed(2) + "' style='background-color:" + (value.is_backword_path == false ? "rgb(239, 168, 168)" : "rgb(197, 200, 236)") + "'></option>").val(value.is_backword_path).html(value.stream_type + '(' + value.fiber_length.toFixed(2) + ' meter)'));
             });
             $(DE.ddlStreamType + ' option[data-geom="null"]').css({ 'color': '#000', 'cursor': 'not-allowed' }).attr('disabled', true).trigger("chosen:updated");
             $(DE.ddlStreamType).trigger('chosen:updated');

@@ -880,8 +880,27 @@ namespace SmartInventoryServices.Controllers
 								return response;
 							}
 						}
-						#endregion
-						else if (headerAttribute.entity_type.ToUpper() == EntityType.Gipipe.ToString().ToUpper())
+                        #endregion
+                        #region Microductuct
+                        else if (headerAttribute.entity_type.ToUpper() == EntityType.Microduct.ToString().ToUpper())
+                        {
+                            if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
+                            {
+                                return AddMicroduct(data);
+                            }
+                            else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
+                            {
+                                return SaveMicroduct(data);
+                            }
+                            else
+                            {
+                                response.status = ResponseStatus.FAILED.ToString();
+                                response.error_message = "Entity_Action not matched";
+                                return response;
+                            }
+                        }
+                        #endregion
+                        else if (headerAttribute.entity_type.ToUpper() == EntityType.Gipipe.ToString().ToUpper())
 						{
 							if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
 							{
@@ -1073,11 +1092,29 @@ namespace SmartInventoryServices.Controllers
 								return response;
 							}
 						}
-						#endregion
-						//
+                        #endregion
+                        //
+						//SLACK BY ANTRA
 
+                        else if (headerAttribute.entity_type.ToUpper() == EntityType.Slack.ToString().ToUpper())
+                        {
+                            if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
+                            {
+                                return AddSlack(data);
+                            }
+                            else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
+                            {
+                                return SaveSlack(data);
+                            }
+                            else
+                            {
+                                response.status = ResponseStatus.FAILED.ToString();
+                                response.error_message = "Entity_Action not matched";
+                                return response;
+                            }
+                        }
 
-					}
+                    }
 				}
 				else if (objEntityInfo.system_id > 0)// headerAttribute.entity_action.ToUpper() == EntityAction.Update.ToString().ToUpper())
 				{
@@ -1185,7 +1222,7 @@ namespace SmartInventoryServices.Controllers
 				if (objPoleMaster.networkIdType == NetworkIdType.A.ToString() && objPoleMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Pole.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPoleMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Pole.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPoleMaster.geom, parent_eType = objPoleMaster.pEntityType, parent_sysId = objPoleMaster.pSystemId });                
 					if (objPoleMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -1349,7 +1386,7 @@ namespace SmartInventoryServices.Controllers
 				if (objManholeMaster.networkIdType == NetworkIdType.A.ToString() && objManholeMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Manhole.ToString(), gType = GeometryType.Point.ToString(), eGeom = objManholeMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Manhole.ToString(), gType = GeometryType.Point.ToString(), eGeom = objManholeMaster.geom, parent_eType = objManholeMaster.pEntityType, parent_sysId = objManholeMaster.pSystemId });
 					if (objManholeMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -1589,7 +1626,7 @@ namespace SmartInventoryServices.Controllers
 				if (objTreeMaster.networkIdType == NetworkIdType.A.ToString() && objTreeMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Tree.ToString(), gType = GeometryType.Point.ToString(), eGeom = objTreeMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Tree.ToString(), gType = GeometryType.Point.ToString(), eGeom = objTreeMaster.geom, parent_eType = objTreeMaster.pEntityType, parent_sysId = objTreeMaster.pSystemId });
 					if (objTreeMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -1781,7 +1818,7 @@ namespace SmartInventoryServices.Controllers
 				if (objWallMountMaster.networkIdType == NetworkIdType.A.ToString() && objWallMountMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.WallMount.ToString(), gType = GeometryType.Point.ToString(), eGeom = objWallMountMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.WallMount.ToString(), gType = GeometryType.Point.ToString(), eGeom = objWallMountMaster.geom, parent_eType = objWallMountMaster.pEntityType, parent_sysId = objWallMountMaster.pSystemId });
 					if (objWallMountMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -2026,7 +2063,7 @@ namespace SmartInventoryServices.Controllers
 				if (objPODMaster.networkIdType == NetworkIdType.A.ToString() && objPODMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.POD.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPODMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.POD.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPODMaster.geom, parent_eType = objPODMaster.pEntityType, parent_sysId = objPODMaster.pSystemId });
 					if (objPODMaster.isDirectSave == true)
 					{
 						if (objPODMaster.parent_entity_type.ToLower() == EntityType.Structure.ToString().ToLower())
@@ -2341,7 +2378,7 @@ namespace SmartInventoryServices.Controllers
 				if (objMPODMaster.networkIdType == NetworkIdType.A.ToString() && objMPODMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.MPOD.ToString(), gType = GeometryType.Point.ToString(), eGeom = objMPODMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.MPOD.ToString(), gType = GeometryType.Point.ToString(), eGeom = objMPODMaster.geom, parent_eType = objMPODMaster.pEntityType, parent_sysId = objMPODMaster.pSystemId });
 					if (objMPODMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -2916,7 +2953,12 @@ namespace SmartInventoryServices.Controllers
 				//for additional-attributes
 				objCbl.other_info = new BLCable().GetOtherInfoCable(objCbl.system_id);
 				fillRegionProvAbbr(objCbl);
-			}
+                var objCDB = BLCable.Instance.GetDetailsCDBAttribute(objCbl.system_id);
+                if (objCDB != null)
+                {
+                    objCbl.LstCDBAttribute = objCDB;
+                }
+            }
 			objCbl.lstUserModule = new BLLayer().GetUserModuleAbbrList(objIn.user_id, UserType.Web.ToString());
 			return objCbl;
 		}
@@ -2991,7 +3033,10 @@ namespace SmartInventoryServices.Controllers
 			objCableIn.listExecutionMethod = objDDL.Where(x => x.dropdown_type == DropDownType.Execution_Method.ToString()).ToList();
 			objCableIn.listcableType = objDDL.Where(x => x.dropdown_type == DropDownType.Cable_Type.ToString()).ToList();
 			objCableIn.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			var _objDDL = new BLMisc().GetDropDownList("");
+            objCableIn.LstCDBAttribute.lstRoute = objDDL.Where(x => x.dropdown_type == DropDownType.Route_Type.ToString()).ToList();
+            objCableIn.LstCDBAttribute.lstFiber = objDDL.Where(x => x.dropdown_type == DropDownType.Fiber_Type_LOV.ToString()).ToList();
+            objCableIn.LstCDBAttribute.lstOperator = objDDL.Where(x => x.dropdown_type == DropDownType.Operator_Type_LOV.ToString()).ToList();
+            var _objDDL = new BLMisc().GetDropDownList("");
 			objCableIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objCableIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
 		}
@@ -3737,7 +3782,7 @@ namespace SmartInventoryServices.Controllers
 						objADBMaster.geom = GetPointTypeParentGeom(objADBMaster.pSystemId, objADBMaster.pEntityType);
 					}
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.ADB.ToString(), gType = GeometryType.Point.ToString(), eGeom = objADBMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.ADB.ToString(), gType = GeometryType.Point.ToString(), eGeom = objADBMaster.geom, parent_eType = objADBMaster.pEntityType, parent_sysId = objADBMaster.pSystemId });
 					if (objADBMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -3761,7 +3806,13 @@ namespace SmartInventoryServices.Controllers
 				//ADBTemplateMaster objItem = new ADBTemplateMaster();
 
 				this.Validate(objADBMaster);
-				if (ModelState.IsValid)
+                if (objADBMaster.pSystemId > 0 && !String.IsNullOrEmpty(objADBMaster.pNetworkId))
+                {
+                    objADBMaster.parent_system_id = objADBMaster.pSystemId;
+                    objADBMaster.parent_network_id = objADBMaster.pNetworkId;
+                    objADBMaster.parent_entity_type = objADBMaster.pEntityType;
+                }
+                if (ModelState.IsValid)
 				{
 					var isNew = objADBMaster.system_id > 0 ? false : true;
 					objADBMaster.is_new_entity = (isNew && objADBMaster.source_ref_id != "0" && objADBMaster.source_ref_id != "");
@@ -5062,8 +5113,8 @@ namespace SmartInventoryServices.Controllers
 						{
 							if (resultItem.isPortConnected)
 							{
-								objBDBMaster.status = ResponseStatus.OK.ToString();
-								objBDBMaster.message = BLConvertMLanguage.MultilingualMessageConvert(resultItem.message);//resultItem.message;
+								objBDBMaster.objPM.status = ResponseStatus.OK.ToString();
+								objBDBMaster.objPM.message = BLConvertMLanguage.MultilingualMessageConvert(resultItem.message);//resultItem.message;
 								response.status = ResponseStatus.OK.ToString();
 								response.error_message = BLConvertMLanguage.MultilingualMessageConvert(resultItem.message);//resultItem.message;
 							}
@@ -5293,9 +5344,9 @@ namespace SmartInventoryServices.Controllers
 					{
 						objCDBMaster.geom = GetPointTypeParentGeom(objCDBMaster.pSystemId, objCDBMaster.pEntityType);
 					}
-					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.CDB.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCDBMaster.geom });
-					if (objCDBMaster.isDirectSave == true)
+                    //GET AUTO NETWORK CODE...
+                    var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.CDB.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCDBMaster.geom, parent_eType = objCDBMaster.pEntityType, parent_sysId = objCDBMaster.pSystemId });
+                    if (objCDBMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
 						objCDBMaster = GetCDBDetail(objCDBMaster);
@@ -5315,7 +5366,13 @@ namespace SmartInventoryServices.Controllers
 				{
 					objCDBMaster.cdb_name = objCDBMaster.network_id;
 				}
-				this.Validate(objCDBMaster);
+                if (objCDBMaster.pSystemId > 0 && !String.IsNullOrEmpty(objCDBMaster.pNetworkId))
+                {
+                    objCDBMaster.parent_system_id = objCDBMaster.pSystemId;
+                    objCDBMaster.parent_network_id = objCDBMaster.pNetworkId;
+                    objCDBMaster.parent_entity_type = objCDBMaster.pEntityType;
+                }
+                this.Validate(objCDBMaster);
 				if (ModelState.IsValid)
 				{
 					var isNew = objCDBMaster.system_id > 0 ? false : true;
@@ -5525,7 +5582,6 @@ namespace SmartInventoryServices.Controllers
 
 		#endregion
 
-		#region DUCT
 		#region Add DUCT
 		/// <summary> Add DUCT </summary>
 		/// <param name="data">networkIdType,systemId,geom,userId</param>
@@ -5564,8 +5620,49 @@ namespace SmartInventoryServices.Controllers
 			}
 			return response;
 		}
-		#endregion
-		public ApiResponse<GipipeMaster> AddGipipe(ReqInput data)
+        #endregion
+        #region DUCT
+        #region Add Microduct
+        /// <summary> Add DUCT </summary>
+        /// <param name="data">networkIdType,systemId,geom,userId</param>
+        /// <returns>DUCT Details</returns>
+        /// <CreatedBy>Antra Mathur</CreatedBy>
+
+        public ApiResponse<MicroductMaster> AddMicroduct(ReqInput data)
+        {
+            var response = new ApiResponse<MicroductMaster>();
+            try
+            {
+                LineEntityIn objIn = ReqHelper.GetRequestData<LineEntityIn>(data);
+                MicroductMaster objDuct = GetMicroductDetail(objIn);
+                if (objIn.system_id == 0)
+                {
+                    //Fill Location detail...    
+                    GetLineNetworkDetail(objDuct, objIn, EntityType.Microduct.ToString(), false);
+                }
+                BLItemTemplate.Instance.BindItemDropdowns(objDuct, EntityType.Microduct.ToString());
+                fillProjectSpecifications(objDuct);
+                BindMicroductDropDown(objDuct);
+                objDuct.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Microduct.ToString()).ToList();
+                //Get the layer details to bind additional attributes Duct
+                var layerdetails = new BLLayer().getLayer(EntityType.Microduct.ToString());
+                objDuct.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
+                //End for additional attributes Duct
+                response.status = StatusCodes.OK.ToString();
+                response.results = objDuct;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("AddDuct()", "Library Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
+
+        public ApiResponse<GipipeMaster> AddGipipe(ReqInput data)
 		{
 			var response = new ApiResponse<GipipeMaster>();
 			try
@@ -5646,9 +5743,59 @@ namespace SmartInventoryServices.Controllers
 
 			return objDuct;
 		}
-		#endregion
-		#region Get GIPIPE Details
-		public GipipeMaster GetGipipeDetail(LineEntityIn objIn)
+        #endregion
+        #region Get Microduct Details
+        /// <summary> GetMicroductDetail</summary>
+        /// <param >objIn</param>
+        /// <returns>Microduct Details</returns>
+        /// <CreatedBy>Arabind</CreatedBy>
+        public MicroductMaster GetMicroductDetail(LineEntityIn objIn)
+        {
+            MicroductMaster objMicroduct = new MicroductMaster();
+            int id = objIn.user_id;
+            if (objIn.system_id == 0)
+            {
+                objMicroduct.geom = objIn.geom;
+                if (!string.IsNullOrEmpty(objIn.geom))
+                    objMicroduct.calculated_length = Math.Round((double)new BLMisc().GetCableLength(objIn.geom), 3);
+
+                objMicroduct.manual_length = objMicroduct.calculated_length;
+                objMicroduct.networkIdType = objIn.networkIdType;
+                objMicroduct.ownership_type = "Own";
+                objMicroduct.isDirectSave = objIn.isDirectSave;
+                objMicroduct.user_id = objIn.user_id;
+                //NEW ENTITY->Fill Region and Province Detail..
+                fillRegionProvinceDetail(objMicroduct, GeometryType.Line.ToString(), objIn.geom);
+                var a = new BLMisc().GetEndPoints(objIn.geom);
+                objMicroduct.a_latitude = a[0].a_latitude.Replace("POINT(", "").Replace(")", "");
+                objMicroduct.b_longitude = a[0].b_longitude.Replace("POINT(", "").Replace(")", "");
+                objMicroduct.a_region = a[0].tstart_region;
+                objMicroduct.b_region = a[0].tEnd_region;
+                objMicroduct.a_city = a[0].tstrat_province;
+                objMicroduct.b_city = a[0].tEnd_province;
+                if (ApplicationSettings.IsEntityNamePrefixAllow)
+                {
+                    objMicroduct.microduct_name = "R/OWN/" + a[0].province_abbr;
+                }
+                // Item template binding
+                var objItem = BLItemTemplate.Instance.GetTemplateDetail<MicroductTemplateMaster>(objMicroduct.user_id, EntityType.Microduct);
+                Utility.MiscHelper.CopyMatchingProperties(objItem, objMicroduct);
+                objMicroduct.other_info = null;  //for additional-attributes
+            }
+            else
+            {
+                objMicroduct = new BLMisc().GetEntityDetailById<MicroductMaster>(objIn.system_id, EntityType.Microduct, objIn.user_id);
+                //for additional-attributes
+                objMicroduct.other_info = new BLMicroduct().GetOtherInfoMicroduct(objMicroduct.system_id);
+                fillRegionProvAbbr(objMicroduct);
+            }
+            objMicroduct.lstUserModule = new BLLayer().GetUserModuleAbbrList(id, UserType.Web.ToString());
+
+            return objMicroduct;
+        }
+        #endregion
+        #region Get GIPIPE Details
+        public GipipeMaster GetGipipeDetail(LineEntityIn objIn)
 		{
 			GipipeMaster objGipipe = new GipipeMaster();
 			int id = objIn.user_id;
@@ -5865,6 +6012,187 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
         #endregion
+
+        #region Save Microduct
+        /// <summary> Microduct </summary>
+        /// <param name="data">ReqInput</param>
+        /// <CreatedBy>Arabind</CreatedBy>
+        public ApiResponse<MicroductMaster> SaveMicroduct(ReqInput data)
+        {
+            var response = new ApiResponse<MicroductMaster>();
+            var ductOffsetVal = Convert.ToDecimal(0.00001) * Convert.ToDecimal(ApplicationSettings.DuctOffset);
+            MicroductMaster objnewDuct = ReqHelper.GetRequestData<MicroductMaster>(data);
+            // get duct count for already added duct in trench loaction
+            int CheckductCount = BLMicroduct.Instance.getMicroductCount(objnewDuct.pSystemId);
+            try
+            {
+                var OffsetDir = "leftOffset";
+                decimal leftdistance = ductOffsetVal;
+                decimal rightdistance = ductOffsetVal;
+                string finalDistance;
+                int ductCount = objnewDuct.system_id > 0 ? ductCount = 1 : objnewDuct.microduct_count == 0 ? 1 : objnewDuct.microduct_count;
+                // set left or right distance that already existed duct for same the trench loaction
+                if (CheckductCount > 0)
+                {
+                    if (CheckductCount % 2 == 0)
+                    {
+                        rightdistance = ductOffsetVal * ((CheckductCount / 2));
+                        leftdistance = ductOffsetVal + rightdistance;
+                        OffsetDir = "rightOffset";
+                    }
+                    else
+                    {
+                        leftdistance = ductOffsetVal * ((CheckductCount / 2) + 1);
+                        rightdistance = leftdistance;
+                        OffsetDir = "leftOffset";
+                    }
+                }
+                for (int i = 1; i <= ductCount; i++)
+                {
+                    // set final distance for left or right offset
+                    finalDistance = OffsetDir == "leftOffset" ? "-" + leftdistance.ToString() : rightdistance.ToString();
+                    MicroductMaster objDuct = ReqHelper.GetRequestData<MicroductMaster>(data);
+                    if (objDuct.networkIdType == NetworkIdType.A.ToString() && objDuct.system_id == 0)
+                    {
+                        if (objDuct.isDirectSave == false)
+                        {
+                            objDuct.lstTP.Add(new NetworkDtl { system_id = objDuct.a_system_id, network_id = objDuct.a_location, network_name = objDuct.a_entity_type });
+                            objDuct.lstTP.Add(new NetworkDtl { system_id = objDuct.b_system_id, network_id = objDuct.b_location, network_name = objDuct.b_entity_type });
+                        }
+                        var objLineEntity = new LineEntityIn() { geom = objDuct.geom, systemId = objDuct.system_id, networkIdType = objDuct.networkIdType, lstTP = objDuct.lstTP, user_id = objDuct.user_id, isDirectSave = objDuct.isDirectSave };
+                        if (objDuct.isDirectSave == true)
+                        {
+                            //GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
+                            int trenchId = objDuct.pSystemId;
+                            string pentityType = objDuct.pEntityType;
+                            objDuct = GetMicroductDetail(objLineEntity);
+                            objDuct.pSystemId = trenchId;//it's due to pSystemId lost when call above function i.e. GetDuctDetail.
+                            objDuct.trench_id = objDuct.pSystemId;
+                            objDuct.pEntityType = pentityType;
+                            var objBOMDDL = new BLMisc().GetDropDownList("", "bom_sub_category");
+                            // var objSubCatDDL = new BLMisc().GetDropDownList("", "served_by_ring");
+                            objDuct.bom_sub_category = objBOMDDL[0].dropdown_value;
+                            //objDuct.served_by_ring = objSubCatDDL[0].dropdown_value;
+                        }
+                        GetLineNetworkDetail(objDuct, objLineEntity, EntityType.Microduct.ToString(), true);
+                        if (objDuct.isDirectSave == true)
+                            objDuct.microduct_name = objDuct.network_id;
+                    }
+                    if (string.IsNullOrEmpty(objDuct.microduct_name))
+                    {
+                        objDuct.microduct_name = objDuct.network_id;
+                    }
+                    this.Validate(objDuct);
+                    if (ModelState.IsValid)
+                    {
+
+                        var isNew = objDuct.system_id > 0 ? false : true;
+                        objDuct.is_new_entity = (isNew && objDuct.source_ref_id != "0" && objDuct.source_ref_id != "");
+                        objDuct.trench_id = objDuct.pSystemId;
+                        var resultItem = BLMicroduct.Instance.Save(objDuct, objDuct.user_id);
+                        // update duct geometry                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                        if (i != ductCount || CheckductCount > 0)
+                        {
+                            if (objnewDuct.system_id == 0)
+                            {
+                                BASaveEntityGeometry.Instance.UpdateMicroductLocation(resultItem.system_id, finalDistance, OffsetDir);
+                            }
+                        }
+                        // update duct color code 
+                        if (objnewDuct.system_id == 0 && string.IsNullOrEmpty(objnewDuct.microduct_color))
+                        {
+                            BASaveEntityGeometry.Instance.UpdateMicroductColorCode(resultItem.system_id, objDuct.trench_id, i);
+                        }
+                        if (string.IsNullOrEmpty(resultItem.objPM.message))
+                        {
+                            string[] LayerName = { EntityType.Microduct.ToString() };
+
+                            //Save Reference
+                            if (objDuct.EntityReference != null && resultItem.system_id > 0)
+                            {
+                                SaveReference(objDuct.EntityReference, resultItem.system_id);
+                            }
+                            if (isNew)
+                            {
+                                objDuct.objPM.status = ResponseStatus.OK.ToString();
+                                objDuct.objPM.isNewEntity = isNew;
+                                objDuct.objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);
+                                response.status = ResponseStatus.OK.ToString();
+                                response.error_message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);
+                            }
+                            else
+                            {
+                                objDuct.objPM.status = ResponseStatus.OK.ToString();
+                                objDuct.objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+                                BLItemTemplate.Instance.BindItemDropdowns(objDuct, EntityType.Microduct.ToString());
+                                response.status = ResponseStatus.OK.ToString();
+                                response.error_message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+                            }
+                        }
+                        else
+                        {
+                            objDuct.objPM.status = ResponseStatus.FAILED.ToString();
+                            objDuct.objPM.message = resultItem.objPM.message;
+                            response.error_message = resultItem.objPM.message;
+                            response.status = ResponseStatus.FAILED.ToString();
+                        }
+
+                        //save AT Status                        
+                        if (objDuct.ATAcceptance != null && objDuct.system_id > 0)
+                        {
+                            SaveATAcceptance(objDuct.ATAcceptance, objDuct.system_id, objDuct.user_id);
+                        }
+
+                    }
+                    else
+                    {
+                        objDuct.objPM.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                        objDuct.objPM.message = getFirstErrorFromModelState();
+                        response.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                        response.error_message = getFirstErrorFromModelState();
+                    }
+                    if (objDuct.isDirectSave == true)
+                    {
+                        //RETURN MESSAGE AS JSON FOR DIRECT SAVE
+                        objDuct.objPM.status = ResponseStatus.OK.ToString();
+                        response.status = ResponseStatus.OK.ToString();
+                        response.results = objDuct;
+                    }
+                    else
+                    {
+                        BLItemTemplate.Instance.BindItemDropdowns(objDuct, EntityType.Microduct.ToString());
+                        // RETURN PARTIAL VIEW WITH MODEL DATA
+                        fillProjectSpecifications(objDuct);
+                        BindMicroductDropDown(objDuct);
+                        objDuct.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Microduct.ToString()).ToList();
+                        //Get the layer details to bind additional attributes Duct
+                        var layerdetails = new BLLayer().getLayer(EntityType.Microduct.ToString());
+                        objDuct.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
+                        //End for additional attributes Duct
+                        response.results = objDuct;
+                    }
+                    if (OffsetDir == "leftOffset")
+                    {
+                        leftdistance = leftdistance + ductOffsetVal;
+                        OffsetDir = "rightOffset";
+                    }
+                    else
+                    {
+                        rightdistance = rightdistance + ductOffsetVal;
+                        OffsetDir = "leftOffset";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("SaveDuct()", "Library Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
         public ApiResponse<GipipeMaster> SaveGipipe(ReqInput data)
 		{
 			var response = new ApiResponse<GipipeMaster>();
@@ -6004,11 +6332,29 @@ namespace SmartInventoryServices.Controllers
 			// objDuctIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
 		
 		}
+        private void BindMicroductDropDown(MicroductMaster objMicroductIn)
+        {
+            var objDDL = new BLMisc().GetDropDownList(EntityType.Microduct.ToString());
+            objMicroductIn.NoofMicroductsCreated = objDDL.Where(x => x.dropdown_type == DropDownType.No_of_Ducts_Created.ToString()).ToList();
+            objMicroductIn.MicroductTypeIn = objDDL.Where(x => x.dropdown_type == DropDownType.Duct_Type.ToString()).ToList();
+            objMicroductIn.MicroductCount = objDDL.Where(x => x.dropdown_type == DropDownType.Duct_Count.ToString()).ToList();
+            objMicroductIn.MicroductColorIn = objDDL.Where(x => x.dropdown_type == DropDownType.Duct_Color.ToString()).ToList();
+            objMicroductIn.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
+            objMicroductIn.lstNoOfWays = objDDL.Where(x => x.dropdown_type == DropDownType.Number_of_Ways.ToString()).ToList();
+            objMicroductIn.lstInternalDiameter = objDDL.Where(x => x.dropdown_type == DropDownType.Internal_Diameter.ToString()).ToList();
+            objMicroductIn.lstExternalDiameter = objDDL.Where(x => x.dropdown_type == DropDownType.External_Diameter.ToString()).ToList();
+            objMicroductIn.lstMaterialType = objDDL.Where(x => x.dropdown_type == DropDownType.Material_Type.ToString()).ToList();
+			var _objDDL = new BLMisc().GetDropDownList("");
+            objMicroductIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
+            objMicroductIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+            
 
-		#endregion
+        }
 
-		#endregion
-		private void BindGipipeDropDown(GipipeMaster objGipipeIn)
+        #endregion
+
+        #endregion
+        private void BindGipipeDropDown(GipipeMaster objGipipeIn)
 		{
 			var objDDL = new BLMisc().GetDropDownList(EntityType.Gipipe.ToString());
 			objGipipeIn.GipipeTypeIn = objDDL.Where(x => x.dropdown_type == DropDownType.Gipipe_Type.ToString()).ToList();
@@ -11869,7 +12215,8 @@ namespace SmartInventoryServices.Controllers
 				objLib.parent_entity_type = networkCodeDetail.parent_entity_type;
 				objLib.parent_network_id = networkCodeDetail.parent_network_id;
 				objLib.parent_system_id = networkCodeDetail.parent_system_id;
-			}
+                objLib.sequence_id = networkCodeDetail.sequence_id;
+            }
 		}
 		#endregion
 
@@ -12608,7 +12955,7 @@ namespace SmartInventoryServices.Controllers
 				if (objCabinetMaster.networkIdType == NetworkIdType.A.ToString() && objCabinetMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Cabinet.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCabinetMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Cabinet.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCabinetMaster.geom, parent_eType = objCabinetMaster.pEntityType, parent_sysId = objCabinetMaster.pSystemId });
 					if (objCabinetMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -13070,7 +13417,7 @@ namespace SmartInventoryServices.Controllers
 				if (objVaultMaster.networkIdType == NetworkIdType.A.ToString() && objVaultMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Vault.ToString(), gType = GeometryType.Point.ToString(), eGeom = objVaultMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Vault.ToString(), gType = GeometryType.Point.ToString(), eGeom = objVaultMaster.geom, parent_eType = objVaultMaster.pEntityType, parent_sysId = objVaultMaster.pSystemId });
 					if (objVaultMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -13291,6 +13638,7 @@ namespace SmartInventoryServices.Controllers
 					objLoop.parent_system_id = networkCodeDetail.parent_system_id;
 					objLoop.network_id = networkCodeDetail.network_code;
 					objLoop.sequence_id = networkCodeDetail.sequence_id;
+					
 				}
 				else
 				{
@@ -13303,8 +13651,8 @@ namespace SmartInventoryServices.Controllers
 				if (ModelState.IsValid)
 				{
 					var isNew = objLoop.system_id > 0 ? false : true;
-					var resultItem = new BLLoop().SaveEntityLoop(JsonConvert.SerializeObject(objLoop));
-					objLoop.system_id = resultItem.systemId;
+					var resultItem = new BLLoop().SaveEntityLoop(JsonConvert.SerializeObject(objLoop), objLoop.province_id);
+                    objLoop.system_id = resultItem.systemId;
 					objLoop.objPM = new PageMessage();
 					string[] LayerName = { EntityType.Loop.ToString() };
 					if (resultItem.systemId > 0)
@@ -13714,7 +14062,7 @@ namespace SmartInventoryServices.Controllers
 				if (objHandholeMaster.networkIdType == NetworkIdType.A.ToString() && objHandholeMaster.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Handhole.ToString(), gType = GeometryType.Point.ToString(), eGeom = objHandholeMaster.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Handhole.ToString(), gType = GeometryType.Point.ToString(), eGeom = objHandholeMaster.geom, parent_eType = objHandholeMaster.pEntityType, parent_sysId = objHandholeMaster.pSystemId });
 					if (objHandholeMaster.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -14569,7 +14917,7 @@ namespace SmartInventoryServices.Controllers
 						objSurveyArea.network_status = "P";
 					}
 					var resultItem = new BLSurveyArea().SaveSurveyArea(objSurveyArea, objSurveyArea.user_id);
-					if (!objSurveyArea.isSurveyModuleAssigned && isNew)
+					if (objSurveyArea.isSurveyModuleAssigned && isNew)
 					{
 						new BLSurveyArea().SaveMobileSurveyAreaAssigned(objSurveyArea.user_id, objSurveyArea.system_id);
 					}
@@ -14756,9 +15104,167 @@ namespace SmartInventoryServices.Controllers
 			}
 			return response;
 		}
-		#endregion
+        #endregion
 
 
-	}
+        #region Add Slack
+        public ApiResponse<SlackMaster> AddSlack(ReqInput data)
+        {
+            var response = new ApiResponse<SlackMaster>();
+            try
+            {
+                SlackMaster objRequestIn = ReqHelper.GetRequestData<SlackMaster>(data);
+                SlackMaster objSlack = GetSlackDetail(objRequestIn);
+                objSlack.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.Duct.ToString()).ToList();
+                response.status = StatusCodes.OK.ToString();
+                response.results = objSlack;
+
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("AddSlack()", "Library Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
+
+        #region Slack Details
+        public SlackMaster GetSlackDetail(SlackMaster objSlack)
+        {
+            if (objSlack.system_id == 0)
+            {
+                objSlack.longitude = Convert.ToDouble(objSlack.geom.Split(' ')[0]);
+                objSlack.latitude = Convert.ToDouble(objSlack.geom.Split(' ')[1]);
+                objSlack.lstSlack = BLSlack.Instance.GetSlackDetails(objSlack.longitude, objSlack.latitude, objSlack.associated_system_id, "Duct", objSlack.structure_id);
+                //NEW ENTITY->Fill Region and Province Detail..
+                fillRegionProvinceDetail(objSlack, GeometryType.Point.ToString(), objSlack.geom);
+                //Fill Parent detail...              
+                fillParentDetail(objSlack, new NetworkCodeIn() { eType = EntityType.Slack.ToString(), gType = GeometryType.Point.ToString(), eGeom = objSlack.geom }, objSlack.networkIdType);
+            }
+            else
+            {
+                // Get entity detail by Id...
+                objSlack = new BLMisc().GetEntityDetailById<SlackMaster>(objSlack.system_id, EntityType.Slack, objSlack.user_id);
+                objSlack.lstSlack = BLSlack.Instance.GetSlackDetails(objSlack.longitude, objSlack.latitude, objSlack.associated_system_id, objSlack.associated_entity_type, objSlack.structure_id);
+                DuctMaster obj = new DuctMaster();
+                int DuctId = Convert.ToInt32(objSlack.duct_id);
+                obj = new BLDuct().GetDuctNameAndLengthForSlack(DuctId);
+                objSlack.duct_name = obj.duct_name;
+                objSlack.duct_calculated_length = obj.calculated_length;
+                objSlack.total_slack_count = obj.total_slack_count;
+                objSlack.available_calculated_length = (obj.calculated_length - obj.total_slack_length);
+                objSlack.total_slack_length = obj.total_slack_length;
+                objSlack.associated_network_id = obj.network_id;
+                fillRegionProvAbbr(objSlack);
+            }
+            return objSlack;
+        }
+        #endregion
+
+        #region Save Slack
+        public ApiResponse<SlackMaster> SaveSlack(ReqInput data)
+        {
+            var response = new ApiResponse<SlackMaster>();
+            SlackMaster objSlack = ReqHelper.GetRequestData<SlackMaster>(data);
+            try
+            {
+                ModelState.Clear();
+                if (objSlack.system_id == 0)
+                {
+                    objSlack.created_by = objSlack.user_id;
+                    objSlack.created_on = DateTimeHelper.Now;
+                    objSlack.associated_entity_type = "Duct";
+                    objSlack.longitude = Convert.ToDouble(objSlack.geom.Split(' ')[0]);
+                    objSlack.latitude = Convert.ToDouble(objSlack.geom.Split(' ')[1]);
+                    objSlack.associated_system_id = Convert.ToInt32(objSlack.duct_id);
+                    objSlack.duct_system_id = Convert.ToInt32(objSlack.duct_id);
+					objSlack.associated_network_id = objSlack.duct_name;
+                    NetworkCodeIn objIn = new NetworkCodeIn();
+                    objIn.eType = "Slack"; objIn.eGeom = objSlack.geom; objIn.gType = "Point";
+                    var networkCodeDetail = new BLMisc().GetNetworkCodeDetail(objIn);
+                    objSlack.parent_entity_type = networkCodeDetail.parent_entity_type;
+                    objSlack.parent_network_id = networkCodeDetail.parent_network_id;
+                    objSlack.parent_system_id = networkCodeDetail.parent_system_id;
+                    objSlack.network_id = networkCodeDetail.network_code;
+                    objSlack.sequence_id = networkCodeDetail.sequence_id;
+                }
+                else
+                {
+                    objSlack.modified_by = objSlack.user_id;
+                    objSlack.modified_on = DateTimeHelper.Now;
+                }
+                objSlack.objPM = null;
+                objSlack.lstSlack = null;
+                this.Validate(objSlack);
+                if (ModelState.IsValid)
+                {
+                    var isNew = objSlack.system_id > 0 ? false : true;
+                    var resultItem = new BLSlack().SaveEntitySlack(JsonConvert.SerializeObject(objSlack));
+                    objSlack.system_id = resultItem.systemId;
+                    objSlack.objPM = new PageMessage();
+                    string[] LayerName = { EntityType.Slack.ToString() };
+                    if (resultItem.systemId > 0)
+                    {
+                        if (isNew)
+                        {
+                            objSlack.objPM.status = ResponseStatus.OK.ToString();
+                            objSlack.objPM.isNewEntity = isNew;
+                            objSlack.objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName); ;
+                            response.error_message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);
+                            response.status = ResponseStatus.OK.ToString();
+                        }
+                        else
+                        {
+                            objSlack.objPM.status = ResponseStatus.OK.ToString();
+                            objSlack.objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+                            response.error_message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+                            response.status = ResponseStatus.OK.ToString();
+                        }
+                    }
+                    else
+                    {
+                        objSlack.objPM.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                        objSlack.objPM.message = resultItem.message;
+                        response.error_message = resultItem.message;
+                        response.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                    }
+
+                }
+                else
+                {
+                    objSlack.objPM.status = ResponseStatus.FAILED.ToString();
+                    objSlack.objPM.message = getFirstErrorFromModelState();
+                    response.error_message = getFirstErrorFromModelState();
+                    response.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                }
+                if (objSlack.isDirectSave == true)
+                {
+                    //RETURN MESSAGE AS JSON FOR DIRECT SAVE
+                    response.results = objSlack;
+                    response.status = ResponseStatus.OK.ToString();
+                }
+                else
+                {
+                    objSlack.lstSlack = BLSlack.Instance.GetSlackDetails(objSlack.longitude, objSlack.latitude, objSlack.associated_system_id, "Duct", objSlack.structure_id);
+                    objSlack.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.Duct.ToString()).ToList();
+                    response.results = objSlack;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("SaveSlack()", "Library Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
+
+
+    }
 }
 

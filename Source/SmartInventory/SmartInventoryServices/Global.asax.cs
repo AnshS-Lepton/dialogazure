@@ -13,6 +13,7 @@ namespace SmartInventoryServices
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             ApplicationSettings.InitializeGlobalSettings();
+            EmailSettings.InitializeEmailSettings();
             MvcHandler.DisableMvcResponseHeader = true;
             if (ApplicationSettings.IsUserActivityLogEnabled)
             {

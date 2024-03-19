@@ -187,7 +187,14 @@ namespace Models
         [NotMapped]
         public int duct_count { get; set; }    
         public string duct_color { get; set; }
-       
+        public int? total_slack_count { get; set; }
+        public int? total_slack_length { get; set; }
+        [NotMapped]
+        public int structure_id { get; set; }
+        [NotMapped]
+        public string ispLineGeom { get; set; }
+        [NotMapped]
+        public string cable_type { get; set; }
         public DuctMaster()
         {
             objPM = new PageMessage();
@@ -207,5 +214,5 @@ namespace Models
             bom_sub_category = Convert.ToString(Bom_boq_category.Proposed);
             lstUserModule = new List<string>();
         }
-    }
+    }  
 }

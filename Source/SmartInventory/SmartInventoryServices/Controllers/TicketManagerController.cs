@@ -98,7 +98,7 @@ namespace SmartInventoryServices.Controllers
 			try
 			{			
 		    int TicketAttachmentMaxSize = ApplicationSettings.TicketAttachmentMaxSize;
-             new BLMisc().InitializeEmailSettings();
+             //new BLMisc().InitializeEmailSettings();
             //EmailSettings.InitializeEmailSettings();
              for (int i = 0; i < Request.Files.Count; i++)
             {
@@ -190,7 +190,7 @@ namespace SmartInventoryServices.Controllers
                
                 try
                 {
-                    commonUtil.SendEmail(aarReceiver, subject, objHPSMTicket.ticket_description, totalFiles, out mailsentmsg, BLMisc.EmailSettingsModel, user_email);
+                    commonUtil.SendEmail(aarReceiver, subject, objHPSMTicket.ticket_description, totalFiles, out mailsentmsg, EmailSettings.AllEmailSettings, user_email);
                 }
                 catch(Exception ex)
                 {

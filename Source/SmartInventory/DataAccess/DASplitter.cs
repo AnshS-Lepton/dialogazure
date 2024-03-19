@@ -84,6 +84,7 @@ namespace DataAccess
                     objSplitter.origin_ref_code = objSplitterMaster.origin_ref_code;
                     //  objSplitter.served_by_ring = objSplitterMaster.served_by_ring;
                     objSplitter.bom_sub_category = objSplitterMaster.bom_sub_category;
+                    objSplitter.gis_design_id = objSplitterMaster.gis_design_id;
                     var result = repo.Update(objSplitter);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.Splitter.ToString(), result.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Splitter.ToString(), result.province_id);

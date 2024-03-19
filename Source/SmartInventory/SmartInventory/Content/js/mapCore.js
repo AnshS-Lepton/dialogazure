@@ -24,7 +24,8 @@ function checkLastZoom() {
                     si.LoadLayersOnMap(false);
                     if (si.IsVecorLayerEnabled) {
                         si.fetchVectorDelta();
-                        si.ShowHideVectorLayerByZoomSetting();
+                        si.RenderVectorLayer(-1);
+                        //si.ShowHideVectorLayerByZoomSetting();
                     }
                 }
             }
@@ -1565,6 +1566,8 @@ function ShowLineLength(_path) {
         arrLinePath = _path || si.gMapObj.libPath.slice();
         // distance b/w last 2 vertax..
         arrLast2Points = arrLinePath.slice(Math.max(arrLinePath.length - 2, 0));
+        si.MaxCableLength = showFooterDist(arrLast2Points).split(" ")[0];
+        si.LengthUnit = showFooterDist(arrLast2Points).split(" ")[1];
         $('#lengthAreaDiv').html('<div class="bottom_line">&nbsp;</div><div class="bottom_txt"><b>Length :</b> <span>' + showFooterDist(arrLast2Points) + ' / Total:' + showFooterDist(arrLinePath) + '</span></div>');
     }
 }

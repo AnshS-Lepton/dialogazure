@@ -71,7 +71,7 @@ namespace DataAccess
         {
             try
             {
-                DbMessage dbMessage = repo.ExecuteProcedure<DbMessage>("fn_validate_geom_update", new { p_system_id = objgeom.systemId, p_geom_type = objgeom.geomType, p_entity_type = objgeom.entityType, p_userid = objgeom.userId, p_longlat = objgeom.longLat, p_bld_buffer = objgeom.Bld_Buffer }).FirstOrDefault();
+                DbMessage dbMessage = repo.ExecuteProcedure<DbMessage>("fn_validate_geom_update", new { p_system_id = objgeom.systemId, p_geom_type = objgeom.geomType, p_entity_type = objgeom.entityType, p_userid = objgeom.userId, p_longlat = objgeom.longLat, p_bld_buffer = objgeom.Bld_Buffer, p_source_ref_type = objgeom.source_ref_type, p_source_ref_id = objgeom.source_ref_id }).FirstOrDefault();
                 return dbMessage;
             }
             catch { throw; }
@@ -147,11 +147,29 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public void UpdateMicroductLocation(int systemId, string distance, string OffsetDir)
+        {
+            try
+            {
+                repo.ExecuteProcedure("fn_update_microduct_location", new { p_system_id = systemId, p_distance = distance, offsetdir = OffsetDir });
+
+            }
+            catch { throw; }
+        }
         public void UpdateDuctColorCode(int systemId, int trench_id, int ductcount)
         {
             try
             {
                 repo.ExecuteProcedure("fn_update_duct_color_code", new { p_system_id = systemId, trench_system_id = trench_id, ductCount = ductcount });
+
+            }
+            catch { throw; }
+        }
+        public void UpdateMicroductColorCode(int systemId, int trench_id, int ductcount)
+        {
+            try
+            {
+                repo.ExecuteProcedure("fn_update_microduct_color_code", new { p_system_id = systemId, trench_system_id = trench_id, ductCount = ductcount });
 
             }
             catch { throw; }

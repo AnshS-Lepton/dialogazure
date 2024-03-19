@@ -169,13 +169,13 @@ namespace Utility
 			// Log error in file...
 			if (_isLogRequiredInFile)
 			{
-				using (StreamWriter sw = File.AppendText(System.Web.Hosting.HostingEnvironment.MapPath(_logFolderPath + fileName + "DebugLog-" + DateTimeHelper.Now.ToString("dd-MM-yyyy") + ".txt")))
-				{
-					//sw.WriteLine("\r\nLog Entry:==========>");
-					//sw.WriteLine("Log on Time: {0}", DateTimeHelper.Now);
-					sw.WriteLine(LogMessage);
-				}
-			}
+                using (StreamWriter sw = File.AppendText(System.Web.Hosting.HostingEnvironment.MapPath(_logFolderPath + fileName + "DebugLog-" + DateTimeHelper.Now.ToString("dd-MM-yyyy") + ".txt")))
+                {
+                   // sw.WriteLine("\r\nLog Entry:==========>");
+                    //sw.WriteLine("Log on Time: {0}", DateTimeHelper.Now);
+                    sw.WriteLine(LogMessage);
+                }
+            }
 
 		}
 		public void WriteApplicationEventLog(string LogMessage)

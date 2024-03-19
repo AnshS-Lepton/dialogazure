@@ -1,0 +1,2 @@
+update res_resources set value = 'Clear Advance Filter' where key = 'SI_OSP_GBL_NET_GBL_051' and culture != 'hi';
+update res_resources set value = 'अग्रिम फ़िल्टर साफ़ करें' where key = 'SI_OSP_GBL_NET_GBL_051' and culture = 'hi';

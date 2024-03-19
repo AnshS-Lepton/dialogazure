@@ -1,5 +1,5 @@
 ﻿var ISPMain = function () {
-            
+
     var app = this;
     var gMapObj = {};
     this.ParentModel = 'PARENT';
@@ -8,6 +8,7 @@
     this.isTPPointEnable = true;
     this.lstTerminationPoint = [];
     this.lstISPCablePt = [];
+    this.lstISPDuctPt = [];
     this.TerminationPoints = '';
     this.reqver = 0;
     this.FloorElement = '<div class="EntityBox"><div class="Element elementDotBox entityInfo " id="divBox" data-additionalattr="" data-entity-type="" data-entity-title="" data-entity-geomtype="Point" data-is-isp-child-layer="" data-system_id="">';
@@ -22,7 +23,7 @@
     this.destinationCableId = null;
     this.parentEntities = [];
     this.DE = {
- 
+
         'leftMenuActions': '#divleftMenu div',
         'ItemTemplate': '.clsTemplateIcon',
         'SearchElement': '#txtSearchElement',
@@ -74,8 +75,12 @@
         'EntityDelete': '#EntityDelete:not(.roledisabled)',
         "Cable_A_End": "#ddlCableAEnd",
         "Cable_B_End": "#ddlCableBEnd",
+        "Duct_A_End": "#ddlDuctAEnd",
+        "Duct_B_End": "#ddlDuctBEnd",
         "CreateISPCable": "#btnCreateISPCable",
+        "CreateISPDuct": "#btnCreateISPDuct",
         "ISPCableTemplate": "#btnCableTemplate",
+        "ISPDuctTemplate": "#btnDuctTemplate",
         "ISPNetworkLayer": "#divISPNetworkLayer",
         "InformationTool": "#divInformation",
         "entityboxcount": ".entityboxcount",
@@ -137,7 +142,7 @@
         "liRefLink": "#dvEntityInformationDetail #liRefLink",
         "UploadRefLink": "#dvEntityInformationDetail #RefLinkUpload",
         "divRefLink": "#dvEntityInformationDetail #divRefLink"
-        }
+    }
     this.tableScroll = { top: 0, left: 0 };
     this.responseData = undefined;
     this.convert = {
@@ -151,6 +156,7 @@
         Splitter: 'Splitter',
         Spliceclosure: 'SpliceClosure',
         Cable: 'Cable',
+        Duct: 'Duct',
         MPOD: 'MPOD',
         Customer: 'Customer',
         ONT: 'ONT',
@@ -187,12 +193,18 @@
 
             if (panelClass == 'clslibraryEntity') {
                 $(app.DE.ShowAllEntity).prop('checked', false);
-                $(app.DE.ShowAllEntity)[0].click();
+                //pk
+                var showAllEntityElements = $(app.DE.ShowAllEntity);
+                if (showAllEntityElements.length) {
+                    $(app.DE.ShowAllEntity)[0].click();
+                }
                 $.each($(".mainlyr  input[type='checkbox']"), function (indx, itm) {
                     $(this).prop('checked', false);
                     $(this)[0].click();
                 });
             }
+
+
             //remove info events..
             if ($(this).hasClass('neLibrary')) {
                 $(app.DE.circleMarker).css('visibility', 'hidden');
@@ -251,7 +263,7 @@
         });
 
         $(document).on('click', app.DE.SortEntity, function (e) {
-             
+
             $(".mainlyr #liNetworkLyrEntity").sort(sort_li).appendTo('.mainlyr');
             function sort_li(a, b) {
                 return parseInt($(b).data('position')) < parseInt($(a).data('position')) ? 1 : -1;
@@ -283,7 +295,7 @@
         $(document).on('click', app.DE.EntityCustomerSLD, app.layerActions.customerSLD.getSLD);
 
         $(document).on('click', app.DE.EntityConvertSCtoCDB, function (e) {
-             
+
             var attr = $(this).data();
             var strucIdVal = $(app.DE.StructureId).val();
             ajaxReq('Main/GetPointTypeEntityDetails', { pSystemId: attr.systemId, pEntityType: attr.entityType }, true, function (resp) {
@@ -335,7 +347,7 @@
         });
 
         $(document).on('click', app.DE.EntityConvertCDBtoSC, function (e) {
-             
+
             var attr = $(this).data();
             var strucIdVal = $(app.DE.StructureId).val();
             ajaxReq('Main/GetPointTypeEntityDetails', { pSystemId: attr.systemId, pEntityType: attr.entityType }, true, function (resp) {
@@ -404,7 +416,7 @@
 
 
         $(document).on('click', app.DE.EntityHistory, app.layerActions.history.get);
-        
+
         $(document).on('click', app.DE.EntityDetail, app.layerActions.detail.get);
         //connected customer details
         $(document).on('click', app.DE.EntityCustomerDetails, app.layerActions.ConnectedCustomerDetails.get);
@@ -567,7 +579,43 @@
             }
         });
 
+        $(document).on("click", app.DE.CreateISPDuct, function (e) {
+            app.lstISPDuctPt = [];
+            if ($(app.DE.Duct_A_End).val() <= 0 || ($(app.DE.Duct_B_End).val() <= 0)) {
+                alert(MultilingualKey.SI_ISP_GBL_JQ_FRM_017, 'warning');//Please select termination points!
+                return false;
+            }
+            if ($(app.DE.tempPath).attr("d") == "") {
+                alert(MultilingualKey.SI_ISP_GBL_JQ_FRM_018, "warning");//Path can not be blank!
+                return false;
+            }
+            var attr = $(this).data();
+            if (app.checkTemplateExist(e)) {
+
+                var strucIdVal = $(app.DE.StructureId).val();
+                var lyrDetail = getLayerDetail("Duct");
+                var ntkIdType = lyrDetail['network_id_type'];
+
+                var TPA = $(app.DE.Duct_A_End + ' option:selected').data();
+                var TPB = $(app.DE.Duct_B_End + ' option:selected').data();
+                var _tempPathData = $(app.DE.tempPath).data();
+
+                app.lstISPDuctPt.push({ network_name: TPA.entityType, network_id: TPA.networkId, system_id: TPA.systemId, node_type: _tempPathData.aNodeType });
+                app.lstISPDuctPt.push({ network_name: TPB.entityType, network_id: TPB.networkId, system_id: TPB.systemId, node_type: _tempPathData.bNodeType });
+
+                var _data = {
+                    geom: '0', enType: 'Duct', cableType: 'ISP', lstTP: app.lstISPDuctPt, networkIdType: ntkIdType,
+                    ModelInfo: { structureid: strucIdVal }
+                };
+                app.addDuct(_data);
+            }
+        });
+
         $(document).on("click", app.DE.ISPCableTemplate, function () {
+            $(this).prev('.clsTemplateIcon').trigger("click");
+        });
+
+        $(document).on("click", app.DE.ISPDuctTemplate, function () {
             $(this).prev('.clsTemplateIcon').trigger("click");
         });
 
@@ -997,7 +1045,7 @@
         return true;
     }
     this.isValidUnit = function (floorId) {
-         
+
         //var floorId = $(app.DE.ddlFloor).val();
         var unitCount = $('#divFloor_' + floorId).data().totalUnit;
         var existUnitCount = $('#divFloor_' + floorId + ' div[data-entity-type="UNIT"]').length;
@@ -1107,7 +1155,7 @@
     //}
 
     this.GetISPCableTubeCoreInfo = function (cableid) {
-         
+
         ajaxReq('ISP/GetISPCableTubeCoreDetail', {
             cableId: cableid
         }, false, function (resp) {
@@ -1115,7 +1163,7 @@
         }, false, false);
     }
     this.GetCableFiberDetail = function (_cableid) {
-         
+
         if ($("#FiberDetail").html().trim() == '') {
             ajaxReq('Library/GetCableFiberDetail', { cableId: _cableid, type: "ISP" }, false, function (resp) {
                 $("#FiberDetail").html(resp);
@@ -1330,6 +1378,14 @@
             //app.editCableId = '';
         });
     }
+    this.addDuct = function (data) {
+        popup.LoadModalDialog(app.ParentModel, "ISP/AddDuct", data, "Duct", "modal-lg", function () {
+            $('#hdnLineGeom').val($("#tempPath").attr("d"));
+            //app.isEditMode = false;
+            //app.editCableId = '';
+        });
+    }
+
     //this.refreshStructureInfo = function (enDetails, isCallFromPageMessage) {
     //     //$(app.DE.refreshStructureInfo).trigger("click");
     //    ajaxReq('ISP/getNewEntity', { structureId:$(app.DE.StructureId).val(),systemId: enDetails.systemId, entityType: enDetails.entityType }, false, function (response) {
@@ -1567,7 +1623,7 @@
     this.ManageLibraryEvents = function (obj) {
         app.layerActions.entity.resetFocus($('.entityInfo'));
         app.clearCableEvents();
-        if ($(obj).attr("data-tabName").toUpperCase() == "CABLE") {
+        if ($(obj).attr("data-tabName").toUpperCase() == "CABLE" || $(obj).attr("data-tabName").toUpperCase() == "DUCT") {
             app.attachCableEvents();
         }
 
@@ -1586,6 +1642,8 @@
         }
         $(app.DE.Cable_A_End).val(0).trigger("chosen:updated");
         $(app.DE.Cable_B_End).val(0).trigger("chosen:updated");
+        $(app.DE.Duct_A_End).val(0).trigger("chosen:updated");
+        $(app.DE.Duct_B_End).val(0).trigger("chosen:updated");
     }
 
     this.SaveCable = function (response) {
@@ -1633,6 +1691,80 @@
                         .attr("data-b-node-type", response.b_node_type)
                         .attr("data-b-location", response.b_location);
                     $('#svgCable #ispCable_' + response.system_id).css("display", "block");
+                    $(app.DE.EntityCancel).parent().fadeOut();
+                    $(app.DE.EntitySave).parent().fadeOut();
+                }
+
+                $(app.DE.ElementDots).css('visibility', 'hidden');
+
+                app.enableInfoTool();
+            }
+
+            $(app.DE.tempPath).data().aSystemId = "";
+            $(app.DE.tempPath).data().aEntityType = "";
+            $(app.DE.tempPath).data().aLocation = "";
+            $(app.DE.tempPath).data().bSystemId = "";
+            $(app.DE.tempPath).data().bEntityType = "";
+            $(app.DE.tempPath).data().bLocation = "";
+            $(app.DE.tempPath).data().isEditMode = false;
+            d3.select(app.DE.tempPath).attr('d', '');
+            objCustomD3.removeActualMarkers();
+
+        }
+
+        $(popup.DE.closeModalPopup).trigger("click");
+        alert(response.objPM.message, response.objPM.status == "OK" ? 'success' : 'warning', response.objPM.status == "OK" ? 'success' : 'information');
+        // alert(response.objPM.message, 'success','success');
+        //app.clearControl();
+        $('#ddlCableAEnd').val('0').trigger('chosen:updated');
+        $('#ddlCableBEnd').val('0').trigger('chosen:updated');
+        //app.refreshStructureInfo();
+    }
+
+    this.SaveDuct = function (response) {
+        if (response.objPM != undefined && response.objPM.status == "OK") {
+            app.layerActions.entity.resetFocus($('.entityInfo'));
+            if (response.objPM.isNewEntity) {
+                d3.select('#svgCable').append('path')
+                    .attr('d', d3.select(app.DE.tempPath).attr('d'))
+                    .attr("pointer-events", "visibleStroke")
+                    .attr("id", "ispDuct_" + response.system_id)
+                    .attr("class", "entityInfo P")
+                    .attr("data-system-id", response.system_id)
+                    .attr("data-total-core", response.total_core)
+                    .attr("data-network-id", response.network_id)
+                    .attr("data-cable-type", response.cable_type)
+                    .attr("data-network-status", response.network_status)
+                    .attr("data-a-system-id", response.a_system_id)
+                    .attr("data-a-entity-type", response.a_entity_type)
+                    .attr("data-a-node-type", response.a_node_type)
+                    .attr("data-a-location", response.a_location)
+                    .attr("data-b-system-id", response.b_system_id)
+                    .attr("data-b-entity-type", response.b_entity_type)
+                    .attr("data-b-node-type", response.b_node_type)
+                    .attr("data-b-location", response.b_location)
+                    .attr("data-entity-type", "Duct")
+                    .attr("data-entity-geomtype", "LINE")
+                    .attr("data-entity-title", "Duct").html('<title>' + response.network_id + '</title>');
+
+                //refresh cable count in network layer..
+                app.RefreshISPNetworkLayerElements($(app.DE.StructureId).val());
+
+            }
+            else {
+                if ($(app.DE.tempPath).data().isEditMode) {
+                    d3.select('#svgCable #ispDuct_' + response.system_id)
+                        .attr('d', d3.select(app.DE.tempPath).attr('d'))
+                        .attr("pointer-events", "visibleStroke")
+                        .attr("data-a-system-id", response.a_system_id)
+                        .attr("data-a-entity-type", response.a_entity_type)
+                        .attr("data-a-node-type", response.a_node_type)
+                        .attr("data-a-location", response.a_location)
+                        .attr("data-b-system-id", response.b_system_id)
+                        .attr("data-b-entity-type", response.b_entity_type)
+                        .attr("data-b-node-type", response.b_node_type)
+                        .attr("data-b-location", response.b_location);
+                    $('#svgCable #ispDuct_' + response.system_id).css("display", "block");
                     $(app.DE.EntityCancel).parent().fadeOut();
                     $(app.DE.EntitySave).parent().fadeOut();
                 }
@@ -2419,14 +2551,14 @@
     }
 
     this.layerActions = {
-        
+
         networkStatus: {
             convertStatus: function (_systemId, _entityType, _networkStatus, _oldStatus) {
                 var _old = app.layerActions.networkStatus.getNetStatus(_oldStatus);
                 var _new = app.layerActions.networkStatus.getNetStatus(_networkStatus);
                 var layerTitle = getLayerTltle(_entityType);
                 //Are you sure you want convert
-                 
+
                 confirm(getMultilingualStringValue($.validator.format(MultilingualKey.SI_ISP_GBL_JQ_GBL_020, layerTitle, _old, _new)), function () {
                     ajaxReq('Main/NetworkStage', { systemid: _systemId, entity_type: _entityType, curr_status: _networkStatus, old_status: _oldStatus }, true, function (resp) {
                         if (resp.status == 'OK') {
@@ -2520,7 +2652,7 @@
                 app.layerActions.exportData.render(attr.systemId, attr.entityType, attr.geomType);
             },
             downloadConnections: function (IsConnection) {
-                 
+
                 ExportRoomViewDetail(IsConnection);
             },
             render: function (systemID, entityType, geomType) {
@@ -2543,10 +2675,10 @@
             showSplicingReport: function (e) {
                 var attr = $(e.currentTarget).data();
                 var formURL = "Splicing/GetSplicingReport";
-                var layerTitle = getLayerTltle(attr.entityType );
+                var layerTitle = getLayerTltle(attr.entityType);
                 var titleText = layerTitle + " Splicing Report";
                 popup.LoadModalDialog('PARENT', formURL, {
-                    source_system_id: attr.systemId , source_entity_type: attr.entityType
+                    source_system_id: attr.systemId, source_entity_type: attr.entityType
                 }, titleText, 'modal-lg');
             }
             //download: function (e) {
@@ -2562,7 +2694,7 @@
         },
         detail: {
             get: function (e) {
-                 
+
                 var attr = $(e.currentTarget).data();
                 var NetworkStatus = '';
                 app.layerActions.detail.render({ systemId: attr.systemId, entityType: attr.entityType, geomType: attr.geomType, networkStatus: NetworkStatus });
@@ -2581,13 +2713,13 @@
         },
         ConnectedCustomerDetails: {
             get: function (e) {
-                 
+
                 var attr = $(e.currentTarget).data();
                 app.layerActions.ConnectedCustomerDetails.render({ equipment_id: attr.network_id, objFilterAttributes: { entity_type: attr.entityType, entityid: attr.systemId }, isControllEnable: false });
-             },
+            },
             render: function (_data) {
-                 
-               // var _data = $.extend(_data);
+
+                // var _data = $.extend(_data);
                 var formURL = 'splicing/GetConnectedCustomerDetailsInInfo';
                 var titleText = 'Connected Customer Details';
                 popup.LoadModalDialog('PARENT', formURL, _data, titleText, 'modal-lg');
@@ -2602,7 +2734,7 @@
                 confirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_191, function () {
                     ajaxReq('ISP/Auto_Codification', _data, false, function (resp) {
                         alert(resp.message);
-                         
+
                         if (resp.listLog != '') {
                             var link = document.createElement('a');
                             document.body.appendChild(link);
@@ -2615,10 +2747,10 @@
             }
         },
 
-       
+
         entity: {
             remove: function (e) {
-                
+
                 var attr = $(this).data();
                 if (attr.entityType.toLowerCase() == app.EnumEntityType.Rack.toLowerCase() || attr.entityType.toLowerCase() == app.EnumEntityType.Equipment.toLowerCase()) {
 
@@ -2681,38 +2813,42 @@
             edit: function (e) {
                 var attr = $(e.currentTarget).data();
                 app.DisableInfoTool();
-                //edit cable..
-
-                if (attr.entityType == app.EnumEntityType.Cable) {
-                    //show save cancel actions..
+                if (attr.entityType == app.EnumEntityType.Cable || attr.entityType == app.EnumEntityType.Duct) {
                     $(app.DE.EntityCancel).parent().fadeIn();
                     $(app.DE.EntitySave).parent().fadeIn();
+                    var objEntity = null;
+                    if (attr.entityType == app.EnumEntityType.Cable) {
+                        objEntity = $('#ispCable_' + attr.systemId);
+                    }
+                    if (attr.entityType == app.EnumEntityType.Duct) {
+                        objEntity = $('#ispDuct_' + attr.systemId);
+                    }
+                    if (objEntity) {
+                        var _path = objEntity.attr('d');
+                        var _entityData = objEntity.data();
+                        objEntity.hide();
+                        $(app.DE.ElementDots).css('visibility', 'visible');
+                        let $tempPathData = $('#tempPath').data();
+                        $tempPathData.isEditMode = true;
+                        // copy termination point detail to temp path..
+                        $tempPathData.aSystemId = objEntity.attr('data-a-system-id');
+                        $tempPathData.aEntityType = objEntity.attr('data-a-entity-type');
+                        $tempPathData.aLocation = objEntity.attr('data-a-location');
+                        $tempPathData.aNodeType = objEntity.attr('data-a-node-type');
+                        $tempPathData.bSystemId = objEntity.attr('data-b-system-id');
+                        $tempPathData.bEntityType = objEntity.attr('data-b-entity-type');
+                        $tempPathData.bLocation = objEntity.attr('data-b-location');
+                        $tempPathData.bNodeType = objEntity.attr('data-b-node-type');
+                        $tempPathData.cableType = objEntity.attr('data-cable-type');
+                        $tempPathData.systemId = objEntity.attr('data-system-id');
+                        //edit cable..
+                        objCustomD3.tempPathData = app.getPointArrayFromSvgPath(_path, _entityData.cableType);
+                        objCustomD3.drawTempPathForEdit();
+                        app.cableActions.focusEndPoints($('#div_' + $tempPathData.aEntityType + '_' + $tempPathData.aSystemId), $('#div_' + $tempPathData.bEntityType + '_' + $tempPathData.bSystemId));
 
-                    // get existing cable path..
-                    var objCable = $('#ispCable_' + attr.systemId);
-                    var _path = objCable.attr('d');
-                    var _cableData = objCable.data();
-                    objCable.hide();
-                    $(app.DE.ElementDots).css('visibility', 'visible');
-                    // Enable edit mode
-                    let $tempPathData = $('#tempPath').data();
-                    $tempPathData.isEditMode = true;
-                    // copy termination point detail to temp path..
-                    $tempPathData.aSystemId = objCable.attr('data-a-system-id');
-                    $tempPathData.aEntityType = objCable.attr('data-a-entity-type');
-                    $tempPathData.aLocation = objCable.attr('data-a-location');
-                    $tempPathData.aNodeType = objCable.attr('data-a-node-type');
-                    $tempPathData.bSystemId = objCable.attr('data-b-system-id');
-                    $tempPathData.bEntityType = objCable.attr('data-b-entity-type');
-                    $tempPathData.bLocation = objCable.attr('data-b-location');
-                    $tempPathData.bNodeType = objCable.attr('data-b-node-type');
-                    $tempPathData.cableType = objCable.attr('data-cable-type');
-                    $tempPathData.systemId = objCable.attr('data-system-id');
+                    }
 
-                    // get point array from svg path
-                    objCustomD3.tempPathData = app.getPointArrayFromSvgPath(_path, _cableData.cableType);
-                    objCustomD3.drawTempPathForEdit();
-                    app.cableActions.focusEndPoints($('#div_' + $tempPathData.aEntityType + '_' + $tempPathData.aSystemId), $('#div_' + $tempPathData.bEntityType + '_' + $tempPathData.bSystemId));
+
                 }
 
                 if (attr.entityType.toLowerCase() == app.EnumEntityType.Rack.toLowerCase() || attr.entityType.toLowerCase() == app.EnumEntityType.Equipment.toLowerCase()) {
@@ -2738,7 +2874,6 @@
                 //}, true, false);
             },
             save: function (e) {
-
                 var attr = $(this).data();
                 if (attr.entityType == app.EnumEntityType.Cable) {
                     app.lstISPCablePt = [];
@@ -2781,26 +2916,80 @@
 
                     }
                 }
+
+
+                if (attr.entityType == app.EnumEntityType.Duct) {
+                    debugger;
+                    app.lstISPDuctPt = [];
+                    var objExistingCable = $('#ispDuct_' + attr.systemId);
+                    var updateCablePath = $(app.DE.tempPath).attr("d");
+                    var existingCablePath = objExistingCable.attr("d");
+                    var updatedCableData = $(app.DE.tempPath).data();
+
+                    if (updateCablePath == existingCablePath) {
+                        alert(MultilingualKey.SI_ISP_GBL_JQ_GBL_023, "warning");//No change found in cable path!    
+                        return false;
+                    }
+                    else if (updateCablePath == "") {
+                        alert(MultilingualKey.SI_ISP_GBL_JQ_FRM_018, "warning");//Path can not be blank!
+                        return false;
+                    }
+
+                    else if (updatedCableData.aSystemId == "" || updatedCableData.aEntityType == "") {
+                        alert(MultilingualKey.SI_ISP_GBL_JQ_GBL_024, "warning");//Start termination point can not be blank!
+                        return false;
+                    }
+                    else if (updatedCableData.bSystemId == "" || updatedCableData.bEntityType == "") {
+                        alert(MultilingualKey.SI_ISP_GBL_JQ_GBL_025, "warning");//End termination point can not be blank!
+                        return false;
+                    }
+                    else {
+
+                        var strucIdVal = $(app.DE.StructureId).val();
+                        var lyrDetail = getLayerDetail("Duct");
+                        var ntkIdType = lyrDetail['network_id_type'];
+
+                        app.lstISPDuctPt.push({ network_name: updatedCableData.aEntityType, network_id: updatedCableData.aLocation, system_id: updatedCableData.aSystemId, node_type: updatedCableData.aNodeType });
+                        app.lstISPDuctPt.push({ network_name: updatedCableData.bEntityType, network_id: updatedCableData.bLocation, system_id: updatedCableData.bSystemId, node_type: updatedCableData.bNodeType });
+
+                        var _data = {
+                            geom: '0', enType: 'Duct', cableType: 'ISP', lstTP: app.lstISPDuctPt, networkIdType: ntkIdType, systemId: attr.systemId,
+                            ModelInfo: { structureid: strucIdVal }
+                        };
+                        app.addDuct(_data);
+
+                    }
+                }
+
                 app.layerActions.entity.resetFocus($('.entityInfo'));
             },
             cancel: function (e) {
                 var attr = $(e.currentTarget).data();
+
+
                 if (attr.entityType == app.EnumEntityType.Cable) {
                     $('#ispCable_' + attr.systemId).show();
-                    $(app.DE.ElementDots).css('visibility', 'hidden');
-
-                    // Enable edit mode
-                    let $tempPathData = $('#tempPath').data();
-                    $tempPathData.isEditMode = false;
-                    // copy termination point detail to temp path..
-                    $tempPathData.aSystemId = "";
-                    $tempPathData.aEntityType = "";
-                    $tempPathData.aLocation = "";
-                    $tempPathData.bSystemId = "";
-                    $tempPathData.bEntityType = "";
-                    $tempPathData.bLocation = "";
-                    objCustomD3.removeTempPath();
                 }
+
+                if (attr.entityType == app.EnumEntityType.Duct) {
+                    $('#ispDuct_' + attr.systemId).show();
+                }
+                $(app.DE.ElementDots).css('visibility', 'hidden');
+
+                // Enable edit mode
+                let $tempPathData = $('#tempPath').data();
+                $tempPathData.isEditMode = false;
+                // copy termination point detail to temp path..
+                $tempPathData.aSystemId = "";
+                $tempPathData.aEntityType = "";
+                $tempPathData.aLocation = "";
+                $tempPathData.bSystemId = "";
+                $tempPathData.bEntityType = "";
+                $tempPathData.bLocation = "";
+                objCustomD3.removeTempPath();
+
+
+
                 $(app.DE.EntityCancel).parent().fadeOut();
                 $(app.DE.EntitySave).parent().fadeOut();
 
@@ -2927,7 +3116,7 @@
 
             }
         },
-        
+
     };
 
     this.structureActions = {
@@ -3163,7 +3352,7 @@
                 })
             },
             validate: function () {
-                 
+
                 var totalUnits = parseInt($('#hdnTotalUnits').val());
                 var distributedUnitToFloor = 0;
                 $('.str-floor').filter(function () { if ($(this).data().totalUnit != undefined) { distributedUnitToFloor = distributedUnitToFloor + parseInt($(this).data().totalUnit); } })
@@ -4019,7 +4208,7 @@
 
     }
     this.GetPortInfo = function (system_id, model_id, entity_type, _type) {
-         
+
         ajaxReq('Library/GetPortInfo', { systemId: system_id, modelId: model_id, entity_type: entity_type, type: _type }, false, function (resp) {
             $("#PortInfo").html(resp);
         }, false, false);
@@ -4028,7 +4217,7 @@
 
 
     this.GetAutoFiberLinkId = function (searchText) {
-         
+
         $('#' + searchText).autocomplete({
 
             source: function (request, response) {
@@ -4089,7 +4278,7 @@
 
     //##POP Association
     this.GetPODAssociationDetail = function (_geom, _system_id, _entity_type, _primary_pod_system_id, _secondary_pod_system_id) {
-         
+
         ajaxReq('ISP/GetPODAssociationDetail', {
             geom: _geom, associated_system_id: _system_id, associated_entity_Type: _entity_type, primary_pod_system_id: _primary_pod_system_id, secondary_pod_system_id: _secondary_pod_system_id
         }, true, function (resp) {
@@ -4144,7 +4333,7 @@
     }
 
     this.getLoopDetailsForCable = function (_system_id) {
-         
+
         ajaxReq('ISP/getLoopDetailsForCable', {
             cable_system_id: _system_id
         }, true, function (resp) {
@@ -4210,10 +4399,10 @@
         var _system_Id = $(app.DE.liRefLink).data().systemId;
         var _entity_type = $(app.DE.liRefLink).data().entityType;
         ajaxReq('ISP/getISPEntityRefLink', { system_Id: _system_Id, entity_type: _entity_type }, true, function (jResp) {
-             
+
             $(app.DE.divRefLink).html(jResp);
             //  $("#dvEntityInformationDetail #divRefLink").html(jResp);            
-             
+
         }, false, false, true);
     }
 
@@ -4224,7 +4413,7 @@
             isvalidFm = false;
         }
         else {
-            $('#DocrefLinkText').removeClass("notvalid notvalid input-validation-error");          
+            $('#DocrefLinkText').removeClass("notvalid notvalid input-validation-error");
         }
         if ($('#DocrefLink').val().trim() == "") {
             $('#DocrefLink').addClass("notvalid notvalid input-validation-error");
@@ -4232,7 +4421,7 @@
         }
         else {
             $('#DocrefLink').removeClass("notvalid notvalid input-validation-error");
-           
+
         }
 
         if (isvalidFm) {
@@ -4251,7 +4440,7 @@
                 frmData.append('refDisplayTxt', $('#DocrefLinkText').val());
                 frmData.append('refLink', $('#DocrefLink').val());
                 ajaxReqforFileUpload('Main/UploadRefLink', frmData, true, function (resp) {
-                     
+
                     if (resp.status == "OK") {
                         $('#closeModalPopup').trigger("click");
                         app.getRefLinksFiles();
@@ -4297,7 +4486,7 @@
         //        listPathName.push({ systemId: $(this).attr(KeyAttrName), location: $(this).attr(LocationAttr) });
         //    }
         //});
-         
+
         if (listPathName.length > 0) {
             window.location.href = appRoot + '' + ActionUrl + '?json=' + JSON.stringify(listPathName) + '&entity_type=' + FileNameType;
         }
@@ -4307,7 +4496,7 @@
     }
     this.deleteImgDocsByID = function (PrntIdWidthSelector, ChkboxWidthSelector, ActionUrl, KeyAttrName, ReBindFuName, Parameters, DeleteType) {
         //Ready the list of selected images for delete
-         
+
         KeyAttrName = KeyAttrName == null || KeyAttrName == "" || KeyAttrName == undefined ? "" : KeyAttrName;
         PrntIdWidthSelector = PrntIdWidthSelector == null || PrntIdWidthSelector == "" || PrntIdWidthSelector == undefined ? "" : PrntIdWidthSelector;
         ChkboxWidthSelector = ChkboxWidthSelector == null || ChkboxWidthSelector == "" || ChkboxWidthSelector == undefined ? "" : ChkboxWidthSelector;
@@ -4330,7 +4519,7 @@
                         ReBindFuName();
                 }, true, true)
             };
-            showConfirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_004.replace('file?','') +' '+ DeleteType+'?', func);//Are you sure you want to delete this file?
+            showConfirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_004.replace('file?', '') + ' ' + DeleteType + '?', func);//Are you sure you want to delete this file?
         } else {
             alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_005, 'warning');//Please select any file!
         }
@@ -4366,6 +4555,3 @@ function ValidateFormsWithParentID(ClosetParentIDWithSelector) {
     })
     return isvalidForm;
 }
-
-
-

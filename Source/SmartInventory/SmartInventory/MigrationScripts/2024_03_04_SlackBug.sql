@@ -1,0 +1,1 @@
+﻿update BOM_BOQ_MASTER set calculated_length_column='att.calculated_length + (Cast(att.total_slack_length as decimal(10,2)))' where layer_id=(select layer_id from layer_details where layer_name='Duct');

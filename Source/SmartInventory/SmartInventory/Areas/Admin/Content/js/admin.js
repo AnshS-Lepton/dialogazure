@@ -10,11 +10,18 @@ this.preSelectedBlock = null;
 //this.stepper = new Stepper(document.querySelector('.bs-stepper'));
 
 if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf("SaveUser") > -1) {
-    $(document).ready(function () {
-
-         
+    $(document).ready(function () {         
         var stepper = new Stepper(document.querySelector('.bs-stepper'));
-        $('.chosen-select').chosen({ placeholder_text_multiple: 'All', width: '100%' });
+        $('.chosenfetool').chosen({
+            placeholder_text_multiple: '-Select-',
+            width: '100%',
+            no_results_text: ''
+        });
+        $('.chosen-select').chosen({
+            placeholder_text_multiple: 'All',
+            width: '100%'
+        });      
+
         $(".Nextbtn").on("click", function (e) {
             // 
             //console.log("checkDuplicate Email ID::" + checkDuplicateUserName());
@@ -28,6 +35,7 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
 
             if (!CheckUserRole()) { e.preventDefault(); return true; }
             else if (!CheckReportingManager()) { e.preventDefault(); return true; }
+            
             //if (($("#user_id").val() == 0)) {
             if (!CheckApplicationAccess()) { e.preventDefault(); return true; }
             if (!CheckUserType()) { e.preventDefault(); return true; }
@@ -96,14 +104,18 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
         if (multi_manager_ids != "") {
             if ($("#ddl_UserReportingManager").length) {
                 $("#ddl_UserReportingManager").val(multi_manager_ids.split(',')).trigger("chosen:updated");
-                
-                //app.preSelectedStates = $("#selectedProvinces").val();
-                //getStates();
             }
         }
 
         
-
+        var multi_tools_ids = $("#multi_tool_ids").val();
+        debugger;
+        if (multi_tools_ids != "") {
+            if ($("#ddl_fetool").length) {
+                $("#ddl_fetool").val(multi_tools_ids.split(',')).trigger("chosen:updated");
+                
+            }
+        }
        
 
         var multi_warhouse_codes = $("#multi_warhouse_code").val();
@@ -171,7 +183,7 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
             var reportingManagerId = $("#ddl_UserReportingManager").val();
 
             if ($("#ismutimanagar").val() == "True") {
-                if (reportingManagerId!=null) {
+                if (reportingManagerId != null) {
                     $('#multi_manager_ids').val($("#ddl_UserReportingManager").val().join(","));
                     // reportingManagerId=reportingManagerId[0];
                     reportingManagerId = $("#ddl_UserReportingManager").val().join(",")
@@ -441,7 +453,7 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
     $("#ddl_UserReportingManager").change(function () {
         CheckReportingManager();
     });
-
+    
     $(document).on("change", "#ddlApplication", function () {
         console.log("dfdf");
         CheckApplicationAccess();
@@ -463,7 +475,7 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
             return true;
         }
     };
-
+    
     function CheckReportingManager() {
         if ($("#ddl_UserReportingManager").val() == null || $("#ddl_UserReportingManager").val() == "") {
             $('#ddl_UserReportingManager_chosen').css({ "border": "1px solid red", "border-radius": "0.25rem" });
@@ -1989,7 +2001,6 @@ function updateModuleList() {
 
 
 function onChangeRMId() {
-     
     var ddl= $('#ddl_UserReportingManager');
     if ($("#ddl_UserRole").val() != 0 || $("#ddl_UserRole").val() != "") {
         
@@ -2015,7 +2026,24 @@ function onChangeRMId() {
 
 }
 
+function onChangeToolId() {
+    var ddl = $('#ddl_fetool').val();
+    if ($("#ddl_fetool").val() != 0 || $("#ddl_fetool").val() != "")
+    {
+        var toolId = $("#ddl_fetool").val();
+        if ($("#ddl_fetool").val() != '' && $("#ddl_fetool").val() != null) {
 
+            $('#multi_tool_ids').val($("#ddl_fetool").val().join(","));
+            toolId = $("#ddl_fetool").val().join(",")
+        }
+        else
+        {
+
+            toolId = 0
+        }
+    }
+
+}
 function onChangeWarehouseCode() {
      
      var wareHouseCodes = $("#ddl_WarehouseCode").val();
@@ -2138,15 +2166,18 @@ function DeleteUtilizationSettingsById(id) {
     });
 }
 
+
 function AddNewUtlization(_system_id) {
     
     if (_system_id == 0) {
         $('#OtherEntities').show();
+        popup.LoadModalDialog('Miscellaneous/AddEntityUtilization', { system_id: _system_id }, 'Add New Utilization', 'modal-md');
     }
     else {
         $('#OtherEntities').hide();
+        popup.LoadModalDialog('Miscellaneous/AddEntityUtilization', { system_id: _system_id }, 'Update Utilization', 'modal-md');
     }
-    popup.LoadModalDialog('Miscellaneous/AddEntityUtilization', { system_id: _system_id }, 'Add New Utilization', 'modal-md');
+    
 }
 
 
@@ -2235,12 +2266,13 @@ $(document).on("click", app.DE.AddNewCoreLstRow, function () {
         TubeColorRowData += '<td><span><input class="full col-md-10" value="#1c4587" data-val="true" data-val-required="The color_code field is required." id="lstCableColor_' + rowCount + '__color_code" name="lstCableColor[' + rowCount + '].color_code" type="text" value=""></td>';
         // TubeColorRowData += '<td><span><input style="width: 100%; display: none;" class="full col-md-10" id="lstCableColor_' + rowCount + '__color_code" maxlength="25" name="lstCableColor[' + rowCount + '].color_code" type="text" value="#1c4587"><div class="sp-replacer sp-light"><div class="sp-preview"><div class="sp-preview-inner" style="background-color: rgb(28, 69, 135);"></div></div><i class="fa fa-paint-brush"></i></div></span></td>';
 
-        TubeColorRowData += '<td><span class="TubeColorRowDelete" title="Delete" >x</span></td></tr>';
+        TubeColorRowData += '<td><span class="TubeColorRowDelete" title="Delete" ><i class="fa fa-fw fa-trash" style=" font-size: 13px; color: #f50000;"></i></span></td></tr>';
 
         addRowInFloorTbl.append(TubeColorRowData);
         var chk = $('#lstCableColor');
         //$(app.DE.ShaftNFloorInut).unbind('keypress').keypress(function () { $(this).removeClass('NotValid'); });
         CallRunTimeCssForColorPicker();
+        alert('One row added successfully.');
     }
     else {
         alert('Only 30 row can be added!');
@@ -3331,6 +3363,10 @@ function AddNewAccessories(_id) {
      
     popup.LoadModalDialog('Accessories/AddNewAccessories', { id: _id }, 'Add Accessories', 'modal-md');
 }
+function EditAccessories(_id) {
+
+    popup.LoadModalDialog('Accessories/AddNewAccessories', { id: _id }, 'Update Accessories', 'modal-md');
+}
 
 function DeleteAccessoriesById(id, name) {
      
@@ -3802,14 +3838,12 @@ function AddNewAccessoriesMapping(_id) {
     popup.LoadModalDialog('Miscellaneous/AddNewAccessoriesMapping', { id: _id }, 'Add Accessories Entity', 'modal-md');
 }
 function DeleteAssociateEntityById(id) {
-     
-
     confirm("Are you sure you want to delete this record?", function () {
         ajaxReq('Miscellaneous/DeleteAssociateEntityById', { id: id }, false, function (resp) {
             if (resp.status == "OK") {
                 alert(resp.message, 'Success', 'success');
                 setTimeout(function () {
-                    $("#frmViewAccessories).submit()");
+                    $("#frmViewAccessories").submit();
                 }, 3000);
 
             }

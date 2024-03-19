@@ -1,0 +1,1 @@
+update form_input_settings set is_active='false' where id=(select id from form_input_settings where form_name='User');

@@ -407,15 +407,15 @@
                                             <span class="icon-merge"></span>
                                         </a>
                                     </li>
-                                    <li class="techSep"></li>
+                                    
                                 }
                                 @if (Model.lstUserModule.Contains("MAP-LAYOUT"))
                                 {
+                                    <li class="techSep"></li>
                                     <li>
                                         <a href="#" class="iconBaricomoon" title="Layout">
                                             <span class="icon-layout_New"></span>
                                         </a>
-
                                         <ul class="map-layout childtoolbar">
                                             <li>
                                                 <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.toggleLayout(this,'Polygon')">
@@ -785,7 +785,7 @@
 
 
 
-                    
+
                 }
 
                 @if (Model.lstUserModule.Contains("LTK"))
@@ -952,19 +952,19 @@
 
 
                 @if (Model.lstUserModule.Contains("SFS") && ApplicationSettings.isFeasibilityEnabled)
-                    {
+                {
 
 
-                        <a href="@Url.Action("feasibility", "Main")" target="_blank" class="iconBaricomoon" id="Cpfinder" title="@Resources.Resources.SI_GBL_GBL_NET_GBL_001">
+                    <a href="@Url.Action("feasibility", "Main")" target="_blank" class="iconBaricomoon" id="Cpfinder" title="@Resources.Resources.SI_GBL_GBL_NET_GBL_001">
 
-                            <span class="icon-Connection-Path-finder"></span>
+                        <span class="icon-Connection-Path-finder"></span>
 
-                        </a>
+                    </a>
 
 
 
-                        <li class="techSep"></li>
-                    }
+                    <li class="techSep"></li>
+                }
 
 
                 @*@if (Model.lstUserModule.Contains("SPI") && ApplicationSettings.isSmartPlannerEnabled)
@@ -1345,7 +1345,7 @@
                         <a href="#" class="iconBaricomoon maintoolbar clsWireLine" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_031" onclick="si.showWLTB('WireLine', this)">
                             <span class="icon-wireline_tool"></span>
                         </a>
-                        @if (Model.lstUserModule.Contains("MNS") == true || Model.lstUserModule.Contains("CPF") == true)
+                        @if (Model.lstUserModule.Contains("MNS") == true || Model.lstUserModule.Contains("CPF") == true || Model.lstUserModule.Contains("BLK-SDU") == true)
                         {
                             count++;
                         }
@@ -1360,6 +1360,9 @@
                                         </a>
                                     </li>
                                     <li class="techSep"></li>
+                                }
+                                @if (Model.lstUserModule.Contains("BLK-SDU"))
+                                {
                                     <li>
                                         <a href="#" class="iconBaricomoon bulkSplicing" onclick="splicing.toggleConnectionUpload()" title="Bulk Splicing"><span class="icon-Bulk_Splicing"></span></a>
                                     </li>
@@ -1541,7 +1544,7 @@
                             if (objLayer.isVisibleInNeLibrary == true && objLayer.planned_add == true)
                             {
 
-                                <div class="ImaraGrid">
+                                <div class="ImaraGrid" title="@objLayer.layerTitle">
                                     <img title="@objLayer.layerTitle" data-geomtype="@objLayer.geomType"
                                          data-networkidtype="@objLayer.networkIdType"
                                          data-istemplate="@objLayer.isTemplateRequired"
@@ -1819,7 +1822,7 @@
             <b>Zoom	: </b><span>5</span>
         </div>
         @*<div class="bottom_line_right">
-            </div>*@
+        </div>*@
         <div id="lengthAreaDiv" class="mr-01">
         </div>
         <div class="bottom_txt legendDiv" title="Legend">
@@ -1829,6 +1832,8 @@
                     <span class="slider round"></span>
                 </label>
             </span>
+        </div>
+        <div id="layerLoadingStatusDiv" class="mr-01">
         </div>
         <div id="gMapLineTool" class="gmapLineTools iconBaricomoonfooter bulkOhide">
 

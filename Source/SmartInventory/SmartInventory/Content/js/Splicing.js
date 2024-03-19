@@ -140,6 +140,9 @@
             $("#PathTrack .dropfiles").trigger("click");
         });
         $(app.DE.btnCPFClear).on("click", function () {
+            //$('#equipment_id').val('');
+            $('#btnSchView').prop('disabled', true);
+            $('#btnShowOnMap').prop('disabled', true);
 
             if (isp != null) {
                 $('#btnShowOnMap').hide();
@@ -1918,10 +1921,13 @@
                     canvas: canvas
                 };
             });
-
+            
+            var computedHeight = window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight;
             // At this point the container has no SVG, it only has HTML and Canvases.
             html2canvas($(targetElem)[0], {
-                allowTaint: true, useCORS: true, logging: false, height: window.outerHeight + window.innerHeight, windowHeight: window.outerHeight + window.innerHeight
+                allowTaint: true, useCORS: true, logging: false,
+                height: computedHeight > 1900 ? 4400 : computedHeight,
+                windowHeight: computedHeight > 1900 ? 4400 : computedHeight
             }).then(function (canvas) {
                 // Put the SVGs back in place
                 elements.each(function () {
@@ -2237,7 +2243,6 @@
     }
 
     this.showPath = function () {
-         
         //alert('Entry Splice without osp');
         ajaxReq('Splicing/GetCPFelementPath', {}, true, function (resp) {
             if (resp.status = 'OK') {
@@ -2317,10 +2322,10 @@
                             //IE Solution
                             var ptObj = null;
                             if (resp.result[i].entity_category != null && resp.result[i].entity_category != '') {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.result[i].entity_category + '_' + resp.result[i].en_type.toUpperCase() + '.png', system_id, en_type, port_no, display_name, is_virtual_port_allowed);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.result[i].entity_category + '_' + resp.result[i].en_type.toUpperCase() + '.png', system_id, en_type, port_no,network_id,display_name, is_virtual_port_allowed);
                             }
                             else {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result[i].is_virtual ? 'v_' : '') + resp.result[i].en_type + '.png', system_id, en_type, port_no, display_name, is_virtual_port_allowed);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result[i].is_virtual ? 'v_' : '') + resp.result[i].en_type + '.png', system_id, en_type, port_no,network_id,display_name, is_virtual_port_allowed);
                             }
                             var SourceEquipmentId = $('#equipment_id').val().split(" ")[0];
                             //JIRA- SSSI-452 bug fix change done by Ram
@@ -2396,6 +2401,7 @@
     this.downloadCPEKML = function () {
         window.location = appRoot + 'Splicing/DownloadCPFIntoKML';
     }
+    //pk
     this.clearCFPGrid = function () {
         if (app.apptestvalue == false) {
             $(app.DE.equipmentid).val('');            
@@ -2407,8 +2413,9 @@
         }                
         app.clearCPFMarker();        
         $('#divNoRecordExist').show();        
-        $('#tblConnectionPathFinderInfo,#dvHeader,#dvBtnAction').hide()
-
+        $('#tblConnectionPathFinderInfo,#dvHeader').hide();
+        $('.libTab--dis').hide();
+        $(app.DE.ddlCore).val(0).trigger("chosen:updated");
     }
     this.downloadOpticalLink = function () {
         window.location = appRoot + 'Splicing/DownloadOpticalLinkBudgetReport';

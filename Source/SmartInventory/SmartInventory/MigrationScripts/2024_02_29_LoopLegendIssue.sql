@@ -1,0 +1,2 @@
+INSERT INTO public.legend_details (layer_id, group_name, sub_layer, icon_path, created_by, created_on, modified_by, modified_on, "type", color_code, layer_sub_column, network_type, is_active, sequence_id) 
+VALUES((select layer_id from layer_details where layer_name='Loop'),'Other', '[LAYER_TITLE]', 'loop.svg', 1, '2019-03-12 09:21:51.133', NULL, NULL, 'Web', NULL, 'tree', NULL, true, 8);

@@ -17,7 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Utility;
-using Utility.MapPrinter;
+using BusinessLogics.MapPrinter;
 namespace SmartInventory.Helper
 {
     public class PDFHelper
@@ -413,7 +413,7 @@ namespace SmartInventory.Helper
                     if (rptType.ToUpper() == "BOQ")
                     {
                         tblPDF.AddCell(GetCusotmPDFCell(String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_014.Replace("<br>", ""), ApplicationSettings.Currency), _isHeaderFooter: true));
-                        tblPDF.AddCell(GetCusotmPDFCell(Resources.Resources.SI_OSP_GBL_NET_RPT_017 + " " + string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency), _isHeaderFooter: true));
+                        tblPDF.AddCell(GetCusotmPDFCell(String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_017.Replace("<br>", ""), ApplicationSettings.Currency), _isHeaderFooter: true));
                     }
                     tblPDF.AddCell(GetCusotmPDFCell(Resources.Resources.SI_OSP_GBL_NET_GBL_226, _isHeaderFooter: true));
                     if (rptType.ToUpper() == "BOQ")
@@ -1576,9 +1576,9 @@ namespace SmartInventory.Helper
             //int ActualImageWidth = bitmap.Width;
             int ActualImageHeight = bitmap.Height;
             float horizontalMargin = pdfDoc.LeftMargin + pdfDoc.RightMargin + 10;
-            //float verticalMargin = pdfDoc.TopMargin + pdfDoc.BottomMargin + 10;
+            float verticalMargin = pdfDoc.TopMargin + pdfDoc.BottomMargin + 25;
 
-            int ActualPageHeight = Convert.ToInt32(pdfDoc.PageSize.Height);
+            int ActualPageHeight = Convert.ToInt32(pdfDoc.PageSize.Height) - Convert.ToInt32(verticalMargin);
             int ActualPageWidth = Convert.ToInt32(pdfDoc.PageSize.Width) - Convert.ToInt32(horizontalMargin);
             int pageIteration = 0;
 
@@ -1594,8 +1594,13 @@ namespace SmartInventory.Helper
                 Image imgPlanned = Image.GetInstance(imgCropped, System.Drawing.Imaging.ImageFormat.Png);
                 imgCropped.Dispose();
                 imgPlanned.ScaleToFit(ActualPageWidth, ActualPageHeight);
-                pdfDoc.Add(imgPlanned);
-                //pdfDoc.NewPage();
+                if (ActualImageHeight > ActualPageHeight)
+                    pdfDoc.Add(imgPlanned);
+                else
+                {
+                    pdfDoc.NewPage();
+                    pdfDoc.Add(imgPlanned);
+                }
                 ActualImageHeight = ActualImageHeight - ActualPageHeight;
                 pageIteration++;
 

@@ -59,6 +59,7 @@ namespace Models
         public string chromaticdispersion { get; set; }
         public string totalchromaticloss { get; set; }
         public string remarks { get; set; }
+        [Required]
         public string route_id { get; set; }
         public int created_by { get; set; }
         [NotMapped]
@@ -193,6 +194,7 @@ namespace Models
         public string area_id { get; set; }
         public string dsa_id { get; set; }
         public string csa_id { get; set; }
+        [Required]
         public string gis_design_id { get; set; }
         [NotMapped]
         public string geographic_id { get; set; }
@@ -215,7 +217,10 @@ namespace Models
         public string partner_name { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
-
+        [Required]
+        public string route_name { get; set; }
+        [NotMapped]
+        public CDBAttribute LstCDBAttribute { get; set; }
         public CableMaster()
         {
             objPM = new PageMessage();
@@ -230,6 +235,7 @@ namespace Models
             lstBindWorkorderCode = new List<WorkorderCodeMaster>();
             lstBindPurposeCode = new List<PurposeCodeMaster>();
             EntityReference = new EntityReference();
+            LstCDBAttribute = new CDBAttribute();
             purpose_id = 0;
             planning_id = 0;
             workorder_id = 0;
