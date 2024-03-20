@@ -535,6 +535,7 @@ namespace DataAccess.DBContext
             modelBuilder.Entity<ConnectedDeviceRequest>().ToTable("tbl_wfm_connected_device_request", dbschema);
 
             modelBuilder.Entity<UserManagerMapping>().ToTable("user_manager_mapping", dbschema);
+            modelBuilder.Entity<userFeToolMapping>().ToTable("user_fe_tool_mapping", dbschema);
 
             modelBuilder.Entity<UserWarehouseCodeMapping>().ToTable("user_warehousecode_mapping", dbschema);
 

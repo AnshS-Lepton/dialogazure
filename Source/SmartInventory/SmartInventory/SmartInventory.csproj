@@ -1539,6 +1539,8 @@
     <Content Include="Content\images\StructureHeader.png" />
     <Content Include="Content\images\tick_1.gif" />
     <Content Include="Content\images\timer.svg" />
+    <Content Include="Content\images\top_bg_blue.png" />
+    <Content Include="Content\images\top_bg_dBlue.png" />
     <Content Include="Content\images\top_bg_red.png" />
     <Content Include="Content\images\UnlinkAll.svg" />
     <Content Include="Content\images\warinng.png" />
