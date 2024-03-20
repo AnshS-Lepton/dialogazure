@@ -3,7 +3,7 @@
 <div class="form-group">
     <label class="control-label col-sm-2" for="ddlType">@Resources.Resources.SI_OSP_GBL_GBL_GBL_023<i class="clsMandatory">*</i>:</label>
     <div class="col-sm-45">
-        @Html.DropDownListFor(m => m.type, new SelectList(Model.lstType.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlType", @onchange = "ddlChangeRemoveCss(this.id, 'Type');" })
+        @Html.DropDownListFor(m => m.type, new SelectList(Model.listType.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlType", @onchange = "ddlChangeRemoveCss(this.id, 'Type');" })
     </div>
     <label class="control-label col-sm-2" for="ddlBrand">@Resources.Resources.SI_OSP_GBL_GBL_GBL_024<i class="clsMandatory">*</i>:</label>
     <div class="col-sm-45">
