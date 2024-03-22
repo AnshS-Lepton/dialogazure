@@ -2400,7 +2400,6 @@ var Main = function () {
             });
     }
     this.getCDBLayer = function () {
-        debugger;
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "CDB";
         });
@@ -14779,7 +14778,6 @@ var Main = function () {
             return false;
         }
         ajaxReq('LandBaseLayer/SaveEditGeometry', { systemId: systemId, geomType: geomType, entityType: entityType, longLat: entityGeom, isExisting: true, centerLineGeom: centerLineGeom, tpDetail: app.editExistTerminationPoint }, true, function (resp) {
-            //;
             if (resp.status == "OK" && resp.status == "OK") {
                 $('#EntityCancel').hide();
 
@@ -14898,6 +14896,9 @@ var Main = function () {
                     if (app.distanceWidget_A) {
                         app.distanceWidget_A.set("map", null);
                         app.distanceWidget_A = null;
+                    }
+                    if (typeof dataUploader !== 'undefined' && dataUploader != null) {
+                        dataUploader.RemoveOldFeature();
                     }
                     alert(resp.error_message);
                 }
