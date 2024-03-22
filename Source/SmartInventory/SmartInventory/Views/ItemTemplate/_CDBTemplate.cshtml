@@ -1,6 +1,6 @@
 ﻿@model Models.CDBItemMaster
 @using Models;
-
+@using SmartInventory.Settings;
 <script>
     //Set color of template icon as green in NE library
     if ('@Model.id' > 0) {
@@ -19,6 +19,10 @@
 {
     { Html.RenderPartial("_SystemSpecification", (itemMaster)Model); }
 }
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.CDB.ToString().ToUpper()).FirstOrDefault() : null;
+}
+<input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 <!DOCTYPE html>
 <div class="libDetail">
 
@@ -32,50 +36,50 @@
     new { id = "frmItemTemplate", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
     {
         @Html.HiddenFor(m => m.id)
-             <!-- Message Pop-up -->
+        <!-- Message Pop-up -->
         @pageMessage()
-    <div class="libTabContent" style="overflow:visible !important">
-        <!-- Tab panes -->
-        <div class="tab-content">
-            <div class="tab-pane active" id="ItemSpecfication">
-                <fieldset class="the-fieldset">
-                    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
-                    @ItemSpecification()
-                    <div class="form-group row">
-                        <div class="form-group" id="divddlEntityType">
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_020<i class="clsMandatory">*</i>:</label>
-                            <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.entity_category, new List<SelectListItem>
-                                         {
-                                            new SelectListItem{ Text="Primary", Value = "Primary" },
-                                            new SelectListItem{ Text="Secondary", Value = "Secondary" }
-                                         }, "--select--", new { @class = "chosen-select form-control clsReadOnly", @readonly = "True" })
+        <div class="libTabContent" style="overflow:visible !important">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="ItemSpecfication">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
+                        @ItemSpecification()
+                        <div class="form-group row">
+                            <div class="form-group" id="divddlEntityType">
+                                <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_020<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-4">
+                                    @Html.DropDownListFor(m => m.entity_category, new List<SelectListItem>
+                                             {
+                                                new SelectListItem{ Text="Primary", Value = "Primary" },
+                                                new SelectListItem{ Text="Secondary", Value = "Secondary" }
+                                             }, "--select--", new { @class = "chosen-select form-control clsReadOnly", @readonly = "True" })
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </fieldset>
-                <fieldset class="the-fieldset">
+                    </fieldset>
+                    <fieldset class="the-fieldset">
                         <legend class="the-legend">Model Mapping & System Specification</legend>
                         @SystemSpecification()
                     </fieldset>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="d-flex ModalFooter" id="dvBtnAction">
+        <div class="d-flex ModalFooter" id="dvBtnAction">
 
-        <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
 
-        @if (Model.id > 0)
-        {
-            <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
-        }
-        else
-        {
-            <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
-        }
+            @if (Model.id > 0)
+            {
+                <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
 
-    </div>
+        </div>
     }
 </div>
 <script>
@@ -104,6 +108,6 @@
         $('#id').val('@Model.id');
     });
 
-  
+
 
 </script>

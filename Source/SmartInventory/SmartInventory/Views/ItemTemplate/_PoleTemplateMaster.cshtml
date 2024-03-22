@@ -13,6 +13,7 @@
     var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Pole.ToString().ToUpper()).FirstOrDefault() : null;
 
 }
+<input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 <fieldset class="the-fieldset">
     <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_NET_FRM_218</legend>
     <div class="form-group">
@@ -35,7 +36,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-         
+
         $('.chosen-select').chosen({ width: '100%' });
         var polevalue = $("#ddlPole_Type option:selected").val();
         if (polevalue == undefined || polevalue == null || polevalue == '') {
@@ -49,20 +50,22 @@
             $('txtSubCategory3').val("");
         }
         $('#specification').chosen().change(function (event) {
-             
+
             var dID = $(this).val();
             si.bindVendor(dID);
         });
         $('#ddlVendor').chosen().change(function (event) {
-             
+
             var specfi = $("#specification option:selected").val(); //
             var vandorid = $(this).val();
             var entitytype = $('#entityType').val();
             si.bindCateSubcat(entitytype, specfi, vandorid);
         });
         $('#ddlType').chosen().change(function (event) {
+            debugger;
             var dID = $(this).val();
-            si.bindBrand(dID);
+            var Layer_id = $("#Layer_id").val();
+            si.bindBrand(dID, Layer_id);
         });
         $('#ddlBrand').chosen().change(function (event) {
             var dID = $(this).val();
@@ -70,7 +73,7 @@
         });
 
         $('#ddlPole_Type').chosen().change(function (event) {
-             
+
             var Is_specification_allowed = $(this).attr("is-specification-allowed");
             var selected_pole_type = $("#ddlPole_Type option:selected").val();
             if (Is_specification_allowed == "True") {

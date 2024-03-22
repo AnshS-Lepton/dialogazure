@@ -1,5 +1,6 @@
 ﻿@model Models.HTBTemplate
 @using Models;
+@using SmartInventory.Settings;
 <script>
     //Set color of template icon as green in NE library
     if ('@Model.system_id' > 0) {
@@ -18,6 +19,11 @@
 {
     { Html.RenderPartial("~/Views/ItemTemplate/_SystemSpecification.cshtml", (itemMaster)Model); }
 }
+@using SmartInventory.Settings;
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.HTB.ToString().ToUpper()).FirstOrDefault() : null;
+}
+<input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 <!DOCTYPE html>
 <div class="libDetail">
 
@@ -32,12 +38,12 @@
     {
         @Html.HiddenFor(m => m.system_id)
         @Html.HiddenFor(m=>m.created_by)
-             <!-- Message Pop-up -->
+        <!-- Message Pop-up -->
         @pageMessage()
         <div class="libTabContent">
             <!-- Tab panes -->
             <div class="tab-content">
-                <div class="tab-pane active" id="ItemSpecfication">                   
+                <div class="tab-pane active" id="ItemSpecfication">
                     <fieldset class="the-fieldset">
                         <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
                         @ItemSpecification()
@@ -52,15 +58,15 @@
 
         <div class="d-flex ModalFooter" id="dvBtnAction">
             <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
-                @if (Model.system_id > 0)
-                {
-                    <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
-                }
-                else
-                {
-                    <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
-                }
-            </div>
+            @if (Model.system_id > 0)
+            {
+                <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+        </div>
 
     }
 </div>
@@ -90,7 +96,7 @@
 
         $('#id').val('@Model.system_id');
 
- 
+
     });
 
 </script>

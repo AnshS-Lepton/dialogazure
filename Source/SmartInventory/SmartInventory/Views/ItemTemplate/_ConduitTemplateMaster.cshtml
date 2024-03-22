@@ -1,22 +1,27 @@
 ﻿@model Models.ConduitTemplateMaster
 @using Models;
+@using SmartInventory.Settings
 @helper ItemSpecification()
 {
-{ Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
+    { Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
 }
 @helper SystemSpecification()
 {
-{ Html.RenderPartial("~/Views/ItemTemplate/_SystemSpecification.cshtml", (itemMaster)Model); }
+    { Html.RenderPartial("~/Views/ItemTemplate/_SystemSpecification.cshtml", (itemMaster)Model); }
 }
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Conduit.ToString().ToUpper()).FirstOrDefault() : null;
+}
+<input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 <fieldset class="the-fieldset">
     <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
     @ItemSpecification()
 </fieldset>
 <fieldset class="the-fieldset">
-        <legend class="the-legend">Model Mapping & System Specification</legend>
-        @SystemSpecification()
+    <legend class="the-legend">Model Mapping & System Specification</legend>
+    @SystemSpecification()
 
-    </fieldset>
+</fieldset>
 <script type="text/javascript">
     $(document).ready(function () {
         $('.chosen-select').chosen({ width: '100%' });
@@ -28,7 +33,7 @@
             var specfi = $("#specification option:selected").val(); //
             var vandorid = $(this).val();
             var entitytype = $('#entityType').val();
-            si.bindCateSubcat(entitytype,specfi, vandorid);
+            si.bindCateSubcat(entitytype, specfi, vandorid);
         });
         $('#ddlType').chosen().change(function (event) {
             var dID = $(this).val();

@@ -1,5 +1,6 @@
 ﻿@model Models.HTBTemplateMaster
 @using Models;
+@using SmartInventory.Settings;
 @helper ItemSpecification()
 {
     { Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
@@ -8,6 +9,10 @@
 {
     { Html.RenderPartial("~/Views/ItemTemplate/_SystemSpecification.cshtml", (itemMaster)Model); }
 }
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.HTB.ToString().ToUpper()).FirstOrDefault() : null;
+}
+ <input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 <fieldset class="the-fieldset">
     <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
     @ItemSpecification()

@@ -1,6 +1,6 @@
 ﻿@model Models.OpticalRepeaterTemplate
 @using Models;
-
+@using SmartInventory.Settings;
 <script>
     //Set color of template icon as green in NE library
     if ('@Model.system_id' > 0) {
@@ -19,6 +19,10 @@
 {
     { Html.RenderPartial("~/Views/ItemTemplate/_SystemSpecification.cshtml", (itemMaster)Model); }
 }
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.OpticalRepeater.ToString().ToUpper()).FirstOrDefault() : null;
+}
+ <input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 <!DOCTYPE html>
 <div class="libDetail">
 

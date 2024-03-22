@@ -28,6 +28,7 @@
     }
 
 }
+<input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 @if (ViewContext.RouteData.GetRequiredString("action") == "CableTemplate")
 {
     <fieldset class="the-fieldset">
@@ -124,7 +125,8 @@
         $('#ddlType').chosen().change(function (event) {
             debugger;
             var dID = $(this).val();
-            bindBrand(dID);
+            var Layer_id = $("#Layer_id").val();
+            si.bindBrand(dID, Layer_id);
         });
         $('#ddlBrand').chosen().change(function (event) {
             var dID = $(this).val();

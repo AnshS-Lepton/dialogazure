@@ -58,9 +58,9 @@ namespace BusinessLogics
 		{
 			return new DAItemTemplate().GetMicroductNoOfWaysData(entitytype, specification, vendor_id);
 		}
-		public List<KeyValueDropDown> GetBrandData(int typeid)
+		public List<KeyValueDropDown> GetBrandData(int typeid, int Layer_id)
 		{
-			return new DAItemTemplate().GetBrandData(typeid);
+			return new DAItemTemplate().GetBrandData(typeid, Layer_id);
 		}
 		public List<KeyValueDropDown> GetModelData(int brandid)
 		{

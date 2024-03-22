@@ -70,11 +70,11 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public List<KeyValueDropDown> GetBrandData(int typeid)
+        public List<KeyValueDropDown> GetBrandData(int typeid, int Layer_id)
         {
             try
             {
-                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_isp_brand", new { typeid = typeid });
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_isp_brand", new { typeid = typeid, layerid = Layer_id });
             }
             catch { throw; }
         }
