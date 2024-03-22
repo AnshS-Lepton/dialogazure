@@ -269,7 +269,8 @@ namespace Models
         Microduct_Color,
         Operator_Type_LOV,
         Fiber_Type_LOV,
-        Route_Type
+        Route_Type,
+        type
     }
     public enum VendorType
     {
@@ -381,7 +382,6 @@ namespace Models
         vendor,
         gipipe_type,
         gipipe_color,
-        route_id
     }
     public enum formFeatureType
     {
