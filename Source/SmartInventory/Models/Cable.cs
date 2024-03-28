@@ -58,8 +58,7 @@ namespace Models
         public string chromaticdb { get; set; }
         public string chromaticdispersion { get; set; }
         public string totalchromaticloss { get; set; }
-        public string remarks { get; set; }
-        [Required]
+        public string remarks { get; set; }       
         public string route_id { get; set; }
         public int created_by { get; set; }
         [NotMapped]

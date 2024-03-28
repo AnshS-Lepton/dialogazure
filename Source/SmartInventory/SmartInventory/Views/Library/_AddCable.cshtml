@@ -55,6 +55,7 @@
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Cable.ToString());
     var layer_Detail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
     var innerOuterDimension = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.inner_outer_dimension.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var routeDetail = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.route_id.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
 }
 <!DOCTYPE html>
 <div>
@@ -441,10 +442,25 @@
                             }
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-md-2 col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_CAB_NET_FRM_013<i class="clsMandatory">*</i>:</label>
+                            @if (routeDetail != null)
+                            {
+                                <label class="control-label col-md-2 col-sm-2" for="txtRemarks">
+                                    @Resources.Resources.SI_OSP_CAB_NET_FRM_013
+                                @if (routeDetail.is_required)
+                                {<i class="clsMandatory">*</i>}
+                                else { }:
+                            </label>
                             <div class="col-md-4 col-sm-4">
-                                @Html.TextBoxFor(m => m.route_id, new { @class = "form-control", @maxlength = "20" })
+                                @{
+                                    @Html.TextBoxFor(m => m.route_id,
+                                    SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                    {
+                                        @class = "form-control",
+                                             @maxlength = "20"
+                                    }, (routeDetail.is_required) ? new { @required = "required" } : null))
+                                }
                             </div>
+                        }
                             <label class="control-label col-md-2 col-sm-2">Route Name<i class="clsMandatory">*</i>:</label>
                             <div class="col-md-4 col-sm-4">
                                 @Html.TextBoxFor(m => m.route_name, new { @class = "form-control", @maxlength = "20" })
