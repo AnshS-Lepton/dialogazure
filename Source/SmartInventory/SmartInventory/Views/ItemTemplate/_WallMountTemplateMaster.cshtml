@@ -1,5 +1,6 @@
 ﻿@model Models.WallMountTemplateMaster
 @using Models;
+@using SmartInventory.Settings;
 @helper ItemSpecification()
 {
     { Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
@@ -8,15 +9,19 @@
 {
     { Html.RenderPartial("~/Views/ItemTemplate/_SystemSpecification.cshtml", (itemMaster)Model); }
 }
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.WallMount.ToString().ToUpper()).FirstOrDefault() : null;
+}
+ <input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 <fieldset class="the-fieldset">
     <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
     @ItemSpecification()
 </fieldset>
-@*<fieldset class="the-fieldset">
+<fieldset class="the-fieldset">
     <legend class="the-legend">Model Mapping & System Specification</legend>
     @SystemSpecification()
 
-</fieldset>*@
+</fieldset>
 <script type="text/javascript">
     $(document).ready(function () {
         $('.chosen-select').chosen({ width: '100%', disable_search_threshold: 10 });

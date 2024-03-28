@@ -51,6 +51,8 @@ namespace Models
         [NotMapped]
         public List<KeyValueDropDown> lstType { get; set; }
         [NotMapped]
+        public List<KeyValueDropDown> listType { get; set; }
+        [NotMapped]
         public List<KeyValueDropDown> lstBrand { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> lstModel { get; set; }
@@ -87,6 +89,7 @@ namespace Models
             specification = "";
             lstSpecification = new List<KeyValueDropDown>();
             lstType = new List<KeyValueDropDown>();
+            listType = new List<KeyValueDropDown>();
             lstBrand = new List<KeyValueDropDown>();
             lstModel = new List<KeyValueDropDown>();
             lstAccessibility = new List<KeyValueDropDown>();

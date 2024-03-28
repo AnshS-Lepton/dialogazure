@@ -142,11 +142,11 @@ namespace SmartInventory.Controllers
 
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult GetBrand(Int32 typeId)
+        public ActionResult GetBrand(Int32 typeId, Int32 Layer_id)
         {
             JsonResponse<List<KeyValueDropDown>> objResp = new JsonResponse<List<KeyValueDropDown>>();
 
-            List<KeyValueDropDown> lst = BLItemTemplate.Instance.GetBrandData(typeId);
+            List<KeyValueDropDown> lst = BLItemTemplate.Instance.GetBrandData(typeId, Layer_id);
             if (lst.Count > 0)
             {
                 objResp.status = ResponseStatus.OK.ToString();

@@ -11012,9 +11012,10 @@ var Main = function () {
 
 
     this.bindBrand = function (typeid) {
+        var Layer_id = $("#Layer_id").val();
         var ddlBrand = $("#ddlBrand");
         if (typeid != '') {
-            ajaxReq('ItemTemplate/GetBrand', { typeId: typeid }, false,
+            ajaxReq('ItemTemplate/GetBrand', { typeId: typeid, Layer_id: Layer_id }, false,
                 function (resp) {
                     if (resp.status == "OK") {
                         $(ddlBrand).empty();
