@@ -2400,7 +2400,6 @@ var Main = function () {
             });
     }
     this.getCDBLayer = function () {
-        debugger;
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "CDB";
         });
@@ -29508,7 +29507,7 @@ function validateImageFileType() {
 }
 
 function validateDocumentFileType() {
-    var validFilesTypes = ["dwg", "pdf", "jpeg", "jpg", "doc", "docx", "xls", "xlsx", "csv", "vsd", "ppt", "pptx", "png", "htm", "html"];
+    var validFilesTypes = ["dwg", "pdf", "jpeg", "jpg", "doc", "docx", "xls", "xlsx", "csv", "vsd", "ppt", "pptx", "png", "htm", "html", "msg", "zip","rar"];
     var file = $("#fuAttachmentUpload").val();
     var filepath = file;
     return ValidateFileType(validFilesTypes, filepath);
