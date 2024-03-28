@@ -304,6 +304,29 @@ VALUES(19, '#ff00ff', NULL, 0.26, 21, '#c80bd5', '#cca519', 'Content/images/icon
 ]', 11, 'Solid', 'Solid', 'Dash', 'vendor_name', 'feature.properties.activation_stage ==''COMPLETED''');
 
 
+
+INSERT INTO public.layer_style_master
+(layer_id, color_code_hex, outline_color_hex, opacity, label_font_size, label_color_hex, label_bg_color_hex, icon_base_path, icon_file_name, line_width, entity_category, entity_sub_category, created_on, created_by, modified_on, modified_by, label_expression, layer_sequence, planned, asbuild, dormant, style_column_name, expressions)
+VALUES(19, '#800000', NULL, 0.26, 21, '#c80bd5', '#cca519', 'Content/images/icons/map/', 'cable.png', 5, 'TTSL', NULL,  now(), 5, null, 1, '[
+  {
+    "type": "UD",
+    "Value": "Distribution:"
+  },
+  {
+    "type": "Col",
+    "Value": "cable_name"
+  },
+  {
+    "type": "UD",
+    "Value": "cable"
+  },
+  {
+    "type": "Col",
+    "Value": null
+  }
+]', 11, 'Solid', 'Solid', 'Dash', 'activation_stage', 'feature.properties.activation_stage ==''REJECTED''');
+
+
 -----------------------------------------------------------------------------------------------------------------------------------
 
 alter table  layer_style_master add column expressions varchar null;
