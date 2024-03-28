@@ -46,7 +46,7 @@
         // List of deleted data cache ids, so we can reuse them
         core_deletedIds = [],
 
-        core_version = "3.6.0",
+        core_version = "3.7.1",
 
         // Save a reference to some core methods
         core_concat = core_deletedIds.concat,

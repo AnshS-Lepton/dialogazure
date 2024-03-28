@@ -26,7 +26,7 @@ namespace SmartInventory
 
             #region OSP
             bundles.Add(new ScriptBundle("~/bundles/Scripts").Include(
-                        "~/Content/js/jquery-3.6.0.js",
+                        "~/Content/js/jquery-3.7.1.js",
                         "~/Content/js/jquery-ui.min.js",
                         "~/Scripts/jquery.unobtrusive-ajax.min.js",
                         "~/Scripts/jquery.validate.min.js",
@@ -106,7 +106,7 @@ namespace SmartInventory
 
             #region ISP
             bundles.Add(new ScriptBundle("~/bundles/ISP/Scripts").Include(
-                          "~/Content/js/jquery-3.6.0.js",
+                          "~/Content/js/jquery-3.7.1.js",
                            "~/Content/js/jquery-ui.min.js",
                            "~/Content/js/bootstrap/bootstrap.js",
                            "~/Scripts/jquery.unobtrusive-ajax.min.js",
@@ -131,7 +131,7 @@ namespace SmartInventory
                           ));
 
             bundles.Add(new ScriptBundle("~/ISPSCRIPTS").Include(
-                            "~/Content/js/jquery-3.6.0.js",
+                            "~/Content/js/jquery-3.7.1.js",
                             "~/Content/js/jquery-ui.min.js",
                             "~/Content/js/bootstrap/bootstrap.js",
                             "~/Scripts/jquery.unobtrusive-ajax.min.js",

@@ -99,24 +99,24 @@
     
     $('.chosen-select').chosen({ width: '100%' });
 
-    $('#ddl_ProjectSpeciCode').change(function () {  
+    $('#ddl_ProjectSpeciCode').on('change',function () {  
         debugger;
         BindPlanningDetail();
 
     })
-    $('#ddl_PlanningSpeciCode').change(function () {
+    $('#ddl_PlanningSpeciCode').on('change',function () {
        
         BindWorkCodeDetail();
 
     })
 
-    $('#ddl_WorkorderSpeciCode').change(function () {       
+    $('#ddl_WorkorderSpeciCode').on('change',function () {       
         BindPurposeCodeDetail();
 
     })
 
    
-    $('#ddl_PurposeSpeciCode').change(function () {      
+    $('#ddl_PurposeSpeciCode').on('change',function () {      
         $('#purpose_name').val($('#ddl_PurposeSpeciCode').find(':selected').data('purposename'));
 
     })
