@@ -81,23 +81,24 @@ $function$
 
 ------------------------------------------------------------------------------------------------------------------------------
 
+
 CREATE OR REPLACE FUNCTION public.fn_uploader_validation_cdb_attributes(p_upload_id integer)
  RETURNS void
  LANGUAGE plpgsql
 AS $function$
 BEGIN
-    UPDATE temp_att_details_cable_cdb t1 
+    UPDATE temp_du_att_details_cable_cdb t1 
     SET error_msg = 'duplicate records exists', is_valid = false
     FROM (
         SELECT cable_id
-        FROM temp_att_details_cable_cdb
+        FROM temp_du_att_details_cable_cdb
         WHERE upload_id = p_upload_id AND is_valid = true
         GROUP BY cable_id
         HAVING COUNT(*) > 1
     ) AS sub_cdb
     WHERE t1.upload_id = p_upload_id AND t1.is_valid = true AND t1.cable_id = sub_cdb.cable_id;
    
-update temp_du_cable tb set is_valid = false,error_msg = 'Duplicate records exists cdb attributes' where upload_id = p_upload_id and network_id  in (select (string_to_array(cable_id, '-'))[2] from temp_att_details_cable_cdb tt where tt.upload_id = p_upload_id and tt.is_valid =false );
+update temp_du_cable tb set is_valid = false,error_msg = 'Duplicate records exists in cdb attributes' where upload_id = p_upload_id and network_id  in (select (string_to_array(cable_id, '-'))[2] from temp_du_att_details_cable_cdb tt where tt.upload_id = p_upload_id and tt.is_valid =false );
    
 END;
 $function$
@@ -129,9 +130,8 @@ $function$
 --------------------------------------------------------------------------------------------------------------------
 
 
--- DROP TABLE public.temp_att_details_cable_cdb;
 
-CREATE TABLE public.temp_att_details_cable_cdb (
+CREATE TABLE public.temp_du_att_details_cable_cdb (
 	circle_name varchar NULL,
 	major_route_name varchar NULL,
 	route_id varchar NULL,
@@ -183,8 +183,8 @@ CREATE TABLE public.temp_att_details_cable_cdb (
 
 
 
-
 --------------------------------------------------------------------------------------------------------------------
+
 
 CREATE OR REPLACE FUNCTION public.fn_uploader_insert_cable(p_upload_id integer, p_batch_id integer)
  RETURNS integer
@@ -413,7 +413,7 @@ values(current_system_id,'Cable',v_network_code,fn_get_display_name(current_syst
 (current_system_id,'Cable',v_network_code,fn_get_display_name(current_system_id, 'Cable'),REC.b_system_id,REC.b_entity_type,REC.b_network_id,v_b_display_value,rec.created_by,now(),true);
 
 insert into att_details_cable_cdb (circle_name, major_route_name, route_id, section_name, section_id, route_category, distance, fiber_pairs_laid, total_used_pair, fiber_pairs_used_by_vil, fiber_pairs_given_to_airtel, fiber_pairs_given_to_others, fiber_pairs_free, faulty_fiber_pairs, start_latitude, start_longitude, end_latitude, end_longitude, count_non_vil_tenancies_on_route, route_lit_up_date, aerial_km, avg_loss_per_km, avg_last_six_months_fiber_cut, row, material, execution, row_availablity, iru_given_airtel, iru_given_jio, iru_given_ttsl_or_ttml, network_category, row_valid_or_exp, remarks, cable_owner, route_type, operator_type, fiber_type, cable_id, iru_given_tcl, iru_given_others)
-select circle_name, major_route_name, route_id, section_name, section_id, route_category, distance, fiber_pairs_laid, total_used_pair, fiber_pairs_used_by_vil, fiber_pairs_given_to_airtel, fiber_pairs_given_to_others, fiber_pairs_free, faulty_fiber_pairs, start_latitude, start_longitude, end_latitude, end_longitude, count_non_vil_tenancies_on_route, route_lit_up_date, aerial_km, avg_loss_per_km, avg_last_six_months_fiber_cut, row, material, execution, row_availablity, iru_given_airtel, iru_given_jio, iru_given_ttsl_or_ttml, network_category, row_valid_or_exp, remarks, cable_owner, route_type, operator_type, fiber_type, (SELECT att.system_id FROM  att_details_cable AS att JOIN  temp_att_details_cable_cdb AS tempcdb ON  att.network_id  = tempcdb.cable_id WHERE  tempcdb.cable_id = v_network_code  AND tempcdb.upload_id = p_upload_id) as cable_id, iru_given_tcl, iru_given_others from temp_att_details_cable_cdb where cable_id = v_network_code and upload_id = p_upload_id and is_valid=true;
+select circle_name, major_route_name, route_id, section_name, section_id, route_category, distance, fiber_pairs_laid, total_used_pair, fiber_pairs_used_by_vil, fiber_pairs_given_to_airtel, fiber_pairs_given_to_others, fiber_pairs_free, faulty_fiber_pairs, start_latitude, start_longitude, end_latitude, end_longitude, count_non_vil_tenancies_on_route, route_lit_up_date, aerial_km, avg_loss_per_km, avg_last_six_months_fiber_cut, row, material, execution, row_availablity, iru_given_airtel, iru_given_jio, iru_given_ttsl_or_ttml, network_category, row_valid_or_exp, remarks, cable_owner, route_type, operator_type, fiber_type, (SELECT att.system_id FROM  att_details_cable AS att JOIN  temp_du_att_details_cable_cdb AS tempcdb ON  att.network_id  = tempcdb.cable_id WHERE  tempcdb.cable_id = v_network_code  AND tempcdb.upload_id = p_upload_id) as cable_id, iru_given_tcl, iru_given_others from temp_du_att_details_cable_cdb where cable_id = v_network_code and upload_id = p_upload_id and is_valid=true;
 raise info '--------------network id :%',v_network_code;
 
 END;
@@ -426,6 +426,7 @@ return 1;
 END;
 $function$
 ;
+
 
 ---------------------------------------------------------------------------------------------------------------------------------------
 
