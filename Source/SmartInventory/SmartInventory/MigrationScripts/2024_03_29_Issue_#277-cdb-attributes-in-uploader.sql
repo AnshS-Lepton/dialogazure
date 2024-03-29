@@ -426,3 +426,165 @@ return 1;
 END;
 $function$
 ;
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'circle_name', 'varchar', 'Circle_Name', false, NULL, 'Circle Name', 'GGN', 1, 100, 1,now(), NULL, NULL, false, 'character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+(layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'major_route_name', 'varchar', 'Major_Route_Name', false, NULL, 'Major Route Name', 'Pan Punjab-BB', 1, 100, 1, now(), NULL, NULL, false, 'character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+(layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'route_id', 'varchar', 'Route_Id', false, NULL, 'Route Id', '122', 1, 100, 1, now(), NULL, NULL, false, 'character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'section_name', 'varchar', 'Section_Name', false, NULL, 'Section Name', 'Pan Punjab-BB', 1, 100, 1, now(), NULL, NULL, false, 'character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'section_id', 'varchar', 'Section_Id', false, NULL, 'Section Id', '123', 5, 100, 1,now(), NULL, NULL, false, 'character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'route_category', 'varchar', 'Route_Category', false, NULL, 'Route Category', 'IRU', 6, 100, 1, now(), NULL, NULL, false, 'character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'distance', 'float8', 'Distance', false, NULL, 'Distance', '1.236', 7, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'fiber_pairs_laid', 'int4', 'Fiber_Pairs_Laid', false, NULL, 'Fiber Pairs Laid', '1', 8, 10, 1, now(), NULL, NULL, false, 'integer', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'total_used_pair', 'int4', 'Total_Used_Pair', false, NULL, 'Total Used Pair', '1', 9, 10, 1,now(), NULL, NULL, false, 'integer', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'fiber_pairs_used_by_vil', 'int4', 'Fiber_Pairs_Used_by_VIL', false, NULL, 'Fiber Pairs Used by VIL', '1', 10, 10, 1, now(), NULL, NULL, false, 'integer', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'fiber_pairs_given_to_airtel', 'int4', 'Fiber_Pairs_Given_To_Airtel', false, NULL, 'Fiber Pairs Given To Airtel', '1', 10, 10, 1, now(), NULL, NULL, false, 'integer', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'fiber_pairs_given_to_others', 'int4', 'Fiber_Pairs_Given_To_Others', false, NULL, 'Fiber Pairs Given To Others', '1', 12, 10, 1, now(), NULL, NULL, false, 'integer', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'fiber_pairs_free', 'int4', 'Fiber_Pairs_Free', false, NULL, 'Fiber Pairs Free', '1', 13, 10, 1, now(), NULL, NULL, false, 'integer', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'faulty_fiber_pairs', 'int4', 'Faulty_Fiber_Pairs', false, NULL, 'Faulty Fiber Pairs', '1', 14, 10, 1, now(), NULL, NULL, false, 'integer', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'start_latitude', 'float8', 'Start_Latitude', false, NULL, 'Start Latitude', '28.2221', 15, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'start_longitude', 'float8', 'Start_Longitude', false, NULL, 'Start Longitude', '0', 16, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'end_latitude', 'float8', 'End Latitude', false, NULL, 'End Latitude', '0', 17, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'end_longitude', 'float8', 'End_Longitude', false, NULL, 'End Longitude', '0', 18, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'count_non_vil_tenancies_on_route', 'varchar', 'Count_Non_VIL_Tenancies_on_Route', false, NULL, 'Count Non VIL Tenancies on Route', '1', 19, 10, 1,now(), NULL, NULL, false, 'character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'route_lit_up_date', 'timestamp', 'Route_lit_up_Date', false, NULL, 'Route lit up Date', '', 20, 10, 1, now(), NULL, NULL, false, 'DateTime', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'aerial_km', 'float8', 'Aerial_Km', false, NULL, 'Aerial kms', '1', 21, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'avg_loss_per_km', 'float8', 'Avg_Loss_per_km', false, NULL, 'Avg Loss Per km', '1', 22, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'avg_last_six_months_fiber_cut', 'float8', 'Avg_Last_Six_Months_Fiber_Cut', false, NULL, 'Avg Last Six Months Fiber Cut', '1', 23, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'row', 'float8', 'Row', false, NULL, 'Row', '1', 24, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'material', 'float8', 'Material', false, NULL, 'Material', '1', 24, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'execution', 'float8', 'Execution', false, NULL, 'Execution', '1', 26, 10, 1,now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'row_availablity', 'float8', 'Row_Availablity', false, NULL, 'Row Availablity', '1', 27, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'iru_given_airtel', 'float8', 'IRU_Given_Airtel', false, NULL, 'IRU Given Airtel', '1', 28, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'iru_given_jio', 'float8', 'IRU_Given_JIO', false, NULL, 'IRU Given JIO', '1', 29, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'iru_given_ttsl_or_ttml', 'float8', 'IRU_Given_TTSL_or_TTML', false, NULL, 'IRU Given TTSL or TTML', '1', 30, 10, 1, now(), NULL, NULL, false, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'network_category', 'varchar', 'Network_Category', false, NULL, 'Network Category', '1', 31, 10, 1, now(), NULL, NULL, false, 'character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'row_valid_or_exp', 'timestamp', 'Row_Valid_or_Exp', false, NULL, 'ROW Valid/Exp By', '', 33, 10, 1, now(), NULL, NULL, false, 'DateTime', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'remarks', 'varchar', 'Remarks', false, NULL, 'Remarks', '', 34, 10, 1, now(), NULL, NULL, false, 'Character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'cable_owner', 'varchar', 'Cable_Owner', false, NULL, 'Cable Owner', '', 35, 10, 1, now(), NULL, NULL, false, 'Character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'route_type', 'varchar', 'Route_Type', false, NULL, 'Route Type', '', 36, 10, 1, now(), NULL, NULL, true, 'Character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'operator_type', 'varchar', 'Operator_Type', false, NULL, 'Operator Type', '', 37, 10, 1,now(), NULL, NULL, true, 'Character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'fiber_type', 'varchar', 'Fiber_Type', false, NULL, 'Fiber Type', '', 38, 10, 1, now(), NULL, NULL, true, 'Character varying', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'iru_given_tcl', 'float8', 'IRU_Given_TCL', false, NULL, 'IRU Given TCL', '', 40, 10, 1, now(), NULL, NULL, true, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'iru_given_others', 'float8', 'IRU_Given_Others', false, NULL, 'IRU Given Others', '', 41, 10, 1, now(), NULL, NULL, true, 'double', true, false, true, NULL, false, true, NULL, NULL, NULL, true, false, true);
+
+INSERT INTO public.data_uploader_template
+( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
+VALUES( 19, 'cable_id', 'varchar', 'Cable_Id', true, NULL, 'cable Id', '', 39, 10, 1, now(), NULL, NULL, true, 'Character varying', true, false, true, NULL, true, true, NULL, NULL, NULL, true, false, true);
