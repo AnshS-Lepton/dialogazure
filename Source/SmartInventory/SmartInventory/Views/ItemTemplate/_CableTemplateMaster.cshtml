@@ -28,6 +28,7 @@
     }
 
 }
+<input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 @if (ViewContext.RouteData.GetRequiredString("action") == "CableTemplate")
 {
     <fieldset class="the-fieldset">
@@ -92,11 +93,11 @@
         </div>
     </div>
 </fieldset>
-@*<fieldset class="the-fieldset">
+<fieldset class="the-fieldset">
         <legend class="the-legend">Model Mapping & System Specification</legend>
         @SystemSpecification()
 
-    </fieldset>*@
+    </fieldset>
 <script type="text/javascript">
     $(document).ready(function () {
         $('.chosen-select').chosen({ width: '100%' });
@@ -122,8 +123,10 @@
             }
         });
         $('#ddlType').chosen().change(function (event) {
+            debugger;
             var dID = $(this).val();
-            bindBrand(dID);
+            var Layer_id = $("#Layer_id").val();
+            si.bindBrand(dID, Layer_id);
         });
         $('#ddlBrand').chosen().change(function (event) {
             var dID = $(this).val();

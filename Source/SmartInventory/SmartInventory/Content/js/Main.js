@@ -2400,7 +2400,6 @@ var Main = function () {
             });
     }
     this.getCDBLayer = function () {
-        debugger;
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "CDB";
         });
@@ -11013,9 +11012,10 @@ var Main = function () {
 
 
     this.bindBrand = function (typeid) {
+        var Layer_id = $("#Layer_id").val();
         var ddlBrand = $("#ddlBrand");
         if (typeid != '') {
-            ajaxReq('ItemTemplate/GetBrand', { typeId: typeid }, false,
+            ajaxReq('ItemTemplate/GetBrand', { typeId: typeid, Layer_id: Layer_id }, false,
                 function (resp) {
                     if (resp.status == "OK") {
                         $(ddlBrand).empty();
@@ -14779,7 +14779,6 @@ var Main = function () {
             return false;
         }
         ajaxReq('LandBaseLayer/SaveEditGeometry', { systemId: systemId, geomType: geomType, entityType: entityType, longLat: entityGeom, isExisting: true, centerLineGeom: centerLineGeom, tpDetail: app.editExistTerminationPoint }, true, function (resp) {
-            //;
             if (resp.status == "OK" && resp.status == "OK") {
                 $('#EntityCancel').hide();
 
@@ -14898,6 +14897,9 @@ var Main = function () {
                     if (app.distanceWidget_A) {
                         app.distanceWidget_A.set("map", null);
                         app.distanceWidget_A = null;
+                    }
+                    if (typeof dataUploader !== 'undefined' && dataUploader != null) {
+                        dataUploader.RemoveOldFeature();
                     }
                     alert(resp.error_message);
                 }
@@ -29508,7 +29510,7 @@ function validateImageFileType() {
 }
 
 function validateDocumentFileType() {
-    var validFilesTypes = ["dwg", "pdf", "jpeg", "jpg", "doc", "docx", "xls", "xlsx", "csv", "vsd", "ppt", "pptx", "png", "htm", "html"];
+    var validFilesTypes = ["dwg", "pdf", "jpeg", "jpg", "doc", "docx", "xls", "xlsx", "csv", "vsd", "ppt", "pptx", "png", "htm", "html", "msg", "zip","rar"];
     var file = $("#fuAttachmentUpload").val();
     var filepath = file;
     return ValidateFileType(validFilesTypes, filepath);
