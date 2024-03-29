@@ -219,6 +219,7 @@
     <Compile Include="TempUpload\TempCabinet.cs" />
     <Compile Include="TempUpload\TempCable.cs" />
     <Compile Include="TempUpload\TempCDB.cs" />
+    <Compile Include="TempUpload\TempCDBAttributes.cs" />
     <Compile Include="TempUpload\TempCoupler.cs" />
     <Compile Include="TempUpload\TempCustomer.cs" />
     <Compile Include="TempUpload\TempGipipe.cs" />

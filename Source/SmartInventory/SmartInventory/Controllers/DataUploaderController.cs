@@ -48,6 +48,7 @@ namespace SmartInventory.Controllers
         private readonly UploadExcelOrKML uploadExcelOrKML;
         private readonly BLDataUploader blDataUploader;
         public DataTable dataTable;
+        public DataTable CDBTable;
         public DataUploaderController()
         {
             tempToMainTable = new TempToMainTable();
@@ -773,8 +774,32 @@ namespace SmartInventory.Controllers
                 //DataView view = new DataView(dataTable);
                 //view.RowFilter = filter;
                 //dataTable = view.ToTable();
+                if (ApplicationSettings.isCDBAttributeEnabled == 1 && layerDetail.layer_name == "Cable")
+                {
+                    string fnames = (string)Session["fileName"];
+                    string fileExtn = Path.GetExtension(fnames);
+                    if (fileExtn.ToLower() == ".xlsx")
+                    {
+                        CDBTable = NPOIExcelHelper.ExcelToTableForCDBAttributes(fnames);
+                        new BLDataUploader().DeleteFromTempCDBTable(summary.id);
+                        status = ValidateAndUploadCDBAttributes(layerDetail.layer_name, summary, CDBTable);
+                        if (status.status == StatusCodes.INVALID_INPUTS.ToString())
+                        {
+                            summary.status_message = status.error_msg;
+                            blDataUploader.UpdateStatus(summary);
+                            status.error_msg = status.error_msg + " For CDB Attributes Sheet";
+                            return Json(status, JsonRequestBehavior.AllowGet);
+
+                        }
+                    }
+                }
+
                 new BLDataUploader().DeleteRecordFromTempTable(EnumEntityType.ToString(),summary.id);
                 status = uploadExcelOrKML.UploadExcelorKML(summary, null, null, EnumEntityType, dataTable);
+                if (ApplicationSettings.isCDBAttributeEnabled == 1 && layerDetail.layer_name == "Cable")
+                {
+                    new BLDataUploader().ValidateCDBAttributes(summary.id);
+                }
                 if (!status.is_valid)
                 {
                     summary.status_message = status.error_msg;
@@ -942,6 +967,15 @@ namespace SmartInventory.Controllers
             List<Dictionary<string, string>> lstTemplateGuideLines = blDataUploader.getUploadTemplateGuideLines(entityType);
             DataTable dtSamples = MiscHelper.GetDataTableFromDictionaries(lstSampleRecords);
             DataTable dtGuideLines = MiscHelper.GetDataTableFromDictionaries(lstTemplateGuideLines);
+            DataTable dtCDBAttributes=null;
+
+            if (entityType == "Cable" && ApplicationSettings.isCDBAttributeEnabled == 1)
+            {
+                List<Dictionary<string, string>> lstTemplateCDBAttributes = blDataUploader.getUploadTemplateCDBAttributesRecords(entityType);
+                 dtCDBAttributes = MiscHelper.GetDataTableFromDictionaries(lstTemplateCDBAttributes);
+                dtCDBAttributes.TableName = "CDB Attributes";
+            }
+
             var heading1 = Convert.ToString(dtSamples.Rows[0]["Heading1"]);
             var heading2 = Convert.ToString(dtSamples.Rows[0]["Heading2"]);
             // dtSamples.TableName = entityType + "_Details";
@@ -951,6 +985,10 @@ namespace SmartInventory.Controllers
             dtSamples.Columns.Remove("Heading2");
             DataSet ds = new DataSet();
             ds.Tables.Add(dtSamples);
+            if (entityType == "Cable" && ApplicationSettings.isCDBAttributeEnabled == 1)
+            {
+                ds.Tables.Add(dtCDBAttributes);
+            }
             ds.Tables.Add(dtGuideLines);
 
             if (dtSamples.Rows.Count > 0)
@@ -2418,6 +2456,28 @@ namespace SmartInventory.Controllers
                 }
             }
             return Json(summary);
+        }
+        public ErrorMessage ValidateAndUploadCDBAttributes(string layerName, UploadSummary summary, DataTable dt)
+        {
+            List<Mapping> lstMapping = blDataUploader.GetMappingsForCDBCable(layerName);
+            ErrorMessage status = new ErrorMessage();
+            UploadTempCDBAttributes uploadcdb = new UploadTempCDBAttributes();
+            try
+            {
+                status = DataValidator.ValidateData(summary, dt, lstMapping);
+                if (status.status == StatusCodes.INVALID_INPUTS.ToString())
+                {
+                    return status;
+                }
+                uploadcdb.UploadData(dt, summary);
+                // validation after insert records 
+               // new BLDataUploader().ValidateCDBAttributes(summary.id);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("UploadCDBAttributes", "DataUploader", ex);
+            }
+            return status;
         }
     }
     #endregion
