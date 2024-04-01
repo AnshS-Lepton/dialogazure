@@ -58,8 +58,7 @@ namespace Models
         public string chromaticdb { get; set; }
         public string chromaticdispersion { get; set; }
         public string totalchromaticloss { get; set; }
-        public string remarks { get; set; }
-        [Required]
+        public string remarks { get; set; }       
         public string route_id { get; set; }
         public int created_by { get; set; }
         [NotMapped]
@@ -216,8 +215,7 @@ namespace Models
         [NotMapped]
         public string partner_name { get; set; }
         [NotMapped]
-        public List<string> lstUserModule { get; set; }
-        [Required]
+        public List<string> lstUserModule { get; set; }        
         public string route_name { get; set; }
         [NotMapped]
         public CDBAttribute LstCDBAttribute { get; set; }
