@@ -134,11 +134,11 @@
                     $("input[name=rbSecondaryPODAssc][value=" + $('#secondary_pod_system_id').val() + "]").attr('checked', 'checked');
                 }
         });
-        $('input[name=rbPrimaryPODAssc]').change(function () {
+        $('input[name=rbPrimaryPODAssc]').on('change',function () {
             var rbPrimaryValue = $('input[name=rbPrimaryPODAssc]:checked').val();
             $('#primary_pod_system_id').val(rbPrimaryValue);
         })
-        $('input[name=rbSecondaryPODAssc]').change(function () {
+        $('input[name=rbSecondaryPODAssc]').on('change',function () {
             var rbSecondaryValue = $('input[name=rbSecondaryPODAssc]:checked').val();
             $('#secondary_pod_system_id').val(rbSecondaryValue);
         })

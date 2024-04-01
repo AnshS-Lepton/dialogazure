@@ -74,7 +74,7 @@ function onGridHeaderClick(gridControlId) {
     //var clickedheader = $('th a[href*=' + col + ']');
     //var countTh = document.getElementsByTagName('th').length; //total column header
 
-    var clickedheader = $('#' + gridControlId + '  tr th a[href*=' + col + ']');
+    var clickedheader = $('#' + gridControlId + '  tr th a[href*="' + col + '"]');
     var countTh = $('#' + gridControlId + '  tr th').length; //total column header
 
     for (var i = 1; i <= countTh; i++) {

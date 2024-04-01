@@ -210,7 +210,7 @@ grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format:@<text>
            /* $('#WebGrid thead th').eq(indexOfHiddenColumn).attr('style', 'height:41px;padding:13px;');*/
         });
     }());
-    $('input[name=rbPhsyicalUtil]').change(function () {
+    $('input[name=rbPhsyicalUtil]').on('change',function () {
         si.GetPhysicalUtilValue();
     })
     function ExportCableFiberDetails() {

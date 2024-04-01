@@ -49,31 +49,30 @@
             $('txtSubCategory2').val("");
             $('txtSubCategory3').val("");
         }
-        $('#specification').chosen().change(function (event) {
-
+        $('#specification').chosen().on('change',function (event) {
+             
             var dID = $(this).val();
             si.bindVendor(dID);
         });
-        $('#ddlVendor').chosen().change(function (event) {
-
+        $('#ddlVendor').chosen().on('change',function (event) {
+             
             var specfi = $("#specification option:selected").val(); //
             var vandorid = $(this).val();
             var entitytype = $('#entityType').val();
             si.bindCateSubcat(entitytype, specfi, vandorid);
         });
-        $('#ddlType').chosen().change(function (event) {
-            debugger;
+        $('#ddlType').chosen().on('change',function (event) {
             var dID = $(this).val();
             var Layer_id = $("#Layer_id").val();
             si.bindBrand(dID, Layer_id);
         });
-        $('#ddlBrand').chosen().change(function (event) {
+        $('#ddlBrand').chosen().on('change',function (event) {
             var dID = $(this).val();
             si.bindModel(dID);
         });
 
-        $('#ddlPole_Type').chosen().change(function (event) {
-
+        $('#ddlPole_Type').chosen().on('change',function (event) {
+             
             var Is_specification_allowed = $(this).attr("is-specification-allowed");
             var selected_pole_type = $("#ddlPole_Type option:selected").val();
             if (Is_specification_allowed == "True") {
