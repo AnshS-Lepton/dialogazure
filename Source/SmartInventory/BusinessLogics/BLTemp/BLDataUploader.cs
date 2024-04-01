@@ -1,4 +1,6 @@
-﻿using DataAccess;
+﻿using BusinessLogics.BLTemp;
+using DataAccess;
+using DataAccess.TempUpload;
 using Microsoft.SqlServer.Server;
 using Models;
 using Models.Admin;
@@ -373,7 +375,23 @@ namespace BusinessLogics
         {
 			return new DAfiletype().getFileType(moduleAbbr);
 		}
-	}
+        public List<Dictionary<string, string>> getUploadTemplateCDBAttributesRecords(string entityType)
+        {
+            return new DATempCDBAttributes().getUploadTemplateCDBAttributesRecords(entityType);
+        }
+        public List<Mapping> GetMappingsForCDBCable(string layerName)
+        {
+            return new DATempCDBAttributes().GetMappingForCDBCable(layerName);
+        }
+		public void DeleteFromTempCDBTable(int id)
+        {
+            new DATempCDBAttributes().DeleteFromTempCDBTable(id);
+        }
+        public void ValidateCDBAttributes(int id)
+        {
+			new DATempCDBAttributes().ValidateCDBAttributes(id);
+        }
+    }
 	internal static class Utilities
 	{
 		public static List<List<T>> ToChunks<T>(this List<T> source, int chunkSize)

@@ -22,6 +22,7 @@ using iTextSharp.tool.xml.html.head;
 using Microsoft.SqlServer.Server;
 using Utility;
 using NPOI.SS.Formula.Functions;
+using SmartInventory.Settings;
 
 namespace SmartInventory.Helper
 {
@@ -748,43 +749,53 @@ namespace SmartInventory.Helper
             {
                 workbook = new HSSFWorkbook();
             }
-
-            DataTable dt = ds.Tables[0];
-            ISheet sheet1 = workbook.CreateSheet(dt.TableName);
-            IRow row1 = sheet1.CreateRow(0);
-            for (int j = 0; j < dt.Columns.Count; j++)
+            for (int t = 0; t < ds.Tables.Count-1; t++)
             {
-                if (dt.Columns[j].ColumnName.ToString() != "IS_HEADER")
-                {
-                    ICell cell = row1.CreateCell(j);
-                    String columnName = dt.Columns[j].ToString();
-                    cell.SetCellValue(columnName);
-                    ICellStyle testeStyle = workbook.CreateCellStyle();
-                    testeStyle.FillForegroundColor = IndexedColors.LightGreen.Index;
-                    testeStyle.FillPattern = FillPattern.SolidForeground;
-                    cell.CellStyle = testeStyle;
-                }
-            }
-            var cellstyle = getCellStyle(workbook);
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                IRow row = sheet1.CreateRow(i + 1);
+                DataTable dt = ds.Tables[t];
+                ISheet sheet1 = workbook.CreateSheet(dt.TableName);
+                IRow row1 = sheet1.CreateRow(0);
                 for (int j = 0; j < dt.Columns.Count; j++)
                 {
-                    IDataFormat dataFormatCustom = workbook.CreateDataFormat();
-                    ICell cell = row.CreateCell(j);
-                    String columnName = dt.Columns[j].ToString();
-                    cell.SetCellValue(dt.Rows[i][columnName].ToString());
+                    if (dt.Columns[j].ColumnName.ToString() != "IS_HEADER")
+                    {
+                        ICell cell = row1.CreateCell(j);
+                        String columnName = dt.Columns[j].ToString();
+                        cell.SetCellValue(columnName);
+                        ICellStyle testeStyle = workbook.CreateCellStyle();
+                        testeStyle.FillForegroundColor = IndexedColors.LightGreen.Index;
+                        testeStyle.FillPattern = FillPattern.SolidForeground;
+                        cell.CellStyle = testeStyle;
+                    }
+                }
+                var cellstyle = getCellStyle(workbook);
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    IRow row = sheet1.CreateRow(i + 1);
+                    for (int j = 0; j < dt.Columns.Count; j++)
+                    {
+                        IDataFormat dataFormatCustom = workbook.CreateDataFormat();
+                        ICell cell = row.CreateCell(j);
+                        String columnName = dt.Columns[j].ToString();
+                        cell.SetCellValue(dt.Rows[i][columnName].ToString());
 
 
-                    CreateCustomCell(row, j, dt.Rows[i][j].ToString(), cellstyle);
+                        CreateCustomCell(row, j, dt.Rows[i][j].ToString(), cellstyle);
+                    }
+                }
+                for (int k = 0; k < dt.Columns.Count; k++)
+                {
+                    sheet1.AutoSizeColumn(k, true);
                 }
             }
-            for (int k = 0; k < dt.Columns.Count; k++)
+
+            if (ds.Tables[0].TableName == "Cable" && ApplicationSettings.isCDBAttributeEnabled == 1)
             {
-                sheet1.AutoSizeColumn(k, true);
+                guideLineSheet(workbook, ds.Tables[2], heading1, heading2);
             }
-            guideLineSheet(workbook, ds.Tables[1], heading1, heading2);
+            else
+            {
+                guideLineSheet(workbook, ds.Tables[1], heading1, heading2);
+            }
             return workbook;
         }
         public static IWorkbook guideLineSheet(IWorkbook workbook, DataTable dt, string heading1, string heading2)
@@ -1510,6 +1521,52 @@ namespace SmartInventory.Helper
                 sheet1.AutoSizeColumn(k, true);
             }
             return workbook;
+        }
+        public static DataTable ExcelToTableForCDBAttributes(string filepath)
+        {
+            var table = new DataTable();
+            dynamic book = null;
+            FileStream excelStream = new FileStream(filepath, FileMode.Open);
+            string fileExtn = Path.GetExtension(filepath);
+            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("En");
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("En");
+            if (fileExtn.ToLower() == ".xlsx")
+                book = new XSSFWorkbook(excelStream);
+            else
+                book = new HSSFWorkbook(excelStream);
+            excelStream.Close();
+
+            var sheet = book.GetSheetAt(1);
+            var headerRow = sheet.GetRow(0);
+            if (headerRow == null) return new DataTable();
+            var cellCount = headerRow.LastCellNum;
+            //var cellCount = headerRow.LastCellNum;
+            var rowCount = sheet.LastRowNum;
+            //header
+            for (int i = headerRow.FirstCellNum; i < cellCount; i++)
+            {
+                var column = new DataColumn(headerRow.GetCell(i).StringCellValue);
+                table.Columns.Add(column);
+            }
+            //body
+            for (var i = sheet.FirstRowNum + 1; i <= rowCount; i++)
+            {
+                var row = sheet.GetRow(i);
+                var dataRow = table.NewRow();
+                if (row != null)
+                {
+                    if (row.FirstCellNum > -1)
+                    {
+                        for (int j = row.FirstCellNum; j < cellCount; j++)
+                        {
+                            if (row.GetCell(j) != null)
+                                dataRow[j] = GetCellValue(row.GetCell(j), fileExtn).Trim();
+                        }
+                        table.Rows.Add(dataRow);
+                    }
+                }
+            }
+            return table;
         }
     }
 }
