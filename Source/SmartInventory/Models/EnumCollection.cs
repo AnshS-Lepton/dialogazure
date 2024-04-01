@@ -382,7 +382,9 @@ namespace Models
         vendor,
         gipipe_type,
         gipipe_color,
-        route_id
+        route_id,
+        route_name,
+        gis_design_id
     }
     public enum formFeatureType
     {

@@ -215,8 +215,7 @@ namespace Models
         [NotMapped]
         public string partner_name { get; set; }
         [NotMapped]
-        public List<string> lstUserModule { get; set; }
-        [Required]
+        public List<string> lstUserModule { get; set; }        
         public string route_name { get; set; }
         [NotMapped]
         public CDBAttribute LstCDBAttribute { get; set; }
