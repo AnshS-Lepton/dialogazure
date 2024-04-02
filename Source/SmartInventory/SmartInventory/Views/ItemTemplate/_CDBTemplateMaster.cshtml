@@ -33,21 +33,21 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('.chosen-select').chosen({ width: '100%' });
-        $('#specification').chosen().change(function (event) {
+        $('#specification').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindVendor(dID);
         });
-        $('#ddlVendor').chosen().change(function (event) {
+        $('#ddlVendor').chosen().on('change',function (event) {
             var specfi = $("#specification option:selected").val(); //
             var vandorid = $(this).val();
             var entitytype = $('#entityType').val();
             bindCateSubcat(entitytype, specfi, vandorid);
         });
-        $('#ddlType').chosen().change(function (event) {
+        $('#ddlType').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindBrand(dID);
         });
-        $('#ddlBrand').chosen().change(function (event) {
+        $('#ddlBrand').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindModel(dID);
         });

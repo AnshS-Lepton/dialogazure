@@ -182,5 +182,7 @@ namespace Models
         public string color_code_alpha_hex { get; set; }
         public string outline_color_code_alpha_hex { get; set; }
         public string label_expression { get; set; }
+        public string style_column_name { get; set; }
+        public string expressions { get; set; }
     }
 }

@@ -176,7 +176,7 @@ var Main = function () {
     this.cableFilteredGeoJson = {};
     this.trenchGeoJson = {};
     this.surveyAreaGeoJson = {};
-    this.surveyAreaLabelData = [];    
+    this.surveyAreaLabelData = [];
     this.ductGeoJson = {};
     this.microductGeoJson = {};
     this.ductLabelData = [];
@@ -213,8 +213,8 @@ var Main = function () {
 
 
     this.loopGeoJson = {};
-    this.antennaGeoJson = {}; 
-    this.faultGeoJson = {}; 
+    this.antennaGeoJson = {};
+    this.faultGeoJson = {};
     this.LayerStyles = [];
     this.ActivePlannedVectorlayers = [];
     this.ActiveAsBuiltVectorlayers = [];
@@ -285,7 +285,7 @@ var Main = function () {
         "SubArea": ".SubArea",
         "SubArea": ".SubArea",
         //"ADB": ".ADB",
-       // "CDB": ".CDB",
+        // "CDB": ".CDB",
         "ItemTemplate": ".clsTemplateIcon:not(.dvdisabled)",
         //"ItemTemplate": ".clsTemplateIcon:not(.dvdisabled), .tool_bar .infoTemplate, #BDBTemplate",
         "Structure": ".Structure",
@@ -388,7 +388,7 @@ var Main = function () {
         "CDB": { "entityName": "CDB", "DataObject": "cdbGeoJson", "LayerInstance": "Instance12", "layerList": ['getCDBLayer'] },
         "Microduct": { "entityName": "Microduct", "DataObject": "microductGeoJson", "LayerInstance": "Instance12", "layerList": ['getMicroductLayer', 'getMicroductLabelTextLayer'] }
     };
-    
+
     //this.layerOverlayInstance = ['SubAreaInstance'];
     //this.layerOverlayLayerMethods = [['getAreaLayer']['getSubAreaLayer', 'getSubAreaTextLayer'], ['getDSALayer','getDSATextLayer']];
     this.layerOverlayInstanceValue = new Map();
@@ -804,7 +804,13 @@ var Main = function () {
                 return item.layer_name == 'Cable';
             });
             var CblclrObj = styleObj[0].LayerStyle.filter(function (item) {
-                return item.entity_category == feature.properties.cable_category
+              
+                    if (item.expressions && eval(item.expressions)) {
+                        return item.entity_category == feature.properties[item.style_column_name];
+                    }
+                    else if (item.entity_category == feature.properties[item.style_column_name]) {
+                        return item.entity_category == feature.properties[item.style_column_name];
+                    }
             });
             if (CblclrObj && CblclrObj.length > 0) {
                 clr = app.HexToRGBArray(CblclrObj[0].color_code_hex);
@@ -917,10 +923,10 @@ var Main = function () {
         if (_networkStage == 'A') {
             return [0, 0];
         } else if (_networkStage == 'D') {
-            return [15, 4]; 
+            return [15, 4];
         } else {
             return [4, 4];
-        } 
+        }
     }
     this.HexToRGBArray = (color) => {
         const { style } = new Option();
@@ -1278,399 +1284,399 @@ var Main = function () {
         $('#layerLoadingStatusDiv').html('<div class="bottom_line">&nbsp;</div><div class="bottom_txt">Data downloaded for <b>' + Object.keys(filteredMap).length + ' </b>layer(s) out of  <span><b> ' + Object.keys(app.LayerLoadingStatusMap).length + '</b></span></div>');
 
     }
-        this.getSurveyAreaLayer = function () {
+    this.getSurveyAreaLayer = function () {
 
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "SurveyArea";
-            });
-            return new GeoJsonLayer({
-                id: 'SurveyArea',
-                data: app.filterDataWithProvinceGeom(app.surveyAreaGeoJson, "FeatureCollection", "SVA"),//app.areaGeoJson
-                pickable: true,
-                stroked: true,
-                filled: true,
-                'opacity': styleObj[0].LayerStyle[0].opacity,
-                lineWidthMinPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
-                lineWidthMaxPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
-                getFillColor: d => app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex),
-                getLineColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].outline_color_hex),
-                getLineWidth: parseInt(styleObj[0].LayerStyle[0].line_width),
-                visible: app.isVectorLayerActive("SVA"),
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onHover: ({ object, x, y }) => {
-                    app.HandleVectorHoverEvent(object);
-                }
-            });
-        }
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "SurveyArea";
+        });
+        return new GeoJsonLayer({
+            id: 'SurveyArea',
+            data: app.filterDataWithProvinceGeom(app.surveyAreaGeoJson, "FeatureCollection", "SVA"),//app.areaGeoJson
+            pickable: true,
+            stroked: true,
+            filled: true,
+            'opacity': styleObj[0].LayerStyle[0].opacity,
+            lineWidthMinPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
+            lineWidthMaxPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
+            getFillColor: d => app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex),
+            getLineColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].outline_color_hex),
+            getLineWidth: parseInt(styleObj[0].LayerStyle[0].line_width),
+            visible: app.isVectorLayerActive("SVA"),
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onHover: ({ object, x, y }) => {
+                app.HandleVectorHoverEvent(object);
+            }
+        });
+    }
 
-        this.getAreaLayer = function () {
+    this.getAreaLayer = function () {
 
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Area";
-            });
-            return new GeoJsonLayer({
-                id: 'area',
-                data: app.filterDataWithProvinceGeom(app.areaGeoJson, "FeatureCollection", "ARA"),//app.areaGeoJson
-                pickable: true,
-                stroked: true,
-                filled: true,
-                'opacity': styleObj[0].LayerStyle[0].opacity,
-                lineWidthMinPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
-                lineWidthMaxPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
-                getFillColor: d => app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex),
-                getLineColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].outline_color_hex),
-                getLineWidth: parseInt(styleObj[0].LayerStyle[0].line_width),
-                visible: app.isVectorLayerActive("ARA"),
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onHover: ({ object, x, y }) => {
-                    app.HandleVectorHoverEvent(object);
-                }
-            });
-        }
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Area";
+        });
+        return new GeoJsonLayer({
+            id: 'area',
+            data: app.filterDataWithProvinceGeom(app.areaGeoJson, "FeatureCollection", "ARA"),//app.areaGeoJson
+            pickable: true,
+            stroked: true,
+            filled: true,
+            'opacity': styleObj[0].LayerStyle[0].opacity,
+            lineWidthMinPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
+            lineWidthMaxPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
+            getFillColor: d => app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex),
+            getLineColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].outline_color_hex),
+            getLineWidth: parseInt(styleObj[0].LayerStyle[0].line_width),
+            visible: app.isVectorLayerActive("ARA"),
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onHover: ({ object, x, y }) => {
+                app.HandleVectorHoverEvent(object);
+            }
+        });
+    }
 
-        this.getSubAreaLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "SubArea";
-            });
-            return new GeoJsonLayer({
-                id: 'subarea',
-                data: app.filterDataWithProvinceGeom(app.subareaGeoJson, "FeatureCollection", "SBA"), //app.subareaGeoJson,
-                pickable: true,
-                stroked: true,
-                filled: true,
-                opacity: styleObj[0].LayerStyle[0].opacity,
-                lineWidthMinPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
-                lineWidthMaxPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
-                getFillColor: (f) => app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex),//d => [219, 227, 79],
-                getLineColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].outline_color_hex),
-                getLineWidth: parseInt(styleObj[0].LayerStyle[0].line_width),
-                visible: app.isVectorLayerActive("SBA"),
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onHover: ({ object, x, y }) => {
-                    app.HandleVectorHoverEvent(object);
-                }
-            });
-        }
-        this.getNetworkTicketLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Network_Ticket";
-            });
-            var networkTicketJson = JSON.parse(JSON.stringify(app.networkticketGeoJson));
-            var filternetworkticketGeoJson = networkTicketJson.features.filter(function (item) {
-                return item.properties.network_id == TicketNetworkId;
-            });
-            networkTicketJson.features = filternetworkticketGeoJson;
+    this.getSubAreaLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "SubArea";
+        });
+        return new GeoJsonLayer({
+            id: 'subarea',
+            data: app.filterDataWithProvinceGeom(app.subareaGeoJson, "FeatureCollection", "SBA"), //app.subareaGeoJson,
+            pickable: true,
+            stroked: true,
+            filled: true,
+            opacity: styleObj[0].LayerStyle[0].opacity,
+            lineWidthMinPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
+            lineWidthMaxPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
+            getFillColor: (f) => app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex),//d => [219, 227, 79],
+            getLineColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].outline_color_hex),
+            getLineWidth: parseInt(styleObj[0].LayerStyle[0].line_width),
+            visible: app.isVectorLayerActive("SBA"),
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onHover: ({ object, x, y }) => {
+                app.HandleVectorHoverEvent(object);
+            }
+        });
+    }
+    this.getNetworkTicketLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Network_Ticket";
+        });
+        var networkTicketJson = JSON.parse(JSON.stringify(app.networkticketGeoJson));
+        var filternetworkticketGeoJson = networkTicketJson.features.filter(function (item) {
+            return item.properties.network_id == TicketNetworkId;
+        });
+        networkTicketJson.features = filternetworkticketGeoJson;
 
-            return new GeoJsonLayer({
-                id: 'networkticket',
-                data: app.filterDataWithProvinceGeom(networkTicketJson, "FeatureCollection", "NT"), //app.networkticketGeoJson,
-                pickable: true,
-                stroked: true,
-                filled: true,
-                opacity: styleObj[0].LayerStyle[0].opacity,
-                lineWidthMinPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
-                lineWidthMaxPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
-                getFillColor: (f) => app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex),//d => [219, 227, 79],
-                getLineColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].outline_color_hex),
-                getLineWidth: parseInt(styleObj[0].LayerStyle[0].line_width),
-                visible: visibleNetworkLayer,
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onHover: ({ object, x, y }) => {
-                    app.HandleVectorHoverEvent(object);
-                }
-            });
-        }
-
-
-        this.getDSALayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "DSA";
-            });
-            return new GeoJsonLayer({
-                id: 'dsa',
-                data: app.filterDataWithProvinceGeom(app.dsaGeoJson, "FeatureCollection", "DSA"), //app.dsaGeoJson,
-                pickable: true,
-                stroked: true,
-                filled: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                opacity: styleObj[0].LayerStyle[0].opacity,
-                lineWidthMinPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
-                lineWidthMaxPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
-                getFillColor: d => app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex),
-                getLineColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].outline_color_hex),
-                getLineWidth: parseInt(styleObj[0].LayerStyle[0].line_width),
-                visible: app.isVectorLayerActive("DSA"),
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onHover: ({ object, x, y }) => {
-                    app.HandleVectorHoverEvent(object);
-                }
-            });
-        }
-
-        this.getCSALayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "CSA";
-            });
-            return new GeoJsonLayer({
-                id: 'csa',
-                data: app.filterDataWithProvinceGeom(app.csaGeoJson, "FeatureCollection", "CSA"), //app.csaGeoJson,
-                pickable: true,
-                stroked: true,
-                filled: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                opacity: styleObj[0].LayerStyle[0].opacity,
-                lineWidthMinPixels: 0,
-                lineWidthMaxPixels: (f) => app.GetLineWidth(f), //9,
-                widthScale: 1,
-                lineWidthUnits: 'pixels',
-                getFillColor: (f) => app.GetFillColor(f), //app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex), //d =>  [204, 255, 229],
-                getLineColor: (f) => app.GetLineColor(f),  //app.HexToRGBArray(styleObj[0].LayerStyle[0].outline_color_hex),
-                getLineWidth: (f) => app.GetLineWidth(f), //parseInt(styleObj[0].LayerStyle[0].line_width),
-                visible: app.isVectorLayerActive("CSA"),
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onHover: ({ object, x, y }) => {
-                    app.HandleVectorHoverEvent(object);
-                }
-            });
-        }
-
-        this.getCSATextLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "CSA";
-            });
-            return new deck.TextLayer({
-                id: 'csa-text',
-                data: app.filterDataWithProvinceGeom(app.csaLabelData, "JsonArray", "CSA"), //app.csaLabelData,
-                pickable: false,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                visible: app.isVectorLayerLabelEnabled("CSA"),
-                getPosition: (d) => d.position,
-                getText: (d) => d.text,
-                getSize: (d) => app.GetStyleValueByPropertyName("CSA", d.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getColor: (d) => app.GetStyleValueByPropertyName("CSA", d.entity_category, "label_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getBackgroundColor: (d) => app.GetStyleValueByPropertyName("CSA", d.entity_category, "label_bg_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                background: true,
-                extensions: [new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-            });
-        }
-
-        this.getDSATextLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "DSA";
-            });
-            return new deck.TextLayer({
-                id: 'dsa-text',
-                data: app.filterDataWithProvinceGeom(app.dsaLabelData, "JsonArray", "DSA"), //app.dsaLabelData,
-                pickable: false,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                visible: app.isVectorLayerLabelEnabled("DSA"),
-                getPosition: (d) => d.position,
-                getText: (d) => d.text,
-                getText: (d) => d.text,
-                getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                background: true,
-                fontFamily: 'arial',
-                extensions: [new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-            });
-        }
-
-        this.getSubAreaTextLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "SubArea";
-            });
-            return new deck.TextLayer({
-                id: 'subarea-text',
-                data: app.filterDataWithProvinceGeom(app.subAreaLabelData, "JsonArray", "SBA"), //app.subAreaLabelData,
-                pickable: false,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                visible: app.isVectorLayerLabelEnabled("SBA"),
-                getPosition: (d) => d.position,
-                getText: (d) => d.text,
-                getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                extensions: [new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                background: true,
-            });
-        }
-
-        this.getAreaTextLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Area";
-            });
-            return new deck.TextLayer({
-                id: 'area-text',
-                data: app.filterDataWithProvinceGeom(app.areaLabelData, "JsonArray", "ARA"), //app.areaLabelData,
-                pickable: false,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                visible: app.isVectorLayerLabelEnabled("ARA"),
-                getPosition: (d) => d.position,
-                getText: (d) => d.text,
-                getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                extensions: [new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                background: true,
-            });
-        }
+        return new GeoJsonLayer({
+            id: 'networkticket',
+            data: app.filterDataWithProvinceGeom(networkTicketJson, "FeatureCollection", "NT"), //app.networkticketGeoJson,
+            pickable: true,
+            stroked: true,
+            filled: true,
+            opacity: styleObj[0].LayerStyle[0].opacity,
+            lineWidthMinPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
+            lineWidthMaxPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
+            getFillColor: (f) => app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex),//d => [219, 227, 79],
+            getLineColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].outline_color_hex),
+            getLineWidth: parseInt(styleObj[0].LayerStyle[0].line_width),
+            visible: visibleNetworkLayer,
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onHover: ({ object, x, y }) => {
+                app.HandleVectorHoverEvent(object);
+            }
+        });
+    }
 
 
-        this.getSurveyAreaTextLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "SurveyArea";
-            });
-            return new deck.TextLayer({
-                id: 'SurveyArea-text',
-                data: app.filterDataWithProvinceGeom(app.surveyAreaLabelData, "JsonArray", "SVA"), //app.areaLabelData,
-                pickable: false,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                visible: app.isVectorLayerLabelEnabled("SVA"),
-                getPosition: (d) => d.position,
-                getText: (d) => d.text,
-                getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                extensions: [new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                background: true,
-            });
-        }
+    this.getDSALayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "DSA";
+        });
+        return new GeoJsonLayer({
+            id: 'dsa',
+            data: app.filterDataWithProvinceGeom(app.dsaGeoJson, "FeatureCollection", "DSA"), //app.dsaGeoJson,
+            pickable: true,
+            stroked: true,
+            filled: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            opacity: styleObj[0].LayerStyle[0].opacity,
+            lineWidthMinPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
+            lineWidthMaxPixels: parseInt(styleObj[0].LayerStyle[0].line_width),
+            getFillColor: d => app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex),
+            getLineColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].outline_color_hex),
+            getLineWidth: parseInt(styleObj[0].LayerStyle[0].line_width),
+            visible: app.isVectorLayerActive("DSA"),
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onHover: ({ object, x, y }) => {
+                app.HandleVectorHoverEvent(object);
+            }
+        });
+    }
 
-        this.getCableCoreTextLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Cable";
-            });
-            return new deck.TextLayer({
-                id: 'CableCore-text',
-                data: app.filterDataWithProvinceGeom(app.cableCoreLabelDataFiltered, "JsonArray", "CBL"),// app.cableCoreLabelDataFiltered,
-                pickable: false,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                visible: app.isVectorLayerActive("CBL") && !app.isVectorLayerLabelEnabled("CBL"),
-                getPosition: (d) => d.position,
-                getText: (d) => d.text,
-                getAngle: d => d.angle,
-                getTextAnchor: 'middle',
-                getAlignmentBaseline: 'center',
-                getFilterValue: d => (app.getFilteValuesByNetworkStatus(d.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("CBL"),
-                filterEnabled: app.DeckfilterEnabled,
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                getCollisionPriority: d => d.priority,
-                collisionEnabled: true,
-                collisionTestProps: { radiusScale: 50 },
-                getSize: (f) => app.GetStyleValueByPropertyName("Cable", f.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getColor: (f) => app.GetStyleValueByPropertyName("Cable", f.entity_category, "label_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getBackgroundColor: (f) => app.GetStyleValueByPropertyName("Cable", f.entity_category, "label_bg_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                background: true,
-                backgroundPadding: [4, 1]
-            });
-        }
+    this.getCSALayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "CSA";
+        });
+        return new GeoJsonLayer({
+            id: 'csa',
+            data: app.filterDataWithProvinceGeom(app.csaGeoJson, "FeatureCollection", "CSA"), //app.csaGeoJson,
+            pickable: true,
+            stroked: true,
+            filled: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            opacity: styleObj[0].LayerStyle[0].opacity,
+            lineWidthMinPixels: 0,
+            lineWidthMaxPixels: (f) => app.GetLineWidth(f), //9,
+            widthScale: 1,
+            lineWidthUnits: 'pixels',
+            getFillColor: (f) => app.GetFillColor(f), //app.HexToRGBArray(styleObj[0].LayerStyle[0].color_code_hex), //d =>  [204, 255, 229],
+            getLineColor: (f) => app.GetLineColor(f),  //app.HexToRGBArray(styleObj[0].LayerStyle[0].outline_color_hex),
+            getLineWidth: (f) => app.GetLineWidth(f), //parseInt(styleObj[0].LayerStyle[0].line_width),
+            visible: app.isVectorLayerActive("CSA"),
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onHover: ({ object, x, y }) => {
+                app.HandleVectorHoverEvent(object);
+            }
+        });
+    }
 
-        this.getCableLabelTextLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Cable";
-            });
-            return new deck.TextLayer({
-                id: 'CableLabel-text',
-                data: app.filterDataWithProvinceGeom(app.cableLabelDataFiltered, "JsonArray", "CBL"), //app.cableLabelDataFiltered,
-                pickable: false,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                visible: app.isVectorLayerLabelEnabled("CBL"),
-                getPosition: (d) => d.position,
-                getText: (d) => d.text,
-                getAngle: d => d.angle,
-                getTextAnchor: 'middle',
-                getAlignmentBaseline: 'center',
-                getFilterValue: d => (app.getFilteValuesByNetworkStatus(d.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("CBL"),
-                filterEnabled: app.DeckfilterEnabled,
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                getCollisionPriority: d => d.priority,
-                collisionTestProps: { radiusScale: 2 },
-                getSize: (f) => app.GetStyleValueByPropertyName("Cable", f.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getColor: (f) => app.GetStyleValueByPropertyName("Cable", f.entity_category, "label_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getBackgroundColor: (f) => app.GetStyleValueByPropertyName("Cable", f.entity_category, "label_bg_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                background: true,
-                backgroundPadding: [4, 1]
-            });
-        }
-        this.getTrenchLabelTextLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Trench";
-            });
-            return new deck.TextLayer({
-                id: 'TrenchLabel-text',
-                data: app.filterDataWithProvinceGeom(app.trenchLabelData, "JsonArray", "TRH"), //app.trenchLabelData,
-                pickable: false,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                visible: app.isVectorLayerLabelEnabled("TRH"),
-                getPosition: (d) => d.position,
-                getText: (d) => d.text,
-                getAngle: d => d.angle,
-                getTextAnchor: 'middle',
-                getAlignmentBaseline: 'center',
-                getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getFilterValue: d => (app.getFilteValuesByNetworkStatus(d.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("TRH"),
-                filterEnabled: app.DeckfilterEnabled,
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                getCollisionPriority: d => d.priority,
-                collisionTestProps: { radiusScale: 2 },
-                getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                background: true,
-                backgroundPadding: [4, 1]
-            });
-        }
-        this.getDuctLabelTextLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Duct";
-            });
-            return new deck.TextLayer({
-                id: 'DuctLabel-text',
-                data: app.filterDataWithProvinceGeom(app.ductLabelData, "JsonArray", "DCT"), //app.trenchLabelData,
-                pickable: false,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                visible: app.isVectorLayerLabelEnabled("DCT"),
-                getPosition: (d) => d.position,
-                getText: (d) => d.text,
-                getAngle: d => d.angle,
-                getTextAnchor: 'middle',
-                getAlignmentBaseline: 'center',
-                getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getFilterValue: d => (app.getFilteValuesByNetworkStatus(d.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("DCT"),
-                filterEnabled: app.DeckfilterEnabled,
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                getCollisionPriority: d => d.priority,
-                collisionTestProps: { radiusScale: 2 },
-                getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                background: true,
-                backgroundPadding: [4, 1]
-            });
+    this.getCSATextLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "CSA";
+        });
+        return new deck.TextLayer({
+            id: 'csa-text',
+            data: app.filterDataWithProvinceGeom(app.csaLabelData, "JsonArray", "CSA"), //app.csaLabelData,
+            pickable: false,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            visible: app.isVectorLayerLabelEnabled("CSA"),
+            getPosition: (d) => d.position,
+            getText: (d) => d.text,
+            getSize: (d) => app.GetStyleValueByPropertyName("CSA", d.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getColor: (d) => app.GetStyleValueByPropertyName("CSA", d.entity_category, "label_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getBackgroundColor: (d) => app.GetStyleValueByPropertyName("CSA", d.entity_category, "label_bg_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            background: true,
+            extensions: [new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+        });
+    }
+
+    this.getDSATextLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "DSA";
+        });
+        return new deck.TextLayer({
+            id: 'dsa-text',
+            data: app.filterDataWithProvinceGeom(app.dsaLabelData, "JsonArray", "DSA"), //app.dsaLabelData,
+            pickable: false,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            visible: app.isVectorLayerLabelEnabled("DSA"),
+            getPosition: (d) => d.position,
+            getText: (d) => d.text,
+            getText: (d) => d.text,
+            getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            background: true,
+            fontFamily: 'arial',
+            extensions: [new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+        });
+    }
+
+    this.getSubAreaTextLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "SubArea";
+        });
+        return new deck.TextLayer({
+            id: 'subarea-text',
+            data: app.filterDataWithProvinceGeom(app.subAreaLabelData, "JsonArray", "SBA"), //app.subAreaLabelData,
+            pickable: false,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            visible: app.isVectorLayerLabelEnabled("SBA"),
+            getPosition: (d) => d.position,
+            getText: (d) => d.text,
+            getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            extensions: [new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            background: true,
+        });
+    }
+
+    this.getAreaTextLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Area";
+        });
+        return new deck.TextLayer({
+            id: 'area-text',
+            data: app.filterDataWithProvinceGeom(app.areaLabelData, "JsonArray", "ARA"), //app.areaLabelData,
+            pickable: false,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            visible: app.isVectorLayerLabelEnabled("ARA"),
+            getPosition: (d) => d.position,
+            getText: (d) => d.text,
+            getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            extensions: [new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            background: true,
+        });
+    }
+
+
+    this.getSurveyAreaTextLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "SurveyArea";
+        });
+        return new deck.TextLayer({
+            id: 'SurveyArea-text',
+            data: app.filterDataWithProvinceGeom(app.surveyAreaLabelData, "JsonArray", "SVA"), //app.areaLabelData,
+            pickable: false,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            visible: app.isVectorLayerLabelEnabled("SVA"),
+            getPosition: (d) => d.position,
+            getText: (d) => d.text,
+            getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            extensions: [new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            background: true,
+        });
+    }
+
+    this.getCableCoreTextLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Cable";
+        });
+        return new deck.TextLayer({
+            id: 'CableCore-text',
+            data: app.filterDataWithProvinceGeom(app.cableCoreLabelDataFiltered, "JsonArray", "CBL"),// app.cableCoreLabelDataFiltered,
+            pickable: false,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            visible: app.isVectorLayerActive("CBL") && !app.isVectorLayerLabelEnabled("CBL"),
+            getPosition: (d) => d.position,
+            getText: (d) => d.text,
+            getAngle: d => d.angle,
+            getTextAnchor: 'middle',
+            getAlignmentBaseline: 'center',
+            getFilterValue: d => (app.getFilteValuesByNetworkStatus(d.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("CBL"),
+            filterEnabled: app.DeckfilterEnabled,
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            getCollisionPriority: d => d.priority,
+            collisionEnabled: true,
+            collisionTestProps: { radiusScale: 50 },
+            getSize: (f) => app.GetStyleValueByPropertyName("Cable", f.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getColor: (f) => app.GetStyleValueByPropertyName("Cable", f.entity_category, "label_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getBackgroundColor: (f) => app.GetStyleValueByPropertyName("Cable", f.entity_category, "label_bg_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            background: true,
+            backgroundPadding: [4, 1]
+        });
+    }
+
+    this.getCableLabelTextLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Cable";
+        });
+        return new deck.TextLayer({
+            id: 'CableLabel-text',
+            data: app.filterDataWithProvinceGeom(app.cableLabelDataFiltered, "JsonArray", "CBL"), //app.cableLabelDataFiltered,
+            pickable: false,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            visible: app.isVectorLayerLabelEnabled("CBL"),
+            getPosition: (d) => d.position,
+            getText: (d) => d.text,
+            getAngle: d => d.angle,
+            getTextAnchor: 'middle',
+            getAlignmentBaseline: 'center',
+            getFilterValue: d => (app.getFilteValuesByNetworkStatus(d.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("CBL"),
+            filterEnabled: app.DeckfilterEnabled,
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            getCollisionPriority: d => d.priority,
+            collisionTestProps: { radiusScale: 2 },
+            getSize: (f) => app.GetStyleValueByPropertyName("Cable", f.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getColor: (f) => app.GetStyleValueByPropertyName("Cable", f.entity_category, "label_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getBackgroundColor: (f) => app.GetStyleValueByPropertyName("Cable", f.entity_category, "label_bg_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            background: true,
+            backgroundPadding: [4, 1]
+        });
+    }
+    this.getTrenchLabelTextLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Trench";
+        });
+        return new deck.TextLayer({
+            id: 'TrenchLabel-text',
+            data: app.filterDataWithProvinceGeom(app.trenchLabelData, "JsonArray", "TRH"), //app.trenchLabelData,
+            pickable: false,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            visible: app.isVectorLayerLabelEnabled("TRH"),
+            getPosition: (d) => d.position,
+            getText: (d) => d.text,
+            getAngle: d => d.angle,
+            getTextAnchor: 'middle',
+            getAlignmentBaseline: 'center',
+            getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getFilterValue: d => (app.getFilteValuesByNetworkStatus(d.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("TRH"),
+            filterEnabled: app.DeckfilterEnabled,
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            getCollisionPriority: d => d.priority,
+            collisionTestProps: { radiusScale: 2 },
+            getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            background: true,
+            backgroundPadding: [4, 1]
+        });
+    }
+    this.getDuctLabelTextLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Duct";
+        });
+        return new deck.TextLayer({
+            id: 'DuctLabel-text',
+            data: app.filterDataWithProvinceGeom(app.ductLabelData, "JsonArray", "DCT"), //app.trenchLabelData,
+            pickable: false,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            visible: app.isVectorLayerLabelEnabled("DCT"),
+            getPosition: (d) => d.position,
+            getText: (d) => d.text,
+            getAngle: d => d.angle,
+            getTextAnchor: 'middle',
+            getAlignmentBaseline: 'center',
+            getSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getFilterValue: d => (app.getFilteValuesByNetworkStatus(d.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("DCT"),
+            filterEnabled: app.DeckfilterEnabled,
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            getCollisionPriority: d => d.priority,
+            collisionTestProps: { radiusScale: 2 },
+            getBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            background: true,
+            backgroundPadding: [4, 1]
+        });
     }
     this.getMicroductLabelTextLayer = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
@@ -1701,703 +1707,703 @@ var Main = function () {
             backgroundPadding: [4, 1]
         });
     }
-        //Structure Layers
-        this.getPoleLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Pole";
-            });
-            return new GeoJsonLayer({
-                id: "pole",
-                data: app.filterDataWithProvinceGeom(app.poleGeoJson, "FeatureCollection", "POL"), //app.poleGeoJson,
-                filled: true,
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                iconSizeScale: 1,
-                getIcon: (f) => (app.GetIcon(f)),
-                pointType: (app.isVectorLayerLabelEnabled("POL") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',
-                getTextPixelOffset: [10, 10],
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
-                getTextColor: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_color_hex", "Color"),//app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),               
-                getTextSize: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size), 
-                getTextBackgroundColor: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_bg_color_hex", "Color"),//app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                //autoHighlight: true,
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("POL"),
-                visible: app.isVectorLayerActive("POL"),
-                filterEnabled: app.DeckfilterEnabled,
-                collisionEnabled: app.IsCollisionEnabled,
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar                 
-                },
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        //newTooltip.style.cursor = 'pointer';
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-            })
-        };
+    //Structure Layers
+    this.getPoleLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Pole";
+        });
+        return new GeoJsonLayer({
+            id: "pole",
+            data: app.filterDataWithProvinceGeom(app.poleGeoJson, "FeatureCollection", "POL"), //app.poleGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            iconSizeScale: 1,
+            getIcon: (f) => (app.GetIcon(f)),
+            pointType: (app.isVectorLayerLabelEnabled("POL") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextPixelOffset: [10, 10],
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
+            getTextColor: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_color_hex", "Color"),//app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),               
+            getTextSize: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size), 
+            getTextBackgroundColor: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_bg_color_hex", "Color"),//app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            //autoHighlight: true,
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("POL"),
+            visible: app.isVectorLayerActive("POL"),
+            filterEnabled: app.DeckfilterEnabled,
+            collisionEnabled: app.IsCollisionEnabled,
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            onDataLoad: () => {
+                progress.done(); // hides progress bar                 
+            },
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    //newTooltip.style.cursor = 'pointer';
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+        })
+    };
 
-        this.getManholeLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Manhole";
-            });
-            return new GeoJsonLayer({
-                id: "manhole",
-                data: app.filterDataWithProvinceGeom(app.manholeGeoJson, "FeatureCollection", "MH"), //app.manholeGeoJson,
-                filled: true,
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("MH") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',
-                getTextPixelOffset: [10, 10],
-                getIcon: (f) => (app.GetIcon(f)),
-                getTextColor: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_color_hex", "Color"),//app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),               
-                getTextSize: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size),               
-                //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                getTextBackgroundColor: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_bg_color_hex", "Color"),//app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("MH"),
-                visible: app.isVectorLayerActive("MH"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionEnabled: app.IsCollisionEnabled,
-                collisionGroup: 'Label',
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+    this.getManholeLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Manhole";
+        });
+        return new GeoJsonLayer({
+            id: "manhole",
+            data: app.filterDataWithProvinceGeom(app.manholeGeoJson, "FeatureCollection", "MH"), //app.manholeGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("MH") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextPixelOffset: [10, 10],
+            getIcon: (f) => (app.GetIcon(f)),
+            getTextColor: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_color_hex", "Color"),//app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),               
+            getTextSize: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size),               
+            //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            getTextBackgroundColor: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_bg_color_hex", "Color"),//app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("MH"),
+            visible: app.isVectorLayerActive("MH"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionEnabled: app.IsCollisionEnabled,
+            collisionGroup: 'Label',
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            })
-        };
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
 
-        this.getWallmountLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "WallMount";
-            });
-            return new GeoJsonLayer({
-                id: "wallmount",
-                data: app.filterDataWithProvinceGeom(app.wallmountGeoJson, "FeatureCollection", "WMT"), //app.wallmountGeoJson,
-                filled: true,
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("WMT") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [10, 10],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("WMT"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("WMT"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+    this.getWallmountLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "WallMount";
+        });
+        return new GeoJsonLayer({
+            id: "wallmount",
+            data: app.filterDataWithProvinceGeom(app.wallmountGeoJson, "FeatureCollection", "WMT"), //app.wallmountGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("WMT") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("WMT"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("WMT"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            })
-        };
-        //New 
-        this.getFMSLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "FMS";
-            });
-            return new GeoJsonLayer({
-                id: "fms",
-                data: app.filterDataWithProvinceGeom(app.fmsGeoJson, "FeatureCollection", "FMS"), //app.fmsGeoJson,
-                filled: true,
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("FMS") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextPixelOffset: [10, 10],
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("FMS"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("FMS"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
+    //New 
+    this.getFMSLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "FMS";
+        });
+        return new GeoJsonLayer({
+            id: "fms",
+            data: app.filterDataWithProvinceGeom(app.fmsGeoJson, "FeatureCollection", "FMS"), //app.fmsGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("FMS") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextPixelOffset: [10, 10],
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("FMS"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("FMS"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            })
-        };
-        this.getONTLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "ONT";
-            });
-            return new GeoJsonLayer({
-                id: "ont",
-                data: app.filterDataWithProvinceGeom(app.ontGeoJson, "FeatureCollection", "ONT"), //app.ontGeoJson,
-                filled: true,
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("ONT") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [10, 10],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: () => 20,
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("ONT"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("ONT"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
+    this.getONTLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "ONT";
+        });
+        return new GeoJsonLayer({
+            id: "ont",
+            data: app.filterDataWithProvinceGeom(app.ontGeoJson, "FeatureCollection", "ONT"), //app.ontGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("ONT") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: () => 20,
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("ONT"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("ONT"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            })
-        };
-        this.getTreeLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Tree";
-            });
-            return new GeoJsonLayer({
-                id: "tree",
-                data: app.filterDataWithProvinceGeom(app.treeGeoJson, "FeatureCollection", "TRE"), //app.treeGeoJson,
-                filled: true,
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("TRE") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [10, 10],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("TRE"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("TRE"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
+    this.getTreeLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Tree";
+        });
+        return new GeoJsonLayer({
+            id: "tree",
+            data: app.filterDataWithProvinceGeom(app.treeGeoJson, "FeatureCollection", "TRE"), //app.treeGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("TRE") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("TRE"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("TRE"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            })
-        };
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
 
-        this.getBuildingLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Building";
-            });
-            return new GeoJsonLayer({
-                id: "building",
-                data: app.filterDataWithProvinceGeom(app.buildingGeoJson, "FeatureCollection", "BLDP,BLD,BLDC"), //app.buildingGeoJson,
-                filled: true,
-                stroked: true,
-                opacity: .2,
-                getLineWidth: 0,
-                getFillColor: "#e4f21c",
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("BLDP,BLD,BLDC") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [10, 10],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: () => 30,
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("BLDP,BLD,BLDC"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("BLDP,BLD,BLDC"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+    this.getBuildingLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Building";
+        });
+        return new GeoJsonLayer({
+            id: "building",
+            data: app.filterDataWithProvinceGeom(app.buildingGeoJson, "FeatureCollection", "BLDP,BLD,BLDC"), //app.buildingGeoJson,
+            filled: true,
+            stroked: true,
+            opacity: .2,
+            getLineWidth: 0,
+            getFillColor: "#e4f21c",
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("BLDP,BLD,BLDC") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: () => 30,
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("BLDP,BLD,BLDC"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("BLDP,BLD,BLDC"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            })
-        };
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
 
-        this.getPODLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "POD";
-            });
-            return new GeoJsonLayer({
-                id: "pod",
-                data: app.filterDataWithProvinceGeom(app.podGeoJson, "FeatureCollection", "POD"), //app.podGeoJson,
-                filled: true,
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("POD") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [10, 10],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: (f) => (f.properties.network_status == 'A' ? 16 : 20),
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                autoHighlight: true,
-                visible: app.isVectorLayerActive("POD"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("POD"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label1',
-                collisionEnabled: app.IsCollisionEnabled,
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+    this.getPODLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "POD";
+        });
+        return new GeoJsonLayer({
+            id: "pod",
+            data: app.filterDataWithProvinceGeom(app.podGeoJson, "FeatureCollection", "POD"), //app.podGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("POD") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: (f) => (f.properties.network_status == 'A' ? 16 : 20),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            autoHighlight: true,
+            visible: app.isVectorLayerActive("POD"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("POD"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label1',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            })
-        };
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
 
-        //Splicenode Layers
-        this.getSplitterLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Splitter";
-            });
-            app.filterSplitterGeoJsonData();
-            return new GeoJsonLayer({
-                id: "splitter",
-                data: app.filterDataWithProvinceGeom(app.splitterFilteredGeoJson, "FeatureCollection", "SPL"), //app.splitterFilteredGeoJson,
-                filled: true,
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("SPL") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'end',
-                getTextPixelOffset: [-10, -5],
-                getTextColor: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_color_hex", "Color"),//app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),               
-                getTextSize: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size), 
-                getTextBackgroundColor: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_bg_color_hex", "Color"),//app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: (f) => (f.properties.network_status == 'A' ? 16 : 20),
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //getIconPixelOffset: () => [2, 2],
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("SPL"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("SPL"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+    //Splicenode Layers
+    this.getSplitterLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Splitter";
+        });
+        app.filterSplitterGeoJsonData();
+        return new GeoJsonLayer({
+            id: "splitter",
+            data: app.filterDataWithProvinceGeom(app.splitterFilteredGeoJson, "FeatureCollection", "SPL"), //app.splitterFilteredGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("SPL") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'end',
+            getTextPixelOffset: [-10, -5],
+            getTextColor: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_color_hex", "Color"),//app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),               
+            getTextSize: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size), 
+            getTextBackgroundColor: (f) => app.GetStyleValueByPropertyName(f.entity_type, f.properties.entity_category, "label_bg_color_hex", "Color"),//app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: (f) => (f.properties.network_status == 'A' ? 16 : 20),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //getIconPixelOffset: () => [2, 2],
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("SPL"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("SPL"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            })
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
     }
 
-        this.getFDBLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "FDB";
-            });
-            return new GeoJsonLayer({
-                id: "fdb",
-                data: app.filterDataWithProvinceGeom(app.fdbGeoJson, "FeatureCollection", "FDB"), //app.fdbGeoJson,
-                filled: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("FDB") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'end',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [-10, 5],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                pickable: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: (f) => (f.properties.network_status == 'A' ? 16 : 20),
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("FDB"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("FDB"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+    this.getFDBLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "FDB";
+        });
+        return new GeoJsonLayer({
+            id: "fdb",
+            data: app.filterDataWithProvinceGeom(app.fdbGeoJson, "FeatureCollection", "FDB"), //app.fdbGeoJson,
+            filled: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("FDB") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'end',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [-10, 5],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            pickable: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: (f) => (f.properties.network_status == 'A' ? 16 : 20),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("FDB"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("FDB"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            });
-        }
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        });
+    }
 
-        this.getBDBLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "BDB";
-            });
-            return new GeoJsonLayer({
-                id: "bdb",
-                data: app.filterDataWithProvinceGeom(app.bdbGeoJson, "FeatureCollection", "BDB"), //app.bdbGeoJson,
-                filled: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("BDB") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'end',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [-10, 5],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                pickable: true,
-                //getIconSize: (f) => (f.properties.network_status == 'A' ? 16 : 20),
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("BDB"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("BDB"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar                   
-                },
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+    this.getBDBLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "BDB";
+        });
+        return new GeoJsonLayer({
+            id: "bdb",
+            data: app.filterDataWithProvinceGeom(app.bdbGeoJson, "FeatureCollection", "BDB"), //app.bdbGeoJson,
+            filled: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("BDB") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'end',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [-10, 5],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            pickable: true,
+            //getIconSize: (f) => (f.properties.network_status == 'A' ? 16 : 20),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("BDB"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("BDB"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onDataLoad: () => {
+                progress.done(); // hides progress bar                   
+            },
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-            });
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+        });
     }
     this.getCDBLayer = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
@@ -2462,300 +2468,300 @@ var Main = function () {
         });
     }
 
-        this.getADBLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "ADB";
-            });
-            return new GeoJsonLayer({
-                id: "adb",
-                data: app.filterDataWithProvinceGeom(app.adbGeoJson, "FeatureCollection", "ADB"), //app.adbGeoJson,
-                filled: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("ADB") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'end',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [-10, 5],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                pickable: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("ADB"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("ADB"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar                   
-                },
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+    this.getADBLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "ADB";
+        });
+        return new GeoJsonLayer({
+            id: "adb",
+            data: app.filterDataWithProvinceGeom(app.adbGeoJson, "FeatureCollection", "ADB"), //app.adbGeoJson,
+            filled: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("ADB") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'end',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [-10, 5],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            pickable: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("ADB"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("ADB"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onDataLoad: () => {
+                progress.done(); // hides progress bar                   
+            },
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-            });
-        }
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+        });
+    }
 
-        this.getSpliceClosureLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "SpliceClosure";
-            });
-            return new GeoJsonLayer({
-                id: "spliceclosure",
-                data: app.filterDataWithProvinceGeom(app.spliceclosureGeoJson, "FeatureCollection", "SC"), //app.spliceclosureGeoJson,
-                filled: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("SC") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'end',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [-10, -5],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                pickable: true,
-                //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("SC"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("SC"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar                   
-                },
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+    this.getSpliceClosureLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "SpliceClosure";
+        });
+        return new GeoJsonLayer({
+            id: "spliceclosure",
+            data: app.filterDataWithProvinceGeom(app.spliceclosureGeoJson, "FeatureCollection", "SC"), //app.spliceclosureGeoJson,
+            filled: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("SC") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'end',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [-10, -5],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            pickable: true,
+            //getIconSize: (f) => (f.properties.network_status == 'A' ? 20 : 24),
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("SC"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("SC"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onDataLoad: () => {
+                progress.done(); // hides progress bar                   
+            },
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-            });
-        }
-        //Line Layers
-    this.getCableLayer = function () {      
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Cable";
-            });
-            app.filterCableGeoJsonData();
-            return new GeoJsonLayer({
-                id: 'cable',
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+        });
+    }
+    //Line Layers
+    this.getCableLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Cable";
+        });
+        app.filterCableGeoJsonData();
+        return new GeoJsonLayer({
+            id: 'cable',
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
                 data: app.filterDataWithProvinceGeom(app.cableFilteredGeoJson, "FeatureCollection","CBL"), //app.cableFilteredGeoJson,
-                lineWidthScale: 1,
-                lineWidthUnits: 'pixels',
-                lineWidthMinPixels: 1,
-                lineWidthMaxPixels: 10,
-                getLineColor: f => app.GetLineColor(f),
-                getLineWidth: feature => app.GetLineWidth(feature),
-                opacity: styleObj[0].LayerStyle[0].opacity,
-                autoHighlight: true,
-                pickable: true,
-                visible: app.isVectorLayerActive("CBL"),
-                getFilterValue: f => [app.getFilteValuesByNetworkStatus(f.properties.network_status)],
-                filterRange: app.GetVectorLayerFilterRange("CBL"),
-                getDashArray: f => (app.GetDashArray(f.properties.network_status)),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new PathStyleExtension({ highPrecisionDash: true, dash: true, dashJustified: true })],
-                collisionEnabled: app.IsCollisionEnabled,
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar                   
-                },
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+            lineWidthScale: 1,
+            lineWidthUnits: 'pixels',
+            lineWidthMinPixels: 1,
+            lineWidthMaxPixels: 10,
+            getLineColor: f => app.GetLineColor(f),
+            getLineWidth: feature => app.GetLineWidth(feature),
+            opacity: styleObj[0].LayerStyle[0].opacity,
+            autoHighlight: true,
+            pickable: true,
+            visible: app.isVectorLayerActive("CBL"),
+            getFilterValue: f => [app.getFilteValuesByNetworkStatus(f.properties.network_status)],
+            filterRange: app.GetVectorLayerFilterRange("CBL"),
+            getDashArray: f => (app.GetDashArray(f.properties.network_status)),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new PathStyleExtension({ highPrecisionDash: true, dash: true, dashJustified: true })],
+            collisionEnabled: app.IsCollisionEnabled,
+            onDataLoad: () => {
+                progress.done(); // hides progress bar                   
+            },
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
-
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
                 }
-            })
-        }
-        this.getTrenchLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Trench";
-            });
-            return new GeoJsonLayer({
-                id: 'trench',
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                data: app.filterDataWithProvinceGeom(app.trenchGeoJson, "FeatureCollection", "TRH"), //app.trenchGeoJson,
-                lineWidthScale: 1,
-                lineWidthUnits: 'pixels',
-                lineWidthMinPixels: 1,
-                lineWidthMaxPixels: 10,
-                getLineColor: f => app.GetLineColor(f),
-                getLineWidth: feature => app.GetLineWidth(feature),
-                opacity: styleObj[0].LayerStyle[0].opacity,
-                autoHighlight: true,
-                pickable: true,
-                visible: app.isVectorLayerActive("TRH"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("TRH"),
-                getDashArray: f => (app.GetDashArray(f.properties.network_status)), //dashSize,Gap
-                dashJustified: false,
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new PathStyleExtension({ highPrecisionDash: true })],
-                collisionEnabled: app.IsCollisionEnabled,
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar                   
-                },
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
-
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
                 }
-            })
-        }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            }
+        })
+    }
+    this.getTrenchLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Trench";
+        });
+        return new GeoJsonLayer({
+            id: 'trench',
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            data: app.filterDataWithProvinceGeom(app.trenchGeoJson, "FeatureCollection", "TRH"), //app.trenchGeoJson,
+            lineWidthScale: 1,
+            lineWidthUnits: 'pixels',
+            lineWidthMinPixels: 1,
+            lineWidthMaxPixels: 10,
+            getLineColor: f => app.GetLineColor(f),
+            getLineWidth: feature => app.GetLineWidth(feature),
+            opacity: styleObj[0].LayerStyle[0].opacity,
+            autoHighlight: true,
+            pickable: true,
+            visible: app.isVectorLayerActive("TRH"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("TRH"),
+            getDashArray: f => (app.GetDashArray(f.properties.network_status)), //dashSize,Gap
+            dashJustified: false,
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new PathStyleExtension({ highPrecisionDash: true })],
+            collisionEnabled: app.IsCollisionEnabled,
+            onDataLoad: () => {
+                progress.done(); // hides progress bar                   
+            },
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-        this.getDuctLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Duct";
-            });
-            return new GeoJsonLayer({
-                id: 'duct',
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                data: app.filterDataWithProvinceGeom(app.ductGeoJson, "FeatureCollection", "DCT"), //app.trenchGeoJson,
-                lineWidthScale: 1,
-                lineWidthUnits: 'pixels',
-                lineWidthMinPixels: 1,
-                lineWidthMaxPixels: 10,
-                getLineColor: f => app.GetLineColor(f),
-                getLineWidth: feature => app.GetLineWidth(feature),
-                opacity: styleObj[0].LayerStyle[0].opacity,
-                autoHighlight: true,
-                pickable: true,
-                visible: app.isVectorLayerActive("DCT"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("DCT"),
-                getDashArray: f => (app.GetDashArray(f.properties.network_status)),//dashSize,Gap
-                dashJustified: false,
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new PathStyleExtension({ highPrecisionDash: true })],
-                collisionEnabled: app.IsCollisionEnabled,
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar                   
-                },
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
-
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
-
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
                 }
-            })
+
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            }
+        })
+    }
+
+    this.getDuctLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Duct";
+        });
+        return new GeoJsonLayer({
+            id: 'duct',
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            data: app.filterDataWithProvinceGeom(app.ductGeoJson, "FeatureCollection", "DCT"), //app.trenchGeoJson,
+            lineWidthScale: 1,
+            lineWidthUnits: 'pixels',
+            lineWidthMinPixels: 1,
+            lineWidthMaxPixels: 10,
+            getLineColor: f => app.GetLineColor(f),
+            getLineWidth: feature => app.GetLineWidth(feature),
+            opacity: styleObj[0].LayerStyle[0].opacity,
+            autoHighlight: true,
+            pickable: true,
+            visible: app.isVectorLayerActive("DCT"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("DCT"),
+            getDashArray: f => (app.GetDashArray(f.properties.network_status)),//dashSize,Gap
+            dashJustified: false,
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new PathStyleExtension({ highPrecisionDash: true })],
+            collisionEnabled: app.IsCollisionEnabled,
+            onDataLoad: () => {
+                progress.done(); // hides progress bar                   
+            },
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
+
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
+
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            }
+        })
     }
     this.getMicroductLayer = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
@@ -2813,310 +2819,310 @@ var Main = function () {
             }
         })
     }
-        this.getCustomerLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "Customer";
-            });
-            return new GeoJsonLayer({
-                id: "cus",
-                data: app.filterDataWithProvinceGeom(app.customerGeoJson, "FeatureCollection", "CUS"), //app.ontGeoJson,
-                filled: true,
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("CUS") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [10, 10],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: () => 20,
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("CUS"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("CUS"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+    this.getCustomerLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "Customer";
+        });
+        return new GeoJsonLayer({
+            id: "cus",
+            data: app.filterDataWithProvinceGeom(app.customerGeoJson, "FeatureCollection", "CUS"), //app.ontGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("CUS") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: () => 20,
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("CUS"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("CUS"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
-
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            })
-        };
-        this.getROWLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "ROW";
-            });
-            return new GeoJsonLayer({
-                id: 'row',
-                data: app.filterDataWithProvinceGeom(app.rowGeoJson, "FeatureCollection", "ROW,ROWL,PIT"),
-                pickable: true,
-                stroked: true,
-                filled: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                opacity: styleObj[0].LayerStyle[0].opacity,
-                lineWidthMinPixels: 0,
-                lineWidthMaxPixels: (f) => app.GetLineWidth(f),
-                widthScale: 1,
-                lineWidthUnits: 'pixels',
-                getFillColor: (f) => app.GetFillColor(f),
-                getLineColor: (f) => app.GetLineColor(f),
-                getLineWidth: (f) => app.GetLineWidth(f),
-                visible: app.isVectorLayerActive("ROW,ROWL,PIT"),
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onHover: ({ object, x, y }) => {
-                    app.HandleVectorHoverEvent(object);
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
                 }
-            });
-        }
-        this.getROWTextLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                return item.layer_name == "ROW";
-            });
-            return new deck.TextLayer({
-                id: 'row-text',
-                data: app.filterDataWithProvinceGeom(app.rowLabelData, "JsonArray", "ROW,ROWL,PIT"), //app.csaLabelData,
-                pickable: false,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                visible: app.isVectorLayerLabelEnabled("ROW,ROWL,PIT"),
-                getPosition: (d) => d.position,
-                getText: (d) => d.text,
-                getSize: (d) => app.GetStyleValueByPropertyName("ROW", d.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getColor: (d) => app.GetStyleValueByPropertyName("ROW", d.entity_category, "label_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getBackgroundColor: (d) => app.GetStyleValueByPropertyName("ROW", d.entity_category, "label_bg_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                background: true,
-                extensions: [new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-            });
-        }
 
-        this.getHandholeLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                //console.log("Handhole called");
-                return item.layer_name == "Handhole";
-            });
-            return new GeoJsonLayer({
-                id: "HH",
-                data: app.filterDataWithProvinceGeom(app.handholeGeoJson, "FeatureCollection", "HH"), //app.ontGeoJson,
-                filled: true,
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("HH") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [10, 10],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: () => 20,
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("HH"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("HH"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
+    this.getROWLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "ROW";
+        });
+        return new GeoJsonLayer({
+            id: 'row',
+            data: app.filterDataWithProvinceGeom(app.rowGeoJson, "FeatureCollection", "ROW,ROWL,PIT"),
+            pickable: true,
+            stroked: true,
+            filled: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            opacity: styleObj[0].LayerStyle[0].opacity,
+            lineWidthMinPixels: 0,
+            lineWidthMaxPixels: (f) => app.GetLineWidth(f),
+            widthScale: 1,
+            lineWidthUnits: 'pixels',
+            getFillColor: (f) => app.GetFillColor(f),
+            getLineColor: (f) => app.GetLineColor(f),
+            getLineWidth: (f) => app.GetLineWidth(f),
+            visible: app.isVectorLayerActive("ROW,ROWL,PIT"),
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onHover: ({ object, x, y }) => {
+                app.HandleVectorHoverEvent(object);
+            }
+        });
+    }
+    this.getROWTextLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            return item.layer_name == "ROW";
+        });
+        return new deck.TextLayer({
+            id: 'row-text',
+            data: app.filterDataWithProvinceGeom(app.rowLabelData, "JsonArray", "ROW,ROWL,PIT"), //app.csaLabelData,
+            pickable: false,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            visible: app.isVectorLayerLabelEnabled("ROW,ROWL,PIT"),
+            getPosition: (d) => d.position,
+            getText: (d) => d.text,
+            getSize: (d) => app.GetStyleValueByPropertyName("ROW", d.entity_category, "label_font_size", "Number"), //parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getColor: (d) => app.GetStyleValueByPropertyName("ROW", d.entity_category, "label_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getBackgroundColor: (d) => app.GetStyleValueByPropertyName("ROW", d.entity_category, "label_bg_color_hex", "Color"), //app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            background: true,
+            extensions: [new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+        });
+    }
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+    this.getHandholeLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            //console.log("Handhole called");
+            return item.layer_name == "Handhole";
+        });
+        return new GeoJsonLayer({
+            id: "HH",
+            data: app.filterDataWithProvinceGeom(app.handholeGeoJson, "FeatureCollection", "HH"), //app.ontGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("HH") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: () => 20,
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("HH"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("HH"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            })
-        };
-        this.getStructureLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                //console.log("Handhole called");
-                return item.layer_name == "Structure";
-            });
-            return new GeoJsonLayer({
-                id: "structure",
-                data: app.filterDataWithProvinceGeom(app.structureGeoJson, "FeatureCollection", "STRP,STR,STRC"), //app.ontGeoJson,
-                filled: true,
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("STRP,STR,STRC") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [10, 10],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: () => 20,
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("STRP,STR,STRC"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("STRP,STR,STRC"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
+    this.getStructureLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            //console.log("Handhole called");
+            return item.layer_name == "Structure";
+        });
+        return new GeoJsonLayer({
+            id: "structure",
+            data: app.filterDataWithProvinceGeom(app.structureGeoJson, "FeatureCollection", "STRP,STR,STRC"), //app.ontGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("STRP,STR,STRC") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: () => 20,
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("STRP,STR,STRC"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("STRP,STR,STRC"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            })
-        };
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
 
-        this.getCabinetLayer = function () {
-            var styleObj = app.LayerStyles.filter(function (item) {
-                //console.log("Handhole called");
-                return item.layer_name == "Cabinet";
-            });
-            return new GeoJsonLayer({
-                id: "cabinet",
-                data: app.filterDataWithProvinceGeom(app.cabinetGeoJson, "FeatureCollection", "CBT"), //app.ontGeoJson,
-                filled: true,
-                pickable: true,
-                useDevicePixels: app.useDevicePixelsInVectorLayer,
-                pointType: (app.isVectorLayerLabelEnabled("CBT") ? 'icon+text' : 'icon'),
-                getText: f => app.GetLabelText(f),
-                getTextAlignmentBaseline: 'center',
-                getTextAnchor: 'start',
-                getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
-                getTextPixelOffset: [10, 10],
-                getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
-                getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
-                textBackground: true,
-                getIcon: (f) => (app.GetIcon(f)),
-                //getIconSize: () => 20,
-                getIconSize: (f) => app.getIconSize(f.properties.network_status),
-                iconSizeScale: 1,
-                //autoHighlight: true,
-                visible: app.isVectorLayerActive("CBT"),
-                getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
-                filterRange: app.GetVectorLayerFilterRange("CBT"),
-                extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
-                collisionGroup: 'Label',
-                collisionEnabled: app.IsCollisionEnabled,
-                onHover: ({ object, x, y }) => {
-                    const tooltip = object && object.properties.display_name;
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
+    };
 
-                    // Remove existing tooltip
-                    const existingTooltip = document.getElementById('tooltip');
-                    if (existingTooltip) {
-                        document.body.removeChild(existingTooltip);
-                    }
+    this.getCabinetLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
+            //console.log("Handhole called");
+            return item.layer_name == "Cabinet";
+        });
+        return new GeoJsonLayer({
+            id: "cabinet",
+            data: app.filterDataWithProvinceGeom(app.cabinetGeoJson, "FeatureCollection", "CBT"), //app.ontGeoJson,
+            filled: true,
+            pickable: true,
+            useDevicePixels: app.useDevicePixelsInVectorLayer,
+            pointType: (app.isVectorLayerLabelEnabled("CBT") ? 'icon+text' : 'icon'),
+            getText: f => app.GetLabelText(f),
+            getTextAlignmentBaseline: 'center',
+            getTextAnchor: 'start',
+            getTextColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_color_hex),
+            getTextPixelOffset: [10, 10],
+            getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
+            getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
+            textBackground: true,
+            getIcon: (f) => (app.GetIcon(f)),
+            //getIconSize: () => 20,
+            getIconSize: (f) => app.getIconSize(f.properties.network_status),
+            iconSizeScale: 1,
+            //autoHighlight: true,
+            visible: app.isVectorLayerActive("CBT"),
+            getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
+            filterRange: app.GetVectorLayerFilterRange("CBT"),
+            extensions: [new DataFilterExtension({ filterSize: 1 }), new CollisionFilterExtension()],
+            collisionGroup: 'Label',
+            collisionEnabled: app.IsCollisionEnabled,
+            onHover: ({ object, x, y }) => {
+                const tooltip = object && object.properties.display_name;
 
-                    // Create new tooltip
-                    if (tooltip) {
-                        const newTooltip = document.createElement('div');
-                        newTooltip.id = 'tooltip';
-                        newTooltip.style.position = 'absolute';
-                        newTooltip.style.left = x + 'px';
-                        newTooltip.style.top = (y + 20) + 'px';
-                        newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                        newTooltip.style.color = '#fff';
-                        newTooltip.style.padding = '5px';
-                        newTooltip.innerText = tooltip;
-                        document.body.appendChild(newTooltip);
-                    }
-                    app.HandleVectorHoverEvent(object);
-                },
-                onClick: function (info) {
-                    app.ShowWhatIsHere(info);
-                },
-                onDataLoad: () => {
-                    progress.done(); // hides progress bar
-                },
-            })
+                // Remove existing tooltip
+                const existingTooltip = document.getElementById('tooltip');
+                if (existingTooltip) {
+                    document.body.removeChild(existingTooltip);
+                }
+
+                // Create new tooltip
+                if (tooltip) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.id = 'tooltip';
+                    newTooltip.style.position = 'absolute';
+                    newTooltip.style.left = x + 'px';
+                    newTooltip.style.top = (y + 20) + 'px';
+                    newTooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    newTooltip.style.color = '#fff';
+                    newTooltip.style.padding = '5px';
+                    newTooltip.innerText = tooltip;
+                    document.body.appendChild(newTooltip);
+                }
+                app.HandleVectorHoverEvent(object);
+            },
+            onClick: function (info) {
+                app.ShowWhatIsHere(info);
+            },
+            onDataLoad: () => {
+                progress.done(); // hides progress bar
+            },
+        })
     };
 
     this.getRackLayer = function () {
-        var styleObj = app.LayerStyles.filter(function (item) {            
+        var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Rack";
         });
         return new GeoJsonLayer({
@@ -3134,9 +3140,9 @@ var Main = function () {
             getTextSize: parseInt(styleObj[0].LayerStyle[0].label_font_size),
             getTextBackgroundColor: app.HexToRGBArray(styleObj[0].LayerStyle[0].label_bg_color_hex),
             textBackground: true,
-            getIcon: (f) => (app.GetIcon(f)),           
+            getIcon: (f) => (app.GetIcon(f)),
             getIconSize: (f) => app.getIconSize(f.properties.network_status),
-            iconSizeScale: 1,           
+            iconSizeScale: 1,
             visible: app.isVectorLayerActive("RCK"),
             getFilterValue: f => (app.getFilteValuesByNetworkStatus(f.properties.network_status)),
             filterRange: app.GetVectorLayerFilterRange("RCK"),
@@ -3535,8 +3541,8 @@ var Main = function () {
             },
         })
     };
-    this.getLoopLayer = function () {       
-        var styleObj = app.LayerStyles.filter(function (item) {          
+    this.getLoopLayer = function () {
+        var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Loop";
         });
         return new GeoJsonLayer({
@@ -3718,53 +3724,53 @@ var Main = function () {
             },
         })
     };
-        this.getFilteValuesByNetworkStatus = function (networkStatusVal) {
-            return networkStatusVal == 'A' ? 1 : 2;
+    this.getFilteValuesByNetworkStatus = function (networkStatusVal) {
+        return networkStatusVal == 'A' ? 1 : 2;
+    }
+    this.isVectorLayerActive = function (entityName) {
+        let retval = false;
+        if (app.ActivePlannedVectorlayers.includes(entityName) ||
+            app.ActiveAsBuiltVectorlayers.includes(entityName) ||
+            app.PolygonVectorlayers.includes(entityName) ||
+            app.ActivePlannedVectorlayersWithLabels.includes(entityName) ||
+            app.ActiveAsBuiltVectorlayersWithLabels.includes(entityName) ||
+            app.PolygonVectorlayersWithLabel.includes(entityName)) {
+            retval = true;
         }
-        this.isVectorLayerActive = function (entityName) {
-            let retval = false;
-            if (app.ActivePlannedVectorlayers.includes(entityName) ||
-                app.ActiveAsBuiltVectorlayers.includes(entityName) ||
-                app.PolygonVectorlayers.includes(entityName) ||
-                app.ActivePlannedVectorlayersWithLabels.includes(entityName) ||
-                app.ActiveAsBuiltVectorlayersWithLabels.includes(entityName) ||
-                app.PolygonVectorlayersWithLabel.includes(entityName)) {
-                retval = true;
-            }
-            return retval;
-        }
+        return retval;
+    }
 
-        this.isVectorLayerLabelEnabled = function (entityName) {
-            let retval = false;
-            if (app.ActivePlannedVectorlayersWithLabels.includes(entityName) ||
-                app.ActiveAsBuiltVectorlayersWithLabels.includes(entityName) ||
-                app.PolygonVectorlayersWithLabel.includes(entityName)) {
-                retval = true;
-            }
-            return retval;
+    this.isVectorLayerLabelEnabled = function (entityName) {
+        let retval = false;
+        if (app.ActivePlannedVectorlayersWithLabels.includes(entityName) ||
+            app.ActiveAsBuiltVectorlayersWithLabels.includes(entityName) ||
+            app.PolygonVectorlayersWithLabel.includes(entityName)) {
+            retval = true;
         }
+        return retval;
+    }
 
-        this.GetVectorLayerFilterRange = function (entityName) {
-            let layerRangeVal = [];//1 For As Built, //2 For Planned   
-            let retRangeVal = [];
-            if (app.ActiveAsBuiltVectorlayers.includes(entityName) || app.ActiveAsBuiltVectorlayersWithLabels.includes(entityName)) {
-                layerRangeVal.push(1)
-            }
-            if (app.ActivePlannedVectorlayers.includes(entityName) || app.ActivePlannedVectorlayersWithLabels.includes(entityName)) {
-                layerRangeVal.push(2)
-            }
-            retRangeVal.push(Math.min(...layerRangeVal));
-            retRangeVal.push(Math.max(...layerRangeVal));
-            //console.log("layerRangeVal:" + layerRangeVal)
-            //console.log("retRangeVal:" + retRangeVal)
-            //console.log("length:" + layerRangeVal.length);
-            if (layerRangeVal.length == 0) {
-                return [0, 0];
-            } else {
-                return retRangeVal;
-            }
+    this.GetVectorLayerFilterRange = function (entityName) {
+        let layerRangeVal = [];//1 For As Built, //2 For Planned   
+        let retRangeVal = [];
+        if (app.ActiveAsBuiltVectorlayers.includes(entityName) || app.ActiveAsBuiltVectorlayersWithLabels.includes(entityName)) {
+            layerRangeVal.push(1)
         }
-   // }
+        if (app.ActivePlannedVectorlayers.includes(entityName) || app.ActivePlannedVectorlayersWithLabels.includes(entityName)) {
+            layerRangeVal.push(2)
+        }
+        retRangeVal.push(Math.min(...layerRangeVal));
+        retRangeVal.push(Math.max(...layerRangeVal));
+        //console.log("layerRangeVal:" + layerRangeVal)
+        //console.log("retRangeVal:" + retRangeVal)
+        //console.log("length:" + layerRangeVal.length);
+        if (layerRangeVal.length == 0) {
+            return [0, 0];
+        } else {
+            return retRangeVal;
+        }
+    }
+    // }
     this.filterCableGeoJsonData = function () {
         let sCable_Type = '';
         let sCable_Category = '';
@@ -3920,9 +3926,9 @@ var Main = function () {
 
                     if (app.areaGeoJson.features) {
                         app.areaGeoJson = { "type": "FeatureCollection", "features": app.areaGeoJson.features.concat(allLayerVector.Area ? allLayerVector.Area : []) };
-                      
+
                     } else {
-                        app.areaGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Area };                       
+                        app.areaGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Area };
                     }
                     if (app.areaGeoJson.features) {
                         app.areaLabelData = [];
@@ -4097,9 +4103,9 @@ var Main = function () {
 
                     if (app.ductGeoJson.features) {
                         app.ductGeoJson = { "type": "FeatureCollection", "features": app.ductGeoJson.features.concat(allLayerVector.Duct ? allLayerVector.Duct : []) };
-                      
+
                     } else {
-                        app.ductGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Duct };                        
+                        app.ductGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Duct };
                     }
 
 
@@ -4127,14 +4133,14 @@ var Main = function () {
                     } else {
                         app.customerGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Customer };
                         //app.RenderVectorLayer(app.layestList.indexOf("Customer"));
-                    }                   
+                    }
 
                     if (app.handholeGeoJson.features) {
                         app.handholeGeoJson = { "type": "FeatureCollection", "features": app.handholeGeoJson.features.concat(allLayerVector.Handhole ? allLayerVector.Handhole : []) };
                         //app.RenderVectorLayer(app.layestList.indexOf("Handhole"));
                     } else {
                         app.handholeGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Handhole };
-                       // app.RenderVectorLayer(app.layestList.indexOf("Handhole"));
+                        // app.RenderVectorLayer(app.layestList.indexOf("Handhole"));
                     }
 
                     if (app.structureGeoJson.features) {
@@ -4156,7 +4162,7 @@ var Main = function () {
                     if (app.surveyAreaGeoJson.features) {
                         app.surveyAreaGeoJson = { "type": "FeatureCollection", "features": app.surveyAreaGeoJson.features.concat(allLayerVector.SurveyArea ? allLayerVector.SurveyArea : []) };
                     } else {
-                        app.surveyAreaGeoJson = { "type": "FeatureCollection", "features": allLayerVector.SurveyArea };                        
+                        app.surveyAreaGeoJson = { "type": "FeatureCollection", "features": allLayerVector.SurveyArea };
                     }
 
                     if (app.surveyAreaGeoJson.features) {
@@ -4199,13 +4205,13 @@ var Main = function () {
                             });
                         });
                         //app.RenderVectorLayer(app.layestList.indexOf("ROW"));
-                    }     
+                    }
 
 
                     if (app.rackGeoJson.features) {
-                        app.rackGeoJson = { "type": "FeatureCollection", "features": app.rackGeoJson.features.concat(allLayerVector.Rack ? allLayerVector.Rack : []) };                
+                        app.rackGeoJson = { "type": "FeatureCollection", "features": app.rackGeoJson.features.concat(allLayerVector.Rack ? allLayerVector.Rack : []) };
                     } else {
-                        app.rackGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Rack };             
+                        app.rackGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Rack };
                     }
 
                     if (app.patchpanelGeoJson.features) {
@@ -4241,13 +4247,13 @@ var Main = function () {
                         app.sectorGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Sector };
                     }
 
-                    
+
                     if (app.loopGeoJson.features) {
                         app.loopGeoJson = { "type": "FeatureCollection", "features": app.loopGeoJson.features.concat(allLayerVector.Loop ? allLayerVector.Loop : []) };
                     } else {
                         app.loopGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Loop };
                     }
-                    
+
                     if (app.antennaGeoJson.features) {
                         app.antennaGeoJson = { "type": "FeatureCollection", "features": app.antennaGeoJson.features.concat(allLayerVector.Antenna ? allLayerVector.Antenna : []) };
                     } else {
@@ -4268,7 +4274,7 @@ var Main = function () {
 
             }, true, true);
         });
-        requestResult.then(function successValue(result) {            
+        requestResult.then(function successValue(result) {
             //Array.prototype.push.apply(app.provinceListData, app.ActiveProvincelayers); 
             app.provinceListData = app.provinceListData.concat(
                 app.ActiveProvincelayers.filter(item =>
@@ -4328,7 +4334,7 @@ var Main = function () {
     this.filterDataWithProvince = function (layerData, dataType) {
         app.ActiveProvincelayers = app.getActiveProvinceLayers();
         var filteredData = {};
-       
+
         if (dataType == "JsonArray") { //LabelData //FeatureData
             return layerData.filter((feature) =>
                 app.ActiveProvincelayers.includes(feature.province_id.toString())
@@ -4353,8 +4359,8 @@ var Main = function () {
         }
         return features.slice(0, numberOfFeatures);
     }
-    this.filterDataWithProvinceGeom_old = function (layerData, dataType) {    
-        var _data_per = si.map.getZoom() > 13 ? 10 : 5; 
+    this.filterDataWithProvinceGeom_old = function (layerData, dataType) {
+        var _data_per = si.map.getZoom() > 13 ? 10 : 5;
         var _bbox = [app.BBOXPointForVectorlayer[0], app.BBOXPointForVectorlayer[1], app.BBOXPointForVectorlayer[2], app.BBOXPointForVectorlayer[3]];
         var _bboxPolygon = turf.bboxPolygon(_bbox);
         app.ActiveProvincelayers = app.getActiveProvinceLayers();
@@ -4376,12 +4382,12 @@ var Main = function () {
             };
         }
     }
-    this.filterDataWithProvinceGeom = function (layerData, dataType, entityName) {        
+    this.filterDataWithProvinceGeom = function (layerData, dataType, entityName) {
         var _bbox = [app.BBOXPointForVectorlayer[0], app.BBOXPointForVectorlayer[1], app.BBOXPointForVectorlayer[2], app.BBOXPointForVectorlayer[3]];
         var _bboxPolygon = turf.bboxPolygon(_bbox);
         var _isLayerActive = true
         if (entityName != "") {
-           _isLayerActive = app.isVectorLayerActive(entityName);
+            _isLayerActive = app.isVectorLayerActive(entityName);
         }
         app.ActiveProvincelayers = app.getActiveProvinceLayers();
         var filteredData = {};
@@ -4397,17 +4403,17 @@ var Main = function () {
             //console.log("Filtered Cable Length" + filteredFeatures.length);
             return {
                 type: "FeatureCollection",
-                features: filteredFeatures,                
+                features: filteredFeatures,
             };
         }
     }
-    this.fetchVectorDelta = function () {      
-        let intersectingProvince = app.GetIntersectedProvince();        
+    this.fetchVectorDelta = function () {
+        let intersectingProvince = app.GetIntersectedProvince();
         app.ActiveProvincelayers = app.getActiveProvinceLayers();
         app.ActiveProvincelayers = app.ActiveProvincelayers.filter(item => intersectingProvince.includes(item));
         //Added this Patch get the Delta of a single province(DB function is ready to handle multiple provine)
         app.ActiveProvincelayers = app.ActiveProvincelayers.slice(0, 1);
-        let vectorPrvinceSelected = app.ActiveProvincelayers.join(",");       
+        let vectorPrvinceSelected = app.ActiveProvincelayers.join(",");
         if (app.ActiveProvincelayers.length == 0) {
             console.log("Selected Layres are out of BBOX so no need to check delta");
             return false;
@@ -4653,7 +4659,7 @@ var Main = function () {
                     app.cabinetGeoJson = { "type": "FeatureCollection", "features": allLayerVector.Cabinet };
                     isDelta = true;
                     app.RenderVectorLayer(app.layestList.indexOf("Cabinet"));
-                } 
+                }
 
                 if (allLayerVector.ROW) {
                     app.rowGeoJson = { "type": "FeatureCollection", "features": allLayerVector.ROW };
@@ -4767,8 +4773,8 @@ var Main = function () {
         if (app.ActiveProvincelayers.length > 0) {
             app.ClearOldVectorData();
             let vectorPrvinceSelected = app.ActiveProvincelayers.join(",");
-            console.log(vectorPrvinceSelected);            
-            app.layestList.forEach(function (_element) { 
+            console.log(vectorPrvinceSelected);
+            app.layestList.forEach(function (_element) {
                 app.LayerLoadingStatusMap[_element] = "Pending";
                 app.fetchVectorLayerData(vectorPrvinceSelected, _element);
             });
@@ -7427,7 +7433,7 @@ var Main = function () {
             app.filterSplitterType = "1 = 1";
         }
     }
-   
+
     this.SetPODFilters = function () {
         app.filterPODvalue = "";
         app.primary_pod_system_id = $("#ddlPrimaryPOD").val();
@@ -8024,11 +8030,11 @@ var Main = function () {
                 $("#googleSearch").addClass('spnGoogleNot');
                 $("#googleSearch").removeClass('spnGoogle');
                 $("#txtLandBaseLayerSearch").removeClass('spnLandbaseNot');
-                $('.logout').fadeOut(500); 
-                $('.gMapProjSpecific, .gmapLineTools').not('.footerMenu').not('.footerRemove').addClass('bulkOhide'); 
+                $('.logout').fadeOut(500);
+                $('.gMapProjSpecific, .gmapLineTools').not('.footerMenu').not('.footerRemove').addClass('bulkOhide');
                 resetActiveClassFromMenuItem();
-                getAddressRemoveActiveClass(); 
-                resetActiveClassFromMenuItem();                
+                getAddressRemoveActiveClass();
+                resetActiveClassFromMenuItem();
                 break;
         }
     }
@@ -9221,12 +9227,12 @@ var Main = function () {
                             app.IsCollisionEnabled = false;
                         }
                         if (app.IsVecorLayerEnabled) {
-                           app.RefreshVectorDataAndLayer();
+                            app.RefreshVectorDataAndLayer();
                         }
                     }
                     //-----------------//
 
-                   app.LoadLayersOnMap();
+                    app.LoadLayersOnMap();
                     //START: Clear Markings & Load Markings according to workspace
 
                     for (k = 0; k < app.gpolyline.length; k++) {
@@ -9276,9 +9282,9 @@ var Main = function () {
         if (app.OldWorkSpaceId==0)
             OpenNewWorkspace(wrkspcID);
         else {
-           // confirm("Are you sure you want to open this workspace?", function () {
-                OpenNewWorkspace(wrkspcID);
-           // });
+            // confirm("Are you sure you want to open this workspace?", function () {
+            OpenNewWorkspace(wrkspcID);
+            // });
         }
     }
 
@@ -16989,7 +16995,7 @@ var Main = function () {
         app.filterprojectvalue = "";
         app.LoadLayersOnMap();
         app.RenderVectorLayer(-1);
-       /* $(popup.DE.MinimizeModel).trigger("click");*/
+        /* $(popup.DE.MinimizeModel).trigger("click");*/
 
     }
 
@@ -21189,7 +21195,7 @@ var Main = function () {
             } else {
                 $('#checkAllAssociation').prop("checked", false);
             }
-        },      
+        },
         getActualTotalAmount: function () {
             var accessCharge = parseFloat($('#txtActualAccessCharge').val());
             var actualRIAmount = parseFloat($('#txtActualRIAmount').val());
@@ -22398,10 +22404,10 @@ var Main = function () {
                     app.Networkticket.removeExistingNetwork();
                 }
             }, false, false)
-            
-          
+
+
         },
-    
+
         setDateTimeCalendar: function (startdateid, startdateimgid, chkDisabled, isFutureDateAllowed) {
 
             Calendar.setup({
@@ -22793,7 +22799,7 @@ var Main = function () {
         getTicketBounds: function (_ticketId) {
             ajaxReq('NetworkTicket/getTicketBounds', { ticketId: _ticketId }, false, function (resp) {
                 app.fitElementOnMap(resp);
-              
+
             })
         },
         showExistingNetwork: function (_ticketId) {
@@ -22868,7 +22874,7 @@ var Main = function () {
             $('input:checkbox[data-layername=Network_Ticket]').prop('checked', true);
             app.Networkticket.getTicketBounds(_ticketId);
             $(app.DE.lyrRefresh).trigger("click");
-                  },
+        },
 
         cleanNetwork: function () {
             $('#dvShowNetworkOnmap').hide();
@@ -22881,7 +22887,7 @@ var Main = function () {
             $('#chk_rLyr_' + region_id + '').prop('checked', false);
             $('#chk_pLyr_' + province_id + '').prop('checked', false);
             app.Networkticket.removeExistingNetwork();
-         
+
         },
         radioActionChange: function () {
             if ($("input[name='rdApprRej']:checked").val() == 'Reject') {
@@ -27547,7 +27553,7 @@ var Main = function () {
                         $("#dvGroupClone").append("<input type='hidden' id='hdnentityptype'/><input type='hidden' id='hdnid' value=" + item['id'] + " /> <div class='buffer--group-entity " + divdisabled + "' " + item['id'] + "' onclick='si.getClone(" + item['id'] + "," + '"' + EntityType + '"' + ")'><i title='" + MultilingualKey.SI_GBL_GBL_GBL_GBL_002 + "' class='icon-close buffer-close-icon' onclick='si.DeleteGL(" + item['id'] + ")' ></i><i href='#' class='infoSwitch buffer-view-icon' title='" + MultilingualKey.GBL_GBL_GBL_JQ_GBL_001 + "'onclick='si.GroupLibraryinformation(" + item['id'] + ")'><span class='icon-info'></span></i> <h5 title='" + name.toUpperCase() + "'>" + name.toUpperCase() + "</h5><p id='lblDescription'>" + description + "</p>");
                         $("#hdnentityptype").val(item["entity_type"]);
                     }
-                    
+
                 });
 
             }

@@ -63,8 +63,10 @@
     }
     this.bindEvents = function () {
         $(app.DE.equipmentid).autocomplete({
+            
             source: function (request, response) {
                 var res = ajaxReq('Splicing/GetEquipmentSearchResult', { SearchText: $.trim(request.term) }, true, function (data) {
+                    debugger;
                     if (data.length == 0) {
                         var result = [
                             {
@@ -2062,6 +2064,7 @@
         });
     }
     this.BindEquipementPort = function (entityid, entitytype) {
+        debugger;
         var ddlCore = $(app.DE.ddlCore);
         ajaxReq('Splicing/GetEquipmentPortInfo', { entity_id: entityid, entity_type: entitytype }, false, function (resp) {
             if (resp.status = 'OK') {

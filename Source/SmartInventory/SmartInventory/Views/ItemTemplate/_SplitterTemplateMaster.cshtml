@@ -42,26 +42,26 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('.chosen-select').chosen({ width: '100%' });
-        $('#specification').chosen().change(function (event) {
+        $('#specification').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindVendor(dID);
         });
-        $('#ddlVendor').chosen().change(function (event) {
+        $('#ddlVendor').chosen().on('change',function (event) {
             var specfi = $("#specification option:selected").val(); //
             var vandorid = $(this).val();
             var entitytype = $('#entityType').val();
             bindCateSubcat(entitytype, specfi, vandorid);
         });
-        $('#ddlType').chosen().change(function (event) {
+        $('#ddlType').chosen().on('change',function (event) {
             var dID = $(this).val();
             var Layer_id = $("#Layer_id").val();
             si.bindBrand(dID, Layer_id);
         });
-        $('#ddlBrand').chosen().change(function (event) {
+        $('#ddlBrand').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindModel(dID);
         });
-        $('#ddlSplitterType').chosen().change(function (event) {
+        $('#ddlSplitterType').chosen().on('change',function (event) {
             if ($('#dvMainSpecification').hasClass('dvdisabled')) {
                 var specfi = $("#ddlSplitterType option:selected").val();
                 var defaultSpecif = $($('#specification option[data-type="' + specfi + '"]')[0]).val();

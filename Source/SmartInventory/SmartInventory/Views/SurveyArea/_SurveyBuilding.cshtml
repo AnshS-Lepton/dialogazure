@@ -380,7 +380,7 @@ grid.Column("created_on", Resources.Resources.SI_OSP_GBL_NET_RPT_050, format: @<
         });
 
         // bulk update hide/show
-        $('#drpBldStatus').chosen().change(function (event) {
+        $('#drpBldStatus').chosen().on('change',function (event) {
             var dID = $(this).val();
             var role_id = $('#objbuildingFilterAttributes_roleid').val();
 
