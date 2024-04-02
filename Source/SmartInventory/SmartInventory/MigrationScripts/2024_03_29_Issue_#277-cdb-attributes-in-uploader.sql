@@ -589,3 +589,31 @@ VALUES( 19, 'iru_given_others', 'float8', 'IRU_Given_Others', false, NULL, 'IRU 
 INSERT INTO public.data_uploader_template
 ( layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, udtname, description, example_value, column_sequence, max_length, created_by, created_on, modified_by, modified_on, is_dropdown, display_column_data_type, is_kml_attribute, is_nullable, is_excel_attribute, boundary_type, is_template_column_required, is_enable_for_template_column, default_value, min_value, max_value, is_allowed_for_update, is_allowed_for_update_admin, is_cdb_attributes)
 VALUES( 19, 'cable_id', 'varchar', 'Cable_Id', true, NULL, 'cable Id', '', 39, 10, 1, now(), NULL, NULL, true, 'Character varying', true, false, true, NULL, true, true, NULL, NULL, NULL, true, false, true);
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_uploader_get_entity_template(p_entity_type character varying)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$ 
+BEGIN
+
+RETURN QUERY
+select row_to_json(row) from (select dutemp.id, ld.layer_id,ld.layer_name,db_column_name,db_column_data_type,column_sequence,template_column_name,is_mandatory,max_length,is_dropdown,is_nullable,is_template_column_required,default_value,min_value,max_value from data_uploader_template dutemp 
+left join layer_details ld on dutemp.layer_id=ld.layer_id where upper(ld.layer_name)=upper(p_entity_type) 
+and  dutemp.is_enable_for_template_column=true and is_cdb_attributes = false
+--and dutemp.is_kml_attribute=false 
+order by column_sequence
+) row;
+
+END ;
+$function$
+;
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+alter table data_uploader_template add column is_allowed_for_update bool;
+
+alter table data_uploader_template add column is_allowed_for_update_admin bool;
+
+alter table data_uploader_template add column is_cdb_attributes bool NOT NULL DEFAULT false;
