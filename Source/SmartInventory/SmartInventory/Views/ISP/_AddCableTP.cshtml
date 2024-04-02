@@ -36,7 +36,7 @@
             <button id="btnCableTemplate" type="submit" class="d-flex templateBtn btn-warning">
                 @if (Model.NetworkLayers.Count > 0 && lineEntity != null && lineEntity.isTemplateRequired)
                 {
-                    <div class="Ticon mr-01 @(lineEntity.templateId > 0 ? "templateFilled" : "" ) " data-href="@lineEntity.templateFormUrl" data-lyrname="@lineEntity.layerName" data-cable-type="ISP" data-title="@lineEntity.layerTitle" data-roleid="@ViewBag.UserRoleId">T</div>
+                    <div class="clsTemplateIcon Ticon mr-01 @(lineEntity.templateId > 0 ? "templateFilled" : "" ) " data-href="@lineEntity.templateFormUrl" data-lyrname="@lineEntity.layerName" data-cable-type="ISP" data-title="@lineEntity.layerTitle" data-roleid="@ViewBag.UserRoleId">T</div>
                 }
             <span> @Resources.Resources.SI_ISP_CAB_NET_FRM_012</span>
             </button>

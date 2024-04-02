@@ -1456,9 +1456,10 @@ function bindCateSubcat(entitytype, specification, vendorid) {
 }
 
 function bindBrand(typeid) {
+    var Layer_id = $("#Layer_id").val();
     var ddlBrand = $("#ddlBrand");
     if (typeid != '') {
-        ajaxReq('ItemTemplate/GetBrand', { typeId: typeid }, false,
+        ajaxReq('ItemTemplate/GetBrand', { typeId: typeid, Layer_id: Layer_id }, false,
                 function (resp) {
                     if (resp.status == "OK") {
                         $(ddlBrand).empty();
@@ -1931,7 +1932,7 @@ function onGridHeaderClick(gridControlId) {
     //var clickedheader = $('th a[href*=' + col + ']');
     //var countTh = document.getElementsByTagName('th').length; //total column header
 
-    var clickedheader = $('#' + gridControlId + '  tr th a[href*=' + col + ']');
+    var clickedheader = $('#' + gridControlId + '  tr th a[href*="' + col + '"]');
     var countTh = $('#' + gridControlId + '  tr th').length; //total column header
 
     for (var i = 1; i <= countTh; i++) {
@@ -3446,7 +3447,7 @@ class AdditionalAttributesUtility {
 }
 //## end region
 
-$('.textarea-maxlen-validate').keydown(function (event) {
+$('.textarea-maxlen-validate').on('keydown',function (event) {
     var key = event.keyCode;
     var maxLength = $(this).attr('maxlength');
     var length = this.value.length;

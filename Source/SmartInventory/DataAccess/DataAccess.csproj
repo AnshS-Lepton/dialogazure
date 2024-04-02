@@ -198,6 +198,7 @@
     <Compile Include="DAProjectArea.cs" />
     <Compile Include="DAProvinceBoundary.cs" />
     <Compile Include="DARack.cs" />
+    <Compile Include="DASlack.cs" />
     <Compile Include="DAWebRequestLog.cs" />
     <Compile Include="DAXMLBuilderDashboard.cs" />
     <Compile Include="DARedline.cs" />
@@ -253,6 +254,7 @@
     <Compile Include="TempUpload\DATempCabinet.cs" />
     <Compile Include="TempUpload\DATempCable.cs" />
     <Compile Include="TempUpload\DATempCDB.cs" />
+    <Compile Include="TempUpload\DATempCDBAttributes.cs" />
     <Compile Include="TempUpload\DATempCoupler.cs" />
     <Compile Include="TempUpload\DATempGipipe.cs" />
     <Compile Include="TempUpload\DATempDuct.cs" />
@@ -272,6 +274,7 @@
     <Compile Include="TempUpload\DATempPOI.cs" />
     <Compile Include="TempUpload\DATempPole.cs" />
     <Compile Include="TempUpload\DATempRoom.cs" />
+    <Compile Include="TempUpload\DATempRow.cs" />
     <Compile Include="TempUpload\DATempSector.cs" />
     <Compile Include="TempUpload\DATempSpliceClosure.cs" />
     <Compile Include="TempUpload\DATempSplitter.cs" />

@@ -10,11 +10,18 @@ this.preSelectedBlock = null;
 //this.stepper = new Stepper(document.querySelector('.bs-stepper'));
 
 if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf("SaveUser") > -1) {
-    $(document).ready(function () {
-
-         
+    $(document).ready(function () {         
         var stepper = new Stepper(document.querySelector('.bs-stepper'));
-        $('.chosen-select').chosen({ placeholder_text_multiple: 'All', width: '100%' });
+        $('.chosenfetool').chosen({
+            placeholder_text_multiple: '-Select-',
+            width: '100%',
+            no_results_text: ''
+        });
+        $('.chosen-select').chosen({
+            placeholder_text_multiple: 'All',
+            width: '100%'
+        });      
+
         $(".Nextbtn").on("click", function (e) {
             // 
             //console.log("checkDuplicate Email ID::" + checkDuplicateUserName());
@@ -28,6 +35,7 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
 
             if (!CheckUserRole()) { e.preventDefault(); return true; }
             else if (!CheckReportingManager()) { e.preventDefault(); return true; }
+            
             //if (($("#user_id").val() == 0)) {
             if (!CheckApplicationAccess()) { e.preventDefault(); return true; }
             if (!CheckUserType()) { e.preventDefault(); return true; }
@@ -96,14 +104,18 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
         if (multi_manager_ids != "") {
             if ($("#ddl_UserReportingManager").length) {
                 $("#ddl_UserReportingManager").val(multi_manager_ids.split(',')).trigger("chosen:updated");
-                
-                //app.preSelectedStates = $("#selectedProvinces").val();
-                //getStates();
             }
         }
 
         
-
+        var multi_tools_ids = $("#multi_tool_ids").val();
+        debugger;
+        if (multi_tools_ids != "") {
+            if ($("#ddl_fetool").length) {
+                $("#ddl_fetool").val(multi_tools_ids.split(',')).trigger("chosen:updated");
+                
+            }
+        }
        
 
         var multi_warhouse_codes = $("#multi_warhouse_code").val();
@@ -171,7 +183,7 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
             var reportingManagerId = $("#ddl_UserReportingManager").val();
 
             if ($("#ismutimanagar").val() == "True") {
-                if (reportingManagerId!=null) {
+                if (reportingManagerId != null) {
                     $('#multi_manager_ids').val($("#ddl_UserReportingManager").val().join(","));
                     // reportingManagerId=reportingManagerId[0];
                     reportingManagerId = $("#ddl_UserReportingManager").val().join(",")
@@ -242,7 +254,7 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
         // fillPermissionArea();
 
         //country
-        $("#ddlCountry").change(function () {
+        $("#ddlCountry").on('change', function () {
        
             app.preSelectedRegion = $("#ddlregion").val() != null ? $("#ddlregion").chosen().val().join(",") : null;
             app.preSelectedCountries = $("#ddlCountry").val() != null ? $("#ddlCountry").chosen().val().join(",") : null;
@@ -254,14 +266,14 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
             //  $("#ddlblock").trigger("change");
             return false;
         });
-        $("#ddlregion").change(function () {
+        $("#ddlregion").on('change', function () {
 
             app.preSelectedStates = $("#ddlState").val() != null ? $("#ddlState").chosen().val().join(",") : null;
 
             getStates();
             return false;
         });
-        $("#ddlState").change(function () {
+        $("#ddlState").on('change', function () {
 
             app.preSelectedSubDistrict = $("#ddlSubDistrict").val() != null ? $("#ddlSubDistrict").chosen().val().join(",") : null;
 
@@ -272,7 +284,7 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
 
 
 
-        $("#ddlSubDistrict").change(function () {
+        $("#ddlSubDistrict").on('change', function () {
             app.preSelectedBlock = $("#ddlBlock").val() != null ? $("#ddlBlock").chosen().val().join(",") : null;
 
             getblock();
@@ -434,14 +446,14 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
         });
     });
 
-    $("#ddl_UserRole").change(function () {
+    $("#ddl_UserRole").on('change', function () {
         CheckUserRole();
     });
 
-    $("#ddl_UserReportingManager").change(function () {
+    $("#ddl_UserReportingManager").on('change', function () {
         CheckReportingManager();
     });
-
+    
     $(document).on("change", "#ddlApplication", function () {
         console.log("dfdf");
         CheckApplicationAccess();
@@ -463,7 +475,7 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
             return true;
         }
     };
-
+    
     function CheckReportingManager() {
         if ($("#ddl_UserReportingManager").val() == null || $("#ddl_UserReportingManager").val() == "") {
             $('#ddl_UserReportingManager_chosen').css({ "border": "1px solid red", "border-radius": "0.25rem" });
@@ -1989,7 +2001,6 @@ function updateModuleList() {
 
 
 function onChangeRMId() {
-     
     var ddl= $('#ddl_UserReportingManager');
     if ($("#ddl_UserRole").val() != 0 || $("#ddl_UserRole").val() != "") {
         
@@ -2015,7 +2026,24 @@ function onChangeRMId() {
 
 }
 
+function onChangeToolId() {
+    var ddl = $('#ddl_fetool').val();
+    if ($("#ddl_fetool").val() != 0 || $("#ddl_fetool").val() != "")
+    {
+        var toolId = $("#ddl_fetool").val();
+        if ($("#ddl_fetool").val() != '' && $("#ddl_fetool").val() != null) {
 
+            $('#multi_tool_ids').val($("#ddl_fetool").val().join(","));
+            toolId = $("#ddl_fetool").val().join(",")
+        }
+        else
+        {
+
+            toolId = 0
+        }
+    }
+
+}
 function onChangeWarehouseCode() {
      
      var wareHouseCodes = $("#ddl_WarehouseCode").val();
@@ -3810,14 +3838,12 @@ function AddNewAccessoriesMapping(_id) {
     popup.LoadModalDialog('Miscellaneous/AddNewAccessoriesMapping', { id: _id }, 'Add Accessories Entity', 'modal-md');
 }
 function DeleteAssociateEntityById(id) {
-     
-
     confirm("Are you sure you want to delete this record?", function () {
         ajaxReq('Miscellaneous/DeleteAssociateEntityById', { id: id }, false, function (resp) {
             if (resp.status == "OK") {
                 alert(resp.message, 'Success', 'success');
                 setTimeout(function () {
-                    $("#frmViewAccessories).submit()");
+                    $("#frmViewAccessories").submit();
                 }, 3000);
 
             }

@@ -63,8 +63,10 @@
     }
     this.bindEvents = function () {
         $(app.DE.equipmentid).autocomplete({
+            
             source: function (request, response) {
                 var res = ajaxReq('Splicing/GetEquipmentSearchResult', { SearchText: $.trim(request.term) }, true, function (data) {
+                    debugger;
                     if (data.length == 0) {
                         var result = [
                             {
@@ -2062,6 +2064,7 @@
         });
     }
     this.BindEquipementPort = function (entityid, entitytype) {
+        debugger;
         var ddlCore = $(app.DE.ddlCore);
         ajaxReq('Splicing/GetEquipmentPortInfo', { entity_id: entityid, entity_type: entitytype }, false, function (resp) {
             if (resp.status = 'OK') {
@@ -2243,7 +2246,6 @@
     }
 
     this.showPath = function () {
-         
         //alert('Entry Splice without osp');
         ajaxReq('Splicing/GetCPFelementPath', {}, true, function (resp) {
             if (resp.status = 'OK') {
@@ -2323,10 +2325,10 @@
                             //IE Solution
                             var ptObj = null;
                             if (resp.result[i].entity_category != null && resp.result[i].entity_category != '') {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.result[i].entity_category + '_' + resp.result[i].en_type.toUpperCase() + '.png', system_id, en_type, port_no, display_name, is_virtual_port_allowed);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.result[i].entity_category + '_' + resp.result[i].en_type.toUpperCase() + '.png', system_id, en_type, port_no,network_id,display_name, is_virtual_port_allowed);
                             }
                             else {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result[i].is_virtual ? 'v_' : '') + resp.result[i].en_type + '.png', system_id, en_type, port_no, display_name, is_virtual_port_allowed);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result[i].is_virtual ? 'v_' : '') + resp.result[i].en_type + '.png', system_id, en_type, port_no,network_id,display_name, is_virtual_port_allowed);
                             }
                             var SourceEquipmentId = $('#equipment_id').val().split(" ")[0];
                             //JIRA- SSSI-452 bug fix change done by Ram

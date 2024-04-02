@@ -154,7 +154,7 @@ var kpi_nameoldvalue = '';
 			$('.closeBox').click(function() {
 				$('.modalPopup').removeClass('showHide')
 			});
-			$('#catName').change(function() {
+			$('#catName').on('change',function() {
 
 				$('#category_name').val($('#catName option:selected').text());
 

@@ -494,7 +494,7 @@ namespace DataAccess
                     }, true).FirstOrDefault();
             }
             catch { throw; }
-        }
+            }
 
         public DbMessage deleteConnection(string listConnection)
         {

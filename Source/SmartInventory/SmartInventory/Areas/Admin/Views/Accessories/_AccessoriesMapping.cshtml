@@ -140,7 +140,7 @@
         }
     };
     $(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
-    $(".onchang").change(function () { $('.onchang').removeClass("errorClass"); })
+    $(".onchang").on('change',function () { $('.onchang').removeClass("errorClass"); })
 
     function OnSuccess(data) {
         

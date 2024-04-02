@@ -70,11 +70,11 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public List<KeyValueDropDown> GetBrandData(int typeid)
+        public List<KeyValueDropDown> GetBrandData(int typeid, int Layer_id)
         {
             try
             {
-                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_isp_brand", new { typeid = typeid });
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_isp_brand", new { typeid = typeid, layerid = Layer_id });
             }
             catch { throw; }
         }
@@ -117,6 +117,7 @@ namespace DataAccess
             objItem.lstSpecification = lstDropDownValues.Where(x => x.ddtype == DropDownType.Specification.ToString()).ToList();
             var listType = lstDropDownValues.Where(x => x.ddtype == DropDownType.TypeMaster.ToString()).ToList();
             objItem.lstType = lstDropDownValues.Where(x => x.ddtype == DropDownType.TypeMaster.ToString()).ToList();
+            objItem.listType = lstDropDownValues.Where(x => x.ddtype == DropDownType.type.ToString()).ToList();
             objItem.lstVendor = lstDropDownValues.Where(x => x.ddtype == DropDownType.Vendor.ToString()).ToList();
             objItem.lstActivation = lstDropDownValues.Where(x => x.ddtype == DropDownType.Activation.ToString()).ToList();
             objItem.lstConstruction = lstDropDownValues.Where(x => x.ddtype == DropDownType.Construction.ToString()).ToList();

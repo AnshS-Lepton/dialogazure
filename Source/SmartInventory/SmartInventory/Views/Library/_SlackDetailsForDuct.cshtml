@@ -1,0 +1,69 @@
+﻿@model List<Models.SlackMaster>
+@using Models;
+@using SmartInventory.Settings;
+
+@{ var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Duct.ToString().ToUpper()).FirstOrDefault() : null;}
+<!DOCTYPE html>
+<div class="form-group">
+    <div class="tab-content">
+
+        <fieldset class="the-fieldset">
+
+            <div id="Grid" style="border:none;">
+                <div class="tab-pane active" id="divSlackDetail" style="max-height: 350px; overflow: auto;">
+
+                    @if (Model.Count > 0)
+                    {
+                        <table id="tblSlackDetailForDuct" class="grid" cellpadding="0" cellspacing="0" style="text-align: center;">
+
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_GBL_GBL_GBL_001
+                                    </th>
+                                    <th>
+                                        Slack Length(m)
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_GBL_NET_FRM_390
+                                    </th>
+                                    <th>
+                                        @Resources.Resources.SI_OSP_GBL_NET_FRM_391
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Model[i].network_id
+                                        </td>
+                                        <td>
+                                            @Model[i].slack_length
+                                        </td>
+                                        <td>
+                                            @Model[i].associated_entity_type
+                                        </td>
+
+                                        <td>
+                                            @Model[i].associated_network_id
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div>@string.Format("No Slack found on {0}.", layerDetail.layer_title)</div>
+                    }
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+</div>
+
+
+

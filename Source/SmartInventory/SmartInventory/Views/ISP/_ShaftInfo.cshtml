@@ -163,7 +163,7 @@
 <script type="text/javascript" language=javascript>
     // $('.chosen-select').chosen({ width: '100%' });
     $(document).ready(function () {
-        $('#ddlFloorRangeType').change(function () {
+        $('#ddlFloorRangeType').on('change', function () {
             if ($('#ddlFloorRangeType').val() == 'Custom') {
                 $('#FloorFromTo').show();
                 $('#is_partial_shaft').val(true);

@@ -608,7 +608,8 @@ namespace SmartInventory.Controllers
                                 {
                                     if (obj.surveyarea_status == "New")
                                     {
-                                        deleteChk = new BLSurveyArea().DeleteSurveyAreaById(systemId);
+                                        response = new BLMisc().deleteEntity(systemId, EntityType.SurveyArea.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
+                                        deleteChk = response.status == true ? 1 : 0;
                                     }
                                     else
                                     {
@@ -768,6 +769,10 @@ namespace SmartInventory.Controllers
                             case EntityType.RestrictedArea:
                                 response = new BLMisc().deleteEntity(systemId, EntityType.RestrictedArea.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
                                 break;
+                            case EntityType.Slack:
+                                response = new BLMisc().deleteEntity(systemId, EntityType.Slack.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                                break;
+
                         }
                     }
                 }
@@ -1551,8 +1556,7 @@ namespace SmartInventory.Controllers
 
             var exportData = new BLMisc().GetEntityExportData<Dictionary<string, string>>(systemId, entityType, networkStage);            
             exportData = BLConvertMLanguage.ExportMultilingualConvert(exportData);
-
-            DataTable dtlogs = Utility.MiscHelper.GetDataTableFromDictionaries(exportData, true, ApplicationSettings.numberFormatType, new string[] { "Longitude", "Latitude","Created By","Modified By", "Created By ID", "Item_Code","item code", "PTS_code" });
+            DataTable dtlogs = Utility.MiscHelper.GetDataTableFromDictionaries(exportData, (entityType == "Cable" || entityType == "Trench" || entityType == "Duct" )? false:true, ApplicationSettings.numberFormatType, new string[] { "Longitude", "Latitude", "Created By", "Modified By", "Created By ID", "Item_Code", "item code", "PTS_code" });
             dtlogs.TableName = layerDetail.layer_title;
             //if (entityType == "Cable")
             //  dtlogs = Utility.CommonUtility.GetFormattedDataTable(dtlogs, ApplicationSettings.numberFormatType);                  

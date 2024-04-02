@@ -43,6 +43,10 @@
 {
     { Html.RenderPartial("~/Views/Library/_AdditionalFields.cshtml", (IAdditionalFields)Model); }
 }
+@helper CDBAttribute()
+{
+    { Html.RenderPartial("~/Views/Library/_CDBAttributes.cshtml", (CableMaster)Model); }
+}
 @{
     var startEndReading = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.start_end_reading.ToString() && m.form_feature_type.ToLower() == formFeatureType.feature.ToString() && m.is_active == true).FirstOrDefault() : null;
     var subCategory = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.sub_category.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
@@ -51,6 +55,10 @@
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Cable.ToString());
     var layer_Detail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
     var innerOuterDimension = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.inner_outer_dimension.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var route_id = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.route_id.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var route_name = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.route_name.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var gis_design_id = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.gis_design_id.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+
 }
 <!DOCTYPE html>
 <div>
@@ -86,7 +94,7 @@
         @Html.HiddenFor(m => m.calculated_length_remark, new { @id = "hdncblComment" })
         @Html.HiddenFor(m => m.audit_item_master_id)
         @Html.HiddenFor(m => m.cable_calculated_length, new { @id = "hdncblCalLen" })
-       // @Html.HiddenFor(m => m.cable_name, new { @id = "hdnProvinceAbbr" })
+        // @Html.HiddenFor(m => m.cable_name, new { @id = "hdnProvinceAbbr" })
 
 
 
@@ -102,6 +110,12 @@
                 <div class="scrollerhide overflow-hidden">
                     <ul class="nav nav-tabs tabs-left" id="ulCableTabs">
                         <li class="active"><a href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                        @if (ApplicationSettings.isCDBAttributeEnabled == 1)
+                        {
+                            <li>
+                                <a title="CDB Attributes" style="display:block;" href="#CDBAttributes" data-toggle="tab">CDB Attributes</a>
+                            </li>
+                        }
                         <li><a href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_005</a></li>
                         @if (layerDetail != null && layerDetail.is_pod_association_allowed)
                         {
@@ -155,6 +169,12 @@
                         <div class="alltabs">@Resources.Resources.SI_OSP_CAB_NET_FRM_014</div>
                         <ul>
                             <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                            @if (ApplicationSettings.isCDBAttributeEnabled == 1)
+                            {
+                                <li>
+                                    <a title="CDB Attributes" style="display:block;" href="#CDBAttributes" data-toggle="tab">CDB Attributes</a>
+                                </li>
+                            }
                             <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_005</a></li>
                             @if (layerDetail != null && layerDetail.is_pod_association_allowed)
                             {
@@ -250,7 +270,7 @@
                             </div>
 
                             @*@if (ApplicationSettings.isterminationpointenable)
-                {*@
+                    {*@
                             <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">@Resources.Resources.SI_OSP_ROW_NET_FRM_009:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
                                 @Html.TextBoxFor(m => m.a_location, new { @class = "form-control clsReadOnly", @readonly = true })
@@ -280,7 +300,7 @@
 
                             <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">B Region Name:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
-                                @Html.TextBoxFor(m => m.b_region, new { @class = "form-control clsReadOnly", @readonly = true, autocomplete = "do-not-show-ac"})
+                                @Html.TextBoxFor(m => m.b_region, new { @class = "form-control clsReadOnly", @readonly = true, autocomplete = "do-not-show-ac" })
                             </div>
                             <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">A City Name:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
@@ -301,9 +321,9 @@
                                 @Html.DropDownListFor(m => m.cable_type, new SelectList(Model.listcableType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
                             </div>
                             @*<label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">Cable Type<i class="clsMandatory">*</i>:</label>
-                <div class="col-md-4 col-sm-4 mrgn_btm ">
-                    @Html.TextBoxFor(m => m.cable_type, new { @class = "form-control", @readonly = true })
-                </div>*@
+                    <div class="col-md-4 col-sm-4 mrgn_btm ">
+                        @Html.TextBoxFor(m => m.cable_type, new { @class = "form-control", @readonly = true })
+                    </div>*@
 
 
                             @if (startEndReading != null)
@@ -396,13 +416,13 @@
 
 
                             @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-                <div class="col-md-4 col-sm-4 mrgn_btm">
-                    @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
-                </div>*@
+                    <div class="col-md-4 col-sm-4 mrgn_btm">
+                        @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+                    </div>*@
                             @*<label class="control-label col-md-2 col-sm-2" for="txtAcquireFrom">@Resources.Resources.SI_GBL_GBL_GBL_GBL_010:</label>
-                <div class="col-md-4 col-sm-4 mrgn_btm">
-                    @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
-                </div>*@
+                    <div class="col-md-4 col-sm-4 mrgn_btm">
+                        @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
+                    </div>*@
 
                         </div>
                         <div id="dvOwnerShip">
@@ -425,10 +445,44 @@
                             }
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-md-2 col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_CAB_NET_FRM_013:</label>
-                            <div class="col-md-10 col-sm-10">
-                                @Html.TextBoxFor(m => m.route_id, new { @class = "form-control", @maxlength = "200" })
-                            </div>
+                            @if (route_id != null)
+                            {
+                                <label class="control-label col-md-2 col-sm-2" for="txtRemarks">
+                                    @Resources.Resources.SI_OSP_CAB_NET_FRM_013
+                                    @if (route_id.is_required)
+                                    {<i class="clsMandatory">*</i>}
+                                    else { }:
+                                </label>
+                                <div class="col-md-4 col-sm-4">
+                                    @{
+                                        @Html.TextBoxFor(m => m.route_id,
+                                        SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                        {
+                                            @class = "form-control",
+                                                 @maxlength = "20"
+                                        }, (route_id.is_required) ? new { @required = "required" } : null))
+                                    }
+                                </div>
+                            }
+                            @if (route_name != null)
+                            {
+                                <label class="control-label col-md-2 col-sm-2">
+                                    Route Name
+                                    @if (route_name.is_required)
+                                    {<i class="clsMandatory">*</i>}
+                                    else { }:
+                                </label>
+                                <div class="col-md-4 col-sm-4">
+                                    @{
+                                        @Html.TextBoxFor(m => m.route_name,
+                                        SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                        {
+                                            @class = "form-control",
+                                                 @maxlength = "20"
+                                        }, (route_id.is_required) ? new { @required = "required" } : null))
+                                    }
+                                </div>
+                            }
                         </div>
                         @if (Model.calculated_length_remark != null)
                         {
@@ -487,6 +541,12 @@
                 <div class="tab-pane" id="Reference">
                     @Reference()
                 </div>
+                @if (ApplicationSettings.isCDBAttributeEnabled == 1)
+                {
+                    <div class="tab-pane" id="CDBAttributes">
+                        @CDBAttribute()
+                    </div>
+                }
             </div>
         </div>
         <div class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"d-flex ModalFooter":"d-flex ModalFooter dvdisabled")" id="dvBtnAction">
@@ -524,7 +584,7 @@
 
 <script type="text/javascript">
     $("#btnSaveCable").on("click", function() {
-         
+
         var ddlFiberCount = $("#ddlIOP_chosen").children('a').text().trim();
         var tubeCount = parseInt($('#no_of_tube').val());
         var corePerTubeCount = parseInt($('#no_of_core_per_tube').val());
@@ -585,7 +645,7 @@
 
 
         else {
-             
+
             $('#hdncblCalLen').val($('#cable_calculated_length').val());
             $("#frmAddCable").submit();
         }
@@ -600,7 +660,10 @@
     var inputs = [];
     $(document).ready(function () {
 
-
+        if ('@gis_design_id.form_feature_name' == "gis_design_id" && '@gis_design_id.is_required' == 'True')
+        {
+            $('#gisDesignId').attr('required', true);
+        }
         callFormValidator("frmAddCable");
         $('.chosen-select').chosen({ width: '100%' });
 
@@ -653,7 +716,7 @@
     });
 
     function SaveLMCInfo(objLMCInfo) {
-         
+
         if (objLMCInfo.ActionTab == "LMCInfoTab") {
             if (objLMCInfo.objPM.status != "OK") {
                 alert(objLMCInfo.objPM.message);
@@ -667,7 +730,7 @@
     }
 
     $("#ulCableTabs li a").on("click", function () {
-         
+
         var url = $(this).attr('href'); //
         if (url == '#dvLMCInfo') {
             // $('#dvBtnAction').hide();
@@ -679,7 +742,7 @@
         }
     });
     $("#divRightMenu .dropMenu ul li a").on("click", function () {
-         
+
         var url = $(this).attr('href'); //
         if (url == '#dvLMCInfo') {
             // $('#dvBtnAction').hide();

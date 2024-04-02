@@ -124,7 +124,7 @@ var ListingPage = function () {
 
         var dir = $('#dir').val(); //direction value
         var col = $('#col').val(); // header value
-        var clickedheader = $('th a[href*=' + col + ']');
+        var clickedheader = $('th a[href*="' + col + '"]');
         var countTh = document.getElementsByTagName('th').length; //total column header
 
         for (var i = 1; i <= countTh; i++) {

@@ -3344,7 +3344,7 @@ var main = function () {
     }
 
     this.bindEvents = function () {
-        $(app.DE.cableTypeddl).change(function () {
+        $(app.DE.cableTypeddl).on('change', function () {
             if ($(app.DE.cableTypeddl).val() != '')
                 $(app.DE.divCableType).removeClass("has-error");
         });
@@ -3483,7 +3483,7 @@ var main = function () {
             }
         });
 
-        $(app.DE.txtLatLng).change(function () {
+        $(app.DE.txtLatLng).on('change', function () {
            
             var text = $(this).val();
             var dd = app.DMStoDD(text);
@@ -3554,7 +3554,7 @@ var main = function () {
             }
         });
 
-        $(app.DE.txtBufferRadius).change(function () {
+        $(app.DE.txtBufferRadius).on('change',function () {
             var text = $(this).val();
             var name = $(this).data('name');
             if (text.length) {
@@ -3567,7 +3567,7 @@ var main = function () {
             }
         });
 
-        $('.validate').change(function () {
+        $('.validate').on('change', function () {
             if (!$(this)[0].checkValidity()) {
                 $(this).parent().addClass("has-error");
             }
@@ -3721,7 +3721,7 @@ var main = function () {
             $(this).closest('div .layers').find('#dvNetworkActions').slideToggle();
         });
 
-        $(app.DE.chkAll).change(function () {
+        $(app.DE.chkAll).on('change', function () {
              
             //  $("input:checkbox").prop('checked', $(this).prop("checked")); // 
 
@@ -5024,7 +5024,7 @@ var main = function () {
             alert('Please select Network Layers!');
         }
     }
-    $('.mainlyr .checkbox-custom').change(function () {
+    $('.mainlyr .checkbox-custom').on('change', function () {
          
         if (this.checked) {
             var chkid = this.id;
@@ -5135,12 +5135,12 @@ var main = function () {
 
     });
 
-    $("input[name='latLngFrmt']").change(function () {
+    $("input[name='latLngFrmt']").on('change', function () {
         app.LAT_LNG_FORMAT = $(this).val();
     });
 
     // for grop checkbox checked/unchecked
-    $('.mainlyr .checkbox-customgrp').change(function () {
+    $('.mainlyr .checkbox-customgrp').on('change', function () {
          
         if (this.checked) {
             $("[data-layergroup='" + this.id + "']").filter("[data-networktype!='L']").not(":disabled").prop('checked', this.checked);

@@ -122,6 +122,7 @@ namespace Models
         public string user_email { get; set; }
         [Required]
         public int manager_id { get; set; }
+        
         [Required]
         public int role_id { get; set; }
         public List<int> module_id { get; set; }
@@ -221,19 +222,15 @@ namespace Models
         public string selectedSubDistrict { get; set; }
         [NotMapped]
         public string selectedBlock { get; set; }
-
-
-
         [NotMapped]
         public bool is_multi_manager_allowed { get; set; }
-
         [NotMapped]
         public string multi_manager_ids { get; set; }
+        [NotMapped]
+        public string multi_tool_ids { get; set; }
         public double? capacity { get; set; }
-
         [NotMapped]
         public List<KeyValueDropDown> lstWarehouseCode { get; set; }
-
         [NotMapped]
         public string multi_warhouse_code { get; set; }
 
@@ -244,6 +241,9 @@ namespace Models
         public string prms_id { get; set; }
         public string vendor_id { get; set; }
         public bool is_all_provience_assigned { get; set; }
+        
+        [NotMapped]
+        public List<KeyValueDropDown> lstFEtool { get; set; }
 
     }
 
@@ -875,6 +875,34 @@ namespace Models
         public string user_name { get; set; }
         public string otp { get; set; }
         public string organization { get; set; }
+    }
+
+    public class UserRegionProvinceFilter
+    {
+        public string lng { get; set; }
+        public string lat { get; set; }
+
+        public int userId { get; set; }
+
+        public UserRegionProvinceFilter()
+        {
+            userId = 0;
+        }
+
+    }
+
+    public class UserRegionProvince
+    {
+        public bool is_user_permission { get; set; }
+        public int regionid { get; set; }
+        public int provinceid { get; set; }
+
+        public string regionname { get; set; }
+
+        public string provincename { get; set; }
+
+
+
     }
 }
 
