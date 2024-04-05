@@ -648,6 +648,7 @@ namespace Models
     }
     public class RouteInfo
     {
+        public int id { get; set; }
         public int cable_id { get; set; }
         public int entity_id { get; set; }
         public string entity_type { get; set; }

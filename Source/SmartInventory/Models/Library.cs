@@ -1570,7 +1570,9 @@ namespace Models
 		public List<NELoopDetails> lstLoopMangment { get; set; }
 		[NotMapped]
 		public List<SpliceTrayInfo> lstSpliceTrayInfo { get; set; }
-		public string status_remark { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }        
+        public string status_remark { get; set; }
 		public bool is_new_entity { get; set; }
 		[NotMapped]
 		public int split_cable_system_id { get; set; }
@@ -1628,6 +1630,7 @@ namespace Models
 			EntityReference = new EntityReference();
 			lstLoopMangment = new List<NELoopDetails>();
 			lstSpliceTrayInfo = new List<SpliceTrayInfo>();
+			lstRouteInfo = new List<RouteInfo>();
 			project_id = 0;
 			planning_id = 0;
 			workorder_id = 0;

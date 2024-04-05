@@ -2576,8 +2576,9 @@ namespace SmartInventoryServices.Controllers
 			objSCMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objSCMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
-			// objSCMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
-		}
+            objSCMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSCMaster.geom);
+            // objSCMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+        }
 		#endregion
 
 		#region Add Splice Closure
