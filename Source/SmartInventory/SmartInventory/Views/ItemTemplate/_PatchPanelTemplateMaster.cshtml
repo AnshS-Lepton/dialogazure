@@ -1,5 +1,9 @@
 ﻿@model Models.PatchPanelTemplateMaster
 @using Models;
+@using SmartInventory.Settings;
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Manhole.ToString().ToUpper()).FirstOrDefault() : null;
+}
 @helper ItemSpecification()
 {
     { Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
@@ -8,9 +12,14 @@
 {
     { Html.RenderPartial("~/Views/ItemTemplate/_SystemSpecification.cshtml", (itemMaster)Model); }
 }
+<input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 <fieldset class="the-fieldset">
     <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
     @ItemSpecification()
+</fieldset>
+<fieldset class="the-fieldset">
+    <legend class="the-legend">Model Mapping & System Specification</legend>
+    @SystemSpecification()
 </fieldset>
 
 <script type="text/javascript">
