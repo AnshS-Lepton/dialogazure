@@ -969,10 +969,14 @@ namespace SmartInventory.Controllers
             DataTable dtGuideLines = MiscHelper.GetDataTableFromDictionaries(lstTemplateGuideLines);
             DataTable dtCDBAttributes=null;
 
+            DataTable dtCDBAttributesGuideLines = null;
+
             if (entityType == "Cable" && ApplicationSettings.isCDBAttributeEnabled == 1)
             {
                 List<Dictionary<string, string>> lstTemplateCDBAttributes = blDataUploader.getUploadTemplateCDBAttributesRecords(entityType);
-                 dtCDBAttributes = MiscHelper.GetDataTableFromDictionaries(lstTemplateCDBAttributes);
+                dtCDBAttributes = MiscHelper.GetDataTableFromDictionaries(lstTemplateCDBAttributes);
+                List<Dictionary<string, string>> lstTemplateGuildlines = blDataUploader.getUploadCDBAttributesGuideLines(entityType);
+                dtCDBAttributesGuideLines = MiscHelper.GetDataTableFromDictionaries(lstTemplateGuildlines);
                 dtCDBAttributes.TableName = "CDB Attributes";
             }
 
@@ -988,6 +992,7 @@ namespace SmartInventory.Controllers
             if (entityType == "Cable" && ApplicationSettings.isCDBAttributeEnabled == 1)
             {
                 ds.Tables.Add(dtCDBAttributes);
+                ds.Tables.Add(dtCDBAttributesGuideLines);
             }
             ds.Tables.Add(dtGuideLines);
 

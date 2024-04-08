@@ -617,3 +617,27 @@ alter table data_uploader_template add column is_allowed_for_update bool;
 alter table data_uploader_template add column is_allowed_for_update_admin bool;
 
 alter table data_uploader_template add column is_cdb_attributes bool NOT NULL DEFAULT false;
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION public.fn_uploader_get_template_cdbattributes_guideline(p_entity_type character varying)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+declare v_columns character varying;
+v_values character varying;
+BEGIN
+
+RETURN QUERY
+select row_to_json(row) from (
+select template_column_name as "Field Name",description as "Description",display_column_data_type as "Data Type", case when is_mandatory then 'YES' else 'NO' end as "Is Mandatory",example_value as "Example value",default_value as "Default value",max_length as "Max length",min_value as "Min value",max_value as "Max value" from data_uploader_template dutemp
+left join layer_details ld on dutemp.layer_id=ld.layer_id where upper(ld.layer_name)=upper(p_entity_type) and dutemp.db_column_name not in ('client_id', 'parent_client_id') and dutemp.is_cdb_attributes =true
+--and is_kml_attribute=false
+order by column_sequence
+) row;
+
+
+END ;
+$function$
+;
