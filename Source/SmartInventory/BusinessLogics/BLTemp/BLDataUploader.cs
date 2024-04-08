@@ -391,8 +391,13 @@ namespace BusinessLogics
         {
 			new DATempCDBAttributes().ValidateCDBAttributes(id);
         }
+        public List<Dictionary<string, string>> getUploadCDBAttributesGuideLines(string entityType)
+        {
+            return DAUploadSummary.Instance.getUploadCDBAttributesGuideLines(entityType);
+        }
+
     }
-	internal static class Utilities
+    internal static class Utilities
 	{
 		public static List<List<T>> ToChunks<T>(this List<T> source, int chunkSize)
 		{
