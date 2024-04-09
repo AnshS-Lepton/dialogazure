@@ -1572,7 +1572,7 @@
     <Content Include="Content\js\inputpicker\popper.min.js" />
     <Content Include="Content\js\jquery-1.9.1.min.js" />
     <Content Include="Content\js\jquery-3.7.1.js" />
-	    <Content Include="Content\js\jquery-ui.js" />
+    <Content Include="Content\js\jquery-ui.js" />
     <Content Include="Content\js\jquery-ui.min.js" />
     <Content Include="Content\js\jquery.serializejson.js" />
     <Content Include="Content\js\LandBase.js" />
@@ -1754,8 +1754,6 @@
     <Content Include="Content\js\InputMask\dx.common.css" />
     <Content Include="Content\js\InputMask\dx.light.css" />
     <Content Include="Content\js\jquery-1.10.2.js" />
-    <Content Include="Content\js\jquery-ui123.js" />
-    <Content Include="Content\js\jquery-ui.min123.js" />
     <Content Include="Content\js\jquery.cookie.js" />
     <Content Include="Content\js\jquery.js" />
     <Content Include="Content\js\jquery.treeview.js" />
@@ -2851,7 +2849,6 @@
     <Folder Include="Content\UploadedFiles\Fiber\" />
     <Folder Include="Content\UploadedFiles\Resources\" />
     <Folder Include="Content\UploadedFiles\VendorSpecifications\" />
-    <Folder Include="ErrorLogs\" />
     <Folder Include="shp2kml_convertor\" />
     <Folder Include="Uploads\ExternalData\KMZ\" />
     <Folder Include="Uploads\LayerStyleMaster\" />
