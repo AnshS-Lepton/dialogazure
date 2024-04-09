@@ -722,7 +722,7 @@ function getLayerMapping(lyrName) {
     return lyrMapping;
 }
 function callFormValidator(formId) {
-    $.validator.setDefaults({ ignore: ":hidden:not(select)" });
+    $.validator.setDefaults({ ignore: ".ignore,:hidden:not(select)" });
     $.validator.unobtrusive.parse("#" + formId);
 
     var $validator = $("#" + formId).validate();
