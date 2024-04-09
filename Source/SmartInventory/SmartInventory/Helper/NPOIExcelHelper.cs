@@ -790,7 +790,8 @@ namespace SmartInventory.Helper
 
             if (ds.Tables[0].TableName == "Cable" && ApplicationSettings.isCDBAttributeEnabled == 1)
             {
-                guideLineSheet(workbook, ds.Tables[2], heading1, heading2);
+                GuideLineCDBAttributesSheet(workbook, ds.Tables[3],ds.Tables[2], heading1, heading2, "                                GUIDELINE FOR FILLING CDB Attributes DETAILS");
+                workbook.RemoveSheetAt(2);
             }
             else
             {
@@ -798,6 +799,120 @@ namespace SmartInventory.Helper
             }
             return workbook;
         }
+        public static IWorkbook GuideLineCDBAttributesSheet(IWorkbook workbook, DataTable dt1, DataTable dt2, string heading1, string heading2, string heading3)
+        {
+            ISheet sheet1 = workbook.CreateSheet(dt1.TableName);
+
+            // Make header row for table 1
+            ICellStyle headerStyle = getCellStyle(workbook, "HEADER");
+            IRow row1 = sheet1.CreateRow(5);
+            IRow row2 = sheet1.CreateRow(6);
+            IRow row3 = sheet1.CreateRow(7);
+            headerStyle.FillBackgroundColor = IndexedColors.DarkYellow.Index;
+            var cellstyle2 = getCellStyle(workbook);
+            cellstyle2.FillForegroundColor = IndexedColors.Yellow.Index;
+            cellstyle2.FillPattern = FillPattern.SolidForeground;
+            cellstyle2.BorderLeft = BorderStyle.None;
+            cellstyle2.BorderTop = BorderStyle.None;
+            cellstyle2.BorderBottom = BorderStyle.None;
+            CreateCustomCell(row1, 1, heading1, cellstyle2);
+            var cellstyle3 = getCellStyle(workbook);
+            cellstyle3.FillForegroundColor = IndexedColors.Grey25Percent.Index;
+            cellstyle3.FillPattern = FillPattern.SolidForeground;
+            cellstyle3.BorderLeft = BorderStyle.None;
+            cellstyle3.BorderTop = BorderStyle.None;
+            IFont myFont = (IFont)workbook.CreateFont();
+            myFont.FontHeightInPoints = (short)20;
+            myFont.FontName = "ARIAL";
+            myFont.IsBold = true;
+            cellstyle3.SetFont(myFont);
+            CreateCustomCell(row2, 1, heading2, cellstyle3);
+            sheet1.AddMergedRegion(new CellRangeAddress(5, 5, 1, 5));
+            sheet1.AddMergedRegion(new CellRangeAddress(6, 6, 1, 5));
+            ICellStyle headerStyle1 = getCellStyle(workbook, "HEADER");
+            headerStyle1.FillForegroundColor = IndexedColors.LightYellow.Index;
+            headerStyle1.FillPattern = FillPattern.SolidForeground;
+            for (int j = 0; j < dt1.Columns.Count; j++)
+            {
+                IFont headerFont = (IFont)workbook.CreateFont();
+                headerFont.FontHeightInPoints = (short)11;
+                headerFont.FontName = "ARIAL";
+                headerFont.IsBold = true;
+
+                headerStyle.SetFont(headerFont);
+                CreateCustomCell(row3, j + 1, dt1.Columns[j].ToString(), headerStyle);
+            }
+            var cellstyle = getCellStyle(workbook);
+            for (int i = 0; i < dt1.Rows.Count; i++)
+            {
+                IRow row = sheet1.CreateRow(i + 8);
+                for (int j = 0; j < dt1.Columns.Count; j++)
+                {
+                    if (i == (dt1.Rows.Count - 1) && (j == 2 || j == 3))
+                    {
+                        cellstyle = getCellStyle(workbook);
+                    }
+                    if (j == 3 && Convert.ToString(dt1.Rows[i][j]) == "YES")
+                    {
+                        var coloredCell = getCellStyle(workbook);
+                        IFont customFont = (IFont)workbook.CreateFont();
+                        customFont.FontHeightInPoints = (short)11;
+                        customFont.FontName = "ARIAL";
+                        customFont.Color = (short)FontColor.Red;
+                        coloredCell.SetFont(customFont);
+                        CreateCustomCell(row, j + 1, dt1.Rows[i][j].ToString(), coloredCell);
+                    }
+                    else
+                    {
+                        CreateCustomCell(row, j + 1, dt1.Rows[i][j].ToString(), cellstyle);
+                    }
+                }
+            }
+
+            // Make header row for table 2
+            ICellStyle headerStyle2 = getCellStyle(workbook, "HEADER");
+            headerStyle2.FillForegroundColor = IndexedColors.Grey25Percent.Index;
+            headerStyle2.FillPattern = FillPattern.SolidForeground;
+            headerStyle2.BorderBottom = BorderStyle.Thin;
+            headerStyle2.BottomBorderColor = IndexedColors.Black.Index;
+            IFont headerFont2 = workbook.CreateFont();
+            headerFont2.FontHeightInPoints = (short)20;
+            headerFont2.FontName = "ARIAL";
+            headerFont2.IsBold = true; // Set the font to bold for table 2 header
+            headerStyle2.SetFont(headerFont2); // Apply the font to the style
+
+            IRow row4 = sheet1.CreateRow(dt1.Rows.Count + 9);
+            CreateCustomCell(row4, 1, heading3, headerStyle2); // Use heading3 for table 2
+            sheet1.AddMergedRegion(new CellRangeAddress(dt1.Rows.Count + 9, dt1.Rows.Count + 9, 1, dt2.Columns.Count));
+
+            // Add column headers for table 2
+            IRow row5 = sheet1.CreateRow(dt1.Rows.Count + 10);
+            for (int j = 0; j < dt2.Columns.Count; j++)
+            {
+                ICell cell = row5.CreateCell(j + 1);
+                cell.SetCellValue(dt2.Columns[j].ColumnName);
+                cell.CellStyle = headerStyle;
+            }
+
+            // Add data for table 2
+            for (int i = 0; i < dt2.Rows.Count; i++)
+            {
+                IRow row = sheet1.CreateRow(dt1.Rows.Count + i + 11);
+                for (int j = 0; j < dt2.Columns.Count; j++)
+                {
+                    CreateCustomCell(row, j + 1, dt2.Rows[i][j].ToString(), cellstyle);
+                }
+            }
+
+            // Autofit columns
+            for (int k = 1; k <= Math.Max(dt1.Columns.Count, dt2.Columns.Count); k++)
+            {
+                sheet1.AutoSizeColumn(k, true);
+            }
+
+            return workbook;
+        }
+
         public static IWorkbook guideLineSheet(IWorkbook workbook, DataTable dt, string heading1, string heading2)
         {
             ISheet sheet1 = workbook.CreateSheet(dt.TableName);
