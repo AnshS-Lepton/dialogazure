@@ -35,16 +35,11 @@ namespace Models
         [NotMapped]
         public string unitValue { get; set; }
         //MODEL MAPPING      
-        public int type { get; set; }
-        [Required]
-        public int brand { get; set; }
-        [Required]
-        public int model { get; set; }
-        [Required]
-        public int construction { get; set; }
-        [Required]
-        public int activation { get; set; }
-        [Required]
+        public int type { get; set; }       
+        public int brand { get; set; }       
+        public int model { get; set; }       
+        public int construction { get; set; }      
+        public int activation { get; set; }       
         public int accessibility { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> lstSpecification { get; set; }
