@@ -34,7 +34,7 @@ namespace SmartInventoryServices.Controllers
     [Authorize]
     [CustomAuthorization]
     [APIExceptionFilter]
-    [CustomAction]
+    //[CustomAction]
     public class MainController : ApiController
     {
 

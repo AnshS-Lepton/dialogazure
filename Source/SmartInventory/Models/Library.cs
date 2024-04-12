@@ -881,9 +881,8 @@ namespace Models
 		public DateTime created_on { get; set; }
 		public int? modified_by { get; set; }
 		public DateTime? modified_on { get; set; }
-
-
-		public string status { get; set; }
+        public string mcgm_ward { get; set; }
+        public string status { get; set; }
 		public string network_status { get; set; }
 		public string construction_type { get; set; }
 		[NotMapped]
@@ -930,9 +929,10 @@ namespace Models
 		public IList<DropDownMaster> listConstructionType { get; set; }
 		[NotMapped]
 		public EntityReference EntityReference { get; set; }
+        [NotMapped]
+        public IList<DropDownMaster> MCGMWardIn { get; set; }
 
-
-		[NotMapped]
+        [NotMapped]
 		public entityATStatusAtachmentsList ATAcceptance { get; set; }
 
 		[NotMapped]

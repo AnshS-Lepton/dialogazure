@@ -7,7 +7,7 @@
     var vendor = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.vendor.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
 }
 <!DOCTYPE html>
-<div id="dvMainSpecification"  class="form-group row @((specification != null && specification.is_readonly == true && Model.entityType==EntityType.Splitter.ToString())?"dvdisabled":"")">
+<div id="dvMainSpecification"  class="form-group row @((specification != null && specification.is_readonly == false && Model.entityType==EntityType.Splitter.ToString())?"dvdisabled":"")">
 
     <label class="control-label col-sm-2" for="ddlSpecification">@Resources.Resources.SI_OSP_GBL_NET_FRM_012<i class="clsMandatory">*</i>:</label>
     <div class="col-md-4">
