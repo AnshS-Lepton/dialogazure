@@ -473,13 +473,13 @@
     }
 
 
-    $('#ddlProjectCode').change(function () {
+    $('#ddlProjectCode').on('change', function () {
         si.BindPlanningDetailByProjectIds();
     })
-    $('#ddlPlanningCode').change(function () {
+    $('#ddlPlanningCode').on('change', function () {
         si.BindWorkCodeDetailByPlanningIds();
     })
-    $('#ddlWorkorderCode').change(function () {
+    $('#ddlWorkorderCode').on('change', function () {
         si.BindPurposeCodeDetailByWorkOrderIds();
     })
 </script>

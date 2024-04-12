@@ -254,7 +254,7 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
         // fillPermissionArea();
 
         //country
-        $("#ddlCountry").change(function () {
+        $("#ddlCountry").on('change', function () {
        
             app.preSelectedRegion = $("#ddlregion").val() != null ? $("#ddlregion").chosen().val().join(",") : null;
             app.preSelectedCountries = $("#ddlCountry").val() != null ? $("#ddlCountry").chosen().val().join(",") : null;
@@ -266,14 +266,14 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
             //  $("#ddlblock").trigger("change");
             return false;
         });
-        $("#ddlregion").change(function () {
+        $("#ddlregion").on('change', function () {
 
             app.preSelectedStates = $("#ddlState").val() != null ? $("#ddlState").chosen().val().join(",") : null;
 
             getStates();
             return false;
         });
-        $("#ddlState").change(function () {
+        $("#ddlState").on('change', function () {
 
             app.preSelectedSubDistrict = $("#ddlSubDistrict").val() != null ? $("#ddlSubDistrict").chosen().val().join(",") : null;
 
@@ -284,7 +284,7 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
 
 
 
-        $("#ddlSubDistrict").change(function () {
+        $("#ddlSubDistrict").on('change', function () {
             app.preSelectedBlock = $("#ddlBlock").val() != null ? $("#ddlBlock").chosen().val().join(",") : null;
 
             getblock();
@@ -446,11 +446,11 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
         });
     });
 
-    $("#ddl_UserRole").change(function () {
+    $("#ddl_UserRole").on('change', function () {
         CheckUserRole();
     });
 
-    $("#ddl_UserReportingManager").change(function () {
+    $("#ddl_UserReportingManager").on('change', function () {
         CheckReportingManager();
     });
     

@@ -254,6 +254,7 @@
     <Compile Include="TempUpload\DATempCabinet.cs" />
     <Compile Include="TempUpload\DATempCable.cs" />
     <Compile Include="TempUpload\DATempCDB.cs" />
+    <Compile Include="TempUpload\DATempCDBAttributes.cs" />
     <Compile Include="TempUpload\DATempCoupler.cs" />
     <Compile Include="TempUpload\DATempGipipe.cs" />
     <Compile Include="TempUpload\DATempDuct.cs" />

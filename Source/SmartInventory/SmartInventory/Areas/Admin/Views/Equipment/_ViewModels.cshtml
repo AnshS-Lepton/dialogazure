@@ -12,7 +12,7 @@
 </style>
 <script>
     $(document).ready(function (e) {
-        $(".rdb").change(function (event) {
+        $(".rdb").on('change', function (event) {
             //$(this).next().slideToggle();
             $('ul.list-group').slideToggle();
             $('#editModal').hide();
