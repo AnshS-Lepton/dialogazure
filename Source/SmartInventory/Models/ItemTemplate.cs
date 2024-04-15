@@ -35,21 +35,18 @@ namespace Models
         [NotMapped]
         public string unitValue { get; set; }
         //MODEL MAPPING      
-        public int type { get; set; }
-        [Required]
-        public int brand { get; set; }
-        [Required]
-        public int model { get; set; }
-        [Required]
-        public int construction { get; set; }
-        [Required]
-        public int activation { get; set; }
-        [Required]
+        public int type { get; set; }       
+        public int brand { get; set; }       
+        public int model { get; set; }       
+        public int construction { get; set; }      
+        public int activation { get; set; }       
         public int accessibility { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> lstSpecification { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> lstType { get; set; }
+        [NotMapped]
+        public List<KeyValueDropDown> listType { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> lstBrand { get; set; }
         [NotMapped]
@@ -79,12 +76,15 @@ namespace Models
         [NotMapped]
         public List<DropDownMaster> lstEntityType { get; set; }
         public int? audit_item_master_id { get; set; }
+        [NotMapped]
+        public List<DropDownMaster> lstNoOfWays { get; set; }
         //public string specify_type { get; set; }
         public itemMaster()
         {
             specification = "";
             lstSpecification = new List<KeyValueDropDown>();
             lstType = new List<KeyValueDropDown>();
+            listType = new List<KeyValueDropDown>();
             lstBrand = new List<KeyValueDropDown>();
             lstModel = new List<KeyValueDropDown>();
             lstAccessibility = new List<KeyValueDropDown>();
@@ -767,6 +767,48 @@ namespace Models
             objPM = new PageMessage();
         }
     }
+    public class MicroductTemplateMaster : itemMaster
+    {
+        // ADDITION FIELD WHICH ARE COMMON FOR SPLT FORM AND TEMPLATE WILL BE THERE.
+        [NotMapped]
+        public override int no_of_input_port { get; set; }
+        [NotMapped]
+        public override int no_of_output_port { get; set; }
+        [NotMapped]
+        public override int no_of_port { get; set; }
+        [NotMapped]
+        public override string unit { get; set; }
+        [NotMapped]
+        public override string other { get; set; }
+        [NotMapped]
+        public string no_of_ways { get; set; }
+    }
+
+    public class MicroductItemMaster : MicroductTemplateMaster
+    {
+        //ADDITION FIELD WHICH ARE REQUIRED FOR SPLT TEMPLATE ONLY WILL BE THERE
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
+        public int created_by { get; set; }
+        [NotMapped]
+        public DateTime created_on { get; set; }
+        public int? modified_by { get; set; }
+        public DateTime? modified_on { get; set; }
+        [NotMapped]
+        public PageMessage objPM { get; set; }
+        [NotMapped]
+        public int user_Id { get; set; }
+        
+
+        public MicroductItemMaster()
+        {
+            objPM = new PageMessage();
+            lstNoOfWays = new List<DropDownMaster>();
+        }
+    }
+    
 
 
     public class ConduitTemplateMaster : itemMaster

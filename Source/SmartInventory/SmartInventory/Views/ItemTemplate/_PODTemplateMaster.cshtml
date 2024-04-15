@@ -1,5 +1,6 @@
 ﻿@model Models.PODTemplateMaster
 @using Models;
+@using SmartInventory.Settings;
 @helper ItemSpecification()
 {
     { Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
@@ -8,33 +9,37 @@
 {
     { Html.RenderPartial("~/Views/ItemTemplate/_SystemSpecification.cshtml", (itemMaster)Model); }
 }
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
+}
+ <input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 <fieldset class="the-fieldset">
     <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
     @ItemSpecification()
 </fieldset>
-@*<fieldset class="the-fieldset">
+<fieldset class="the-fieldset">
     <legend class="the-legend">Model Mapping & System Specification</legend>
     @SystemSpecification()
 
-</fieldset>*@
+</fieldset>
 <script type="text/javascript">
     $(document).ready(function () {
         $('.chosen-select').chosen({ width: '100%' });
-        $('#specification').chosen().change(function (event) {
+        $('#specification').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindVendor(dID);
         });
-        $('#ddlVendor').chosen().change(function (event) {
+        $('#ddlVendor').chosen().on('change',function (event) {
             var specfi = $("#specification option:selected").val(); //
             var vandorid = $(this).val();
             var entitytype = $('#entityType').val();
             bindCateSubcat(entitytype,specfi, vandorid);
         });
-        $('#ddlType').chosen().change(function (event) {
+        $('#ddlType').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindBrand(dID);
         });
-        $('#ddlBrand').chosen().change(function (event) {
+        $('#ddlBrand').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindModel(dID);
         });

@@ -577,7 +577,7 @@
             $('#divActionButton').css('display', '@(Model.id > 0 ? "none" : "block")');
             checkLayerType();
 
-            $('#layer_type').change(function () {
+            $('#layer_type').on('change',function () {
                 checkLayerType();
             });
 

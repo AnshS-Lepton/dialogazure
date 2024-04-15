@@ -90,6 +90,8 @@ namespace DataUploader
                     return new UploadTempOpticalrepeater();
                 case EntityType.Gipipe:
                     return new UploadTempFMS();
+                case EntityType.ROW:
+                    return new UploadTempRow();
                 default:
                     return null;
             }

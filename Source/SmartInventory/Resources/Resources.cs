@@ -27483,5 +27483,19 @@ namespace Resources {
                 return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_217", CultureInfo.CurrentUICulture.Name) as string;
             }
         }
+        public static string SI_OSP_GBL_GBL_FRM_238
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_GBL_FRM_238", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+        public static string SI_OSP_GBL_GBL_FRM_239
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_GBL_FRM_239", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
     }        
 }

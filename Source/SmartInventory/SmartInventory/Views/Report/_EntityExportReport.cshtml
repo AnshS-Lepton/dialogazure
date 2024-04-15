@@ -934,13 +934,13 @@
         previousDate.setMonth(previousDate.getMonth() - _monthCount);
         return parseInt((previousDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24)) + 1;
     }
-    $('#ddlProjectCode').change(function () {
+    $('#ddlProjectCode').on('change',function () {
         si.BindPlanningDetailByProjectIds();
     })
-    $('#ddlPlanningCode').change(function () {
+    $('#ddlPlanningCode').on('change',function () {
         si.BindWorkCodeDetailByPlanningIds();
     })
-    $('#ddlWorkorderCode').change(function () {
+    $('#ddlWorkorderCode').on('change',function () {
         si.BindPurposeCodeDetailByWorkOrderIds();
     })
     function UpdateFormattedNumbers() {

@@ -264,7 +264,13 @@ namespace Models
         Splitter_Type,
         CSA_RFS,
         No_of_Ducts_Created,
-        Duct_Count
+        Duct_Count,
+        No_of_Microducts_Created,
+        Microduct_Color,
+        Operator_Type_LOV,
+        Fiber_Type_LOV,
+        Route_Type,
+        type
     }
     public enum VendorType
     {
@@ -334,6 +340,7 @@ namespace Models
     public enum PortStatus
     {
         Vacant,
+        Reserved,
         Connected
     }
     public enum UnitInputType
@@ -375,6 +382,15 @@ namespace Models
         vendor,
         gipipe_type,
         gipipe_color,
+        route_id,
+        route_name,
+        gis_design_id,
+        type,
+        brand,
+        model,
+        construction,
+        activation,
+        accessibility
     }
     public enum formFeatureType
     {

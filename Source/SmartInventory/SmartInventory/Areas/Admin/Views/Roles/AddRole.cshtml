@@ -124,7 +124,7 @@
         }, true, true);
     }
 
-    $('#ddlTemplate').change(function () {
+    $('#ddlTemplate').on('change', function () {
         $("#progressbar").show();
         $("#permission").load(appRoot + '/Roles/ViewLayerRightsTemplate/' + $(this).val(), function () {
             $("#progressbar").hide();

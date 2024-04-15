@@ -116,7 +116,7 @@ grid.Column("remarks", Resources.Resources.SI_OSP_GBL_GBL_GBL_006, format: @<tex
         });
         $('.chosen-select').chosen({ width: '100%' });
 
-        $('#drpCity').chosen().change(function (event) {
+        $('#drpCity').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindAreaDD(dID);
             //  si.bindArea(dID);

@@ -59,7 +59,7 @@ namespace DataAccess
                     objDuct.construction = DuctInfo.construction;
                     objDuct.activation = DuctInfo.activation;
                     objDuct.accessibility = DuctInfo.accessibility;
-                    objDuct.duct_type = DuctInfo.duct_type;
+                    objDuct.duct_type = DuctInfo.cable_type;
                     objDuct.color_code = DuctInfo.color_code;
                     objDuct.inner_dimension = DuctInfo.inner_dimension;
                     objDuct.outer_dimension = DuctInfo.outer_dimension;
@@ -107,18 +107,36 @@ namespace DataAccess
                     DuctInfo.created_by = userId;
                     DuctInfo = repo.Insert(DuctInfo);
                     // Save geometry
-                    InputGeom geom = new InputGeom();
-                    geom.networkStatus = string.IsNullOrEmpty(DuctInfo.network_status) ? "P" : DuctInfo.network_status;
-                    geom.systemId = DuctInfo.system_id;
-                    geom.longLat = latLong;
-                    geom.userId = userId;
-                    geom.entityType = EntityType.Duct.ToString();
-                    geom.commonName = DuctInfo.network_id;
-                    geom.geomType = GeometryType.Line.ToString();
-                    geom.project_id = DuctInfo.project_id;
-                    string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
-                    DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctInfo.system_id, Models.EntityType.Duct.ToString(), DuctInfo.province_id, 0);
-                    //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Duct.ToString(), DuctInfo.province_id);
+                    if (DuctInfo.cable_type != "ISP" && latLong != "" && latLong != "0")
+                    {
+                        InputGeom geom = new InputGeom();
+                        geom.networkStatus = string.IsNullOrEmpty(DuctInfo.network_status) ? "P" : DuctInfo.network_status;
+                        geom.systemId = DuctInfo.system_id;
+                        geom.longLat = latLong;
+                        geom.userId = userId;
+                        geom.entityType = EntityType.Duct.ToString();
+                        geom.commonName = DuctInfo.network_id;
+                        geom.geomType = GeometryType.Line.ToString();
+                        geom.project_id = DuctInfo.project_id;
+                        string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
+                        DAIspLine.Instance.CreateOSPCable(DuctInfo.system_id);
+                        new DADuct().setEndPoint(DuctInfo.system_id);
+                        DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctInfo.system_id, Models.EntityType.Duct.ToString(), DuctInfo.province_id, 0);
+                    }
+                    else
+                    {
+                        IspLineMaster objLine = new IspLineMaster();
+                        objLine.entity_id = DuctInfo.system_id;
+                        objLine.entity_type = EntityType.Duct.ToString();
+                        objLine.line_geom = DuctInfo.ispLineGeom;
+                        objLine.structure_id = DuctInfo.structure_id;
+                        objLine.created_by = userId;
+                        objLine.created_on = DateTimeHelper.Now;
+                        objLine.a_node_type = DuctInfo.a_node_type;
+                        objLine.b_node_type = DuctInfo.b_node_type;
+                        DAIspLine.Instance.saveLineGeom(objLine);
+                    }
+
                     if (DuctInfo.a_system_id > 0)
                     {
                         AssociateEntity assStartPt = new AssociateEntity();

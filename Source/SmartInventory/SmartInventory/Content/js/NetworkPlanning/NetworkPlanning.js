@@ -1814,7 +1814,7 @@ function showAutoPlanDist(_path) {
     else
         return distance.toFixed(2) + ' m';
 }
-$('#demo').change(function (input) {
+$('#demo').on('change', function (input) {
     var id = $(this).val();
     var lat_long = $('tr[data-content="' + id + '"]').find('td:last').text();
     var lat_longArr = lat_long.split(',');

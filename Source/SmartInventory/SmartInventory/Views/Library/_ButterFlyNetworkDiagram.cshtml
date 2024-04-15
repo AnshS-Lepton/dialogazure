@@ -98,7 +98,7 @@
 
             var newEdge = $.parseJSON(('@Model.edges'.replace(/&quot;/g, '"')));
              var newNode = $.parseJSON(('@Model.nodes'.replace(/&quot;/g, '"')));
-            $('[name="chkEntity"]').change(function () {
+            $('[name="chkEntity"]').on('change',function () {
 
                 var Entity = $(this).context.id.slice(3);
                 newEdge = newEdge.filter(({ checkbox_entity_type }) => checkbox_entity_type !== Entity);

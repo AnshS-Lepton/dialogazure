@@ -1,5 +1,6 @@
 ﻿@model Models.HTBTemplate
 @using Models;
+@using SmartInventory.Settings;
 <script>
     //Set color of template icon as green in NE library
     if ('@Model.system_id' > 0) {
@@ -18,6 +19,11 @@
 {
     { Html.RenderPartial("~/Views/ItemTemplate/_SystemSpecification.cshtml", (itemMaster)Model); }
 }
+@using SmartInventory.Settings;
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.HTB.ToString().ToUpper()).FirstOrDefault() : null;
+}
+<input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 <!DOCTYPE html>
 <div class="libDetail">
 
@@ -32,35 +38,35 @@
     {
         @Html.HiddenFor(m => m.system_id)
         @Html.HiddenFor(m=>m.created_by)
-             <!-- Message Pop-up -->
+        <!-- Message Pop-up -->
         @pageMessage()
         <div class="libTabContent">
             <!-- Tab panes -->
             <div class="tab-content">
-                <div class="tab-pane active" id="ItemSpecfication">                   
+                <div class="tab-pane active" id="ItemSpecfication">
                     <fieldset class="the-fieldset">
                         <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
                         @ItemSpecification()
                     </fieldset>
-                    @*<fieldset class="the-fieldset">
+                    <fieldset class="the-fieldset">
                         <legend class="the-legend">Model Mapping & System Specification</legend>
                         @SystemSpecification()
-                    </fieldset>*@
+                    </fieldset>
                 </div>
             </div>
         </div>
 
         <div class="d-flex ModalFooter" id="dvBtnAction">
             <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
-                @if (Model.system_id > 0)
-                {
-                    <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
-                }
-                else
-                {
-                    <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
-                }
-            </div>
+            @if (Model.system_id > 0)
+            {
+                <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+            }
+        </div>
 
     }
 </div>
@@ -69,28 +75,28 @@
         callFormValidator("frmItemTemplate");
         $('.chosen-select').chosen({ width: '100%' });
 
-        $('#specification').chosen().change(function (event) {
+        $('#specification').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindVendor(dID);
         });
-        $('#ddlVendor').chosen().change(function (event) {
+        $('#ddlVendor').chosen().on('change',function (event) {
             var specfi = $("#specification option:selected").val(); //
             var vandorid = $(this).val();
             var entitytype = $('#entityType').val();
             bindCateSubcat(entitytype,specfi, vandorid);
         });
-        $('#ddlType').chosen().change(function (event) {
+        $('#ddlType').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindBrand(dID);
         });
-        $('#ddlBrand').chosen().change(function (event) {
+        $('#ddlBrand').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindModel(dID);
         });
 
         $('#id').val('@Model.system_id');
 
- 
+
     });
 
 </script>

@@ -391,7 +391,7 @@
                     }
 
                 }
-                $("#ddlSelectEntity").change(function () {
+                    $("#ddlSelectEntity").on('change',function () {
                      
                     var selectedValue = $("#ddlSelectEntity option:selected").text();
                     var Entitynetworkid = $("#ddlSelectEntity option:selected").attr('data-network-id');
@@ -410,7 +410,7 @@
 
                 });
 
-                $("#ddlFaultStatus").change(function () {
+    $("#ddlFaultStatus").on('change',function () {
                     var status = this.value;
                     // var firstDropVal = $('#pick').val();
                     if (status == "Unresolved" || status == "Reopened") {

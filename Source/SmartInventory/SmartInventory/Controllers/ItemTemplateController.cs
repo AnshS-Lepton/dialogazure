@@ -142,11 +142,11 @@ namespace SmartInventory.Controllers
 
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult GetBrand(Int32 typeId)
+        public ActionResult GetBrand(Int32 typeId, Int32 Layer_id)
         {
             JsonResponse<List<KeyValueDropDown>> objResp = new JsonResponse<List<KeyValueDropDown>>();
 
-            List<KeyValueDropDown> lst = BLItemTemplate.Instance.GetBrandData(typeId);
+            List<KeyValueDropDown> lst = BLItemTemplate.Instance.GetBrandData(typeId, Layer_id);
             if (lst.Count > 0)
             {
                 objResp.status = ResponseStatus.OK.ToString();
@@ -720,7 +720,7 @@ namespace SmartInventory.Controllers
 		public ActionResult SaveMicroductTemplate(MicroductItemMaster objMicroductItemMaster)
 		{
 
-			objMicroductItemMaster.userId = Convert.ToInt32(Session["user_id"]);
+			objMicroductItemMaster.user_Id = Convert.ToInt32(Session["user_id"]);
 			string url = "api/ItemTemplate/EntityTemplate";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<MicroductItemMaster>(url, objMicroductItemMaster, EntityType.Microduct.ToString(), EntityAction.Save.ToString());
 			return PartialView("_MicroductTemplate", response.results);

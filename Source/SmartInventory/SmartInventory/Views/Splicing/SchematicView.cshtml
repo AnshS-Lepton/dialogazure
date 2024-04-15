@@ -167,7 +167,7 @@
             $("div.downStream").show();
            // $("div.upStream").hide();
             $("#TempDataDiv").html($(".contentFooter").html() + $(".contentFooter").html());
-            $('#chkPort').change(function () {
+            $('#chkPort').on('change', function () {
                 getSchematicView($('input[name="SchematicStream"]:checked').val(), $(this).is(":checked"));
             });
         });

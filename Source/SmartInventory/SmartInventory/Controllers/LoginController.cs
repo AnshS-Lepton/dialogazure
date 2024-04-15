@@ -17,6 +17,7 @@ using Lepton.Utility;
 using Newtonsoft.Json;
 using Lepton.Entities;
 using System.IO;
+using System.Web.SessionState;
 
 namespace SmartInventory.Controllers
 { 
@@ -495,6 +496,12 @@ namespace SmartInventory.Controllers
 
         private void LogUserIn(User user, string Source)
         {
+            SessionIDManager manager = new SessionIDManager();
+            string newSessionId = manager.CreateSessionID(System.Web.HttpContext.Current);
+            bool redirected = false;
+            bool IsAdded = false;
+            manager.SaveSessionID(System.Web.HttpContext.Current, newSessionId, out redirected, out IsAdded);
+
             //SaveLoginHistory(user.user_id);
             Session["user_id"] = user.user_id;
             //get user image
@@ -503,7 +510,22 @@ namespace SmartInventory.Controllers
             var userLoginHistory = new BLUserLogin().GetUserLoginDetailById(user.user_id,Source);
             UpdateBrowserInfo(userLoginHistory.login_id);
             Session["userLoginHistory"] = userLoginHistory;
-            FormsAuthentication.SetAuthCookie(user.user_name, false);
+
+            //FormsAuthentication.SetAuthCookie(user.user_name, false);
+
+            /* To tightly couple session id with the form auth ticket,
+             adding session ID to Forms Authentication ticket */
+            FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
+                1, 
+                user.user_name, 
+                DateTime.Now, 
+                DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes), 
+                false, // persistent
+                Session.SessionID 
+            );
+            string encryptedTicket = FormsAuthentication.Encrypt(ticket);
+            HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+            Response.Cookies.Add(authCookie);
         }
 
         void SaveLoginHistory(int userId)
@@ -596,6 +618,15 @@ namespace SmartInventory.Controllers
             Session.Clear();
             Session.RemoveAll();
             FormsAuthentication.SignOut();
+
+            // Clear the session cookie
+            if (Response.Cookies["ASP.NET_SessionId"] != null)
+            {
+                Response.Cookies["ASP.NET_SessionId"].Value = string.Empty;
+                Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.Now.AddYears(-1);
+            }
+
+
             Session["Language"] = Lang;
         }
         public JsonResult checkSession()

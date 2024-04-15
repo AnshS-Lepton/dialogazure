@@ -84,6 +84,7 @@
     <Compile Include="Admin\OrthoImageModel.cs" />
     <Compile Include="Admin\BusinessLayer.cs" />
     <Compile Include="Admin\OTPAuthenticationSettings.cs" />
+    <Compile Include="MicroductMaster.cs" />
     <Compile Include="GisApiLog.cs" />
     <Compile Include="ApiResponse.cs" />
     <Compile Include="CustDistance.cs" />
@@ -201,6 +202,8 @@
     <Compile Include="SplitCableEntity.cs" />
     <Compile Include="SplitConduit.cs" />
     <Compile Include="SplitConduitEntity.cs" />
+    <Compile Include="SplitMicroductEntity.cs" />
+    <Compile Include="SplitMicroduct.cs" />
     <Compile Include="SplitTrenchEntity.cs" />
     <Compile Include="SplitTrench.cs" />
     <Compile Include="SplitDuct.cs" />
@@ -216,6 +219,7 @@
     <Compile Include="TempUpload\TempCabinet.cs" />
     <Compile Include="TempUpload\TempCable.cs" />
     <Compile Include="TempUpload\TempCDB.cs" />
+    <Compile Include="TempUpload\TempCDBAttributes.cs" />
     <Compile Include="TempUpload\TempCoupler.cs" />
     <Compile Include="TempUpload\TempCustomer.cs" />
     <Compile Include="TempUpload\TempGipipe.cs" />
@@ -237,6 +241,7 @@
     <Compile Include="TempUpload\TempPOI.cs" />
     <Compile Include="TempUpload\TempPole.cs" />
     <Compile Include="TempUpload\TempRoom.cs" />
+    <Compile Include="TempUpload\TempRow.cs" />
     <Compile Include="TempUpload\TempSector.cs" />
     <Compile Include="TempUpload\TempSpliceClosure.cs" />
     <Compile Include="TempUpload\TempSplitter.cs" />

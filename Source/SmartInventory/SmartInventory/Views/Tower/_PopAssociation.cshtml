@@ -51,7 +51,7 @@
     $(document).ready(function () {
        var towerId = @Model.system_id;
         //getPopInBuffer(towerId, 1);
-        $('#ddlBufferDistance').chosen().change(function (event) {
+        $('#ddlBufferDistance').chosen().on('change', function (event) {
             //var specfi = $("#specification option:selected").val(); //
             var distance = $(this).val();
             getPopInBuffer(towerId, distance);

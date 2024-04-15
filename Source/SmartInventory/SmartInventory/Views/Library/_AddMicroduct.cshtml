@@ -173,7 +173,7 @@
                                 }:
                             </label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
-                                @Html.TextBoxFor(m => m.network_name,
+                                @Html.TextBoxFor(m => m.microduct_name,
                                    SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(
                               new
                               {
@@ -237,12 +237,12 @@
                         <div class="form-group">
                             <label class="control-label col-md-2 col-sm-2 ">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023:</label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
-                                @Html.DropDownListFor(m => m.microduct_type, new SelectList(Model.DuctTypeIn.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
+                                @Html.DropDownListFor(m => m.microduct_type, new SelectList(Model.MicroductTypeIn.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
                             </div>
 
                             <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_DUC_NET_RPT_009:</label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
-                                @Html.DropDownListFor(m => m.color_code, new SelectList(Model.DuctColorIn.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
+                                @Html.DropDownListFor(m => m.color_code, new SelectList(Model.MicroductColorIn.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
                             </div>
 
                         </div>
@@ -342,21 +342,21 @@
 
         callFormValidator("frmAddMicroduct");
         $('.chosen-select').chosen({ width: '100%' });
-        $('#specification').chosen().change(function (event) {
+        $('#specification').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindVendor(dID);
         });
-        $('#ddlVendor').chosen().change(function (event) {
+        $('#ddlVendor').chosen().on('change',function (event) {
             var specfi = $("#specification option:selected").val(); //
             var vandorid = $(this).val();
             var entitytype = $('#entityType').val();
             bindCateSubcat(entitytype, specfi, vandorid);
         });
-        $('#ddlType').chosen().change(function (event) {
+        $('#ddlType').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindBrand(dID);
         });
-        $('#ddlBrand').chosen().change(function (event) {
+        $('#ddlBrand').chosen().on('change',function (event) {
             var dID = $(this).val();
             bindModel(dID);
         });
@@ -373,14 +373,21 @@
             //end region Additional-Attributes
             if (!entityReferencevalidation())
                 return false;
+            if (!entityMaintainence())
+                return false;
             return true;
         });
-        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+        $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" }); 
     });
     function formPost() {
+        debugger;
         $('#no_of_ways').val($("#ddlNoOfWays").val());
         if ($('#txtbomsubcategory').val() == '') {
             $('#txtbomsubcategory').next().addClass('input-validation-error');
+            return false;
+        }
+        if ($('#ddlNoOfWays').val() == '') {
+            $('#ddlNoOfWays').next().addClass('input-validation-error');
             return false;
         }
         else {

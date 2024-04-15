@@ -82,7 +82,7 @@ namespace SmartInventory
                 var userId = userDetails.user_id;
                 new BLUserLogin().UpdateLogOutTime(userId, historyId,loginHistory.source);
             }
-            else
+            else if(HttpContext.Current != null && HttpContext.Current.Response != null)
             {
                 Response.Redirect(Request.Url.GetLeftPart(UriPartial.Authority) + VirtualPathUtility.ToAbsolute("~\\"));
             }

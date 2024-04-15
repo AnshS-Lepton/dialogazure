@@ -356,9 +356,11 @@
 
             }
         });
+        //pk
         objJsPlumb.bind("beforeDrop", function (params) {
             var connection = app.getConnectionsData(params.sourceId, params.targetId, true);
-            var _filterConnection = AllConnectionData.filter(m=>((parseInt(m.source_port_no) == parseInt($('#' + params.sourceId).attr('data-port-no')) && parseInt(m.destination_port_no) == parseInt($('#' + params.targetId).attr('data-port-no')))
+            var _filterConnection = AllConnectionData.filter(m => ((parseInt(m.source_port_no) == parseInt($('#' + params.sourceId).attr('data-port-no')) &&
+                parseInt(m.destination_port_no) == parseInt($('#' + params.targetId).attr('data-port-no')))
             || (parseInt(m.source_port_no) == parseInt($('#' + params.targetId).attr('data-port-no')) && parseInt(m.destination_port_no) == parseInt($('#' + params.sourceId).attr('data-port-no')))));
             if (_filterConnection.length > 0) {
                 alert('Connection already created for these ports!');
@@ -383,7 +385,6 @@
         });
     }
     this.getConnectionsData = function (sourceId, targetId, isManualSplicing) {
-         
         var source = $('#' + sourceId);
         var target = $('#' + targetId);
         var connection = {
@@ -649,7 +650,8 @@
             $('#' + sourceId).attr('data-is-connected', '1');//.css('background', connectedColor);
             $('#' + targetId).attr('data-is-connected', '1');//.css('background', connectedColor);           
             app.currentConnections.push(app.getConnectionsData(sourceId, targetId));
-            AllConnectionData.push(app.getConnectionsData(sourceId, targetId));
+            //AllConnectionData.push(app.getConnectionsData(sourceId, targetId));
+            AllConnectionData.push(app.getConnectionsData());
         }
     }
     this.getOptions = function (sourceId, targetId, cablePosition, color, lineType) {
@@ -734,8 +736,6 @@
         //}
     }
     this.deleteMultiConnection = function (_ssystemId, _snetworkId, _sentityType, _sportNo, _dsystemId, _dnetworkId, _dentityType, _dportNo, _connectionId) {
-         
-
         var source = _ssystemId + '_EQUIPMENT_' + _sportNo;
         var target = _dsystemId + '_EQUIPMENT_' + _dportNo;
         if ($('#hdnInsideConnectivity').val() == 'False') {
@@ -819,8 +819,11 @@
                 if (target.siblings('.connectionCount ').find('.webgrid tbody tr').length == 0) {
                     target.siblings('.connectionCount ').next('.dropbox').hide();
                 }
-                var _findIndex = AllConnectionData.findIndex(m=>((parseInt(m.source_system_id) == parseInt(sourceAttributes.systemId) && parseInt(m.source_port_no) == parseInt(sourceAttributes.portNo) && parseInt(m.destination_port_no) == parseInt(targetAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId))
-            || (parseInt(m.source_system_id) == parseInt(targetAttributes.systemId) && parseInt(m.source_port_no) == parseInt(targetAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(sourceAttributes.systemId) && parseInt(m.destination_port_no) == parseInt(sourceAttributes.portNo))));
+                var _findIndex = AllConnectionData.findIndex(m => ((parseInt(m.source_system_id) == parseInt(sourceAttributes.systemId) &&
+                    parseInt(m.source_port_no) == parseInt(sourceAttributes.portNo) &&
+                    parseInt(m.destination_port_no) == parseInt(targetAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId))
+                    || (parseInt(m.source_system_id) == parseInt(targetAttributes.systemId) && parseInt(m.source_port_no) == parseInt(targetAttributes.portNo) &&
+                        parseInt(m.destination_system_id) == parseInt(sourceAttributes.systemId) && parseInt(m.destination_port_no) == parseInt(sourceAttributes.portNo))));
                 AllConnectionData.splice(_findIndex, 1);
 
             }
@@ -963,7 +966,8 @@
             .attr('stroke', 'none');
     }
     this.unSpliceAll = function () {
-        if (app.currentConnections.length > 0) {
+        if (app.currentConnections.length > 0)
+        {
             //Are you sure to un-splice all connections?
             confirm(MultilingualKey.SI_OSP_GBL_JQ_GBL_025, function () {
                 app.isAutoDeleteConnection = true;

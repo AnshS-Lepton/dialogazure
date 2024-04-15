@@ -182,6 +182,10 @@ namespace BusinessLogics
         {
             return new DAUser().BindReportingManager(RoleId, user_id);
         }
+        public List<KeyValueDropDown> BindFETool( int user_id)
+        {
+            return new DAUser().BindFETool(user_id);
+        }
         #endregion
         public List<KeyValueDropDown> BindWarehouseCode()
         {
@@ -649,6 +653,19 @@ namespace BusinessLogics
         {
             return new DAUserManagerMapping().GetManagerMapping(user_id);
         }
+    }
+
+    public class BLUserToolMapping
+    {
+        public List<userFeToolMapping> SaveUserToolMapping(List<userFeToolMapping> lstUserToolMapping, int user_id)
+        {
+            return new DAUserToolMapping().SaveUserToolMapping(lstUserToolMapping, user_id);
+        }
+        public List<userFeToolMapping> GetToolMapping(int user_id)
+        {
+            return new DAUserToolMapping().GetToolMapping(user_id);
+        }
+
     }
 
     public class BLUserWarehouseCodeMapping

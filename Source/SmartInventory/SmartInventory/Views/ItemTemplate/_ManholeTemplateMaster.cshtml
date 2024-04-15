@@ -12,6 +12,7 @@
 @{
     var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Manhole.ToString().ToUpper()).FirstOrDefault() : null;
 }
+<input type="hidden" id="Layer_id" value="@layerDetail.layer_id" />
 <fieldset class="the-fieldset">
     <legend class="the-legend">@layerDetail.layer_title Details</legend>
     <div class="form-group">
@@ -25,7 +26,10 @@
     <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_GBL_026</legend>
     @ItemSpecification()
 </fieldset>
-
+<fieldset class="the-fieldset">
+    <legend class="the-legend">Model Mapping & System Specification</legend>
+    @SystemSpecification()
+</fieldset>
 <script type="text/javascript">
 
     $(document).ready(function () {
@@ -43,27 +47,27 @@
         //    $('#txtSubCategory3').val("");
         //}
         $('.chosen-select').chosen({ width: '100%' });
-        $('#specification').chosen().change(function (event) {
+        $('#specification').chosen().on('change',function (event) {
             var dID = $(this).val();
             si.bindVendor(dID);
         });
-        $('#ddlVendor').chosen().change(function (event) {
+        $('#ddlVendor').chosen().on('change',function (event) {
             var specfi = $("#specification option:selected").val(); //
             var vandorid = $(this).val();
             var entitytype = $('#entityType').val();
             si.bindCateSubcat(entitytype, specfi, vandorid);
         });
-        $('#ddlType').chosen().change(function (event) {
+        $('#ddlType').chosen().on('change',function (event) {
             var dID = $(this).val();
             si.bindBrand(dID);
         });
-        $('#ddlBrand').chosen().change(function (event) {
+        $('#ddlBrand').chosen().on('change',function (event) {
             var dID = $(this).val();
             si.bindModel(dID);
         });
 
         //---------shazia
-        $('#ddlManholeType').change(function (event) {
+        $('#ddlManholeType').on('change',function (event) {
 
             var Is_specification_allowed = $(this).attr("is-specification-allowed");
             var selected_manhole_type = $("#ddlManholeType option:selected").val();
