@@ -1604,8 +1604,10 @@ namespace Models
 		public string province_abbreviation { get; set; }
 		[Required]
 		public string bom_sub_category { get; set; }
-		//public string served_by_ring { get; set; }
-		[NotMapped]
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
+        //public string served_by_ring { get; set; }
+        [NotMapped]
 		public List<DropDownMaster> lstBOMSubCategory { get; set; }
 		[NotMapped]
 		public List<DropDownMaster> lstServedByRing { get; set; }
