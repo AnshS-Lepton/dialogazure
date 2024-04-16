@@ -340,6 +340,9 @@ namespace BusinessLogics
         {
             return objDALayer.GetBlockBySubDistrictId(subdistrictid);
         }
-
+        public List<RouteInfo> getRouteInfo(string province_ids)
+        {
+            return objDALayer.getRouteInfo(province_ids);
+        }
     }
 }

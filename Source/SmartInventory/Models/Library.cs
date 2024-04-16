@@ -2728,6 +2728,10 @@ namespace Models
 		public IList<DropDownMaster> lstNetworkStatus { get; set; }
 		[NotMapped]
         public List<string> lstUserModule { get; set; }
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
         public ExportEntitiesReportNew()
 		{
 			lstLayers = new List<layerReportDetail>();
@@ -2745,7 +2749,8 @@ namespace Models
 			list3rdPartyVendorId = new List<KeyValueDropDown>();
             lstUserModule = new List<string>();
 			lstfiletypes = new List<fileTypes>();
-		}
+            lstRouteInfo = new List<RouteInfo>();
+        }
 
 	}
 	[Serializable]
@@ -2785,7 +2790,9 @@ namespace Models
 		public string durationbasedon { get; set; }
         public bool is_all_provience_assigned { get; set; }
 		public double radius { get; set; }
-        public string connectionString { get; set; }       
+        public string connectionString { get; set; }
+        public List<int> selected_route_id { get; set; }//int[]
+        public string selected_route_ids { get; set; }
     }
 
 	public class EntitySummaryReport
@@ -2878,6 +2885,7 @@ namespace Models
 		public string SelectedLayerIds { get; set; }
 		public double radius { get; set; }
         public string connectionString { get; set; }
+        public string selected_route_ids { get; set; }
     }
 
 	public class ReportAdvanceFilter
