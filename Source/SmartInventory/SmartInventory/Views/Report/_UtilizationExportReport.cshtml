@@ -461,7 +461,7 @@
 
     function selectallentity(chkAll) {
         if (!$(chkAll).is(":checked")) {
-            $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").removeAttr("checked");
+            $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").prop("checked", false);
         }
         else {
             $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").prop("checked", true);
