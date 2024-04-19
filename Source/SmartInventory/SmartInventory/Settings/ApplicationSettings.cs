@@ -243,6 +243,7 @@ namespace SmartInventory.Settings
         public static int MaxLineEntityLength = 0;
         public static int isCDBAttributeEnabled = 0;
         public static bool fetoolsenabled = true;
+        public static int CableDefLabelMinZoom = 0;
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -841,7 +842,10 @@ namespace SmartInventory.Settings
                 {
                     isCDBAttributeEnabled = Convert.ToInt32(objSetting.value);
                 }
-
+                if (objSetting.key == "CableDefLabelMinZoom")
+                {
+                    CableDefLabelMinZoom = Convert.ToInt32(objSetting.value);
+                }
             }
         }
     }

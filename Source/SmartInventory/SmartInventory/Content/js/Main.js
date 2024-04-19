@@ -1564,12 +1564,14 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Cable";
         });
+        var zoomlevel = si.map.getZoom();
+        var isZoomLevelLessThan14 = zoomlevel < cableDefLabelMinZoom;//cabledeflabelminzoom
         return new deck.TextLayer({
             id: 'CableCore-text',
             data: app.filterDataWithProvinceGeom(app.cableCoreLabelDataFiltered, "JsonArray", "CBL"),// app.cableCoreLabelDataFiltered,
             pickable: false,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
-            visible: app.isVectorLayerActive("CBL") && !app.isVectorLayerLabelEnabled("CBL"),
+            visible: isZoomLevelLessThan14 ? false : app.isVectorLayerActive("CBL") && !app.isVectorLayerLabelEnabled("CBL"),
             getPosition: (d) => d.position,
             getText: (d) => d.text,
             getAngle: d => d.angle,
