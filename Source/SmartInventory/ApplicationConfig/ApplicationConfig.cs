@@ -8,8 +8,8 @@ namespace ApplicationConfig
 {
     public class AppConfig
     {
-        public static int WebUserMaxLimit { get { return 30000; } }
-        public static int MobileUserMaxLimit { get { return 30000; } }
+        public static int WebUserMaxLimit { get { return 25; } }
+        public static int MobileUserMaxLimit { get { return 25; } }
         public static string AdminPassword { get { return "QGRtaW5pc3RyQHQwckAxMjM="; } }// base 64 encrypted
         public static string MobileResourcesKeyPassword { get { return "QGRtaW5pc3RyQHQwcgRtaW5pc3RyQHQwcgc3RyQHQwcgQwcg=="; } }
     }

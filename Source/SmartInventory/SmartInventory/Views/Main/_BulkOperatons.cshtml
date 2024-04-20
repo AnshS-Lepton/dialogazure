@@ -250,7 +250,7 @@ grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format:
                                                         </span>*@
                                                                     //if (userModuleList.Contains("PROJ"))
                                                                     //{
-                                                                        <span class="bulkEntityLstAction @(!item.is_project_spec_allowed || !editPermission ? "roledisabled" : "")" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_032" onclick="@(!item.is_project_spec_allowed || !editPermission ? "disabledItem(event);" : "si.SaveBulkProjSpec( '" + item.entity_type + "','" + item.entity_sub_type + "')")">
+                                                                        <span class="bulkEntityLstAction @(!item.is_project_spec_allowed || !editPermission ? "roledisabled" : "")" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_032" onclick="@(!item.is_project_spec_allowed || !editPermission ? "disabledItem(event);" : "si.SaveBulkProjSpec( '" + item.layer_name + "','" + item.entity_sub_type + "')")">
                                                                         </span>
                                                                     //}
                                                                     if (isPODAssociationEnabled)

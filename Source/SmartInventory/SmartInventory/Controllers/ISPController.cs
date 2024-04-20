@@ -689,7 +689,7 @@ namespace SmartInventory.Controllers
             fillProjectSpecifications(objFDB);
             return objFDB;
         }
-        public ActionResult SaveFDB(FDBInfo model, bool isDirectSave = false)
+        public ActionResult SaveFDB(FDBInfo objFDB, bool isDirectSave = false)
         {
 
             //ModelState.Clear();
@@ -793,10 +793,10 @@ namespace SmartInventory.Controllers
             //    new MiscHelper().BindPortDetails(model, EntityType.FDB.ToString(), DropDownType.Fdb_Port_Ratio.ToString());
             //    return PartialView("_AddFDB", model);
             //}
-            model.user_id = Convert.ToInt32(Session["user_id"]);
-            model.isDirectSave = isDirectSave;
+            objFDB.user_id = Convert.ToInt32(Session["user_id"]);
+            objFDB.isDirectSave = isDirectSave;
             string url = "api/Library/EntityOperations ";
-            var response = WebAPIRequest.PostIntegrationAPIRequest<FDBInfo>(url, model, EntityType.FDB.ToString(), EntityAction.Save.ToString(), model.objIspEntityMap.structure_id.ToString());
+            var response = WebAPIRequest.PostIntegrationAPIRequest<FDBInfo>(url, objFDB, EntityType.FDB.ToString(), EntityAction.Save.ToString(), objFDB.objIspEntityMap.structure_id.ToString());
             if (isDirectSave)
             {
                 return Json(response.results.objPM, JsonRequestBehavior.AllowGet);

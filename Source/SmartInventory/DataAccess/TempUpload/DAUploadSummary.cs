@@ -136,5 +136,13 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<Dictionary<string, string>> getUploadCDBAttributesGuideLines(string entityType)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<Dictionary<string, string>>("fn_uploader_get_template_cdbattributes_guideline", new { p_entity_type = entityType }, true);
+            }
+            catch { throw; }
+        }
     }
 }
