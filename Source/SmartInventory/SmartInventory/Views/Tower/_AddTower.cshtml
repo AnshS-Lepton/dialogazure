@@ -1,9 +1,9 @@
 ﻿@model Models.TowerMaster
 @using Models;
 @using SmartInventory.Settings;
-@helper ItemSpecification()
+@helper TowerSpecification()
 {
-    { Html.RenderPartial("~/Views/ItemTemplate/_ItemSpecification.cshtml", (itemMaster)Model); }
+    { Html.RenderPartial("~/Views/Tower/ItemTemplate/_TowerTemplateMaster.cshtml", (TowerTemplateMaster)Model); }
 }
 
 @helper ProjectSpecifications()
@@ -233,7 +233,7 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="ItemSpecf">
-                    @ItemSpecification()
+                    @TowerSpecification()
                 </div>
                 <div id="dvRefrence" class="tab-pane"></div>
                 <div class="tab-pane" id="InstallationInfo">
