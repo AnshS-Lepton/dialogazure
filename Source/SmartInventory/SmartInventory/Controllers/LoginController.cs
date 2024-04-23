@@ -496,11 +496,11 @@ namespace SmartInventory.Controllers
 
         private void LogUserIn(User user, string Source)
         {
-            SessionIDManager manager = new SessionIDManager();
-            string newSessionId = manager.CreateSessionID(System.Web.HttpContext.Current);
-            bool redirected = false;
-            bool IsAdded = false;
-            manager.SaveSessionID(System.Web.HttpContext.Current, newSessionId, out redirected, out IsAdded);
+            //SessionIDManager manager = new SessionIDManager();
+            //string newSessionId = manager.CreateSessionID(System.Web.HttpContext.Current);
+            //bool redirected = false;
+            //bool IsAdded = false;
+            //manager.SaveSessionID(System.Web.HttpContext.Current, newSessionId, out redirected, out IsAdded);
 
             //SaveLoginHistory(user.user_id);
             Session["user_id"] = user.user_id;
