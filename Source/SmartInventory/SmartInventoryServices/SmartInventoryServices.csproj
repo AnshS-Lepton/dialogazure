@@ -608,6 +608,7 @@
     <Compile Include="Controllers\ResourcesController.cs" />
     <Compile Include="Controllers\SignInController.cs" />
     <Compile Include="Controllers\SplicingController.cs" />
+    <Compile Include="Controllers\ConnectionController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="Controllers\TicketManagerController.cs" />
     <Compile Include="Controllers\UserController.cs" />
