@@ -35,21 +35,18 @@ namespace Models
         [NotMapped]
         public string unitValue { get; set; }
         //MODEL MAPPING      
-        public int type { get; set; }
-        [Required]
-        public int brand { get; set; }
-        [Required]
-        public int model { get; set; }
-        [Required]
-        public int construction { get; set; }
-        [Required]
-        public int activation { get; set; }
-        [Required]
+        public int type { get; set; }       
+        public int brand { get; set; }       
+        public int model { get; set; }       
+        public int construction { get; set; }      
+        public int activation { get; set; }       
         public int accessibility { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> lstSpecification { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> lstType { get; set; }
+        [NotMapped]
+        public List<KeyValueDropDown> listType { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> lstBrand { get; set; }
         [NotMapped]
@@ -87,6 +84,7 @@ namespace Models
             specification = "";
             lstSpecification = new List<KeyValueDropDown>();
             lstType = new List<KeyValueDropDown>();
+            listType = new List<KeyValueDropDown>();
             lstBrand = new List<KeyValueDropDown>();
             lstModel = new List<KeyValueDropDown>();
             lstAccessibility = new List<KeyValueDropDown>();

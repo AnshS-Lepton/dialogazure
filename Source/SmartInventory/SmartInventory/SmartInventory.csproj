@@ -299,8 +299,8 @@
     <Content Include="Areas\Admin\Content\js\jquery-1.10.2.js" />
     <Content Include="Areas\Admin\Content\js\jquery-1.10.2.min.js" />
     <Content Include="Areas\Admin\Content\js\jquery-1.9.1.js" />
-    <Content Include="Areas\Admin\Content\js\jquery-3.6.0.js" />
-    <Content Include="Areas\Admin\Content\js\jquery-3.6.0.min.js" />
+    <Content Include="Areas\Admin\Content\js\jquery-3.7.1.js" />
+    <Content Include="Areas\Admin\Content\js\jquery-3.7.1.min.js" />
     <Content Include="Areas\Admin\Content\js\spectrum.js" />
     <Content Include="Areas\Admin\Content\images\handle.png" />
     <Content Include="Areas\Admin\Content\images\sort_asc.png" />
@@ -1539,6 +1539,8 @@
     <Content Include="Content\images\StructureHeader.png" />
     <Content Include="Content\images\tick_1.gif" />
     <Content Include="Content\images\timer.svg" />
+    <Content Include="Content\images\top_bg_blue.png" />
+    <Content Include="Content\images\top_bg_dBlue.png" />
     <Content Include="Content\images\top_bg_red.png" />
     <Content Include="Content\images\UnlinkAll.svg" />
     <Content Include="Content\images\warinng.png" />
@@ -1569,7 +1571,9 @@
     <Content Include="Content\js\inputpicker\jquery.inputpicker1.js" />
     <Content Include="Content\js\inputpicker\popper.min.js" />
     <Content Include="Content\js\jquery-1.9.1.min.js" />
-    <Content Include="Content\js\jquery-3.6.0.js" />
+    <Content Include="Content\js\jquery-3.7.1.js" />
+    <Content Include="Content\js\jquery-ui.js" />
+    <Content Include="Content\js\jquery-ui.min.js" />
     <Content Include="Content\js\jquery.serializejson.js" />
     <Content Include="Content\js\LandBase.js" />
     <Content Include="Content\js\gmaps-large-polygon.js" />
@@ -1588,6 +1592,7 @@
     <Content Include="Content\js\vis_4_18_1.min.js" />
     <Content Include="Content\sort_asc.png" />
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
+    <Content Include="MigrationScripts\05-04-2024.sql" />
     <Content Include="MigrationScripts\2024_02_27_vodafone_issues.sql" />
     <Content Include="MigrationScripts\2024_02_25_vodafone_issues.sql" />
     <Content Include="MultilingualJunkKeys\Content\Js\Alert.js" />
@@ -1749,8 +1754,6 @@
     <Content Include="Content\js\InputMask\dx.common.css" />
     <Content Include="Content\js\InputMask\dx.light.css" />
     <Content Include="Content\js\jquery-1.10.2.js" />
-    <Content Include="Content\js\jquery-ui.js" />
-    <Content Include="Content\js\jquery-ui.min.js" />
     <Content Include="Content\js\jquery.cookie.js" />
     <Content Include="Content\js\jquery.js" />
     <Content Include="Content\js\jquery.treeview.js" />
@@ -1934,11 +1937,11 @@
     <Content Include="Areas\Admin\Views\OTPAuthenticationSettings\EmailTemplateConfiguration.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\ViewSpecificationServices.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\SpecificationService.cshtml" />
-    <None Include="Scripts\jquery-3.6.0.intellisense.js" />
-    <Content Include="Scripts\jquery-3.6.0.js" />
-    <Content Include="Scripts\jquery-3.6.0.min.js" />
-    <Content Include="Scripts\jquery-3.6.0.slim.js" />
-    <Content Include="Scripts\jquery-3.6.0.slim.min.js" />
+    <None Include="Scripts\jquery-3.7.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.7.1.js" />
+    <Content Include="Scripts\jquery-3.7.1.min.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.js" />
     <Content Include="Scripts\jquery.signalR-2.4.1.js" />
     <Content Include="Scripts\jquery.signalR-2.4.1.min.js" />
     <Content Include="Uploads\SHAPE\RegionProvince\save\test.txt" />
@@ -2232,8 +2235,8 @@
     </None>
     <Content Include="Content\js\chartist.min.js.map" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\jquery-3.6.0.slim.min.map" />
-    <Content Include="Scripts\jquery-3.6.0.min.map" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.7.1.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />

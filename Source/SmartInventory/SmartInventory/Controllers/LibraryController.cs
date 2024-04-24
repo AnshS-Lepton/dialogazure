@@ -3655,8 +3655,9 @@ namespace SmartInventory.Controllers
 		{
 			var objDDL = new BLMisc().GetDropDownList(EntityType.Manhole.ToString());
 			objManholeMaster.listConstructionType = objDDL.Where(x => x.dropdown_type == DropDownType.Construction_Type.ToString()).ToList();
-			//objManholeMaster.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
-			objManholeMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
+            //objManholeMaster.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
+            objManholeMaster.MCGMWardIn = objDDL.Where(x => x.dropdown_type == DropDownType.MCGM_Ward.ToString()).ToList();
+            objManholeMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
 		}
 		#endregion
 
@@ -12343,7 +12344,9 @@ namespace SmartInventory.Controllers
 					});
 				}
 			}
-			return Json(lstImageResult, JsonRequestBehavior.AllowGet);
+			var jsonResult = Json(lstImageResult, JsonRequestBehavior.AllowGet);
+		    jsonResult.MaxJsonLength = int.MaxValue;
+			return jsonResult;
 		}
 
 		private static bool ExistFile(string remoteAddress, string FtpUser, string FtpPass)

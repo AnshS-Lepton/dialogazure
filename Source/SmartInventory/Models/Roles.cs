@@ -305,6 +305,15 @@ namespace Models
         public int user_id { get; set; }
     }
 
+    public class userFeToolMapping
+    {
+        public int id { get; set; }
+        public int user_id { get; set; }
+        public int tool_id { get; set; }
+        [NotMapped]
+        public string tool_name { get; set; }
+    }
+
     public class ReportingRoleMapping
     {
         [Key]

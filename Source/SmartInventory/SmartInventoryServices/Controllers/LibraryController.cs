@@ -1497,9 +1497,10 @@ namespace SmartInventoryServices.Controllers
 		private void BindManholeDropDown(ManholeMaster objManholeMaster)
 		{
 			var objDDL = new BLMisc().GetDropDownList(EntityType.Manhole.ToString());
-			objManholeMaster.listConstructionType = objDDL.Where(x => x.dropdown_type == DropDownType.Construction_Type.ToString()).ToList();
+            objManholeMaster.listConstructionType = objDDL.Where(x => x.dropdown_type == DropDownType.Construction_Type.ToString()).ToList();
 			objManholeMaster.lstManholeType = objDDL.Where(x => x.dropdown_type == DropDownType.Manhole_types.ToString()).ToList();
-			objManholeMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
+            objManholeMaster.MCGMWardIn = objDDL.Where(x => x.dropdown_type == DropDownType.MCGM_Ward.ToString()).ToList();
+            objManholeMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList("");
 			objManholeMaster.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//objManholeMaster.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();

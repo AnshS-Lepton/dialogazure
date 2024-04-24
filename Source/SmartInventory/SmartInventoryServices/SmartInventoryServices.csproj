@@ -544,7 +544,7 @@
     <Content Include="Content\js\chosen.jquery.min.js" />
     <Content Include="Content\js\HPSMTicket.js" />
     <Content Include="Content\js\jquery-1.10.2.min.js" />
-    <Content Include="Content\js\jquery-3.6.0.min.js" />
+    <Content Include="Content\js\jquery-3.7.1.min.js" />
     <Content Include="Content\js\jquery-swapsies.js" />
     <Content Include="Content\js\jquery-ui.min.js" />
     <Content Include="Content\js\jquery.js" />
@@ -563,11 +563,11 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <None Include="Scripts\jquery-3.6.0.intellisense.js" />
-    <Content Include="Scripts\jquery-3.6.0.js" />
-    <Content Include="Scripts\jquery-3.6.0.min.js" />
-    <Content Include="Scripts\jquery-3.6.0.slim.js" />
-    <Content Include="Scripts\jquery-3.6.0.slim.min.js" />
+    <None Include="Scripts\jquery-3.7.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.7.1.js" />
+    <Content Include="Scripts\jquery-3.7.1.min.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -608,6 +608,7 @@
     <Compile Include="Controllers\ResourcesController.cs" />
     <Compile Include="Controllers\SignInController.cs" />
     <Compile Include="Controllers\SplicingController.cs" />
+    <Compile Include="Controllers\ConnectionController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="Controllers\TicketManagerController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -687,8 +688,8 @@
     <Content Include="Views\Splicing\_Splicing.cshtml" />
     <Content Include="Views\Shared\_ModalPopUp.cshtml" />
     <Content Include="Views\TicketManager\_HPSMTicket.cshtml" />
-    <Content Include="Scripts\jquery-3.6.0.slim.min.map" />
-    <Content Include="Scripts\jquery-3.6.0.min.map" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.7.1.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

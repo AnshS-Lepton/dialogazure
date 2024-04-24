@@ -461,7 +461,7 @@
 
     function selectallentity(chkAll) {
         if (!$(chkAll).is(":checked")) {
-            $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").removeAttr("checked");
+            $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").prop("checked", false);
         }
         else {
             $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").prop("checked", true);
@@ -620,13 +620,13 @@
         }
     };
 
-    $('#ddlProjectCode').change(function () {
+    $('#ddlProjectCode').on('change',function () {
         si.BindPlanningDetailByProjectIds();
     })
-    $('#ddlPlanningCode').change(function () {
+    $('#ddlPlanningCode').on('change',function () {
         si.BindWorkCodeDetailByPlanningIds();
     })
-    $('#ddlWorkorderCode').change(function () {
+    $('#ddlWorkorderCode').on('change',function () {
         si.BindPurposeCodeDetailByWorkOrderIds();
     })
     function ShowOnMap(summaryid, entitytitle,networkstatus, lowcount, moderatecount, highcount, overcount, ductutilization)

@@ -242,7 +242,8 @@ namespace SmartInventory.Settings
         static string smsapi = "";
         public static int MaxLineEntityLength = 0;
         public static int isCDBAttributeEnabled = 0;
-
+        public static bool fetoolsenabled = true;
+        public static int CableDefLabelMinZoom = 0;
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -252,6 +253,8 @@ namespace SmartInventory.Settings
             {
                 if (objSetting.key == "AppVersion")
                     AppVersion = objSetting.value;
+                if (objSetting.key == "fetoolsenabled")
+                    fetoolsenabled =Convert.ToInt32(objSetting.value) == 1 ? true : false;
                 if (objSetting.key == "EntitySearchLength")
                     EntitySearchLength = Convert.ToInt32(objSetting.value);
                 if (objSetting.key == "BldBufferInMtr")
@@ -839,7 +842,10 @@ namespace SmartInventory.Settings
                 {
                     isCDBAttributeEnabled = Convert.ToInt32(objSetting.value);
                 }
-
+                if (objSetting.key == "CableDefLabelMinZoom")
+                {
+                    CableDefLabelMinZoom = Convert.ToInt32(objSetting.value);
+                }
             }
         }
     }

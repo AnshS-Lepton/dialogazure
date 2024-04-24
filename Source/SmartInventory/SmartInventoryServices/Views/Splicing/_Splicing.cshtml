@@ -232,7 +232,7 @@
         </div>
     </div>
 </div>
-<script src="~/Content/js/jquery-3.6.0.min.js"></script>
+<script src="~/Content/js/jquery-3.7.1.min.js"></script>
 @*<script src="~/Content/js/jquery.js"></script>*@
 <script src="~/Content/js/jquery-ui.min.js"></script>
 
@@ -255,7 +255,7 @@
         splicing.initApp();
         $(' .chosen-select').chosen({ width: '100%', max_selected_options: 5, search_contains: true });
         $("#CPEToCustomer .chosen-select").bind("chosen:maxselected", function () { alert('Maximum 5 customers can be selected!') });
-        $(".chosen-select").chosen().next(".chzn-container").hover(
+        $(".chosen-select").chosen().next(".chzn-container").on('hover',
             function () {
                 $("#dropdown").trigger("liszt:open");
             },

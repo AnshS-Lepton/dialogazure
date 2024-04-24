@@ -157,7 +157,7 @@
 
 
     $(document).ready(function () {
-        $("#checkedAll").change(function () {
+        $("#checkedAll").on('change', function () {
             if (this.checked) {
                 $(".checkSingle").each(function () {
                     this.checked = true;
