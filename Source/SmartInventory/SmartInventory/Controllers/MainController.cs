@@ -507,7 +507,6 @@ namespace SmartInventory.Controllers
             //    objResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_160;
             //}
             //return Json(objResp, JsonRequestBehavior.AllowGet);
-
             objImpactDetailIn.user_id = Convert.ToInt32(Session["user_id"]);
             string url = "api/Main/GetDependentChildElements ";
             var response = WebAPIRequest.PostIntegrationAPIRequest<ImpactDetail>(url, objImpactDetailIn, "", "");
