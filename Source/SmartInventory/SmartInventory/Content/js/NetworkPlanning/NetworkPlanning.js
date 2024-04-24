@@ -329,7 +329,11 @@ var NetworkPlanning = function () {
     }
 
     this.createAutoPlanNetwork = function () {
-         
+        debugger;
+        var isValid = validateSpanlength();
+        if (isvalid = "false") {
+            return false;
+        }
         if (app.selectedPlanningPath != null && app.selectedPlanningPath.length == undefined) {
 
             for (let j = 0; j < app.selectedPlanningPath.legs.length; j++) {
@@ -388,7 +392,7 @@ var NetworkPlanning = function () {
             app.autoPlanningShowNetworkLayer(resp);
         }, false, true, false);
     }
-
+  
     this.geomToForm = function () {
         if ($('#ddledit_path').val() == "manually") {
             si.point2pointgeom = [];
@@ -1910,6 +1914,19 @@ function drawCircle(point, radius, dir) {
 function powerBackupTrue() {
 
     $("#txtPwrBkpCapacity").prop("readonly", false);
+}
+function validateSpanlength() {
+    debugger;
+    var Spanlength = parseFloat(document.getElementById('pole_manhole_distance').value);
+    var Cabledrumlength = parseFloat(document.getElementById('cable_length').value);
+    var status ="true"
+
+    if (Spanlength > Cabledrumlength) {
+        alert('Span length equal or less then drum length');
+        document.getElementById('pole_manhole_distance').value = '';
+        status ="false"
+    }
+    return status;
 }
 
 

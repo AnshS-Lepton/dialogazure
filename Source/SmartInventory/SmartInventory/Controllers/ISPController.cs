@@ -952,7 +952,7 @@ namespace SmartInventory.Controllers
             }
             return objBDB;
         }
-        public ActionResult SaveBDB(BDBMaster model, bool isDirectSave = false)
+        public ActionResult SaveBDB(BDBMaster objBDB, bool isDirectSave = false)
         {
 
             //ModelState.Clear();
@@ -1063,10 +1063,10 @@ namespace SmartInventory.Controllers
             //    return PartialView("_AddBDB", model);
             //}
 
-            model.user_id = Convert.ToInt32(Session["user_id"]);
-            model.isDirectSave = isDirectSave;
+            objBDB.user_id = Convert.ToInt32(Session["user_id"]);
+            objBDB.isDirectSave = isDirectSave;
             string url = "api/Library/EntityOperations ";
-            var response = WebAPIRequest.PostIntegrationAPIRequest<BDBMaster>(url, model, EntityType.BDB.ToString(), EntityAction.Save.ToString(), model.objIspEntityMap.structure_id.ToString());
+            var response = WebAPIRequest.PostIntegrationAPIRequest<BDBMaster>(url, objBDB, EntityType.BDB.ToString(), EntityAction.Save.ToString(), objBDB.objIspEntityMap.structure_id.ToString());
             if (isDirectSave)
             {
                 return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
