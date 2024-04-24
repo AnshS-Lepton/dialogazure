@@ -1118,6 +1118,17 @@ namespace Models
         public List<ConnectionInfoMaster> connections { get; set; }
         public User user { get; set; }
     }
+    public class bulkSplicingInput
+    {
+        public int systemId { get; set; }
+        public string networkId { get; set; }
+        public string entityType { get; set; }
+        public bool isCableAend { get; set; }
+        public string connectionType { get; set; }
+        public int from { get; set; }
+        public int to { get; set; }
+    }
+
 }
 
 
