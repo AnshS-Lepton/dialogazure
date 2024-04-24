@@ -329,7 +329,7 @@ var NetworkPlanning = function () {
     }
 
     this.createAutoPlanNetwork = function () {
-        debugger;
+        
         var isValid = validateSpanlength();
         if (isvalid = "false") {
             return false;
@@ -1916,7 +1916,6 @@ function powerBackupTrue() {
     $("#txtPwrBkpCapacity").prop("readonly", false);
 }
 function validateSpanlength() {
-    debugger;
     var Spanlength = parseFloat(document.getElementById('pole_manhole_distance').value);
     var Cabledrumlength = parseFloat(document.getElementById('cable_length').value);
     var status ="true"
