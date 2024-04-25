@@ -1527,7 +1527,7 @@ var NetworkPlanning = function () {
                 const startPointLineArr = [];
                 startPointLineArr.push(latLngArr[0]);
                 startPointLineArr.push(startPoint);
-                app.StartTmpLine = app.createAutoPlanLine(startPointLineArr, false, true);
+                app.StartTmpLine = app.createAutoPlanLine(startPointLineArr, true, false);
                 app.StartTmpLine.setMap(si.map);
 
 
@@ -1537,7 +1537,7 @@ var NetworkPlanning = function () {
                     EndPointLineArr.push(latLngArr[i]);
                 }
                 EndPointLineArr.push(EndPoint);
-                app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, false, true);
+                app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, true, false);
                 app.EndTmpLine.setMap(si.map);
 
                 app.createDirectionMarker(startPoint, EndPoint);
@@ -1553,7 +1553,7 @@ var NetworkPlanning = function () {
                 const startPointLineArr = [];
                 startPointLineArr.push(latLngArr[0]);
                 startPointLineArr.push(startPoint);
-                app.StartTmpLine = app.createAutoPlanLine(startPointLineArr, false, true);
+                app.StartTmpLine = app.createAutoPlanLine(startPointLineArr, true, false);
                 app.StartTmpLine.setMap(si.map);
 
 
@@ -1564,7 +1564,7 @@ var NetworkPlanning = function () {
                     //app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, false, true);
                 }
                 EndPointLineArr.push(EndPoint);
-                app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, false, true);
+                app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, true, false);
                 //EndPointLineArr.push(latLngArr[endIndex]);
                 //EndPointLineArr.push(EndPoint);
 
