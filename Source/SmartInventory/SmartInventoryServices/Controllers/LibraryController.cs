@@ -2596,8 +2596,12 @@ namespace SmartInventoryServices.Controllers
 			objSCMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objSCMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
-			// objSCMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
-		}
+			if (objSCMaster.system_id == 0)
+				objSCMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSCMaster.geom);
+			else			
+				objSCMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSCMaster.system_id, objSCMaster.entityType);            
+            // objSCMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+        }
 		#endregion
 
 		#region Add Splice Closure
@@ -2622,7 +2626,13 @@ namespace SmartInventoryServices.Controllers
 				BLItemTemplate.Instance.BindItemDropdowns(objSCMaster, EntityType.SpliceClosure.ToString());
 				BindSpilceClosureDropdown(objSCMaster);
 				fillProjectSpecifications(objSCMaster);
-				new BLMisc().BindPortDetails(objSCMaster, EntityType.SpliceClosure.ToString(), DropDownType.SC_Port_Ratio.ToString());
+                List<int> listI = new List<int>();
+                foreach (var i in objSCMaster.lstRouteInfo.Where(x => x.is_associated))
+                {
+					listI.Add(i.cable_id);
+                }
+				objSCMaster.selected_route_ids = listI;
+                new BLMisc().BindPortDetails(objSCMaster, EntityType.SpliceClosure.ToString(), DropDownType.SC_Port_Ratio.ToString());
 				//Get the layer details to bind additional attributes SpliceClosure
 				var layerdetails = new BLLayer().getLayer(EntityType.SpliceClosure.ToString());
 				objSCMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
@@ -2699,6 +2709,30 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objSCMaster.system_id > 0 ? false : true;
 					objSCMaster.is_new_entity = (isNew && objSCMaster.source_ref_id != "0" && objSCMaster.source_ref_id != "");
 					var resultItem = new BLSC().SaveEntitySC(objSCMaster, objSCMaster.user_id);
+                    BindSpilceClosureDropdown(objSCMaster);
+                    List<RouteInfo> objL = new List<RouteInfo>();
+                    foreach (var itm in objSCMaster.lstRouteInfo)
+					{
+						bool f = false;
+						foreach(var ids in objSCMaster.selected_route_ids)
+						{
+							if (ids == itm.cable_id)
+							{
+								f = true;
+
+                            }
+						}
+                        RouteInfo objS = new RouteInfo();
+                        objS.entity_id = resultItem.system_id;
+                        objS.entity_type = resultItem.entityType;
+                        objS.created_by = resultItem.user_id.ToString();
+						objS.cable_id = itm.cable_id;
+						objS.is_associated = f;
+                        objL.Add(objS);
+                    }
+				
+					var res = new BLMisc().saveRouteAssocition(JsonConvert.SerializeObject(objL), resultItem.system_id, EntityType.SpliceClosure.ToString(), resultItem.user_id);
+					
 					if (resultItem.isConvert && string.IsNullOrEmpty(resultItem.objPM.message) && isNew)
 					{
 						string[] LayerName = { EntityType.CDB.ToString(), EntityType.SpliceClosure.ToString() };
@@ -2716,8 +2750,8 @@ namespace SmartInventoryServices.Controllers
 						{
 							SaveReference(objSCMaster.EntityReference, resultItem.system_id);
 						}
-						// }
-					}
+						
+                    }
 					//START SPLIT CABLE FEATURE BY ANTRA//
 					var layerDetails = ApplicationSettings.listLayerDetails.Where(m => m.layer_name.ToUpper() == EntityType.SpliceClosure.ToString().ToUpper()).FirstOrDefault();
 					if (objSCMaster.split_cable_system_id > 0 && layerDetails.is_split_allowed == true && isNew)

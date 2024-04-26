@@ -1023,6 +1023,14 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<RouteInfo> getRouteEntityInLineBuffer(string geom)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<RouteInfo>("fn_get_near_by_route", new { p_geom = geom }, true).ToList();
+            }
+            catch { throw; }
+        }
         public List<LineEntityInfo> getAutoLineEntityInLineBuffer(int systemId, string entityType, int pSystemId, string pEntityType, string pParentGeom, string pParentGeomType)
         {
             try
