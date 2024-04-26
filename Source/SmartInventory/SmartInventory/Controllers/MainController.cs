@@ -59,7 +59,7 @@ namespace SmartInventory.Controllers
         public ActionResult Index()
         {
             var usrDetail = (User)Session["userDetail"];
-           
+
             //if (usrDetail != null && usrDetail.role_id == 1)
             //{
             //    return RedirectToAction("index", "UnAuthorized");
@@ -79,16 +79,16 @@ namespace SmartInventory.Controllers
                 }
                 var moduleAbbr = "NWTLYR";
                 var connectionString = "";
-               // List<ConnectionMaster> con = new BLLayer().GetConnectionString(moduleAbbr);
+                // List<ConnectionMaster> con = new BLLayer().GetConnectionString(moduleAbbr);
                 ConnectionMaster con = new BLLayer().GetConnectionString(moduleAbbr);
-              //  foreach (var conn in con)
-              //  {
-                if(con != null)
+                //  foreach (var conn in con)
+                //  {
+                if (con != null)
                 {
-					connectionString = con.connection_string;
-				}
-                    
-              //  }
+                    connectionString = con.connection_string;
+                }
+
+                //  }
 
                 objMain.lstNetworkLayers = objBLLayer.GetNetworkLayers(usrId, 0, role_Id, connectionString);
                 Session["NerworkLayerDetails"] = objBLLayer.GetAllNetworkLayersPermissions(usrId);
@@ -122,17 +122,17 @@ namespace SmartInventory.Controllers
                 return View("Login/Index");
         }
 
-		public ActionResult HierachyList()
-		{
-			var result = new BusinessLogics.BLDashboard().GetHierarchyList();
-			return Json(new { Data = result });
-		}
-		public ActionResult DashboardResult(string state, string jc, string town, string partner, string fsa)
-		{
-			var output = new BusinessLogics.BLDashboard().GetDashboardResult(state, jc, town, partner, fsa);
-			return Json(new { Data = output[0] });
-		}
-		[HttpPost]
+        public ActionResult HierachyList()
+        {
+            var result = new BusinessLogics.BLDashboard().GetHierarchyList();
+            return Json(new { Data = result });
+        }
+        public ActionResult DashboardResult(string state, string jc, string town, string partner, string fsa)
+        {
+            var output = new BusinessLogics.BLDashboard().GetDashboardResult(state, jc, town, partner, fsa);
+            return Json(new { Data = output[0] });
+        }
+        [HttpPost]
         public ActionResult GetEntitySearchResult(string SearchText)
         {
             var usrDetail = (User)Session["userDetail"];
@@ -163,7 +163,7 @@ namespace SmartInventory.Controllers
                 }
             }
             return Json(new { geonames = lstSearchResult }, JsonRequestBehavior.AllowGet);
-        } 
+        }
         [HttpPost]
         public ActionResult GetSiteVendorAutoResult(string SearchText)
         {
@@ -507,7 +507,6 @@ namespace SmartInventory.Controllers
             //    objResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_160;
             //}
             //return Json(objResp, JsonRequestBehavior.AllowGet);
-
             objImpactDetailIn.user_id = Convert.ToInt32(Session["user_id"]);
             string url = "api/Main/GetDependentChildElements ";
             var response = WebAPIRequest.PostIntegrationAPIRequest<ImpactDetail>(url, objImpactDetailIn, "", "");
@@ -519,7 +518,7 @@ namespace SmartInventory.Controllers
         {
             var usrDetail = (User)Session["userDetail"];
             JsonResponse<string> objResp = new JsonResponse<string>();
-            GISAPIResponse objGISresp= new GISAPIResponse();
+            GISAPIResponse objGISresp = new GISAPIResponse();
             int deleteChk = 0;
             bool DelSurveyAreaChk = false;
             EntityType enType = (EntityType)System.Enum.Parse(typeof(EntityType), entityType);
@@ -538,244 +537,219 @@ namespace SmartInventory.Controllers
                     objResp.message = Resources.Resources.SI_GBL_GBL_GBL_GBL_007;
 
                     return Json(objResp, JsonRequestBehavior.AllowGet);
-                }
-                //Boundary Deletion in JFP to be synced in GIS BY ANTRA
-                string URL = new BLSearch().GetGISApi(systemId, entityType, 2);
-                BoundaryPushFilter objGIS = new BoundaryPushFilter();
-                objGIS.entity_type = entityType;
-                objGIS.system_id= systemId;
-                var objEntityDetails = new BLSearch().GetGeometryDetailsToPush(objGIS);
-                string gisDesignId = new BLTicketType().GetDesignId(systemId, entityType);
-                var objDetails = objEntityDetails.FirstOrDefault();
-                if (objDetails != null)
+                }               
+                switch (enType)
                 {
-                    if (objDetails.objectId > 0)
-                    {
-                        var VersionName = "R4G_FTTX." + gisDesignId;
-                        objGISresp = WebAPIRequest.PostPartnerAPI<GISAPIResponse>(usrDetail.user_id, gisDesignId, systemId, entityType, "", URL, VersionName, objDetails.objectId, "DELETE-DATA","");
-                        if (objGISresp.deleteResults.Count > 0)
+                    case EntityType.Area:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Area.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
+                        deleteChk = response.status == true ? 1 : 0;
+                        break;
+
+                    case EntityType.SubArea:
+
+                        response = new BLMisc().deleteEntity(systemId, EntityType.SubArea.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
+                        deleteChk = response.status == true ? 1 : 0;
+                        break;
+
+                    case EntityType.CSA:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.CSA.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
+                        deleteChk = response.status == true ? 1 : 0;
+                        break;
+
+                    case EntityType.Building:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Building.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
+                        deleteChk = response.status == true ? 1 : 0;
+                        break;
+
+                    case EntityType.Structure:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Structure.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        if (!response.status)
                         {
-                            response = new BLMisc().deleteEntity(systemId, entityType, GeometryType.Polygon.ToString(), usrDetail.user_id);
-                            deleteChk = response.status == true ? 1 : 0;
+                            objResp.status = ResponseStatus.FAILED.ToString();
+                            objResp.message = BLConvertMLanguage.MultilingualMessageConvert(response.message);//response.message;
+                            return Json(objResp, JsonRequestBehavior.AllowGet);
                         }
-                    }
-                    //END
-                    else
-                    {
-
-                        switch (enType)
+                        else
                         {
-                            case EntityType.Area:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Area.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
-                                deleteChk = response.status == true ? 1 : 0;
-                                break;
-
-                            case EntityType.SubArea:
-
-                                response = new BLMisc().deleteEntity(systemId, EntityType.SubArea.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
-                                deleteChk = response.status == true ? 1 : 0;
-                                break;
-
-                            case EntityType.CSA:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.CSA.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
-                                deleteChk = response.status == true ? 1 : 0;
-                                break;
-
-                            case EntityType.Building:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Building.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
-                                deleteChk = response.status == true ? 1 : 0;
-                                break;
-
-                            case EntityType.Structure:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Structure.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                if (!response.status)
-                                {
-                                    objResp.status = ResponseStatus.FAILED.ToString();
-                                    objResp.message = BLConvertMLanguage.MultilingualMessageConvert(response.message);//response.message;
-                                    return Json(objResp, JsonRequestBehavior.AllowGet);
-                                }
-                                else
-                                {
-                                    string[] LayerName = { entityType };
-                                    objResp.status = ResponseStatus.OK.ToString();
-                                    objResp.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_JQ_FRM_003, ApplicationSettings.listLayerDetails, LayerName);
-                                    return Json(objResp, JsonRequestBehavior.AllowGet);
-                                }
-
-                            case EntityType.SurveyArea:
-                                var obj = new BLMisc().GetEntityDetailById<SurveyArea>(systemId, EntityType.SurveyArea);
-                                if (obj != null)
-                                {
-                                    if (obj.surveyarea_status == "New")
-                                    {
-                                        response = new BLMisc().deleteEntity(systemId, EntityType.SurveyArea.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
-                                        deleteChk = response.status == true ? 1 : 0;
-                                    }
-                                    else
-                                    {
-                                        deleteChk = 1;
-                                        DelSurveyAreaChk = true;
-                                    }
-                                }
-                                break;
-
-                            case EntityType.ADB:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.ADB.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.CDB:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.CDB.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.BDB:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.BDB.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-
-                            case EntityType.Pole:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Pole.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.POD:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.POD.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.Splitter:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Splitter.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.Tree:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Tree.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.Manhole:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Manhole.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.Coupler:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Coupler.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.SpliceClosure:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.SpliceClosure.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.FMS:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.FMS.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.MPOD:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.MPOD.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.ONT:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.ONT.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.Customer:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Customer.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.Gipipe:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Gipipe.ToString(), GeometryType.Line.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.Cable:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Cable.ToString(), GeometryType.Line.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.Trench:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Trench.ToString(), GeometryType.Line.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.Duct:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Duct.ToString(), GeometryType.Line.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.Conduit:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Conduit.ToString(), GeometryType.Line.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.WallMount:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.WallMount.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.FDB:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.FDB.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.HTB:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.HTB.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.ProjectArea:
-                                deleteChk = new BLProjectArea().DeleteProjectAreaId(systemId);
-                                break;
-                            case EntityType.UNIT:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.UNIT.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.DSA:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.DSA.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
-                                deleteChk = response.status == true ? 1 : 0;
-                                break;
-
-                            case EntityType.ROW:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.ROW.ToString(), geomType, usrDetail.user_id);
-                                break;
-                            case EntityType.PIT:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.PIT.ToString(), geomType, usrDetail.user_id);
-                                break;
-                            case EntityType.Tower:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Tower.ToString(), geomType, usrDetail.user_id);
-                                break;
-                            case EntityType.Antenna:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Antenna.ToString(), geomType, usrDetail.user_id);
-                                break;
-                            case EntityType.Sector:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Sector.ToString(), geomType, usrDetail.user_id);
-                                break;
-                            case EntityType.Fault:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Fault.ToString(), geomType, usrDetail.user_id);
-                                if (response.status)
-                                {
-                                    int result = BLFaultStatusHistory.Instance.DeleteStatusHistorybyFaultId(systemId);
-                                }
-                                break;
-                            case EntityType.Competitor:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Competitor.ToString(), geomType, usrDetail.user_id);
-                                break;
-                            case EntityType.MicrowaveLink:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.MicrowaveLink.ToString(), geomType, usrDetail.user_id);
-                                break;
-                            case EntityType.Microduct:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Microduct.ToString(), GeometryType.Line.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.Network_Ticket:
-                                var resultNW = new BLNetworkTicket().DeleteNetworkTicketById(systemId, Convert.ToInt32(Session["user_id"]));
-                                if (resultNW.status)
-                                {
-                                    response.status = true;
-                                    response.message = resultNW.message;
-                                }
-                                else
-                                {
-                                    response.status = false;
-                                    response.message = resultNW.message;
-                                }
-                                break;
-                            //cabinet shazia
-                            case EntityType.Cabinet:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Cabinet.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            //cabinet shazia end 
-                            case EntityType.OpticalRepeater:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.OpticalRepeater.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-
-                            //vault shazia
-                            case EntityType.Vault:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Vault.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            //Vault shazia end 
-                            case EntityType.Loop:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Loop.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            //HANDHOLE BY ANTRA
-                            case EntityType.Handhole:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Handhole.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            //PATCHPANEL BY SHAZIA 
-                            case EntityType.PatchPanel:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.PatchPanel.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.RestrictedArea:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.RestrictedArea.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
-                                break;
-                            case EntityType.Slack:
-                                response = new BLMisc().deleteEntity(systemId, EntityType.Slack.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                                break;
-
+                            string[] LayerName = { entityType };
+                            objResp.status = ResponseStatus.OK.ToString();
+                            objResp.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_JQ_FRM_003, ApplicationSettings.listLayerDetails, LayerName);
+                            return Json(objResp, JsonRequestBehavior.AllowGet);
                         }
-                    }
+
+                    case EntityType.SurveyArea:
+                        var obj = new BLMisc().GetEntityDetailById<SurveyArea>(systemId, EntityType.SurveyArea);
+                        if (obj != null)
+                        {
+                            if (obj.surveyarea_status == "New")
+                            {
+                                response = new BLMisc().deleteEntity(systemId, EntityType.SurveyArea.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
+                                deleteChk = response.status == true ? 1 : 0;
+                            }
+                            else
+                            {
+                                deleteChk = 1;
+                                DelSurveyAreaChk = true;
+                            }
+                        }
+                        break;
+
+                    case EntityType.ADB:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.ADB.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.CDB:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.CDB.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.BDB:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.BDB.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+
+                    case EntityType.Pole:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Pole.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.POD:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.POD.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.Splitter:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Splitter.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.Tree:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Tree.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.Manhole:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Manhole.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.Coupler:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Coupler.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.SpliceClosure:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.SpliceClosure.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.FMS:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.FMS.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.MPOD:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.MPOD.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.ONT:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.ONT.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.Customer:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Customer.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.Gipipe:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Gipipe.ToString(), GeometryType.Line.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.Cable:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Cable.ToString(), GeometryType.Line.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.Trench:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Trench.ToString(), GeometryType.Line.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.Duct:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Duct.ToString(), GeometryType.Line.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.Conduit:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Conduit.ToString(), GeometryType.Line.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.WallMount:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.WallMount.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.FDB:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.FDB.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.HTB:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.HTB.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.ProjectArea:
+                        deleteChk = new BLProjectArea().DeleteProjectAreaId(systemId);
+                        break;
+                    case EntityType.UNIT:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.UNIT.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.DSA:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.DSA.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
+                        deleteChk = response.status == true ? 1 : 0;
+                        break;
+
+                    case EntityType.ROW:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.ROW.ToString(), geomType, usrDetail.user_id);
+                        break;
+                    case EntityType.PIT:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.PIT.ToString(), geomType, usrDetail.user_id);
+                        break;
+                    case EntityType.Tower:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Tower.ToString(), geomType, usrDetail.user_id);
+                        break;
+                    case EntityType.Antenna:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Antenna.ToString(), geomType, usrDetail.user_id);
+                        break;
+                    case EntityType.Sector:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Sector.ToString(), geomType, usrDetail.user_id);
+                        break;
+                    case EntityType.Fault:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Fault.ToString(), geomType, usrDetail.user_id);
+                        if (response.status)
+                        {
+                            int result = BLFaultStatusHistory.Instance.DeleteStatusHistorybyFaultId(systemId);
+                        }
+                        break;
+                    case EntityType.Competitor:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Competitor.ToString(), geomType, usrDetail.user_id);
+                        break;
+                    case EntityType.MicrowaveLink:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.MicrowaveLink.ToString(), geomType, usrDetail.user_id);
+                        break;
+                    case EntityType.Microduct:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Microduct.ToString(), GeometryType.Line.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.Network_Ticket:
+                        var resultNW = new BLNetworkTicket().DeleteNetworkTicketById(systemId, Convert.ToInt32(Session["user_id"]));
+                        if (resultNW.status)
+                        {
+                            response.status = true;
+                            response.message = resultNW.message;
+                        }
+                        else
+                        {
+                            response.status = false;
+                            response.message = resultNW.message;
+                        }
+                        break;
+                    //cabinet shazia
+                    case EntityType.Cabinet:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Cabinet.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    //cabinet shazia end 
+                    case EntityType.OpticalRepeater:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.OpticalRepeater.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+
+                    //vault shazia
+                    case EntityType.Vault:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Vault.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    //Vault shazia end 
+                    case EntityType.Loop:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Loop.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    //HANDHOLE BY ANTRA
+                    case EntityType.Handhole:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Handhole.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    //PATCHPANEL BY SHAZIA 
+                    case EntityType.PatchPanel:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.PatchPanel.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.RestrictedArea:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.RestrictedArea.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
+                        break;
+                    case EntityType.Slack:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Slack.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
+
                 }
+
                 if (deleteChk == 1)
                 {
                     string[] LayerName = { entityType };
@@ -1427,8 +1401,8 @@ namespace SmartInventory.Controllers
                 var NWTicketDetails = (NetworkTicket)Session["NWTicketDetails"];
                 obj.ticket_id = NWTicketDetails.ticket_id;
 
-			}
-				string url = "api/main/ValidateEntityGeom ";
+            }
+            string url = "api/main/ValidateEntityGeom ";
             var response = WebAPIRequest.PostIntegrationAPIRequest<dynamic>(url, obj, "", "");
             return Json(response, JsonRequestBehavior.AllowGet);
         }
@@ -1554,9 +1528,9 @@ namespace SmartInventory.Controllers
             //Filter the Layer Detail
             var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == entityType.ToUpper()).FirstOrDefault();
 
-            var exportData = new BLMisc().GetEntityExportData<Dictionary<string, string>>(systemId, entityType, networkStage);            
+            var exportData = new BLMisc().GetEntityExportData<Dictionary<string, string>>(systemId, entityType, networkStage);
             exportData = BLConvertMLanguage.ExportMultilingualConvert(exportData);
-            DataTable dtlogs = Utility.MiscHelper.GetDataTableFromDictionaries(exportData, (entityType == "Cable" || entityType == "Trench" || entityType == "Duct" )? false:true, ApplicationSettings.numberFormatType, new string[] { "Longitude", "Latitude", "Created By", "Modified By", "Created By ID", "Item_Code", "item code", "PTS_code" });
+            DataTable dtlogs = Utility.MiscHelper.GetDataTableFromDictionaries(exportData, (entityType == "Cable" || entityType == "Trench" || entityType == "Duct") ? false : true, ApplicationSettings.numberFormatType, new string[] { "Longitude", "Latitude", "Created By", "Modified By", "Created By ID", "Item_Code", "item code", "PTS_code" });
             dtlogs.TableName = layerDetail.layer_title;
             //if (entityType == "Cable")
             //  dtlogs = Utility.CommonUtility.GetFormattedDataTable(dtlogs, ApplicationSettings.numberFormatType);                  
@@ -1732,10 +1706,10 @@ namespace SmartInventory.Controllers
                     dtAssociatedPopInfo.Columns.Remove("pop_id");
                     dtAssociatedPopInfo.Columns.Remove("tower_id");
                     dtAssociatedPopInfo.TableName = layerDetail.layer_title + "_Associated_Pop";
-                    
+
                     ds.Tables.Add(dtAssociatedPopInfo);
 
-                   
+
                 }
 
             }
@@ -3303,7 +3277,7 @@ namespace SmartInventory.Controllers
             }
             return userImgBytes;
         }
-        
+
         public JsonResult getUserProfile()
         {
             var usrDetail = (User)Session["userDetail"];
@@ -3727,7 +3701,7 @@ namespace SmartInventory.Controllers
                     entityInformationDetail[i].is_visible = false;
                 }
             }
-            ViewBag.IsBackButtonRequired = isBackButtonRequired;           
+            ViewBag.IsBackButtonRequired = isBackButtonRequired;
             return PartialView("_InformationToolbar", entityInformationDetail);
         }
 
@@ -4509,9 +4483,9 @@ namespace SmartInventory.Controllers
         //push to gis bulk of data List<
         //BoundaryPushFilter>
         [HttpPost]
-        public JsonResult BoundaryGetDataToList(List<BoundaryPushFilter> data,int psystemId,string pentityType)
-        { 
-            var userdetail= (User)Session["userDetail"];
+        public JsonResult BoundaryGetDataToList(List<BoundaryPushFilter> data, int psystemId, string pentityType)
+        {
+            var userdetail = (User)Session["userDetail"];
             var token = (TokenDetail)Session["TokenDetail"];
             GisApiLogs _objGisapiLogs = new GisApiLogs();
             var TransactionId = DateTime.Now.Ticks.ToString();
@@ -4519,7 +4493,7 @@ namespace SmartInventory.Controllers
             string url;
             CreateVersionIn objIn = new CreateVersionIn();
             string gisDesignId = new BLTicketType().GetDesignId(psystemId, pentityType);
-             var process_id = DateTime.Now.Ticks.ToString();
+            var process_id = DateTime.Now.Ticks.ToString();
             if (string.IsNullOrEmpty(gisDesignId))
             {
 
@@ -4569,7 +4543,7 @@ namespace SmartInventory.Controllers
                         TempData["NE_System_id"] = response.results;
                         TempData["txn_id"] = TransactionId;
                         if (response.results.Status.ToUpper() == "SUCCESS")
-                        {                           
+                        {
                             Pushgislogrequest pushgisrequestobj = new Pushgislogrequest();
                             pushgisrequestobj.id = Convert.ToInt32(psystemId);
                             pushgisrequestobj.system_id = Convert.ToInt32(psystemId);
@@ -4604,7 +4578,7 @@ namespace SmartInventory.Controllers
                                 tsk.Exception.Handle(ex => { ErrorLogHelper.WriteErrorLog("BoundaryGetDataToList", "Main", ex); return true; });
                             }, TaskContinuationOptions.OnlyOnFaulted);
 
-                          
+
                             //threading end
 
                             //PostVersionIn ObjPostVer = new PostVersionIn();
@@ -4633,10 +4607,10 @@ namespace SmartInventory.Controllers
             }
         }
         [HttpPost]
-        public object GISPostVersion(string transactionId, string processid,int systemId, string EntityType, User userDetails, TokenDetail token)
+        public object GISPostVersion(string transactionId, string processid, int systemId, string EntityType, User userDetails, TokenDetail token)
         {
             string url;
-          //  var TransactionId = TempData.Peek("txn_id").ToString();
+            //  var TransactionId = TempData.Peek("txn_id").ToString();
             string gisDesignId = new BLTicketType().GetDesignId(systemId, EntityType);
             PostVersionIn ObjPostVer = new PostVersionIn();
             ObjPostVer.user_id = userDetails.user_id;
@@ -4650,9 +4624,9 @@ namespace SmartInventory.Controllers
             ObjPostVer.process_id = processid;
             url = "api/main/GISPostVersion";
             var PostVerResponse = WebAPIRequest.PostIntegrationAPIRequest<PostVersionOut>(url, ObjPostVer, "", "", "", token, false);
-           
+
             Pushgislogrequest pushgisrequestobj = new Pushgislogrequest();
-            pushgisrequestobj =  new BLTicketType().Getpushrequest(systemId, EntityType, userDetails.user_id, "Update", processid, "Request has been processed successfully!");
+            pushgisrequestobj = new BLTicketType().Getpushrequest(systemId, EntityType, userDetails.user_id, "Update", processid, "Request has been processed successfully!");
             return pushgisrequestobj;
 
             //return Json(PostVerResponse, JsonRequestBehavior.AllowGet);
@@ -4686,7 +4660,7 @@ namespace SmartInventory.Controllers
             pushgisrequestobj.created_by = userdetails.user_id;
             pushgisrequestobj.created_on = DateTime.Now;
             pushgisrequestobj = new BLTicketType().Getpushrequest(pushgisrequestobj.system_id, pushgisrequestobj.entity_type,
-            pushgisrequestobj.created_by, "SELECT","");
+            pushgisrequestobj.created_by, "SELECT", "");
             return Json(pushgisrequestobj, JsonRequestBehavior.AllowGet);
         }
 
@@ -4694,7 +4668,7 @@ namespace SmartInventory.Controllers
         public JsonResult PushDataToGIS(BoundaryPushFilter obj, User userdetail, TokenDetail token)
         {
             GisApiLogs _objGisapiLogs = new GisApiLogs();
-            var TransactionId=  DateTime.Now.Ticks.ToString();
+            var TransactionId = DateTime.Now.Ticks.ToString();
             JsonPlannerResponse<string> objResp = new JsonPlannerResponse<string>();
             string url;
             CreateVersionIn objIn = new CreateVersionIn();
@@ -4725,11 +4699,11 @@ namespace SmartInventory.Controllers
 
                 }
                 else
-                {                   
+                {
                     //var userDetail = "";
                     if (userdetail == null || userdetail.user_id == 0)
                     {
-                        userdetail = (User)Session["userDetail"];                        
+                        userdetail = (User)Session["userDetail"];
                     }
                     objIn.UserName = "JFP_" + userdetail.user_name;
                     objIn.VersionName = gisDesignId;
@@ -4739,7 +4713,7 @@ namespace SmartInventory.Controllers
                     objIn.entityType = obj.entity_type;
                     objIn.transaction_id = TransactionId;
                     url = "api/main/GISCreateVersion";
-                    var response = WebAPIRequest.PostIntegrationAPIRequest<CreateVersionOut>(url, objIn, "", "","",token,false);
+                    var response = WebAPIRequest.PostIntegrationAPIRequest<CreateVersionOut>(url, objIn, "", "", "", token, false);
                     LogHelper.GetInstance.WriteDebugLog("Response-2:" + JsonConvert.SerializeObject(response));
                     if (response.results != null)
                     {
@@ -4750,13 +4724,13 @@ namespace SmartInventory.Controllers
                             obj.VersionName = "R4G_FTTX." + gisDesignId;
                             obj.transaction_id = TransactionId;
                             url = "api/main/PushToGis";
-                            var PushToGISResponse = WebAPIRequest.PostIntegrationAPIRequest<dynamic>(url, obj, "", "","",token, false);
-                         
+                            var PushToGISResponse = WebAPIRequest.PostIntegrationAPIRequest<dynamic>(url, obj, "", "", "", token, false);
+
                             if (PushToGISResponse.status == StatusCodes.OK.ToString())
                             {
                                 PostVersionIn ObjPostVer = new PostVersionIn();
                                 ObjPostVer.user_id = userdetail.user_id;
-                                ObjPostVer.gis_design_id= gisDesignId;
+                                ObjPostVer.gis_design_id = gisDesignId;
                                 ObjPostVer.systemId = obj.system_id;
                                 ObjPostVer.entityType = obj.entity_type;
                                 ObjPostVer.VersionName = objIn.VersionName;
@@ -4773,7 +4747,7 @@ namespace SmartInventory.Controllers
                                 objResp.results = PushToGISResponse.error_message.ToString();
                                 return Json(objResp, JsonRequestBehavior.AllowGet);
                             }
-                           
+
                         }
                         else
                         {
@@ -4786,7 +4760,7 @@ namespace SmartInventory.Controllers
             }
 
         }
-       
+
         public ActionResult GetProcessedXMLDashboard(ProcessSummaryFilter objFilters, int page = 1, string sort = "", string sortdir = "", int systemId = 0, string ps_port = "")
         {
             objFilters.pageSize = 10;
@@ -4838,60 +4812,60 @@ namespace SmartInventory.Controllers
             Binddropdown();
             return PartialView("_ProcessedNEXMLDashboard", objFilters);
         }
-		//GetDesignValidationDashboard
-		public ActionResult GetSecondarySplitter(SeconarySplitterListFilter objFilters, int page = 1, string sort = "", string sortdir = "")
-		{
-			objFilters.sort = sort;
-			objFilters.sortdir = sortdir;
-			
-			List<Dictionary<string, string>> lstSeconarySplitterDetails = new BLProcess().GetSecondarySplitter(objFilters);
-			if (lstSeconarySplitterDetails.Count > 0)
-			{
-				string[] arrIgnoreColumns = { "TOTALRECORDS", "S_NO" };
-				foreach (Dictionary<string, string> dic in lstSeconarySplitterDetails)
-				{
-					
-					var obj = (IDictionary<string, object>)new ExpandoObject();
-					foreach (var col in dic)
-					{
-						if (!Array.Exists(arrIgnoreColumns, m => m == col.Key.ToUpper()))
-						{
-							obj.Add(col.Key, col.Value);
-						}
+        //GetDesignValidationDashboard
+        public ActionResult GetSecondarySplitter(SeconarySplitterListFilter objFilters, int page = 1, string sort = "", string sortdir = "")
+        {
+            objFilters.sort = sort;
+            objFilters.sortdir = sortdir;
 
-					}
-					objFilters.lstSeconarySplitterDetails.Add(obj);
+            List<Dictionary<string, string>> lstSeconarySplitterDetails = new BLProcess().GetSecondarySplitter(objFilters);
+            if (lstSeconarySplitterDetails.Count > 0)
+            {
+                string[] arrIgnoreColumns = { "TOTALRECORDS", "S_NO" };
+                foreach (Dictionary<string, string> dic in lstSeconarySplitterDetails)
+                {
 
-				}
-				objFilters.totalRecord = objFilters.lstSeconarySplitterDetails.Count > 0 ? Convert.ToInt32(lstSeconarySplitterDetails[0].FirstOrDefault().Value) : 0;
-           }
-			objFilters.column_filter = BindSeconarySplitterdropdown();
-			return PartialView("_DesignValidationDashboard", objFilters);
-		}
-		public JsonResult IsDesignSubmittedByEntity(int systemId, string entityType)
-		{
-			JsonResponse<string> objResp = new JsonResponse<string>();
+                    var obj = (IDictionary<string, object>)new ExpandoObject();
+                    foreach (var col in dic)
+                    {
+                        if (!Array.Exists(arrIgnoreColumns, m => m == col.Key.ToUpper()))
+                        {
+                            obj.Add(col.Key, col.Value);
+                        }
+
+                    }
+                    objFilters.lstSeconarySplitterDetails.Add(obj);
+
+                }
+                objFilters.totalRecord = objFilters.lstSeconarySplitterDetails.Count > 0 ? Convert.ToInt32(lstSeconarySplitterDetails[0].FirstOrDefault().Value) : 0;
+            }
+            objFilters.column_filter = BindSeconarySplitterdropdown();
+            return PartialView("_DesignValidationDashboard", objFilters);
+        }
+        public JsonResult IsDesignSubmittedByEntity(int systemId, string entityType)
+        {
+            JsonResponse<string> objResp = new JsonResponse<string>();
             var result = new BLProcess().IsDesignSubmittedByEntity(systemId, entityType);
-			if (!result)
-			{
-				objResp.status = ResponseStatus.FAILED.ToString();
-			}
-			else
-			{
-				objResp.status = ResponseStatus.OK.ToString();
-			}
-			return Json(objResp, JsonRequestBehavior.AllowGet);
-		}
-		public dynamic BindSeconarySplitterdropdown()
-		{
-     		List<SelectListItem> items = new List<SelectListItem>();
-			items.Add(new SelectListItem { Text = "S2 ID", Value = "common_name" });
-			items.Add(new SelectListItem { Text = "CSA Id", Value = "csa_id" });
-			items.Add(new SelectListItem { Text = "DSA Id", Value = "dsa_id" });
+            if (!result)
+            {
+                objResp.status = ResponseStatus.FAILED.ToString();
+            }
+            else
+            {
+                objResp.status = ResponseStatus.OK.ToString();
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
+        public dynamic BindSeconarySplitterdropdown()
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
+            items.Add(new SelectListItem { Text = "S2 ID", Value = "common_name" });
+            items.Add(new SelectListItem { Text = "CSA Id", Value = "csa_id" });
+            items.Add(new SelectListItem { Text = "DSA Id", Value = "dsa_id" });
             return items;
-		}
+        }
 
-		public ActionResult Binddropdown()
+        public ActionResult Binddropdown()
         {
             var result = (List<string>)Session["ApplicableModuleList"];
             List<SelectListItem> items = new List<SelectListItem>();
@@ -4919,12 +4893,12 @@ namespace SmartInventory.Controllers
         }
 
         // Below method for S2 trace validation 
-		public ActionResult ValidateSecondarySplitterData(string pEntityType, int pUserId, int p_systemId, string p_sourceRefId,string p_action)
-		{
-			var ProcessData = new BLProcess().ValidateSecondarySplitterData(pEntityType, pUserId, p_systemId, p_sourceRefId, p_action);
-			return Json(ProcessData, JsonRequestBehavior.AllowGet);
-		}
-		public void DownloadProcessSplitterDataLogs(string pEntityType, string pSystemId, int pUserId, int p_subareaid)
+        public ActionResult ValidateSecondarySplitterData(string pEntityType, int pUserId, int p_systemId, string p_sourceRefId, string p_action)
+        {
+            var ProcessData = new BLProcess().ValidateSecondarySplitterData(pEntityType, pUserId, p_systemId, p_sourceRefId, p_action);
+            return Json(ProcessData, JsonRequestBehavior.AllowGet);
+        }
+        public void DownloadProcessSplitterDataLogs(string pEntityType, string pSystemId, int pUserId, int p_subareaid)
         {
             var ProcessedData = (List<EntitySummary>)Session["ProcessedSplitterXMLDetails"];
             if (ProcessedData.Count > 0)
@@ -4971,56 +4945,56 @@ namespace SmartInventory.Controllers
         }
 
         //Below Method for download S2 trace validation failed log 
-		public void DownloadSecondarySplitterValidationLogs(string pEntityType, int pUserId, int p_systemId, string p_sourceRefId, string p_action, int? p_requestLogId)
-		{
-			var ProcessedData = new BLProcess().DownloadSecondarySplitterValidationLogs( pUserId, p_action, p_requestLogId);
-			if (ProcessedData.Count > 0)
-			{
-				DataTable dt = MiscHelper.ListToDataTable(ProcessedData);
-				if (dt.Rows.Count > 0)
-				{
+        public void DownloadSecondarySplitterValidationLogs(string pEntityType, int pUserId, int p_systemId, string p_sourceRefId, string p_action, int? p_requestLogId)
+        {
+            var ProcessedData = new BLProcess().DownloadSecondarySplitterValidationLogs(pUserId, p_action, p_requestLogId);
+            if (ProcessedData.Count > 0)
+            {
+                DataTable dt = MiscHelper.ListToDataTable(ProcessedData);
+                if (dt.Rows.Count > 0)
+                {
 
-					//if (dt.Columns.Contains("DESIGN_ID")) { dt.Columns.Remove("DESIGN_ID"); }
-					if (dt.Columns.Contains("ENTITY_TYPE")) { dt.Columns.Remove("ENTITY_TYPE"); }
-					for (int i = 0; i < dt.Rows.Count; i++)
-					{
-						if (dt.Rows[i]["network_status"].ToString() == "P")
-						{
-							dt.Rows[i]["network_status"] = "Planned";
-						}
-						if (dt.Rows[i]["network_status"].ToString() == "A")
-						{
-							dt.Rows[i]["network_status"] = "As Built";
-						}
-					}
-					dt.Columns["ENTITY_TITLE"].ColumnName = "Entity Name";
-					dt.Columns["DESIGN_ID"].ColumnName = "Design Id";
-					dt.Columns["NETWORK_ID"].ColumnName = "Network Id";
-					dt.Columns["NETWORK_STATUS"].ColumnName = "Network Status";
-					dt.Columns["ERR_MESSAGE"].ColumnName = "Message";
-					
-				}
-				string fileName = "";
-				if (p_action == "DesignValidation")
-				{
-					fileName = "DesignValidationLogs";
-					dt.TableName = "DesignValidationLogs";
-				}
-				else
-				{
-					fileName = "ConstructionValidationLogs";
-					dt.TableName = "ConstructionValidationLogs";
-				}
+                    //if (dt.Columns.Contains("DESIGN_ID")) { dt.Columns.Remove("DESIGN_ID"); }
+                    if (dt.Columns.Contains("ENTITY_TYPE")) { dt.Columns.Remove("ENTITY_TYPE"); }
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        if (dt.Rows[i]["network_status"].ToString() == "P")
+                        {
+                            dt.Rows[i]["network_status"] = "Planned";
+                        }
+                        if (dt.Rows[i]["network_status"].ToString() == "A")
+                        {
+                            dt.Rows[i]["network_status"] = "As Built";
+                        }
+                    }
+                    dt.Columns["ENTITY_TITLE"].ColumnName = "Entity Name";
+                    dt.Columns["DESIGN_ID"].ColumnName = "Design Id";
+                    dt.Columns["NETWORK_ID"].ColumnName = "Network Id";
+                    dt.Columns["NETWORK_STATUS"].ColumnName = "Network Status";
+                    dt.Columns["ERR_MESSAGE"].ColumnName = "Message";
+
+                }
+                string fileName = "";
+                if (p_action == "DesignValidation")
+                {
+                    fileName = "DesignValidationLogs";
+                    dt.TableName = "DesignValidationLogs";
+                }
+                else
+                {
+                    fileName = "ConstructionValidationLogs";
+                    dt.TableName = "ConstructionValidationLogs";
+                }
                 if (dt.Rows.Count > 0)
                 {
                     ExportData(dt, fileName + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));
                 }
-			}
-		}
+            }
+        }
 
-		
-		#region XMLDashboard
-		public ActionResult XmlBuilderDashboard(XMLBuilderDashboardFilter objXMLBuilderDashboardFilter, int page = 0, string sort = "", string sortdir = "")
+
+        #region XMLDashboard
+        public ActionResult XmlBuilderDashboard(XMLBuilderDashboardFilter objXMLBuilderDashboardFilter, int page = 0, string sort = "", string sortdir = "")
         {
             objXMLBuilderDashboardFilter.pagerecord = 10;
             objXMLBuilderDashboardFilter.pageno = page == 0 ? 1 : page;
@@ -5095,7 +5069,7 @@ namespace SmartInventory.Controllers
             }
             return View("GetRouteAssetDetails", lst);
 
-            
+
 
         }
 
@@ -5122,8 +5096,8 @@ namespace SmartInventory.Controllers
             objBoundaryPush.viewBoundaryPush.totalRecord = objBoundaryPush.pushboundaryDetailList != null && objBoundaryPush.pushboundaryDetailList.Count > 0 ? objBoundaryPush.pushboundaryDetailList[0].totalRecords : 0;
             Session["BoundarypushDashboard"] = objBoundaryPush.viewBoundaryPush;
             Session["Boundarypushlist"] = objBoundaryPush;
-            objBoundaryPush.user_id=usrDetail.user_id;
-            var _objData= new BLLayer().GetBoundaryPushStatus(objBoundaryPush);
+            objBoundaryPush.user_id = usrDetail.user_id;
+            var _objData = new BLLayer().GetBoundaryPushStatus(objBoundaryPush);
             if (_objData != null)
             {
                 objBoundaryPush.status = _objData.status;
@@ -5180,7 +5154,7 @@ namespace SmartInventory.Controllers
                 objBoundaryPushFilter = (BoundaryPushFilter)Session["Boundarypushlist"];
                 objBoundaryPushFilter.viewBoundaryPush = (ViewBoundaryPush)Session["BoundarypushDashboard"];
                 objBoundaryPushFilter.viewBoundaryPush.currentPage = 0;
-                objBoundaryPushFilter.viewBoundaryPush.pageSize = 0;   
+                objBoundaryPushFilter.viewBoundaryPush.pageSize = 0;
                 objBoundaryPushFilter.pushboundaryDetailList = new BLLayer().GetBoundaryPushToGis(objBoundaryPushFilter);
                 DataTable dtReport = new DataTable();
                 dtReport = Utility.MiscHelper.ListToDataTable(objBoundaryPushFilter.pushboundaryDetailList);
@@ -5283,7 +5257,7 @@ namespace SmartInventory.Controllers
                     objResp.status = ResponseStatus.OK.ToString();
                     objResp.message = "WorkArea Marking Deleted Successfully!";
                 }
-                else if(output == -1)
+                else if (output == -1)
                 {
                     objResp.status = ResponseStatus.OK.ToString();
                     objResp.message = "No Markings Found!";
