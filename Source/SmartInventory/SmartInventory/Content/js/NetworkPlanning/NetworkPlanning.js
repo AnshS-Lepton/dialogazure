@@ -329,7 +329,11 @@ var NetworkPlanning = function () {
     }
 
     this.createAutoPlanNetwork = function () {
-         
+        
+        var isValid = validateSpanlength();
+        if (isvalid = "false") {
+            return false;
+        }
         if (app.selectedPlanningPath != null && app.selectedPlanningPath.length == undefined) {
 
             for (let j = 0; j < app.selectedPlanningPath.legs.length; j++) {
@@ -388,7 +392,7 @@ var NetworkPlanning = function () {
             app.autoPlanningShowNetworkLayer(resp);
         }, false, true, false);
     }
-
+  
     this.geomToForm = function () {
         if ($('#ddledit_path').val() == "manually") {
             si.point2pointgeom = [];
@@ -1527,7 +1531,7 @@ var NetworkPlanning = function () {
                 const startPointLineArr = [];
                 startPointLineArr.push(latLngArr[0]);
                 startPointLineArr.push(startPoint);
-                app.StartTmpLine = app.createAutoPlanLine(startPointLineArr, false, true);
+                app.StartTmpLine = app.createAutoPlanLine(startPointLineArr, true, false);
                 app.StartTmpLine.setMap(si.map);
 
 
@@ -1537,7 +1541,7 @@ var NetworkPlanning = function () {
                     EndPointLineArr.push(latLngArr[i]);
                 }
                 EndPointLineArr.push(EndPoint);
-                app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, false, true);
+                app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, true, false);
                 app.EndTmpLine.setMap(si.map);
 
                 app.createDirectionMarker(startPoint, EndPoint);
@@ -1553,7 +1557,7 @@ var NetworkPlanning = function () {
                 const startPointLineArr = [];
                 startPointLineArr.push(latLngArr[0]);
                 startPointLineArr.push(startPoint);
-                app.StartTmpLine = app.createAutoPlanLine(startPointLineArr, false, true);
+                app.StartTmpLine = app.createAutoPlanLine(startPointLineArr, true, false);
                 app.StartTmpLine.setMap(si.map);
 
 
@@ -1564,7 +1568,7 @@ var NetworkPlanning = function () {
                     //app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, false, true);
                 }
                 EndPointLineArr.push(EndPoint);
-                app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, false, true);
+                app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, true, false);
                 //EndPointLineArr.push(latLngArr[endIndex]);
                 //EndPointLineArr.push(EndPoint);
 
@@ -1910,6 +1914,18 @@ function drawCircle(point, radius, dir) {
 function powerBackupTrue() {
 
     $("#txtPwrBkpCapacity").prop("readonly", false);
+}
+function validateSpanlength() {
+    var Spanlength = parseFloat(document.getElementById('pole_manhole_distance').value);
+    var Cabledrumlength = parseFloat(document.getElementById('cable_length').value);
+    var status ="true"
+
+    if (Spanlength > Cabledrumlength) {
+        alert('Span length equal or less then drum length');
+        document.getElementById('pole_manhole_distance').value = '';
+        status ="false"
+    }
+    return status;
 }
 
 

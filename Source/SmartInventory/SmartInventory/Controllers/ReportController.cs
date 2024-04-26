@@ -481,14 +481,15 @@ namespace SmartInventory.Controllers
 			//objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportEntitiesReport.objReportFilters.SelectedOwnerShipId != null && objExportEntitiesReport.objReportFilters.SelectedOwnerShipId.Count > 0 ? "'" + string.Join("','", objExportEntitiesReport.objReportFilters.SelectedOwnerShipId.ToArray()) + "'" : "";
 			objExportEntitiesReport.objReportFilters.SelectedOwnerShipType = objExportEntitiesReport.objReportFilters.SelectedOwnerShipType != null ? objExportEntitiesReport.objReportFilters.SelectedOwnerShipType : "";
 			objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorId != null && objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorId.ToArray()) : "";
-			//if (objExportEntitiesReport.objReportFilters.SelectedParentUser == null)
-			//{
-			//    objExportEntitiesReport.objReportFilters.SelectedParentUser = new List<int>();
-			//    //objExportEntitiesReport.objReportFilters.SelectedParentUser.Add(((User)Session["userDetail"]).user_id);
-			//    objExportEntitiesReport.objReportFilters.SelectedParentUser.Add(1);
-			//}
-			//if (objExportEntitiesReport.objReportFilters.fromDate != null || objExportEntitiesReport.objReportFilters.customDate==9)
-			var selectedLayers = objExportEntitiesReport.objReportFilters.SelectedLayerIds;
+            objExportEntitiesReport.objReportFilters.selected_route_ids = objExportEntitiesReport.selected_route_ids != null && objExportEntitiesReport.selected_route_ids.Count > 0 ? string.Join(",", objExportEntitiesReport.selected_route_ids.ToArray()) : "";
+            //if (objExportEntitiesReport.objReportFilters.SelectedParentUser == null)
+            //{
+            //    objExportEntitiesReport.objReportFilters.SelectedParentUser = new List<int>();
+            //    //objExportEntitiesReport.objReportFilters.SelectedParentUser.Add(((User)Session["userDetail"]).user_id);
+            //    objExportEntitiesReport.objReportFilters.SelectedParentUser.Add(1);
+            //}
+            //if (objExportEntitiesReport.objReportFilters.fromDate != null || objExportEntitiesReport.objReportFilters.customDate==9)
+            var selectedLayers = objExportEntitiesReport.objReportFilters.SelectedLayerIds;
 			if (!string.IsNullOrEmpty(IsRequestFromInfo) && Convert.ToBoolean(IsRequestFromInfo))
 			{
 				//LogHelper.GetInstance.WriteDebugLog($"Request Sent to get the data from database on: {DateTime.Now}");
@@ -539,8 +540,9 @@ namespace SmartInventory.Controllers
 			objExportEntitiesReport.lstfiletypes = blExportData.getfiletype(moduleAbbr);
 			//Bind Layers..
 			objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
-			//Bind Regions..
-			objExportEntitiesReport.lstRegion = new BLLayer().GetAllRegion(new RegionIn() { userId = Convert.ToInt32(Session["user_id"]) });
+			objExportEntitiesReport.lstRouteInfo = new BLLayer().getRouteInfo("0");
+            //Bind Regions..
+            objExportEntitiesReport.lstRegion = new BLLayer().GetAllRegion(new RegionIn() { userId = Convert.ToInt32(Session["user_id"]) });
 			//Bind Provinces..
 			if (!string.IsNullOrWhiteSpace(objExportEntitiesReport.objReportFilters.SelectedRegionIds))
 			{
@@ -1603,9 +1605,10 @@ namespace SmartInventory.Controllers
 					objExportEntitiesReport.objReportFilters.userId = objExportReportFilterNew.userId;
 					objExportEntitiesReport.objReportFilters.roleId = objExportReportFilterNew.roleId;
 					objExportEntitiesReport.objReportFilters.radius = objExportReportFilterNew.radius;
-					// objExportEntitiesReport.objReportFilters.SelectedOwnerShipId = objExportReportFilterNew.SelectedOwnerShipId;
-					// objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportReportFilterNew.SelectedOwnershipIds;
-					objExportEntitiesReport.objReportFilters.SelectedOwnerShipType = objExportReportFilterNew.SelectedOwnerShipType;
+                    objExportEntitiesReport.objReportFilters.selected_route_ids = objExportReportFilterNew.selected_route_ids;
+                    // objExportEntitiesReport.objReportFilters.SelectedOwnerShipId = objExportReportFilterNew.SelectedOwnerShipId;
+                    // objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportReportFilterNew.SelectedOwnershipIds;
+                    objExportEntitiesReport.objReportFilters.SelectedOwnerShipType = objExportReportFilterNew.SelectedOwnerShipType;
 					objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objExportReportFilterNew.SelectedThirdPartyVendorIds;
 
 					objExportEntitiesReport.objReportFilters.currentPage = 0;
@@ -3069,10 +3072,10 @@ namespace SmartInventory.Controllers
 				objExportEntitiesReport.objReportFilters.roleId = objExportReportFilterNew.roleId;
 				objExportEntitiesReport.objReportFilters.SelectedOwnerShipType = objExportReportFilterNew.SelectedOwnerShipType;
 				objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objExportReportFilterNew.SelectedThirdPartyVendorIds;
-
-				// objExportEntitiesReport.objReportFilters.SelectedOwnerShipId = objExportReportFilterNew.SelectedOwnerShipId;
-				// objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportReportFilterNew.SelectedOwnershipIds;
-				BindReportDropdownSummaryView(ref objExportEntitiesReport);
+                objExportEntitiesReport.objReportFilters.selected_route_ids = objExportReportFilterNew.selected_route_ids ;
+                // objExportEntitiesReport.objReportFilters.SelectedOwnerShipId = objExportReportFilterNew.SelectedOwnerShipId;
+                // objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportReportFilterNew.SelectedOwnershipIds;
+                BindReportDropdownSummaryView(ref objExportEntitiesReport);
 
 				//rt
 				var userdetails = (User)Session["userDetail"];
@@ -6399,9 +6402,10 @@ namespace SmartInventory.Controllers
 					objExportEntitiesReport.objReportFilters.userId = objExportReportFilterNew.userId;
 					objExportEntitiesReport.objReportFilters.roleId = objExportReportFilterNew.roleId;
 					objExportEntitiesReport.objReportFilters.radius = objExportReportFilterNew.radius;
-					// objExportEntitiesReport.objReportFilters.SelectedOwnerShipId = objExportReportFilterNew.SelectedOwnerShipId;
-					// objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportReportFilterNew.SelectedOwnershipIds;
-					objExportEntitiesReport.objReportFilters.SelectedOwnerShipType = objExportReportFilterNew.SelectedOwnerShipType;
+                    objExportEntitiesReport.objReportFilters.selected_route_ids = objExportReportFilterNew.selected_route_ids;
+                    // objExportEntitiesReport.objReportFilters.SelectedOwnerShipId = objExportReportFilterNew.SelectedOwnerShipId;
+                    // objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportReportFilterNew.SelectedOwnershipIds;
+                    objExportEntitiesReport.objReportFilters.SelectedOwnerShipType = objExportReportFilterNew.SelectedOwnerShipType;
 					objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objExportReportFilterNew.SelectedThirdPartyVendorIds;
 
 					objExportEntitiesReport.objReportFilters.currentPage = 0;

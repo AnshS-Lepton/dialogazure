@@ -85,21 +85,21 @@ namespace DataAccess
         //    catch { throw; }
         //}
 
-        public List<NetworkLayer> GetNetworkLayers(int userId, int groupId,int roleId, string connectionString)
+        public List<NetworkLayer> GetNetworkLayers(int userId, int groupId, int roleId, string connectionString)
         {
             try
             {
                 if (!string.IsNullOrEmpty(connectionString))
                     connetionString = connectionString;
-                return repo.ExecuteProcedure<NetworkLayer>("fn_get_network_layers", new { userId = userId, groupId = groupId,roleId = roleId });
+                return repo.ExecuteProcedure<NetworkLayer>("fn_get_network_layers", new { userId = userId, groupId = groupId, roleId = roleId });
             }
             catch { throw; }
         }
-        public List<landBaseLayres> GetLandBaseLayres(int userId , int roleId)
+        public List<landBaseLayres> GetLandBaseLayres(int userId, int roleId)
         {
             try
             {
-                return repo.ExecuteProcedure<landBaseLayres>("fn_landbase_get_layers", new { userId = userId , roleId = roleId });
+                return repo.ExecuteProcedure<landBaseLayres>("fn_landbase_get_layers", new { userId = userId, roleId = roleId });
             }
             catch { throw; }
         }
@@ -122,7 +122,7 @@ namespace DataAccess
             catch { throw; }
         }
 
-        public List<string> GetUserModuleAbbrList(int userId,string userType)
+        public List<string> GetUserModuleAbbrList(int userId, string userType)
         {
             try
             {
@@ -175,7 +175,7 @@ namespace DataAccess
                 if (lstRegionProvinces != null && lstRegionProvinces.Count > 0)
                 {
                     lstRegionProvinceLayers = (from rp in lstRegionProvinces.AsEnumerable()
-                                               group rp by new { rp.regionId, rp.regionName, rp.CountryName,rp.regionAbbr,rp.regionVisibility,rp.role_id } into g
+                                               group rp by new { rp.regionId, rp.regionName, rp.CountryName, rp.regionAbbr, rp.regionVisibility, rp.role_id } into g
                                                select new RegionProvinceLayer
                                                {
                                                    regionId = g.Key.regionId,
@@ -183,14 +183,14 @@ namespace DataAccess
                                                    countryname = g.Key.CountryName,
                                                    regionAbbr = g.Key.regionAbbr,
                                                    regionVisibility = g.Key.regionVisibility,
-                                                   role_id=g.Key.role_id,
+                                                   role_id = g.Key.role_id,
                                                    lstProvince = g.Select(
                                                     p => new Province
                                                     {
                                                         provinceId = p.provinceId,
                                                         provinceName = p.provinceName,
                                                         provinceAbbr = p.provinceAbbr,
-                                                        provinceVisibility =p.provinceVisibility,
+                                                        provinceVisibility = p.provinceVisibility,
                                                         role_id = p.role_id
                                                     }).ToList()
                                                }).ToList();
@@ -357,9 +357,9 @@ namespace DataAccess
         {
             try
             {
-                return repo.ExecuteProcedure<BoundaryPushToGis>("fn_get_push_boundary_status", new{p_system_id = objPushFilter.system_id,p_entity_type = objPushFilter.entity_type,p_user_id= objPushFilter.user_id},true).FirstOrDefault();
+                return repo.ExecuteProcedure<BoundaryPushToGis>("fn_get_push_boundary_status", new { p_system_id = objPushFilter.system_id, p_entity_type = objPushFilter.entity_type, p_user_id = objPushFilter.user_id }, true).FirstOrDefault();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             { throw ex; }
         }
 
@@ -512,7 +512,7 @@ namespace DataAccess
         }
         public List<layerReportDetail> GetReportLayers(int roleId, string purpose)
         {
-            
+
             try
             {
                 return repo.ExecuteProcedure<layerReportDetail>("fn_report_get_entity", new { p_roleid = roleId, p_purpose = purpose }, false);
@@ -558,7 +558,7 @@ namespace DataAccess
             catch { throw; }
         }
         public List<Region> GetAllRegion(RegionIn objRegionIn)
-        {            
+        {
             try
             {
                 return repo.ExecuteProcedure<Region>("fn_get_Region_boundary", new { p_userid = objRegionIn.userId, p_geom = objRegionIn.geom, p_radius = objRegionIn.buffRadius, p_geom_type = objRegionIn.geomType }, false);
@@ -575,7 +575,7 @@ namespace DataAccess
             catch { throw; }
         }
         public List<Province> GetProvinceByRegionId(ProvinceIn objProvinceIn)
-        {            
+        {
             try
             {
                 return repo.ExecuteProcedure<Province>("fn_get_province_by_region_Id", new { p_userid = objProvinceIn.userId, p_region_ids = objProvinceIn.regionIds, p_geom = objProvinceIn.geom, p_radius = objProvinceIn.buffRadius, p_geom_type = objProvinceIn.geomType }, false);
@@ -620,8 +620,8 @@ namespace DataAccess
         {
             try
             {
-                if(!string.IsNullOrEmpty(objReportFilter.connectionString))
-                connetionString = objReportFilter.connectionString;
+                if (!string.IsNullOrEmpty(objReportFilter.connectionString))
+                    connetionString = objReportFilter.connectionString;
                 var lst = repo.ExecuteProcedure<EntitySummaryReport>("fn_get_export_report_summary",
                     new
                     {
@@ -644,68 +644,70 @@ namespace DataAccess
                         p_is_all_provience_assigned = objReportFilter.is_all_provience_assigned,
                         p_ownership_type = objReportFilter.SelectedOwnerShipType,
                         p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
-                        p_radious = objReportFilter.radius
+                        p_radious = objReportFilter.radius,
+                        p_route = objReportFilter.selected_route_ids,
                     }, false);
                 return lst;
 
             }
             catch { throw; }
         }
-		public List<Dictionary<string, string>> GetExportReportSummaryViewNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
-		{
-			try
-			{
-				if (!string.IsNullOrEmpty(objReportFilter.connectionString))
-					connetionString = objReportFilter.connectionString;
-				var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
-				var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view",
-					new
-					{
-						p_regionids = objReportFilter.SelectedRegionIds,
-						p_provinceids = objReportFilter.SelectedProvinceIds,
-						p_networkstatues = objReportFilter.SelectedNetworkStatues,
-						p_parentusers = objReportFilter.SelectedParentUsers,
-						p_userids = objReportFilter.SelectedUserIds,
-						p_layer_name = layerName,
-						p_projectcodes = objReportFilter.SelectedProjectIds,
-						p_planningcodes = objReportFilter.SelectedPlanningIds,
-						p_workordercodes = objReportFilter.SelectedWorkOrderIds,
-						p_purposecodes = objReportFilter.SelectedPurposeIds,
-						p_durationbasedon = objReportFilter.durationbasedon,
-						p_fromdate = objReportFilter.fromDate,
-						p_todate = objReportFilter.toDate,
-						p_geom = objReportFilter.geom,
-						p_pageno = objReportFilter.currentPage,
-						p_pagerecord = objReportFilter.pageSize,
-						p_sortcolname = objReportFilter.sort,
-						p_sorttype = objReportFilter.sortdir,
-						p_advancefilter = objReportFilter.advancefilter,
-						p_userid = objReportFilter.userId,
-						p_roleid = objReportFilter.roleId,
-						p_ownership_type = objReportFilter.SelectedOwnerShipType,
-						p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
-						p_culturename = Convert.ToString(currentLang),
-						p_radious = objReportFilter.radius
-					}, true); ; ;
-				return lst;
-			}
-			catch { throw; }
-		}
-
-		public List<Dictionary<string, string>> GetExportReportSummaryView(ExportEntitiesSummaryViewFilter objReportFilter)
+        public List<Dictionary<string, string>> GetExportReportSummaryViewNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
             try
             {
-            //    ExportReportLog exportReportLog = new ExportReportLog();
-            //    exportReportLog.applied_filter = JsonConvert.SerializeObject(objReportFilter);
-            //    exportReportLog = new DAExportReportLog().SaveExportReportLog(exportReportLog);
-            //}
-            //catch (Exception ex)
-            //{
+                if (!string.IsNullOrEmpty(objReportFilter.connectionString))
+                    connetionString = objReportFilter.connectionString;
+                var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view",
+                    new
+                    {
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_parentusers = objReportFilter.SelectedParentUsers,
+                        p_userids = objReportFilter.SelectedUserIds,
+                        p_layer_name = layerName,
+                        p_projectcodes = objReportFilter.SelectedProjectIds,
+                        p_planningcodes = objReportFilter.SelectedPlanningIds,
+                        p_workordercodes = objReportFilter.SelectedWorkOrderIds,
+                        p_purposecodes = objReportFilter.SelectedPurposeIds,
+                        p_durationbasedon = objReportFilter.durationbasedon,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_pageno = objReportFilter.currentPage,
+                        p_pagerecord = objReportFilter.pageSize,
+                        p_sortcolname = objReportFilter.sort,
+                        p_sorttype = objReportFilter.sortdir,
+                        p_advancefilter = objReportFilter.advancefilter,
+                        p_userid = objReportFilter.userId,
+                        p_roleid = objReportFilter.roleId,
+                        p_ownership_type = objReportFilter.SelectedOwnerShipType,
+                        p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
+                        p_culturename = Convert.ToString(currentLang),
+                        p_radious = objReportFilter.radius,
+                        p_route = objReportFilter.selected_route_ids
+                    }, true); ; ;
+                return lst;
+            }
+            catch { throw; }
+        }
 
-            //}
-            //try
-            //{
+        public List<Dictionary<string, string>> GetExportReportSummaryView(ExportEntitiesSummaryViewFilter objReportFilter)
+        {
+            try
+            {
+                //    ExportReportLog exportReportLog = new ExportReportLog();
+                //    exportReportLog.applied_filter = JsonConvert.SerializeObject(objReportFilter);
+                //    exportReportLog = new DAExportReportLog().SaveExportReportLog(exportReportLog);
+                //}
+                //catch (Exception ex)
+                //{
+
+                //}
+                //try
+                //{
                 if (!string.IsNullOrEmpty(objReportFilter.connectionString))
                     connetionString = objReportFilter.connectionString;
                 var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
@@ -736,55 +738,57 @@ namespace DataAccess
                         p_ownership_type = objReportFilter.SelectedOwnerShipType,
                         p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
                         p_culturename = Convert.ToString(currentLang),
-                        p_radious = objReportFilter.radius
+                        p_radious = objReportFilter.radius,
+                        p_route = objReportFilter.selected_route_ids
                     }, true); ; ;
                 return lst;
             }
             catch { throw; }
         }
 
-		public List<Dictionary<string, string>> GetExportReportSummaryViewCSV(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
-		{
-			try
-			{
+        public List<Dictionary<string, string>> GetExportReportSummaryViewCSV(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            try
+            {
                 if (!string.IsNullOrEmpty(objReportFilter.connectionString))
                     connetionString = objReportFilter.connectionString;
                 var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
-				var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view_csv",
-					new
-					{
-						p_regionids = objReportFilter.SelectedRegionIds,
-						p_provinceids = objReportFilter.SelectedProvinceIds,
-						p_networkstatues = objReportFilter.SelectedNetworkStatues,
-						p_parentusers = objReportFilter.SelectedParentUsers,
-						p_userids = objReportFilter.SelectedUserIds,
-						p_layer_name = layerName,
-						p_projectcodes = objReportFilter.SelectedProjectIds,
-						p_planningcodes = objReportFilter.SelectedPlanningIds,
-						p_workordercodes = objReportFilter.SelectedWorkOrderIds,
-						p_purposecodes = objReportFilter.SelectedPurposeIds,
-						p_durationbasedon = objReportFilter.durationbasedon,
-						p_fromdate = objReportFilter.fromDate,
-						p_todate = objReportFilter.toDate,
-						p_geom = objReportFilter.geom,
-						p_pageno = objReportFilter.currentPage,
-						p_pagerecord = objReportFilter.pageSize,
-						p_sortcolname = objReportFilter.sort,
-						p_sorttype = objReportFilter.sortdir,
-						p_advancefilter = objReportFilter.advancefilter,
-						p_userid = objReportFilter.userId,
-						p_roleid = objReportFilter.roleId,
-						p_ownership_type = objReportFilter.SelectedOwnerShipType,
-						p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
-						p_culturename = Convert.ToString(currentLang),
-						p_radious = objReportFilter.radius
-					}, true); ; ;
-				return lst;
-			}
-			catch { throw; }
-		}
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view_csv",
+                    new
+                    {
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_parentusers = objReportFilter.SelectedParentUsers,
+                        p_userids = objReportFilter.SelectedUserIds,
+                        p_layer_name = layerName,
+                        p_projectcodes = objReportFilter.SelectedProjectIds,
+                        p_planningcodes = objReportFilter.SelectedPlanningIds,
+                        p_workordercodes = objReportFilter.SelectedWorkOrderIds,
+                        p_purposecodes = objReportFilter.SelectedPurposeIds,
+                        p_durationbasedon = objReportFilter.durationbasedon,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_pageno = objReportFilter.currentPage,
+                        p_pagerecord = objReportFilter.pageSize,
+                        p_sortcolname = objReportFilter.sort,
+                        p_sorttype = objReportFilter.sortdir,
+                        p_advancefilter = objReportFilter.advancefilter,
+                        p_userid = objReportFilter.userId,
+                        p_roleid = objReportFilter.roleId,
+                        p_ownership_type = objReportFilter.SelectedOwnerShipType,
+                        p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
+                        p_culturename = Convert.ToString(currentLang),
+                        p_radious = objReportFilter.radius,
+                        p_route = objReportFilter.selected_route_ids
+                    }, true); ; ;
+                return lst;
+            }
+            catch { throw; }
+        }
 
-		public List<WebGridColumns> GetEntityWiseColumns(int entity_id, string entity_name, string setting_type, int user_id, int role_id)
+        public List<WebGridColumns> GetEntityWiseColumns(int entity_id, string entity_name, string setting_type, int user_id, int role_id)
         {
             try
             {
@@ -949,49 +953,49 @@ namespace DataAccess
             }
             catch { throw; }
         }
-		public List<Dictionary<string, string>> GetExportSummaryViewKML(ExportEntitiesSummaryViewFilter objReportFilter)
-		{
-			try
-			{
-				if (!string.IsNullOrEmpty(objReportFilter.connectionString))
-					connetionString = objReportFilter.connectionString;
-				var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view_kml",
-					new
-					{
-						p_regionids = objReportFilter.SelectedRegionIds,
-						p_provinceids = objReportFilter.SelectedProvinceIds,
-						p_networkstatues = objReportFilter.SelectedNetworkStatues,
-						p_parentusers = objReportFilter.SelectedParentUsers,
-						p_userids = objReportFilter.SelectedUserIds,
-						p_layer_name = objReportFilter.layerName,
-						p_projectcode = objReportFilter.SelectedProjectIds,
-						p_planningcode = objReportFilter.SelectedPlanningIds,
-						p_workordercode = objReportFilter.SelectedWorkOrderIds,
-						p_purposecode = objReportFilter.SelectedPurposeIds,
-						p_durationbasedon = objReportFilter.durationbasedon,
-						p_fromdate = objReportFilter.fromDate,
-						p_todate = objReportFilter.toDate,
-						p_geom = objReportFilter.geom,
-						p_pageno = objReportFilter.currentPage,
-						p_pagerecord = objReportFilter.pageSize,
-						p_sortcolname = objReportFilter.sort,
-						p_sorttype = objReportFilter.sortdir,
-						p_advancefilter = objReportFilter.advancefilter,
-						p_filetype = objReportFilter.fileType,
-						p_userid = objReportFilter.userId,
-						p_roleid = objReportFilter.roleId,
-						p_ownership_type = objReportFilter.SelectedOwnerShipType,
-						p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
-						p_radious = objReportFilter.radius
+        public List<Dictionary<string, string>> GetExportSummaryViewKML(ExportEntitiesSummaryViewFilter objReportFilter)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(objReportFilter.connectionString))
+                    connetionString = objReportFilter.connectionString;
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view_kml",
+                    new
+                    {
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_parentusers = objReportFilter.SelectedParentUsers,
+                        p_userids = objReportFilter.SelectedUserIds,
+                        p_layer_name = objReportFilter.layerName,
+                        p_projectcode = objReportFilter.SelectedProjectIds,
+                        p_planningcode = objReportFilter.SelectedPlanningIds,
+                        p_workordercode = objReportFilter.SelectedWorkOrderIds,
+                        p_purposecode = objReportFilter.SelectedPurposeIds,
+                        p_durationbasedon = objReportFilter.durationbasedon,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_pageno = objReportFilter.currentPage,
+                        p_pagerecord = objReportFilter.pageSize,
+                        p_sortcolname = objReportFilter.sort,
+                        p_sorttype = objReportFilter.sortdir,
+                        p_advancefilter = objReportFilter.advancefilter,
+                        p_filetype = objReportFilter.fileType,
+                        p_userid = objReportFilter.userId,
+                        p_roleid = objReportFilter.roleId,
+                        p_ownership_type = objReportFilter.SelectedOwnerShipType,
+                        p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
+                        p_radious = objReportFilter.radius
 
-					}, true);
-				return lst;
-			}
-			catch { throw; }
-		}
+                    }, true);
+                return lst;
+            }
+            catch { throw; }
+        }
 
 
-		public List<Dictionary<string, string>> GetExportSummaryViewKMLNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        public List<Dictionary<string, string>> GetExportSummaryViewKMLNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
             try
             {
@@ -1201,6 +1205,15 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<RouteInfo> getRouteInfo(string province_ids)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<RouteInfo>("fn_get_route_info", new { p_province_id = province_ids }, true).ToList();
+            }
+            catch
+            { throw; }
+        }
     }
     public class DAParentChildLayer : Repository<ParentChildLayerMapping>
     {
@@ -1225,5 +1238,4 @@ namespace DataAccess
         }
 
     }
-    
-    }
+}

@@ -497,6 +497,10 @@ namespace BusinessLogics
         {
             return new DAMisc().getRouteEntityInLineBuffer(systemId, entityType);
         }
+        public List<RouteInfo> getRouteEntityInLineBuffer(string geom)
+        {
+            return new DAMisc().getRouteEntityInLineBuffer(geom);
+        }
         public List<LineEntityInfo> getAutoLineEntityInLineBuffer(int systemId, string entityType, int pSystemId, string pEntityType, string pParentGeom, string pParentGeomType)
         {
             return new DAMisc().getAutoLineEntityInLineBuffer(systemId, entityType, pSystemId, pEntityType, pParentGeom, pParentGeomType);
