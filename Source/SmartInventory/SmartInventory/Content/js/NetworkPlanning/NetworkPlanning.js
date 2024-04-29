@@ -235,6 +235,10 @@ var NetworkPlanning = function () {
     }
 
     this.loopValidation = function () {
+        var isValid = validateSpanlength();
+        if (isValid = "false") {
+            return false;
+        }
         if (!app.networkPlanningManualmode('start', false)) {
             return false;
         }
@@ -330,10 +334,6 @@ var NetworkPlanning = function () {
 
     this.createAutoPlanNetwork = function () {
         
-        var isValid = validateSpanlength();
-        if (isvalid = "false") {
-            return false;
-        }
         if (app.selectedPlanningPath != null && app.selectedPlanningPath.length == undefined) {
 
             for (let j = 0; j < app.selectedPlanningPath.legs.length; j++) {
