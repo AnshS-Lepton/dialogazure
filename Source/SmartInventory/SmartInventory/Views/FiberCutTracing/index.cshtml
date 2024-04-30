@@ -50,7 +50,7 @@
                         <div class="col-md-6">
                             <select id="ddlStreamType" class="chosen-select form-control"><option>-Select-</option></select>
                         </div>
-                        <div class="col-md-6">@Html.TextBoxFor(m => m.tracingDistance, new { @class = "form-control", @onkeypress = "return allowNumberwithOneDot(event,'tracingDistance');", @maxlength = "10" })</div>
+                        <div class="col-md-6">@Html.TextBoxFor(m => m.tracingDistance, new { @class = "form-control numbers-only", @onkeypress = "return allowNumberwithOneDot(event,'tracingDistance');", @maxlength = "10" })</div>
                     </div>
                 </div>
             </div>
@@ -66,3 +66,19 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("input.numbers-only").on("paste", function () {
+            var thisvalue = this;
+
+            setTimeout(function () {
+                var OnlyNumber = new RegExp(/^[0-9]{1,10}$/);
+
+                if (!OnlyNumber.test(thisvalue.value)) {
+                    thisvalue.value = "";
+                }
+            }, 0);
+        });
+    });
+</script>
