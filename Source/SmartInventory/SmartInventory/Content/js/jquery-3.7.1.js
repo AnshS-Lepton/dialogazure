@@ -6671,7 +6671,7 @@
 			val = "auto";
 		}
 
-		debugger;
+		//debugger;
 		// Support: IE 9 - 11 only
 		// Use offsetWidth/offsetHeight for when box sizing is unreliable.
 		// In those cases, the computed value can be trusted to be border-box.
@@ -6899,7 +6899,7 @@
 		jQuery.cssHooks[dimension] = {
 			get: function (elem, computed, extra) {
 				if (computed) {
-					debugger;
+					//debugger;
 					// Certain elements can have dimension info if we invisibly show them
 					// but it must have a current display style that would benefit
 					return rdisplayswap.test(jQuery.css(elem, "display")) &&
@@ -9789,7 +9789,7 @@
 		return !jQuery.expr.pseudos.visible(elem);
 	};
 	jQuery.expr.pseudos.visible = function (elem) {
-		debugger;
+		//debugger;
 		return !!(elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length);
 	};
 
@@ -10338,7 +10338,7 @@
 			// Support: IE <=11 only
 			// Running getBoundingClientRect on a
 			// disconnected node in IE throws an error
-			debugger;
+			//debugger;
 			if (!elem.getClientRects().length) {
 				return { top: 0, left: 0 };
 			}
