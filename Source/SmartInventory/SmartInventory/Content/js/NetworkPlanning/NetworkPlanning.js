@@ -235,10 +235,9 @@ var NetworkPlanning = function () {
     }
 
     this.loopValidation = function () {
-        var isValid = validateSpanlength();
-        if (isValid = "false") {
-            return false;
-        }
+
+        return validateSpanlength() === 'true';
+
         if (!app.networkPlanningManualmode('start', false)) {
             return false;
         }
