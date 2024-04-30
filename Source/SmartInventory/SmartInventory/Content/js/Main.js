@@ -1714,9 +1714,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Pole";
         });
+        app.filterPoleGeoJsonData();
         return new GeoJsonLayer({
             id: "pole",
-            data: app.filterDataWithProvinceGeom(app.poleGeoJson, "FeatureCollection", "POL"), //app.poleGeoJson,
+            data: app.filterDataWithProvinceGeom(app.poleFilteredGeoJson, "FeatureCollection", "POL"), //app.poleGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -1777,9 +1778,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Manhole";
         });
+        app.filterManholeGeoJsonData();
         return new GeoJsonLayer({
             id: "manhole",
-            data: app.filterDataWithProvinceGeom(app.manholeGeoJson, "FeatureCollection", "MH"), //app.manholeGeoJson,
+            data: app.filterDataWithProvinceGeom(app.manholeFilteredGeoJson, "FeatureCollection", "MH"), //app.manholeGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -1840,9 +1842,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "WallMount";
         });
+        app.filterWallMountGeoJsonData();
         return new GeoJsonLayer({
             id: "wallmount",
-            data: app.filterDataWithProvinceGeom(app.wallmountGeoJson, "FeatureCollection", "WMT"), //app.wallmountGeoJson,
+            data: app.filterDataWithProvinceGeom(app.wallmountFilteredGeoJson, "FeatureCollection", "WMT"), //app.wallmountGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -1903,9 +1906,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "FMS";
         });
+        app.filterFMSGeoJsonData();
         return new GeoJsonLayer({
             id: "fms",
-            data: app.filterDataWithProvinceGeom(app.fmsGeoJson, "FeatureCollection", "FMS"), //app.fmsGeoJson,
+            data: app.filterDataWithProvinceGeom(app.fmsFilteredGeoJson, "FeatureCollection", "FMS"), //app.fmsGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -1965,9 +1969,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "ONT";
         });
+        app.filterONTGeoJsonData();
         return new GeoJsonLayer({
             id: "ont",
-            data: app.filterDataWithProvinceGeom(app.ontGeoJson, "FeatureCollection", "ONT"), //app.ontGeoJson,
+            data: app.filterDataWithProvinceGeom(app.ontFilteredGeoJson, "FeatureCollection", "ONT"), //app.ontGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -2157,9 +2162,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "POD";
         });
+        app.filterPODGeoJsonData();
         return new GeoJsonLayer({
             id: "pod",
-            data: app.filterDataWithProvinceGeom(app.podGeoJson, "FeatureCollection", "POD"), //app.podGeoJson,
+            data: app.filterDataWithProvinceGeom(app.podFilteredGeoJson, "FeatureCollection", "POD"), //app.podGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -2286,9 +2292,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "FDB";
         });
+        app.filterFDBGeoJsonData();
         return new GeoJsonLayer({
             id: "fdb",
-            data: app.filterDataWithProvinceGeom(app.fdbGeoJson, "FeatureCollection", "FDB"), //app.fdbGeoJson,
+            data: app.filterDataWithProvinceGeom(app.fdbFilteredGeoJson, "FeatureCollection", "FDB"), //app.fdbGeoJson,
             filled: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
             pointType: (app.isVectorLayerLabelEnabled("FDB") ? 'icon+text' : 'icon'),
@@ -2349,9 +2356,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "BDB";
         });
+        app.filterBDBGeoJsonData();
         return new GeoJsonLayer({
             id: "bdb",
-            data: app.filterDataWithProvinceGeom(app.bdbGeoJson, "FeatureCollection", "BDB"), //app.bdbGeoJson,
+            data: app.filterDataWithProvinceGeom(app.bdbFilteredGeoJson, "FeatureCollection", "BDB"), //app.bdbGeoJson,
             filled: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
             pointType: (app.isVectorLayerLabelEnabled("BDB") ? 'icon+text' : 'icon'),
@@ -2411,9 +2419,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "CDB";
         });
+        app.filterCDBGeoJsonData();
         return new GeoJsonLayer({
             id: "cdb",
-            data: app.filterDataWithProvinceGeom(app.cdbGeoJson, "FeatureCollection", "CDB"), //app.bdbGeoJson,
+            data: app.filterDataWithProvinceGeom(app.cdbFilteredGeoJson, "FeatureCollection", "CDB"), //app.bdbGeoJson,
             filled: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
             pointType: (app.isVectorLayerLabelEnabled("CDB") ? 'icon+text' : 'icon'),
@@ -2474,9 +2483,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "ADB";
         });
+        app.filterADBGeoJsonData();
         return new GeoJsonLayer({
             id: "adb",
-            data: app.filterDataWithProvinceGeom(app.adbGeoJson, "FeatureCollection", "ADB"), //app.adbGeoJson,
+            data: app.filterDataWithProvinceGeom(app.adbFilteredGeoJson, "FeatureCollection", "ADB"), //app.adbGeoJson,
             filled: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
             pointType: (app.isVectorLayerLabelEnabled("ADB") ? 'icon+text' : 'icon'),
@@ -2537,9 +2547,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "SpliceClosure";
         });
+        app.filterSpliceClosureGeoJsonData();
         return new GeoJsonLayer({
             id: "spliceclosure",
-            data: app.filterDataWithProvinceGeom(app.spliceclosureGeoJson, "FeatureCollection", "SC"), //app.spliceclosureGeoJson,
+            data: app.filterDataWithProvinceGeom(app.spliceclosureFilteredGeoJson, "FeatureCollection", "SC"), //app.spliceclosureGeoJson,
             filled: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
             pointType: (app.isVectorLayerLabelEnabled("SC") ? 'icon+text' : 'icon'),
@@ -2656,10 +2667,11 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Trench";
         });
+        app.filterTrenchGeoJsonData();
         return new GeoJsonLayer({
             id: 'trench',
             useDevicePixels: app.useDevicePixelsInVectorLayer,
-            data: app.filterDataWithProvinceGeom(app.trenchGeoJson, "FeatureCollection", "TRH"), //app.trenchGeoJson,
+            data: app.filterDataWithProvinceGeom(app.trenchFilteredGeoJson, "FeatureCollection", "TRH"), //app.trenchGeoJson,
             lineWidthScale: 1,
             lineWidthUnits: 'pixels',
             lineWidthMinPixels: 1,
@@ -2713,10 +2725,11 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Duct";
         });
+        app.filterDuctGeoJsonData();
         return new GeoJsonLayer({
             id: 'duct',
             useDevicePixels: app.useDevicePixelsInVectorLayer,
-            data: app.filterDataWithProvinceGeom(app.ductGeoJson, "FeatureCollection", "DCT"), //app.trenchGeoJson,
+            data: app.filterDataWithProvinceGeom(app.ductFilteredGeoJson, "FeatureCollection", "DCT"), //app.trenchGeoJson,
             lineWidthScale: 1,
             lineWidthUnits: 'pixels',
             lineWidthMinPixels: 1,
@@ -2769,10 +2782,11 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Microduct";
         });
+        app.filterMicroductGeoJsonData();
         return new GeoJsonLayer({
             id: 'microduct',
             useDevicePixels: app.useDevicePixelsInVectorLayer,
-            data: app.filterDataWithProvinceGeom(app.microductGeoJson, "FeatureCollection", "MD"), //app.trenchGeoJson,
+            data: app.filterDataWithProvinceGeom(app.microductFilteredGeoJson, "FeatureCollection", "MD"), //app.trenchGeoJson,
             lineWidthScale: 1,
             lineWidthUnits: 'pixels',
             lineWidthMinPixels: 1,
@@ -2937,9 +2951,10 @@ var Main = function () {
             //console.log("Handhole called");
             return item.layer_name == "Handhole";
         });
+        app.filterHandholeGeoJsonData();
         return new GeoJsonLayer({
             id: "HH",
-            data: app.filterDataWithProvinceGeom(app.handholeGeoJson, "FeatureCollection", "HH"), //app.ontGeoJson,
+            data: app.filterDataWithProvinceGeom(app.handholeFilteredGeoJson, "FeatureCollection", "HH"), //app.ontGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3064,9 +3079,10 @@ var Main = function () {
             //console.log("Handhole called");
             return item.layer_name == "Cabinet";
         });
+        app.filterCabinetGeoJsonData();
         return new GeoJsonLayer({
             id: "cabinet",
-            data: app.filterDataWithProvinceGeom(app.cabinetGeoJson, "FeatureCollection", "CBT"), //app.ontGeoJson,
+            data: app.filterDataWithProvinceGeom(app.cabinetFilteredGeoJson, "FeatureCollection", "CBT"), //app.ontGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3187,9 +3203,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "PatchPanel";
         });
+        app.filterPatchPanelGeoJsonData();
         return new GeoJsonLayer({
             id: "PatchPanel",
-            data: app.filterDataWithProvinceGeom(app.patchpanelGeoJson, "FeatureCollection", "PATCHP"), //app.ontGeoJson,
+            data: app.filterDataWithProvinceGeom(app.patchpanelFilteredGeoJson, "FeatureCollection", "PATCHP"), //app.ontGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3247,9 +3264,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Tower";
         });
+        app.filterTowerGeoJsonData();
         return new GeoJsonLayer({
             id: "Tower",
-            data: app.filterDataWithProvinceGeom(app.towerGeoJson, "FeatureCollection", "TWR"),
+            data: app.filterDataWithProvinceGeom(app.towerFilteredGeoJson, "FeatureCollection", "TWR"),
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3367,9 +3385,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Sector";
         });
+        app.filterSectorGeoJsonData();
         return new GeoJsonLayer({
             id: "Sector",
-            data: app.filterDataWithProvinceGeom(app.sectorGeoJson, "FeatureCollection", "SCT"),
+            data: app.filterDataWithProvinceGeom(app.sectorFilteredGeoJson, "FeatureCollection", "SCT"),
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3427,9 +3446,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "HTB";
         });
+        app.filterHTBGeoJsonData();
         return new GeoJsonLayer({
             id: "HTB",
-            data: app.filterDataWithProvinceGeom(app.htbGeoJson, "FeatureCollection", "HTB"), //app.ontGeoJson,
+            data: app.filterDataWithProvinceGeom(app.htbFilteredGeoJson, "FeatureCollection", "HTB"), //app.ontGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3608,9 +3628,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Antenna";
         });
+        app.filterAntennaGeoJsonData();
         return new GeoJsonLayer({
             id: "ANT",
-            data: app.filterDataWithProvinceGeom(app.antennaGeoJson, "FeatureCollection", "ANT"), //app.ontGeoJson,
+            data: app.filterDataWithProvinceGeom(app.antennaFilteredGeoJson, "FeatureCollection", "ANT"), //app.ontGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3813,13 +3834,265 @@ var Main = function () {
     }
     this.filterSplitterGeoJsonData = function () {
         let sSplitter_type = '';
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
         if (app.splitter_type != '0' && app.splitter_type != undefined) {
             sSplitter_type = app.splitter_type;
         }
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+
         app.splitterFilteredGeoJson = {
             type: "FeatureCollection",
             features: app.splitterGeoJson.features.reduce(function (result, feature) {
-                if ((sSplitter_type == '' || feature.properties.splitter_type == sSplitter_type)) {
+                if ((sSplitter_type == '' || feature.properties.splitter_type == sSplitter_type) &&
+                    (sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterPoleGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.poleFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.poleGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterManholeGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.manholeFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.manholeGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterWallMountGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.wallmountFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.wallmountGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterFMSGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.fmsFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.fmsGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterONTGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.ontFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.ontGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterPODGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.podFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.podGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterFDBGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.fdbFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.fdbGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterBDBGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.bdbFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.bdbGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterADBGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.adbFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.adbGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterSpliceClosureGeoJsonData = function (eType) {
+        debugger;
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.spliceclosureFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.spliceclosureGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterTrenchGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.trenchFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.trenchGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterDuctGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.ductFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.ductGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -3827,6 +4100,198 @@ var Main = function () {
         };
     }
 
+    this.filterHandholeGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.handholeFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.handholeGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+
+
+    this.filterCabinetGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.cabinetFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.cabinetGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+
+
+    this.filterPatchPanelGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.patchpanelFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.patchpanelGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+
+
+    this.filterHTBGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.htbFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.htbGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+
+
+    this.filterAntennaGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.antennaFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.antennaGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+
+    this.filterCDBGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.cdbFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.cdbGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+
+    this.filterSectorGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.sectorFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.sectorGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+
+    this.filterTowerGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.towerFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.towerGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+
+    this.filterMicroductGeoJsonData = function (eType) {
+        let sOwnership = '';
+        let sThirdPartyVendor = '';
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.microductFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.microductGeoJson.features.reduce(function (result, feature) {
+                if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
 
     this.fetchVectorLayerData = function (vectorPrvinceSelected, _entityName) {
         //console.log("Request Fetch Time:" + app.vectorFetchTime);
