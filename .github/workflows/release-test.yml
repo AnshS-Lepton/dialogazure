@@ -1,6 +1,6 @@
 # author: hari-lepton
 # date: 17-Feb-2024
-name: Build develop on PR merge
+name: Build and publish on PR merge
 
 # Controls when the workflow will run
 on:
