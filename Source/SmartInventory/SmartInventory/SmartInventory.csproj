@@ -1911,6 +1911,7 @@
     <Content Include="Areas\Admin\Views\OTPAuthenticationSettings\EmailTemplateConfiguration.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\ViewSpecificationServices.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\SpecificationService.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfileWeb.pubxml" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery-3.6.0.min.js" />
