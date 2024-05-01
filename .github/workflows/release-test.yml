@@ -1,6 +1,6 @@
 # author: hari-lepton
 # date: 17-Feb-2024
-name: Build and publish on PR merge
+name: Test | Build and publish on PR merge
 
 # Controls when the workflow will run
 on:
@@ -37,8 +37,11 @@ jobs:
       - name: Build the solution
         run: msbuild Source/SmartInventory/SmartInventory.sln /p:Configuration=Release
         
-      - name: Publish Artifacts
+      - name: Build SmartInventory
+        run: msbuild Source/SmartInventory/SmartInventory/SmartInventory.csproj /p:Configuration=Release /p:OutputPath=bin/web /p:GenerateProjectSpecificOutputFolder=true
+      
+      - name: Publish SmartInventory Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: smart_inventory_artifacts
-          path: 'Source/SmartInventory/SmartInventory/bin/Release/*'
+          path: 'bin/web/**/*'
