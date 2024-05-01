@@ -37,14 +37,20 @@ jobs:
       # - name: Build the solution
       #   run: msbuild Source/SmartInventory/SmartInventory.sln /p:Configuration=Release
         
-      - name: Build SmartInventory
-        run: msbuild Source/SmartInventory/SmartInventory/SmartInventory.csproj /p:Configuration=Release
+      - name: Build SmartInventory Web
+        run: msbuild Source/SmartInventory/SmartInventory/SmartInventory.csproj /p:Configuration=Release /t:Publish /p:PublishProfile=FolderProfileWeb.pubxml
 
-      - name: List contents of bin/web directory
-        run: ls -R Source/SmartInventory/SmartInventory/bin
-      
       - name: Publish SmartInventory Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: smart_inventory_artifacts
-          path: 'Source/SmartInventory/SmartInventory/bin'
+          name: SmartInventory_Web
+          path: 'Source/SmartInventory/SmartInventory/bin/app.publish'
+      
+      # - name: Build SmartInventory Services
+      #   run: msbuild Source/SmartInventory/SmartInventoryServices/SmartInventoryServices.csproj /p:Configuration=Release /t:Publish
+
+      # - name: Publish SmartInventory Artifacts
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: SmartInventory_Services
+      #     path: 'Source/SmartInventory/SmartInventoryServices/bin'
