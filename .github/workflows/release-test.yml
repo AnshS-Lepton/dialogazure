@@ -36,9 +36,12 @@ jobs:
         
       # - name: Build the solution
       #   run: msbuild Source/SmartInventory/SmartInventory.sln /p:Configuration=Release
-        
+
       - name: Build SmartInventory Web
         run: msbuild Source/SmartInventory/SmartInventory/SmartInventory.csproj /p:Configuration=Release /t:Publish /p:PublishProfile=FolderProfileWeb.pubxml
+
+      - name: List contents of bin directory
+        run: ls -R bin
 
       - name: Publish SmartInventory Artifacts
         uses: actions/upload-artifact@v2
