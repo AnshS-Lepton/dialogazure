@@ -34,14 +34,17 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore Source/SmartInventory/SmartInventory.sln
         
-      - name: Build the solution
-        run: msbuild Source/SmartInventory/SmartInventory.sln /p:Configuration=Release
+      # - name: Build the solution
+      #   run: msbuild Source/SmartInventory/SmartInventory.sln /p:Configuration=Release
         
       - name: Build SmartInventory
-        run: msbuild Source/SmartInventory/SmartInventory/SmartInventory.csproj /p:Configuration=Release /p:OutputPath=bin/web /p:GenerateProjectSpecificOutputFolder=true
+        run: msbuild Source/SmartInventory/SmartInventory/SmartInventory.csproj /p:Configuration=Release
+
+      - name: List contents of bin/web directory
+        run: ls -R Source/SmartInventory/SmartInventory/bin
       
       - name: Publish SmartInventory Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: smart_inventory_artifacts
-          path: 'bin/web/**/*'
+          path: 'Source/SmartInventory/SmartInventory/bin'
