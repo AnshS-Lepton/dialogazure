@@ -196,6 +196,28 @@ var Main = function () {
     this.cableLabelDataFiltered = [];
     this.trenchLabelData = [];
 
+    this.poleFilteredGeoJson = [];
+    this.manholeFilteredGeoJson = [];
+    this.wallmountFilteredGeoJson = [];
+    this.fmsFilteredGeoJson = [];
+    this.ontFilteredGeoJson = [];
+    this.podFilteredGeoJson = [];
+    this.fdbFilteredGeoJson = [];
+    this.bdbFilteredGeoJson = [];
+    this.adbFilteredGeoJson = [];
+    this.spliceclosureFilteredGeoJson = [];
+    this.trenchFilteredGeoJson = [];
+    this.ductFilteredGeoJson = [];
+    this.handholeFilteredGeoJson = [];
+    this.cabinetFilteredGeoJson = [];
+    this.patchpanelFilteredGeoJson = [];
+    this.htbFilteredGeoJson = [];
+    this.antennaFilteredGeoJson = [];
+    this.cdbFilteredGeoJson = [];
+    this.sectorFilteredGeoJson = [];
+    this.towerFilteredGeoJson = [];
+    this.microductFilteredGeoJson = [];
+
     this.customerGeoJson = {};
     this.rowGeoJson = {};
     this.rowLabelData = [];
@@ -3798,17 +3820,23 @@ var Main = function () {
         let sCable_Type = '';
         let sCable_Category = '';
         var systemIdSet = new Set();
+        let sThirdPartyVendor = '';
         if (app.cable_type != '0' && app.cable_type != undefined) {
             sCable_Type = app.cable_type;
         }
         if (app.cable_category != '0' && app.cable_category != undefined) {
             sCable_Category = app.cable_category;
         }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
         if (app.cableGeoJson && app.cableGeoJson.features) {
             app.cableFilteredGeoJson = {
                 type: "FeatureCollection",
                 features: app.cableGeoJson.features.reduce(function (result, feature) {
-                    if ((sCable_Type == '' || feature.properties.cable_type == sCable_Type) && (sCable_Category == '' || feature.properties.cable_category == sCable_Category)) {
+                    if ((sCable_Type == '' || feature.properties.cable_type == sCable_Type) &&
+                        (sCable_Category == '' || feature.properties.cable_category == sCable_Category) &&
+                        (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
                         result.push(feature);
                     }
                     return result;

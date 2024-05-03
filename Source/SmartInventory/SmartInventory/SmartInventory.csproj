@@ -1594,6 +1594,7 @@
     <Content Include="Content\js\vis_4_18_1.min.js" />
     <Content Include="Content\sort_asc.png" />
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
+    <Content Include="MigrationScripts\03-05-2024.sql" />
     <Content Include="MigrationScripts\05-04-2024.sql" />
     <Content Include="MigrationScripts\16-04-2024.sql" />
     <Content Include="MigrationScripts\2024_02_27_vodafone_issues.sql" />
