@@ -73,10 +73,17 @@ namespace SmartInventory.Settings
         public static int DefaultFloorHeight = 0;
         public static int DefaultFloorLength = 0;
         public static int DefaultFloorWidth = 0;
+        public static string validDocumentTypes = "";
+        public static string validImageTypes = "";
         public static int ConnectionPathFinderGridPaging = 0;
         public static string validationNotForRFS_Status = "";
         public static int DefaultBulkOperationPaging = 0;
-        public static int MaxFileUploadSizeLimit = 0;
+        public static int MaxFileUploadSizeLimit = 0; 
+        public static int MaxFileCountLimit = 0;
+
+        //public static string allowedDocumentAttachmentType ="";
+        //public static string allowedImageAttachmentType = "";
+
         public static int BulkConnectionUploadMaxCount = 0;
         public static string SplicingConnectionTemplate = "";
         public static string SplicingConnectionTemplateColumns = "";
@@ -310,7 +317,18 @@ namespace SmartInventory.Settings
                 if (objSetting.key == "DefaultBulkOperationPaging")
                     DefaultBulkOperationPaging = Convert.ToInt32(objSetting.value);
                 if (objSetting.key == "MaxFileUploadSizeLimit")
-                    MaxFileUploadSizeLimit = Convert.ToInt32(objSetting.value);
+                    MaxFileUploadSizeLimit = Convert.ToInt32(objSetting.value); 
+
+                    if (objSetting.key == "MaxFileCountLimit")
+                    MaxFileCountLimit = Convert.ToInt32(objSetting.value);
+                if (objSetting.key == "validDocumentTypes")
+                {
+                    validDocumentTypes = objSetting.value;
+                }
+                if (objSetting.key == "validImageTypes")
+                {
+                    validImageTypes = objSetting.value;
+                }
 
                 if (objSetting.key == "BulkConnectionUploadMaxCount")
                     BulkConnectionUploadMaxCount = Convert.ToInt32(objSetting.value);
@@ -846,6 +864,14 @@ namespace SmartInventory.Settings
                 {
                     CableDefLabelMinZoom = Convert.ToInt32(objSetting.value);
                 }
+                //if (objSetting.key == "allowedDocumentAttachmentType")
+                //{
+                //    allowedDocumentAttachmentType = objSetting.value;
+                //}
+                //if (objSetting.key == "allowedImageAttachmentType")
+                //{
+                //    allowedImageAttachmentType = objSetting.value;
+                //}
             }
         }
     }
