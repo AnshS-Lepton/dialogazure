@@ -2416,36 +2416,62 @@ namespace SmartInventory.Controllers
             {
                 try
                 {
+                    
                     var systemId = collection["system_Id"];
                     var entityType = collection["entity_type"];
                     var featureName = collection["feature_name"];
                     HttpFileCollectionBase files = Request.Files;
-                    for (int i = 0; i < files.Count; i++)
+                    VailidateAttachment obj = ValidateDocumentFileType(files);
+                    if (!string.IsNullOrEmpty(obj.invalidattachmentType))
                     {
-                        HttpPostedFileBase file = files[i];
-                        string FileName = file.FileName;
-                        string strNewfilename = Path.GetFileNameWithoutExtension(FileName) + "_" + MiscHelper.getTimeStamp() + Path.GetExtension(FileName);
-                        string strFilePath = UploadfileOnFTP(entityType, systemId, file, "Images", strNewfilename, featureName);
-                        // get User Detail..
-                        User objUser = (User)(Session["userDetail"]);
-                        LibraryAttachment objAttachment = new LibraryAttachment();
-                        objAttachment.entity_system_id = Convert.ToInt32(systemId);
-                        objAttachment.entity_type = entityType;
-                        objAttachment.org_file_name = FileName;
-                        objAttachment.file_name = strNewfilename;
-                        objAttachment.file_extension = Path.GetExtension(FileName);
-                        objAttachment.file_location = strFilePath;
-                        objAttachment.upload_type = "Image";
-                        objAttachment.uploaded_by = objUser.user_id.ToString();
-                        objAttachment.file_size = file.ContentLength;
-                        objAttachment.entity_feature_name = featureName;
-                        objAttachment.uploaded_on = DateTime.Now;
-                        //Save Image on FTP and related detail in database..
-                        var savefile = new BLAttachment().SaveLibraryAttachment(objAttachment);
+                        jResp.message = obj.invalidattachmentType;
+                        jResp.status = StatusCodes.INVALID_FILE.ToString();
+                        return Json(jResp, JsonRequestBehavior.AllowGet);
+
                     }
-                    jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_242;
-                    jResp.status = StatusCodes.OK.ToString();
-                    return Json(jResp, JsonRequestBehavior.AllowGet);
+                    else if (!string.IsNullOrEmpty(obj.invalidattachmentsize))
+                    {
+                        jResp.message = obj.invalidattachmentsize;
+                        jResp.status = StatusCodes.INVALID_FILE.ToString();
+                        return Json(jResp, JsonRequestBehavior.AllowGet);
+
+                    }
+                    else if (!string.IsNullOrEmpty(obj.invalidattachmentename))
+                    {
+                        jResp.message = obj.invalidattachmentename;
+                        jResp.status = StatusCodes.INVALID_FILE.ToString();
+                        return Json(jResp, JsonRequestBehavior.AllowGet);
+
+                    }
+                    else 
+                    {
+                        for (int i = 0; i < files.Count; i++)
+                        {
+                            HttpPostedFileBase file = files[i];
+                            string FileName = file.FileName;
+                            string strNewfilename = Path.GetFileNameWithoutExtension(FileName) + "_" + MiscHelper.getTimeStamp() + Path.GetExtension(FileName);
+                            string strFilePath = UploadfileOnFTP(entityType, systemId, file, "Images", strNewfilename, featureName);
+                            // get User Detail..
+                            User objUser = (User)(Session["userDetail"]);
+                            LibraryAttachment objAttachment = new LibraryAttachment();
+                            objAttachment.entity_system_id = Convert.ToInt32(systemId);
+                            objAttachment.entity_type = entityType;
+                            objAttachment.org_file_name = FileName;
+                            objAttachment.file_name = strNewfilename;
+                            objAttachment.file_extension = Path.GetExtension(FileName);
+                            objAttachment.file_location = strFilePath;
+                            objAttachment.upload_type = "Image";
+                            objAttachment.uploaded_by = objUser.user_id.ToString();
+                            objAttachment.file_size = file.ContentLength;
+                            objAttachment.entity_feature_name = featureName;
+                            objAttachment.uploaded_on = DateTime.Now;
+                            //Save Image on FTP and related detail in database..
+                            var savefile = new BLAttachment().SaveLibraryAttachment(objAttachment);
+                        }
+                        jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_242;
+                        jResp.status = StatusCodes.OK.ToString();
+                        return Json(jResp, JsonRequestBehavior.AllowGet);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -2462,8 +2488,71 @@ namespace SmartInventory.Controllers
                 jResp.status = StatusCodes.INVALID_INPUTS.ToString();
                 return Json(jResp, JsonRequestBehavior.AllowGet);
             }
-        }
+        }       
+        public VailidateAttachment ValidateImageFileType(HttpFileCollectionBase files)
+        {
+            VailidateAttachment obj = new VailidateAttachment();
+            int maxallowedAttachmentSize = ApplicationSettings.MaxFileUploadSizeLimit * ApplicationSettings.MaxFileCountLimit * 1024;
+            List<string> invalidAttachmentType = new List<string>();
+            List<string> invalidAttachmentName = new List<string>();
+            int totalUploadedAttachmentSize = 0;
+            for (int i = 0; i < files.Count; i++)
+            {
+                //var allowedFileTypes = ApplicationSettings.allowedImageAttachmentType;
+                var validDocumentTypes = ApplicationSettings.validDocumentTypes.Split(new string[] { "," }, StringSplitOptions.None);
+                var fileExtension = Path.GetExtension(files[i].FileName);//var fileExtension = files[i].FileName.Split('.').LastOrDefault()?.ToLower();
+                totalUploadedAttachmentSize = totalUploadedAttachmentSize + files[i].ContentLength;
+                if (!validDocumentTypes.Contains(fileExtension.ToLower()))// if (allowedFileTypes.IndexOf(fileExtension) == -1)
+                {
+                    invalidAttachmentType.Add(files[i].FileName);
+                }
+                if (files[i].FileName.Length > 100)
+                {
+                    invalidAttachmentName.Add(files[i].FileName);
 
+                }
+            }
+            if (totalUploadedAttachmentSize > maxallowedAttachmentSize)
+            {
+                totalUploadedAttachmentSize = 0;
+                obj.invalidattachmentsize = "Total file size is too large.Maximum total file size allowed is, " + maxallowedAttachmentSize/1024 +" MB";
+            }
+            obj.invalidattachmentType = invalidAttachmentType.Count > 0 ? "The following files are not of allowed file type are " + string.Join(", ", invalidAttachmentType) : string.Empty;
+            obj.invalidattachmentename = invalidAttachmentName.Count > 0 ? "File Name length should be less than 100 characters. invalid files are " + string.Join(", ", invalidAttachmentType) : string.Empty;
+            return obj;
+        }
+        public VailidateAttachment ValidateDocumentFileType(HttpFileCollectionBase files)
+        {
+            VailidateAttachment obj = new VailidateAttachment();
+            int maxallowedAttachmentSize = ApplicationSettings.MaxFileUploadSizeLimit * ApplicationSettings.MaxFileCountLimit * 1024;
+            List<string> invalidAttachmentType = new List<string>();
+            List<string> invalidAttachmentName = new List<string>();
+            int totalUploadedAttachmentSize = 0;
+            for (int i = 0; i < files.Count; i++)
+            {
+               // var allowedFileTypes = ApplicationSettings.allowedDocumentAttachmentType;
+                var validDocumentTypes = ApplicationSettings.validDocumentTypes.Split(new string[] { "," }, StringSplitOptions.None);
+                var fileExtension = Path.GetExtension(files[i].FileName);//var fileExtension = files[i].FileName.Split('.').LastOrDefault()?.ToLower();
+                totalUploadedAttachmentSize = totalUploadedAttachmentSize + files[i].ContentLength;
+                if (!validDocumentTypes.Contains(fileExtension.ToLower()))//if (allowedFileTypes.IndexOf(fileExtension) == -1)
+                {
+                    invalidAttachmentType.Add(files[i].FileName);
+                }
+                if (files[i].FileName.Length>100)
+                {
+                    invalidAttachmentName.Add(files[i].FileName);
+                    
+                }
+            }
+            if(totalUploadedAttachmentSize > maxallowedAttachmentSize) 
+            {
+                totalUploadedAttachmentSize = 0;
+                obj.invalidattachmentsize = "Total file size is too large.Maximum total file size allowed is, " + maxallowedAttachmentSize/1024 +" MB";
+            }
+            obj.invalidattachmentType = invalidAttachmentType.Count > 0 ? "The following files are not of allowed file type are " + string.Join(", ", invalidAttachmentType) : string.Empty;
+            obj.invalidattachmentename = invalidAttachmentName.Count>0? "File Name length should be less than 100 characters. invalid files are "+ string.Join(", ", invalidAttachmentType): string.Empty;
+            return obj;
+        }
 
         [HttpPost]
         public ActionResult CheckFileExist(FormCollection collection)
@@ -2536,46 +2625,71 @@ namespace SmartInventory.Controllers
                     var featureName = collection["feature_name"];
                     var attachmentType = "Document";
                     HttpFileCollectionBase files = Request.Files;
-                    for (int i = 0; i < files.Count; i++)
+                    VailidateAttachment obj  = ValidateDocumentFileType(files);
+                    if (!string.IsNullOrEmpty(obj.invalidattachmentType))
                     {
-                        HttpPostedFileBase file = files[i];
-                        string FileName = file.FileName;
-                        string strNewfilename = Path.GetFileNameWithoutExtension(FileName) + "_" + MiscHelper.getTimeStamp() + Path.GetExtension(FileName);
-                        string strFilePath = "";
-                        if (entityType == EntityType.ROW.ToString() && !string.IsNullOrEmpty(featureName))
-                        {
-                            attachmentType = (!string.IsNullOrEmpty(collection["attachment_type"]) ? collection["attachment_type"] : attachmentType);
-                            strFilePath = UploadfileOnFTP(featureName, systemId, file, attachmentType, strNewfilename, entityType);
-                        }
-                        else if (!string.IsNullOrEmpty(featureName))
-                        {
-                            strFilePath = UploadfileOnFTP(entityType, systemId, file, attachmentType, strNewfilename, featureName);
-                        }
-                        else
-                        {
-                            strFilePath = UploadfileOnFTP(entityType, systemId, file, attachmentType, strNewfilename);
-                        }
-
-                        // get User Detail..
-                        User objUser = (User)(Session["userDetail"]);
-                        LibraryAttachment objAttachment = new LibraryAttachment();
-                        objAttachment.entity_system_id = Convert.ToInt32(systemId);
-                        objAttachment.entity_type = entityType;
-                        objAttachment.org_file_name = FileName;
-                        objAttachment.file_name = strNewfilename;
-                        objAttachment.file_extension = Path.GetExtension(FileName);
-                        objAttachment.file_location = strFilePath;
-                        objAttachment.upload_type = attachmentType;
-                        objAttachment.uploaded_by = objUser.user_id.ToString();
-                        objAttachment.entity_feature_name = featureName;
-                        objAttachment.file_size = file.ContentLength;
-                        objAttachment.uploaded_on = DateTime.Now;
-                        //Save Image on FTP and related detail in database..
-                        var savefile = new BLAttachment().SaveLibraryAttachment(objAttachment);
+                        jResp.message = obj.invalidattachmentType;
+                        jResp.status = StatusCodes.INVALID_FILE.ToString();
+                        return Json(jResp, JsonRequestBehavior.AllowGet);
+                        
                     }
-                    jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_154;
-                    jResp.status = StatusCodes.OK.ToString();
-                    return Json(jResp, JsonRequestBehavior.AllowGet);
+                    else if (!string.IsNullOrEmpty(obj.invalidattachmentsize))
+                    {
+                        jResp.message = obj.invalidattachmentsize;
+                        jResp.status = StatusCodes.INVALID_FILE.ToString();
+                        return Json(jResp, JsonRequestBehavior.AllowGet);
+
+                    }
+                    else if (!string.IsNullOrEmpty(obj.invalidattachmentename))
+                    {
+                        jResp.message = obj.invalidattachmentename;
+                        jResp.status = StatusCodes.INVALID_FILE.ToString();
+                        return Json(jResp, JsonRequestBehavior.AllowGet);
+
+                    }
+                    else
+                    {
+                        for (int i = 0; i < files.Count; i++)
+                        {
+                            HttpPostedFileBase file = files[i];
+                            string FileName = file.FileName;
+                            string strNewfilename = Path.GetFileNameWithoutExtension(FileName) + "_" + MiscHelper.getTimeStamp() + Path.GetExtension(FileName);
+                            string strFilePath = "";
+                            if (entityType == EntityType.ROW.ToString() && !string.IsNullOrEmpty(featureName))
+                            {
+                                attachmentType = (!string.IsNullOrEmpty(collection["attachment_type"]) ? collection["attachment_type"] : attachmentType);
+                                strFilePath = UploadfileOnFTP(featureName, systemId, file, attachmentType, strNewfilename, entityType);
+                            }
+                            else if (!string.IsNullOrEmpty(featureName))
+                            {
+                                strFilePath = UploadfileOnFTP(entityType, systemId, file, attachmentType, strNewfilename, featureName);
+                            }
+                            else
+                            {
+                                strFilePath = UploadfileOnFTP(entityType, systemId, file, attachmentType, strNewfilename);
+                            }
+
+                            // get User Detail..
+                            User objUser = (User)(Session["userDetail"]);
+                            LibraryAttachment objAttachment = new LibraryAttachment();
+                            objAttachment.entity_system_id = Convert.ToInt32(systemId);
+                            objAttachment.entity_type = entityType;
+                            objAttachment.org_file_name = FileName;
+                            objAttachment.file_name = strNewfilename;
+                            objAttachment.file_extension = Path.GetExtension(FileName);
+                            objAttachment.file_location = strFilePath;
+                            objAttachment.upload_type = attachmentType;
+                            objAttachment.uploaded_by = objUser.user_id.ToString();
+                            objAttachment.entity_feature_name = featureName;
+                            objAttachment.file_size = file.ContentLength;
+                            objAttachment.uploaded_on = DateTime.Now;
+                            //Save Image on FTP and related detail in database..
+                            var savefile = new BLAttachment().SaveLibraryAttachment(objAttachment);
+                        }
+                        jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_154;
+                        jResp.status = StatusCodes.OK.ToString();
+                        return Json(jResp, JsonRequestBehavior.AllowGet);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -4007,23 +4121,23 @@ namespace SmartInventory.Controllers
                 var lstImages = new BLAttachment().getAttachmentDetailsDocs(system_Id, entity_type, "Image");
                 foreach (var item in lstImages)
                 {
-                    var _imgSrc = "";
-                    string imageUrl = string.Concat(FtpUrl, item.FileLocation, item.FileName);
+                    var _imgSrc = "";                       
+                        string imageUrl = string.Concat(FtpUrl, item.FileLocation, item.FileName);
 
-                    WebClient request = new WebClient();
-                    if (!string.IsNullOrEmpty(UserName)) //Authentication require..
-                        request.Credentials = new NetworkCredential(UserName, PassWord);
+                        WebClient request = new WebClient();
+                        if (!string.IsNullOrEmpty(UserName)) //Authentication require..
+                            request.Credentials = new NetworkCredential(UserName, PassWord);
 
-                    byte[] objdata = null;
-                    if (isFileExistOnFTP(imageUrl))
-                    {
-                        objdata = request.DownloadData(imageUrl);
-                    }
-                    if (objdata != null && objdata.Length > 0)
-                        _imgSrc = string.Concat("data:image//png;base64,", Convert.ToBase64String(objdata));
-                    ImageResult Imr = new ImageResult();
+                        byte[] objdata = null;
+                        if (isFileExistOnFTP(imageUrl))
+                        {
+                            objdata = request.DownloadData(imageUrl);
+                        }
+                        if (objdata != null && objdata.Length > 0)
+                            _imgSrc = string.Concat("data:image//png;base64,", Convert.ToBase64String(objdata));
+                        ImageResult Imr = new ImageResult();
 
-                    getLatLongFromImage(objdata, Imr);
+                        getLatLongFromImage(objdata, Imr);
 
                     lstImageResult.Add(new DocumentResult()
                     {

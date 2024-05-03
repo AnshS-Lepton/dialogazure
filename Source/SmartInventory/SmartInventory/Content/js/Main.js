@@ -18944,12 +18944,97 @@ var Main = function () {
         app.getAttachmentFiles();
     }
 
+    this.uploadMultipleDocumentFile = function () {
+        debugger;
+        var frmData = new FormData();
+        var filesize = $('#hdnMaxFileUploadSizeLimit').val();
+        var maxFileCountLimit = $('#fdnMaxFileCountLimit').val();
+        var Sizeinbytes = filesize * 1024;
+        var TotalSizeinBytes = Sizeinbytes * maxFileCountLimit;
+        var uploadedfile = $('#fuAttachmentUpload')[0].files;
+        var invalidFiles = [];
+        //var allowedFileTypes = ["dwg", "pdf", "jpeg", "jpg", "doc", "docx", "xls", "xlsx", "csv", "vsd", "ppt", "pptx", "png", "htm", "html", "msg", "zip", "rar"];
+        var allowedFileTypes = $('#allowedDocumentAttachmentType').val();
+        var totalFilesize = 0;
+        if (uploadedfile.length > 0) {
+            for (var i = 0; i < uploadedfile.length; i++) {
+                frmData.append('images[]', uploadedfile[i]);
+                //if (uploadedfile[i].size > Sizeinbytes) {                 
+                //    alert(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_109, (filesize / 1024).toFixed(2))));
+                //    return false;
+                //}               
+                if (uploadedfile[i].name.length > 100) {
+                    alert("File Name length should be less than <b>100</b>.</br>Current file name length: " + uploadedfil[i].name.lengt + "");
+                    return false;
+                }
+                var fileExtension = '.' + uploadedfile[i].name.split('.')[1].toLowerCase();
+                if (allowedFileTypes.indexOf(fileExtension) === -1) {
+                    invalidFiles.push(uploadedfile[i].name);
+                }
+                if (totalFilesize > TotalSizeinBytes)
+                {
+                    totalFilesize = 0;
+                    var tfilesize = (TotalSizeinBytes / 1024).toFixed(2);
+                    alert("Total file size is too large.Maximum total file size allowed is, " + tfilesize);
+                    return false;
+                }
+                totalFilesize = totalFilesize + uploadedfile[i].size;
+            }
+            if (invalidFiles.length > 0) {
+                alert("The following files are not of allowed file type or exceed the name length limit:\n" + invalidFiles.join("\n"));
+                return false; // Stop further processing
+            }
+            frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
+            frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+            frmData.append('document_type', 'Image');
 
+            ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
+                if (resp.status == "OK") {
+                    ajaxReqforFileUpload('Main/UploadDocument', frmData, true, function (resp) {
+                        if (resp.status == "OK") {
+                            $('#closeModalPopup').trigger("click");
+                            app.getElementImages();
+                            console.log("MSG true:" + resp.message);
+                            alert(resp.message);
+                        }
+                        else {
+                            console.log("MSG false:" + resp.message);
+
+                            alert(resp.message);
+                        }
+                    }, true);
+                }
+                else if (resp.status == "DUPLICATE_EXIST") {
+                    confirm(resp.message, function () {
+                        ajaxReqforFileUpload('Main/UploadDocument', frmData, true, function (resp) {
+                            if (resp.status == "OK") {
+                                $('#closeModalPopup').trigger("click");
+                                app.getElementImages();
+                                console.log("MSG true:" + resp.message);
+                                alert(resp.message);
+                            }
+                            else {
+                                console.log("MSG false:" + resp.message);
+                                alert(resp.message);
+                            }
+                        }, true);
+                    });
+                }
+                else {
+                    console.log("MSG false:" + resp.message);
+                    alert(resp.message);
+                }
+            }, true);
+        }
+        else {
+            alert(MultilingualKey.SI_OSP_GBL_GBL_GBL_099);
+            return false;
+        }
+    }
     this.uploadDocumentFile = function () {
         //;
         var frmData = new FormData();
         var filesize = $('#hdnMaxFileUploadSizeLimit').val();
-
         var Sizeinbytes = filesize * 1024;
         if ($("#fuAttachmentUpload").get(0).files[0].size > Sizeinbytes) {
 
@@ -19136,29 +19221,41 @@ var Main = function () {
         debugger;
         var frmData = new FormData();
         var filesize = $('#hdnMaxFileUploadSizeLimit').val();
+        var maxFileCountLimit = $('#fdnMaxFileCountLimit').val();
         var Sizeinbytes = filesize * 1024;
+        var TotalSizeinBytes = Sizeinbytes * maxFileCountLimit;
+       
         var uploadedfile = $('#fuImgUpload')[0].files;
         var invalidFiles = [];
-        var allowedFileTypes = ["bmp", "gif", "png", "jpg", "jpeg", "zip"];
+        var allowedFileTypes = $('#allowedImageAttachmentType').val();
+        //var allowedFileTypes = ["bmp", "gif", "png", "jpg", "jpeg"];
+        var totalFilesize = 0;
         if (uploadedfile.length > 0) {
             for (var i = 0; i < uploadedfile.length; i++) {
                 frmData.append('images[]', uploadedfile[i]);
-                if (uploadedfile[i].size > Sizeinbytes) {
-                    var validFileSizeinMB = filesize % 1024 == 0 ? parseInt(filesize / 1024) : (filesize / 1024).toFixed(2);
-                    alert(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_GBL_112, validFileSizeinMB)));
-                    return false;
-                }
+                //if (uploadedfile[i].size > Sizeinbytes) {
+                //    var validFileSizeinMB = filesize % 1024 == 0 ? parseInt(filesize / 1024) : (filesize / 1024).toFixed(2);
+                //    alert(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_GBL_112, validFileSizeinMB)));
+                //    return false;
+                //}
                 if (uploadedfile[i].name.length > 100) {
                     alert("File Name length should be less than <b>100</b>.</br>Current file name length: " + uploadedfil[i].name.lengt + "");
                     return false;
                 }
-                var fileExtension = uploadedfile[i].name.split('.')[1].toLowerCase();
+                var fileExtension = '.' + uploadedfile[i].name.split('.')[1].toLowerCase();
                 if (allowedFileTypes.indexOf(fileExtension) === -1) {
                     invalidFiles.push(uploadedfile[i].name);
                 }
+                if (totalFilesize > TotalSizeinBytes) {
+                    totalFilesize = 0;
+                    var tfilesize = (TotalSizeinBytes / 1024).toFixed(2);
+                    alert("Total file size is too large.Maximum total file size allowed is, " + tfilesize);
+                    return false;
+                }
+                totalFilesize = totalFilesize + uploadedfile[i].size;
             }
             if (invalidFiles.length > 0) {
-                alert("The following files are not of allowed file type or exceed the name length limit:\n" + invalidFiles.join("\n"));
+               alert("The following files are not of allowed file type or exceed the name length limit:\n" + invalidFiles.join("\n"));
                 return false; // Stop further processing
             }
             frmData.append('system_Id', $('#infoTB').attr('att_systemid'));

@@ -67,6 +67,13 @@ namespace Models
         public bool is_meter_reading_image { get; set; }
 
 	}
+    public class VailidateAttachment 
+    {
+        public string invalidattachmentType { get; set; }
+        public string invalidattachmentsize { get; set; }
+        public string invalidattachmentename { get; set; }
+
+    }
 
     public class ImageResult
     {
