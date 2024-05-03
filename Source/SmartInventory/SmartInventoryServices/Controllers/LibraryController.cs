@@ -10805,7 +10805,7 @@ namespace SmartInventoryServices.Controllers
 				}
 				else
 				{
-					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.POD.ToString());
+					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.BDB.ToString());
 					// RETURN PARTIAL VIEW WITH MODEL DATA  
 					BindISPBDBDropDown(model);
 					fillProjectSpecifications(model);
@@ -11386,7 +11386,7 @@ namespace SmartInventoryServices.Controllers
 				}
 				else
 				{
-					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.POD.ToString());
+					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.ADB.ToString());
 					// RETURN PARTIAL VIEW WITH MODEL DATA  
 					BindISPADBDropDown(model);
 					fillProjectSpecifications(model);
@@ -11705,7 +11705,7 @@ namespace SmartInventoryServices.Controllers
 				}
 				else
 				{
-					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.POD.ToString());
+					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.CDB.ToString());
 					// RETURN PARTIAL VIEW WITH MODEL DATA  
 					BindISPCDBDropDown(model);
 					fillProjectSpecifications(model);

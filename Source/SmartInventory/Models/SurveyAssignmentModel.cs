@@ -32,7 +32,7 @@ namespace Models
         public string request_ref_id { get; set; }
         public string requested_by { get; set; }
         public string request_approved_by { get; set; }
-
+        public string assigned_by { get; set; }
     }
     public class ViewSurveyAssignmentModel
     {
