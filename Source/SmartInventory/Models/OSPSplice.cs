@@ -658,6 +658,7 @@ namespace Models
             listSplicingReport = new List<ExportSplicing>();
 
         }
+        public int user_id { get; set; }
     }
     public class connectors
     {
@@ -1098,7 +1099,8 @@ namespace Models
         public double latitude { get; set; }
         public double longitude { get; set; }
         public double bufferRadius { get; set; }
-        public User users { get; set; }
+        public int role_id { get; set; }
+        public int user_id { get; set; }
     }
     public class ViewSplicingEntity
     {

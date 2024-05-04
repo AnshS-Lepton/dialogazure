@@ -34,7 +34,7 @@ namespace SmartInventoryServices.Controllers
             {
                 ViewSplicingEntity splicingEntities = new ViewSplicingEntity();
                 SplicingInputReq obj = ReqHelper.GetRequestData<SplicingInputReq>(data);
-                var splicingEntity = new BLOSPSplicing().getEntityForSplicing(obj.latitude, obj.longitude, obj.bufferRadius, obj.users.role_id);
+                var splicingEntity = new BLOSPSplicing().getEntityForSplicing(obj.latitude, obj.longitude, obj.bufferRadius, obj.role_id);
                 splicingEntities.SplicingLst = splicingEntity;
                 if (splicingEntity != null)
                 {
@@ -65,8 +65,7 @@ namespace SmartInventoryServices.Controllers
             {
                 connectionInput obj = ReqHelper.GetRequestData<connectionInput>(data);
                 SplicingViewModel splicingEntity = new SplicingViewModel();
-                var userId = 5;
-                var lstUserModule = new BLLayer().GetUserModuleAbbrList(userId, UserType.Mobile.ToString());
+                var lstUserModule = new BLLayer().GetUserModuleAbbrList(obj.user_id, UserType.Mobile.ToString());
                 splicingEntity.splicingConnections = new BLOSPSplicing().getSplicingInfo(obj, JsonConvert.SerializeObject(obj.listConnector));
                 var connector = obj.listConnector.FirstOrDefault();
                 if (splicingEntity.splicingConnections.Count > 0)
@@ -75,12 +74,26 @@ namespace SmartInventoryServices.Controllers
                     splicingEntity.destinationCable = splicingEntity.splicingConnections.Where(m => m.system_id == obj.destination_system_id && m.entity_type == EntityType.Cable.ToString() && m.is_cable_a_end == obj.is_destination_start_point).FirstOrDefault();
                     splicingEntity.connector = splicingEntity.splicingConnections.Where(m => m.system_id == Convert.ToInt32(connector.system_id) && m.entity_type == connector.entity_type).FirstOrDefault();
                 }
+                var isFSALocked = new BLOSPSplicing().CheckSplicingPermission(connector.system_id, connector.entity_type);
                 var availablePorts = new BLOSPSplicing().getAvailablePorts(Convert.ToInt32(connector.system_id), connector.entity_type);
                 splicingEntity.total_ports = availablePorts.total_ports;
                 splicingEntity.available_ports = availablePorts.available_ports;
-                splicingEntity.userId = userId;
+                splicingEntity.userId = obj.user_id;
                 splicingEntity.listPortStatus = new BLPortStatus().getPortStatus();
-                splicingEntity.isEditAllowed = true;
+                splicingEntity.isEditAllowed = lstUserModule.Contains("EDS"); ;
+
+                if (splicingEntity.isEditAllowed == false)
+                {
+                    splicingEntity.unauthorisedmessage = "You are not authorised!";
+                }
+                else
+                {
+                    if (isFSALocked == false)
+                    {
+                        splicingEntity.isEditAllowed = false;
+                        splicingEntity.unauthorisedmessage = "Changes in splicing has been restricted due to Design BOM is submitted!";
+                    }
+                }
                 splicingEntity.lstUserModule = lstUserModule;
                 splicingEntity.lstSpliceTray = BLSpliceTray.Instance.GetSpliceTrayInfo(connector.system_id, connector.entity_type);
                 splicingEntity.connector_entity_type = obj.connector_entity_type;
@@ -151,6 +164,7 @@ namespace SmartInventoryServices.Controllers
             try
             {
                 connectionInput obj = ReqHelper.GetRequestData<connectionInput>(data);
+                var lstUserModule = new BLLayer().GetUserModuleAbbrList(obj.user_id, UserType.Mobile.ToString());
                 SplicingViewModel splicingEntity = new SplicingViewModel();
                 List<SplicingConectionInfo> listConnections = new List<SplicingConectionInfo>();
                 EntityType enType = (EntityType)System.Enum.Parse(typeof(EntityType), obj.listConnector.First().entity_type);
@@ -163,7 +177,7 @@ namespace SmartInventoryServices.Controllers
                 splicingEntity.middlePortList = new BLOSPSplicing().middleWarePorts(obj.listConnector[0].system_id, enType.ToString());
                 var isFSALocked = new BLOSPSplicing().CheckSplicingPermission((obj.listConnector.FirstOrDefault()).system_id, (obj.listConnector.FirstOrDefault()).entity_type);
 
-                splicingEntity.isEditAllowed = obj.lstUserModule.Contains("EDS");
+                splicingEntity.isEditAllowed = lstUserModule.Contains("EDS");
                 if (splicingEntity.isEditAllowed == false)
                 {
                     splicingEntity.unauthorisedmessage = "You are not authorised!";
@@ -176,7 +190,7 @@ namespace SmartInventoryServices.Controllers
                         splicingEntity.unauthorisedmessage = "Changes in splicing has been restricted due to Design BOM is submitted!";
                     }
                 }
-                splicingEntity.lstUserModule = obj.lstUserModule;
+                splicingEntity.lstUserModule = lstUserModule;
                 splicingEntity.connector_entity_type = obj.connector_entity_type;
                 splicingEntity.is_middleware_entity = obj.is_middleware_entity;
                 if (splicingEntity != null)
