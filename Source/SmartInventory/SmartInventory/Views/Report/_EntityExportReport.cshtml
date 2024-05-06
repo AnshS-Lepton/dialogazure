@@ -96,6 +96,12 @@
                         </div>
                     </div>
                     <div class="row form-group">
+                        <div class="col-md-3">Route Id:</div>
+                        <div class="col-md-9">
+
+                        </div>
+                    </div>
+                    <div class="row form-group">
                         <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_065:</div>
                         <div class="col-md-9">
                             @Html.DropDownListFor(m => m.objReportFilters.SelectedRegionId, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @onchange = "si.onChangeRegion();", @id = "ddlRegions", @disabled = "disabled" })
@@ -114,6 +120,12 @@
                         <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_020:</div>
                         <div class="col-md-9">
                             @Html.DropDownListFor(m => m.objReportFilters.SelectedLayerId, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlLayers" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">Route Id:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
                         </div>
                     </div>
                     <div class="row form-group">
@@ -247,43 +259,43 @@
                         </div>
                     </div>
                 }
-                    <div class="row form-group">
-                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_071<i class="clsMandatory">*</i>:</div>
-                        <div class="col-md-9">
-                            @Html.DropDownListFor(m => m.objReportFilters.durationbasedon, new SelectList(Model.lstDurationBasedOn.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @id = "ddlDurationBasedOn" })
-                        </div>
+                <div class="row form-group">
+                    <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_071<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(m => m.objReportFilters.durationbasedon, new SelectList(Model.lstDurationBasedOn.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @id = "ddlDurationBasedOn" })
                     </div>
-                    <div class="row form-group">
-                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_072<i class="clsMandatory">*</i>:</div>
-                        <div class="col-md-9">
-                            @Html.DropDownListFor(m => m.objReportFilters.customDate, new List<SelectListItem>{
-                                    new SelectListItem { Text = "All", Value = "9"},
-                                    new SelectListItem { Text = "Custom", Value = "1"},
-                                    new SelectListItem { Text = "Today", Value = "2"},
-                                    new SelectListItem { Text = "Previous Day", Value = "3"},
-                                    new SelectListItem { Text = "Last 7 Days", Value = "4"},
-                                    new SelectListItem { Text = "Last 30 Day", Selected=true, Value = "5"},
-                                    new SelectListItem { Text = "Last 3 Months", Value = "6"},
-                                    new SelectListItem { Text = "Last 6 Months", Value = "7"},
-                                  new SelectListItem { Text = "Last 1 Year", Value = "8"},
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_072<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(m => m.objReportFilters.customDate, new List<SelectListItem>{
+                                new SelectListItem { Text = "All", Value = "9"},
+                                new SelectListItem { Text = "Custom", Value = "1"},
+                                new SelectListItem { Text = "Today", Value = "2"},
+                                new SelectListItem { Text = "Previous Day", Value = "3"},
+                                new SelectListItem { Text = "Last 7 Days", Value = "4"},
+                                new SelectListItem { Text = "Last 30 Day", Selected=true, Value = "5"},
+                                new SelectListItem { Text = "Last 3 Months", Value = "6"},
+                                new SelectListItem { Text = "Last 6 Months", Value = "7"},
+                              new SelectListItem { Text = "Last 1 Year", Value = "8"},
 
-                                }, new { @class = "chosen-select", @onchange = "onChangeCustomDate();", @id = "customedate" })
-                        </div>
+                            }, new { @class = "chosen-select", @onchange = "onChangeCustomDate();", @id = "customedate" })
                     </div>
-                    <div class="row form-group">
-                        <div class="col-md-3"></div>
-                        <div class="col-md-9" style="display:flex">
-                            <div class="col-md-6" style="padding:0px;padding-right: 6px;">
-                                @Html.TextBoxFor(m => m.objReportFilters.fromDate, new { @id = "txtDateFrom", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_096, @tabindex = "4", @class = "input-sm form-control", @readonly = true, @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_096 })
-                                <img id="imgFromDate" class="export-report-cal" src="@Url.Content("~/Content/images/calendar.png")" style="right: 12px;">
-                            </div>
-                            <div class="col-md-6" style="padding:0px;">
-                                @Html.TextBoxFor(m => m.objReportFilters.toDate, new { @id = "txtDateTo", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_097, @tabindex = "4", @class = "input-sm form-control", @readonly = true, @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_097 })
-                                <img id="imgToDate" class="export-report-cal" src="@Url.Content("~/Content/images/calendar.png")">
-                            </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-9" style="display:flex">
+                        <div class="col-md-6" style="padding:0px;padding-right: 6px;">
+                            @Html.TextBoxFor(m => m.objReportFilters.fromDate, new { @id = "txtDateFrom", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_096, @tabindex = "4", @class = "input-sm form-control", @readonly = true, @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_096 })
+                            <img id="imgFromDate" class="export-report-cal" src="@Url.Content("~/Content/images/calendar.png")" style="right: 12px;">
+                        </div>
+                        <div class="col-md-6" style="padding:0px;">
+                            @Html.TextBoxFor(m => m.objReportFilters.toDate, new { @id = "txtDateTo", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_097, @tabindex = "4", @class = "input-sm form-control", @readonly = true, @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_097 })
+                            <img id="imgToDate" class="export-report-cal" src="@Url.Content("~/Content/images/calendar.png")">
                         </div>
                     </div>
                 </div>
+            </div>
             <div class="ModalFooter d-flex">
                 <button type="button" class="btn btn-default ml-auto" id="btnEntityExportClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
                 <button type="submit" class="btn btn-success ml-10" id="btnShowReportData">@Resources.Resources.SI_OSP_GBL_GBL_GBL_040</button>
@@ -535,6 +547,7 @@
         $("#ddlParentUsers").val(SelectedParentUsers.split(',')).trigger("chosen:updated");
 
         //alert(SelectedUserIds);
+        debugger;
         var selectedLayerIds = '@Model.objReportFilters.SelectedLayerIds';
         $("#ddlLayers").val(selectedLayerIds.split(',')).trigger("chosen:updated");
 

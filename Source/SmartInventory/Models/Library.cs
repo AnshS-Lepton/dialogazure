@@ -1570,7 +1570,9 @@ namespace Models
 		public List<NELoopDetails> lstLoopMangment { get; set; }
 		[NotMapped]
 		public List<SpliceTrayInfo> lstSpliceTrayInfo { get; set; }
-		public string status_remark { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }        
+        public string status_remark { get; set; }
 		public bool is_new_entity { get; set; }
 		[NotMapped]
 		public int split_cable_system_id { get; set; }
@@ -1602,8 +1604,10 @@ namespace Models
 		public string province_abbreviation { get; set; }
 		[Required]
 		public string bom_sub_category { get; set; }
-		//public string served_by_ring { get; set; }
-		[NotMapped]
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
+        //public string served_by_ring { get; set; }
+        [NotMapped]
 		public List<DropDownMaster> lstBOMSubCategory { get; set; }
 		[NotMapped]
 		public List<DropDownMaster> lstServedByRing { get; set; }
@@ -1628,6 +1632,7 @@ namespace Models
 			EntityReference = new EntityReference();
 			lstLoopMangment = new List<NELoopDetails>();
 			lstSpliceTrayInfo = new List<SpliceTrayInfo>();
+			lstRouteInfo = new List<RouteInfo>();
 			project_id = 0;
 			planning_id = 0;
 			workorder_id = 0;
@@ -2723,6 +2728,10 @@ namespace Models
 		public IList<DropDownMaster> lstNetworkStatus { get; set; }
 		[NotMapped]
         public List<string> lstUserModule { get; set; }
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
         public ExportEntitiesReportNew()
 		{
 			lstLayers = new List<layerReportDetail>();
@@ -2740,7 +2749,8 @@ namespace Models
 			list3rdPartyVendorId = new List<KeyValueDropDown>();
             lstUserModule = new List<string>();
 			lstfiletypes = new List<fileTypes>();
-		}
+            lstRouteInfo = new List<RouteInfo>();
+        }
 
 	}
 	[Serializable]
@@ -2780,7 +2790,9 @@ namespace Models
 		public string durationbasedon { get; set; }
         public bool is_all_provience_assigned { get; set; }
 		public double radius { get; set; }
-        public string connectionString { get; set; }       
+        public string connectionString { get; set; }
+        public List<int> selected_route_id { get; set; }//int[]
+        public string selected_route_ids { get; set; }
     }
 
 	public class EntitySummaryReport
@@ -2873,6 +2885,7 @@ namespace Models
 		public string SelectedLayerIds { get; set; }
 		public double radius { get; set; }
         public string connectionString { get; set; }
+        public string selected_route_ids { get; set; }
     }
 
 	public class ReportAdvanceFilter

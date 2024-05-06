@@ -19132,74 +19132,82 @@ var Main = function () {
         });
     }
 
-    //this.uploadMultipleImageFile = function () {
-    //    var frmData = new FormData();
-    //    var filesize = $('#hdnMaxFileUploadSizeLimit').val();
-    //    var Sizeinbytes = filesize * 1024;
-    //    var uploadedfile = $('#fuImgUpload')[0].files;
-    //    if (uploadedfile.length > 0) {
-    //        for (var i = 0; i < uploadedfile.length; i++) {
-    //            frmData.append('images[]', uploadedfile[i]);
-    //            if (uploadedfile[i].size > Sizeinbytes) {
-    //                var validFileSizeinMB = filesize % 1024 == 0 ? parseInt(filesize / 1024) : (filesize / 1024).toFixed(2);
-    //                alert(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_GBL_112, validFileSizeinMB)));
-    //                return false;
-    //            }
-    //            if (uploadedfile[i].name.length > 100) {
-    //                alert("File Name length should be less than <b>100</b>.</br>Current file name length: " + uploadedfil[i].name.lengt + "");
-    //                return false;
-    //            }
-    //        }
-    //        if (!validateImageFileType()) {
-    //            return false;
-    //        }
-    //        frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
-    //        frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
-    //        frmData.append('document_type', 'Image');
+    this.uploadMultipleImageFile = function () {
+        debugger;
+        var frmData = new FormData();
+        var filesize = $('#hdnMaxFileUploadSizeLimit').val();
+        var Sizeinbytes = filesize * 1024;
+        var uploadedfile = $('#fuImgUpload')[0].files;
+        var invalidFiles = [];
+        var allowedFileTypes = ["bmp", "gif", "png", "jpg", "jpeg", "zip"];
+        if (uploadedfile.length > 0) {
+            for (var i = 0; i < uploadedfile.length; i++) {
+                frmData.append('images[]', uploadedfile[i]);
+                if (uploadedfile[i].size > Sizeinbytes) {
+                    var validFileSizeinMB = filesize % 1024 == 0 ? parseInt(filesize / 1024) : (filesize / 1024).toFixed(2);
+                    alert(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_GBL_112, validFileSizeinMB)));
+                    return false;
+                }
+                if (uploadedfile[i].name.length > 100) {
+                    alert("File Name length should be less than <b>100</b>.</br>Current file name length: " + uploadedfil[i].name.lengt + "");
+                    return false;
+                }
+                var fileExtension = uploadedfile[i].name.split('.')[1].toLowerCase();
+                if (allowedFileTypes.indexOf(fileExtension) === -1) {
+                    invalidFiles.push(uploadedfile[i].name);
+                }
+            }
+            if (invalidFiles.length > 0) {
+                alert("The following files are not of allowed file type or exceed the name length limit:\n" + invalidFiles.join("\n"));
+                return false; // Stop further processing
+            }
+            frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
+            frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+            frmData.append('document_type', 'Image');
 
-    //        ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
-    //            if (resp.status == "OK") {
-    //                ajaxReqforFileUpload('Main/UploadImage', frmData, true, function (resp) {
-    //                    if (resp.status == "OK") {
-    //                        $('#closeModalPopup').trigger("click");
-    //                        app.getElementImages();
-    //                        console.log("MSG true:" + resp.message);
-    //                        alert(resp.message);
-    //                    }
-    //                    else {
-    //                        console.log("MSG false:" + resp.message);
+            ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
+                if (resp.status == "OK") {
+                    ajaxReqforFileUpload('Main/UploadImage', frmData, true, function (resp) {
+                        if (resp.status == "OK") {
+                            $('#closeModalPopup').trigger("click");
+                            app.getElementImages();
+                            console.log("MSG true:" + resp.message);
+                            alert(resp.message);
+                        }
+                        else {
+                            console.log("MSG false:" + resp.message);
 
-    //                        alert(resp.message);
-    //                    }
-    //                }, true);
-    //            }
-    //            else if (resp.status == "DUPLICATE_EXIST") {
-    //                confirm(resp.message, function () {
-    //                    ajaxReqforFileUpload('Main/UploadImage', frmData, true, function (resp) {
-    //                        if (resp.status == "OK") {
-    //                            $('#closeModalPopup').trigger("click");
-    //                            app.getElementImages();
-    //                            console.log("MSG true:" + resp.message);
-    //                            alert(resp.message);
-    //                        }
-    //                        else {
-    //                            console.log("MSG false:" + resp.message);
-    //                            alert(resp.message);
-    //                        }
-    //                    }, true);
-    //                });
-    //            }
-    //            else {
-    //                console.log("MSG false:" + resp.message);
-    //                alert(resp.message);
-    //            }
-    //        }, true);
-    //    }
-    //    else {
-    //        alert(MultilingualKey.SI_OSP_GBL_GBL_GBL_099);
-    //        return false;
-    //    }
-    //}
+                            alert(resp.message);
+                        }
+                    }, true);
+                }
+                else if (resp.status == "DUPLICATE_EXIST") {
+                    confirm(resp.message, function () {
+                        ajaxReqforFileUpload('Main/UploadImage', frmData, true, function (resp) {
+                            if (resp.status == "OK") {
+                                $('#closeModalPopup').trigger("click");
+                                app.getElementImages();
+                                console.log("MSG true:" + resp.message);
+                                alert(resp.message);
+                            }
+                            else {
+                                console.log("MSG false:" + resp.message);
+                                alert(resp.message);
+                            }
+                        }, true);
+                    });
+                }
+                else {
+                    console.log("MSG false:" + resp.message);
+                    alert(resp.message);
+                }
+            }, true);
+        }
+        else {
+            alert(MultilingualKey.SI_OSP_GBL_GBL_GBL_099);
+            return false;
+        }
+    }
 
     this.uploadImageFile = function () {
         //Get File from uploader and prepare form data to post.
@@ -19278,6 +19286,8 @@ var Main = function () {
             }, true);
         }
     }
+   
+
     this.getUserProfileImage = function () {
         //;
         var _userId = $("#hdnCurrentUserId").val()
@@ -29511,7 +29521,7 @@ function ValidateGeomForJPBoundary(entityGeom, geomType) {
 //END REGION JP_BOUNDARY
 
 function validateImageFileType() {
-    var validFilesTypes = ["bmp", "gif", "png", "jpg", "jpeg"];
+    var validFilesTypes = ["bmp", "gif", "png", "jpg", "jpeg","zip"];
     var file = $("#fuImgUpload").val();
     var filepath = file;
     return ValidateFileType(validFilesTypes, filepath);

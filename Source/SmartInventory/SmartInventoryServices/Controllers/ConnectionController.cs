@@ -16,17 +16,19 @@ using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.Http;
+using System.Web.Mvc;
 using Utility;
+using static SmartInventoryServices.Filters.CustomAuthorization;
 
 namespace SmartInventoryServices.Controllers
 {
-    [RoutePrefix("api/Connection")]
+    [System.Web.Http.RoutePrefix("api/Connection")]
     [CustomAuthorization]
     [APIExceptionFilter]
     [CustomAction]
     public class ConnectionController : ApiController
     {
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<ViewSplicingEntity> Splicing(ReqInput data)
         {
             var response = new ApiResponse<ViewSplicingEntity>();
@@ -57,7 +59,7 @@ namespace SmartInventoryServices.Controllers
 
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<SplicingViewModel> CableToCable(ReqInput data)
         {
             var response = new ApiResponse<SplicingViewModel>();
@@ -109,7 +111,7 @@ namespace SmartInventoryServices.Controllers
 
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<SplicingViewModel> CPEToCustomer(ReqInput data)
         {
             var response = new ApiResponse<SplicingViewModel>();
@@ -144,7 +146,7 @@ namespace SmartInventoryServices.Controllers
 
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<SplicingViewModel> ODFToCable(ReqInput data)
         {
             var response = new ApiResponse<SplicingViewModel>();
@@ -200,7 +202,7 @@ namespace SmartInventoryServices.Controllers
 
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<DbMessage> ValidateConnections(ReqInput data)
         {          
             var response = new ApiResponse<DbMessage>();
@@ -224,7 +226,7 @@ namespace SmartInventoryServices.Controllers
             }
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<DbMessage> deleteConnection(ReqInput data)
         {
             var objResp = new ApiResponse<DbMessage>();  
@@ -261,12 +263,12 @@ namespace SmartInventoryServices.Controllers
             }
             return objResp;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<DbMessage> SaveConnectionInfo(ReqInput data)
         {
             var objResp = new ApiResponse<DbMessage>();
             try
-            {
+            {               
                 ConnectionInfoMasterInput objConnectionInfo = ReqHelper.GetRequestData<ConnectionInfoMasterInput>(data);
                 var userdetatils = objConnectionInfo.user;
                 List<UserModule> lstUserModule = new BLMisc().GetUserModuleMasterList();
@@ -399,7 +401,7 @@ namespace SmartInventoryServices.Controllers
             return filepath;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<AvailablePorts> GetAvailabePorts(ReqInput data)
         {
             var objResp = new ApiResponse<AvailablePorts>();
@@ -427,7 +429,7 @@ namespace SmartInventoryServices.Controllers
             }
             return objResp;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<dynamic> GetTrayUsedPort(ReqInput data)
         {
             var objResp = new ApiResponse<dynamic>();
@@ -456,5 +458,101 @@ namespace SmartInventoryServices.Controllers
             }
             return objResp;
         }
+
+        [System.Web.Http.HttpPost]
+        public ApiResponse<DbMessage> SaveBulkConnection(ReqInput data)
+        {
+            var response = new ApiResponse<DbMessage>();
+            try
+            {
+                List<bulkSplicingInput> objInput = ReqHelper.GetRequestData<List<bulkSplicingInput>>(data);
+                List<ConnectionInfoMaster> lstConnection = new List<ConnectionInfoMaster>();
+                List<ConnectionInfoMaster> lstValidateConnection = new List<ConnectionInfoMaster>();
+                bulkSplicingInput objSource = objInput.Where(m => m.connectionType == "Source").FirstOrDefault();
+                bulkSplicingInput objDestination = objInput.Where(m => m.connectionType == "Destination").FirstOrDefault();
+                bulkSplicingInput objConnector = objInput.Where(m => m.connectionType == "Connector").FirstOrDefault();
+                    for (int i = objSource.from; i <= objSource.to; i++)
+                    {
+                        ConnectionInfoMaster objConnection = new ConnectionInfoMaster();
+                        objConnection.source_system_id = objSource.systemId;
+                        objConnection.source_entity_type = objSource.entityType;
+                        objConnection.source_network_id = objSource.networkId;
+                        objConnection.source_port_no = i;
+                        objConnection.is_source_cable_a_end = objSource.isCableAend;
+
+                        objConnection.destination_system_id = objDestination.systemId;
+                        objConnection.destination_entity_type = objDestination.entityType;
+                        objConnection.destination_network_id = objDestination.networkId;
+                        objConnection.destination_port_no = objDestination.from;
+                        objConnection.is_destination_cable_a_end = objDestination.isCableAend;
+
+                        objConnection.equipment_system_id = objConnector.systemId;
+                        objConnection.equipment_network_id = objConnector.networkId;
+                        objConnection.equipment_entity_type = objConnector.entityType;
+                        objConnection.splicing_source = "Mobile Splicing";
+
+                        objConnection.is_through_connection = false;
+
+
+                        lstValidateConnection.Add(objConnection);
+                        var resp = new BLOSPSplicing().ValidtaeConnections(JsonConvert.SerializeObject(lstValidateConnection));
+                        if (resp.status) { lstConnection.Add(objConnection); }
+
+                        if (objDestination.from == objDestination.to) { break; }
+                        objDestination.from++;
+                    }
+                SaveConnectionInfo(lstConnection);
+
+                response.status = StatusCodes.OK.ToString();
+                response.error_message = "";
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("SaveBulkConnection()", "Splicing Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = "Error While Processing  Request.";
+            }
+            return response;
+        }
+        public void SaveConnectionInfo(List<ConnectionInfoMaster> objConnectionInfo)
+        {
+            var access_token = Request.Headers.Authorization.Parameter;
+            var secureDataFormat = new Microsoft.Owin.Security.DataHandler.TicketDataFormat(new MachineKeyProtector());
+            Microsoft.Owin.Security.AuthenticationTicket ticket = secureDataFormat.Unprotect(access_token);
+            var user_id = Convert.ToInt32(ticket.Properties.Dictionary.FirstOrDefault(x => x.Key == "userId").Value);
+            var role_id = Convert.ToInt32(ticket.Properties.Dictionary.FirstOrDefault(x => x.Key == "userRoleId").Value);
+            List<UserModule> lstUserModule = new BLMisc().GetUserModuleMasterList();
+            objConnectionInfo.ForEach(p => p.created_by = user_id);
+            objConnectionInfo.ForEach(p => p.created_on = DateTimeHelper.Now);
+            var objConnection = new BLOSPSplicing().SaveConnectionInfo(JsonConvert.SerializeObject(objConnectionInfo));
+            var objConection = objConnectionInfo.FirstOrDefault();
+            var module = lstUserModule.Where(x => x.module_abbr.ToUpper() == "NTF").FirstOrDefault();
+            if (module != null)
+            {
+
+                if (objConection != null)
+                {
+
+                    System.Threading.Tasks.Task.Factory.StartNew(() =>
+                    {
+                        DbMessage objDbMessage = new BLOSPSplicing().SaveUtilizationNotification(objConection);
+                        SmartInventoryHub smartInventoryhub = SmartInventoryHub.Instance;
+                        var UnreadNotificationCount = new BLMisc().GetUnreadNotificationCount(user_id, role_id);
+                        NotificationOutPut objNotification = new NotificationOutPut();
+                        objNotification.info = Convert.ToString(UnreadNotificationCount);
+                        objNotification.sendToAllUser = false;
+                        objNotification.notificationType = notificationType.Utilization.ToString();
+                        smartInventoryhub.BroadCastInfo(objNotification);
+                    }).ContinueWith(tsk =>
+                    {
+                        tsk.Exception.Handle(ex => { ErrorLogHelper.WriteErrorLog("Splicing", "SaveConnectionInfo", ex); return true; });
+                    }, System.Threading.Tasks.TaskContinuationOptions.OnlyOnFaulted);
+                    //SendUtilizationEmail(objConnectionInfo);
+                }
+            }
+        }
+
+        
     }
 }
