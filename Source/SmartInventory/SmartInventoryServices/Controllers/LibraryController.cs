@@ -559,7 +559,7 @@ namespace SmartInventoryServices.Controllers
 						#endregion
 
 						#region RestrictedArea
-						else if (headerAttribute.entity_type.ToUpper() == EntityType.RestrictedArea.ToString().ToUpper())
+						else if (headerAttribute.entity_type.ToUpper() == EntityType.Restricted_Area.ToString().ToUpper())
 						{
 							if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
 							{
@@ -4156,7 +4156,7 @@ namespace SmartInventoryServices.Controllers
 
 		public RestrictedArea GetRestrictedAreaDetail(RestrictedArea objRestrictedArea)
 		{
-			var objDDL = new BLMisc().GetDropDownList(EntityType.RestrictedArea.ToString());
+			var objDDL = new BLMisc().GetDropDownList(EntityType.Restricted_Area.ToString());
 			DropDownMaster drp = new DropDownMaster();
 			//objDDL.Insert(0, new DropDownMaster { dropdown_key = "Select", dropdown_status = false, dropdown_type = DropDownType.Area_RFS.ToString(), dropdown_value = "0" });
 
@@ -4165,12 +4165,12 @@ namespace SmartInventoryServices.Controllers
 				//NEW ENTITY->Fill Region and Province Detail..
 				fillRegionProvinceDetail(objRestrictedArea, GeometryType.Polygon.ToString(), objRestrictedArea.geom);
 				//Fill Parent detail...              
-				fillParentDetail(objRestrictedArea, new NetworkCodeIn() { eType = EntityType.RestrictedArea.ToString(), gType = GeometryType.Polygon.ToString(), eGeom = objRestrictedArea.geom }, objRestrictedArea.networkIdType);
+				fillParentDetail(objRestrictedArea, new NetworkCodeIn() { eType = EntityType.Restricted_Area.ToString(), gType = GeometryType.Polygon.ToString(), eGeom = objRestrictedArea.geom }, objRestrictedArea.networkIdType);
 			}
 			else
 			{
 				// Get entity detail by Id...
-				objRestrictedArea = new BLMisc().GetEntityDetailById<RestrictedArea>(objRestrictedArea.system_id, EntityType.RestrictedArea, objRestrictedArea.user_id);
+				objRestrictedArea = new BLMisc().GetEntityDetailById<RestrictedArea>(objRestrictedArea.system_id, EntityType.Restricted_Area, objRestrictedArea.user_id);
 				fillRegionProvAbbr(objRestrictedArea);
 			}
 
@@ -4193,7 +4193,7 @@ namespace SmartInventoryServices.Controllers
 			try
 			{
 				ModelState.Clear();
-				var objDDL = new BLMisc().GetDropDownList(EntityType.RestrictedArea.ToString());
+				var objDDL = new BLMisc().GetDropDownList(EntityType.Restricted_Area.ToString());
 				DropDownMaster drp = new DropDownMaster();
 				objRestrictedArea.lstRestrictedAreaRFS = objDDL.Where(x => x.dropdown_type == DropDownType.RestrictedArea_RFS.ToString()).ToList();
 				objRestrictedArea.lstcategoryRFS = objDDL.Where(x => x.dropdown_type == DropDownType.Category.ToString()).ToList();
@@ -4204,7 +4204,7 @@ namespace SmartInventoryServices.Controllers
 				if (objRestrictedArea.networkIdType == NetworkIdType.A.ToString() && objRestrictedArea.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.RestrictedArea.ToString(), gType = GeometryType.Polygon.ToString(), eGeom = objRestrictedArea.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Restricted_Area.ToString(), gType = GeometryType.Polygon.ToString(), eGeom = objRestrictedArea.geom });
 					if (objRestrictedArea.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -4214,7 +4214,7 @@ namespace SmartInventoryServices.Controllers
 					}
 					else
 					{
-						var objNetworkStatus = new BLMisc().GetEntityDetailById<RestrictedArea>(objRestrictedArea.system_id, EntityType.RestrictedArea, objRestrictedArea.user_id);
+						var objNetworkStatus = new BLMisc().GetEntityDetailById<RestrictedArea>(objRestrictedArea.system_id, EntityType.Restricted_Area, objRestrictedArea.user_id);
 						objRestrictedArea.network_status = objNetworkStatus.network_status;
 					}
 					//SET NETWORK CODE
@@ -4238,7 +4238,7 @@ namespace SmartInventoryServices.Controllers
 					var resultItem = new BLrestricted_area().SaveRestrictedArea(objRestrictedArea, objRestrictedArea.user_id);
 					if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
-						string[] LayerName = { EntityType.RestrictedArea.ToString() };
+						string[] LayerName = { EntityType.Restricted_Area.ToString() };
 
 						if (isNew)
 						{
@@ -10805,7 +10805,7 @@ namespace SmartInventoryServices.Controllers
 				}
 				else
 				{
-					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.POD.ToString());
+					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.BDB.ToString());
 					// RETURN PARTIAL VIEW WITH MODEL DATA  
 					BindISPBDBDropDown(model);
 					fillProjectSpecifications(model);
@@ -11386,7 +11386,7 @@ namespace SmartInventoryServices.Controllers
 				}
 				else
 				{
-					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.POD.ToString());
+					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.ADB.ToString());
 					// RETURN PARTIAL VIEW WITH MODEL DATA  
 					BindISPADBDropDown(model);
 					fillProjectSpecifications(model);
@@ -11705,7 +11705,7 @@ namespace SmartInventoryServices.Controllers
 				}
 				else
 				{
-					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.POD.ToString());
+					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.CDB.ToString());
 					// RETURN PARTIAL VIEW WITH MODEL DATA  
 					BindISPCDBDropDown(model);
 					fillProjectSpecifications(model);

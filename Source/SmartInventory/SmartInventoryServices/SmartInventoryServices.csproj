@@ -335,6 +335,7 @@
     <Content Include="Content\Images\icons\lib\Legend\D_WC.png" />
     <Content Include="Content\Images\icons\lib\Legend\Electrical.png" />
     <Content Include="Content\Images\icons\lib\Legend\electric_pole.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Fault.svg" />
     <Content Include="Content\Images\icons\lib\Legend\FDB.png" />
     <Content Include="Content\Images\icons\lib\Legend\fms.png" />
     <Content Include="Content\Images\icons\lib\Legend\HTB.png" />
@@ -342,6 +343,7 @@
     <Content Include="Content\Images\icons\lib\Legend\Light.png" />
     <Content Include="Content\Images\icons\lib\Legend\LightPole.png" />
     <Content Include="Content\Images\icons\lib\Legend\loop-bold.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Loop.svg" />
     <Content Include="Content\Images\icons\lib\Legend\loop_back %282%29.png" />
     <Content Include="Content\Images\icons\lib\Legend\loop_back %283%29.png" />
     <Content Include="Content\Images\icons\lib\Legend\loop_back-1.png" />
@@ -350,6 +352,7 @@
     <Content Include="Content\Images\icons\lib\Legend\manhole.png" />
     <Content Include="Content\Images\icons\lib\Legend\MicroPOD.png" />
     <Content Include="Content\Images\icons\lib\Legend\MPOD.png" />
+    <Content Include="Content\Images\icons\lib\Legend\MPOD.svg" />
     <Content Include="Content\Images\icons\lib\Legend\N-RFECommercial+Residential.png" />
     <Content Include="Content\Images\icons\lib\Legend\N-RFECommercialHighRise.png" />
     <Content Include="Content\Images\icons\lib\Legend\N-RFECommercialLowRise.png" />

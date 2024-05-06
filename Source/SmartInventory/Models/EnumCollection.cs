@@ -45,7 +45,7 @@ namespace Models
         Area,
         SubArea,
         SurveyArea,
-        RestrictedArea,
+        Restricted_Area,
         Structure,
         POD,
         Pole,

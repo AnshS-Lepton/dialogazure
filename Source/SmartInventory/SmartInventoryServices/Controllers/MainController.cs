@@ -26,19 +26,20 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Utility;
 
 namespace SmartInventoryServices.Controllers
 {
-    [Authorize]
+    [System.Web.Http.Authorize]
     [CustomAuthorization]
     [APIExceptionFilter]
     //[CustomAction]
     public class MainController : ApiController
     {
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<EntityDropDownItemList>> GetDropDownItems(ReqInput data)
         {
             var response = new ApiResponse<List<EntityDropDownItemList>>();
@@ -199,7 +200,7 @@ namespace SmartInventoryServices.Controllers
         //    }
         //    return response;
         //}
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<string> DeleteEntityFromInfo(ReqInput data)
         {
             var response = new ApiResponse<string>();
@@ -235,7 +236,7 @@ namespace SmartInventoryServices.Controllers
             }
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<dynamic> GetEntityTemplate(ReqInput data)
         {
             var response = new ApiResponse<dynamic>();
@@ -362,7 +363,7 @@ namespace SmartInventoryServices.Controllers
             }
             return objSplitterItem;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<EntityDetail>> GetNearByEntities(ReqInput data)
         {
             var response = new ApiResponse<List<EntityDetail>>();
@@ -402,7 +403,7 @@ namespace SmartInventoryServices.Controllers
 
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<EntityDetailWithAttribute>> GetNearByEntitiesWithAttribute(ReqInput data)
         {
             var response = new ApiResponse<List<EntityDetailWithAttribute>>();
@@ -441,7 +442,7 @@ namespace SmartInventoryServices.Controllers
 
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<entityInfo>> GetEntityInfo(ReqInput data)
         {
             var response = new ApiResponse<List<entityInfo>>();
@@ -480,7 +481,7 @@ namespace SmartInventoryServices.Controllers
             }
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<SearchResult>> GetEntitySearchResult(ReqInput data)
         {
             var response = new ApiResponse<List<SearchResult>>();
@@ -526,7 +527,7 @@ namespace SmartInventoryServices.Controllers
             return response;
 
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<GeometryDetail> getGeometryDetail(ReqInput data)
         {
             GeomDetailIn objGeomDetailIn = ReqHelper.GetRequestData<GeomDetailIn>(data);
@@ -557,7 +558,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
         #region SPLITTER
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<SplitterMobileMaster> GetSplitterDetail(ReqInput data)
         {
             var response = new ApiResponse<SplitterMobileMaster>();
@@ -1219,7 +1220,7 @@ namespace SmartInventoryServices.Controllers
         }
         #endregion
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<EntityDropDownItemList>> GetItemSpecifications(ReqInput data)
         {
             var response = new ApiResponse<List<EntityDropDownItemList>>();
@@ -1257,7 +1258,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<EntityDropDownItemList>> GetItemVendors(ReqInput data)
         {
             var response = new ApiResponse<List<EntityDropDownItemList>>();
@@ -1293,7 +1294,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<ItemCategoryDetailOut> GetItemCategoryDetail(ReqInput data)
         {
             var response = new ApiResponse<ItemCategoryDetailOut>();
@@ -1391,7 +1392,7 @@ namespace SmartInventoryServices.Controllers
         }
 
         #region customer
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<Customer> saveCustomerInfo(ReqInput data)
         {
             var response = new ApiResponse<Customer>();
@@ -1425,7 +1426,7 @@ namespace SmartInventoryServices.Controllers
         }
 
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<CustomerInfo> getCustomerInfo(ReqInput data)
         {
             var response = new ApiResponse<CustomerInfo>();
@@ -1566,7 +1567,7 @@ namespace SmartInventoryServices.Controllers
         //    return response;
         //}
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<IspPortInfo>> GetPortInfo(ReqInput data)
         {
             var response = new ApiResponse<List<IspPortInfo>>();
@@ -1617,7 +1618,7 @@ namespace SmartInventoryServices.Controllers
         }
 
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<string> saveSplitterAllocationPortInfo(ReqInput data)
 
         {
@@ -1656,7 +1657,7 @@ namespace SmartInventoryServices.Controllers
 
 
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<EntityDetail>> GetNearEntitiesByEntityType(ReqInput data)
         {
             var response = new ApiResponse<List<EntityDetail>>();
@@ -1701,7 +1702,7 @@ namespace SmartInventoryServices.Controllers
         #endregion
 
         #region GET BUILDING INFO WITH STRUCTURE INFO
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<BuildingMaster> getBuildingDetail(ReqInput data)
         {
             var response = new ApiResponse<BuildingMaster>();
@@ -1746,7 +1747,7 @@ namespace SmartInventoryServices.Controllers
             return response;
 
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<BuildingGeomInfo> getBuildingGeom(ReqInput data)
         {
             var response = new ApiResponse<BuildingGeomInfo>();
@@ -1788,7 +1789,7 @@ namespace SmartInventoryServices.Controllers
         #endregion
 
         #region GET STRUCTURE INFO WITH SHAFT/FLOOR AND ELEMENTS
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<StructureMaster> getStructureInfo(ReqInput data)
         {
             var response = new ApiResponse<StructureMaster>();
@@ -1828,7 +1829,7 @@ namespace SmartInventoryServices.Controllers
         #endregion
         #region Get Mobile legend info
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<LegendDetail>> getMobileLegendInfo(ReqInput data)
         {
             var response = new ApiResponse<List<LegendDetail>>();
@@ -1869,7 +1870,7 @@ namespace SmartInventoryServices.Controllers
 
         #region GetDBInfo
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<DistributionBoxInfo> getDistributionBoxInfo(ReqInput data)
         {
             var response = new ApiResponse<DistributionBoxInfo>();
@@ -1907,7 +1908,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<DistributionBoxEntityInfo> getDistributionBoxEntityInfo(ReqInput data)
         {
             var response = new ApiResponse<DistributionBoxEntityInfo>();
@@ -1938,7 +1939,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<SplitterPortInfo> getSplitterPortInfo(ReqInput data)
         {
             var response = new ApiResponse<SplitterPortInfo>();
@@ -1969,7 +1970,7 @@ namespace SmartInventoryServices.Controllers
         }
         #endregion
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<saveCustomerAssociationOut> SaveCustomerAssociation(ReqInput data)
         {
             var response = new ApiResponse<saveCustomerAssociationOut>();
@@ -2387,7 +2388,7 @@ namespace SmartInventoryServices.Controllers
         }
 
         #region Get WCR Material
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<Models.Admin.VendorSpecificationMaster>> GetWCRMaterial(ReqInput data)
         {
             var response = new ApiResponse<List<Models.Admin.VendorSpecificationMaster>>();
@@ -2418,7 +2419,7 @@ namespace SmartInventoryServices.Controllers
         }
         #endregion
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<DBInfoViewModel> GetNearByDBInfo(ReqInput data)
         {
             var response = new ApiResponse<DBInfoViewModel>();
@@ -2457,7 +2458,7 @@ namespace SmartInventoryServices.Controllers
 
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<string> UpdateEntityBarCode(ReqInput data)
         {
             var response = new ApiResponse<string>();
@@ -2493,8 +2494,8 @@ namespace SmartInventoryServices.Controllers
 
             return response;
         }
-		[HttpPost]
-		public ApiResponse<string> UpdatePowerMeterReading(ReqInput data)
+        [System.Web.Http.HttpPost]
+        public ApiResponse<string> UpdatePowerMeterReading(ReqInput data)
 		{
 			var response = new ApiResponse<string>();
 			try
@@ -2530,7 +2531,7 @@ namespace SmartInventoryServices.Controllers
 			return response;
 		}
 
-		[HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<userModuleViewModel> GetUserModule(ReqInput data)
         {
             var response = new ApiResponse<userModuleViewModel>();
@@ -2598,7 +2599,7 @@ namespace SmartInventoryServices.Controllers
             }).ToList();
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<Dictionary<string, string>> GetEntityAdvanceAttribute(ReqInput data)
         {
             var response = new ApiResponse<Dictionary<string, string>>();
@@ -2636,7 +2637,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<EquipementSearchResultViewModel> GetEquipmentSearchResult(ReqInput data)
         {
             var response = new ApiResponse<EquipementSearchResultViewModel>();
@@ -2676,7 +2677,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<EquipementPortViewModel> GetEquipmentPortInfo(ReqInput data)
         {
             var response = new ApiResponse<EquipementPortViewModel>();
@@ -2709,7 +2710,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<ConnectionInfoViewModel> GetConnectionInfo(ReqInput data)
         {
             var response = new ApiResponse<ConnectionInfoViewModel>();
@@ -2786,7 +2787,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<CPFElementsViewModel> GetCPFelementPath(ReqInput data)
         {
             var response = new ApiResponse<CPFElementsViewModel>();
@@ -2826,7 +2827,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<LogicalViewVM> GetEntityLogicalView(ReqInput data)
         {
             var response = new ApiResponse<LogicalViewVM>();
@@ -2851,7 +2852,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<LogicalViewEquipementSearchVM> GetLogicalViewEquipmentSearchResult(ReqInput data)
         {
             var response = new ApiResponse<LogicalViewEquipementSearchVM>();
@@ -2892,7 +2893,7 @@ namespace SmartInventoryServices.Controllers
         }
 
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<vwLayerActionMapping> GetEntityActions(ReqInput data)
         {
             var response = new ApiResponse<vwLayerActionMapping>();
@@ -2931,7 +2932,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<MobileRegionProvince>> GetRegionProvince(ReqInput data)
         {
             var response = new ApiResponse<List<MobileRegionProvince>>();
@@ -2953,7 +2954,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<EntityLayerActions>> GetAllEntityActions(ReqInput data)
         {
             var response = new ApiResponse<List<EntityLayerActions>>();
@@ -2976,7 +2977,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<vmNearbyentityDetails> GetNearbyEntityDetailsWithAtributes(ReqInput data)
         {
             var response = new ApiResponse<vmNearbyentityDetails>();
@@ -3028,7 +3029,7 @@ namespace SmartInventoryServices.Controllers
             }
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<nearByEntityDetailsCount> GetNearbyEntityDetailsWithAtributesCount(ReqInput data)
         {
             var response = new ApiResponse<nearByEntityDetailsCount>();
@@ -3075,7 +3076,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<nearByNetworkEntities>> GetNearByNetworkEntities(ReqInput data)
         {
             var response = new ApiResponse<List<nearByNetworkEntities>>();
@@ -3123,7 +3124,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<dynamic> GetThirdPartyVendor()
         {
             var response = new ApiResponse<dynamic>();
@@ -3141,17 +3142,18 @@ namespace SmartInventoryServices.Controllers
         }
 
         #region Upload Image/Document APIs
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<string> UploadAttachment()
         {
 
             var response = new ApiResponse<string>();
             try
             {
-                HttpPostedFile files = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
+                //HttpPostedFile files = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
+                HttpFileCollection files = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files : null;
                 if (HttpContext.Current.Request.Files.Count > 0 && files != null)
                 {
-
+                    VailidateAttachment obj = new VailidateAttachment();
                     var systemId = HttpContext.Current.Request.Params["entitySystemId"];
                     var entityType = HttpContext.Current.Request.Params["entityType"];
                     var featureName = HttpContext.Current.Request.Params["featureName"];
@@ -3161,59 +3163,84 @@ namespace SmartInventoryServices.Controllers
                     var validImageTypes = ApplicationSettings.validImageTypes.Split(new string[] { "," }, StringSplitOptions.None);
                     var isBarcodeImage = HttpContext.Current.Request.Params["is_barcode_image"];
 					var isMeterReadingImage = HttpContext.Current.Request.Params["is_meter_reading_image"];
-					for (int i = 0; i < HttpContext.Current.Request.Files.Count; i++)
+                    if (attachmentType.ToUpper() == "DOCUMENT") { obj = ValidateDocumentFileType(HttpContext.Current.Request.Files); }
+                    else {  obj = ValidateImageFileType(HttpContext.Current.Request.Files); }
+                       
+                    if (!string.IsNullOrEmpty(obj.invalidattachmentType))
+                    {
+                        response.error_message = obj.invalidattachmentType;
+                        response.status = StatusCodes.INVALID_FILE.ToString();
+                        return response;
+
+                    }
+                    else if (!string.IsNullOrEmpty(obj.invalidattachmentsize))
+                    {
+                        response.error_message = obj.invalidattachmentsize;
+                        response.status = StatusCodes.INVALID_FILE.ToString();
+                        return response;
+
+                    }
+                    else if (!string.IsNullOrEmpty(obj.invalidattachmentename))
+                    {
+                        response.error_message = obj.invalidattachmentename;
+                        response.status = StatusCodes.INVALID_FILE.ToString();
+                        return response;
+
+                    }
+                    for (int i = 0; i < HttpContext.Current.Request.Files.Count; i++)
                     {
 
-                        string FileName = files.FileName;
+                        string FileName = files[i].FileName;
                         var fileExtension = Path.GetExtension(FileName);
 
-                        if ((ApplicationSettings.MaxuploadFileSize < files.ContentLength / 1024 / 1024) && (attachmentType.ToUpper() == "DOCUMENT"))
-                        {
-                            response.error_message = String.Format(Resources.Resources.SI_OSP_GBL_JQ_FRM_109, ApplicationSettings.MaxuploadFileSize);
-                            response.status = StatusCodes.INVALID_FILE.ToString();
-                            return response;
-                        }
-                        if ((ApplicationSettings.MaxuploadFileSize < files.ContentLength / 1024 / 1024) && (attachmentType.ToUpper() == "IMAGE"))
-                        {
-                            response.error_message = String.Format(Resources.Resources.SI_OSP_GBL_JQ_GBL_112, ApplicationSettings.MaxuploadFileSize);
-                            response.status = StatusCodes.INVALID_FILE.ToString();
-                            return response;
-                        }
 
-                        if ((attachmentType != null && attachmentType.ToUpper() == "DOCUMENT") && !validDocumentTypes.Contains(fileExtension.ToLower()))
-                        {
-                            response.error_message = Resources.Resources.SI_OSP_GBL_JQ_FRM_059 + " extension:" + ApplicationSettings.validDocumentTypes;
-                            response.status = StatusCodes.INVALID_FILE.ToString();
-                            return response;
-                        }
-                        if ((attachmentType != null && attachmentType.ToUpper() == "IMAGE") && !validImageTypes.Contains(fileExtension.ToLower()))
-                        {
-                            response.error_message = Resources.Resources.SI_OSP_GBL_JQ_FRM_059 + " extension:" + ApplicationSettings.validImageTypes;
-                            response.status = StatusCodes.INVALID_FILE.ToString();
-                            return response;
-                        }
+                        //if ((ApplicationSettings.MaxuploadFileSize < files.ContentLength / 1024 / 1024) && (attachmentType.ToUpper() == "DOCUMENT"))
+                        //{
+                        //    response.error_message = String.Format(Resources.Resources.SI_OSP_GBL_JQ_FRM_109, ApplicationSettings.MaxuploadFileSize);
+                        //    response.status = StatusCodes.INVALID_FILE.ToString();
+                        //    return response;
+                        //}
+                        //if ((ApplicationSettings.MaxuploadFileSize < files.ContentLength / 1024 / 1024) && (attachmentType.ToUpper() == "IMAGE"))
+                        //{
+                        //    response.error_message = String.Format(Resources.Resources.SI_OSP_GBL_JQ_GBL_112, ApplicationSettings.MaxuploadFileSize);
+                        //    response.status = StatusCodes.INVALID_FILE.ToString();
+                        //    return response;
+                        //}
+
+                        //if ((attachmentType != null && attachmentType.ToUpper() == "DOCUMENT") && !validDocumentTypes.Contains(fileExtension.ToLower()))
+                        //{
+                        //    response.error_message = Resources.Resources.SI_OSP_GBL_JQ_FRM_059 + " extension:" + ApplicationSettings.validDocumentTypes;
+                        //    response.status = StatusCodes.INVALID_FILE.ToString();
+                        //    return response;
+                        //}
+                        //if ((attachmentType != null && attachmentType.ToUpper() == "IMAGE") && !validImageTypes.Contains(fileExtension.ToLower()))
+                        //{
+                        //    response.error_message = Resources.Resources.SI_OSP_GBL_JQ_FRM_059 + " extension:" + ApplicationSettings.validImageTypes;
+                        //    response.status = StatusCodes.INVALID_FILE.ToString();
+                        //    return response;
+                        //}
                         var lstDocument = new BLAttachment().getAttachmentDetailsbyId(Convert.ToInt32(systemId), entityType, attachmentType, FileName, Convert.ToInt32(UserId), "");
-                        if (lstDocument.Count > 0)
-                        {
-                            response.error_message = Resources.Resources.SI_OSP_GBL_JQ_FRM_055;
-                            response.status = StatusCodes.INVALID_FILE.ToString();
-                            return response;
-                        }
+                        //if (lstDocument.Count > 0)
+                        //{
+                        //    response.error_message = Resources.Resources.SI_OSP_GBL_JQ_FRM_055;
+                        //    response.status = StatusCodes.INVALID_FILE.ToString();
+                        //    return response;
+                        //}
 
                         string strNewfilename = Path.GetFileNameWithoutExtension(FileName) + "_" + MiscHelper.getTimeStamp() + Path.GetExtension(FileName);
                         string strFilePath = "";
                         if (entityType == EntityType.ROW.ToString() && !string.IsNullOrEmpty(featureName))
                         {
                             attachmentType = "";
-                            strFilePath = ReqHelper.UploadfileOnFTP(featureName, systemId, files, attachmentType, strNewfilename, entityType);
+                            strFilePath = ReqHelper.UploadfileOnFTP(featureName, systemId, files[i], attachmentType, strNewfilename, entityType);
                         }
                         else if (!string.IsNullOrEmpty(featureName))
                         {
-                            strFilePath = ReqHelper.UploadfileOnFTP(entityType, systemId, files, attachmentType, strNewfilename, featureName);
+                            strFilePath = ReqHelper.UploadfileOnFTP(entityType, systemId, files[i], attachmentType, strNewfilename, featureName);
                         }
                         else
                         {
-                            strFilePath = ReqHelper.UploadfileOnFTP(entityType, systemId, files, attachmentType, strNewfilename);
+                            strFilePath = ReqHelper.UploadfileOnFTP(entityType, systemId, files[i], attachmentType, strNewfilename);
                         }
                         LibraryAttachment objAttachment = new LibraryAttachment();
                         objAttachment.entity_system_id = Convert.ToInt32(systemId);
@@ -3225,7 +3252,7 @@ namespace SmartInventoryServices.Controllers
                         objAttachment.upload_type = attachmentType;
                         objAttachment.uploaded_by = UserId;
                         objAttachment.entity_feature_name = featureName;
-                        objAttachment.file_size = files.ContentLength;
+                        objAttachment.file_size = files[i].ContentLength;
                         objAttachment.uploaded_on = DateTime.Now;
                         objAttachment.is_barcode_image = Convert.ToBoolean(isBarcodeImage);
 						objAttachment.is_meter_reading_image = Convert.ToBoolean(isMeterReadingImage);
@@ -3257,7 +3284,69 @@ namespace SmartInventoryServices.Controllers
             }
         }
 
-        [HttpPost]
+        public VailidateAttachment ValidateImageFileType(HttpFileCollection files)
+        {
+            VailidateAttachment obj = new VailidateAttachment();
+            int maxallowedAttachmentSize = ApplicationSettings.MaxuploadFileSize * ApplicationSettings.MaxFileCountLimit;
+            List<string> invalidAttachmentType = new List<string>();
+            List<string> invalidAttachmentName = new List<string>();
+            int totalUploadedAttachmentSize = 0;
+            for (int i = 0; i < files.Count; i++)
+            {
+                var validImageTypes = ApplicationSettings.validImageTypes.Split(new string[] { "," }, StringSplitOptions.None);
+                var fileExtension = Path.GetExtension(files[i].FileName);//files[i].FileName.Split('.').LastOrDefault()?.ToLower();
+                totalUploadedAttachmentSize = totalUploadedAttachmentSize + files[i].ContentLength;
+                if ( !validImageTypes.Contains(fileExtension.ToLower()))
+                {
+                    invalidAttachmentType.Add(files[i].FileName);
+                }
+                if (files[i].FileName.Length > 100)
+                {
+                    invalidAttachmentName.Add(files[i].FileName);
+
+                }
+            }
+            if (totalUploadedAttachmentSize/1024/1024 > maxallowedAttachmentSize)
+            {
+                totalUploadedAttachmentSize = 0;
+                obj.invalidattachmentsize = String.Format(Resources.Resources.SI_OSP_GBL_JQ_FRM_109, maxallowedAttachmentSize);//"Total file size is too large.Maximum total file size allowed is, " + maxallowedAttachmentSize / 1024 + " MB";
+            }
+            obj.invalidattachmentType = invalidAttachmentType.Count > 0 ? Resources.Resources.SI_OSP_GBL_JQ_FRM_059 + " extension:" + ApplicationSettings.validImageTypes : string.Empty;//invalidAttachmentType.Count > 0 ? "The following files are not of allowed file type are " + string.Join(", ", invalidAttachmentType) : string.Empty;
+            obj.invalidattachmentename = invalidAttachmentName.Count > 0 ? "File Name length should be less than 100 characters. invalid files are " + string.Join(", ", invalidAttachmentType) : string.Empty;
+            return obj;
+        }
+        public VailidateAttachment ValidateDocumentFileType(HttpFileCollection files)
+        {
+            VailidateAttachment obj = new VailidateAttachment();
+            int maxallowedAttachmentSize = ApplicationSettings.MaxuploadFileSize * ApplicationSettings.MaxFileCountLimit;
+            List<string> invalidAttachmentType = new List<string>();
+            List<string> invalidAttachmentName = new List<string>();
+            int totalUploadedAttachmentSize = 0;
+            for (int i = 0; i < files.Count; i++)
+            {
+                var validImageTypes = ApplicationSettings.validDocumentTypes.Split(new string[] { "," }, StringSplitOptions.None);
+                var fileExtension = Path.GetExtension(files[i].FileName);//files[i].FileName.Split('.').LastOrDefault()?.ToLower();
+                totalUploadedAttachmentSize = totalUploadedAttachmentSize + files[i].ContentLength;
+                if (!validImageTypes.Contains(fileExtension.ToLower()))
+                {
+                    invalidAttachmentType.Add(files[i].FileName);
+                }
+                if (files[i].FileName.Length > 100)
+                {
+                    invalidAttachmentName.Add(files[i].FileName);
+
+                }
+            }
+            if (totalUploadedAttachmentSize / 1024 / 1024 > maxallowedAttachmentSize)
+            {
+                totalUploadedAttachmentSize = 0;
+                obj.invalidattachmentsize = String.Format(Resources.Resources.SI_OSP_GBL_JQ_FRM_109, maxallowedAttachmentSize);//"Total file size is too large.Maximum total file size allowed is, " + maxallowedAttachmentSize / 1024 + " MB";
+            }
+            obj.invalidattachmentType = invalidAttachmentType.Count > 0 ? Resources.Resources.SI_OSP_GBL_JQ_FRM_059 + " extension:" + ApplicationSettings.validDocumentTypes:string.Empty;//invalidAttachmentType.Count > 0 ? "The following files are not of allowed file type are " + string.Join(", ", invalidAttachmentType) : string.Empty;
+            obj.invalidattachmentename = invalidAttachmentName.Count > 0 ? "File Name length should be less than 100 characters. invalid files are " + string.Join(", ", invalidAttachmentType) : string.Empty;
+            return obj;
+        }
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<DocumentResult>> GetEntityDocuments(ReqInput data)
         {
             var response = new ApiResponse<List<DocumentResult>>();
@@ -3298,7 +3387,7 @@ namespace SmartInventoryServices.Controllers
             }
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<DocumentResult> DeleteAttachment(ReqInput data)
         {
             var response = new ApiResponse<DocumentResult>();
@@ -3359,7 +3448,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<ImageResult>> GetEntityImages(ReqInput data)
         {
 
@@ -3448,7 +3537,7 @@ namespace SmartInventoryServices.Controllers
 
 
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<LibraryAttachment> DownloadAttachment(ReqInput data)
         {
 
@@ -3494,7 +3583,7 @@ namespace SmartInventoryServices.Controllers
         }
 
         #endregion;
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<DbMessage> NetworkStage(ReqInput data)
         {
             var response = new ApiResponse<DbMessage>();
@@ -3582,7 +3671,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<ImpactDetail> GetDependentChildElements(ReqInput data)
         {
             var response = new ApiResponse<ImpactDetail>();
@@ -3637,7 +3726,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Sumit Poonia</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<string> ValidateRegionProvinceBoundary(ReqInput data)
         {
             var response = new ApiResponse<string>();
@@ -3673,7 +3762,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Sumit Poonia</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<UpdateGeomtaryValue> GetRegionProvinceGeomDetails(ReqInput data)
         {
             var response = new ApiResponse<UpdateGeomtaryValue>();
@@ -3732,7 +3821,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Sumit Poonia</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<GeometryDetail> getGeometryForEdit(ReqInput data)
         {
             var response = new ApiResponse<GeometryDetail>();
@@ -3789,7 +3878,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Sumit Poonia</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<dynamic> SaveEditGeometry(ReqInput data)
         {
             var response = new ApiResponse<dynamic>();
@@ -4090,7 +4179,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Sumit Poonia</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<string> ValidateEntityGeom(ReqInput data)
         {
             var response = new ApiResponse<string>();
@@ -4393,7 +4482,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Sumit Poonia</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<NetworkLayersOut> GetNetworkLayers(ReqInput data)
         {
             var response = new ApiResponse<NetworkLayersOut>();
@@ -4464,7 +4553,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Sumit Poonia</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<AssociateLineEntity> GetEntityAssociation(ReqInput data)
         {
             var response = new ApiResponse<AssociateLineEntity>();
@@ -4507,7 +4596,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Arabind</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<AssociateRoute> GetRouteAssociation(ReqInput data)
         {
             var response = new ApiResponse<AssociateRoute>();
@@ -4543,7 +4632,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Sumit Poonia</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<AssociateLineEntity> ViewOtherEntityAssociation(ReqInput data)
         {
             var response = new ApiResponse<AssociateLineEntity>();
@@ -4577,7 +4666,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Sumit Poonia</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<AssociateLineEntity> SaveEntityAssociate(ReqInput data)
         {
             var response = new ApiResponse<AssociateLineEntity>();
@@ -4609,7 +4698,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Arabind</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<AssociateRoute> SaveRouteAssociate(ReqInput data)
         {
             var response = new ApiResponse<AssociateRoute>();
@@ -4633,7 +4722,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
         #endregion
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<AssociateLineEntity> AutoAssosiation(ReqInput data)
         {
             var response = new ApiResponse<AssociateLineEntity>();
@@ -4676,7 +4765,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Sumit Poonia</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<TerminationPointDtl>> TerminationEntity(ReqInput data)
         {
             var response = new ApiResponse<List<TerminationPointDtl>>();
@@ -4741,7 +4830,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Rajesh Kumar</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<ImpactDetail> RevertEntityChanges(ReqInput data)
         {
             var response = new ApiResponse<ImpactDetail>();
@@ -4788,7 +4877,7 @@ namespace SmartInventoryServices.Controllers
         }
         #endregion
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<string> ValidateLBEntityGeom(ReqInput data)
         {
             var response = new ApiResponse<string>();
@@ -5044,7 +5133,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Rahul Tyagi</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<DbMessage> SubmitNetwork(ReqInput data)
         {
             var response = new ApiResponse<DbMessage>();
@@ -5112,7 +5201,7 @@ namespace SmartInventoryServices.Controllers
         #endregion
 
         #region UserDashboard
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<UserDashboard>> UserDashboard(ReqInput data)
         {
             var response = new ApiResponse<List<UserDashboard>>();
@@ -5152,7 +5241,7 @@ namespace SmartInventoryServices.Controllers
         }
         #endregion
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<ItemSpecificationResult> ValidateEntityForConversion(ReqInput data)
         {
             var response = new ApiResponse<ItemSpecificationResult>();
@@ -5196,7 +5285,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
 
         public ApiResponse<List<NECableDetails>> GetNearByCables(ReqInput data)
         {
@@ -5237,7 +5326,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
 
         public ApiResponse<List<NearByAssociatedEntities>> GetNearbyAssociatedEntity(ReqInput data)
         {
@@ -5299,7 +5388,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>DbMessage</returns>
         ///  <Created By>Rajesh Kumar</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<ImpactDetail> DeleteEntity(ReqInput data)
         {
             var response = new ApiResponse<ImpactDetail>();
@@ -5348,7 +5437,7 @@ namespace SmartInventoryServices.Controllers
         #endregion
 
         #region GEOTAGGING IMAGES BY ANTRA
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<string> UploadGeoTaggedImages()
         {
 
@@ -5454,7 +5543,7 @@ namespace SmartInventoryServices.Controllers
             }
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<DocumentResult> DeleteGeoTaggedImage(ReqInput data)
         {
             var response = new ApiResponse<DocumentResult>();
@@ -5513,7 +5602,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<GeoImageResult>> GetAllGeoTaggedImages(ReqInput data)
         {
 
@@ -5583,7 +5672,7 @@ namespace SmartInventoryServices.Controllers
             return response;
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<GeoTaggingImages> DownloadGeoTaggedAttachment(ReqInput data)
         {
 
@@ -5630,7 +5719,7 @@ namespace SmartInventoryServices.Controllers
         #endregion
 
         #region LANDBASE LOCATION EDIT BY SHAZIA
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<LandBaseDetail>> GetNearByLandbaseEntities(ReqInput data)
         {
             var response = new ApiResponse<List<LandBaseDetail>>();
@@ -5669,7 +5758,7 @@ namespace SmartInventoryServices.Controllers
 
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<Dictionary<string, string>> GetLandbaseEntityInfo(ReqInput data)
         {
             var response = new ApiResponse<Dictionary<string, string>>();
@@ -5725,7 +5814,7 @@ namespace SmartInventoryServices.Controllers
             }
             return response;
         }
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<GeometryDetail> GetLandbaseGeometryForEdit(ReqInput data)
         {
             var response = new ApiResponse<GeometryDetail>();
@@ -5797,7 +5886,7 @@ namespace SmartInventoryServices.Controllers
         #endregion
 
         #region REMARKS UPDATE BY SHAZIA
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<string> UpdateRemarks(ReqInput data)
         {
             var response = new ApiResponse<string>();
@@ -5827,7 +5916,7 @@ namespace SmartInventoryServices.Controllers
         #endregion
 
         #region CPE Installation By ANTRA
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<CPEInstallation> CPEInstallation(ReqInput data)
         {
             var response = new ApiResponse<CPEInstallation>();
@@ -6208,7 +6297,7 @@ namespace SmartInventoryServices.Controllers
         #endregion
 
         #region GET VOICE COMMAND JSON DATA
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<dynamic> GetVoiceCommands()
         {
             var response = new ApiResponse<dynamic>();
@@ -6228,7 +6317,7 @@ namespace SmartInventoryServices.Controllers
         }
         #endregion
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<List<EntityDropDownItemList>> GetDropDownListParent(ReqInput data)
         {
             var response = new ApiResponse<List<EntityDropDownItemList>>();
@@ -6265,7 +6354,7 @@ namespace SmartInventoryServices.Controllers
         /// <param name="data"></param>
         /// <returns>boolean</returns>
         ///  <Created By>Rahul Sharma</returns>
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public ApiResponse<UserRegionProvince> GetRegionProvinceBasedOnLocation(ReqInput data)
         {
             var response = new ApiResponse<UserRegionProvince>();
@@ -6297,7 +6386,7 @@ namespace SmartInventoryServices.Controllers
         }
         #endregion
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
 
         public ApiResponse<List<NEDuctDetails>> GetNearByDucts(ReqInput data)
         {
