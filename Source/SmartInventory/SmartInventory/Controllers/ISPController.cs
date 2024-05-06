@@ -487,7 +487,7 @@ namespace SmartInventory.Controllers
             }
             return objHTB;
         }
-        public ActionResult SaveHTB(HTBInfo model, bool isDirectSave = false)
+        public ActionResult SaveHTB(HTBInfo objHTB, bool isDirectSave = false)
         {
 
             //ModelState.Clear();
@@ -592,10 +592,10 @@ namespace SmartInventory.Controllers
             //    return PartialView("_AddHTB", model);
             //}
 
-            model.user_id = Convert.ToInt32(Session["user_id"]);
-            model.isDirectSave = isDirectSave;
+            objHTB.user_id = Convert.ToInt32(Session["user_id"]);
+            objHTB.isDirectSave = isDirectSave;
             string url = "api/Library/EntityOperations ";
-            var response = WebAPIRequest.PostIntegrationAPIRequest<HTBInfo>(url, model, EntityType.HTB.ToString(), EntityAction.Save.ToString(), model.objIspEntityMap.structure_id.ToString());
+            var response = WebAPIRequest.PostIntegrationAPIRequest<HTBInfo>(url, objHTB, EntityType.HTB.ToString(), EntityAction.Save.ToString(), objHTB.objIspEntityMap.structure_id.ToString());
             if (isDirectSave)
             {
                 return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
@@ -1147,12 +1147,12 @@ namespace SmartInventory.Controllers
             }
             return objADB;
         }
-        public ActionResult SaveADB(ADBMaster model, bool isDirectSave = false)
+        public ActionResult SaveADB(ADBMaster objADB, bool isDirectSave = false)
         {
-            model.user_id = Convert.ToInt32(Session["user_id"]);
-            model.isDirectSave = isDirectSave;
+            objADB.user_id = Convert.ToInt32(Session["user_id"]);
+            objADB.isDirectSave = isDirectSave;
             string url = "api/Library/EntityOperations ";
-            var response = WebAPIRequest.PostIntegrationAPIRequest<ADBMaster>(url, model, EntityType.ADB.ToString(), EntityAction.Save.ToString(), model.objIspEntityMap.structure_id.ToString());
+            var response = WebAPIRequest.PostIntegrationAPIRequest<ADBMaster>(url, objADB, EntityType.ADB.ToString(), EntityAction.Save.ToString(), objADB.objIspEntityMap.structure_id.ToString());
             if (isDirectSave)
             {
                 return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
@@ -1237,12 +1237,12 @@ namespace SmartInventory.Controllers
             }
             return objCDB;
         }
-        public ActionResult SaveCDB(CDBMaster model, bool isDirectSave = false)
+        public ActionResult SaveCDB(CDBMaster objCDB, bool isDirectSave = false)
         {
-            model.user_id = Convert.ToInt32(Session["user_id"]);
-            model.isDirectSave = isDirectSave;
+            objCDB.user_id = Convert.ToInt32(Session["user_id"]);
+            objCDB.isDirectSave = isDirectSave;
             string url = "api/Library/EntityOperations ";
-            var response = WebAPIRequest.PostIntegrationAPIRequest<CDBMaster>(url, model, EntityType.CDB.ToString(), EntityAction.Save.ToString(), model.objIspEntityMap.structure_id.ToString());
+            var response = WebAPIRequest.PostIntegrationAPIRequest<CDBMaster>(url, objCDB, EntityType.CDB.ToString(), EntityAction.Save.ToString(), objCDB.objIspEntityMap.structure_id.ToString());
             if (isDirectSave)
             {
                 return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
