@@ -5035,130 +5035,130 @@ namespace SmartInventory.Controllers
 			//objHTB.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objHTB.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
 		}
-		public ActionResult SaveHTB(HTBInfo model, string networkIdType, bool isDirectSave = false)
+		public ActionResult SaveHTB(HTBInfo objHTB, string networkIdType, bool isDirectSave = false)
 		{
-			//ModelState.Clear();
-			//PageMessage objPM = new PageMessage();
-			//// int structure_id = model.objIspEntityMap.structure_id;
-			//// int? floor_id = model.objIspEntityMap.floor_id;
-			////int? shaft_id = model.objIspEntityMap.shaft_id;
-			//model.userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-			//if (model.networkIdType == NetworkIdType.A.ToString() && model.system_id == 0)
-			//{
-			//    //GET AUTO NETWORK CODE... new NetworkCodeIn() { eType = EntityType.BDB.ToString(), gType = GeometryType.Point.ToString(), eGeom = objBDB.geom, parent_eType = pEntityType, parent_sysId = pSystemId }, networkIdType)
-			//    //var objISPNetworkCode = new BLMisc().GetISPNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.geom, parent_eType = "", parent_sysId = 0 });
-			//    var objISPNetworkCode = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.geom, parent_eType = "", parent_sysId = 0 });
-			//    model.longitude = Convert.ToDouble(model.geom.Split(' ')[0]);
-			//    model.latitude = Convert.ToDouble(model.geom.Split(' ')[1]);
-			//    //NEW ENTITY->Fill Region and Province Detail..
-			//    // fillRegionProvinceDetail(model, GeometryType.Point.ToString(), model.geom);
+            //ModelState.Clear();
+            //PageMessage objPM = new PageMessage();
+            //// int structure_id = model.objIspEntityMap.structure_id;
+            //// int? floor_id = model.objIspEntityMap.floor_id;
+            ////int? shaft_id = model.objIspEntityMap.shaft_id;
+            //model.userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+            //if (model.networkIdType == NetworkIdType.A.ToString() && model.system_id == 0)
+            //{
+            //    //GET AUTO NETWORK CODE... new NetworkCodeIn() { eType = EntityType.BDB.ToString(), gType = GeometryType.Point.ToString(), eGeom = objBDB.geom, parent_eType = pEntityType, parent_sysId = pSystemId }, networkIdType)
+            //    //var objISPNetworkCode = new BLMisc().GetISPNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.geom, parent_eType = "", parent_sysId = 0 });
+            //    var objISPNetworkCode = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.geom, parent_eType = "", parent_sysId = 0 });
+            //    model.longitude = Convert.ToDouble(model.geom.Split(' ')[0]);
+            //    model.latitude = Convert.ToDouble(model.geom.Split(' ')[1]);
+            //    //NEW ENTITY->Fill Region and Province Detail..
+            //    // fillRegionProvinceDetail(model, GeometryType.Point.ToString(), model.geom);
 
-			//    // fillParentDetail(model, new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.geom, parent_eType = "", parent_sysId = 0 }, networkIdType);
+            //    // fillParentDetail(model, new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.geom, parent_eType = "", parent_sysId = 0 }, networkIdType);
 
 
-			//    if (isDirectSave == true)
-			//    {
-			//        //objONTMaster.pSystemId, objONTMaster.pEntityType, objONTMaster.networkIdType, objONTMaster.system_id, objONTMaster.geom
-			//        model = getHTBInfo(model.networkIdType, model.templateId, model.system_id, model.geom);
-			//        // model.objIspEntityMap.floor_id = floor_id;
-			//        // model.objIspEntityMap.structure_id = structure_id;
-			//        // model.objIspEntityMap.shaft_id = shaft_id;
-			//        model.htb_name = objISPNetworkCode.network_code;
-			//    }
-			//    model.network_id = objISPNetworkCode.network_code;
-			//    model.sequence_id = objISPNetworkCode.sequence_id;
+            //    if (isDirectSave == true)
+            //    {
+            //        //objONTMaster.pSystemId, objONTMaster.pEntityType, objONTMaster.networkIdType, objONTMaster.system_id, objONTMaster.geom
+            //        model = getHTBInfo(model.networkIdType, model.templateId, model.system_id, model.geom);
+            //        // model.objIspEntityMap.floor_id = floor_id;
+            //        // model.objIspEntityMap.structure_id = structure_id;
+            //        // model.objIspEntityMap.shaft_id = shaft_id;
+            //        model.htb_name = objISPNetworkCode.network_code;
+            //    }
+            //    model.network_id = objISPNetworkCode.network_code;
+            //    model.sequence_id = objISPNetworkCode.sequence_id;
 
-			//}
+            //}
 
-			////var structureDetails = new BLISP().GetStructureById(structure_id);
-			////if (structureDetails != null)
-			////{
-			////    model.region_id = structureDetails.First().region_id;
-			////    model.province_id = structureDetails.First().province_id;
-			////    model.latitude = structureDetails.First().latitude;
-			////    model.longitude = structureDetails.First().longitude;
-			////}
-			//if (TryValidateModel(model))
-			//{
-			//    model.objIspEntityMap.structure_id = Convert.ToInt32(model.objIspEntityMap.AssociateStructure);
-			//    model.objIspEntityMap.shaft_id = model.objIspEntityMap.AssoType == "Floor" ? 0 : model.objIspEntityMap.shaft_id;
-			//    if (string.IsNullOrEmpty(model.objIspEntityMap.AssoType))
-			//    {
-			//        model.objIspEntityMap.shaft_id = 0; model.objIspEntityMap.floor_id = 0;
-			//    }
-			//    bool isNew = model.system_id == 0 ? true : false;
-			//    if (model.unitValue != null && model.unitValue.Contains(":"))
-			//    {
-			//        model.no_of_input_port = Convert.ToInt32(model.unitValue.Split(':')[0]);
-			//        model.no_of_output_port = Convert.ToInt32(model.unitValue.Split(':')[1]);
-			//    }
-			//    if (model.objIspEntityMap.structure_id == 0)
-			//    {
-			//        var objIn = new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.longitude + " " + model.latitude };
-			//        var parentDetails = new BLMisc().getParentInfo(objIn);
-			//        if (parentDetails != null)
-			//        {
-			//            model.parent_system_id = parentDetails.p_system_id;
-			//            model.parent_network_id = parentDetails.p_network_id;
-			//            model.parent_entity_type = parentDetails.p_entity_type;
-			//        }
-			//    }
-			//    var result = new BLISP().SaveHTBDetails(model, Convert.ToInt32(Session["user_id"]));
-			//    if (string.IsNullOrEmpty(result.objPM.message))
-			//    {
-			//        string[] LayerName = { EntityType.HTB.ToString() };
-			//        if (model.EntityReference != null && result.system_id > 0)
-			//        {
-			//            SaveReference(model.EntityReference, result.system_id);
-			//        }
-			//        if (isNew)
-			//        {
-			//            objPM.status = ResponseStatus.OK.ToString(); ;
-			//            objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);
-			//        }
-			//        else
-			//        {
-			//            if (result.isPortConnected == true)
-			//            {
-			//                objPM.status = ResponseStatus.OK.ToString();
-			//                objPM.message = BLConvertMLanguage.MultilingualMessageConvert(result.message);//result.message;
-			//            }
-			//            else
-			//            {
-			//                objPM.status = ResponseStatus.OK.ToString();
-			//                objPM.message = BLConvertMLanguage.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
-			//            }
-			//        }
-			//        model.objPM = objPM;
-			//    }
+            ////var structureDetails = new BLISP().GetStructureById(structure_id);
+            ////if (structureDetails != null)
+            ////{
+            ////    model.region_id = structureDetails.First().region_id;
+            ////    model.province_id = structureDetails.First().province_id;
+            ////    model.latitude = structureDetails.First().latitude;
+            ////    model.longitude = structureDetails.First().longitude;
+            ////}
+            //if (TryValidateModel(model))
+            //{
+            //    model.objIspEntityMap.structure_id = Convert.ToInt32(model.objIspEntityMap.AssociateStructure);
+            //    model.objIspEntityMap.shaft_id = model.objIspEntityMap.AssoType == "Floor" ? 0 : model.objIspEntityMap.shaft_id;
+            //    if (string.IsNullOrEmpty(model.objIspEntityMap.AssoType))
+            //    {
+            //        model.objIspEntityMap.shaft_id = 0; model.objIspEntityMap.floor_id = 0;
+            //    }
+            //    bool isNew = model.system_id == 0 ? true : false;
+            //    if (model.unitValue != null && model.unitValue.Contains(":"))
+            //    {
+            //        model.no_of_input_port = Convert.ToInt32(model.unitValue.Split(':')[0]);
+            //        model.no_of_output_port = Convert.ToInt32(model.unitValue.Split(':')[1]);
+            //    }
+            //    if (model.objIspEntityMap.structure_id == 0)
+            //    {
+            //        var objIn = new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.longitude + " " + model.latitude };
+            //        var parentDetails = new BLMisc().getParentInfo(objIn);
+            //        if (parentDetails != null)
+            //        {
+            //            model.parent_system_id = parentDetails.p_system_id;
+            //            model.parent_network_id = parentDetails.p_network_id;
+            //            model.parent_entity_type = parentDetails.p_entity_type;
+            //        }
+            //    }
+            //    var result = new BLISP().SaveHTBDetails(model, Convert.ToInt32(Session["user_id"]));
+            //    if (string.IsNullOrEmpty(result.objPM.message))
+            //    {
+            //        string[] LayerName = { EntityType.HTB.ToString() };
+            //        if (model.EntityReference != null && result.system_id > 0)
+            //        {
+            //            SaveReference(model.EntityReference, result.system_id);
+            //        }
+            //        if (isNew)
+            //        {
+            //            objPM.status = ResponseStatus.OK.ToString(); ;
+            //            objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);
+            //        }
+            //        else
+            //        {
+            //            if (result.isPortConnected == true)
+            //            {
+            //                objPM.status = ResponseStatus.OK.ToString();
+            //                objPM.message = BLConvertMLanguage.MultilingualMessageConvert(result.message);//result.message;
+            //            }
+            //            else
+            //            {
+            //                objPM.status = ResponseStatus.OK.ToString();
+            //                objPM.message = BLConvertMLanguage.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+            //            }
+            //        }
+            //        model.objPM = objPM;
+            //    }
 
-			//}
-			//else
-			//{
-			//    objPM.status = ResponseStatus.FAILED.ToString();
-			//    objPM.message = getFirstErrorFromModelState();
-			//    model.objPM = objPM;
-			//}
-			//if (isDirectSave == true)
-			//{
-			//    //RETURN MESSAGE AS JSON FOR DIRECT SAVE
-			//    return Json(model.objPM, JsonRequestBehavior.AllowGet);
-			//}
-			//else
-			//{
-			//    BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.HTB.ToString());
-			//    BindHTBDropDown(model);
-			//    new MiscHelper().BindPortDetails(model, EntityType.HTB.ToString(), DropDownType.Htb_Port_Ratio.ToString());
-			//    fillProjectSpecifications(model);
-			//    model.entityType = EntityType.HTB.ToString();
-			//    return PartialView("_AddHTB", model);
-			//}
-			model.isDirectSave = isDirectSave;
-			model.networkIdType = networkIdType;
-			model.user_id = Convert.ToInt32(Session["user_id"]);
+            //}
+            //else
+            //{
+            //    objPM.status = ResponseStatus.FAILED.ToString();
+            //    objPM.message = getFirstErrorFromModelState();
+            //    model.objPM = objPM;
+            //}
+            //if (isDirectSave == true)
+            //{
+            //    //RETURN MESSAGE AS JSON FOR DIRECT SAVE
+            //    return Json(model.objPM, JsonRequestBehavior.AllowGet);
+            //}
+            //else
+            //{
+            //    BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.HTB.ToString());
+            //    BindHTBDropDown(model);
+            //    new MiscHelper().BindPortDetails(model, EntityType.HTB.ToString(), DropDownType.Htb_Port_Ratio.ToString());
+            //    fillProjectSpecifications(model);
+            //    model.entityType = EntityType.HTB.ToString();
+            //    return PartialView("_AddHTB", model);
+            //}
+            objHTB.isDirectSave = isDirectSave;
+            objHTB.networkIdType = networkIdType;
+            objHTB.user_id = Convert.ToInt32(Session["user_id"]);
 			
 			string url = "api/Library/EntityOperations";
-			var response = WebAPIRequest.PostIntegrationAPIRequest<HTBInfo>(url, model, EntityType.HTB.ToString(), EntityAction.Save.ToString());
+			var response = WebAPIRequest.PostIntegrationAPIRequest<HTBInfo>(url, objHTB, EntityType.HTB.ToString(), EntityAction.Save.ToString());
 			if (isDirectSave)
 			{
 				return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
