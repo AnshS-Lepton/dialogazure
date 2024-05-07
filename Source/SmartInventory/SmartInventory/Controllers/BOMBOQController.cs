@@ -50,19 +50,20 @@ namespace SmartInventory.Controllers
 			objBomBoq.objReportFilters.radius = objBomBoq.objReportFilters.radius;
 			objBomBoq.lstDurationBasedOn = new BLMisc().GetDropDownList("", DropDownType.Export_Report.ToString());
 			objBomBoq.lstWave_length = new BusinessLogics.Admin.BLLinkBudget().GetWaveLength();
+            objBomBoq.objReportFilters.selected_route_ids = objBomBoq.objReportFilters.selected_route_ids != null && objBomBoq.selected_route_ids.Count > 0 ? string.Join(",", objBomBoq.selected_route_ids.ToArray()) : "";
 
-			//if ((objBomBoq.objReportFilters.SelectedRegionIds == null || objBomBoq.objReportFilters.SelectedRegionIds == "") && string.IsNullOrEmpty(objBomBoq.objReportFilters.geom) == false && string.IsNullOrEmpty(objBomBoq.objReportFilters.geomType) == false)
-			//{
-			//    string gtype = Convert.ToString(objBomBoq.objReportFilters.geomType).ToLower() == "circle" ? "Point" : objBomBoq.objReportFilters.geomType;
-			//    var result = BLBuilding.Instance.GetRegionProvince(objBomBoq.objReportFilters.geom, gtype);
-			//    if (result.Count == 1)
-			//    {
-			//        objBomBoq.objReportFilters.SelectedRegionIds = Convert.ToString(result[0].region_id);
-			//        objBomBoq.objReportFilters.SelectedProvinceIds = Convert.ToString(result[0].province_id);                
-			//    }
-			//}
+            //if ((objBomBoq.objReportFilters.SelectedRegionIds == null || objBomBoq.objReportFilters.SelectedRegionIds == "") && string.IsNullOrEmpty(objBomBoq.objReportFilters.geom) == false && string.IsNullOrEmpty(objBomBoq.objReportFilters.geomType) == false)
+            //{
+            //    string gtype = Convert.ToString(objBomBoq.objReportFilters.geomType).ToLower() == "circle" ? "Point" : objBomBoq.objReportFilters.geomType;
+            //    var result = BLBuilding.Instance.GetRegionProvince(objBomBoq.objReportFilters.geom, gtype);
+            //    if (result.Count == 1)
+            //    {
+            //        objBomBoq.objReportFilters.SelectedRegionIds = Convert.ToString(result[0].region_id);
+            //        objBomBoq.objReportFilters.SelectedProvinceIds = Convert.ToString(result[0].province_id);                
+            //    }
+            //}
 
-			BindReportDropdownNew(ref objBomBoq);
+            BindReportDropdownNew(ref objBomBoq);
 			Session["BomBoqExportSummaryData"] = objBomBoq;
 			return PartialView("_BomBoqReport", objBomBoq);
 
@@ -109,8 +110,9 @@ namespace SmartInventory.Controllers
 			objBOMViewModel.objReportFilters.entityType = objBOMViewModel.objReportFilters.entityType;
 			string gom = Convert.ToString(objBOMViewModel.objReportFilters.geom);
 			string enti = Convert.ToString(objBOMViewModel.objReportFilters.entityType);
+            objBOMViewModel.objReportFilters.selected_route_ids = objBOMViewModel.selected_route_ids != null && objBOMViewModel.selected_route_ids.Count > 0 ? string.Join(",", objBOMViewModel.selected_route_ids.ToArray()) : "";
 
-			objBOMViewModel.objReportFilters.geom = (gom == null ? "" : (enti != null ? (enti.ToUpper() == "STRUCTURE" ? "" : gom) : gom));
+            objBOMViewModel.objReportFilters.geom = (gom == null ? "" : (enti != null ? (enti.ToUpper() == "STRUCTURE" ? "" : gom) : gom));
 			Session["BomBoqReportFilters"] = objBOMViewModel.objReportFilters;
 			objBOMViewModel.BomBoqReportList = new BomBoq().getBOMBOQReport(objBOMViewModel.objReportFilters);
 			objBOMViewModel.objdBLoss = new BomBoq().getdBLossReport(objBOMViewModel.objReportFilters);
@@ -182,7 +184,8 @@ namespace SmartInventory.Controllers
 			}
 			objExportEntitiesReport.lstNetworkStatus = new BLMisc().GetDropDownList("", DropDownType.ddlNetworkStatus.ToString());
 			objExportEntitiesReport.lstUserModule = new BLLayer().GetUserModuleAbbrList(userdetails.user_id, UserType.Web.ToString());
-		}
+            objExportEntitiesReport.lstRouteInfo = new BLLayer().getRouteInfo("0");
+        }
 
 		public ActionResult BomBoqAdAttribute(BomBoqAdAttribute objBomBoqAttr)
 		{
