@@ -487,7 +487,7 @@ namespace SmartInventory.Controllers
             }
             return objHTB;
         }
-        public ActionResult SaveHTB(HTBInfo model, bool isDirectSave = false)
+        public ActionResult SaveHTB(HTBInfo objHTB, bool isDirectSave = false)
         {
 
             //ModelState.Clear();
@@ -592,10 +592,10 @@ namespace SmartInventory.Controllers
             //    return PartialView("_AddHTB", model);
             //}
 
-            model.user_id = Convert.ToInt32(Session["user_id"]);
-            model.isDirectSave = isDirectSave;
+            objHTB.user_id = Convert.ToInt32(Session["user_id"]);
+            objHTB.isDirectSave = isDirectSave;
             string url = "api/Library/EntityOperations ";
-            var response = WebAPIRequest.PostIntegrationAPIRequest<HTBInfo>(url, model, EntityType.HTB.ToString(), EntityAction.Save.ToString(), model.objIspEntityMap.structure_id.ToString());
+            var response = WebAPIRequest.PostIntegrationAPIRequest<HTBInfo>(url, objHTB, EntityType.HTB.ToString(), EntityAction.Save.ToString(), objHTB.objIspEntityMap.structure_id.ToString());
             if (isDirectSave)
             {
                 return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
