@@ -487,7 +487,7 @@ namespace SmartInventory.Controllers
             }
             return objHTB;
         }
-        public ActionResult SaveHTB(HTBInfo model, bool isDirectSave = false)
+        public ActionResult SaveHTB(HTBInfo objHTB, bool isDirectSave = false)
         {
 
             //ModelState.Clear();
@@ -592,10 +592,10 @@ namespace SmartInventory.Controllers
             //    return PartialView("_AddHTB", model);
             //}
 
-            model.user_id = Convert.ToInt32(Session["user_id"]);
-            model.isDirectSave = isDirectSave;
+            objHTB.user_id = Convert.ToInt32(Session["user_id"]);
+            objHTB.isDirectSave = isDirectSave;
             string url = "api/Library/EntityOperations ";
-            var response = WebAPIRequest.PostIntegrationAPIRequest<HTBInfo>(url, model, EntityType.HTB.ToString(), EntityAction.Save.ToString(), model.objIspEntityMap.structure_id.ToString());
+            var response = WebAPIRequest.PostIntegrationAPIRequest<HTBInfo>(url, objHTB, EntityType.HTB.ToString(), EntityAction.Save.ToString(), objHTB.objIspEntityMap.structure_id.ToString());
             if (isDirectSave)
             {
                 return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
@@ -952,7 +952,7 @@ namespace SmartInventory.Controllers
             }
             return objBDB;
         }
-        public ActionResult SaveBDB(BDBMaster model, bool isDirectSave = false)
+        public ActionResult SaveBDB(BDBMaster objBDB, bool isDirectSave = false)
         {
 
             //ModelState.Clear();
@@ -1063,10 +1063,10 @@ namespace SmartInventory.Controllers
             //    return PartialView("_AddBDB", model);
             //}
 
-            model.user_id = Convert.ToInt32(Session["user_id"]);
-            model.isDirectSave = isDirectSave;
+            objBDB.user_id = Convert.ToInt32(Session["user_id"]);
+            objBDB.isDirectSave = isDirectSave;
             string url = "api/Library/EntityOperations ";
-            var response = WebAPIRequest.PostIntegrationAPIRequest<BDBMaster>(url, model, EntityType.BDB.ToString(), EntityAction.Save.ToString(), model.objIspEntityMap.structure_id.ToString());
+            var response = WebAPIRequest.PostIntegrationAPIRequest<BDBMaster>(url, objBDB, EntityType.BDB.ToString(), EntityAction.Save.ToString(), objBDB.objIspEntityMap.structure_id.ToString());
             if (isDirectSave)
             {
                 return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
@@ -1147,12 +1147,12 @@ namespace SmartInventory.Controllers
             }
             return objADB;
         }
-        public ActionResult SaveADB(ADBMaster model, bool isDirectSave = false)
+        public ActionResult SaveADB(ADBMaster objADB, bool isDirectSave = false)
         {
-            model.user_id = Convert.ToInt32(Session["user_id"]);
-            model.isDirectSave = isDirectSave;
+            objADB.user_id = Convert.ToInt32(Session["user_id"]);
+            objADB.isDirectSave = isDirectSave;
             string url = "api/Library/EntityOperations ";
-            var response = WebAPIRequest.PostIntegrationAPIRequest<ADBMaster>(url, model, EntityType.ADB.ToString(), EntityAction.Save.ToString(), model.objIspEntityMap.structure_id.ToString());
+            var response = WebAPIRequest.PostIntegrationAPIRequest<ADBMaster>(url, objADB, EntityType.ADB.ToString(), EntityAction.Save.ToString(), objADB.objIspEntityMap.structure_id.ToString());
             if (isDirectSave)
             {
                 return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
@@ -1237,12 +1237,12 @@ namespace SmartInventory.Controllers
             }
             return objCDB;
         }
-        public ActionResult SaveCDB(CDBMaster model, bool isDirectSave = false)
+        public ActionResult SaveCDB(CDBMaster objCDB, bool isDirectSave = false)
         {
-            model.user_id = Convert.ToInt32(Session["user_id"]);
-            model.isDirectSave = isDirectSave;
+            objCDB.user_id = Convert.ToInt32(Session["user_id"]);
+            objCDB.isDirectSave = isDirectSave;
             string url = "api/Library/EntityOperations ";
-            var response = WebAPIRequest.PostIntegrationAPIRequest<CDBMaster>(url, model, EntityType.CDB.ToString(), EntityAction.Save.ToString(), model.objIspEntityMap.structure_id.ToString());
+            var response = WebAPIRequest.PostIntegrationAPIRequest<CDBMaster>(url, objCDB, EntityType.CDB.ToString(), EntityAction.Save.ToString(), objCDB.objIspEntityMap.structure_id.ToString());
             if (isDirectSave)
             {
                 return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
@@ -1365,55 +1365,55 @@ namespace SmartInventory.Controllers
             }
             return objSplitter;
         }
-        public ActionResult SaveSplitter(SplitterMaster model, bool isDirectSave = false)
+        public ActionResult SaveSplitter(SplitterMaster objSplitter, bool isDirectSave = false)
         {
 
             ModelState.Clear();
             PageMessage objPM = new PageMessage();
-            int structure_id = model.objIspEntityMap.structure_id;
-            int pSystemId = model.pSystemId;
-            string pEntityType = model.pEntityType;
-            model.parent_system_id = pSystemId;
-            model.parent_entity_type = pEntityType;
+            int structure_id = objSplitter.objIspEntityMap.structure_id;
+            int pSystemId = objSplitter.pSystemId;
+            string pEntityType = objSplitter.pEntityType;
+            objSplitter.parent_system_id = pSystemId;
+            objSplitter.parent_entity_type = pEntityType;
 
-            if (model.networkIdType == NetworkIdType.A.ToString() && model.system_id == 0)
+            if (objSplitter.networkIdType == NetworkIdType.A.ToString() && objSplitter.system_id == 0)
             {
                 //GET AUTO NETWORK CODE...
-                var objISPNetworkCode = new BLMisc().GetISPNetworkCodeDetail(new ISPNetworkCodeIn() { parent_sysId = model.pSystemId, parent_eType = model.pEntityType, eType = EntityType.Splitter.ToString(), structureId = structure_id });
+                var objISPNetworkCode = new BLMisc().GetISPNetworkCodeDetail(new ISPNetworkCodeIn() { parent_sysId = objSplitter.pSystemId, parent_eType = objSplitter.pEntityType, eType = EntityType.Splitter.ToString(), structureId = structure_id });
                 if (isDirectSave == true)
                 {
-                    model = getSplitterInfo(model.networkIdType, model.templateId, model.system_id, structure_id, model.pSystemId, model.pEntityType);
-                    model.objIspEntityMap.structure_id = structure_id;
-                    model.parent_system_id = pSystemId;
-                    model.parent_entity_type = pEntityType;
-                    model.splitter_name = objISPNetworkCode.network_code;
-                    model.objIspEntityMap.structure_id = structure_id;
+                    objSplitter = getSplitterInfo(objSplitter.networkIdType, objSplitter.templateId, objSplitter.system_id, structure_id, objSplitter.pSystemId, objSplitter.pEntityType);
+                    objSplitter.objIspEntityMap.structure_id = structure_id;
+                    objSplitter.parent_system_id = pSystemId;
+                    objSplitter.parent_entity_type = pEntityType;
+                    objSplitter.splitter_name = objISPNetworkCode.network_code;
+                    objSplitter.objIspEntityMap.structure_id = structure_id;
                     var objBOMDDL = new BLMisc().GetDropDownList("", "bom_sub_category");
                     //var objSubCatDDL = new BLMisc().GetDropDownList("", "served_by_ring");
-                    model.bom_sub_category = objBOMDDL[0].dropdown_value;
+                    objSplitter.bom_sub_category = objBOMDDL[0].dropdown_value;
                    // model.served_by_ring = objSubCatDDL[0].dropdown_value;
                 }
-                model.network_id = objISPNetworkCode.network_code;
-                model.sequence_id = objISPNetworkCode.sequence_id;
+                objSplitter.network_id = objISPNetworkCode.network_code;
+                objSplitter.sequence_id = objISPNetworkCode.sequence_id;
 
             }
             var structureDetails = new BLMisc().GetEntityDetailById<StructureMaster>(structure_id, EntityType.Structure);
             if (structureDetails != null)
             {
-                model.region_id = structureDetails.region_id;
-                model.province_id = structureDetails.province_id;
-                model.latitude = structureDetails.latitude;
-                model.longitude = structureDetails.longitude;
+                objSplitter.region_id = structureDetails.region_id;
+                objSplitter.province_id = structureDetails.province_id;
+                objSplitter.latitude = structureDetails.latitude;
+                objSplitter.longitude = structureDetails.longitude;
             }
-            if (model.unitValue != null && model.unitValue.Contains(":"))
+            if (objSplitter.unitValue != null && objSplitter.unitValue.Contains(":"))
             {
-                model.splitter_ratio = model.unitValue;
+                objSplitter.splitter_ratio = objSplitter.unitValue;
             }
 
-            if (TryValidateModel(model))
+            if (TryValidateModel(objSplitter))
             {
-                bool isNew = model.system_id == 0 ? true : false;
-                var resultItem = new BLSplitter().SaveSplitterEntity(model, Convert.ToInt32(((User)Session["userDetail"]).user_id));
+                bool isNew = objSplitter.system_id == 0 ? true : false;
+                var resultItem = new BLSplitter().SaveSplitterEntity(objSplitter, Convert.ToInt32(((User)Session["userDetail"]).user_id));
                 if (string.IsNullOrEmpty(resultItem.objPM.message))
                 {
 
@@ -1425,11 +1425,11 @@ namespace SmartInventory.Controllers
                         objPM.systemId = resultItem.system_id;
                         objPM.entityType = EntityType.Splitter.ToString();
                         objPM.NetworkId = resultItem.network_id;
-                        objPM.structureId = model.objIspEntityMap.structure_id;
-                        objPM.shaftId = model.objIspEntityMap.shaft_id ?? 0;
-                        objPM.floorId = model.objIspEntityMap.floor_id ?? 0;
-                        objPM.pSystemId = model.parent_system_id;
-                        objPM.pEntityType = model.parent_entity_type;
+                        objPM.structureId = objSplitter.objIspEntityMap.structure_id;
+                        objPM.shaftId = objSplitter.objIspEntityMap.shaft_id ?? 0;
+                        objPM.floorId = objSplitter.objIspEntityMap.floor_id ?? 0;
+                        objPM.pSystemId = objSplitter.parent_system_id;
+                        objPM.pEntityType = objSplitter.parent_entity_type;
                     }
                     else
                     {
@@ -1446,7 +1446,7 @@ namespace SmartInventory.Controllers
                         }
 
                     }
-                    model.objPM = objPM;
+                    objSplitter.objPM = objPM;
                 }
 
             }
@@ -1454,25 +1454,25 @@ namespace SmartInventory.Controllers
             {
                 objPM.status = ResponseStatus.FAILED.ToString();
                 objPM.message = getFirstErrorFromModelState();
-                model.objPM = objPM;
+                objSplitter.objPM = objPM;
             }
-            model.entityType = EntityType.Splitter.ToString();
+            objSplitter.entityType = EntityType.Splitter.ToString();
             if (isDirectSave == true)
             {
                 //RETURN MESSAGE AS JSON FOR DIRECT SAVE
-                return Json(model.objPM, JsonRequestBehavior.AllowGet);
+                return Json(objSplitter.objPM, JsonRequestBehavior.AllowGet);
             }
             else
             {
-                BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.Splitter.ToString());
-                BindSplitterDropDown(model);
-                fillProjectSpecifications(model);
-                model.unitValue = model.splitter_ratio;
+                BLItemTemplate.Instance.BindItemDropdowns(objSplitter, EntityType.Splitter.ToString());
+                BindSplitterDropDown(objSplitter);
+                fillProjectSpecifications(objSplitter);
+                objSplitter.unitValue = objSplitter.splitter_ratio;
                 //Get the layer details to bind additional attributes Splitter
                 var layerdetails = new BLLayer().getLayer(EntityType.Splitter.ToString());
-                model.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
+                objSplitter.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
                 //End for additional attributes Splitter
-                return PartialView("_AddSplitter", model);
+                return PartialView("_AddSplitter", objSplitter);
             }
         }
         public JsonResult DeleteSplitterById(int systemId)

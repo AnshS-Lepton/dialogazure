@@ -658,6 +658,7 @@ namespace Models
             listSplicingReport = new List<ExportSplicing>();
 
         }
+        public int user_id { get; set; }
     }
     public class connectors
     {
@@ -1098,7 +1099,8 @@ namespace Models
         public double latitude { get; set; }
         public double longitude { get; set; }
         public double bufferRadius { get; set; }
-        public User users { get; set; }
+        public int role_id { get; set; }
+        public int user_id { get; set; }
     }
     public class ViewSplicingEntity
     {
@@ -1118,6 +1120,17 @@ namespace Models
         public List<ConnectionInfoMaster> connections { get; set; }
         public User user { get; set; }
     }
+    public class bulkSplicingInput
+    {
+        public int systemId { get; set; }
+        public string networkId { get; set; }
+        public string entityType { get; set; }
+        public bool isCableAend { get; set; }
+        public string connectionType { get; set; }
+        public int from { get; set; }
+        public int to { get; set; }
+    }
+
 }
 
 

@@ -559,7 +559,7 @@ namespace SmartInventoryServices.Controllers
 						#endregion
 
 						#region RestrictedArea
-						else if (headerAttribute.entity_type.ToUpper() == EntityType.RestrictedArea.ToString().ToUpper())
+						else if (headerAttribute.entity_type.ToUpper() == EntityType.Restricted_Area.ToString().ToUpper())
 						{
 							if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
 							{
@@ -2596,8 +2596,12 @@ namespace SmartInventoryServices.Controllers
 			objSCMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objSCMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
-			// objSCMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
-		}
+			if (objSCMaster.system_id == 0)
+				objSCMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSCMaster.geom);
+			else			
+				objSCMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSCMaster.system_id, objSCMaster.entityType);            
+            // objSCMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+        }
 		#endregion
 
 		#region Add Splice Closure
@@ -2622,7 +2626,13 @@ namespace SmartInventoryServices.Controllers
 				BLItemTemplate.Instance.BindItemDropdowns(objSCMaster, EntityType.SpliceClosure.ToString());
 				BindSpilceClosureDropdown(objSCMaster);
 				fillProjectSpecifications(objSCMaster);
-				new BLMisc().BindPortDetails(objSCMaster, EntityType.SpliceClosure.ToString(), DropDownType.SC_Port_Ratio.ToString());
+                List<int> listI = new List<int>();
+                foreach (var i in objSCMaster.lstRouteInfo.Where(x => x.is_associated))
+                {
+					listI.Add(i.cable_id);
+                }
+				objSCMaster.selected_route_ids = listI;
+                new BLMisc().BindPortDetails(objSCMaster, EntityType.SpliceClosure.ToString(), DropDownType.SC_Port_Ratio.ToString());
 				//Get the layer details to bind additional attributes SpliceClosure
 				var layerdetails = new BLLayer().getLayer(EntityType.SpliceClosure.ToString());
 				objSCMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
@@ -2699,6 +2709,30 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objSCMaster.system_id > 0 ? false : true;
 					objSCMaster.is_new_entity = (isNew && objSCMaster.source_ref_id != "0" && objSCMaster.source_ref_id != "");
 					var resultItem = new BLSC().SaveEntitySC(objSCMaster, objSCMaster.user_id);
+                    BindSpilceClosureDropdown(objSCMaster);
+                    List<RouteInfo> objL = new List<RouteInfo>();
+                    foreach (var itm in objSCMaster.lstRouteInfo)
+					{
+						bool f = false;
+						foreach(var ids in objSCMaster.selected_route_ids)
+						{
+							if (ids == itm.cable_id)
+							{
+								f = true;
+
+                            }
+						}
+                        RouteInfo objS = new RouteInfo();
+                        objS.entity_id = resultItem.system_id;
+                        objS.entity_type = resultItem.entityType;
+                        objS.created_by = resultItem.user_id.ToString();
+						objS.cable_id = itm.cable_id;
+						objS.is_associated = f;
+                        objL.Add(objS);
+                    }
+				
+					var res = new BLMisc().saveRouteAssocition(JsonConvert.SerializeObject(objL), resultItem.system_id, EntityType.SpliceClosure.ToString(), resultItem.user_id);
+					
 					if (resultItem.isConvert && string.IsNullOrEmpty(resultItem.objPM.message) && isNew)
 					{
 						string[] LayerName = { EntityType.CDB.ToString(), EntityType.SpliceClosure.ToString() };
@@ -2716,8 +2750,8 @@ namespace SmartInventoryServices.Controllers
 						{
 							SaveReference(objSCMaster.EntityReference, resultItem.system_id);
 						}
-						// }
-					}
+						
+                    }
 					//START SPLIT CABLE FEATURE BY ANTRA//
 					var layerDetails = ApplicationSettings.listLayerDetails.Where(m => m.layer_name.ToUpper() == EntityType.SpliceClosure.ToString().ToUpper()).FirstOrDefault();
 					if (objSCMaster.split_cable_system_id > 0 && layerDetails.is_split_allowed == true && isNew)
@@ -4122,7 +4156,7 @@ namespace SmartInventoryServices.Controllers
 
 		public RestrictedArea GetRestrictedAreaDetail(RestrictedArea objRestrictedArea)
 		{
-			var objDDL = new BLMisc().GetDropDownList(EntityType.RestrictedArea.ToString());
+			var objDDL = new BLMisc().GetDropDownList(EntityType.Restricted_Area.ToString());
 			DropDownMaster drp = new DropDownMaster();
 			//objDDL.Insert(0, new DropDownMaster { dropdown_key = "Select", dropdown_status = false, dropdown_type = DropDownType.Area_RFS.ToString(), dropdown_value = "0" });
 
@@ -4131,12 +4165,12 @@ namespace SmartInventoryServices.Controllers
 				//NEW ENTITY->Fill Region and Province Detail..
 				fillRegionProvinceDetail(objRestrictedArea, GeometryType.Polygon.ToString(), objRestrictedArea.geom);
 				//Fill Parent detail...              
-				fillParentDetail(objRestrictedArea, new NetworkCodeIn() { eType = EntityType.RestrictedArea.ToString(), gType = GeometryType.Polygon.ToString(), eGeom = objRestrictedArea.geom }, objRestrictedArea.networkIdType);
+				fillParentDetail(objRestrictedArea, new NetworkCodeIn() { eType = EntityType.Restricted_Area.ToString(), gType = GeometryType.Polygon.ToString(), eGeom = objRestrictedArea.geom }, objRestrictedArea.networkIdType);
 			}
 			else
 			{
 				// Get entity detail by Id...
-				objRestrictedArea = new BLMisc().GetEntityDetailById<RestrictedArea>(objRestrictedArea.system_id, EntityType.RestrictedArea, objRestrictedArea.user_id);
+				objRestrictedArea = new BLMisc().GetEntityDetailById<RestrictedArea>(objRestrictedArea.system_id, EntityType.Restricted_Area, objRestrictedArea.user_id);
 				fillRegionProvAbbr(objRestrictedArea);
 			}
 
@@ -4159,7 +4193,7 @@ namespace SmartInventoryServices.Controllers
 			try
 			{
 				ModelState.Clear();
-				var objDDL = new BLMisc().GetDropDownList(EntityType.RestrictedArea.ToString());
+				var objDDL = new BLMisc().GetDropDownList(EntityType.Restricted_Area.ToString());
 				DropDownMaster drp = new DropDownMaster();
 				objRestrictedArea.lstRestrictedAreaRFS = objDDL.Where(x => x.dropdown_type == DropDownType.RestrictedArea_RFS.ToString()).ToList();
 				objRestrictedArea.lstcategoryRFS = objDDL.Where(x => x.dropdown_type == DropDownType.Category.ToString()).ToList();
@@ -4170,7 +4204,7 @@ namespace SmartInventoryServices.Controllers
 				if (objRestrictedArea.networkIdType == NetworkIdType.A.ToString() && objRestrictedArea.system_id == 0)
 				{
 					//GET AUTO NETWORK CODE...
-					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.RestrictedArea.ToString(), gType = GeometryType.Polygon.ToString(), eGeom = objRestrictedArea.geom });
+					var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Restricted_Area.ToString(), gType = GeometryType.Polygon.ToString(), eGeom = objRestrictedArea.geom });
 					if (objRestrictedArea.isDirectSave == true)
 					{
 						//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
@@ -4180,7 +4214,7 @@ namespace SmartInventoryServices.Controllers
 					}
 					else
 					{
-						var objNetworkStatus = new BLMisc().GetEntityDetailById<RestrictedArea>(objRestrictedArea.system_id, EntityType.RestrictedArea, objRestrictedArea.user_id);
+						var objNetworkStatus = new BLMisc().GetEntityDetailById<RestrictedArea>(objRestrictedArea.system_id, EntityType.Restricted_Area, objRestrictedArea.user_id);
 						objRestrictedArea.network_status = objNetworkStatus.network_status;
 					}
 					//SET NETWORK CODE
@@ -4204,7 +4238,7 @@ namespace SmartInventoryServices.Controllers
 					var resultItem = new BLrestricted_area().SaveRestrictedArea(objRestrictedArea, objRestrictedArea.user_id);
 					if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
-						string[] LayerName = { EntityType.RestrictedArea.ToString() };
+						string[] LayerName = { EntityType.Restricted_Area.ToString() };
 
 						if (isNew)
 						{
@@ -10771,7 +10805,7 @@ namespace SmartInventoryServices.Controllers
 				}
 				else
 				{
-					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.POD.ToString());
+					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.BDB.ToString());
 					// RETURN PARTIAL VIEW WITH MODEL DATA  
 					BindISPBDBDropDown(model);
 					fillProjectSpecifications(model);
@@ -11352,7 +11386,7 @@ namespace SmartInventoryServices.Controllers
 				}
 				else
 				{
-					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.POD.ToString());
+					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.ADB.ToString());
 					// RETURN PARTIAL VIEW WITH MODEL DATA  
 					BindISPADBDropDown(model);
 					fillProjectSpecifications(model);
@@ -11671,7 +11705,7 @@ namespace SmartInventoryServices.Controllers
 				}
 				else
 				{
-					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.POD.ToString());
+					BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.CDB.ToString());
 					// RETURN PARTIAL VIEW WITH MODEL DATA  
 					BindISPCDBDropDown(model);
 					fillProjectSpecifications(model);

@@ -58,9 +58,9 @@ namespace DataAccess
                     item.associated_network_id = associated_network_id;
                     item.longitude = Convert.ToDouble(objIn.eGeom.Split(' ')[0]);
                     item.latitude = Convert.ToDouble(objIn.eGeom.Split(' ')[1]);
-                   
+
                     List<InRegionProvince> objRegionProvince = new List<InRegionProvince>();
-                    objRegionProvince = DABuilding.Instance.GetRegionProvince(objIn.eGeom,GeometryType.Point.ToString());
+                    objRegionProvince = DABuilding.Instance.GetRegionProvince(objIn.eGeom, GeometryType.Point.ToString());
                     if (objRegionProvince != null && objRegionProvince.Count > 0)
                     {
                         item.region_id = objRegionProvince[0].region_id;
@@ -90,7 +90,8 @@ namespace DataAccess
                     geom.commonName = resultItem.network_id;
                     geom.geomType = GeometryType.Point.ToString();
                     string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
-                    
+                    DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(item.system_id, Models.EntityType.Loop.ToString(), item.province_id, 0);
+
                 }
                 //return resultItem;
 
@@ -100,6 +101,10 @@ namespace DataAccess
                 ListLoopDetailsUpdate.ForEach(p => p.modified_by = userId);
                 ListLoopDetailsUpdate.ForEach(p => p.modified_on = DateTimeHelper.Now);
                 repo.Update(ListLoopDetailsUpdate);
+                foreach (var item in ListLoopDetailsUpdate)
+                {
+                    DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(item.system_id, Models.EntityType.Loop.ToString(), item.province_id, 1);
+                }
             }
 
             return resultItem;

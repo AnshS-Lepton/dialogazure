@@ -758,6 +758,7 @@
     <Content Include="Content\images\icons\lib\Legend\Electrical.svg" />
     <Content Include="Content\images\icons\lib\Legend\electric_pole.png" />
     <Content Include="Content\images\icons\lib\Legend\EQUIPMENT.png" />
+    <Content Include="Content\images\icons\lib\Legend\Fault.svg" />
     <Content Include="Content\images\icons\lib\Legend\FDB.png" />
     <Content Include="Content\images\icons\lib\Legend\FDB.svg" />
     <Content Include="Content\images\icons\lib\Legend\fms.png" />
@@ -772,6 +773,7 @@
     <Content Include="Content\images\icons\lib\Legend\LightPole.png" />
     <Content Include="Content\images\icons\lib\Legend\logo_black.png" />
     <Content Include="Content\images\icons\lib\Legend\loop-bold.png" />
+    <Content Include="Content\images\icons\lib\Legend\Loop.svg" />
     <Content Include="Content\images\icons\lib\Legend\loop_back %282%29.png" />
     <Content Include="Content\images\icons\lib\Legend\loop_back %283%29.png" />
     <Content Include="Content\images\icons\lib\Legend\loop_back-1.png" />
@@ -1592,9 +1594,15 @@
     <Content Include="Content\js\vis_4_18_1.min.js" />
     <Content Include="Content\sort_asc.png" />
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
+    <Content Include="MigrationScripts\03-05-2024.sql" />
     <Content Include="MigrationScripts\05-04-2024.sql" />
+    <Content Include="MigrationScripts\06-05-2024.sql" />
+    <Content Include="MigrationScripts\06-05-2024_2.sql" />
+    <Content Include="MigrationScripts\16-04-2024.sql" />
+    <Content Include="MigrationScripts\2024-05-07_unique_constraint_lbl_clm_stng.sql" />
     <Content Include="MigrationScripts\2024_02_27_vodafone_issues.sql" />
     <Content Include="MigrationScripts\2024_02_25_vodafone_issues.sql" />
+    <Content Include="MigrationScripts\30-04-2024.sql" />
     <Content Include="MultilingualJunkKeys\Content\Js\Alert.js" />
     <Content Include="Scripts\APIHandler.js" />
     <Content Include="Content\js\canvg.min.js" />
@@ -2849,7 +2857,6 @@
     <Folder Include="Content\UploadedFiles\Fiber\" />
     <Folder Include="Content\UploadedFiles\Resources\" />
     <Folder Include="Content\UploadedFiles\VendorSpecifications\" />
-    <Folder Include="ErrorLogs\" />
     <Folder Include="shp2kml_convertor\" />
     <Folder Include="Uploads\ExternalData\KMZ\" />
     <Folder Include="Uploads\LayerStyleMaster\" />
