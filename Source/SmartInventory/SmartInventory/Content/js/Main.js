@@ -3820,12 +3820,16 @@ var Main = function () {
         let sCable_Type = '';
         let sCable_Category = '';
         var systemIdSet = new Set();
+        let sOwnership = '';
         let sThirdPartyVendor = '';
         if (app.cable_type != '0' && app.cable_type != undefined) {
             sCable_Type = app.cable_type;
         }
         if (app.cable_category != '0' && app.cable_category != undefined) {
             sCable_Category = app.cable_category;
+        }
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
         }
         if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
             sThirdPartyVendor = app.thirdpartyvendor;
@@ -3836,6 +3840,7 @@ var Main = function () {
                 features: app.cableGeoJson.features.reduce(function (result, feature) {
                     if ((sCable_Type == '' || feature.properties.cable_type == sCable_Type) &&
                         (sCable_Category == '' || feature.properties.cable_category == sCable_Category) &&
+                        (sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                         (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
                         result.push(feature);
                     }

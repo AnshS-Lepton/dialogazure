@@ -1597,6 +1597,7 @@
     <Content Include="MigrationScripts\03-05-2024.sql" />
     <Content Include="MigrationScripts\05-04-2024.sql" />
     <Content Include="MigrationScripts\06-05-2024.sql" />
+    <Content Include="MigrationScripts\06-05-2024_2.sql" />
     <Content Include="MigrationScripts\16-04-2024.sql" />
     <Content Include="MigrationScripts\2024_02_27_vodafone_issues.sql" />
     <Content Include="MigrationScripts\2024_02_25_vodafone_issues.sql" />
