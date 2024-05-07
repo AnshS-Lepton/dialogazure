@@ -363,3 +363,18 @@ group by ld.layer_name,ld.layer_title,ld.layer_abbr,ld.layer_id,layer_sequence o
 end 
 $function$
 ;
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+INSERT INTO public.label_column_settings
+( layer_id, column_name, display_column_name, column_sequence, is_active, table_column_name)
+VALUES( 19, 'vendor_name', 'vendor name', 0, true, 'vendor_name');
+
+INSERT INTO public.label_column_settings
+( layer_id, column_name, display_column_name, column_sequence, is_active, table_column_name)
+VALUES( 19, 'activation_stage', 'activation stage', 0, true, 'activation_stage');
+
+INSERT INTO public.label_column_settings
+( layer_id, column_name, display_column_name, column_sequence, is_active, table_column_name)
+VALUES( 19, 'ownership_type', 'ownership type', 0, true, 'ownership_type');
