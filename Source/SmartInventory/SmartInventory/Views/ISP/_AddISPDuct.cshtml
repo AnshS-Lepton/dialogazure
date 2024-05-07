@@ -58,8 +58,8 @@
 <div>
     @using (Ajax.BeginForm("SaveDuct", "ISP", new AjaxOptions
     {
-        HttpMethod = "POST",
         OnSuccess = "isp.SaveDuct",
+        HttpMethod = "POST",        
         LoadingElementId = "dvProgress",
         OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.Duct.ToString() + "');"
 
@@ -310,7 +310,7 @@
 
                                 <label class="control-label col-md-2 col-sm-2 " for="calculated_length">@Resources.Resources.SI_OSP_DUC_NET_FRM_006:</label>
                                 <div class="col-md-4 col-sm-4  mrgn_btm">
-                                    @Html.TextBoxFor(m => m.calculated_length, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
+                                    @Html.TextBoxFor(m => m.calculated_length, new { @class = "form-control", @onkeyup= "setmanuallength();", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
 
                                 </div>
 
@@ -434,7 +434,7 @@
     $(document).ready(function () {
         callFormValidator("frmAddDuct");
         $('.chosen-select').chosen({ width: '100%' });
-        setMeasuredLength('#calculated_length', '#manual_length');
+        
         EnableDisableUpdateButton("frmAddDuct", @Model.system_id > 0 ? "btnUpdateSubArea" : "btnSaveDuct");
         //APPLY INPUT MASK ON NETWORK ID..
         getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
@@ -475,6 +475,11 @@
         else {
             $("#frmAddDuct").submit();
         }
+    }
+
+    function setmanuallength() {
+        var calculatedLen = parseFloat($("#calculated_length").val());
+            $("#manual_length").val(calculatedLen);        
     }
 </script>
 <style>
