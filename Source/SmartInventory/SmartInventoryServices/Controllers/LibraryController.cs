@@ -1153,7 +1153,14 @@ namespace SmartInventoryServices.Controllers
 				PoleMaster objRequestIn = ReqHelper.GetRequestData<PoleMaster>(data);
 				PoleMaster objPoleMaster = GetPoleDetail(objRequestIn);
 				BindPoleDropDown(objPoleMaster);
-				BLItemTemplate.Instance.BindItemDropdowns(objPoleMaster, EntityType.Pole.ToString());
+                BindPoleRoute(objPoleMaster);
+                List<int> listI = new List<int>();
+                foreach (var i in objPoleMaster.lstRouteInfo.Where(x => x.is_associated))
+                {
+                    listI.Add(i.cable_id);
+                }
+                objPoleMaster.selected_route_ids = listI;
+                BLItemTemplate.Instance.BindItemDropdowns(objPoleMaster, EntityType.Pole.ToString());
 				fillProjectSpecifications(objPoleMaster);
 				objPoleMaster.is_specification_allowed = new BLLayer().GetSpecificationAllowed(EntityType.Manhole.ToString()).ToString();
 				//Get the layer details to bind additional attributes Pole
@@ -1247,8 +1254,41 @@ namespace SmartInventoryServices.Controllers
 				{
 					var isNew = objPoleMaster.system_id > 0 ? false : true;
 					objPoleMaster.is_new_entity = (isNew && objPoleMaster.source_ref_id != "0" && objPoleMaster.source_ref_id != "");
-					var resultItem = new BLPole().SaveEntityPole(objPoleMaster, objPoleMaster.user_id);
-					if (string.IsNullOrEmpty(resultItem.objPM.message))
+
+                    BindPoleRoute(objPoleMaster);
+                    var resultItem = new BLPole().SaveEntityPole(objPoleMaster, objPoleMaster.user_id);
+                    List<RouteInfo> objL = new List<RouteInfo>();
+                    foreach (var itm in objPoleMaster.lstRouteInfo)
+                    {
+                        bool f = false;
+						if (objPoleMaster.selected_route_ids != null)
+						{
+							foreach (var ids in objPoleMaster.selected_route_ids)
+							{
+								if (ids == itm.cable_id)
+								{
+									f = true;
+
+								}
+							}
+						}
+                        RouteInfo objS = new RouteInfo();
+                        objS.entity_id = resultItem.system_id;
+                        objS.entity_type = EntityType.Pole.ToString();
+                        objS.created_by = objPoleMaster.user_id.ToString();
+                        objS.cable_id = itm.cable_id;
+                        objS.is_associated = f;
+                        objL.Add(objS);
+                    }
+                    var res = new BLMisc().saveRouteAssocition(JsonConvert.SerializeObject(objL), resultItem.system_id, EntityType.Pole.ToString(), objPoleMaster.user_id);
+                    BindPoleRoute(objPoleMaster);
+                    List<int> listI = new List<int>();
+                    foreach (var i in objPoleMaster.lstRouteInfo.Where(x => x.is_associated))
+                    {
+                        listI.Add(i.cable_id);
+                    }
+                    objPoleMaster.selected_route_ids = listI;
+                    if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						//Save Reference
 						string[] LayerName = { EntityType.Pole.ToString() };
@@ -1299,7 +1339,8 @@ namespace SmartInventoryServices.Controllers
 				{
 					BLItemTemplate.Instance.BindItemDropdowns(objPoleMaster, EntityType.Pole.ToString());
 					BindPoleDropDown(objPoleMaster);
-					fillProjectSpecifications(objPoleMaster);
+                    BindPoleRoute(objPoleMaster);
+                    fillProjectSpecifications(objPoleMaster);
 					//Get the layer details to bind additional attributes Pole
 					var layerdetails = new BLLayer().getLayer(EntityType.Pole.ToString());
 					objPoleMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
@@ -1329,8 +1370,16 @@ namespace SmartInventoryServices.Controllers
 			objPoleMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList("");
 			objPoleMaster.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
-			//objPoleMaster.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
-		}
+           
+            //objPoleMaster.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+        }
+		private void BindPoleRoute(PoleMaster objPoleMaster)
+		{
+            if (objPoleMaster.system_id == 0)
+                objPoleMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objPoleMaster.geom);
+            else
+                objPoleMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objPoleMaster.system_id, EntityType.Pole.ToString());            
+        }
 		#endregion
 
 		#endregion
@@ -1353,7 +1402,14 @@ namespace SmartInventoryServices.Controllers
 				BLItemTemplate.Instance.BindItemDropdowns(objManholeMaster, EntityType.Manhole.ToString());
 				fillProjectSpecifications(objManholeMaster);
 				BindManholeDropDown(objManholeMaster);
-				objManholeMaster.is_specification_allowed = new BLLayer().GetSpecificationAllowed(EntityType.Manhole.ToString()).ToString();
+                BindManholeRoute(objManholeMaster);
+                List<int> listI = new List<int>();
+                foreach (var i in objManholeMaster.lstRouteInfo.Where(x => x.is_associated))
+                {
+                    listI.Add(i.cable_id);
+                }
+                objManholeMaster.selected_route_ids = listI;
+                objManholeMaster.is_specification_allowed = new BLLayer().GetSpecificationAllowed(EntityType.Manhole.ToString()).ToString();
 				objManholeMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.Manhole.ToString()).ToList();
 				//Get the layer details to bind additional attributes Manhole
 				var layerdetails = new BLLayer().getLayer(EntityType.Manhole.ToString());
@@ -1411,8 +1467,38 @@ namespace SmartInventoryServices.Controllers
 				{
 					var isNew = objManholeMaster.system_id > 0 ? false : true;
 					objManholeMaster.is_new_entity = (isNew && objManholeMaster.source_ref_id != "0" && objManholeMaster.source_ref_id != "");
-					var resultItem = new BLManhole().SaveEntityManhole(objManholeMaster, objManholeMaster.user_id);
-					if (string.IsNullOrEmpty(resultItem.objPM.message))
+					var resultItem = new BLManhole().SaveEntityManhole(objManholeMaster, objManholeMaster.user_id);                   
+                    BindManholeRoute(objManholeMaster);                    
+                    List<RouteInfo> objL = new List<RouteInfo>();
+                    foreach (var itm in objManholeMaster.lstRouteInfo)
+                    {
+                        bool f = false;
+                        foreach (var ids in objManholeMaster.selected_route_ids)
+                        {
+                            if (ids == itm.cable_id)
+                            {
+                                f = true;
+
+                            }
+                        }
+                        RouteInfo objS = new RouteInfo();
+                        objS.entity_id = resultItem.system_id;
+                        objS.entity_type = EntityType.Manhole.ToString();
+                        objS.created_by = objManholeMaster.user_id.ToString();
+                        objS.cable_id = itm.cable_id;
+                        objS.is_associated = f;
+                        objL.Add(objS);
+                    }
+
+                    var res = new BLMisc().saveRouteAssocition(JsonConvert.SerializeObject(objL), resultItem.system_id, EntityType.Manhole.ToString(), objManholeMaster.user_id);
+                    BindManholeRoute(objManholeMaster);
+                    List<int> listI = new List<int>();
+                    foreach (var i in objManholeMaster.lstRouteInfo.Where(x => x.is_associated))
+                    {
+                        listI.Add(i.cable_id);
+                    }
+                    objManholeMaster.selected_route_ids = listI;
+                    if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						//Save Reference
 						string[] LayerName = { EntityType.Manhole.ToString() };
@@ -1503,16 +1589,24 @@ namespace SmartInventoryServices.Controllers
             objManholeMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList("");
 			objManholeMaster.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
-			//objManholeMaster.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
-		}
-		#endregion
+          
+            //objManholeMaster.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+        }
+        private void BindManholeRoute(ManholeMaster objManholeMaster)
+		{
+            if (objManholeMaster.system_id == 0)
+                objManholeMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objManholeMaster.geom);
+            else
+                objManholeMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objManholeMaster.system_id, EntityType.Manhole.ToString());
+        }
+        #endregion
 
-		#region Get Manhole Details
-		/// <summary> Get Manhole </summary>
-		/// <returns>Get Manhole Details</returns>
-		/// <CreatedBy>Sumit Poonia</CreatedBy>
-		///<Created Date>11-Jan-2020</Created Date>
-		public ManholeMaster GetManholeDetail(ManholeMaster objManhole)
+        #region Get Manhole Details
+        /// <summary> Get Manhole </summary>
+        /// <returns>Get Manhole Details</returns>
+        /// <CreatedBy>Sumit Poonia</CreatedBy>
+        ///<Created Date>11-Jan-2020</Created Date>
+        public ManholeMaster GetManholeDetail(ManholeMaster objManhole)
 		{
 			int id = objManhole.user_id;
 			if (objManhole.system_id == 0)
@@ -2596,11 +2690,15 @@ namespace SmartInventoryServices.Controllers
 			objSCMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objSCMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
-			if (objSCMaster.system_id == 0)
-				objSCMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSCMaster.geom);
-			else			
-				objSCMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSCMaster.system_id, objSCMaster.entityType);            
+			          
             // objSCMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+        }
+		private void BindSpilceClosureRoute(SCMaster objSCMaster)
+		{
+            if (objSCMaster.system_id == 0)
+                objSCMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSCMaster.geom);
+            else
+                objSCMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSCMaster.system_id, objSCMaster.entityType);
         }
 		#endregion
 
@@ -2625,7 +2723,9 @@ namespace SmartInventoryServices.Controllers
 
 				BLItemTemplate.Instance.BindItemDropdowns(objSCMaster, EntityType.SpliceClosure.ToString());
 				BindSpilceClosureDropdown(objSCMaster);
-				fillProjectSpecifications(objSCMaster);
+				BindSpilceClosureRoute(objSCMaster);
+
+                fillProjectSpecifications(objSCMaster);
                 List<int> listI = new List<int>();
                 foreach (var i in objSCMaster.lstRouteInfo.Where(x => x.is_associated))
                 {
@@ -2709,31 +2809,41 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objSCMaster.system_id > 0 ? false : true;
 					objSCMaster.is_new_entity = (isNew && objSCMaster.source_ref_id != "0" && objSCMaster.source_ref_id != "");
 					var resultItem = new BLSC().SaveEntitySC(objSCMaster, objSCMaster.user_id);
-                    BindSpilceClosureDropdown(objSCMaster);
+                    BindSpilceClosureRoute(objSCMaster);
                     List<RouteInfo> objL = new List<RouteInfo>();
                     foreach (var itm in objSCMaster.lstRouteInfo)
 					{
 						bool f = false;
-						foreach(var ids in objSCMaster.selected_route_ids)
+						if (objSCMaster.selected_route_ids != null)
 						{
-							if (ids == itm.cable_id)
+							foreach (var ids in objSCMaster.selected_route_ids)
 							{
-								f = true;
+								if (ids == itm.cable_id)
+								{
+									f = true;
 
-                            }
+								}
+							}
 						}
                         RouteInfo objS = new RouteInfo();
                         objS.entity_id = resultItem.system_id;
-                        objS.entity_type = resultItem.entityType;
-                        objS.created_by = resultItem.user_id.ToString();
-						objS.cable_id = itm.cable_id;
+                        objS.entity_type = EntityType.SpliceClosure.ToString();
+                        objS.created_by = objSCMaster.user_id.ToString();
+                        objS.cable_id = itm.cable_id;
 						objS.is_associated = f;
                         objL.Add(objS);
                     }
 				
-					var res = new BLMisc().saveRouteAssocition(JsonConvert.SerializeObject(objL), resultItem.system_id, EntityType.SpliceClosure.ToString(), resultItem.user_id);
-					
-					if (resultItem.isConvert && string.IsNullOrEmpty(resultItem.objPM.message) && isNew)
+					var res = new BLMisc().saveRouteAssocition(JsonConvert.SerializeObject(objL), resultItem.system_id, EntityType.SpliceClosure.ToString(), objSCMaster.user_id);
+                    BindSpilceClosureRoute(objSCMaster);
+                    fillProjectSpecifications(objSCMaster);
+                    List<int> listI = new List<int>();
+                    foreach (var i in objSCMaster.lstRouteInfo.Where(x => x.is_associated))
+                    {
+                        listI.Add(i.cable_id);
+                    }
+                    objSCMaster.selected_route_ids = listI;
+                    if (resultItem.isConvert && string.IsNullOrEmpty(resultItem.objPM.message) && isNew)
 					{
 						string[] LayerName = { EntityType.CDB.ToString(), EntityType.SpliceClosure.ToString() };
 						CDBMaster objCDB = new CDBMaster();
@@ -2838,8 +2948,9 @@ namespace SmartInventoryServices.Controllers
 				{
 					BLItemTemplate.Instance.BindItemDropdowns(objSCMaster, EntityType.SpliceClosure.ToString());
 					BindSpilceClosureDropdown(objSCMaster);
-					// RETURN PARTIAL VIEW WITH MODEL DATA
-					fillProjectSpecifications(objSCMaster);
+                    BindSpilceClosureRoute(objSCMaster);
+                    // RETURN PARTIAL VIEW WITH MODEL DATA
+                    fillProjectSpecifications(objSCMaster);
 					new BLMisc().BindPortDetails(objSCMaster, EntityType.SpliceClosure.ToString(), DropDownType.SC_Port_Ratio.ToString());
 					//Get the layer details to bind additional attributes SpliceClosure
 					var layerdetails = new BLLayer().getLayer(EntityType.SpliceClosure.ToString());
@@ -3490,6 +3601,13 @@ namespace SmartInventoryServices.Controllers
 			objSplitterMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objSplitterMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
 		}
+		private void BindSplitterRoute(SplitterMaster objSplitterMaster)
+		{
+            if (objSplitterMaster.system_id == 0)
+                objSplitterMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSplitterMaster.geom);
+            else
+                objSplitterMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSplitterMaster.system_id, EntityType.Splitter.ToString());
+        }
 		#endregion
 
 		#region Add Splitter 
@@ -3514,8 +3632,14 @@ namespace SmartInventoryServices.Controllers
 				objSplitterMaster.pEntityType = objRequestIn.pEntityType;
 				BLItemTemplate.Instance.BindItemDropdowns(objSplitterMaster, EntityType.Splitter.ToString());
 				BindSplitterDropDown(objSplitterMaster);
-
-				if (objSplitterMaster.pEntityType == EntityType.FDB.ToString() || objSplitterMaster.parent_entity_type == EntityType.FDB.ToString())
+                BindSplitterRoute(objSplitterMaster);
+                List<int> listI = new List<int>();
+                foreach (var i in objSplitterMaster.lstRouteInfo.Where(x => x.is_associated))
+                {
+                    listI.Add(i.cable_id);
+                }
+                objSplitterMaster.selected_route_ids = listI;
+                if (objSplitterMaster.pEntityType == EntityType.FDB.ToString() || objSplitterMaster.parent_entity_type == EntityType.FDB.ToString())
 				{
 					if (ApplicationSettings.splitterTypeForFat == 2)
 					{
@@ -3617,7 +3741,40 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objSplitterMaster.system_id > 0 ? false : true;
 					objSplitterMaster.is_new_entity = (isNew && objSplitterMaster.source_ref_id != "0" && objSplitterMaster.source_ref_id != "");
 					var resultItem = new BLSplitter().SaveSplitterEntity(objSplitterMaster, objSplitterMaster.user_id);
-					if (String.IsNullOrEmpty(resultItem.objPM.message))
+                    BindSplitterRoute(objSplitterMaster);
+                    List<RouteInfo> objL = new List<RouteInfo>();
+                    foreach (var itm in objSplitterMaster.lstRouteInfo)
+                    {
+                        bool f = false;
+						if (objSplitterMaster.selected_route_ids != null)
+						{
+							foreach (var ids in objSplitterMaster.selected_route_ids)
+							{
+								if (ids == itm.cable_id)
+								{
+									f = true;
+
+								}
+							}
+						}
+                        RouteInfo objS = new RouteInfo();
+                        objS.entity_id = resultItem.system_id;
+                        objS.entity_type = EntityType.Splitter.ToString();
+                        objS.created_by = objSplitterMaster.user_id.ToString();
+                        objS.cable_id = itm.cable_id;
+                        objS.is_associated = f;
+                        objL.Add(objS);
+                    }
+
+                    var res = new BLMisc().saveRouteAssocition(JsonConvert.SerializeObject(objL), resultItem.system_id, EntityType.Splitter.ToString(), objSplitterMaster.user_id);
+                    BindSplitterRoute(objSplitterMaster);
+                    List<int> listI = new List<int>();
+                    foreach (var i in objSplitterMaster.lstRouteInfo.Where(x => x.is_associated))
+                    {
+                        listI.Add(i.cable_id);
+                    }
+                    objSplitterMaster.selected_route_ids = listI;
+                    if (String.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						//Save Reference
 						if (objSplitterMaster.EntityReference != null && resultItem.system_id > 0)
@@ -4642,9 +4799,16 @@ namespace SmartInventoryServices.Controllers
 					objFDBMaster.objIspEntityMap.AssociateStructure = objFDB.pSystemId;
 				}
 				BindFDBDropdown(objFDBMaster);
+                BindFDBRoute(objFDBMaster);
+                List<int> listI = new List<int>();
+                foreach (var i in objFDBMaster.lstRouteInfo.Where(x => x.is_associated))
+                {
+                    listI.Add(i.cable_id);
+                }
+                objFDBMaster.selected_route_ids = listI;
 
-				//Get the layer details to bind additional attributes FDB
-				var layerdetails = new BLLayer().getLayer(EntityType.FDB.ToString());
+                //Get the layer details to bind additional attributes FDB
+                var layerdetails = new BLLayer().getLayer(EntityType.FDB.ToString());
 				objFDBMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
 				//End for additional attributes FDB
 
@@ -4746,6 +4910,13 @@ namespace SmartInventoryServices.Controllers
 			objFDB.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//  objFDB.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
 		}
+		private void BindFDBRoute(FDBInfo objFDB)
+		{
+            if (objFDB.system_id == 0)
+                objFDB.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objFDB.geom);
+            else
+                objFDB.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objFDB.system_id, EntityType.FDB.ToString());
+        }
 		#endregion
 
 		#region Save FDB
@@ -4835,7 +5006,40 @@ namespace SmartInventoryServices.Controllers
 					objFDBMaster.barcode = objFDBMaster.barcode;
 
 					var resultItem = BLISP.Instance.SaveFDBDetails(objFDBMaster);
-					if (string.IsNullOrEmpty(resultItem.objPM.message))
+                    BindFDBRoute(objFDBMaster);
+                    List<RouteInfo> objL = new List<RouteInfo>();
+                    foreach (var itm in objFDBMaster.lstRouteInfo)
+                    {
+                        bool f = false;
+						if (objFDBMaster.selected_route_ids != null)
+						{
+							foreach (var ids in objFDBMaster.selected_route_ids)
+							{
+								if (ids == itm.cable_id)
+								{
+									f = true;
+
+								}
+							}
+						}
+                        RouteInfo objS = new RouteInfo();
+                        objS.entity_id = resultItem.system_id;
+                        objS.entity_type = EntityType.FDB.ToString();
+                        objS.created_by = objFDBMaster.user_id.ToString();
+                        objS.cable_id = itm.cable_id;
+                        objS.is_associated = f;
+                        objL.Add(objS);
+                    }
+
+                    var res = new BLMisc().saveRouteAssocition(JsonConvert.SerializeObject(objL), resultItem.system_id, EntityType.FDB.ToString(), objFDBMaster.user_id);
+                    BindFDBRoute(objFDBMaster);
+                    List<int> listI = new List<int>();
+                    foreach (var i in objFDBMaster.lstRouteInfo.Where(x => x.is_associated))
+                    {
+                        listI.Add(i.cable_id);
+                    }
+                    objFDBMaster.selected_route_ids = listI;
+                    if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						#region By default add the splitter in BOX -JIO BY ANTRA
 
@@ -4960,9 +5164,15 @@ namespace SmartInventoryServices.Controllers
 				}
 
 				BindBDBDropDown(objBDBMaster);
-
-				//Get the layer details to bind additional attributes BDB
-				var layerdetails = new BLLayer().getLayer(EntityType.BDB.ToString());
+                BindBDBRoute(objBDBMaster);
+                List<int> listI = new List<int>();
+                foreach (var i in objBDBMaster.lstRouteInfo.Where(x => x.is_associated))
+                {
+                    listI.Add(i.cable_id);
+                }
+                objBDBMaster.selected_route_ids = listI;
+                //Get the layer details to bind additional attributes BDB
+                var layerdetails = new BLLayer().getLayer(EntityType.BDB.ToString());
 				objBDBMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
 				//End for additional attributes BDB
 
@@ -5100,8 +5310,42 @@ namespace SmartInventoryServices.Controllers
 						}
 					}
 					var resultItem = new BLBDB().SaveEntityBDB(objBDBMaster, objBDBMaster.user_id);
-					//START SPLIT CABLE FEATURE BY ANTRA//
-					var layerDetails = ApplicationSettings.listLayerDetails.Where(m => m.layer_name.ToUpper() == EntityType.BDB.ToString().ToUpper()).FirstOrDefault();
+                    BindBDBRoute(objBDBMaster);
+                    List<RouteInfo> objL = new List<RouteInfo>();
+                    foreach (var itm in objBDBMaster.lstRouteInfo)
+                    {
+                        bool f = false;
+						if (objBDBMaster.selected_route_ids != null)
+						{
+							foreach (var ids in objBDBMaster.selected_route_ids)
+							{
+								if (ids == itm.cable_id)
+								{
+									f = true;
+
+								}
+							}
+						}
+                        RouteInfo objS = new RouteInfo();
+                        objS.entity_id = resultItem.system_id;
+                        objS.entity_type = EntityType.BDB.ToString();
+                        objS.created_by = objBDBMaster.user_id.ToString();
+                        objS.cable_id = itm.cable_id;
+                        objS.is_associated = f;
+                        objL.Add(objS);
+                    }
+
+                    var res = new BLMisc().saveRouteAssocition(JsonConvert.SerializeObject(objL), resultItem.system_id, EntityType.BDB.ToString(), objBDBMaster.user_id);
+
+                    BindBDBRoute(objBDBMaster);
+                    List<int> listI = new List<int>();
+                    foreach (var i in objBDBMaster.lstRouteInfo.Where(x => x.is_associated))
+                    {
+                        listI.Add(i.cable_id);
+                    }
+                    objBDBMaster.selected_route_ids = listI;
+                    //START SPLIT CABLE FEATURE BY ANTRA//
+                    var layerDetails = ApplicationSettings.listLayerDetails.Where(m => m.layer_name.ToUpper() == EntityType.BDB.ToString().ToUpper()).FirstOrDefault();
 					if (objBDBMaster.split_cable_system_id > 0 && layerDetails.is_split_allowed == true && isNew)
 					{
 						SplitCable(objBDBMaster.system_id, objBDBMaster.split_cable_system_id, "BDB", objBDBMaster.network_status, objBDBMaster.user_id);
@@ -5259,6 +5503,13 @@ namespace SmartInventoryServices.Controllers
 			objBDB.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//   objBDB.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
 		}
+		private void BindBDBRoute(BDBMaster objBDB)
+		{
+            if (objBDB.system_id == 0)
+                objBDB.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objBDB.geom);
+            else
+                objBDB.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objBDB.system_id, EntityType.BDB.ToString());
+        }
 		#endregion
 
 		#endregion
@@ -6879,7 +7130,14 @@ namespace SmartInventoryServices.Controllers
 
 				BLItemTemplate.Instance.BindItemDropdowns(objFMSMaster, EntityType.FMS.ToString());
 				BindFMSDropDown(objFMSMaster);
-				fillProjectSpecifications(objFMSMaster);
+                BindFMSRoute(objFMSMaster);
+                List<int> listI = new List<int>();
+                foreach (var i in objFMSMaster.lstRouteInfo.Where(x => x.is_associated))
+                {
+                    listI.Add(i.cable_id);
+                }
+                objFMSMaster.selected_route_ids = listI;
+                fillProjectSpecifications(objFMSMaster);
 				new BLMisc().BindPortDetails(objFMSMaster, EntityType.FMS.ToString(), DropDownType.FMS_Port_Ratio.ToString());
 				objFMSMaster.pNetworkId = objFMS.pNetworkId;
 				//Get the layer details to bind additional attributes FMS
@@ -6995,8 +7253,41 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objFMSMaster.system_id > 0 ? false : true;
 					objFMSMaster.is_new_entity = (isNew && objFMSMaster.source_ref_id != "0" && objFMSMaster.source_ref_id != "");
 					var resultItem = new BLFMS().SaveEntityFMS(objFMSMaster, objFMSMaster.user_id);
-					//START SPLIT CABLE FEATURE BY ANTRA//
-					var layerDetails = ApplicationSettings.listLayerDetails.Where(m => m.layer_name.ToUpper() == EntityType.FMS.ToString().ToUpper()).FirstOrDefault();
+                    BindFMSRoute(objFMSMaster);
+                    List<RouteInfo> objL = new List<RouteInfo>();
+                    foreach (var itm in objFMSMaster.lstRouteInfo)
+                    {
+                        bool f = false;
+						if (objFMSMaster.selected_route_ids != null)
+						{
+							foreach (var ids in objFMSMaster.selected_route_ids)
+							{
+								if (ids == itm.cable_id)
+								{
+									f = true;
+
+								}
+							}
+						}
+                        RouteInfo objS = new RouteInfo();
+                        objS.entity_id = resultItem.system_id;
+                        objS.entity_type = EntityType.FMS.ToString();
+                        objS.created_by = objFMSMaster.user_id.ToString();
+                        objS.cable_id = itm.cable_id;
+                        objS.is_associated = f;
+                        objL.Add(objS);
+                    }
+
+                    var res = new BLMisc().saveRouteAssocition(JsonConvert.SerializeObject(objL), resultItem.system_id, EntityType.FMS.ToString(), objFMSMaster.user_id);
+                    BindFMSRoute(objFMSMaster);
+                    List<int> listI = new List<int>();
+                    foreach (var i in objFMSMaster.lstRouteInfo.Where(x => x.is_associated))
+                    {
+                        listI.Add(i.cable_id);
+                    }
+                    objFMSMaster.selected_route_ids = listI;
+                    //START SPLIT CABLE FEATURE BY ANTRA//
+                    var layerDetails = ApplicationSettings.listLayerDetails.Where(m => m.layer_name.ToUpper() == EntityType.FMS.ToString().ToUpper()).FirstOrDefault();
 					if (objFMSMaster.split_cable_system_id > 0 && layerDetails.is_split_allowed == true && isNew)
 					{
 						SplitCable(objFMSMaster.system_id, objFMSMaster.split_cable_system_id, "FMS", objFMSMaster.network_status, objFMSMaster.user_id);
@@ -7096,17 +7387,24 @@ namespace SmartInventoryServices.Controllers
 			objFMSMaster.lstBOMSubCategory = objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objFMSMaster.lstServedByRing = objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
 		}
-		#endregion
+        private void BindFMSRoute(FMSMaster objFMSMaster)
+        {
+            if (objFMSMaster.system_id == 0)
+                objFMSMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objFMSMaster.geom);
+            else
+                objFMSMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objFMSMaster.system_id, EntityType.FMS.ToString());
+        }
+        #endregion
 
-		#endregion
+        #endregion
 
-		#region OpticalRepeater
-		#region Add OpticalRepeater
-		/// <summary> Add OpticalRepeater </summary>
-		/// <returns>OpticalRepeater Details</returns>
-		/// <CreatedBy>Tapish</CreatedBy>
+        #region OpticalRepeater
+        #region Add OpticalRepeater
+        /// <summary> Add OpticalRepeater </summary>
+        /// <returns>OpticalRepeater Details</returns>
+        /// <CreatedBy>Tapish</CreatedBy>
 
-		public ApiResponse<OpticalRepeaterInfo> AddOpticalRepeater(ReqInput data)
+        public ApiResponse<OpticalRepeaterInfo> AddOpticalRepeater(ReqInput data)
 		{
 			var response = new ApiResponse<OpticalRepeaterInfo>();
 			try

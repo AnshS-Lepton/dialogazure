@@ -545,6 +545,10 @@ namespace Models
 		public List<string> lstUserModule { get; set; }
         [NotMapped]
         public int pSystemId { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
         public PoleMaster()
 		{
 			objPM = new PageMessage();
@@ -556,7 +560,8 @@ namespace Models
 			//lstLoopMangment = new List<NELoopDetails>();
 			lstLoopMangment = new List<NELoopDetails>();
 			EntityReference = new EntityReference();
-			planning_id = 0;
+            lstRouteInfo = new List<RouteInfo>();
+            planning_id = 0;
 			workorder_id = 0;
 			purpose_id = 0;
 			project_id = 0;
@@ -711,8 +716,11 @@ namespace Models
         [NotMapped]
         public List<string> lstUserModule { get; set; }		
 		public double? power_meter_reading { get; set; }
-
-		public SplitterMaster()
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
+        public SplitterMaster()
 		{
 			objPM = new PageMessage();
 			objIspEntityMap = new IspEntityMapping();
@@ -727,6 +735,7 @@ namespace Models
 			purpose_id = 0;
 			bom_sub_category = Convert.ToString(Bom_boq_category.Proposed);
             lstUserModule = new List<string>();
+            lstRouteInfo = new List<RouteInfo>();
         }
 	}
 
@@ -992,6 +1001,10 @@ namespace Models
         public List<string> lstUserModule { get; set; }
         [NotMapped]
         public int pSystemId { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
         public ManholeMaster()
 		{
 			objPM = new PageMessage();
@@ -1000,7 +1013,8 @@ namespace Models
 			lstBindWorkorderCode = new List<WorkorderCodeMaster>();
 			lstBindPurposeCode = new List<PurposeCodeMaster>();
 			lstLoopMangment = new List<NELoopDetails>();
-			planning_id = 0;
+            lstRouteInfo = new List<RouteInfo>();
+            planning_id = 0;
 			purpose_id = 0;
 			workorder_id = 0;
 			project_id = 0;
@@ -1445,6 +1459,10 @@ namespace Models
 		public string partner_name { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
         public BDBMaster()
 		{
 			shaft_id = 0;
@@ -1465,6 +1483,7 @@ namespace Models
 			planning_id = 0;
 			bom_sub_category = Convert.ToString(Bom_boq_category.Proposed);
             lstUserModule = new List<string>();
+            lstRouteInfo = new List<RouteInfo>();
         }
 	}
 	public class SCMaster : SCTemplateMaster, IProjectSpecification, IOwnershipInfo, IAcquireFrom, IReference, IGeographicDetails, IAdditionalFields, ICustomCoordinate
@@ -1786,6 +1805,10 @@ namespace Models
 		public string partner_name { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
         public FMSMaster()
 		{
 			objPM = new PageMessage();
@@ -1801,6 +1824,7 @@ namespace Models
 			workorder_id = 0;
 			bom_sub_category = Convert.ToString(Bom_boq_category.Proposed);
             lstUserModule = new List<string>();
+            lstRouteInfo = new List<RouteInfo>();
         }
 	}
 
