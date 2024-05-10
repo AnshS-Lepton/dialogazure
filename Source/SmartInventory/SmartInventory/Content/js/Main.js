@@ -17937,14 +17937,17 @@ var Main = function () {
 
                     var parentCable = resp.result.parentCableNetworkId;
 
-                    var firstCableNetworkId = parentCable + '_01';
+                   // var firstCableNetworkId = parentCable + '_01'; //Commented by Nikhil
+                    var firstCableNetworkId = '';
+                    
                     $('#cable_one_network_id').val(firstCableNetworkId);
                     /* $('#cable_one_name').val(firstCableNetworkId);*/
                     $('#cable_one_name').val(displayname);
                     $('#cable_one_a_location').val(resp.result.cable1_a_location);
                     $('#cable_one_b_location').val(splitEnityNetworkId);
 
-                    var secondCableNetworkId = parentCable + '_02';
+                  //  var secondCableNetworkId = parentCable + '_02'; //Commented by Nikhil
+                    var secondCableNetworkId = '';
                     $('#cable_two_network_id').val(secondCableNetworkId);
                     /* $('#cable_two_name').val(secondCableNetworkId);*/
                     $('#cable_two_name').val(displayname);
