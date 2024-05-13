@@ -500,10 +500,13 @@ namespace SmartInventoryServices.Controllers
                         objConnection.destination_port_no = objDestination.from;
                         objConnection.is_destination_cable_a_end = objDestination.isCableAend;
 
+                    if (objConnector != null)
+                    {
                         objConnection.equipment_system_id = objConnector.systemId;
                         objConnection.equipment_network_id = objConnector.networkId;
                         objConnection.equipment_entity_type = objConnector.entityType;
-                        objConnection.splicing_source = "Mobile Splicing";
+                    }
+                    objConnection.splicing_source = "Mobile Splicing";
 
                         objConnection.is_through_connection = false;
 
