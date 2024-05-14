@@ -314,7 +314,7 @@
                         <div class="form-group row">
                             <label class="col-md-2 col-sm-2" for="txtRouteName">Route Name:</label>
                             <div class="col-md-4 col-sm-4">
-                                @Html.TextBoxFor(m => m.route_name, new { @class = "form-control " })
+                                @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.entity_network_id }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
                             </div>
                         </div>
                         @*----------------------------------------------------------------------------------------------------------------------------------------------*@
@@ -398,6 +398,8 @@
     var inputs = [];
     $(document).ready(function () {
         callFormValidator("frmAddManhole");
+         var selectedRouteIds = '@string.Join(",", Model.selected_route_ids.ToList().Select(n => n.ToString()).ToArray())';
+        $("#txtrouteInfo").val(selectedRouteIds.split(',')).trigger("chosen:updated");
         $('.chosen-select').chosen({ width: '100%' });
         EnableDisableUpdateButton("frmAddManhole", @Model.system_id > 0 ? "btnUpdateItemTemplate" : "btnSaveItemTemplate");
         //APPLY INPUT MASK ON NETWORK ID..

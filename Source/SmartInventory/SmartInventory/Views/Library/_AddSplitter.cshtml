@@ -207,20 +207,26 @@
                             @CustomCoordinate()
                         </div>
                         @*<div class="form-group">
-                <label class="control-label col-sm-2" data-val="@Model.splitter_ratio" for="ddlSplitterType">Splitter Ratio<i class="clsMandatory">*</i>:</label>
-                <div class="col-sm-45">
-                    @Html.DropDownListFor(m => m.splitter_ratio, new SelectList(Model.lstSplRatio.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Splitter Ratio", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlSplitterRatio" })
-                </div>
-                <label class="control-label col-sm-2" for="ddlType">Splitter Type<i class="clsMandatory">*</i>:</label>
-                <div class="col-sm-45">
-                    @Html.DropDownListFor(m => m.splitter_type, new SelectList(Model.lstType.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlSplitterType", @onchange = "si.ddlChangeRemoveCss(this.id, 'Type');" })
-                </div>
-            </div>*@
+            <label class="control-label col-sm-2" data-val="@Model.splitter_ratio" for="ddlSplitterType">Splitter Ratio<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-45">
+                @Html.DropDownListFor(m => m.splitter_ratio, new SelectList(Model.lstSplRatio.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Splitter Ratio", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlSplitterRatio" })
+            </div>
+            <label class="control-label col-sm-2" for="ddlType">Splitter Type<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-45">
+                @Html.DropDownListFor(m => m.splitter_type, new SelectList(Model.lstType.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlSplitterType", @onchange = "si.ddlChangeRemoveCss(this.id, 'Type');" })
+            </div>
+        </div>*@
                         <div>
                             @OwnershipInfo()
                         </div>
                         <div class="form-group row">
                             @AcquireFrom()
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtRouteName">Route Name:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.entity_network_id }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
+                            </div>
                         </div>
                         <div>@AdditionalFields()</div>
                         <div class="form-group row">
@@ -297,7 +303,8 @@
                 $(document).ready(function () {
                     callFormValidator("frmAddSplitter");
                     $('.chosen-select').chosen({ width: '100%' });
-
+     var selectedRouteIds = '@string.Join(",", Model.selected_route_ids.ToList().Select(n => n.ToString()).ToArray())';
+$("#txtrouteInfo").val(selectedRouteIds.split(',')).trigger("chosen:updated");
                     EnableDisableUpdateButton("frmAddSplitter", @Model.system_id > 0 ? "btnUpdateItemTemplate" : "btnSaveItemTemplate");
 
                     //APPLY INPUT MASK ON NETWORK ID..
@@ -315,7 +322,7 @@
                     $('#ddlSplitterType').val($($('#ddlSplitterType> option')[1]).text()).trigger('change').trigger('chosen:updated');
                 });
     function formPost() {
-         
+
         if ($('#txtbomsubcategory').val() == '') {
             $('#txtbomsubcategory').next().addClass('input-validation-error');
             return false;
