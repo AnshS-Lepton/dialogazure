@@ -2903,6 +2903,179 @@ namespace Models
 		public List<dynamic> lstReportData { get; set; }
 	}
 	#endregion
+
+	#region Association Report
+	public class AssociationEntitiesReport
+	{
+		public static List<Models.ConnectionMaster> lstConnections { get; set; }
+		public AssociationReportFilter objReportFilters { get; set; }
+		public List<Region> lstRegion { get; set; }
+		public List<Province> lstProvince { get; set; }
+		public List<EntitySummaryReport> lstReportData { get; set; }
+		public List<layerReportDetail> lstLayers { get; set; }
+		//public List<KeyValueDropDown> lstLayerColumns { get; set; }
+		//need to define for parent user
+		public List<User> lstParentUsers { get; set; }
+		public List<User> lstUsers { get; set; }
+		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
+		public List<PlanningCodeMaster> lstBindPlanningCode { get; set; }
+		public List<WorkorderCodeMaster> lstBindWorkorderCode { get; set; }
+		public List<PurposeCodeMaster> lstBindPurposeCode { get; set; }
+		public IList<DropDownMaster> lstDurationBasedOn { get; set; }
+		//public List<DropDownMaster> listOwnership { get; set; }
+		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public string entityids { get; set; }
+		[NotMapped]
+		public string fileType { get; set; }
+		public List<fileTypes> lstfiletypes { get; set; }
+		[NotMapped]
+		public IList<DropDownMaster> lstNetworkStatus { get; set; }
+		[NotMapped]
+		public List<string> lstUserModule { get; set; }
+		[NotMapped]
+		public List<int> selected_route_ids { get; set; }
+		[NotMapped]
+		public List<RouteInfo> lstRouteInfo { get; set; }
+		public AssociationEntitiesReport()
+		{
+			lstLayers = new List<layerReportDetail>();
+			//lstLayerColumns = new List<KeyValueDropDown>();
+			lstProvince = new List<Province>();
+			lstReportData = new List<EntitySummaryReport>();
+			lstRegion = new List<Region>();
+			objReportFilters = new AssociationReportFilter();
+			lstUsers = new List<User>();
+			lstBindProjectCode = new List<ProjectCodeMaster>();
+			lstBindPlanningCode = new List<PlanningCodeMaster>();
+			lstBindWorkorderCode = new List<WorkorderCodeMaster>();
+			lstBindPurposeCode = new List<PurposeCodeMaster>();
+			// listOwnership = new List<DropDownMaster>();
+			list3rdPartyVendorId = new List<KeyValueDropDown>();
+			lstUserModule = new List<string>();
+			lstfiletypes = new List<fileTypes>();
+			lstRouteInfo = new List<RouteInfo>();
+		}
+
+	}
+	[Serializable]
+	public class AssociationReportFilter
+	{
+		public int userId { get; set; }
+		public int roleId { get; set; }
+		public string SelectedLayerIds { get; set; }
+		public string fromDate { get; set; }
+		public string toDate { get; set; }
+		public string SelectedParentUsers { get; set; }
+		public string SelectedNetworkStatues { get; set; }
+		public string SelectedProvinceIds { get; set; }
+		public string SelectedRegionIds { get; set; }
+		public string SelectedUserIds { get; set; }
+		public string SelectedProjectIds { get; set; }
+		public string SelectedPlanningIds { get; set; }
+		public string SelectedWorkOrderIds { get; set; }
+		public string SelectedPurposeIds { get; set; }
+		public string geom { get; set; }
+		public string geomType { get; set; }
+		public string SelectedThirdPartyVendorIds { get; set; }
+		public List<string> SelectedNetworkStatus { get; set; }
+		public List<int> SelectedRegionId { get; set; }
+		public List<int> SelectedLayerId { get; set; }
+		public string SelectedOwnerShipType { get; set; }
+		public List<int> SelectedUserId { get; set; }
+		public List<int> SelectedParentUser { get; set; }
+		public List<int> SelectedProvinceId { get; set; }//int[]
+		public List<int> SelectedThirdPartyVendorId { get; set; }
+		public int customDate { get; set; }
+		public List<int> SelectedProjectId { get; set; }
+		public List<int> SelectedPlanningId { get; set; }
+		public List<int> SelectedWorkOrderId { get; set; }
+		public List<int> SelectedPurposeId { get; set; }
+		public string durationbasedon { get; set; }
+		public bool is_all_provience_assigned { get; set; }
+		public double radius { get; set; }
+		public string connectionString { get; set; }
+		public List<int> selected_route_id { get; set; }//int[]
+		public string selected_route_ids { get; set; }
+	}
+
+	public class AssociationEntitiesSummaryView
+	{
+		public AssociationEntitiesSummaryViewFilter objReportFilters { get; set; }
+		public List<dynamic> lstReportData { get; set; }
+
+		public List<WebGridColumn> webColumns { get; set; }
+		public List<layerReportDetail> lstLayers { get; set; }
+		public List<KeyValueDropDown> lstLayerColumns { get; set; }
+		public List<ReportAdvanceFilter> lstAdvanceFilters { get; set; }
+		public AssociationEntitiesSummaryView()
+		{
+			lstLayers = new List<layerReportDetail>();
+			lstLayerColumns = new List<KeyValueDropDown>();
+			lstReportData = new List<dynamic>();
+			webColumns = new List<WebGridColumn>();
+			objReportFilters = new AssociationEntitiesSummaryViewFilter();
+			lstAdvanceFilters = new List<ReportAdvanceFilter>();
+		}
+	}
+
+	[Serializable]
+	public class AssociationEntitiesSummaryViewFilter
+	{
+		public int userId { get; set; }
+		public int roleId { get; set; }
+		public int layerId { get; set; }
+		public string SearchbyColumnName { get; set; }
+		public string SearchbyBasedOn { get; set; }
+		public string SearchbyText { get; set; }
+		public string layerName { get; set; }
+		public int pageSize { get; set; }
+		public int totalRecord { get; set; }
+		public int currentPage { get; set; }
+		public string sort { get; set; }
+		public string sortdir { get; set; }
+
+		public string fromDate { get; set; }
+		public string toDate { get; set; }
+		public string SelectedParentUsers { get; set; }
+		public string SelectedNetworkStatues { get; set; }
+		public string SelectedProvinceIds { get; set; }
+		public string SelectedRegionIds { get; set; }
+		public string SelectedUserIds { get; set; }
+		public string SelectedProjectIds { get; set; }
+		public string SelectedPlanningIds { get; set; }
+		public string SelectedWorkOrderIds { get; set; }
+		public string SelectedPurposeIds { get; set; }
+		public string geom { get; set; }
+		public string geomType { get; set; }
+		public string durationbasedon { get; set; }
+		public string advancefilter { get; set; }
+		public string SelectedThirdPartyVendorIds { get; set; }
+		public List<int> SelectedLayerId { get; set; }
+		public string filtertype { get; set; }
+		public List<Array> lstdynamicobject { get; set; }
+		public string SelectedOwnerShipType { get; set; }
+		public List<string> SelectedNetworkStatus { get; set; }
+		public List<int> SelectedRegionId { get; set; }
+		public List<int> SelectedUserId { get; set; }
+		public List<int> SelectedParentUser { get; set; }
+		public List<int> SelectedProvinceId { get; set; }
+		public List<int> SelectedThirdPartyVendorId { get; set; }
+		public int customDate { get; set; }
+		public List<int> SelectedProjectId { get; set; }
+		public List<int> SelectedPlanningId { get; set; }
+		public List<int> SelectedWorkOrderId { get; set; }
+		public List<int> SelectedPurposeId { get; set; }
+		public List<ReportAdvanceFilter> lstAdvanceFilters { get; set; }
+		public string fileType { get; set; }
+		[NotMapped]
+		public string SelectedLayerIds { get; set; }
+		public double radius { get; set; }
+		public string connectionString { get; set; }
+		public string selected_route_ids { get; set; }
+	}
+	#endregion
+
 	#region LMC Report
 	public class ExportLMCEntitiesReport
 	{

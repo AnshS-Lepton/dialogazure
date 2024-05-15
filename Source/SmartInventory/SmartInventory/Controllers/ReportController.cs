@@ -3644,7 +3644,6 @@ namespace SmartInventory.Controllers
 			}
 
 		}
-
 		public void DownloadEntitySummaryViewIntoKML(string fileName, string fileType)
 		{
 			if (Session["EntityExportSummaryView"] != null)
@@ -3726,9 +3725,6 @@ namespace SmartInventory.Controllers
 				}
 			}
 		}
-
-
-
 		public string getKmlForSingleEntity()
 		{
 			string finalkml = string.Empty;
@@ -3766,8 +3762,6 @@ namespace SmartInventory.Controllers
 			}
 			return finalkml;
 		}
-
-
 		public void DownloadEntitySummaryViewIntoDXF(string fileName, string fileType)
 		{
 			if (Session["EntityExportSummaryView"] != null)
@@ -3863,8 +3857,6 @@ namespace SmartInventory.Controllers
 				});
 			}
 		}
-
-
 		public void ExportSummaryViewIntoShape()
 		{
 
@@ -4154,7 +4146,6 @@ namespace SmartInventory.Controllers
 			//Response.End();
 			System.IO.File.Delete(zipshapePath);
 		}
-
 		public void GetShapeFileOne(DataTable dtReport, string fileNameValue, string ftpfilePath, string ftpUserName, string ftpPassword, string shapeFilePath, string layerName)
 		{
 			// LogHelper.GetInstance.WriteDebugLogTest($"====Shape File Start:-{dtReport.TableName} on {DateTime.Now}======", layerName);
@@ -4227,8 +4218,1993 @@ namespace SmartInventory.Controllers
 
 		}
 
-
 		#endregion Export Entites Report
+
+
+
+		#region Association Report
+		[System.Web.Services.WebMethod(true)]
+		public ActionResult EntityAssociationReport(AssociationEntitiesReport objAssociationEntitiesReport, string IsRequestFromInfo)
+		{
+			DateTime startTime = DateTime.Now;
+			var userdetails = (User)Session["userDetail"];
+
+			var moduleAbbr = "EXASSRPT";
+			ConnectionMaster con = new BLLayer().GetConnectionString(moduleAbbr);
+
+			if (con != null)
+			{
+				objAssociationEntitiesReport.objReportFilters.connectionString = con.connection_string;
+			}
+         
+
+			objAssociationEntitiesReport.objReportFilters.SelectedRegionIds = objAssociationEntitiesReport.objReportFilters.SelectedRegionId != null && objAssociationEntitiesReport.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedRegionId.ToArray()) : "";
+			objAssociationEntitiesReport.objReportFilters.SelectedProvinceIds = objAssociationEntitiesReport.objReportFilters.SelectedProvinceId != null && objAssociationEntitiesReport.objReportFilters.SelectedProvinceId.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedProvinceId.ToArray()) : "";
+			objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatus != null && objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatus.Count > 0 ? "'" + string.Join("','", objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatus.ToArray()) + "'" : "";
+			objAssociationEntitiesReport.objReportFilters.SelectedParentUsers = objAssociationEntitiesReport.objReportFilters.SelectedParentUser != null && objAssociationEntitiesReport.objReportFilters.SelectedParentUser.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedParentUser.ToArray()) : "";//((User)Session["userDetail"]).user_id.ToString();
+			objAssociationEntitiesReport.objReportFilters.SelectedUserIds = objAssociationEntitiesReport.objReportFilters.SelectedUserId != null && objAssociationEntitiesReport.objReportFilters.SelectedUserId.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedUserId.ToArray()) : "";
+			objAssociationEntitiesReport.objReportFilters.SelectedLayerIds = objAssociationEntitiesReport.objReportFilters.SelectedLayerId != null && objAssociationEntitiesReport.objReportFilters.SelectedLayerId.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedLayerId.ToArray()) : "";// objExportEntitiesReport.objReportFilters.SelectedLayerId != null && objExportEntitiesReport.objReportFilters.SelectedLayerId.Count > 0 ? ("'" + string.Join("','", objExportEntitiesReport.objReportFilters.SelectedLayerId.ToArray()) + "'").ToString().ToLower() : "";
+			objAssociationEntitiesReport.objReportFilters.SelectedProjectIds = objAssociationEntitiesReport.objReportFilters.SelectedProjectId != null && objAssociationEntitiesReport.objReportFilters.SelectedProjectId.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedProjectId.ToArray()) : "";
+			objAssociationEntitiesReport.objReportFilters.SelectedPlanningIds = objAssociationEntitiesReport.objReportFilters.SelectedPlanningId != null && objAssociationEntitiesReport.objReportFilters.SelectedPlanningId.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedPlanningId.ToArray()) : "";
+			objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderIds = objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderId != null && objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderId.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderId.ToArray()) : "";
+			objAssociationEntitiesReport.objReportFilters.SelectedPurposeIds = objAssociationEntitiesReport.objReportFilters.SelectedPurposeId != null && objAssociationEntitiesReport.objReportFilters.SelectedPurposeId.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedPurposeId.ToArray()) : "";
+			objAssociationEntitiesReport.objReportFilters.userId = Convert.ToInt32(userdetails.user_id);
+			objAssociationEntitiesReport.objReportFilters.roleId = Convert.ToInt32(userdetails.role_id);
+			objAssociationEntitiesReport.objReportFilters.is_all_provience_assigned = userdetails.is_all_provience_assigned;
+			objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType = objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType != null ? objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType : "";
+			objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorId != null && objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorId.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorId.ToArray()) : "";
+			objAssociationEntitiesReport.objReportFilters.selected_route_ids = objAssociationEntitiesReport.selected_route_ids != null && objAssociationEntitiesReport.selected_route_ids.Count > 0 ? string.Join(",", objAssociationEntitiesReport.selected_route_ids.ToArray()) : "";
+			
+			var selectedLayers = objAssociationEntitiesReport.objReportFilters.SelectedLayerIds;
+			if (!string.IsNullOrEmpty(IsRequestFromInfo) && Convert.ToBoolean(IsRequestFromInfo))
+			{
+				objAssociationEntitiesReport.lstReportData = new BLLayer().GetAssociationReportSummary(objAssociationEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
+			}
+			objAssociationEntitiesReport.objReportFilters.SelectedLayerIds = selectedLayers;
+			Session["AssociationReportFilter"] = objAssociationEntitiesReport.objReportFilters;
+
+			BindAssociationReportDropdown(ref objAssociationEntitiesReport);
+			Session["EntityAssociationSummaryData"] = objAssociationEntitiesReport;
+			DateTime endTime = DateTime.Now;
+
+			return PartialView("_EntityAssociationReport", objAssociationEntitiesReport);
+		}
+
+		public void BindAssociationReportDropdown(ref AssociationEntitiesReport objAssociationEntitiesReport)
+		{
+			var userdetails = (User)Session["userDetail"];
+			var moduleAbbr = "EXASSRPT";
+			objAssociationEntitiesReport.lstfiletypes = blExportData.getfiletype(moduleAbbr);
+			//Bind Layers..
+			objAssociationEntitiesReport.lstLayers = new BLLayer().GetAssociationReportLayers(userdetails.role_id, "ENTITY");
+			objAssociationEntitiesReport.lstRouteInfo = new BLLayer().getRouteInfo("0");
+			//Bind Regions..
+			objAssociationEntitiesReport.lstRegion = new BLLayer().GetAllRegion(new RegionIn() { userId = Convert.ToInt32(Session["user_id"]) });
+			//Bind Provinces..
+			if (!string.IsNullOrWhiteSpace(objAssociationEntitiesReport.objReportFilters.SelectedRegionIds))
+			{
+				objAssociationEntitiesReport.lstProvince = new BLLayer().GetProvinceByRegionId(new ProvinceIn() { regionIds = objAssociationEntitiesReport.objReportFilters.SelectedRegionIds, userId = Convert.ToInt32(Session["user_id"]) });
+			}
+
+			List<int> parentUser = new List<int>();
+			parentUser.Add(1);
+			if (userdetails.role_id == 1 || userdetails.is_all_provience_assigned)
+				objAssociationEntitiesReport.lstParentUsers = new BLUser().GetUsersListByMGRIds(parentUser).OrderBy(x => x.user_name).ToList();//new BLUser().GetUsersListByMGRIds(parentUser).Where(x => x.user_id == Convert.ToInt32(Session["user_id"])).OrderBy(x => x.user_name).ToList();
+			else
+			{
+				objAssociationEntitiesReport.lstParentUsers = new List<Models.User>();
+				objAssociationEntitiesReport.lstParentUsers.Add(userdetails);// new BLUser().GetUserDetailByID(Convert.ToInt32(Session["user_id"])));// new BLUser().GetUsersListByMGRIds(parentUser).Where(x=> x.user_id == Convert.ToInt32(Session["user_id"])).OrderBy(x => x.user_name).ToList();
+			}
+			
+			if (objAssociationEntitiesReport.objReportFilters.SelectedParentUser != null)
+			{
+				if (userdetails.role_id == 1 || userdetails.is_all_provience_assigned)
+				{
+					objAssociationEntitiesReport.lstUsers = new BLUser().GetUsersListByMGRIds(objAssociationEntitiesReport.objReportFilters.SelectedParentUser).OrderBy(x => x.user_name).ToList();
+				}
+				else
+				{
+					var parentUser_ids = string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedParentUser.Select(n => n.ToString()).ToArray());
+					objAssociationEntitiesReport.lstUsers = new BLUser().GetUserReportDetailsList(parentUser_ids).ToList();
+				}
+			}
+			//for project code,planning code,workordercode & purpose code
+			objAssociationEntitiesReport.lstBindProjectCode = new BusinessLogics.Admin.BLProject().getProjectCodeDetails(string.IsNullOrWhiteSpace(objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues) ? "P" : objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.ToUpper() == "PLANNED" ? "P" : objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.ToUpper() == "AS BUILT" ? "A" : objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.ToUpper() == "DORMANT" ? "D" : "P");
+			if (objAssociationEntitiesReport.objReportFilters.SelectedProjectId != null)
+				objAssociationEntitiesReport.lstBindPlanningCode = new BusinessLogics.Admin.BLProject().getPlanningDetailByProjectIds(objAssociationEntitiesReport.objReportFilters.SelectedProjectId);
+			if (objAssociationEntitiesReport.objReportFilters.SelectedPlanningId != null)
+				objAssociationEntitiesReport.lstBindWorkorderCode = new BusinessLogics.Admin.BLProject().getWorkorderDetailByPlanningIds(objAssociationEntitiesReport.objReportFilters.SelectedPlanningId);
+			if (objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderId != null)
+				objAssociationEntitiesReport.lstBindPurposeCode = new BusinessLogics.Admin.BLProject().getPurposeDetailByWorkOrderIds(objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderId);
+			//for duration based on 
+			objAssociationEntitiesReport.lstDurationBasedOn = new BLMisc().GetDropDownList("", DropDownType.Export_Report.ToString());
+
+			//objExportEntitiesReport.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
+			objAssociationEntitiesReport.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
+			objAssociationEntitiesReport.lstNetworkStatus = new BLMisc().GetDropDownList("", DropDownType.ddlNetworkStatus.ToString());
+			objAssociationEntitiesReport.lstUserModule = new BLLayer().GetUserModuleAbbrList(userdetails.user_id, UserType.Web.ToString());
+		}
+
+		public ActionResult EntityAssociationReportLog(AssociationReportLogVM ObjAssociationReportLogVM, int page = 0, string sort = "", string sortdir = "")
+		{
+
+			//System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken => new Worker().StartProcessing(cancellationToken));
+			var usrDetail = (User)Session["userDetail"];
+			if (sort != "" || page != 0)
+			{
+				ObjAssociationReportLogVM.objGridAttributes = new CommonGridAttributes(); //(CommonGridAttributes)Session["printExportLog"];
+			}
+			var timeInteval = ApplicationSettings.PrintLogTimeInterval;
+			ObjAssociationReportLogVM.objGridAttributes.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
+			ObjAssociationReportLogVM.objGridAttributes.currentPage = page == 0 ? 1 : page;
+			ObjAssociationReportLogVM.objGridAttributes.sort = sort;
+			ObjAssociationReportLogVM.objGridAttributes.orderBy = sortdir;
+			ObjAssociationReportLogVM.ExportLog = new BLAssociationReportLog().GetAssociationAssociationLogList(ObjAssociationReportLogVM.objGridAttributes, usrDetail.user_id, timeInteval);
+			ObjAssociationReportLogVM.objGridAttributes.totalRecord = ObjAssociationReportLogVM.ExportLog != null && ObjAssociationReportLogVM.ExportLog.Count > 0 ? ObjAssociationReportLogVM.ExportLog[0].totalRecords : 0;
+			Session["EntityAssociationLog"] = ObjAssociationReportLogVM.objGridAttributes;
+			return PartialView("_EntityAssociationReportLog", ObjAssociationReportLogVM);
+		}
+
+		[HttpPost]
+		public JsonResult DownloadAssociationEntityReport(string fileType, string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+		{
+			PageMessage objMsg = new PageMessage();
+			if (!string.IsNullOrWhiteSpace(fileType))
+			{
+				Response.Cookies.Add(new HttpCookie("downloadStarted", "1"));
+				////create ftp folder if not exist
+
+				string ftpFilePath = ApplicationSettings.FTPAttachment;
+				string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
+				string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
+				string[] ftplogReportDirectory = new string[] { ftpFolder.Replace("/", "") };
+				CreateNestedDirectoryOnFTP(ftpFilePath, ftpUserName, ftpPwd, ftplogReportDirectory);
+
+				if (fileType.ToUpper() == "EXCEL")
+				{
+					//DownloadEntityReportNewIntoExcel(entityids);
+					DownloadAssociationEntityReportIntoExcel(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount);
+				}
+				else if (fileType.ToUpper() == "PDF")
+				{
+					//DownloadFileFromFTP(entityids);
+					DownloadAssociartionEntityReportIntoPDF(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount);
+				}
+				else if (fileType.ToUpper() == "ALLEXCEL")
+				{
+					DownloadAssociationEntityReportIntoExcelAll(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount);
+				}
+				else if (fileType.ToUpper() == "XML")
+				{
+					DownloadAssociationEntitySummaryIntoXML(entityids, fileType.ToUpper(), totalPlannedCount, totalAsBuiltCount, totalDormantCount);
+				}
+				else if (fileType.ToUpper() == "KML")
+				{
+					DownloadAssociationEntitySummaryIntoAllKML(entityids, fileType.ToUpper(), totalPlannedCount, totalAsBuiltCount, totalDormantCount);
+				}
+				else if (fileType.ToUpper() == "DXF")
+				{
+					DownloadAssociationEntitySummaryIntoDXF(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount);
+				}
+				else if (fileType.ToUpper() == "ALLSHAPE")
+				{
+					DownloadAssociationEntityReportIntoShape(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount);
+				}
+				else if (fileType.ToUpper() == "ALLTXT")
+				{
+					DownloadAssociationEntityReportIntoTXT(entityids, fileType.ToUpper(), totalPlannedCount, totalAsBuiltCount, totalDormantCount);
+				}
+				else if (fileType.ToUpper() == "ALLCSV")
+				{
+					DownloadAssociationEntityReportIntoCSV(entityids, fileType.ToUpper(), totalPlannedCount, totalAsBuiltCount, totalDormantCount);
+				}
+
+
+			}
+			objMsg.status = ResponseStatus.OK.ToString();
+			objMsg.message = "Request is processing in background.Please check the export report log page.";
+			return Json(objMsg, JsonRequestBehavior.AllowGet);
+		}
+
+		public void DownloadAssociationEntityReportIntoExcel(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+		{
+			if (Session["EntityAssociationSummaryData"] != null)
+			{
+
+				try
+				{
+					var userdetails = (User)Session["userDetail"];
+					AssociationEntitiesReport objAssociationEntitiesReport = new AssociationEntitiesReport();
+
+					objAssociationEntitiesReport.objReportFilters = (AssociationReportFilter)Session["AssociationReportFilter"];// for filter
+					List<int> SelectedLayerId = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					objAssociationEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					if (!objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.Contains("Planned"))
+						objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.Replace("P", "Planned");
+					if (!objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.Contains("As-Built"))
+						objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.Replace("A", "As-Built");
+					if (!objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.Contains("Dormant"))
+						objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.Replace("D", "Dormant");
+					DataTable dtFilter = GetExportReportFilter(objAssociationEntitiesReport.objReportFilters);
+
+					string fileName = "AssociationSummary_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
+
+					objAssociationEntitiesReport = (AssociationEntitiesReport)Session["EntityAssociationSummaryData"];
+					System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
+					{
+						List<EntitySummaryReport> lstRprtData = objAssociationEntitiesReport.lstReportData;
+						if (objAssociationEntitiesReport.objReportFilters.SelectedLayerId != null)
+							objAssociationEntitiesReport.lstReportData = objAssociationEntitiesReport.lstReportData.Where(x => objAssociationEntitiesReport.objReportFilters.SelectedLayerId.Contains(x.entity_id)).ToList();
+						DataTable dtReport = new DataTable();
+						dtReport = MiscHelper.ListToDataTable(objAssociationEntitiesReport.lstReportData);
+						dtReport.TableName = Resources.Resources.SI_OSP_GBL_NET_FRM_064;
+						objAssociationEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
+						objAssociationEntitiesReport.lstReportData = lstRprtData;
+						DataSet ds = new DataSet();
+						ds.Tables.Add(dtFilter);
+
+						int TotalEntityReport = 0;
+						AssociationReportLog associationReportLog = new AssociationReportLog();
+						associationReportLog.user_id = userdetails.user_id;
+						associationReportLog.export_started_on = DateTime.Now;
+						associationReportLog.file_name = fileName;
+						associationReportLog.file_type = "Excel";
+						associationReportLog.file_extension = ".xlsx";
+						associationReportLog.status = "InProgress";
+						associationReportLog.applied_filter = JsonConvert.SerializeObject(dtFilter);
+						associationReportLog.planned = totalPlannedCount;
+						associationReportLog.asbuilt = totalAsBuiltCount;
+						associationReportLog.dormant = totalDormantCount;
+						associationReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+						associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+
+						try
+						{
+
+							if (dtReport != null && dtReport.Rows.Count > 0)
+							{
+								if (!ApplicationSettings.IsDormantEnabled)
+								{
+									dtReport.Columns.Remove("DORMANT_COUNT");
+								}
+								dtReport.Columns.Remove("entity_id");
+								dtReport.Columns.Remove("entity_name");
+								dtReport.Columns["entity_title"].ColumnName = Resources.Resources.SI_OSP_GBL_GBL_GBL_144;
+								dtReport.Columns["planned_count"].ColumnName = "Planned";
+								dtReport.Columns["as_built_count"].ColumnName = "As-Built";
+								if (ApplicationSettings.IsDormantEnabled)
+								{
+									dtReport.Columns["dormant_count"].ColumnName = "Dormant";
+								}
+
+								string[] networkstatusvalues = objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatus == null ? new string[3] { "PLANNED", "AS BUILT", "DORMANT" } : objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatus.ToArray();
+								if (networkstatusvalues.Length < 3)
+								{
+									if (!networkstatusvalues.Contains("P"))
+									{
+										dtReport.Columns.Remove("PLANNED");
+									}
+									if (!networkstatusvalues.Contains("A"))
+									{
+										dtReport.Columns.Remove("AS-BUILT");
+									}
+									if (ApplicationSettings.IsDormantEnabled)
+									{
+										if (!networkstatusvalues.Contains("D"))
+										{
+											dtReport.Columns.Remove("DORMANT");
+										}
+									}
+								}
+								DataRow row = dtReport.NewRow();
+								row[Resources.Resources.SI_OSP_GBL_GBL_GBL_144] = "Total";
+								if (dtReport.Columns.Contains("Planned"))
+								{
+									row["Planned"] = dtReport.Compute("Sum(Planned)", "");
+								}
+								if (dtReport.Columns.Contains("As-Built"))
+								{
+									row["As-Built"] = dtReport.Compute("Sum([As-Built])", "");
+								}
+								if (ApplicationSettings.IsDormantEnabled)
+								{
+									if (dtReport.Columns.Contains("Dormant"))
+									{
+										row["Dormant"] = dtReport.Compute("Sum(Dormant)", "");
+									}
+								}
+								dtReport.Rows.Add(row);
+								ds.Tables.Add(dtReport);
+								if (dtReport.Columns.Contains("Planned"))
+								{
+									totalPlannedCount = Convert.ToInt32(row["Planned"]);
+								}
+								if (dtReport.Columns.Contains("As-Built"))
+								{
+									totalAsBuiltCount = Convert.ToInt32(row["As-Built"]);
+								}
+								//totalDormantCount = Convert.ToInt32(row["Dormant"]);
+								if (ApplicationSettings.IsDormantEnabled)
+								{
+									if (dtReport.Columns.Contains("Dormant"))
+									{
+										totalDormantCount = Convert.ToInt32(row["Dormant"]);
+									}
+								}
+							}
+
+							string tempFileName = fileName + associationReportLog.file_extension;
+							string ftpFilePath = ApplicationSettings.FTPAttachment + ftpFolder;
+							string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
+							string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
+							ExportData(ds, tempFileName, ftpFilePath, ftpUserName, ftpPwd);
+
+							associationReportLog.planned = totalPlannedCount;
+							associationReportLog.asbuilt = totalAsBuiltCount;
+							associationReportLog.dormant = totalDormantCount;
+							associationReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+							associationReportLog.export_ended_on = DateTime.Now;
+							associationReportLog.status = "Success";
+							associationReportLog.file_location = ftpFolder + tempFileName;
+							//Thread.Sleep(10000);
+							associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+
+						}
+						catch (Exception ex)
+						{
+							associationReportLog.export_ended_on = DateTime.Now;
+							associationReportLog.status = "Error occurred while processing request";
+							associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+							ErrorLogHelper.WriteErrorLog("DownloadAssociationEntityReportIntoExcel()", "Report", ex);
+						}
+					});
+
+				}
+				catch (Exception ex)
+				{
+					throw ex;
+				}
+			}
+
+		}
+
+		public ActionResult AssociationSummaryView(AssociationEntitiesSummaryView objAssociationEntitiesReport, int page = 1, string sort = "", string sortdir = "")
+		{
+			if (Session["AssociationReportFilter"] != null)
+			{
+				//sort = String.IsNullOrEmpty(sort) ? "" : sort.Replace(" ", "_");
+				AssociationReportFilter objAssociationReportFilter = new AssociationReportFilter();
+
+				objAssociationReportFilter = (AssociationReportFilter)Session["AssociationReportFilter"];
+
+				objAssociationEntitiesReport.objReportFilters.SelectedRegionId = objAssociationReportFilter.SelectedRegionId;
+				objAssociationEntitiesReport.objReportFilters.SelectedProvinceId = objAssociationReportFilter.SelectedProvinceId;
+				objAssociationEntitiesReport.objReportFilters.SelectedParentUser = objAssociationReportFilter.SelectedParentUser;
+				objAssociationEntitiesReport.objReportFilters.SelectedUserId = objAssociationReportFilter.SelectedUserId;
+				objAssociationEntitiesReport.objReportFilters.SelectedProjectId = objAssociationReportFilter.SelectedProjectId;
+				objAssociationEntitiesReport.objReportFilters.SelectedPlanningId = objAssociationReportFilter.SelectedPlanningId;
+				objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderId = objAssociationReportFilter.SelectedWorkOrderId;
+				objAssociationEntitiesReport.objReportFilters.SelectedPurposeId = objAssociationReportFilter.SelectedPurposeId;
+				objAssociationEntitiesReport.objReportFilters.radius = objAssociationReportFilter.radius;
+
+				objAssociationEntitiesReport.objReportFilters.SelectedRegionIds = objAssociationReportFilter.SelectedRegionIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedProvinceIds = objAssociationReportFilter.SelectedProvinceIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationReportFilter.SelectedNetworkStatues;
+				objAssociationEntitiesReport.objReportFilters.SelectedParentUsers = objAssociationReportFilter.SelectedParentUsers;
+				objAssociationEntitiesReport.objReportFilters.SelectedUserIds = objAssociationReportFilter.SelectedUserIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedLayerId = objAssociationReportFilter.SelectedLayerId;
+				objAssociationEntitiesReport.objReportFilters.SelectedProjectIds = objAssociationReportFilter.SelectedProjectIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedPlanningIds = objAssociationReportFilter.SelectedPlanningIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderIds = objAssociationReportFilter.SelectedWorkOrderIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedPurposeIds = objAssociationReportFilter.SelectedPurposeIds;
+				objAssociationEntitiesReport.objReportFilters.durationbasedon = objAssociationReportFilter.durationbasedon;
+				objAssociationEntitiesReport.objReportFilters.fromDate = objAssociationReportFilter.fromDate;
+				objAssociationEntitiesReport.objReportFilters.toDate = objAssociationReportFilter.toDate;
+				objAssociationEntitiesReport.objReportFilters.geom = objAssociationReportFilter.geom;
+				objAssociationEntitiesReport.objReportFilters.pageSize = 10;
+				objAssociationEntitiesReport.objReportFilters.currentPage = page == 0 ? 1 : page;
+				objAssociationEntitiesReport.objReportFilters.sort = sort;
+				objAssociationEntitiesReport.objReportFilters.sortdir = sortdir;
+				objAssociationEntitiesReport.objReportFilters.userId = objAssociationReportFilter.userId;
+				objAssociationEntitiesReport.objReportFilters.roleId = objAssociationReportFilter.roleId;
+				objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType = objAssociationReportFilter.SelectedOwnerShipType;
+				objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objAssociationReportFilter.SelectedThirdPartyVendorIds;
+				objAssociationEntitiesReport.objReportFilters.selected_route_ids = objAssociationReportFilter.selected_route_ids;
+				BindAssociationReportDropdownSummaryView(ref objAssociationEntitiesReport);
+
+				//rt
+				var userdetails = (User)Session["userDetail"];
+				objAssociationEntitiesReport.objReportFilters.SelectedLayerId = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY").Where(x => x.layer_name == objAssociationEntitiesReport.objReportFilters.layerName).Select(x => x.layer_id).ToList();
+				objAssociationEntitiesReport.objReportFilters.lstAdvanceFilters = objAssociationEntitiesReport.lstAdvanceFilters;
+				if (!string.IsNullOrWhiteSpace(objAssociationEntitiesReport.objReportFilters.layerName))
+				{
+					objAssociationEntitiesReport.objReportFilters.advancefilter = getAdvanceFilter(objAssociationEntitiesReport.lstAdvanceFilters);
+					List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetAssociationReportSummaryView(objAssociationEntitiesReport.objReportFilters);
+
+					string[] arrIgnoreColumns = { "TOTALRECORDS", "S_NO", "BARCODE" };
+					objAssociationEntitiesReport.webColumns = BLConvertMLanguage.GetEntityWiseColumns(objAssociationEntitiesReport.objReportFilters.SelectedLayerId[0], objAssociationEntitiesReport.objReportFilters.layerName, "REPORT", arrIgnoreColumns, userdetails.role_id, userdetails.user_id);
+					foreach (Dictionary<string, string> dic in lstExportEntitiesDetail)
+					{
+						var obj = (IDictionary<string, object>)new ExpandoObject();
+
+						foreach (var col in dic)
+						{
+							//if (!Array.Exists(arrIgnoreColumns, m => m == col.Key.ToUpper()))
+							//{
+							//    obj.Add(col.Key, col.Value);
+							//}
+							obj.Add(col.Key, col.Value);
+						}
+						objAssociationEntitiesReport.lstReportData.Add(obj);
+					}
+					//objExportEntitiesReport.lstReportData = BLConvertMLanguage.MultilingualConvert(objExportEntitiesReport.lstReportData, arrIgnoreColumns);
+					objAssociationEntitiesReport.objReportFilters.totalRecord = lstExportEntitiesDetail.Count > 0 ? Convert.ToInt32(lstExportEntitiesDetail[0].FirstOrDefault().Value) : 0;
+				}
+			}
+			// if there is no filter and add one row by default...
+			if (objAssociationEntitiesReport.lstAdvanceFilters.Count == 0)
+			{
+				objAssociationEntitiesReport.lstAdvanceFilters.Add(new ReportAdvanceFilter());
+			}
+			Session["EntityAssociationSummaryView"] = objAssociationEntitiesReport.objReportFilters;
+			return PartialView("_EntityAssociationSummaryView", objAssociationEntitiesReport);
+		}
+
+		public void BindAssociationReportDropdownSummaryView(ref AssociationEntitiesSummaryView objAssociationEntitiesReport)
+		{
+			//rt
+			var userdetails = (User)Session["userDetail"];
+			//Bind Layers..
+			objAssociationEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
+			var selectedlayerids = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+			if (selectedlayerids != null)
+			{
+				if (selectedlayerids.Count > 0)
+					objAssociationEntitiesReport.lstLayers = objAssociationEntitiesReport.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).ToList();
+			}
+			//objExportEntitiesReport.objReportFilters.layerName = objExportEntitiesReport.objReportFilters.layerName == null ? objExportEntitiesReport.lstLayers[0].layer_name : objExportEntitiesReport.objReportFilters.layerName;
+			if (!string.IsNullOrWhiteSpace(objAssociationEntitiesReport.objReportFilters.layerName))
+			{
+				objAssociationEntitiesReport.lstLayerColumns = new BLLayer().GetSearchByColumnName(objAssociationEntitiesReport.objReportFilters.layerName);
+			}
+		}
+
+		public void DownloadAssociartionEntityReportIntoPDF(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+		{
+			if (Session["EntityAssociationSummaryData"] != null)
+				try
+				{
+					var userdetails = (User)Session["userDetail"];
+					AssociationEntitiesReport objAssociationEntitiesReport = new AssociationEntitiesReport();
+
+					objAssociationEntitiesReport.objReportFilters = (AssociationReportFilter)Session["AssociationReportFilter"];
+					List<int> SelectedLayerId = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					objAssociationEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					if (!objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.Contains("Planned"))
+						objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.Replace("P", "Planned");
+					if (!objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.Contains("As-Built"))
+						objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.Replace("A", "As-Built");
+					if (!objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.Contains("Dormant"))
+						objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues.Replace("D", "Dormant");
+					DataTable dtFilter = GetAssociationReportFilter(objAssociationEntitiesReport.objReportFilters);// GetAssociationReportFilter
+
+					DataSet ds = new DataSet();
+					ds.Tables.Add(dtFilter);
+					objAssociationEntitiesReport = (AssociationEntitiesReport)Session["EntityAssociationSummaryData"];
+
+					BaseFont baseFont = PDFHelper.GetFont();
+					string fileName = "ExportSummary_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
+
+					System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
+					{
+						//int TotalEntityReport = 0;
+
+
+						AssociationReportLog associationReportLog = new AssociationReportLog();
+						associationReportLog.user_id = userdetails.user_id;
+						associationReportLog.export_started_on = DateTime.Now;
+						associationReportLog.file_name = fileName;
+						associationReportLog.file_type = "PDF";
+						associationReportLog.file_extension = ".pdf";
+						associationReportLog.status = "InProgress";
+						associationReportLog.applied_filter = JsonConvert.SerializeObject(dtFilter);
+						associationReportLog.planned = totalPlannedCount;
+						associationReportLog.asbuilt = totalAsBuiltCount;
+						associationReportLog.dormant = totalDormantCount;
+						associationReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+						associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+
+						try
+						{
+							List<EntitySummaryReport> lstRprtData = objAssociationEntitiesReport.lstReportData;
+							if (objAssociationEntitiesReport.objReportFilters.SelectedLayerId != null)
+								objAssociationEntitiesReport.lstReportData = objAssociationEntitiesReport.lstReportData.Where(x => objAssociationEntitiesReport.objReportFilters.SelectedLayerId.Contains(x.entity_id)).ToList();
+
+							DataTable dtReport = new DataTable();
+							dtReport = MiscHelper.ListToDataTable(objAssociationEntitiesReport.lstReportData);//,true)ApplicationSettings.numberFormatType,null
+							dtReport.TableName = "EntitySummaryDetail";
+							objAssociationEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
+							objAssociationEntitiesReport.lstReportData = lstRprtData;
+							if (dtReport != null && dtReport.Rows.Count > 0)
+							{
+								if (!ApplicationSettings.IsDormantEnabled)
+								{
+									dtReport.Columns.Remove("DORMANT_COUNT");
+								}
+								dtReport.Columns.Remove("entity_id");
+								dtReport.Columns.Remove("entity_name");
+								dtReport.Columns["entity_title"].ColumnName = Resources.Resources.SI_OSP_GBL_GBL_GBL_144;
+								dtReport.Columns["planned_count"].ColumnName = "Planned";
+								dtReport.Columns["as_built_count"].ColumnName = "As-Built";
+								if (ApplicationSettings.IsDormantEnabled)
+								{
+									dtReport.Columns["dormant_count"].ColumnName = "Dormant";
+								}
+								string[] networkstatusvalues = objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatus == null ? new string[3] { "PLANNED", "AS BUILT", "DORMANT" } : objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatus.ToArray();
+								if (networkstatusvalues.Length < 3)
+								{
+									if (!networkstatusvalues.Contains("P"))
+									{
+										dtReport.Columns.Remove("PLANNED");
+									}
+									if (!networkstatusvalues.Contains("A"))
+									{
+										dtReport.Columns.Remove("AS-BUILT");
+									}
+									if (ApplicationSettings.IsDormantEnabled)
+									{
+										if (!networkstatusvalues.Contains("D"))
+										{
+											dtReport.Columns.Remove("DORMANT");
+										}
+									}
+								}
+								DataRow row = dtReport.NewRow();
+								row[Resources.Resources.SI_OSP_GBL_GBL_GBL_144] = Resources.Resources.SI_OSP_GBL_GBL_GBL_041;
+								if (dtReport.Columns.Contains("Planned"))
+								{
+									row["Planned"] = dtReport.Compute("Sum(Planned)", "");
+								}
+								if (dtReport.Columns.Contains("As-Built"))
+								{
+									row["As-Built"] = dtReport.Compute("Sum([As-Built])", "");
+								}
+								if (ApplicationSettings.IsDormantEnabled)
+								{
+									if (dtReport.Columns.Contains("Dormant"))
+									{
+										row["Dormant"] = dtReport.Compute("Sum(Dormant)", "");
+									}
+								}
+								dtReport.Rows.Add(row);
+								ds.Tables.Add(dtReport);
+								if (dtReport.Columns.Contains("Planned"))
+								{
+									totalPlannedCount = Convert.ToInt32(row["Planned"]);
+								}
+								if (dtReport.Columns.Contains("As-Built"))
+								{
+									totalAsBuiltCount = Convert.ToInt32(row["As-Built"]);
+								}
+								// totalDormantCount = Convert.ToInt32(row["Dormant"]);
+
+								if (ApplicationSettings.IsDormantEnabled)
+								{
+									if (dtReport.Columns.Contains("Dormant"))
+									{
+										totalDormantCount = Convert.ToInt32(row["Dormant"]);
+									}
+								}
+								//commented by pk
+								// dtReport = Utility.CommonUtility.GetFormattedDataTable(dtReport, ApplicationSettings.numberFormatType);
+
+							}
+
+							string tempFileName = fileName + associationReportLog.file_extension;
+							//string ftpFolder = "ExportReportLog/";
+							string ftpFilePath = ApplicationSettings.FTPAttachment + ftpFolder;
+							string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
+							string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
+							//ExportData(ds, tempFileName, ftpFilePath, ftpUserName, ftpPwd);
+							GenerateToPDFNew(ds, tempFileName, Resources.Resources.SI_OSP_GBL_NET_RPT_127, ftpFilePath, ftpUserName, ftpPwd, baseFont);
+							associationReportLog.planned = totalPlannedCount;
+							associationReportLog.asbuilt = totalAsBuiltCount;
+							associationReportLog.dormant = totalDormantCount;
+							associationReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+							associationReportLog.export_ended_on = DateTime.Now;
+							associationReportLog.status = "Success";
+							associationReportLog.file_location = ftpFolder + tempFileName;
+							//Thread.Sleep(10000);
+							associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+						}
+						catch (Exception ex)
+						{
+							associationReportLog.export_ended_on = DateTime.Now;
+							associationReportLog.status = "Error occurred while processing request";
+							associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+							ErrorLogHelper.WriteErrorLog("DownloadAssociationEntityReportIntoPDF()", "Report", ex);
+						}
+					});
+				}
+				catch (Exception ex)
+				{
+					throw ex;
+				}
+			}
+
+		public DataTable GetAssociationReportFilter(object obj)
+		{
+			var userdetails = (User)Session["userDetail"];
+			var isAttr = ((List<string>)Session["ApplicableModuleList"]);
+			CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+			TextInfo textInfo = cultureInfo.TextInfo;
+			DataTable dt = new DataTable(Resources.Resources.SI_GBL_GBL_NET_FRM_165);
+			dt.Columns.Add(Resources.Resources.SI_GBL_GBL_NET_FRM_166);
+			dt.Columns.Add(Resources.Resources.SI_GBL_GBL_NET_FRM_167);
+			DataRow dr = dt.NewRow();
+			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_GBL_GBL_NET_FRM_098; dt.Rows.Add(dr); dr = dt.NewRow();
+			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_065; dt.Rows.Add(dr); dr = dt.NewRow();
+			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_066; dt.Rows.Add(dr); dr = dt.NewRow();
+			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_GBL_GBL_063; dt.Rows.Add(dr); dr = dt.NewRow();
+			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_068; dt.Rows.Add(dr); dr = dt.NewRow();
+			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_069; dt.Rows.Add(dr); dr = dt.NewRow();
+			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_GBL_GBL_GBL_GBL_147; dt.Rows.Add(dr); dr = dt.NewRow();
+			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_GBL_FRM_030; dt.Rows.Add(dr); dr = dt.NewRow();
+			if (isAttr.Contains("PROJ"))
+			{
+				dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_GBL_GBL_074; dt.Rows.Add(dr); dr = dt.NewRow();
+				dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_GBL_GBL_076; dt.Rows.Add(dr); dr = dt.NewRow();
+				dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_GBL_010; dt.Rows.Add(dr); dr = dt.NewRow();
+				dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_GBL_011; dt.Rows.Add(dr); dr = dt.NewRow();
+			}
+			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_071; dt.Rows.Add(dr); dr = dt.NewRow();
+			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_072; dt.Rows.Add(dr); dr = dt.NewRow();
+			if (obj.GetType().GetProperty("advancefilter") != null)
+			{
+				if (!String.IsNullOrEmpty(obj.GetType().GetProperty("advancefilter").GetValue(obj, null).ToString()))
+				{
+					int rowCount = dt.Rows.Count;
+					dr["Filter Type"] = "Add-on Filter"; dt.Rows.Add(dr); dr = dt.NewRow();
+					List<ReportAdvanceFilter> advnanceFilter = (List<ReportAdvanceFilter>)obj.GetType().GetProperty("lstAdvanceFilters").GetValue(obj, null);
+					for (int i = 0; i < advnanceFilter.Count; i++)
+					{
+						dt.Rows[rowCount + i][1] = textInfo.ToTitleCase(advnanceFilter[i].searchBy.ToString().ToLower().Replace("_", " ")) + " " + advnanceFilter[i].searchType + " '" + advnanceFilter[i].searchText + "'";
+						if ((advnanceFilter.Count - 1) != i)
+						{
+							dt.Rows.Add(dr); dr = dt.NewRow();
+						}
+					}
+				}
+			}
+
+			List<int> regionIds = (List<int>)obj.GetType().GetProperty("SelectedRegionId").GetValue(obj, null);
+			var regionName = regionIds == null ? "All" : string.Join(",", new BLLayer().GetAllRegion(new RegionIn() { userId = Convert.ToInt32(Session["user_id"]) }).Where(x => regionIds.Contains(x.regionId)).Select(x => x.regionName).ToList());
+
+			List<int> provinceIds = (List<int>)obj.GetType().GetProperty("SelectedProvinceId").GetValue(obj, null);
+			var provinceName = provinceIds == null ? "All" : string.Join(",", new BLLayer().GetProvinceByRegionId(new ProvinceIn() { regionIds = string.Join(",", regionIds), userId = Convert.ToInt32(Session["user_id"]) }).Where(x => provinceIds.Contains(x.provinceId)).Select(x => x.provinceName).ToList());
+
+			string networkStatus = textInfo.ToTitleCase(obj.GetType().GetProperty("SelectedNetworkStatues").GetValue(obj, null).ToString().Replace("AS BUILT", "AS-BUILT").ToLower()).Replace("'", "");
+
+			string ownershipType = textInfo.ToTitleCase(obj.GetType().GetProperty("SelectedOwnerShipType").GetValue(obj, null).ToString()).Replace("'", "");
+			ownershipType = string.IsNullOrEmpty(ownershipType) ? "All" : ownershipType;
+
+			List<int> thirdPartyVendorId = (List<int>)obj.GetType().GetProperty("SelectedThirdPartyVendorId").GetValue(obj, null);
+			var thirdPartyVendorName = thirdPartyVendorId == null ? "All" : string.Join(",", BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList().Where(x => thirdPartyVendorId.Contains(Convert.ToInt32(x.key))).Select(x => x.value).ToList());
+
+			List<int> parentUser = new List<int>();
+			List<int> parentUserIds = (List<int>)obj.GetType().GetProperty("SelectedParentUser").GetValue(obj, null);
+			var parentUserName = string.Empty;
+			if (userdetails.role_id == 1)
+			{
+				parentUser.Add(1);
+				parentUserName = parentUserIds == null ? "All" : string.Join(",", new BLUser().GetUsersListByMGRIds(parentUser).Where(x => parentUserIds.Contains(x.user_id)).Select(x => x.user_name).ToList());
+			}
+			else
+			{
+				parentUserName = parentUserIds == null ? "All" : new BLUser().GetUserDetailByID(userdetails.user_id).user_name;
+			}
+
+			List<int> userIds = (List<int>)obj.GetType().GetProperty("SelectedUserId").GetValue(obj, null);
+			var userName = userIds == null ? "All" : string.Join(",", new BLUser().GetUsersListByMGRIds(parentUserIds).Where(x => userIds.Contains(x.user_id)).Select(x => x.user_name).ToList());
+
+			//rt
+			//var userdetails = (User)Session["userDetail"];
+			List<int> layerIds = (List<int>)obj.GetType().GetProperty("SelectedLayerId").GetValue(obj, null);
+			var layerName = layerIds == null ? "All" : string.Join(",", new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY").Where(x => layerIds.Contains(x.layer_id)).Select(x => x.layer_title).ToList());
+			var projectCodeName = "";
+			var planningCodeName = "";
+			var workOrderCodeName = "";
+			var purposeCodeName = "";
+			if (isAttr.Contains("PROJ"))
+			{
+				List<int> projectCodeIds = (List<int>)obj.GetType().GetProperty("SelectedProjectId").GetValue(obj, null);
+				projectCodeName = projectCodeIds == null ? "All" : string.Join(",", new BusinessLogics.Admin.BLProject().getProjectCodeDetails(string.IsNullOrEmpty(networkStatus) ? "P" : networkStatus.ToUpper() == "PLANNED" ? "P" : networkStatus.ToUpper() == "AS BUILT" ? "A" : networkStatus.ToUpper() == "DORMANT" ? "D" : "P").Where(x => projectCodeIds.Contains(x.system_id)).Select(x => x.project_code).ToList());
+
+				List<int> planningCodeIds = (List<int>)obj.GetType().GetProperty("SelectedPlanningId").GetValue(obj, null);
+				planningCodeName = planningCodeIds == null ? "All" : string.Join(",", new BusinessLogics.Admin.BLProject().getPlanningDetailByProjectIds(projectCodeIds).Where(x => planningCodeIds.Contains(x.system_id)).Select(x => x.planning_code).ToList());
+
+				List<int> workOrderCodeIds = (List<int>)obj.GetType().GetProperty("SelectedWorkOrderId").GetValue(obj, null);
+				workOrderCodeName = workOrderCodeIds == null ? "All" : string.Join(",", new BusinessLogics.Admin.BLProject().getWorkorderDetailByPlanningIds(planningCodeIds).Where(x => workOrderCodeIds.Contains(x.system_id)).Select(x => x.workorder_code).ToList());
+
+				List<int> purposeCodeIds = (List<int>)obj.GetType().GetProperty("SelectedPurposeId").GetValue(obj, null);
+				purposeCodeName = purposeCodeIds == null ? "All" : string.Join(",", new BusinessLogics.Admin.BLProject().getPurposeDetailByWorkOrderIds(workOrderCodeIds).Where(x => purposeCodeIds.Contains(x.system_id)).Select(x => x.purpose_code).ToList());
+			}
+			string duration = "";
+			string durationBasedOn = obj.GetType().GetProperty("durationbasedon").GetValue(obj, null).ToString().Replace("_", " ");
+			if (obj.GetType().GetProperty("fromDate").GetValue(obj, null) != null && obj.GetType().GetProperty("toDate").GetValue(obj, null) != null)
+			{
+				duration = obj.GetType().GetProperty("fromDate").GetValue(obj, null).ToString() + " To " + obj.GetType().GetProperty("toDate").GetValue(obj, null).ToString();
+			}
+			else
+			{
+				duration = "All";
+			}
+			if (!networkStatus.Contains("Planned"))
+				networkStatus = networkStatus.Replace("P", "Planned");
+			if (!networkStatus.Contains("As-Built"))
+				networkStatus = networkStatus.Replace("A", "As-Built");
+			if (!networkStatus.Contains("Dormant"))
+				networkStatus = networkStatus.Replace("D", "Dormant");
+
+			dt.Rows[0][1] = layerName;
+			dt.Rows[1][1] = regionName;
+			dt.Rows[2][1] = provinceName;
+			dt.Rows[3][1] = String.IsNullOrEmpty(networkStatus) ? "All" : networkStatus;
+			dt.Rows[4][1] = parentUserName;
+			dt.Rows[5][1] = userName;
+			//dt.Rows[5][1] = layerName;
+
+			dt.Rows[6][1] = ownershipType;
+			dt.Rows[7][1] = thirdPartyVendorName;
+
+			if (isAttr.Contains("PROJ"))
+			{
+				dt.Rows[8][1] = projectCodeName;
+				dt.Rows[9][1] = planningCodeName;
+				dt.Rows[10][1] = workOrderCodeName;
+				dt.Rows[11][1] = purposeCodeName;
+				dt.Rows[12][1] = durationBasedOn;
+				dt.Rows[13][1] = duration;
+			}
+			else
+			{
+				dt.Rows[8][1] = durationBasedOn;
+				dt.Rows[9][1] = duration;
+			}
+			return dt;
+		}
+
+		[System.Web.Services.WebMethod(true)]
+		public void DownloadAssociationEntityReportIntoExcelAll(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+		{
+
+			if (Session["AssociationReportFilter"] != null)
+			{
+				try
+				{
+					AssociationEntitiesReport entityAssociationSummaryData = new AssociationEntitiesReport();
+
+					entityAssociationSummaryData = (AssociationEntitiesReport)Session["EntityAssociationSummaryData"];
+					AssociationEntitiesSummaryView objAssociationEntitiesReport = new AssociationEntitiesSummaryView();
+
+					AssociationReportFilter objAssociationReportFilter = new AssociationReportFilter();
+
+					objAssociationReportFilter = (AssociationReportFilter)Session["AssociationReportFilter"];
+
+					objAssociationEntitiesReport.objReportFilters.connectionString = objAssociationReportFilter.connectionString;
+					objAssociationEntitiesReport.objReportFilters.SelectedRegionIds = objAssociationReportFilter.SelectedRegionIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedProvinceIds = objAssociationReportFilter.SelectedProvinceIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationReportFilter.SelectedNetworkStatues;
+					objAssociationEntitiesReport.objReportFilters.SelectedParentUsers = objAssociationReportFilter.SelectedParentUsers;
+					objAssociationEntitiesReport.objReportFilters.SelectedUserIds = objAssociationReportFilter.SelectedUserIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedLayerId = objAssociationReportFilter.SelectedLayerId;
+					objAssociationEntitiesReport.objReportFilters.SelectedProjectIds = objAssociationReportFilter.SelectedProjectIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedPlanningIds = objAssociationReportFilter.SelectedPlanningIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderIds = objAssociationReportFilter.SelectedWorkOrderIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedPurposeIds = objAssociationReportFilter.SelectedPurposeIds;
+					objAssociationEntitiesReport.objReportFilters.durationbasedon = objAssociationReportFilter.durationbasedon;
+					objAssociationEntitiesReport.objReportFilters.fromDate = objAssociationReportFilter.fromDate;
+					objAssociationEntitiesReport.objReportFilters.toDate = objAssociationReportFilter.toDate;
+					objAssociationEntitiesReport.objReportFilters.geom = objAssociationReportFilter.geom;
+					objAssociationEntitiesReport.objReportFilters.userId = objAssociationReportFilter.userId;
+					objAssociationEntitiesReport.objReportFilters.roleId = objAssociationReportFilter.roleId;
+					objAssociationEntitiesReport.objReportFilters.radius = objAssociationReportFilter.radius;
+					objAssociationEntitiesReport.objReportFilters.selected_route_ids = objAssociationReportFilter.selected_route_ids;
+					// objExportEntitiesReport.objReportFilters.SelectedOwnerShipId = objExportReportFilterNew.SelectedOwnerShipId;
+					// objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportReportFilterNew.SelectedOwnershipIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType = objAssociationReportFilter.SelectedOwnerShipType;
+					objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objAssociationReportFilter.SelectedThirdPartyVendorIds;
+
+					objAssociationEntitiesReport.objReportFilters.currentPage = 0;
+					List<int> SelectedLayerId = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					List<int> SelectedLayerIdSummary = objAssociationReportFilter.SelectedLayerId;
+
+					objAssociationEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					objAssociationReportFilter.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationReportFilter.SelectedLayerId;
+
+					DataTable dtFilter = GetAssociationReportFilter(objAssociationReportFilter);
+
+					//rt
+					var userdetails = (User)Session["userDetail"];
+					objAssociationEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
+					var selectedlayerids = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					if (selectedlayerids != null)
+					{
+						if (selectedlayerids.Count > 0)
+							objAssociationEntitiesReport.lstLayers = objAssociationEntitiesReport.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).ToList();
+					}
+
+					string parentFolder = $"ExportReport_{DateTimeHelper.Now.ToString("ddMMyyyy")}-{DateTimeHelper.Now.ToString("HHmmssfff")}_{userdetails.user_id}";
+					string attachmentLocalPath = Path.Combine(ApplicationSettings.AttachmentLocalPath, ftpFolder);
+					string pathWithParentFolder = Path.Combine(attachmentLocalPath, parentFolder);
+					string directoryPath = Path.Combine(Server.MapPath(pathWithParentFolder));
+
+					// Create Parent folder for temparary basic on server 
+					if (Directory.Exists(directoryPath).Equals(false))
+						Directory.CreateDirectory(directoryPath);
+					string fileName = $"{dtFilter.TableName}";
+					string tempFileName = $"{directoryPath}/{dtFilter.TableName}.xlsx";
+					ExportDataNew(dtFilter, fileName, tempFileName);
+					System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
+					{
+						AssociationReportLog associationReportLog = new AssociationReportLog();
+						associationReportLog.user_id = userdetails.user_id;
+						associationReportLog.export_started_on = DateTime.Now;
+						associationReportLog.file_name = parentFolder;
+						associationReportLog.file_type = "ALLEXCEL";
+						associationReportLog.file_extension = ".zip";
+						associationReportLog.status = "InProgress";
+						associationReportLog.applied_filter = JsonConvert.SerializeObject(dtFilter);
+						associationReportLog.planned = totalPlannedCount;
+						associationReportLog.asbuilt = totalAsBuiltCount;
+						associationReportLog.dormant = totalDormantCount;
+						associationReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+						associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+						dtFilter = null;
+						try
+						{
+							var tasks = new List<Task>();
+							foreach (var layer in objAssociationEntitiesReport.lstLayers)
+							{
+								tasks.Add(Task.Run(() =>
+								{
+									try
+									{
+										objAssociationEntitiesReport.objReportFilters.layerName = layer.layer_name;
+										var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objAssociationEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
+										EntitySummaryReport recordCount = entityAssociationSummaryData.lstReportData.Where(x => x.entity_name.ToUpper() == layer.layer_name.ToUpper()).FirstOrDefault();
+										int total_entity_count = 0;
+										if (recordCount != null)
+											total_entity_count = recordCount.planned_count + recordCount.as_built_count + recordCount.dormant_count;
+										List<Dictionary<string, string>> lstExportEntitiesDetail = null;
+										if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
+										{
+											lstExportEntitiesDetail = new BLLayer().GetAssociationReportSummaryViewCSV(objAssociationEntitiesReport.objReportFilters, layer.layer_name);
+
+										}
+										else
+										{
+											lstExportEntitiesDetail = new BLLayer().GetAssociationReportSummaryView(objAssociationEntitiesReport.objReportFilters, layer.layer_name);
+										}
+										// lstExportEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstExportEntitiesDetail);
+										DataTable dtReport = new DataTable();
+										dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
+										dtReport.TableName = layer.layer_title;
+										//dtReport.TableName = objExportEntitiesReport.objReportFilters.layerName;
+										if (dtReport != null && dtReport.Rows.Count > 0)
+										{
+											if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+											if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+											if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+											if (dtReport.Columns.Contains("Fn Get Date")) { dtReport.Columns.Remove("Fn Get Date"); }
+										}
+										if (dtReport.Rows.Count > 0)
+										{
+											objAssociationEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
+											objAssociationReportFilter.SelectedLayerId = SelectedLayerIdSummary;
+											fileName = $"{dtReport.TableName}";
+											if (dtReport.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
+											{
+												tempFileName = $"{parentFolder}/{dtReport.TableName}.csv";
+												StreamNewCSVInFolder(dtReport, tempFileName);
+											}
+											else
+											{
+												tempFileName = $"{directoryPath}/{dtReport.TableName}.xlsx";
+												ExportDataNew(dtReport, fileName, tempFileName);
+
+											}
+
+											associationReportLog.export_ended_on = DateTime.Now;
+											associationReportLog.status = "Success";
+											associationReportLog.file_location = ftpFolder + parentFolder + associationReportLog.file_extension;
+											//Thread.Sleep(10000);
+											dtReport = null;
+										}
+									}
+									catch (Exception)
+									{
+										throw;
+									}
+								}));
+							}
+							Task t = Task.WhenAll(tasks);
+							t.Wait();
+
+							// get FTP details
+							string ftpServer = ApplicationSettings.FTPAttachment + ftpFolder;
+							string ftpUsername = ApplicationSettings.FTPUserNameAttachment;
+							string ftpPassword = ApplicationSettings.FTPPasswordAttachment;
+
+							string zipfilePath = directoryPath + ".zip";
+							string fileNameValue = parentFolder + ".zip";
+
+							// Below code for Convert parent folder to ZIP and delete parent folder after ZIP on server
+							using (var zip = new ZipFile())
+							{
+								//zip.UseZip64WhenSaving = Zip64Option.Always;
+								//zip.CompressionMethod = CompressionMethod.BZip2;
+								zip.AddDirectory(directoryPath);
+								zip.Save(zipfilePath);
+							}
+							if (System.IO.File.Exists(zipfilePath))
+							{
+								string fileZipName = Path.GetFileName(zipfilePath);
+								Directory.Delete(directoryPath, true);
+							}
+							FileInfo file = new FileInfo(zipfilePath);
+
+							// ZIP File upload on FTP server
+							CommonUtility.FTPFileUpload(zipfilePath, fileNameValue, ftpServer, ftpUsername, ftpPassword);
+							// Deleted ZIP on Server after uploaded on FTP server
+							System.IO.File.Delete(zipfilePath);
+							associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+
+
+						}
+						catch (Exception ex)
+						{
+							associationReportLog.export_ended_on = DateTime.Now;
+							associationReportLog.status = "Error occurred while processing request";
+							associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+							ErrorLogHelper.WriteErrorLog("DownloadEntityReportIntoExcelAll()", "Report", ex);
+							// delete folder after error generate
+							if (Directory.Exists(directoryPath).Equals(true))
+								Directory.Delete(directoryPath, true);
+						}
+					});
+				}
+				catch (Exception ex)
+				{
+					throw ex;
+				}
+			}
+
+		}
+
+		public void DownloadAssociationEntitySummaryIntoXML(string entityids, string fileType, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+		{
+			if (Session["AssociationReportFilter"] != null)
+			{
+
+				DataSet ds = new DataSet();
+				AssociationEntitiesSummaryView objAssociationEntitiesReport = new AssociationEntitiesSummaryView();
+				AssociationReportFilter objAssociationReportFilter = new AssociationReportFilter();
+				objAssociationReportFilter = (AssociationReportFilter)Session["AssociationReportFilter"];
+
+				objAssociationEntitiesReport.objReportFilters.connectionString = objAssociationReportFilter.connectionString;
+				objAssociationEntitiesReport.objReportFilters.SelectedRegionIds = objAssociationReportFilter.SelectedRegionIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedProvinceIds = objAssociationReportFilter.SelectedProvinceIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationReportFilter.SelectedNetworkStatues;
+				objAssociationEntitiesReport.objReportFilters.SelectedParentUsers = objAssociationReportFilter.SelectedParentUsers;
+				objAssociationEntitiesReport.objReportFilters.SelectedUserIds = objAssociationReportFilter.SelectedUserIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedLayerId = objAssociationReportFilter.SelectedLayerId;
+				objAssociationEntitiesReport.objReportFilters.SelectedProjectIds = objAssociationReportFilter.SelectedProjectIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedPlanningIds = objAssociationReportFilter.SelectedPlanningIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderIds = objAssociationReportFilter.SelectedWorkOrderIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedPurposeIds = objAssociationReportFilter.SelectedPurposeIds;
+				objAssociationEntitiesReport.objReportFilters.durationbasedon = objAssociationReportFilter.durationbasedon;
+				objAssociationEntitiesReport.objReportFilters.fromDate = objAssociationReportFilter.fromDate;
+				objAssociationEntitiesReport.objReportFilters.toDate = objAssociationReportFilter.toDate;
+				objAssociationEntitiesReport.objReportFilters.geom = objAssociationReportFilter.geom;
+				objAssociationEntitiesReport.objReportFilters.currentPage = 0;
+				objAssociationEntitiesReport.objReportFilters.fileType = "KML";
+				objAssociationEntitiesReport.objReportFilters.userId = objAssociationReportFilter.userId;
+				objAssociationEntitiesReport.objReportFilters.roleId = objAssociationReportFilter.roleId;
+				objAssociationEntitiesReport.objReportFilters.radius = objAssociationReportFilter.radius;
+				objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType = objAssociationReportFilter.SelectedOwnerShipType;
+				objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objAssociationReportFilter.SelectedThirdPartyVendorIds;
+
+				List<int> SelectedLayerId = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+				List<int> SelectedLayerIdSummary = objAssociationReportFilter.SelectedLayerId;
+
+				objAssociationEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+				objAssociationReportFilter.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationReportFilter.SelectedLayerId;
+
+				var userdetails = (User)Session["userDetail"];
+				objAssociationEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
+				var selectedlayerids = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+				if (selectedlayerids != null)
+				{
+					if (selectedlayerids.Count > 0)
+						objAssociationEntitiesReport.lstLayers = objAssociationEntitiesReport.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).ToList();
+				}
+				DataTable dtFilter = GetExportReportFilter(objAssociationReportFilter);
+
+				string fileName = (fileType == "KML" ? "ExportReport_KML_" : "ExportReport_XML_") + DateTimeHelper.Now.ToString("ddMMyyyy") + " - " + DateTimeHelper.Now.ToString("HHmmss");
+
+				System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
+				{
+					//int TotalEntityReport = 0;
+					AssociationReportLog associationReportLog = new AssociationReportLog();
+					associationReportLog.user_id = userdetails.user_id;
+					associationReportLog.export_started_on = DateTime.Now;					
+					associationReportLog.file_type = fileType;
+					associationReportLog.file_extension = ".zip";
+					associationReportLog.status = "InProgress";
+					associationReportLog.applied_filter = JsonConvert.SerializeObject(dtFilter);
+					associationReportLog.planned = totalPlannedCount;
+					associationReportLog.asbuilt = totalAsBuiltCount;
+					associationReportLog.dormant = totalDormantCount;
+					associationReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+					associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+
+					try
+					{
+
+						for (int i = 0; i < objAssociationEntitiesReport.lstLayers.Count; i++)
+						{
+							objAssociationEntitiesReport.objReportFilters.layerName = objAssociationEntitiesReport.lstLayers[i].layer_name;
+							var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objAssociationEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
+							List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetAssociationSummaryViewKML(objAssociationEntitiesReport.objReportFilters);
+							DataTable dtReport = new DataTable();
+							dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//,true,ApplicationSettings.numberFormatType,new string[] {""}
+
+							dtReport.TableName = layerDetail.layer_title;
+							if (dtReport.Rows.Count > 0)
+								ds.Tables.Add(dtReport);
+						}
+
+						objAssociationEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
+						objAssociationReportFilter.SelectedLayerId = SelectedLayerIdSummary;
+
+
+						string tempFileName = fileName + associationReportLog.file_extension;
+						//string ftpFolder = "ExportReportLog/";
+						//string tempFileName = "ExportReportLog/" + fileName + "." + exportReportLog.file_type;
+						string ftpFilePath = ApplicationSettings.FTPAttachment + ftpFolder;
+						string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
+						string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
+						string tempFolderName = string.Empty;
+						if (fileType == "KML")
+						{
+							string TempkmlFileName = fileName + ".kml";
+							tempFolderName = "KML_" + DateTimeHelper.Now.ToString("ddMMyyyy") + " - " + DateTimeHelper.Now.ToString("HHmmss");
+							KMLHelper.DatasetToKMLNew(ftpFilePath, ftpUserName, ftpPwd, ds, objAssociationEntitiesReport.lstLayers, ApplicationSettings.DownloadTempPath, tempFolderName, TempkmlFileName, "", dtFilter, fileType);
+						}
+						else
+						{
+							string TempkmlFileName = fileName + ".xml";
+							tempFolderName = "XML_" + DateTimeHelper.Now.ToString("ddMMyyyy") + " - " + DateTimeHelper.Now.ToString("HHmmss");
+							KMLHelper.DatasetToKMLNew(ftpFilePath, ftpUserName, ftpPwd, ds, objAssociationEntitiesReport.lstLayers, ApplicationSettings.DownloadTempPath, tempFolderName, TempkmlFileName, "", dtFilter, fileType);
+						}
+						associationReportLog.file_name = tempFolderName;
+						associationReportLog.file_location = ftpFolder + tempFolderName + ".zip";
+						associationReportLog.export_ended_on = DateTime.Now;
+						associationReportLog.status = "Success";
+						//Thread.Sleep(10000);
+						associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+					}
+					catch (Exception ex)
+					{
+						associationReportLog.export_ended_on = DateTime.Now;
+						associationReportLog.status = "Error occurred while processing request";
+						associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+						ErrorLogHelper.WriteErrorLog("DownloadAssociationEntitySummaryIntoXML()", "Report", ex);
+					}
+				});
+			}
+		}
+
+		public void DownloadAssociationEntitySummaryIntoAllKML(string entityids, string fileType, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+		{
+			if (Session["AssociationReportFilter"] != null)
+			{
+
+				//DataSet ds = new DataSet();
+				AssociationEntitiesSummaryView objAssociationEntitiesReport = new AssociationEntitiesSummaryView();
+				AssociationReportFilter objAssociationReportFilter = new AssociationReportFilter();
+				objAssociationReportFilter = (AssociationReportFilter)Session["AssociationReportFilter"];
+
+				objAssociationEntitiesReport.objReportFilters.connectionString = objAssociationReportFilter.connectionString;
+				objAssociationEntitiesReport.objReportFilters.SelectedRegionIds = objAssociationReportFilter.SelectedRegionIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedProvinceIds = objAssociationReportFilter.SelectedProvinceIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationReportFilter.SelectedNetworkStatues;
+				objAssociationEntitiesReport.objReportFilters.SelectedParentUsers = objAssociationReportFilter.SelectedParentUsers;
+				objAssociationEntitiesReport.objReportFilters.SelectedUserIds = objAssociationReportFilter.SelectedUserIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedLayerId = objAssociationReportFilter.SelectedLayerId;
+				objAssociationEntitiesReport.objReportFilters.SelectedProjectIds = objAssociationReportFilter.SelectedProjectIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedPlanningIds = objAssociationReportFilter.SelectedPlanningIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderIds = objAssociationReportFilter.SelectedWorkOrderIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedPurposeIds = objAssociationReportFilter.SelectedPurposeIds;
+				objAssociationEntitiesReport.objReportFilters.durationbasedon = objAssociationReportFilter.durationbasedon;
+				objAssociationEntitiesReport.objReportFilters.fromDate = objAssociationReportFilter.fromDate;
+				objAssociationEntitiesReport.objReportFilters.toDate = objAssociationReportFilter.toDate;
+				objAssociationEntitiesReport.objReportFilters.geom = objAssociationReportFilter.geom;
+				objAssociationEntitiesReport.objReportFilters.currentPage = 0;
+				objAssociationEntitiesReport.objReportFilters.fileType = "KML";
+				objAssociationEntitiesReport.objReportFilters.userId = objAssociationReportFilter.userId;
+				objAssociationEntitiesReport.objReportFilters.roleId = objAssociationReportFilter.roleId;
+				objAssociationEntitiesReport.objReportFilters.radius = objAssociationReportFilter.radius;
+				objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType = objAssociationReportFilter.SelectedOwnerShipType;
+				objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objAssociationReportFilter.SelectedThirdPartyVendorIds;
+
+				List<int> SelectedLayerId = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+				List<int> SelectedLayerIdSummary = objAssociationReportFilter.SelectedLayerId;
+
+				objAssociationEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+				objAssociationReportFilter.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationReportFilter.SelectedLayerId;
+
+				var userdetails = (User)Session["userDetail"];
+				objAssociationEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
+				var selectedlayerids = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+				if (selectedlayerids != null)
+				{
+					if (selectedlayerids.Count > 0)
+						objAssociationEntitiesReport.lstLayers = objAssociationEntitiesReport.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).ToList();
+				}
+				DataTable dtFilter = GetAssociationReportFilter(objAssociationReportFilter);
+				string parentFolder = $"KML_{DateTimeHelper.Now.ToString("ddMMyyyy")}-{DateTimeHelper.Now.ToString("HHmmssfff")}_{userdetails.user_id}";
+				string attachmentLocalPath = Path.Combine(ApplicationSettings.AttachmentLocalPath, ftpFolder);
+				string pathWithParentFolder = Path.Combine(attachmentLocalPath, parentFolder);
+				string directoryPath = Path.Combine(Server.MapPath(pathWithParentFolder));
+
+				// Create Parent folder for temparary basic on server 
+				if (Directory.Exists(directoryPath).Equals(false))
+					Directory.CreateDirectory(directoryPath);
+
+				System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
+				{
+					//int TotalEntityReport = 0;
+					AssociationReportLog associationReportLog = new AssociationReportLog();
+					associationReportLog.user_id = userdetails.user_id;
+					associationReportLog.export_started_on = DateTime.Now;
+					associationReportLog.file_type = fileType;
+					associationReportLog.file_extension = ".zip";
+					associationReportLog.status = "InProgress";
+					associationReportLog.applied_filter = JsonConvert.SerializeObject(dtFilter);
+					associationReportLog.planned = totalPlannedCount;
+					associationReportLog.asbuilt = totalAsBuiltCount;
+					associationReportLog.dormant = totalDormantCount;
+					associationReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+					associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+
+					try
+					{
+
+						var tasks = new List<Task>();
+						foreach (var layer in objAssociationEntitiesReport.lstLayers)
+						{
+							tasks.Add(Task.Run(() =>
+							{
+								try
+								{
+
+									objAssociationEntitiesReport.objReportFilters.layerName = layer.layer_name;
+									List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetAssociationSummaryViewKMLNew(objAssociationEntitiesReport.objReportFilters, layer.layer_name);
+									DataTable dtReport = new DataTable();
+									dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//,true,ApplicationSettings.numberFormatType,new string[] {""}
+
+									dtReport.TableName = layer.layer_title;
+
+									objAssociationEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
+									objAssociationReportFilter.SelectedLayerId = SelectedLayerIdSummary;
+
+									string fileName = layer.layer_title;
+
+									string TempkmlFileName = fileName + ".kml";
+									string finalkml = KMLHelper.GetKmlForEntityNew(dtReport, objAssociationEntitiesReport.lstLayers, dtFilter, TempkmlFileName, directoryPath);
+									dtReport = null;
+									string kmlDesFullPath = directoryPath + "\\" + TempkmlFileName;
+									System.IO.File.WriteAllText(kmlDesFullPath, finalkml.ToString());
+
+
+									//Thread.Sleep(10000);
+								}
+								catch (Exception)
+								{
+									throw;
+								}
+							}));
+						}
+						Task t = Task.WhenAll(tasks);
+						t.Wait();
+
+						dtFilter = null;
+						// get FTP details
+						string ftpServer = ApplicationSettings.FTPAttachment + ftpFolder;
+						string ftpUsername = ApplicationSettings.FTPUserNameAttachment;
+						string ftpPassword = ApplicationSettings.FTPPasswordAttachment;
+
+						string zipfilePath = directoryPath + ".zip";
+						string fileNameValue = parentFolder + ".zip";
+
+						// Below code for Convert parent folder to ZIP and delete parent folder after ZIP on server
+						using (var zip = new ZipFile())
+						{
+							//zip.UseZip64WhenSaving = Zip64Option.Always;
+							//zip.CompressionMethod = CompressionMethod.BZip2;
+							zip.AddDirectory(directoryPath);
+							zip.Save(zipfilePath);
+						}
+						if (System.IO.File.Exists(zipfilePath))
+						{
+							string fileZipName = Path.GetFileName(zipfilePath);
+							Directory.Delete(directoryPath, true);
+						}
+						FileInfo file = new FileInfo(zipfilePath);
+
+						//LogHelper.GetInstance.WriteDebugLog($"Combined file Uploading start on FTP : {DateTime.Now}");
+						// ZIP File upload on FTP server
+						CommonUtility.FTPFileUpload(zipfilePath, fileNameValue, ftpServer, ftpUsername, ftpPassword);
+						//LogHelper.GetInstance.WriteDebugLog($"Combined file Uploading completed on FTP : {DateTime.Now}");
+
+						associationReportLog.file_name = parentFolder;
+						associationReportLog.file_location = ftpFolder + parentFolder + ".zip";
+						associationReportLog.export_ended_on = DateTime.Now;
+						associationReportLog.status = "Success";
+						associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+
+						// Deleted ZIP on Server after uploaded on FTP server
+						System.IO.File.Delete(zipfilePath);
+					}
+					catch (Exception ex)
+					{
+						associationReportLog.export_ended_on = DateTime.Now;
+						associationReportLog.status = "Error occurred while processing request";
+						associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+						ErrorLogHelper.WriteErrorLog("DownloadAssociationEntitySummaryIntoAllKML()", "Report", ex);
+						// delete folder after error generate
+						if (Directory.Exists(directoryPath).Equals(true))
+							Directory.Delete(directoryPath, true);
+					}
+				});
+			}
+		}
+
+		public void DownloadAssociationEntitySummaryIntoDXF(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+		{
+			if (Session["AssociationReportFilter"] != null)
+			{
+
+				DataSet ds = new DataSet();
+				AssociationEntitiesSummaryView objAssociationEntitiesReport = new AssociationEntitiesSummaryView();
+				AssociationReportFilter objAssociationReportFilter = new AssociationReportFilter();
+				objAssociationReportFilter = (AssociationReportFilter)Session["AssociationReportFilter"];
+
+				objAssociationEntitiesReport.objReportFilters.connectionString = objAssociationReportFilter.connectionString;
+				objAssociationEntitiesReport.objReportFilters.SelectedRegionIds = objAssociationReportFilter.SelectedRegionIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedProvinceIds = objAssociationReportFilter.SelectedProvinceIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationReportFilter.SelectedNetworkStatues;
+				objAssociationEntitiesReport.objReportFilters.SelectedParentUsers = objAssociationReportFilter.SelectedParentUsers;
+				objAssociationEntitiesReport.objReportFilters.SelectedUserIds = objAssociationReportFilter.SelectedUserIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedLayerId = objAssociationReportFilter.SelectedLayerId;
+				objAssociationEntitiesReport.objReportFilters.SelectedProjectIds = objAssociationReportFilter.SelectedProjectIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedPlanningIds = objAssociationReportFilter.SelectedPlanningIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderIds = objAssociationReportFilter.SelectedWorkOrderIds;
+				objAssociationEntitiesReport.objReportFilters.SelectedPurposeIds = objAssociationReportFilter.SelectedPurposeIds;
+				objAssociationEntitiesReport.objReportFilters.durationbasedon = objAssociationReportFilter.durationbasedon;
+				objAssociationEntitiesReport.objReportFilters.fromDate = objAssociationReportFilter.fromDate;
+				objAssociationEntitiesReport.objReportFilters.toDate = objAssociationReportFilter.toDate;
+				objAssociationEntitiesReport.objReportFilters.geom = objAssociationReportFilter.geom;
+				objAssociationEntitiesReport.objReportFilters.currentPage = 0;
+				objAssociationEntitiesReport.objReportFilters.fileType = "KML";
+				objAssociationEntitiesReport.objReportFilters.userId = objAssociationReportFilter.userId;
+				objAssociationEntitiesReport.objReportFilters.roleId = objAssociationReportFilter.roleId;
+				objAssociationEntitiesReport.objReportFilters.radius = objAssociationReportFilter.radius;
+				objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType = objAssociationReportFilter.SelectedOwnerShipType;
+				objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objAssociationReportFilter.SelectedThirdPartyVendorIds;
+
+				List<int> SelectedLayerId = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+				List<int> SelectedLayerIdSummary = objAssociationReportFilter.SelectedLayerId;
+
+				objAssociationEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+				objAssociationReportFilter.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationReportFilter.SelectedLayerId;
+
+				var userdetails = (User)Session["userDetail"];
+				objAssociationEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
+				var selectedlayerids = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+				if (selectedlayerids != null)
+				{
+					if (selectedlayerids.Count > 0)
+						objAssociationEntitiesReport.lstLayers = objAssociationEntitiesReport.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).ToList();
+				}
+				DataTable dtFilter = GetAssociationReportFilter(objAssociationReportFilter);
+
+
+				string fileName = "AssociationReport_" + DateTimeHelper.Now.ToString("ddMMyyyy") + " - " + DateTimeHelper.Now.ToString("HHmmss");
+				System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
+				{
+					//int TotalEntityReport = 0;
+					AssociationReportLog associationReportLog = new AssociationReportLog();
+					associationReportLog.user_id = userdetails.user_id;
+					associationReportLog.export_started_on = DateTime.Now;
+					associationReportLog.file_name = fileName;
+					associationReportLog.file_type = "DXF";
+					associationReportLog.file_extension = ".dxf";
+					associationReportLog.status = "InProgress";
+					associationReportLog.applied_filter = JsonConvert.SerializeObject(dtFilter);
+					associationReportLog.planned = totalPlannedCount;
+					associationReportLog.asbuilt = totalAsBuiltCount;
+					associationReportLog.dormant = totalDormantCount;
+					associationReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+					associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+
+					try
+					{
+
+						for (int i = 0; i < objAssociationEntitiesReport.lstLayers.Count; i++)
+						{
+							objAssociationEntitiesReport.objReportFilters.layerName = objAssociationEntitiesReport.lstLayers[i].layer_name;
+							var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objAssociationEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
+							List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetAssociationSummaryViewKML(objAssociationEntitiesReport.objReportFilters);
+							DataTable dtReport = new DataTable();
+							dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//,true,ApplicationSettings.numberFormatType,new string[] { ""}
+							dtReport.TableName = layerDetail.layer_title;
+							if (dtReport.Rows.Count > 0)
+								ds.Tables.Add(dtReport);
+						}
+						objAssociationEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
+						objAssociationReportFilter.SelectedLayerId = SelectedLayerIdSummary;
+						string finalkml = KMLHelper.GetKmlForEntitiesNew(ds, objAssociationEntitiesReport.lstLayers, ApplicationSettings.DownloadTempPath, dtFilter);
+						//Create a new subfolder under the current active folder
+						string newPath = Path.Combine(Server.MapPath("~/Uploads/"));
+
+
+						//dataContent is byte[]
+						System.IO.File.WriteAllText(newPath + "report.kml", finalkml.ToString());
+						string baseFolder = newPath + "report.kml";
+						string kmlFolder = newPath;
+						DataTable dataTable = new DataTable();
+						var converter = new Convertor(baseFolder, "", kmlFolder, "");
+						var response = converter.KmltoDXFConverter(newPath, "report");
+
+
+						string tempFileName = fileName + associationReportLog.file_extension;
+						//string ftpFolder = "ExportReportLog/";
+						//string tempFileName = "ExportReportLog/" + fileName + "." + exportReportLog.file_type;
+						string ftpFilePath = ApplicationSettings.FTPAttachment + ftpFolder;
+						string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
+						string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
+
+						associationReportLog.export_ended_on = DateTime.Now;
+						associationReportLog.status = "Success";
+						associationReportLog.file_location = ftpFolder + tempFileName;
+						//Thread.Sleep(10000);
+						CommonUtility.FTPFileUpload(response.OutputFile, tempFileName, ftpFilePath, ftpUserName, ftpPwd);
+						associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+						System.IO.File.Delete(response.OutputFile);
+					}
+					catch (Exception ex)
+					{
+						associationReportLog.export_ended_on = DateTime.Now;
+						associationReportLog.status = "Error occurred while processing request";
+						associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+						ErrorLogHelper.WriteErrorLog("DownloadAssociationEntitySummaryIntoDXF()", "Report", ex);
+					}
+
+				});
+				//string attachment = "attachment; filename=ExportReport_" + DateTimeHelper.Now.ToString("ddMMyyyy") + " - " + DateTimeHelper.Now.ToString("HHmmss") + ".dxf";
+				//Response.ClearContent();
+				//Response.Clear();
+				//Response.ContentType = "application/xml";
+				//Response.AddHeader("content-disposition", attachment);
+				//Response.Write(response.Output);
+				//Response.End();
+			}
+		}
+
+		public void DownloadAssociationEntityReportIntoShape(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+		{
+			if (Session["AssociationReportFilter"] != null)
+			{
+				try
+				{
+					//LogHelper.GetInstance.WriteDebugLog($"***********************************Shape logs start ***  {DateTime.Now}********************************");
+
+					AssociationEntitiesSummaryView objAssociationEntitiesReport = new AssociationEntitiesSummaryView();
+					AssociationReportFilter objAssociationReportFilter = new AssociationReportFilter();
+					objAssociationReportFilter = (AssociationReportFilter)Session["AssociationReportFilter"];
+
+					objAssociationEntitiesReport.objReportFilters.connectionString = objAssociationReportFilter.connectionString;
+					objAssociationEntitiesReport.objReportFilters.SelectedRegionIds = objAssociationReportFilter.SelectedRegionIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedProvinceIds = objAssociationReportFilter.SelectedProvinceIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationReportFilter.SelectedNetworkStatues;
+					objAssociationEntitiesReport.objReportFilters.SelectedParentUsers = objAssociationReportFilter.SelectedParentUsers;
+					objAssociationEntitiesReport.objReportFilters.SelectedUserIds = objAssociationReportFilter.SelectedUserIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedLayerId = objAssociationReportFilter.SelectedLayerId;
+					objAssociationEntitiesReport.objReportFilters.SelectedProjectIds = objAssociationReportFilter.SelectedProjectIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedPlanningIds = objAssociationReportFilter.SelectedPlanningIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderIds = objAssociationReportFilter.SelectedWorkOrderIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedPurposeIds = objAssociationReportFilter.SelectedPurposeIds;
+					objAssociationEntitiesReport.objReportFilters.durationbasedon = objAssociationReportFilter.durationbasedon;
+					objAssociationEntitiesReport.objReportFilters.fromDate = objAssociationReportFilter.fromDate;
+					objAssociationEntitiesReport.objReportFilters.toDate = objAssociationReportFilter.toDate;
+					objAssociationEntitiesReport.objReportFilters.geom = objAssociationReportFilter.geom;
+					objAssociationEntitiesReport.objReportFilters.currentPage = 0;
+					objAssociationEntitiesReport.objReportFilters.fileType = "SHAPE";
+					objAssociationEntitiesReport.objReportFilters.userId = objAssociationReportFilter.userId;
+					objAssociationEntitiesReport.objReportFilters.roleId = objAssociationReportFilter.roleId;
+					objAssociationEntitiesReport.objReportFilters.radius = objAssociationReportFilter.radius;
+					objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType = objAssociationReportFilter.SelectedOwnerShipType;
+					objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objAssociationReportFilter.SelectedThirdPartyVendorIds;
+
+					List<int> SelectedLayerId = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					List<int> SelectedLayerIdSummary = objAssociationReportFilter.SelectedLayerId;
+
+					objAssociationEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					objAssociationReportFilter.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationReportFilter.SelectedLayerId;
+
+					//rt
+					var userdetails = (User)Session["userDetail"];
+					objAssociationEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
+					var selectedlayerids = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					if (selectedlayerids != null)
+					{
+						if (selectedlayerids.Count > 0)
+							objAssociationEntitiesReport.lstLayers = objAssociationEntitiesReport.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).DistinctBy(o => o.layer_id).ToList();
+					}
+					DataTable dtFilter = GetAssociationReportFilter(objAssociationReportFilter);
+
+
+					//DataSet ds = new DataSet();
+
+
+					System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
+					{
+
+						AssociationReportLog associationReportLog = new AssociationReportLog();
+						associationReportLog.user_id = userdetails.user_id;
+						associationReportLog.export_started_on = DateTime.Now;
+						associationReportLog.file_type = "ALLSHAPE";
+						associationReportLog.file_extension = ".zip";
+						associationReportLog.status = "InProgress";
+						associationReportLog.applied_filter = JsonConvert.SerializeObject(dtFilter);
+						associationReportLog.planned = totalPlannedCount;
+						associationReportLog.asbuilt = totalAsBuiltCount;
+						associationReportLog.dormant = totalDormantCount;
+						associationReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+						associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+						dtFilter = null;
+						string shapeFilePath = "";
+
+						try
+						{
+
+							string tempFileName = String.Empty;
+							//string ftpFolder = "ExportReportLog/";
+							//string tempFileName = "ExportReportLog/" + fileName + "." + exportReportLog.file_type;
+							string ftpFilePath = ApplicationSettings.FTPAttachment + ftpFolder;
+							string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
+							string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
+							//string shapeFilePath = System.Web.Hosting.HostingEnvironment.MapPath("~/public/Attachments/SI_Shape_" + Guid.NewGuid().ToString().Substring(0, 8));
+							//string parentFolder = $"SI_Shape_{Guid.NewGuid().ToString().Substring(0, 8)}_{userdetails.user_id}";
+							string parentFolder = $"Shape_{DateTimeHelper.Now.ToString("ddMMyyyy")}-{DateTimeHelper.Now.ToString("HHmmssfff")}_{userdetails.user_id}";
+							string attachmentLocalPath = Path.Combine(ApplicationSettings.AttachmentLocalPath, ftpFolder);
+							string pathWithParentFolder = Path.Combine(attachmentLocalPath, parentFolder);
+							shapeFilePath = Path.Combine(Server.MapPath(pathWithParentFolder));
+
+							if (Directory.Exists(shapeFilePath).Equals(false))
+								Directory.CreateDirectory(shapeFilePath);
+
+							var tasks = new List<Task>();
+							foreach (var layer in objAssociationEntitiesReport.lstLayers)
+							{
+								tasks.Add(Task.Run(() =>
+								{
+									try
+									{
+										objAssociationEntitiesReport.objReportFilters.layerName = layer.layer_name;
+										List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetAssociationSummaryViewKMLNew(objAssociationEntitiesReport.objReportFilters, layer.layer_name);
+										DataTable dtReport = new DataTable();
+										dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//,true,ApplicationSettings.numberFormatType,new string[] { ""}
+										dtReport.TableName = layer.layer_title;
+										if (dtReport != null && dtReport.Rows.Count > 0)
+										{
+											if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+											if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+											if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+										}
+										GetShapeFileOne(dtReport, "AssociationReport", ftpFilePath, ftpUserName, ftpPwd, shapeFilePath, layer.layer_name);
+										dtReport = null;
+										// LogHelper.GetInstance.WriteDebugLogTest($"====================================={layer.layer_name}====END {DateTime.Now}========================", layer.layer_name);
+
+									}
+									catch (Exception)
+									{
+										throw;
+									}
+								}));
+
+							}
+							Task t = Task.WhenAll(tasks);
+							t.Wait();
+
+							objAssociationEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
+							objAssociationReportFilter.SelectedLayerId = SelectedLayerIdSummary;
+
+							string zipshapePath = shapeFilePath + ".zip";//result.Replace("success:", "");
+																		 //zip the shape file
+							using (var zip = new ZipFile())
+							{
+								zip.AddDirectory(shapeFilePath);
+								zip.Save(zipshapePath);
+							}
+							if (System.IO.File.Exists(zipshapePath))
+							{
+								string fileName = Path.GetFileName(zipshapePath);
+								Directory.Delete(shapeFilePath, true);
+							}
+							FileInfo file = new FileInfo(zipshapePath);
+							tempFileName = Path.GetFileNameWithoutExtension(file.FullName);
+
+							// LogHelper.GetInstance.WriteDebugLog($"Combined file Uploading start on FTP : {DateTime.Now}");
+							CommonUtility.FTPFileUpload(zipshapePath, (tempFileName + ".zip"), ftpFilePath, ftpUserName, ftpPwd);
+							// LogHelper.GetInstance.WriteDebugLog($"Combined file Uploading completed on FTP : {DateTime.Now}");
+							System.IO.File.Delete(zipshapePath);
+
+							associationReportLog.file_name = tempFileName;
+							associationReportLog.export_ended_on = DateTime.Now;
+							associationReportLog.status = "Success";
+							associationReportLog.file_location = ftpFolder + tempFileName + associationReportLog.file_extension;
+							//Thread.Sleep(10000);
+							associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+
+							//LogHelper.GetInstance.WriteDebugLog($"***********************************Shape logs end ***  {DateTime.Now}********************************");
+						}
+						catch (Exception ex)
+						{
+							associationReportLog.export_ended_on = DateTime.Now;
+							associationReportLog.status = "Error occurred while processing request";
+							associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+							ErrorLogHelper.WriteErrorLog("DownloadAssociationEntityReportIntoShape()", "Report", ex);
+							// delete folder after error generate
+							if (Directory.Exists(shapeFilePath).Equals(true))
+								Directory.Delete(shapeFilePath, true);
+						}
+					});
+
+
+
+				}
+				catch (Exception ex)
+				{
+					throw ex;
+				}
+			}
+		}
+
+		public void DownloadAssociationEntityReportIntoTXT(string entityids, string fileType, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+		{
+
+			if (Session["AssociationReportFilter"] != null)
+			{
+				try
+				{
+					AssociationEntitiesSummaryView objAssociationEntitiesSummaryView = new AssociationEntitiesSummaryView();
+
+					AssociationReportFilter objAssociationReportFilter = new AssociationReportFilter();
+
+					objAssociationReportFilter = (AssociationReportFilter)Session["AssociationReportFilter"];
+
+					objAssociationEntitiesSummaryView.objReportFilters.connectionString = objAssociationReportFilter.connectionString;
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedRegionIds = objAssociationReportFilter.SelectedRegionIds;
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedProvinceIds = objAssociationReportFilter.SelectedProvinceIds;
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedNetworkStatues = objAssociationReportFilter.SelectedNetworkStatues;
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedParentUsers = objAssociationReportFilter.SelectedParentUsers;
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedUserIds = objAssociationReportFilter.SelectedUserIds;
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedLayerId = objAssociationReportFilter.SelectedLayerId;
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedProjectIds = objAssociationReportFilter.SelectedProjectIds;
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedPlanningIds = objAssociationReportFilter.SelectedPlanningIds;
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedWorkOrderIds = objAssociationReportFilter.SelectedWorkOrderIds;
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedPurposeIds = objAssociationReportFilter.SelectedPurposeIds;
+					objAssociationEntitiesSummaryView.objReportFilters.durationbasedon = objAssociationReportFilter.durationbasedon;
+					objAssociationEntitiesSummaryView.objReportFilters.fromDate = objAssociationReportFilter.fromDate;
+					objAssociationEntitiesSummaryView.objReportFilters.toDate = objAssociationReportFilter.toDate;
+					objAssociationEntitiesSummaryView.objReportFilters.geom = objAssociationReportFilter.geom;
+					objAssociationEntitiesSummaryView.objReportFilters.userId = objAssociationReportFilter.userId;
+					objAssociationEntitiesSummaryView.objReportFilters.roleId = objAssociationReportFilter.roleId;
+					objAssociationEntitiesSummaryView.objReportFilters.radius = objAssociationReportFilter.radius;
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedOwnerShipType = objAssociationReportFilter.SelectedOwnerShipType;
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedThirdPartyVendorIds = objAssociationReportFilter.SelectedThirdPartyVendorIds;
+
+					objAssociationEntitiesSummaryView.objReportFilters.currentPage = 0;
+					List<int> SelectedLayerId = objAssociationEntitiesSummaryView.objReportFilters.SelectedLayerId;
+					List<int> SelectedLayerIdSummary = objAssociationReportFilter.SelectedLayerId;
+
+					objAssociationEntitiesSummaryView.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationEntitiesSummaryView.objReportFilters.SelectedLayerId;
+					objAssociationReportFilter.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationReportFilter.SelectedLayerId;
+
+					DataTable dtFilter = GetAssociationReportFilter(objAssociationReportFilter);
+
+					//rt
+					var userdetails = (User)Session["userDetail"];
+					objAssociationEntitiesSummaryView.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
+					var selectedlayerids = objAssociationEntitiesSummaryView.objReportFilters.SelectedLayerId;
+					if (selectedlayerids != null)
+					{
+						if (selectedlayerids.Count > 0)
+							objAssociationEntitiesSummaryView.lstLayers = objAssociationEntitiesSummaryView.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).ToList();
+					}
+					DataSet ds = new DataSet();
+					ds.Tables.Add(dtFilter);
+
+
+					string fileName = "AssociationReport_" + (fileType == "ALLCSV" ? "CSV_" : "TXT_") + DateTimeHelper.Now.ToString("ddMMyyyy") + " - " + DateTimeHelper.Now.ToString("HHmmss");
+
+					System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
+					{
+						//int TotalEntityReport = 0;
+						AssociationReportLog associationReportLog = new AssociationReportLog();
+						associationReportLog.user_id = userdetails.user_id;
+						associationReportLog.export_started_on = DateTime.Now;
+						associationReportLog.file_name = fileName;
+						associationReportLog.file_type = fileType;
+						associationReportLog.file_extension = ".zip";
+						associationReportLog.status = "InProgress";
+						associationReportLog.applied_filter = JsonConvert.SerializeObject(dtFilter);
+						associationReportLog.planned = totalPlannedCount;
+						associationReportLog.asbuilt = totalAsBuiltCount;
+						associationReportLog.dormant = totalDormantCount;
+						associationReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+						associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+
+						try
+						{
+							for (int i = 0; i < objAssociationEntitiesSummaryView.lstLayers.Count; i++)
+							{
+								objAssociationEntitiesSummaryView.objReportFilters.layerName = objAssociationEntitiesSummaryView.lstLayers[i].layer_name;
+								List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetAssociationReportSummaryView(objAssociationEntitiesSummaryView.objReportFilters);
+								if (lstExportEntitiesDetail.Count > 0)
+								{
+									DataTable dtReport = new DataTable();
+									dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//,true,ApplicationSettings.numberFormatType,new string[] { ""}
+																												//dtReport.TableName = layerDetail.layer_title;
+									dtReport.TableName = objAssociationEntitiesSummaryView.objReportFilters.layerName;
+									if (dtReport != null && dtReport.Rows.Count > 0)
+									{
+										if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+										if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+										if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+									}
+									if (dtReport.Rows.Count > 0)
+										ds.Tables.Add(dtReport);
+								}
+							}
+							objAssociationEntitiesSummaryView.objReportFilters.SelectedLayerId = SelectedLayerId;
+							objAssociationReportFilter.SelectedLayerId = SelectedLayerIdSummary;
+
+							string tempFileName = fileName + associationReportLog.file_extension;
+							string ftpFilePath = ApplicationSettings.FTPAttachment + ftpFolder;
+							string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
+							string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
+							AssociationReportCSV(ds, tempFileName, ApplicationSettings.CsvDelimiter, fileType, ftpFilePath, ftpUserName, ftpPwd);
+							associationReportLog.export_ended_on = DateTime.Now;
+							associationReportLog.status = "Success";
+							associationReportLog.file_location = ftpFolder + tempFileName;
+							//Thread.Sleep(10000);
+							associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+						}
+						catch (Exception ex)
+						{
+							associationReportLog.export_ended_on = DateTime.Now;
+							associationReportLog.status = "Error occurred while processing request";
+							associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+							ErrorLogHelper.WriteErrorLog("DownloadEntityReportNewIntoCSVAll()", "Report", ex);
+						}
+
+					});
+
+				}
+				catch (Exception ex)
+				{
+					throw ex;
+				}
+			}
+
+		}
+
+		public void AssociationReportCSV(DataSet ds, string fileNameValue, string delimiter, string fileType, string ftpfilePath, string ftpUserName, string ftpPassword)
+		{
+			List<Files> txtDatas = new List<Files>();
+			foreach (DataTable dt in ds.Tables)
+			{
+				byte[] bytes = Encoding.ASCII.GetBytes(Utility.CommonUtility.ConvertDataTableToString(dt, delimiter)); //Convert DataTable to string with specific delimiter
+				txtDatas.Add(new Files() { TableName = dt.TableName, Bytes = bytes });
+			}
+
+			using (ZipFile zip = new ZipFile())
+			{
+				zip.AlternateEncodingUsage = ZipOption.AsNecessary;
+				foreach (Files txtData in txtDatas)
+				{
+					if (fileType == "ALLCSV")
+					{
+						zip.AddEntry(txtData.TableName + ".csv", txtData.Bytes);
+					}
+					else
+					{
+						zip.AddEntry(txtData.TableName + ".txt", txtData.Bytes);
+					}
+				}
+				string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
+				string tempfilePath = Path.Combine(Server.MapPath(downloadTempPath + "AssociationReportLog"), fileNameValue);
+
+				zip.Save(tempfilePath);
+				CommonUtility.FTPFileUpload(tempfilePath, fileNameValue, ftpfilePath, ftpUserName, ftpPassword);
+				System.IO.File.Delete(tempfilePath);
+			}
+		}
+
+		public void DownloadAssociationEntityReportIntoCSV(string entityids, string fileType, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+		{
+
+
+			if (Session["AssociationReportFilter"] != null)
+			{
+				try
+				{
+					//LogHelper.GetInstance.WriteDebugLog($"***********************************CSV logs start ***********************************");
+
+					DateTime startTime = DateTime.Now;
+					AssociationEntitiesSummaryView objAssociationEntitiesReport = new AssociationEntitiesSummaryView();
+					AssociationEntitiesReport AssociationEntitiesReportSummary = new AssociationEntitiesReport();
+					AssociationEntitiesReportSummary = (AssociationEntitiesReport)Session["EntityAssociationSummaryData"];
+					AssociationReportFilter objAssociationReportFilter = new AssociationReportFilter();
+
+					objAssociationReportFilter = (AssociationReportFilter)Session["AssociationReportFilter"];
+
+					objAssociationEntitiesReport.objReportFilters.connectionString = objAssociationReportFilter.connectionString;
+					objAssociationEntitiesReport.objReportFilters.SelectedRegionIds = objAssociationReportFilter.SelectedRegionIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedProvinceIds = objAssociationReportFilter.SelectedProvinceIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatues = objAssociationReportFilter.SelectedNetworkStatues;
+					objAssociationEntitiesReport.objReportFilters.SelectedParentUsers = objAssociationReportFilter.SelectedParentUsers;
+					objAssociationEntitiesReport.objReportFilters.SelectedUserIds = objAssociationReportFilter.SelectedUserIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedLayerId = objAssociationReportFilter.SelectedLayerId;
+					objAssociationEntitiesReport.objReportFilters.SelectedProjectIds = objAssociationReportFilter.SelectedProjectIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedPlanningIds = objAssociationReportFilter.SelectedPlanningIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderIds = objAssociationReportFilter.SelectedWorkOrderIds;
+					objAssociationEntitiesReport.objReportFilters.SelectedPurposeIds = objAssociationReportFilter.SelectedPurposeIds;
+					objAssociationEntitiesReport.objReportFilters.durationbasedon = objAssociationReportFilter.durationbasedon;
+					objAssociationEntitiesReport.objReportFilters.fromDate = objAssociationReportFilter.fromDate;
+					objAssociationEntitiesReport.objReportFilters.toDate = objAssociationReportFilter.toDate;
+					objAssociationEntitiesReport.objReportFilters.geom = objAssociationReportFilter.geom;
+					objAssociationEntitiesReport.objReportFilters.userId = objAssociationReportFilter.userId;
+					objAssociationEntitiesReport.objReportFilters.roleId = objAssociationReportFilter.roleId;
+					objAssociationEntitiesReport.objReportFilters.radius = objAssociationReportFilter.radius;
+					objAssociationEntitiesReport.objReportFilters.selected_route_ids = objAssociationReportFilter.selected_route_ids;
+					objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType = objAssociationReportFilter.SelectedOwnerShipType;
+					objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objAssociationReportFilter.SelectedThirdPartyVendorIds;
+
+					objAssociationEntitiesReport.objReportFilters.currentPage = 0;
+					List<int> SelectedLayerId = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					List<int> SelectedLayerIdSummary = objAssociationReportFilter.SelectedLayerId;
+
+					objAssociationEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					objAssociationReportFilter.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objAssociationReportFilter.SelectedLayerId;
+
+					DataTable dtFilter = GetAssociationReportFilter(objAssociationReportFilter);
+
+					//rt
+					var userdetails = (User)Session["userDetail"];
+					objAssociationEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
+					var selectedlayerids = objAssociationEntitiesReport.objReportFilters.SelectedLayerId;
+					if (selectedlayerids != null)
+					{
+						if (selectedlayerids.Count > 0)
+							objAssociationEntitiesReport.lstLayers = objAssociationEntitiesReport.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).ToList();
+					}
+					string parentFolder = $"AssociationReport_{DateTimeHelper.Now.ToString("ddMMyyyy")}-{DateTimeHelper.Now.ToString("HHmmssfff")}_{userdetails.user_id}";
+					string attachmentLocalPath = Path.Combine(ApplicationSettings.AttachmentLocalPath, ftpFolder);
+					string pathWithParentFolder = Path.Combine(attachmentLocalPath, parentFolder);
+					string directoryPath = Path.Combine(Server.MapPath(pathWithParentFolder));
+
+					// Create Parent folder for temparary basic on server 
+					if (Directory.Exists(directoryPath).Equals(false))
+						Directory.CreateDirectory(directoryPath);
+
+					string fileName = $"{parentFolder}/{dtFilter.TableName}.csv";
+					StreamCSVInFolder(dtFilter, fileName);
+					System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
+					{
+						//int TotalEntityReport = 0;
+						AssociationReportLog associationReportLog = new AssociationReportLog();
+						associationReportLog.user_id = userdetails.user_id;
+						associationReportLog.export_started_on = DateTime.Now;
+						associationReportLog.file_name = parentFolder;
+						associationReportLog.file_type = fileType;
+						associationReportLog.file_extension = ".zip";
+						associationReportLog.status = "InProgress";
+						associationReportLog.applied_filter = JsonConvert.SerializeObject(dtFilter);
+						associationReportLog.planned = totalPlannedCount;
+						associationReportLog.asbuilt = totalAsBuiltCount;
+						associationReportLog.dormant = totalDormantCount;
+						associationReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+						associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+						dtFilter = null;
+						try
+						{
+							// ---Start-- Below code for generate export report summary in csv file -------
+							List<EntitySummaryReport> lstRprtData = AssociationEntitiesReportSummary.lstReportData;
+							if (lstRprtData.Count > 0)
+							{
+								if (!AssociationEntitiesReportSummary.objReportFilters.SelectedNetworkStatues.Contains("Planned"))
+									AssociationEntitiesReportSummary.objReportFilters.SelectedNetworkStatues = AssociationEntitiesReportSummary.objReportFilters.SelectedNetworkStatues.Replace("P", "Planned");
+								if (!AssociationEntitiesReportSummary.objReportFilters.SelectedNetworkStatues.Contains("As-Built"))
+									AssociationEntitiesReportSummary.objReportFilters.SelectedNetworkStatues = AssociationEntitiesReportSummary.objReportFilters.SelectedNetworkStatues.Replace("A", "As-Built");
+								if (!AssociationEntitiesReportSummary.objReportFilters.SelectedNetworkStatues.Contains("Dormant"))
+									AssociationEntitiesReportSummary.objReportFilters.SelectedNetworkStatues = AssociationEntitiesReportSummary.objReportFilters.SelectedNetworkStatues.Replace("D", "Dormant");
+
+								DataTable dtSummaryReport = new DataTable();
+								dtSummaryReport = MiscHelper.ListToDataTable(AssociationEntitiesReportSummary.lstReportData);
+								dtSummaryReport.TableName = Resources.Resources.SI_OSP_GBL_NET_FRM_064;
+								if (dtSummaryReport != null && dtSummaryReport.Rows.Count > 0)
+								{
+									if (!ApplicationSettings.IsDormantEnabled)
+									{
+										dtSummaryReport.Columns.Remove("DORMANT_COUNT");
+									}
+									dtSummaryReport.Columns.Remove("entity_id");
+									dtSummaryReport.Columns.Remove("entity_name");
+									dtSummaryReport.Columns["entity_title"].ColumnName = Resources.Resources.SI_OSP_GBL_GBL_GBL_144;
+									dtSummaryReport.Columns["planned_count"].ColumnName = "Planned";
+									dtSummaryReport.Columns["as_built_count"].ColumnName = "As-Built";
+									if (ApplicationSettings.IsDormantEnabled)
+									{
+										dtSummaryReport.Columns["dormant_count"].ColumnName = "Dormant";
+									}
+
+									string[] networkstatusvalues = objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatus == null ? new string[3] { "PLANNED", "AS BUILT", "DORMANT" } : objAssociationEntitiesReport.objReportFilters.SelectedNetworkStatus.ToArray();
+									if (networkstatusvalues.Length < 3)
+									{
+										if (!networkstatusvalues.Contains("P"))
+										{
+											dtSummaryReport.Columns.Remove("PLANNED");
+										}
+										if (!networkstatusvalues.Contains("A"))
+										{
+											dtSummaryReport.Columns.Remove("AS-BUILT");
+										}
+										if (ApplicationSettings.IsDormantEnabled)
+										{
+											if (!networkstatusvalues.Contains("D"))
+											{
+												dtSummaryReport.Columns.Remove("DORMANT");
+											}
+										}
+									}
+									DataRow row = dtSummaryReport.NewRow();
+									row[Resources.Resources.SI_OSP_GBL_GBL_GBL_144] = "Total";
+									if (dtSummaryReport.Columns.Contains("Planned"))
+									{
+										row["Planned"] = dtSummaryReport.Compute("Sum(Planned)", "");
+									}
+									if (dtSummaryReport.Columns.Contains("As-Built"))
+									{
+										row["As-Built"] = dtSummaryReport.Compute("Sum([As-Built])", "");
+									}
+									if (ApplicationSettings.IsDormantEnabled)
+									{
+										if (dtSummaryReport.Columns.Contains("Dormant"))
+										{
+											row["Dormant"] = dtSummaryReport.Compute("Sum(Dormant)", "");
+										}
+									}
+									dtSummaryReport.Rows.Add(row);
+									string summaryFileName = $"{parentFolder}/{dtSummaryReport.TableName}.csv";
+									StreamCSVInFolder(dtSummaryReport, summaryFileName);
+								}
+							}
+							var tasks = new List<Task>();
+							foreach (var layer in objAssociationEntitiesReport.lstLayers)
+							{
+								tasks.Add(Task.Run(() =>
+								{
+									try
+									{
+
+										objAssociationEntitiesReport.objReportFilters.layerName = layer.layer_name;
+										List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetAssociationReportSummaryViewCSV(objAssociationEntitiesReport.objReportFilters, layer.layer_name);
+										if (lstExportEntitiesDetail.Count > 0)
+										{
+											DataTable dtReport = new DataTable();
+											dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//, true, ApplicationSettings.numberFormatType, new string[] { "" }
+																														//dtReport.TableName = layerDetail.layer_title;
+											dtReport.TableName = layer.layer_title;
+											if (dtReport != null && dtReport.Rows.Count > 0)
+											{
+												if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+												if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+												if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+											}
+											if (dtReport.Rows.Count > 0)
+											{
+												//	ds.Tables.Add(dtReport);
+												objAssociationEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
+												objAssociationReportFilter.SelectedLayerId = SelectedLayerIdSummary;
+												fileName = $"{parentFolder}/{dtReport.TableName}.csv";
+												StreamNewCSVInFolder(dtReport, fileName);
+												associationReportLog.export_ended_on = DateTime.Now;
+												associationReportLog.status = "Success";
+												associationReportLog.file_location = ftpFolder + parentFolder + associationReportLog.file_extension;
+											}
+											dtReport = null;
+										}
+									}
+									catch (Exception)
+									{
+										throw;
+									}
+								}));
+							}
+							Task t = Task.WhenAll(tasks);
+							t.Wait();
+							
+							string ftpServer = ApplicationSettings.FTPAttachment + ftpFolder;
+							string ftpUsername = ApplicationSettings.FTPUserNameAttachment;
+							string ftpPassword = ApplicationSettings.FTPPasswordAttachment;
+
+							string zipfilePath = directoryPath + ".zip";
+							string fileNameValue = parentFolder + ".zip";
+
+							// Below code for Convert parent folder to ZIP and delete parent folder after ZIP on server
+							using (var zip = new ZipFile())
+							{
+								//zip.UseZip64WhenSaving = Zip64Option.Always;
+								//zip.CompressionMethod = CompressionMethod.BZip2;
+								zip.AddDirectory(directoryPath);
+								zip.Save(zipfilePath);
+							}
+							if (System.IO.File.Exists(zipfilePath))
+							{
+								string fileZipName = Path.GetFileName(zipfilePath);
+								Directory.Delete(directoryPath, true);
+							}
+							FileInfo file = new FileInfo(zipfilePath);
+
+							// ZIP File upload on FTP server
+							CommonUtility.FTPFileUpload(zipfilePath, fileNameValue, ftpServer, ftpUsername, ftpPassword);
+
+							// Deleted ZIP on Server after uploaded on FTP server
+							System.IO.File.Delete(zipfilePath);
+							associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+							DateTime endTime = DateTime.Now;
+						}
+						catch (Exception ex)
+						{
+
+							associationReportLog.export_ended_on = DateTime.Now;
+							associationReportLog.status = "Error occurred while processing request";
+							associationReportLog = new BLAssociationReportLog().SaveAssociationReportLog(associationReportLog);
+							ErrorLogHelper.WriteErrorLog("DownloadAssociationEntityReportIntoCSV()", "Report", ex);
+							// delete folder after error generate
+							if (Directory.Exists(directoryPath).Equals(true))
+								Directory.Delete(directoryPath, true);
+						}
+
+					});
+
+				}
+				catch (Exception ex)
+				{
+
+					throw ex;
+				}
+			}
+
+		}
+
+		#endregion
 
 		#region BOM/BOQ Report
 
