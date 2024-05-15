@@ -4532,6 +4532,7 @@ namespace SmartInventoryServices.Controllers
                 MobileLayers.lstNetworkLayers = lstMobileNetworkLayers;
                 MobileLayers.lstLandBaseLayers = lstLandBaseLayers;
                 MobileLayers.lstWMSWMTSLayers = objBLLayer.GetWMSWMTSLayres(objNetworkLayersIn.User_Id, 0);
+                MobileLayers.lstGroupLibrary = new BLMisc().GetGroupLibrary(objNetworkLayersIn.User_Id);
                 response.status = StatusCodes.OK.ToString();
                 response.results = MobileLayers;
             }
