@@ -73,6 +73,7 @@ namespace SmartInventoryServices.Helper
         public List<NetworkLayers> lstNetworkLayers { get; set; }
         public List<landBaseLayres> lstLandBaseLayers { get; set; }
         public List<BusnessLayerforAPI> lstWMSWMTSLayers { get; set; }
+        public List<getGroupLibrary> lstGroupLibrary { get; set; }
     }
     public class NetworkLayers
     {
