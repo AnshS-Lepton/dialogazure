@@ -2997,6 +2997,7 @@ namespace Models
 		public string connectionString { get; set; }
 		public List<int> selected_route_id { get; set; }//int[]
 		public string selected_route_ids { get; set; }
+		public string purpose { get; set; }
 	}
 
 	public class AssociationEntitiesSummaryView

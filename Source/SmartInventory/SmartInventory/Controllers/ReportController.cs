@@ -4256,18 +4256,26 @@ namespace SmartInventory.Controllers
 			objAssociationEntitiesReport.objReportFilters.selected_route_ids = objAssociationEntitiesReport.selected_route_ids != null && objAssociationEntitiesReport.selected_route_ids.Count > 0 ? string.Join(",", objAssociationEntitiesReport.selected_route_ids.ToArray()) : "";
 			
 			var selectedLayers = objAssociationEntitiesReport.objReportFilters.SelectedLayerIds;
-			if (!string.IsNullOrEmpty(IsRequestFromInfo) && Convert.ToBoolean(IsRequestFromInfo))
-			{
+
 				objAssociationEntitiesReport.lstReportData = new BLLayer().GetAssociationReportSummary(objAssociationEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
-			}
+			
 			objAssociationEntitiesReport.objReportFilters.SelectedLayerIds = selectedLayers;
 			Session["AssociationReportFilter"] = objAssociationEntitiesReport.objReportFilters;
 
 			BindAssociationReportDropdown(ref objAssociationEntitiesReport);
 			Session["EntityAssociationSummaryData"] = objAssociationEntitiesReport;
 			DateTime endTime = DateTime.Now;
+			if(objAssociationEntitiesReport.objReportFilters.purpose == "" || objAssociationEntitiesReport.objReportFilters.purpose == null)
+            {
+				return PartialView("_EntityAssociationReport", objAssociationEntitiesReport);
 
-			return PartialView("_EntityAssociationReport", objAssociationEntitiesReport);
+			}
+            else
+            {
+				DownloadAssociationEntityReport(objAssociationEntitiesReport.objReportFilters.purpose, objAssociationEntitiesReport.objReportFilters.SelectedLayerIds, 0, 0, 0);
+				return PartialView("_EntityAssociationReport", objAssociationEntitiesReport);
+			}
+
 		}
 
 		public void BindAssociationReportDropdown(ref AssociationEntitiesReport objAssociationEntitiesReport)
@@ -4317,7 +4325,7 @@ namespace SmartInventory.Controllers
 			if (objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderId != null)
 				objAssociationEntitiesReport.lstBindPurposeCode = new BusinessLogics.Admin.BLProject().getPurposeDetailByWorkOrderIds(objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderId);
 			//for duration based on 
-			objAssociationEntitiesReport.lstDurationBasedOn = new BLMisc().GetDropDownList("", DropDownType.Export_Report.ToString());
+			objAssociationEntitiesReport.lstDurationBasedOn = new BLMisc().GetAssociationDropDownList("", DropDownType.Associatoin_Report.ToString());
 
 			//objExportEntitiesReport.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objAssociationEntitiesReport.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();

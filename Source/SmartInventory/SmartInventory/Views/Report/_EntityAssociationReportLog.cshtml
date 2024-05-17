@@ -58,11 +58,7 @@ grid.Column("user_name", "User Name", format: @<text>@item.user_name</text>),
 grid.Column("file_name", "File Name", format: @<text>@item.file_name</text>),
 grid.Column("file_type", "File Type", format: @<text>@item.file_type</text>),
 grid.Column("export_started_on", "Start On", format: @<text>@(item.export_started_on == null ? "-" : (item.export_started_on.ToString("dd-MMM-yy hh:mm:ss tt")))</text>),
-grid.Column("export_ended_on", "End On", format: @<text>@(item.export_ended_on == null ? "-" : (item.export_ended_on.ToString("dd-MMM-yy hh:mm:ss tt")))</text>),
-grid.Column("total_entity", "Total Entity", format: @<text>@item.total_entity</text>),
-grid.Column("planned", "Planned", format: @<text>@item.planned</text>),
-grid.Column("asbuilt", "AsBuilt", format: @<text>@item.asbuilt</text>),
-grid.Column("dormant", "Dormant", format: @<text>@item.dormant</text>)
+grid.Column("export_ended_on", "End On", format: @<text>@(item.export_ended_on == null ? "-" : (item.export_ended_on.ToString("dd-MMM-yy hh:mm:ss tt")))</text>)
 ))
 
                                     @Html.Hidden("dir", grid.SortDirection)

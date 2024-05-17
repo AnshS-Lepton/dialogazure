@@ -77,12 +77,14 @@
     </ul>
 </div>
 <div class="ExportReportbody">
-    @using (Ajax.BeginForm("EntityAssociationReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress",  }, new { id = "frmAssociationEntitiesSummaryData", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
-     {
+    @using (Ajax.BeginForm("EntityAssociationReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress", }, new { id = "frmAssociationEntitiesSummaryData", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
         @Html.HiddenFor(m => m.objReportFilters.geom)
         @Html.HiddenFor(m => m.objReportFilters.geomType)
         @Html.HiddenFor(m => m.objReportFilters.radius)
         @Html.HiddenFor(m => m.objReportFilters.SelectedParentUser, new { id = "hdnSelectedParentUsers" })
+        @Html.HiddenFor(m => m.objReportFilters.purpose, new { id = "purpose" })
+
         <input type="hidden" name="IsRequestFromInfo" value="true" />
         <div class="EEReport" id="divFilter">
             <div class="scrollDiv space-pad">
@@ -251,30 +253,27 @@
                 </div>
             </div>
             <div class="ModalFooter d-flex">
-                <button type="button" class="btn btn-default ml-auto" id="btnEntityAssociationClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
-                <button type="submit" class="btn btn-success ml-10" id="btnShowReportData">@Resources.Resources.SI_OSP_GBL_GBL_GBL_040</button>
+                <button type="button" class="btn btn-default ml-auto mr-05" id="btnEntityAssociationClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
 
-                @if (Model.lstReportData.Count > 0)
-                 {
-                    <div class="tablePad-bn d-flex mb-15">
-                        <div class="ml-auto">
-                            <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
-                            <div class="dropbox">
-                                @foreach (var item in Model.lstfiletypes)
-                                {
-                                    <span onclick="AssociationSummaryDetail('@item.file_type')">@item.file_display_name</span>
-                                }
-                            </div>
-                        </div>
-                        <div id="dvReportProgress1" class="progress utili-prog-bar" style="display:none;">
-                            <div class="progress-bar progress-bar-striped" style="width:70%;background-color: darkgreen;">@Resources.Resources.SI_OSP_GBL_NET_FRM_073</div>
+
+                <div class="d-flex">
+                    <div class="ml-auto">
+                        <button type="button" class="btn btn-success dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                        <div class="dropbox dropBottomPos">
+                            @foreach (var item in Model.lstfiletypes)
+                            {
+                                <span onclick="AssociationSummaryDetail('@item.file_type')">@item.file_display_name</span>
+                            }
                         </div>
                     </div>
-                 }
+                    <div id="dvReportProgress1" class="progress utili-prog-bar" style="display:none;">
+                        <div class="progress-bar progress-bar-striped" style="width:70%;background-color: darkgreen;">@Resources.Resources.SI_OSP_GBL_NET_FRM_073</div>
+                    </div>
+                </div>
 
             </div>
         </div>
-     }
+    }
 </div>
 
 <script src="~/Content/js/Utility.js"></script>
@@ -297,7 +296,7 @@
 
     $(document).ready(function () {
         $("#ddlFilterOwnershipType").attr('data-placeholder', "-All-").trigger("chosen:updated");
-       
+
         if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9) {
             $("#customedate").val(5).trigger("chosen:updated");
             onChangeCustomDate();
@@ -369,7 +368,7 @@
 
 
     function isValidReportFilter() {
-        
+
         if ($('#customedate option:selected').val() == 9) {
             return true;
         }
@@ -392,6 +391,7 @@
         if (isValidReportFilter()) {
             //SHOW SUMMARY TAB
             $("#divFilter").show();
+            document.getElementById("exportdrop").disabled = false;
             return true;
         }
         else {
@@ -497,21 +497,9 @@
     }
 
     function AssociationSummaryDetail(purpose) {
-        var TotalPlannedCount = parseInt(0);
-        var TotalAsBuiltCount = parseInt(0);
-        var TotalDormantCount = parseInt(0);
+        $("#purpose").val(purpose);
+        $("#frmAssociationEntitiesSummaryData").submit();
 
-        var entityids = "";
-        entityids = '@Model.objReportFilters.SelectedLayerIds';
-
-
-            $("#dvReportProgress1").show();
-            $('#dvReportProgress1').css('display', 'block');
-            setCookie('downloadStarted', 0, 3600); //Expiration could be anything... As long as we reset the value
-            setTimeout(checkDownloadCookie, 1000); //Initiate the loop to check the cookie.
-            si.AssociationEntityReportNewEnhancement(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount);
-            $(".dropfiles").trigger("click");
-            var mm = "";
     }
 
     var downloadTimeout;
