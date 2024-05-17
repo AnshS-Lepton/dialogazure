@@ -1385,7 +1385,7 @@ namespace DataAccess
                         p_culturename = Convert.ToString(currentLang),
                         p_radious = objReportFilter.radius,
                         p_route = objReportFilter.selected_route_ids
-                    }, true); ; ;
+                    }, true); 
                 return lst;
             }
             catch { throw; }

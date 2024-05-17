@@ -5034,7 +5034,7 @@ namespace SmartInventory.Controllers
 							objAssociationEntitiesReport.lstLayers = objAssociationEntitiesReport.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).ToList();
 					}
 
-					string parentFolder = $"ExportReport_{DateTimeHelper.Now.ToString("ddMMyyyy")}-{DateTimeHelper.Now.ToString("HHmmssfff")}_{userdetails.user_id}";
+					string parentFolder = $"AssociationReport_{DateTimeHelper.Now.ToString("ddMMyyyy")}-{DateTimeHelper.Now.ToString("HHmmssfff")}_{userdetails.user_id}";
 					string attachmentLocalPath = Path.Combine(ApplicationSettings.AttachmentLocalPath, ftpFolder);
 					string pathWithParentFolder = Path.Combine(attachmentLocalPath, parentFolder);
 					string directoryPath = Path.Combine(Server.MapPath(pathWithParentFolder));

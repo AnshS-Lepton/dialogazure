@@ -72,13 +72,13 @@
 <!DOCTYPE html>
 <input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
 <div class="exportReportHeader">
-    <ul id="ulRptTabs" class="tab">
-        <li id="liFilter" class="tablinks" onclick="SwitchReportTabs(this.id, 'divSummary')">@Resources.Resources.SI_OSP_GBL_NET_FRM_063</li>
+    <ul class="tab">
+        <li id="liFilter">@Resources.Resources.SI_OSP_GBL_NET_FRM_063</li>
     </ul>
 </div>
 <div class="ExportReportbody">
-    @using (Ajax.BeginForm("EntityAssociationReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress", OnSuccess = "switchToResultTab()" }, new { id = "frmAssociationEntitiesSummaryData", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
-    {
+    @using (Ajax.BeginForm("EntityAssociationReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress",  }, new { id = "frmAssociationEntitiesSummaryData", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+     {
         @Html.HiddenFor(m => m.objReportFilters.geom)
         @Html.HiddenFor(m => m.objReportFilters.geomType)
         @Html.HiddenFor(m => m.objReportFilters.radius)
@@ -253,8 +253,10 @@
             <div class="ModalFooter d-flex">
                 <button type="button" class="btn btn-default ml-auto" id="btnEntityAssociationClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
                 <button type="submit" class="btn btn-success ml-10" id="btnShowReportData">@Resources.Resources.SI_OSP_GBL_GBL_GBL_040</button>
+
                 @if (Model.lstReportData.Count > 0)
-                {
+                 {
+                    <div class="tablePad-bn d-flex mb-15">
                         <div class="ml-auto">
                             <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
                             <div class="dropbox">
@@ -264,13 +266,16 @@
                                 }
                             </div>
                         </div>
-                }
-
+                        <div id="dvReportProgress1" class="progress utili-prog-bar" style="display:none;">
+                            <div class="progress-bar progress-bar-striped" style="width:70%;background-color: darkgreen;">@Resources.Resources.SI_OSP_GBL_NET_FRM_073</div>
+                        </div>
+                    </div>
+                 }
 
             </div>
-        </div>       
-     }
         </div>
+     }
+</div>
 
 <script src="~/Content/js/Utility.js"></script>
 <script type="text/javascript">
@@ -285,19 +290,8 @@
             $('#ddl3rdPartyVendor').prop('disabled', false).trigger("chosen:updated");
         }
     }
-    function SwitchReportTabs(tabLinkId, tabDivId) {
-        if (tabDivId == "divSummary") {
-            if (isValidReportFilter()) {
-                $("#frmAssociationEntitiesSummaryData").submit();
-            }
-            else {
-                return;
-            }
-        }
-        else { $('.dropbox').css("display", "none"); $("#ddlRegions").focus(); }
-        $('.EEReport').not('#' + tabDivId).hide();
-        $('#' + tabDivId).show();
-    }
+
+
       $('.chosen-select').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
 
 
@@ -372,11 +366,7 @@
         ResetAssociationEntitesFilterValues();
     });
 
-    function switchToResultTab() {
-        //SHOW SUMMARY TAB
-        $("#divFilter").show();
 
-    }
 
     function isValidReportFilter() {
         
@@ -401,10 +391,7 @@
     $("#btnShowReportData").on("click", function () {
         if (isValidReportFilter()) {
             //SHOW SUMMARY TAB
-            $("#divFilter").hide();
-            $("#divSummary").show();
-            $("#liFilter").removeClass("activerpt");
-            $("#liSummary").addClass("activerpt");
+            $("#divFilter").show();
             return true;
         }
         else {
@@ -515,68 +502,16 @@
         var TotalDormantCount = parseInt(0);
 
         var entityids = "";
-        var chkAll = document.getElementById("checkallentity");
-        if (chkAll.checked == true) {
-            entityids = '@Model.objReportFilters.SelectedLayerIds';
-        }
-        else {
-            //Fetch all rows of the Table.
-            var rows = $("#tblSummaryAll input[type=checkbox]:not('#checkallentity'):checked"); //document.getElementById("tblSummaryAll").rows;
-            //Execute loop on all rows excluding the Header row.
-            for (var i = 0; i < rows.length; i++) {
-                entityids += entityids != "" ? ("," + rows[i].id) : rows[i].id;
-            }
-        }
-        if (chkAll.checked == false && entityids == "") {
-            alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_109);//"Please select at least 1 record!"
-        }
-        else {
-            if (purpose == "ALLEXCEL" || purpose == "KML" || purpose == "ALLCSV" || purpose == "DXF" || purpose == "ALLTXT" || purpose == "XML" || purpose == "ALLSHAPE") {
-                var SummaryTotal = parseInt(0);
+        entityids = '@Model.objReportFilters.SelectedLayerIds';
 
-                $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").each(function () {
-                    var row = $(this).closest('tr');
-                    var checkstatus = $(this).is(":checked")
-                   
-                    if (row.find(".tdplannedcount")[0] != undefined) {
-                        var plannedText = (row.find(".tdplannedcount")[0].innerText).replaceAll(',', '');
-                        if (!isNaN(plannedText) && row.find(".tdplannedcount")[0].innerText.length != 0 && checkstatus == true) {
-                            SummaryTotal += parseInt(plannedText);
-                            TotalPlannedCount += parseInt(plannedText);
-                        }
-                    }
-                    if (row.find(".tdasbuiltcount")[0] != undefined) {
-                        var asbuildText = (row.find(".tdasbuiltcount")[0].innerText).replaceAll(',', '');
-                        if (!isNaN(asbuildText) && row.find(".tdasbuiltcount")[0].innerText.length != 0 && checkstatus == true) {
-                            SummaryTotal += parseInt(asbuildText);
-                            TotalAsBuiltCount += parseInt(asbuildText);
-                        }
-                    }
-                    if (row.find(".tddormantcount")[0] != undefined) {
-                        var asdormantText = (row.find(".tddormantcount")[0].innerText).replaceAll(',', '');
-                        if (!isNaN(asdormantText) && row.find(".tddormantcount")[0].innerText.length != 0 && checkstatus == true) {
-                            SummaryTotal += parseInt(asdormantText);
-                            TotalDormantCount += parseInt(asdormantText);
-                        }
-                    }
-                })
 
-                var MaxRecord = $("#hdnExportReportMaxRecord").val();
-                if (SummaryTotal > parseInt(MaxRecord)) {
-                    alert($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_067, MaxRecord));
-                    $("#divSummary .dropfiles").trigger("click");
-                    return false;
-                }
-            }
             $("#dvReportProgress1").show();
             $('#dvReportProgress1').css('display', 'block');
             setCookie('downloadStarted', 0, 3600); //Expiration could be anything... As long as we reset the value
             setTimeout(checkDownloadCookie, 1000); //Initiate the loop to check the cookie.
             si.AssociationEntityReportNewEnhancement(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount);
-            $("#divSummary .dropfiles").trigger("click");
+            $(".dropfiles").trigger("click");
             var mm = "";
-
-        }
     }
 
     var downloadTimeout;

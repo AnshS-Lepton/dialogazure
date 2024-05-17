@@ -1,6 +1,6 @@
 ﻿@model Models.AssociationEntitiesSummaryView
 @{
-    WebGrid grid = new WebGrid(rowsPerPage: Model.objReportFilters.pageSize, canSort: true, ajaxUpdateContainerId: "dvExportViewReport", ajaxUpdateCallback: "onGridHeaderClickExportReport('tblExportViewReport')");
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objReportFilters.pageSize, canSort: true, ajaxUpdateContainerId: "dvAssociationViewReport", ajaxUpdateCallback: "onGridHeaderClickExportReport('tblAssociationViewReport')");
     grid.Bind(Model.lstReportData, autoSortAndPage: false, rowCount: Model.objReportFilters.totalRecord);
     if (Model.objReportFilters.totalRecord > 0)
     {
@@ -84,10 +84,10 @@
         <div class="clearfix"></div>
         if (Model.lstReportData.Count > 0)
         {
-            <div id="dvExportViewReport" class="tablePad--tn">
+            <div id="dvAssociationViewReport" class="tablePad--tn">
                 <div class="table-responsive">
                     @grid.GetHtml(tableStyle: "grid",
-            htmlAttributes: new { id = "tblExportViewReport" },
+            htmlAttributes: new { id = "tblAssociationViewReport" },
             mode: WebGridPagerModes.All,
             columns: Model.webColumns)
                     @Html.Hidden("dir", grid.SortDirection)
@@ -119,12 +119,12 @@
             $(".reportFilters").slideToggle();
         });
         $('.chosen-select').chosen();
-        addDefaultSortingIcons('tblExportViewReport');
+        addDefaultSortingIcons('tblAssociationViewReport');
         $('th a, tfoot a').on("click", function () {
             $('#frmExportViewReport').attr('action', $(this).attr('href')).submit();
             return false;
         });
-        onGridHeaderClickExportReport('tblExportViewReport');
+        onGridHeaderClickExportReport('tblAssociationViewReport');
     });
     function onGridHeaderClickExportReport(gridControlId) {
          
