@@ -1,6 +1,6 @@
 ﻿@model Models.AssociationEntitiesSummaryView
 @{
-    WebGrid grid = new WebGrid(rowsPerPage: Model.objReportFilters.pageSize, canSort: true, ajaxUpdateContainerId: "dvAssociationViewReport", ajaxUpdateCallback: "onGridHeaderClickExportReport('tblAssociationViewReport')");
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objReportFilters.pageSize, canSort: true, ajaxUpdateContainerId: "dvAssociationViewReport", ajaxUpdateCallback: "onGridHeaderClickAssociationReport('tblAssociationViewReport')");
     grid.Bind(Model.lstReportData, autoSortAndPage: false, rowCount: Model.objReportFilters.totalRecord);
     if (Model.objReportFilters.totalRecord > 0)
     {
@@ -40,19 +40,19 @@
                         <i class="glyphicon glyphicon-filter iconColor mr-03"></i>
                         @Resources.Resources.SI_OSP_GBL_NET_GBL_052
                     </button>
-                    <button type="button" class="btn btn-default ml-10 @(Model.lstReportData.Count==0?"btnNotAllowed":"")" id="btnExportReport">
+                    <button type="button" class="btn btn-default ml-10 @(Model.lstReportData.Count==0?"btnNotAllowed":"")" id="btnAssociationReport">
                         @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010
                         <i class="fa fa-chevron-down" aria-hidden="true"></i>
                     </button>
                     <div class="exportOptions">
                         <span class="roledisabled " title="Temporarily unavailable. ">@Resources.Resources.SI_GBL_GBL_NET_FRM_042</span>
                         @*<span onclick="ExportViewReport('EXCEL')">@Resources.Resources.SI_GBL_GBL_NET_FRM_042</span>*@
-        <span onclick="ExportViewReport('CSV')">@Resources.Resources.SI_OSP_GBL_GBL_GBL_261</span>
-        <span onclick="ExportViewReport('KML')">@Resources.Resources.SI_OSP_GBL_NET_GBL_007</span>
-        <span onclick="ExportViewReport('SHAPE')">@Resources.Resources.SI_GBL_GBL_GBL_GBL_111</span>
-                        <span onclick="ExportViewReport('DXF')">@Resources.Resources.SI_OSP_GBL_GBL_GBL_264</span>
-                        <span onclick="ExportViewReport('BARCODEEXCEL')" style="display:@(displayBarCodeAction)">@Resources.Resources.SI_GBL_GBL_GBL_GBL_112</span>
-                        <span onclick="ExportViewReport('BARCODEPDF')" style="display:@(displayBarCodeAction)">@Resources.Resources.SI_GBL_GBL_GBL_GBL_113</span>
+        <span onclick="AssociationViewReport('CSV')">@Resources.Resources.SI_OSP_GBL_GBL_GBL_261</span>
+        <span onclick="AssociationViewReport('KML')">@Resources.Resources.SI_OSP_GBL_NET_GBL_007</span>
+        <span onclick="AssociationViewReport('SHAPE')">@Resources.Resources.SI_GBL_GBL_GBL_GBL_111</span>
+                        <span onclick="AssociationViewReport('DXF')">@Resources.Resources.SI_OSP_GBL_GBL_GBL_264</span>
+                        <span onclick="AssociationViewReport('BARCODEEXCEL')" style="display:@(displayBarCodeAction)">@Resources.Resources.SI_GBL_GBL_GBL_GBL_112</span>
+                        <span onclick="AssociationViewReport('BARCODEPDF')" style="display:@(displayBarCodeAction)">@Resources.Resources.SI_GBL_GBL_GBL_GBL_113</span>
                     </div>
                     <div class="rowbox reportFilters">
                         <div class="modal-header d-flex">
@@ -111,9 +111,9 @@
         $(".btnAdvanceFilter").on("click", function () {
             $(".reportFilters").slideToggle();
         });
-        $('#btnExportReport').on("click", function () {
+        $('#btnAssociationReport').on("click", function () {
             $(".exportOptions").slideToggle();
-            $('#btnExportReport>i').toggleClass('fa-chevron-down').toggleClass('fa-chevron-up');
+            $('#btnAssociationReport>i').toggleClass('fa-chevron-down').toggleClass('fa-chevron-up');
         });
         $("#btnApplyAdvanceFilters").on("click", function () {
             $(".reportFilters").slideToggle();
@@ -121,12 +121,12 @@
         $('.chosen-select').chosen();
         addDefaultSortingIcons('tblAssociationViewReport');
         $('th a, tfoot a').on("click", function () {
-            $('#frmExportViewReport').attr('action', $(this).attr('href')).submit();
+            $('#frmAssociationViewReport').attr('action', $(this).attr('href')).submit();
             return false;
         });
-        onGridHeaderClickExportReport('tblAssociationViewReport');
+        onGridHeaderClickAssociationReport('tblAssociationViewReport');
     });
-    function onGridHeaderClickExportReport(gridControlId) {
+    function onGridHeaderClickAssociationReport(gridControlId) {
          
         $('#' + gridControlId + ' tr th').addClass('bothorder');
         var dir = $('#dir').val(); //direction value
@@ -224,7 +224,7 @@
     //    $(".exportOptions").slideToggle();
     //    $('#btnExportReport>i').addClass('fa-chevron-down').removeClass('fa-chevron-up');
    // }
-    function ExportViewReport(purpose) {
+    function AssociationViewReport(purpose) {
         var SummaryTotal = (isNaN(parseFloat($("#htntotalRecordGrd").val())) == false ? parseFloat($("#htntotalRecordGrd").val()) :0);
         var MaxRecord = (isNaN(parseFloat($("#hdnExportReportMaxRecord").val())) == false ? parseFloat($("#hdnExportReportMaxRecord").val()) : 0);
         if (SummaryTotal > MaxRecord) {
@@ -234,9 +234,9 @@
         else {
             setCookie('downloadStarted', 0, 3600); //Expiration could be anything... As long as we reset the value
             setTimeout(checkDownloadCookie, 1000); //Initiate the loop to check the cookie.
-            si.ExportSummaryView(purpose);
+            si.AssociationSummaryView(purpose);
             $(".exportOptions").slideToggle();
-            $('#btnExportReport>i').addClass('fa-chevron-down').removeClass('fa-chevron-up');
+            $('#btnAssociationReport>i').addClass('fa-chevron-down').removeClass('fa-chevron-up');
         }
     }
     function clearAdvanceFilters() {
