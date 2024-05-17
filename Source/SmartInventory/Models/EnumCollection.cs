@@ -199,7 +199,7 @@ namespace Models
         Customer_Type,
         Customer_Service_Type,
         Export_Report,
-        Associatoin_Report,
+        Association_Report,
         LMC_TYPE,
         SITE_TYPE,
         Structure_Type,

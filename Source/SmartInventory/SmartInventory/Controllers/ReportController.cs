@@ -4325,7 +4325,7 @@ namespace SmartInventory.Controllers
 			if (objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderId != null)
 				objAssociationEntitiesReport.lstBindPurposeCode = new BusinessLogics.Admin.BLProject().getPurposeDetailByWorkOrderIds(objAssociationEntitiesReport.objReportFilters.SelectedWorkOrderId);
 			//for duration based on 
-			objAssociationEntitiesReport.lstDurationBasedOn = new BLMisc().GetAssociationDropDownList("", DropDownType.Associatoin_Report.ToString());
+			objAssociationEntitiesReport.lstDurationBasedOn = new BLMisc().GetAssociationDropDownList("", DropDownType.Association_Report.ToString());
 
 			//objExportEntitiesReport.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objAssociationEntitiesReport.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
