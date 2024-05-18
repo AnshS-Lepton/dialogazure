@@ -237,6 +237,12 @@
                         <div class="form-group row">
                             @AcquireFrom()
                         </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtRouteName">Route Name:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id + " - (" + x.entity_network_id + ")" }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
+                            </div>
+                        </div>
                         <div>@AdditionalFields()</div>
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
@@ -301,6 +307,8 @@
             st.getTrayInfo('@Model.system_id', '@EntityType.FDB.ToString()');
         }
         callFormValidator("frmAddFDB");
+          var selectedRouteIds = '@string.Join(",", Model.selected_route_ids.ToList().Select(n => n.ToString()).ToArray())';
+ $("#txtrouteInfo").val(selectedRouteIds.split(',')).trigger("chosen:updated");
         $('.chosen-select').chosen({ width: '100%' });
         //APPLY INPUT MASK ON NETWORK ID..
         getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
