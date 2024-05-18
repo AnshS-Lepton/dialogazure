@@ -644,6 +644,9 @@ namespace DataAccess.DBContext
             modelBuilder.Entity<ViewSpecificationServiceList>().ToTable("item_template_service_master", dbschema);
             modelBuilder.Entity<CDBAttribute>().ToTable("att_details_cable_cdb", dbschema);
             modelBuilder.Entity<TempCDBAttributes>().ToTable("temp_du_att_details_cable_cdb", dbschema);
+            //modelBuilder.Entity<FE_Tools>().ToTable("user_fe_tool_mapping1", dbschema);
+            modelBuilder.Entity<FETOOLS_Attachment>().ToTable("fe_tools_attachement", dbschema);
+
         }
 
     }

@@ -1945,6 +1945,10 @@
     <Content Include="Areas\Admin\Views\OTPAuthenticationSettings\EmailTemplateConfiguration.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\ViewSpecificationServices.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\SpecificationService.cshtml" />
+    <Content Include="Areas\Admin\Views\User\Viewfetools.cshtml" />
+    <Content Include="Areas\Admin\Views\User\AddFEtools.cshtml" />
+    <Content Include="Areas\Admin\Views\FeTools\AddFEtools.cshtml" />
+    <Content Include="Areas\Admin\Views\FeTools\Viewfetools.cshtml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
@@ -2346,6 +2350,7 @@
     <Compile Include="Areas\Admin\Controllers\DynamicFormController.cs" />
     <Compile Include="Areas\Admin\Controllers\DynamicThemeController.cs" />
     <Compile Include="Areas\Admin\Controllers\EmailSettingsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\FeToolsController.cs" />
     <Compile Include="Areas\Admin\Controllers\LongRunningQueriesController.cs" />
     <Compile Include="Areas\Admin\Controllers\OrthoImageLayerController.cs" />
     <Compile Include="Areas\Admin\Controllers\ConfigurationSettingsController.cs" />

@@ -158,6 +158,7 @@
     <Compile Include="DADataProcessing.cs" />
     <Compile Include="DADeviceSearch.cs" />
     <Compile Include="DADsa.cs" />
+    <Compile Include="DAFetools_Attachement.cs" />
     <Compile Include="DAGipipe.cs" />
     <Compile Include="DADuct.cs" />
     <Compile Include="DADynamicAttributes.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="DATrench.cs" />
     <Compile Include="DAUser.cs" />
     <Compile Include="DAWorkSpace.cs" />
+    <Compile Include="DA_Fee_tools.cs" />
     <Compile Include="DBContext\MainContext.cs" />
     <Compile Include="DBHelpers\ProcHelper.cs" />
     <Compile Include="DLProcess.cs" />

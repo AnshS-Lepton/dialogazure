@@ -174,6 +174,17 @@ namespace BusinessLogics
             return new DAUser().GetAllRole(role_id, user_id);
 
         }
+        public List<KeyValueDropDown> GetUsernameDetails()
+        {
+            return new DAUser().GetUsernameDetails( );
+
+        }
+        public List<KeyValueDropDown> GetUsernameDetails(int id)
+        {
+            return new DAUser().GetUsernameDetails(id);
+
+        }
+
 
 
         #region sapna
@@ -185,6 +196,16 @@ namespace BusinessLogics
         public List<KeyValueDropDown> BindFETool( int user_id)
         {
             return new DAUser().BindFETool(user_id);
+        }
+        public List<KeyValueDropDown> BindFETooldropdown(int user_id)
+        {
+            return new DAUser().BindFETooldropdown(user_id);
+        }
+        
+
+        public List<KeyValueDropDown> BindFETool()
+        {
+            return new DAUser().BindFETool();
         }
         #endregion
         public List<KeyValueDropDown> BindWarehouseCode()
@@ -223,6 +244,7 @@ namespace BusinessLogics
         {
             return new DAUser().GetUserList(objGridAttributes, role_id, user_id);
         }
+        
         public List<User> GetUsersListByMGRIds(List<int> mgrIds)
         {
             return new DAUser().GetUsersListByMGRIds(mgrIds);

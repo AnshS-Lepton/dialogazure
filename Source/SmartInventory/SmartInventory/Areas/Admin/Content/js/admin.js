@@ -450,6 +450,10 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
         CheckUserRole();
     });
 
+  
+
+
+
     $("#ddl_UserReportingManager").on('change', function () {
         CheckReportingManager();
     });
@@ -474,7 +478,8 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
             $('#ddl_UserRole_chosen').css({ "border": "1px solid #ced4da", "border-radius": "0.25rem" });
             return true;
         }
-    };
+    }; 
+ 
     
     function CheckReportingManager() {
         if ($("#ddl_UserReportingManager").val() == null || $("#ddl_UserReportingManager").val() == "") {
@@ -3825,6 +3830,13 @@ function AddLayerGroups(_group_id) {
     popup.LoadModalDialog('LayerSettings/AddLayerGroups', { group_id: _group_id }, 'Add Layer Group', 'modal-md');
 }
 
+function Addfeetool(_group_id) {
+    
+
+    popup.LoadModalDialog('FeTools/AddFEtools', { group_id: _group_id }, 'Add FE Tools', 'modal-md');
+}
+
+
 function AddLayerStyleMaster(_layer_id,_id, _layer_name, _entity_category) {
     if (_entity_category !='') {
         _entity_category = '('+_entity_category+')';
@@ -4795,7 +4807,92 @@ $(document).ready(function () {
         $("#ddlroles").val(multi_reporting_role_ids.split(',')).trigger("chosen:updated");
     }
 });
+//---------------------fetools  start
+function Deletefetool(id) {
 
+    confirm("Are you sure you want to delete this Fe Name Record?", function () {
+        ajaxReq('FeTools/DeleteFettolsSpecification', { id: id }, false, function (resp) {
+            if (resp.status == "OK") {
+                $("#frmViewfetools").submit();
+                alert('Fe Name deleted successfully.');
+            }
+            else
+                alert(resp.message);
+        }, true, true);
+    });
+}
+
+
+
+function handleFileChange() {
+
+    uploadFEImagedownload();
+    upload_fetools_document();
+}
+function uploadFEImagedownload() {
+
+    var frmData = new FormData();
+    var uploadedfile = $('#fuImgUpload12')[0].files;
+    if (uploadedfile.length > 0) {
+        for (var i = 0; i < uploadedfile.length; i++) {
+            frmData.append('images[]', uploadedfile[i]);
+            
+        }
+        frmData.append('document_type', 'Image');
+
+        ajaxReqforFileUpload('FeTools/UploadFTEImage', frmData, true, function (resp) {
+            if (resp.status == "OK") {
+                //$('#closeModalPopup').trigger("click");
+                //app.getElementImages();
+                //console.log("MSG true:" + resp.message);
+                //alert(resp.message);
+            }
+            else {
+                console.log("MSG false:" + resp.message);
+
+                alert(resp.message);
+            }
+        }, true);
+
+    }
+    //else {
+    //    alert(MultilingualKey.SI_OSP_GBL_GBL_GBL_099);
+    //    return false;
+    //}
+}
+function upload_fetools_document() {
+
+    var frmData = new FormData();
+    var uploadedfile = $('#fuAttachmentUploadfetools')[0].files;
+    if (uploadedfile.length > 0) {
+        for (var i = 0; i < uploadedfile.length; i++) {
+            frmData.append('images[]', uploadedfile[i]);
+            
+        }
+        frmData.append('document_type', 'Image');
+        ajaxReqforFileUpload('FeTools/UploadFTEDocument', frmData, true, function (resp) {
+            if (resp.status == "OK") {
+                //$('#closeModalPopup').trigger("click");
+                //app.getElementImages();
+                //console.log("MSG true:" + resp.message);
+                //alert(resp.message);
+            }
+            else {
+                // console.log("MSG false:" + resp.message);
+
+                alert(resp.message);
+            }
+        }, true);
+
+
+
+    }
+    //else {
+    //    alert(MultilingualKey.SI_OSP_GBL_GBL_GBL_099);
+    //    return false;
+    //}
+}
+//---------------------fetools  end
 
 
 //-------------------------------End-----------------------------------------------------------------------------------------------------------------------

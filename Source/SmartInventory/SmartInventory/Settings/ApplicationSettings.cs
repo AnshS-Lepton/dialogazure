@@ -74,6 +74,7 @@ namespace SmartInventory.Settings
         public static int DefaultFloorLength = 0;
         public static int DefaultFloorWidth = 0;
         public static string validDocumentTypes = "";
+        public static string validDocumentTypesFetools = "";
         public static string validImageTypes = "";
         public static int ConnectionPathFinderGridPaging = 0;
         public static string validationNotForRFS_Status = "";
@@ -325,6 +326,11 @@ namespace SmartInventory.Settings
                 {
                     validDocumentTypes = objSetting.value;
                 }
+                if (objSetting.key == "validDocumentTypesFetools")
+                {
+                    validDocumentTypesFetools = objSetting.value;
+                }
+                
                 if (objSetting.key == "validImageTypes")
                 {
                     validImageTypes = objSetting.value;
