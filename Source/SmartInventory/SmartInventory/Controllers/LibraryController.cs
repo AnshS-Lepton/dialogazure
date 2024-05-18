@@ -7878,7 +7878,8 @@ namespace SmartInventory.Controllers
 			objLib.lstBindPlanningCode = new BLProject().getPlanningDetailByIdList(Convert.ToInt32(objLib.project_id ?? 0));
 			objLib.lstBindWorkorderCode = new BLProject().getWorkorderDetailByIdList(Convert.ToInt32(objLib.planning_id ?? 0));
 			objLib.lstBindPurposeCode = new BLProject().getPurposeDetailByIdList(Convert.ToInt32(objLib.workorder_id ?? 0));
-		}
+            objLib.lstRouteInfo = new BLLayer().getRouteInfo("0");
+        }
 
 		private void fillCableDetails(dynamic objLib)
 		{
