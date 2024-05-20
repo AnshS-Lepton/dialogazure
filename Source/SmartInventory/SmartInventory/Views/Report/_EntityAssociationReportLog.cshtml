@@ -1,0 +1,136 @@
+﻿@model Models.AssociationReportLogVM
+@using SmartInventory.Settings;
+@using Utility
+
+<style>
+    .main-table > tbody > tr > th {
+        border: 0px solid #ddd;
+    }
+</style>
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "divPrintLog", ajaxUpdateCallback: "onGridHeaderClick('tblPrintLog')");
+    grid.Bind(Model.ExportLog, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+    if (Model.objGridAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+    }
+}
+
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+@using (Ajax.BeginForm("EntityAssociationReportLog", "Report", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "dvModalBody",
+},
+   new { id = "frmAssociationLog", autocomplete = "off", @class = "form-horizontal" }))
+{
+    <div class="PrintMapBody">
+        <div class="printRpt" id="ExportLog">
+            <div class="scrollDiv table-scroll">
+                <div class="form-group">
+                    @if (Model.ExportLog.Count > 0)
+                    {<div class="space-pad">
+                            <div id="divPrintLog">
+                                <div class="d-flex mb-15 --gap10">
+                                    <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b>
+                                    <button type="button" class="btn btn-default ml-auto" onclick="si.EntityAssreport.EntityAssociationReportLog(null, null, null, this)">Refresh</button>
+                                </div>
+                                <div class="table-responsive print-maxH">
+                                    @grid.GetHtml(tableStyle: "stickyTh",
+                                                 htmlAttributes: new { id = "tblAssociationReportLog" },
+                                                 mode: WebGridPagerModes.All,
+                                                 columns: grid.Columns(
+        grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>@if (!string.IsNullOrEmpty(item.status) && item.status.ToUpper() == "SUCCESS")
+         {
+        <span>
+            <a title="Download" style="font-size: 16px;" href="@Url.Action("DownloadFileFromFTP", "Report",new { filePath = item.file_location,fileExtension = item.file_extension })" target="_self">
+                <i class="fa fa-download"></i>
+            </a>
+        </span>
+
+}
+        </text>),
+
+
+grid.Column("status", "Status", format: @<text>@item.status</text>),
+grid.Column("user_name", "User Name", format: @<text>@item.user_name</text>),
+grid.Column("file_name", "File Name", format: @<text>@item.file_name</text>),
+grid.Column("file_type", "File Type", format: @<text>@item.file_type</text>),
+grid.Column("export_started_on", "Start On", format: @<text>@(item.export_started_on == null ? "-" : (item.export_started_on.ToString("dd-MMM-yy hh:mm:ss tt")))</text>),
+grid.Column("export_ended_on", "End On", format: @<text>@(item.export_ended_on == null ? "-" : (item.export_ended_on.ToString("dd-MMM-yy hh:mm:ss tt")))</text>)
+))
+
+                                    @Html.Hidden("dir", grid.SortDirection)
+                                    @Html.Hidden("col", grid.SortColumn)
+
+                                </div>
+                            </div>
+
+                            <span class="mt-1rem d-fx">
+                                <span class="red-font">*</span>
+                                @String.Format(Resources.Resources.SI_OSP_PM_NET_FRM_042, @ApplicationSettings.PrintLogTimeInterval)
+                            </span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="nr-found">
+                            <span> @Resources.Resources.SI_OSP_PM_NET_FRM_041</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $("#btnSearchClear").on("click", function () {
+            $("#txtSearchText").val("");
+            $("#btnPrintLogSearch").trigger("click");
+        });
+        if (@Model.ExportLog.Count > 0) {
+            addDefaultSortingIcons("tblPrintLog");
+            onGridHeaderClick('tblPrintLog');
+            updateNumberstoFormatedNumber();
+            UpdateFormattedNumbers();
+        }
+
+    });
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+
+    function UpdateFormattedNumbers() {
+        // Get the table element
+        const table = document.getElementById('tblExportReportLog');
+
+        // Loop through the rows
+        for (let rowIndex = 0; rowIndex < table.rows.length; rowIndex++) {
+            const row = table.rows[rowIndex];
+
+
+            // Loop through the cells in the row
+            for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
+                const cell = row.cells[cellIndex];
+
+                // Extract data from the cell
+                const cellData = cell.textContent.trim();
+
+                // Do something with the cell data
+                console.log(`Data in Row ${rowIndex + 1}, Column ${cellIndex + 1}: ${cellData}`);
+                if ($.isNumeric(cellData) && cellIndex != 2)
+                    row.cells[cellIndex].textContent = getFormattedNumber(cellData);
+            }
+        }
+    }
+</script>
+
+

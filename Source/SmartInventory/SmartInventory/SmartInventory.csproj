@@ -2327,6 +2327,9 @@
     <Content Include="Views\Library\_CDBAttributes.cshtml" />
     <Content Include="Views\ISP\_AddDuctTP.cshtml" />
     <Content Include="Views\ISP\_AddISPDuct.cshtml" />
+    <Content Include="Views\Report\_EntityAssociationReport.cshtml" />
+    <Content Include="Views\Report\_EntityAssociationReportLog.cshtml" />
+    <Content Include="Views\Report\_EntityAssociationSummaryView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

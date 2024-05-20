@@ -19624,6 +19624,7 @@ var Main = function () {
 
         window.location = appRoot + 'Report/DownloadEntityReportNew?fileType=' + _fileType + '&entityids=' + entityids;
     }
+
     this.ExportEntityReportNewEnhancement = function (_fileType, entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount) {
 
         //window.open(appRoot + 'Report/DownloadEntityReportNew?fileType=' + _fileType + '&entityids=' + entityids + '&totalPlannedCount=' + totalPlannedCount + '&totalAsBuiltCount=' + totalAsBuiltCount + '&totalDormantCount=' + totalDormantCount, '_blank');
@@ -19646,6 +19647,7 @@ var Main = function () {
 
         //window.location = appRoot + 'Report/DownloadEntityReportNew?fileType=' + _fileType + '&entityids=' + entityids + '&totalPlannedCount=' + totalPlannedCount + '&totalAsBuiltCount=' + totalAsBuiltCount + '&totalDormantCount=' + totalDormantCount;
     }
+
     this.ExportSummaryView = function (_fileType) {
 
         ajaxReq('Report/DownloadEntitySummaryView', {
@@ -19654,7 +19656,6 @@ var Main = function () {
             alert(obj.message);
         });
     }
-
 
     this.ResetExportEntitesFilterValue = function () {
         $('#ddlLayers').val(0).trigger("chosen:updated");
@@ -25567,6 +25568,229 @@ var Main = function () {
             si.Entityreport.EntityExportReport(lnglat, selectionType, circleRadius);
         }
     }
+
+    this.EntityAssreport = {
+        showMenu: function (divObj) {
+            app.addRemoveActiveClass(divObj);
+            app.showhideChildMenu('#ExportReportToolBar', '.childtoolbar');
+        },
+        EntityAssociationReport: function (geom, modeType, radius, obj) {
+            if (obj) {
+                $('#MainReportToolBar .iconBaricomoon').find(".activeToolBar").removeClass('activeToolBar');
+                //if ($(obj).hasClass('activeToolBar')) { $(obj).removeClass('activeToolBar'); } else { $('#ExportReportToolBar >.iconBaricomoon >a').removeClass('activeToolBar'); $(obj).addClass('activeToolBar'); }
+
+            }
+            if (geom != '' && geom != null) {
+                ajaxReq('Report/ValidatePotentialArea', {
+                    geom: geom, geomType: modeType, buff_Radius: radius
+                }, true, function (resp) {
+                    if (resp.status == 'FAILED' || resp.status == 'ERROR') {
+                        alert(resp.message);
+                        return false;
+                    }
+                    else {
+                        popup.LoadModalDialog('PARENT', 'Report/EntityAssociationReport', {
+                            'objReportFilters.geom': geom, 'objReportFilters.geomType': modeType, 'objReportFilters.radius': radius, 'objReportFilters.layerName': ''
+                        }, "Association Report", 'modal-md-new');
+                    }
+                }, true, true, true);
+            }
+            else {
+                popup.LoadModalDialog('PARENT', 'Report/EntityAssociationReport', {
+                    eType: ''
+                }, "Association Report", 'modal-md-new');
+            }
+        },
+
+        EntityAssociationReportLog: function (geom, modeType, radius, obj) {
+            si.resetShapeTools();
+            popup.LoadModalDialog('PARENT', 'Report/EntityAssociationReportLog', {
+                eType: ''
+            }, "Association Report Log", 'modal-lg');
+        },
+
+        initiateDrawingsAssociationReport: function (obj, shapeFlag) {
+            if (si.PointentityOBJ.length > 0) {
+                for (var k = 0; k < si.PointentityOBJ.length; k++) {
+                    si.PointentityOBJ[k].setMap(null);
+                }
+                app.PointentityOBJ = [];
+            }
+            $(app.DE.SplicingDiv).hide();
+            si.resetShapeTools();
+            $('#MainReportToolBar').find(".activeToolBar").removeClass('activeToolBar');
+            if ($(obj).hasClass('activeToolBar')) { $(obj).removeClass('activeToolBar'); } else { $('#AssociationReportToolBar >.iconBaricomoon >a').removeClass('activeToolBar'); $(obj).addClass('activeToolBar'); }
+            if (si.gMapObj.shapeObj)
+                si.gMapObj.shapeObj.setMap(null);
+            si.removeEventListnrs('click');
+            si.gMapObj.shapeType = shapeFlag;
+            si.gMapObj.purposeType = "AssociationReport";
+            si.gMapObj.shapeArr = [];
+
+            google.maps.event.addListener(si.map, 'click', app.EntityAssreport.handleShapeAssociationReportEvents);
+        },
+
+        handleShapeAssociationReportEvents: function (eventParam) {
+            if (si.gMapObj.shapeObj)
+                si.gMapObj.shapeObj.setMap(null);
+            switch (si.gMapObj.shapeType) {
+                case 'Polygon':
+                    si.gMapObj.shapeArr.push(eventParam.latLng);
+                    si.gMapObj.shapeObj = new google.maps.Polygon({
+                        paths: si.gMapObj.shapeArr,
+                        strokeColor: '#FF8800',
+                        strokeOpacity: 0.6,
+                        strokeWeight: 2,
+                        fillColor: '#FF8800',
+                        fillOpacity: 0.35,
+                        zIndex: 1,
+                        editable: true,
+                        draggable: true
+                    });
+                    google.maps.event.addListener(si.gMapObj.shapeObj, 'mouseup', calculateArea);
+                    google.maps.event.addListener(si.gMapObj.shapeObj, 'rightclick', function (event) {
+                        if (event.vertex == undefined) {
+                            return;
+                        } else {
+                            removeVertex(si.gMapObj.shapeObj, event.vertex);
+                        }
+                    });
+
+                    google.maps.event.addListener(si.gMapObj.shapeObj.getPath(), 'set_at', function (indx) {
+                        var newPath = si.gMapObj.shapeObj.getPath();
+                        si.gMapObj.shapeArr = newPath.getArray();
+                    });
+
+                    google.maps.event.addListener(si.gMapObj.shapeObj.getPath(), 'insert_at', function (indx) {
+                        var newPath = si.gMapObj.shapeObj.getPath();
+                        si.gMapObj.shapeArr = newPath.getArray();
+                    });
+                    break;
+                case 'Rectangle':
+                    si.gMapObj.shapeArr.push(eventParam.latLng);
+                    var rectBound = validateBounds();
+                    si.gMapObj.shapeObj = new google.maps.Rectangle({
+                        strokeColor: '#FF8800',
+                        strokeOpacity: 0.6,
+                        strokeWeight: 2,
+                        fillColor: '#FF8800',
+                        fillOpacity: 0.35,
+                        editable: true,
+                        draggable: true,
+                        bounds: rectBound
+                    });
+                    google.maps.event.addListener(si.gMapObj.shapeObj, 'bounds_changed', calculateArea);
+
+                    break;
+                case 'Circle':
+                    si.gMapObj.shapeArr = [];
+                    si.gMapObj.shapeObj = new google.maps.Circle({
+                        strokeColor: '#FF8800',
+                        strokeOpacity: 0.6,
+                        strokeWeight: 2,
+                        fillColor: '#FF8800',
+                        fillOpacity: 0.35,
+                        center: eventParam.latLng, //new google.maps.LatLng(34.052234, -118.243684),   //event.latLng,     //circlArry[0],
+                        radius: 200,
+                        editable: true,
+                        draggable: true
+                    });
+                    google.maps.event.addListener(si.gMapObj.shapeObj, 'radius_changed', calculateArea);
+                    google.maps.event.addListener(si.gMapObj.shapeObj, 'rightclick', function (event) {
+                        if (event.vertex == undefined) {
+                            return;
+                        } else {
+                            removeVertex(si.gMapObj.shapeObj, event.vertex);
+                        }
+                    });
+
+                    break;
+                case 'PolyLine':
+
+                    si.gMapObj.shapeArr.push(eventParam.latLng);
+                    si.gMapObj.shapeObj = new google.maps.Polyline({
+                        path: si.gMapObj.shapeArr,
+                        strokeColor: '#FF8800',
+                        strokeOpacity: 1,
+                        strokeWeight: 2,
+                        draggable: true
+
+                    });
+
+                    google.maps.event.addListener(si.gMapObj.RulerLine, 'click', function (event) {
+                        addPolyPoint
+                    });
+
+                    si.gMapObj.RulerFlag = true;
+                    break;
+            }
+            if (eventParam != 'PolyLine') {
+                calculateArea();
+                google.maps.event.addListener(si.gMapObj.shapeObj, 'click', app.Entityreport.shapeClickInfoExportReport);
+            }
+            si.gMapObj.shapeObj.setMap(si.map);
+        },
+
+        shapeClickInfoAssociationReport: function () {
+
+            switch (si.gMapObj.shapeType) {
+                case 'Polygon':
+                    app.EntityAssreport.showAssociationReportDetail(si.gMapObj.shapeObj.getPath().getArray(), 'polygon', si.gMapObj.purposeType);
+                    break;
+                case 'Rectangle':
+                    app.EntityAssreport.showAssociationReportDetail(getRectanglePath(si.gMapObj.shapeObj), 'polygon', si.gMapObj.purposeType);
+                    break;
+                case 'Circle':
+                    //getCirclePotential('circle', si.gMapObj.purposeType);
+                    app.EntityAssreport.getCircleAssociationReport('circle', si.gMapObj.purposeType);
+                    break;
+            }
+        },
+
+        showAssociationReportDetail: function (latLongArr, selectionType, purposeType) {
+            var longLatArr = '';
+            if (latLongArr.length > 0) {
+                for (i = 0; i < latLongArr.length; i++) {
+                    longLatArr += (longLatArr == '' ? '' : ',') + latLongArr[i].lng() + ' ' + latLongArr[i].lat();
+                }
+                longLatArr += (longLatArr == '' ? '' : ',') + latLongArr[0].lng() + ' ' + latLongArr[0].lat();
+                si.EntityAssreport.EntityAssociationReport(longLatArr, selectionType);
+            }
+        },
+
+        getCircleAssociationReport: function (selectionType) {
+            var lnglat = si.gMapObj.shapeObj.getCenter().lng() + ' ' + si.gMapObj.shapeObj.getCenter().lat();
+            var circleRadius = si.gMapObj.shapeObj.getRadius();
+
+            si.BulkProcessInfo.geom = lnglat;
+            si.BulkProcessInfo.selection_type = selectionType;
+            si.BulkProcessInfo.buff_Radius = circleRadius;
+            si.BulkProcessInfo.ntk_type = 'P';
+            si.EntityAssreport.EntityAssociationReport(lnglat, selectionType, circleRadius);
+        }
+
+    }
+
+    this.AssociationEntitySummaryView = function (_eType) {
+        popup.LoadModalDialog('CHILD', 'Report/AssociationSummaryView', {
+            'objReportFilters.layerName': _eType
+        }, "View Report", 'modal-xl');
+    }
+
+    this.AssociationEntityReportNewEnhancement = function (_fileType, entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount) {
+
+        ajaxReq('Report/DownloadAssociationEntityReport', {
+            fileType: _fileType,
+            entityids: entityids,
+            totalPlannedCount: totalPlannedCount,
+            totalAsBuiltCount: totalAsBuiltCount,
+            totalDormantCount: totalDormantCount
+        }, false, function (obj) {
+            alert(obj.message);
+
+        });
+    }
+
     this.initiateDrawingsPrintMap = function (obj, shapeFlag) {
         si.resetShapeTools();
         $('#PrintMapToolBar').find('.activeToolBar').removeClass('activeToolBar');
@@ -25863,7 +26087,6 @@ var Main = function () {
         }
     }
 
-
     this.mapReport = {
         clearSelection: function () {
             let $printMap = $('#printMapReport');
@@ -26156,13 +26379,6 @@ var Main = function () {
     }
 
     this.SiteInfo = {
-        //addSiteInfoResponse: function (_systemId,_objPM) {
-        //    ////;
-        //    if (_systemId > 0) {
-        //        alert('Site Customer has been updated successfully!');
-        //    } else { alert('Site Customer has been added successfully!'); }
-        //    $('#ChildPopUp #closeChildPopup').trigger("click"); 
-        //},
         attachment: {
             upload: function (siteId, parentEntityType, parentSystemId) {
                 ////;

@@ -238,6 +238,8 @@ namespace BusinessLogics
         {
             return new DALayer().GetExportReportSummary(objReportFilter);
         }
+
+
         public List<Dictionary<string, string>> GetExportReportSummaryView(ExportEntitiesSummaryViewFilter objReportFilter)
         {
             return new DALayer().GetExportReportSummaryView(objReportFilter);
@@ -344,5 +346,45 @@ namespace BusinessLogics
         {
             return objDALayer.getRouteInfo(province_ids);
         }
+
+
+        //Association Report
+
+        public List<EntitySummaryReport> GetAssociationReportSummary(AssociationReportFilter objReportFilter)
+        {
+            return new DALayer().GetAssociationReportSummary(objReportFilter);
+        }
+
+        public List<layerReportDetail> GetAssociationReportLayers(int roleId, string purpose)
+        {
+            return objDALayer.GetAssociationReportLayers(roleId, purpose);
+        }
+
+        public List<Dictionary<string, string>> GetAssociationReportSummaryView(AssociationEntitiesSummaryViewFilter objReportFilter)
+        {
+            return new DALayer().GetAssociationReportSummaryView(objReportFilter);
+        }
+
+        public List<Dictionary<string, string>> GetAssociationReportSummaryViewCSV(AssociationEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetAssociationReportSummaryViewCSV(objReportFilter, layerName);
+        }
+
+        public List<Dictionary<string, string>> GetAssociationReportSummaryView(AssociationEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetAssociationReportSummaryView(objReportFilter, layerName);
+        }
+
+        public List<Dictionary<string, string>> GetAssociationSummaryViewKML(AssociationEntitiesSummaryViewFilter objReportFilter)
+        {
+            return new DALayer().GetAssociationSummaryViewKML(objReportFilter);
+        }
+        public List<Dictionary<string, string>> GetAssociationSummaryViewKMLNew(AssociationEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetAssociationSummaryViewKMLNew(objReportFilter, layerName);
+        }
+
+        // End Association Report
+
     }
 }

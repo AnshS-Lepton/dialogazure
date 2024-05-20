@@ -137,6 +137,7 @@
     <Compile Include="Admin\BLConfigurationSetting.cs" />
     <Compile Include="BLCompetitor.cs" />
     <Compile Include="BLDashboard.cs" />
+    <Compile Include="BLAssociationReportLog.cs" />
     <Compile Include="BLGipipe.cs" />
     <Compile Include="BLFATConnection.cs" />
     <Compile Include="BLExportData.cs" />
