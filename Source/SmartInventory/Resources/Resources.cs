@@ -27103,7 +27103,16 @@ namespace Resources {
                    return resourceProvider.GetResource("SI_OSP_GBL_GBL_GBL_043", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
-            
+
+        /// <summary>Association Report</summary>
+        public static string SI_OSP_GBL_NET_GBL_279
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_GBL_279", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+
         /// <summary>Shaft Name</summary>
         public static string SI_OSP_STR_JQ_FRM_010 {
                get {
