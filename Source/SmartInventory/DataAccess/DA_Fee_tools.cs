@@ -12,39 +12,40 @@ namespace DataAccess
 {
     public class DA_Fee_tools : Repository<userFeToolMapping>
     {
-        public userFeToolMapping SaveFeToolsdetails(userFeToolMapping objLyrGroup,int user_id)
+        public userFeToolMapping SaveFeToolsdetails(userFeToolMapping ObjFeTools,int user_id)
         {
             try
             {
                 var result1 = new userFeToolMapping() ;
-                if (objLyrGroup.id != 0)
+                if (ObjFeTools.id != 0)
                 {
-                    var objExisiting = repo.GetById(m => m.id == objLyrGroup.id);
+                    var objExisiting = repo.GetById(m => m.id == ObjFeTools.id);
                     
                     if (objExisiting != null)
                     {
-                        if (objExisiting.image_value != false)
-                        {
-                            objLyrGroup.image_value = objExisiting.image_value;
-                        }
-                        if (objExisiting.document_value != false)
-                        {
-                            objLyrGroup.document_value = objExisiting.document_value;
-                        }
-                        objLyrGroup.date_value = Convert.ToDateTime(objLyrGroup.date_v);
-                        objLyrGroup.modified_by = user_id;
-                        objLyrGroup.modified_on = DateTimeHelper.Now;
-                        repo.Update(objLyrGroup);
+                        //if (objExisiting.image_value != false)
+                        //{
+                        //    ObjFeTools.image_value = objExisiting.image_value;
+                        //}
+                        //if (objExisiting.document_value != false)
+                        //{
+                        //    ObjFeTools.document_value = objExisiting.document_value;
+                        //}
+                        ObjFeTools.created_on= objExisiting.created_on; 
+                        ObjFeTools.date_value = Convert.ToDateTime(ObjFeTools.date_v);
+                        ObjFeTools.modified_by = user_id;
+                        ObjFeTools.modified_on = DateTimeHelper.Now;
+                        repo.Update(ObjFeTools);
                         result1.action_type = "Update";
                     }
                 }
                 else
                 {
-                    objLyrGroup.date_value = Convert.ToDateTime(objLyrGroup.date_v);
+                    ObjFeTools.date_value = Convert.ToDateTime(ObjFeTools.date_v);
 
-                    objLyrGroup.created_by = user_id;
-                    objLyrGroup.created_on = DateTimeHelper.Now;
-                    result1 = repo.Insert(objLyrGroup);
+                    ObjFeTools.created_by = user_id;
+                    ObjFeTools.created_on = DateTimeHelper.Now;
+                    result1 = repo.Insert(ObjFeTools);
                     result1.action_type = "Save";
                 }
                 return result1;

@@ -112,17 +112,17 @@
         else {
             $('#datepicker').removeClass('input-validation-error');
         }
-        if ($('#fuImgUpload12').val() == "") {
-            $('#image_value').val('false');
-        } else {
-            $('#image_value').val('true')
-        }
-        if ($('#fuAttachmentUploadfetools').val() == "") {
-            $('#document_value').val('false');
-        } else {
-            $('#document_value').val('true');
+        //if ($('#fuImgUpload12').val() == "") {
+        //    $('#image_value').val('false');
+        //} else {
+        //    $('#image_value').val('true')
+        //}
+        //if ($('#fuAttachmentUploadfetools').val() == "") {
+        //    $('#document_value').val('false');
+        //} else {
+        //    $('#document_value').val('true');
 
-        }
+        //}
 
         //if ($('#fuImgUpload12').val() == "") {
         //    $('#fuImgUpload12').addClass('input-validation-error');
@@ -251,8 +251,6 @@
                                                     new { id = "frmAddFEtools", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal"/*,onsubmit = "handleFileChange()"*/ }))
     {
         @Html.HiddenFor(m => m.id);
-        @Html.HiddenFor(m => m.image_value);
-            @Html.HiddenFor(m => m.document_value);
             @*@Html.HiddenFor(m => m.created_on);*@
         //@Html.HiddenFor(m => m.status);
         <input type="hidden" id="hdnMaxFileUploadSizeLimit" value="@ApplicationSettings.MaxFileUploadSizeLimit" />

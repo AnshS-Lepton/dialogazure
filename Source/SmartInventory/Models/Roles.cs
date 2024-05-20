@@ -314,10 +314,10 @@ namespace Models
         public string serial_number { get; set; }
         public string barcode { get; set; }
         public DateTime date_value { get; set; }
-        public bool image_value { get; set; }
+       
 
 
-        public bool document_value { get; set; }
+        public string upload_type { get; set; }
         
         [NotMapped]
         public int totalRecords { get; set; }
@@ -358,10 +358,7 @@ namespace Models
         public string date_v { get; set; }
       
 
-        public bool image_value { get; set; }
-       
-
-        public bool document_value { get; set; }
+      
 
         [NotMapped]
         public List<KeyValueDropDown> lstusername { get; set; }

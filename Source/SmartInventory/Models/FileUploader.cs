@@ -240,11 +240,7 @@ namespace Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
-        public int fe_tool_id { get; set; }
-        public int fe_userid { get; set; }
-        public int tools_id { get; set; }
-        public string entity_type { get; set; }
-        //public string org_file_name { get; set; }
+        public int tools_mapping_id { get; set; }
         public string file_name { get; set; }
         public string file_extension { get; set; }
         public string file_location { get; set; }
@@ -253,8 +249,8 @@ namespace Models
         public DateTime? uploaded_on { get; set; }
         public int file_size { get; set; }
         //public string entity_feature_name { get; set; }
-        [NotMapped]
-        public string file_size_converted { get; set; }
+        //[NotMapped]
+        //public string file_size_converted { get; set; }
         //[NotMapped]
        // public byte[] attachmentSource { get; set; }
         //public DateTime uploaded_on { get; set; }

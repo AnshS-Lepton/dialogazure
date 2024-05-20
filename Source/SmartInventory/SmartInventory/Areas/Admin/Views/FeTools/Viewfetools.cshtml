@@ -69,17 +69,18 @@
             columns: grid.Columns(
 
      grid.Column("", "Action", format:
-                                                @<text>
-                                                    <a href="#" onclick="Addfeetool(@item.id);" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
-                                                    <a href="#" onclick="Deletefetool(@item.id);" class="auto" title="Delete"> <i class="fa fa-trash action_icon fa-fw m-r-xs"></i></a>
-                                                    @if (item.image_value == true)
-                                                    {
-                                                        <a href="#" onclick="ShowFeimage(@item.id,'Image');" title="Download Image"> <i class="fa fa-file-image-o" style="font-size: 13px; color: #f50000;"></i></a>
-                                                    }
-                                                    @if (item.document_value == true) {
-                                                        <a href="#" onclick="ShowFeimage(@item.id,'Document');" title="Download Certificate"> <i class="fa fa-file-pdf-o" style="font-size: 13px; color: #f50000;"></i></a>
-                                                    }
-                                                </text>),
+                                                    @<text>
+                                                        <a href="#" onclick="Addfeetool(@item.id);" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                                        <a href="#" onclick="Deletefetool(@item.id);" class="auto" title="Delete"> <i class="fa fa-trash action_icon fa-fw m-r-xs"></i></a>
+                                                        @if (item.upload_type == "Image" || item.upload_type == "Both")
+                                                        {
+                                                            <a href="#" onclick="ShowFeimage(@item.id,'Image');" title="Download Image"> <i class="fa fa-file-image-o" style="font-size: 13px; color: #f50000;"></i></a>
+                                                        }
+                                                        @if (item.upload_type == "Document" || item.upload_type == "Both")
+                                                        {
+                                                            <a href="#" onclick="ShowFeimage(@item.id,'Document');" title="Download Certificate"> <i class="fa fa-file-pdf-o" style="font-size: 13px; color: #f50000;"></i></a>
+                                                        }
+                                                    </text>),
 grid.Column("user_name", "FE Name", format: @<text>@item.user_name</text>),
 grid.Column("tool_name", "FE Tool Name", format: @<text>@item.tool_name</text>),
 grid.Column("barcode", "Barcode", format: @<text>@item.barcode </text>),
@@ -117,7 +118,7 @@ grid.Column("date_value", "Date", format: @<text>@item.date_value.ToString("dd-M
     });
 
     function ViewFeToolsReport() {
-        window.location = appRoot + 'FeTools/DownloadFE_ToolsGroupsDetail';
+        window.location = appRoot + 'FeTools/DownloadFE_ToolsDetail';
     }
   
     

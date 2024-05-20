@@ -136,21 +136,21 @@ namespace SmartInventory.Areas.Admin.Controllers
             items.Add(new KeyValueDropDown { key = "User Name", value = "user_name" });
             return vwlyrgrp.lstSearchBy = items.OrderBy(m => m.key).ToList();
         }
-        public ActionResult Viewfetools(ViewFETools objViewGroup, int page = 0, string sort = "", string sortdir = "")
+        public ActionResult Viewfetools(ViewFETools objViewFetools, int page = 0, string sort = "", string sortdir = "")
         {
-            BindSearchBy(objViewGroup);
+            BindSearchBy(objViewFetools);
             if (sort != "" || page != 0)
             {
-                objViewGroup.objGridAttributes = (CommonGridAttributes)Session["viewfetools"];
+                objViewFetools.objGridAttributes = (CommonGridAttributes)Session["viewfetools"];
             }
-            objViewGroup.objGridAttributes.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
-            objViewGroup.objGridAttributes.currentPage = page == 0 ? 1 : page;
-            objViewGroup.objGridAttributes.sort = sort;
-            objViewGroup.objGridAttributes.orderBy = sortdir;
-            objViewGroup.fetools = new BL_Fe_Tools().GetFettoollist(objViewGroup.objGridAttributes);
-            objViewGroup.objGridAttributes.totalRecord = objViewGroup.fetools != null && objViewGroup.fetools.Count > 0 ? objViewGroup.fetools[0].totalRecords : 0;
-            Session["viewfetools"] = objViewGroup.objGridAttributes;
-            return View("Viewfetools", objViewGroup);
+            objViewFetools.objGridAttributes.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
+            objViewFetools.objGridAttributes.currentPage = page == 0 ? 1 : page;
+            objViewFetools.objGridAttributes.sort = sort;
+            objViewFetools.objGridAttributes.orderBy = sortdir;
+            objViewFetools.fetools = new BL_Fe_Tools().GetFettoollist(objViewFetools.objGridAttributes);
+            objViewFetools.objGridAttributes.totalRecord = objViewFetools.fetools != null && objViewFetools.fetools.Count > 0 ? objViewFetools.fetools[0].totalRecords : 0;
+            Session["viewfetools"] = objViewFetools.objGridAttributes;
+            return View("Viewfetools", objViewFetools);
         }
         [HttpPost]
         public ActionResult UploadFTEImage(FormCollection collection)
@@ -204,15 +204,12 @@ namespace SmartInventory.Areas.Admin.Controllers
                                 string FileName = file.FileName;
                                 string strNewfilename = Path.GetFileNameWithoutExtension(FileName) + "_" + MiscHelper.getTimeStamp() + Path.GetExtension(FileName);
 
-                                string strFilePath = feTOOLSUploadfileOnFTP(entityType, systemId, file, "Images", strNewfilename, feuserid, tools_id);
+                                string strFilePath = FETOOLSUploadfileOnFTP(entityType, systemId, file, "Images", strNewfilename, feuserid, tools_id);
 
                                 // }
 
                                 FETOOLS_Attachment objAttachment = new FETOOLS_Attachment();
-                                objAttachment.fe_tool_id = Convert.ToInt32(systemId);
-                                objAttachment.fe_userid = Convert.ToInt32(feuserid);
-                                objAttachment.tools_id = Convert.ToInt32(tools_id);
-                                objAttachment.entity_type = entityType;
+                                objAttachment.tools_mapping_id = Convert.ToInt32(systemId);
                                 objAttachment.file_name = strNewfilename;
                                 objAttachment.file_extension = Path.GetExtension(FileName);
                                 objAttachment.file_location = strFilePath;
@@ -302,16 +299,13 @@ namespace SmartInventory.Areas.Admin.Controllers
                                 string FileName = file.FileName;
                                 string strNewfilename = Path.GetFileNameWithoutExtension(FileName) + "_" + MiscHelper.getTimeStamp() + Path.GetExtension(FileName);
                                 string strFilePath = "";
-                                strFilePath = feTOOLSUploadfileOnFTP(entityType, systemId, file, attachmentType, strNewfilename, feuserid, tools_id );
+                                strFilePath = FETOOLSUploadfileOnFTP(entityType, systemId, file, attachmentType, strNewfilename, feuserid, tools_id );
 
 
                                 // get User Detail..
                                 FETOOLS_Attachment objAttachment = new FETOOLS_Attachment();
-                                objAttachment.fe_tool_id = Convert.ToInt32(systemId);
-                                objAttachment.fe_userid = Convert.ToInt32(feuserid);
-                                objAttachment.tools_id = Convert.ToInt32(tools_id);
+                                objAttachment.tools_mapping_id = Convert.ToInt32(systemId);
 
-                                objAttachment.entity_type = entityType;
                                 objAttachment.file_name = strNewfilename;
                                 objAttachment.file_extension = Path.GetExtension(FileName);
                                 objAttachment.file_location = strFilePath;
@@ -350,7 +344,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                 return Json(jResp, JsonRequestBehavior.AllowGet);
             }
         }
-       public static string feTOOLSUploadfileOnFTP(string sEntityType, int sEntityId, HttpPostedFileBase postedFile, string sUploadType, string newfilename,int user_id,int tool_id, string featureType = null)
+       public static string FETOOLSUploadfileOnFTP(string sEntityType, int sEntityId, HttpPostedFileBase postedFile, string sUploadType, string newfilename,int user_id,int tool_id, string featureType = null)
         {
             try
             {
@@ -532,7 +526,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                             {
                                 fullPath = FtpUrl + data.file_location + "/" + data.file_name;
                                 FileName = data.file_location + "/" + data.file_name;
-                                localPath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["ReportFolderPath"]) + "/" + data.file_name + "";
+                                localPath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"])  + data.file_name + "";
                             }
                         }
                         else if (item.location.ToLower() == "document")
@@ -542,7 +536,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                             {
                                 fullPath = FtpUrl + data.file_location + "/" + data.file_name;
                                 FileName = data.file_location + "/" + data.file_name;
-                                localPath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["ReportFolderPath"]) + "/" + data.file_name + "";
+                                localPath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]) + data.file_name + "";
                             }
                         }
                         var request = (FtpWebRequest)WebRequest.Create(fullPath);
@@ -597,7 +591,8 @@ namespace SmartInventory.Areas.Admin.Controllers
             }
             finally
             {
-                string FileAddress = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]) + "/Attachments";
+                //string FileAddress = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]) + "Attachments";
+                string FileAddress = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]);
                 System.IO.DirectoryInfo di = new DirectoryInfo(FileAddress);
                 foreach (FileInfo file in di.GetFiles())
                 {
@@ -608,7 +603,7 @@ namespace SmartInventory.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public void DownloadFE_ToolsGroupsDetail()
+        public void DownloadFE_ToolsDetail()
         {
             if (Session["viewfetools"] != null)
             {

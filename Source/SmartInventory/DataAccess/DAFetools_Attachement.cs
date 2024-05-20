@@ -19,22 +19,8 @@ namespace DataAccess
             try
             {
                 
-                
-                    var objExisiting = repo.GetById(m => m.fe_tool_id == objAttachment.fe_tool_id );
-
-                    if (objExisiting != null)
-                    {
-                    objAttachment.id = objExisiting.id;
-                        resultItem = repo.Update(objAttachment);
-                        
-                    }
-                
-                else
-                {
-
                     resultItem = repo.Insert(objAttachment);
                     
-                }
                 return resultItem;
             }
             catch { throw; }
@@ -44,7 +30,7 @@ namespace DataAccess
         {
             try
             {
-                return repo.GetById(m => m.fe_tool_id == id && m.upload_type == uploadtype);
+                return repo.GetById(m => m.tools_mapping_id == id && m.upload_type == uploadtype);
             }
             catch { throw; }
         }
