@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
 using System.Data;
+using Models.Admin;
 
 namespace Models
 {
@@ -904,6 +905,7 @@ namespace Models
 
 
     }
+    
 }
 
 

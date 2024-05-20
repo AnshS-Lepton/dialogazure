@@ -235,4 +235,28 @@ namespace Models
         public string uploadedon { get; set; }
         public string file_size_converted { get; set; }
     }
+    public class FETOOLS_Attachment
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
+        public int tools_mapping_id { get; set; }
+        public string file_name { get; set; }
+        public string file_extension { get; set; }
+        public string file_location { get; set; }
+        public string upload_type { get; set; }
+        public string uploaded_by { get; set; }
+        public DateTime? uploaded_on { get; set; }
+        public int file_size { get; set; }
+        //public string entity_feature_name { get; set; }
+        //[NotMapped]
+        //public string file_size_converted { get; set; }
+        //[NotMapped]
+       // public byte[] attachmentSource { get; set; }
+        //public DateTime uploaded_on { get; set; }
+        //public bool is_barcode_image { get; set; }
+        //public bool is_meter_reading_image { get; set; }
+
+    }
+
 }

@@ -1,0 +1,157 @@
+﻿@model Models.ViewFETools
+@using SmartInventory.Settings;
+
+<div id="dvviewfetools">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>View FE Tools</h4>
+        </div>
+
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvviewfetools", ajaxUpdateCallback: "onGridHeaderClick('tblviewfetools')");
+            grid.Bind(Model.fetools, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+            if (Model.objGridAttributes.totalRecord > 0)
+            {
+                grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+            }
+        }
+
+
+        @using (Html.BeginForm("Viewfetools", "FeTools", FormMethod.Post, new { autocomplete = "off", @id = "frmViewfetools" }))
+        {
+            <section class="--pad-15">
+                <div class="form-inline filter-sec ">
+                    <div class="form-group wtd_set">
+                        <label class="control-label col-sm-4">
+                            Search By :
+                        </label>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group wtd_set">
+                        <label class="control-label col-sm-4">
+                            Search Text:
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 15, @onkeypress = "fnOnKeyPress(event)" })
+                        </div>
+                    </div>
+                    <div class="form-group wtd_set" id="dvBtnAction">
+                        <div class="col-md-8">
+                            <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                            @if (@grid.TotalRowCount > 0)
+                            {
+                                <input type="button" id="btnViewFetoolsExport" value="Export" class="btn btn-primary  mr-05" onclick="ViewFeToolsReport()" />
+                            }
+                            else
+                            {
+                                <input type="button" id="btnViewFetoolsExport" value="Export" disabled="disabled" class="btn btn-primary  mr-05" />
+                            }
+                            <a href="@Url.Action("Viewfetools")" class="btn btn-default  mr-05" title="Reset">Reset</a>
+                            <span>
+                                <input type="button" id="btnAddNew" onclick="Addfeetool(0);" value="Add New" class="btn btn-primary" />
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+                @if (Model.fetools.Count > 0)
+                {
+                    <div id="divLayerGroupDetail">
+                        <div class="recordCount mb-01"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+            htmlAttributes: new { id = "tblviewfetools" },
+            mode: WebGridPagerModes.All,
+            columns: grid.Columns(
+
+     grid.Column("", "Action", format:
+                                                    @<text>
+                                                        <a href="#" onclick="Addfeetool(@item.id);" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+                                                        <a href="#" onclick="Deletefetool(@item.id);" class="auto" title="Delete"> <i class="fa fa-trash action_icon fa-fw m-r-xs"></i></a>
+                                                        @if (item.upload_type == "Image" || item.upload_type == "Both")
+                                                        {
+                                                            <a href="#" onclick="ShowFeimage(@item.id,'Image');" title="Download Image"> <i class="fa fa-file-image-o" style="font-size: 13px; color: #f50000;"></i></a>
+                                                        }
+                                                        @if (item.upload_type == "Document" || item.upload_type == "Both")
+                                                        {
+                                                            <a href="#" onclick="ShowFeimage(@item.id,'Document');" title="Download Certificate"> <i class="fa fa-file-pdf-o" style="font-size: 13px; color: #f50000;"></i></a>
+                                                        }
+                                                    </text>),
+grid.Column("user_name", "FE Name", format: @<text>@item.user_name</text>),
+grid.Column("tool_name", "FE Tool Name", format: @<text>@item.tool_name</text>),
+grid.Column("barcode", "Barcode", format: @<text>@item.barcode </text>),
+grid.Column("serial_number", "Serial Number", format: @<text>@item.serial_number </text>),
+grid.Column("date_value", "Date", format: @<text>@item.date_value.ToString("dd-MMM-yyyy")</text>)
+
+))
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+                            @Html.HiddenFor(m => m.objGridAttributes.searchBy)
+                            @Html.HiddenFor(m => m.objGridAttributes.searchText)
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Records Found.
+                    </div>
+                }
+
+            </section>
+
+
+        }
+
+        
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //updateNumberstoFormatedNumber();
+        addDefaultSortingIcons("tblviewfetools");
+    });
+
+    function ViewFeToolsReport() {
+        window.location = appRoot + 'FeTools/DownloadFE_ToolsDetail';
+    }
+  
+    
+
+
+    function updateNumberstoFormatedNumber() {
+        $('span[data]').each(function (index) {
+            // Get the value of the data-target attribute for each element
+            var targetValue = $(this).data('data');
+
+            // Do whatever you want with the element or its data
+            $(this).text(getFormattedNumber($(this).text().trim()));
+        });
+    }
+
+    function ShowFeimage(systemid, Location) {
+        debugger;
+        var ettType = "fe_tools"
+        downloadFe_tools_image('.ImagesContainer', '.img_doc_childcheck', 'FeTools/DownloadfE_toolsFiles', systemid, Location, ettType);
+    }
+    function downloadFe_tools_image(PrntIdWidthSelector, ChkboxWidthSelector, ActionUrl, KeyAttrName, LocationAttr, FileNameType) {
+        PrntIdWidthSelector = PrntIdWidthSelector == null || PrntIdWidthSelector == "" || PrntIdWidthSelector == undefined ? "" : PrntIdWidthSelector;
+        ChkboxWidthSelector = ChkboxWidthSelector == null || ChkboxWidthSelector == "" || ChkboxWidthSelector == undefined ? "" : ChkboxWidthSelector;
+        
+        var listPathName = [];
+        listPathName.push({ systemId: KeyAttrName, location: LocationAttr });
+        var idss = "" + PrntIdWidthSelector + " " + ChkboxWidthSelector + "";
+
+        if (listPathName.length > 0) {
+            window.location.href = appRoot + '' + ActionUrl + '?json=' + JSON.stringify(listPathName) + '&entity_type=' + FileNameType;
+        }
+        else {
+            alert(MultilingualKey.SI_ISP_GBL_JQ_GBL_019, 'warning');//Please select any image!
+        }
+    }
+</script>
