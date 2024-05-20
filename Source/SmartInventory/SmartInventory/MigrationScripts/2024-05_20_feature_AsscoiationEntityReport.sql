@@ -953,5 +953,42 @@ $BODY$;
 
 
 
+CREATE TABLE IF NOT EXISTS public.association_report_log
+(
+    sno integer NOT NULL DEFAULT nextval('association_report_log_sno_seq'::regclass),
+    user_id integer,
+    export_started_on timestamp without time zone,
+    export_ended_on timestamp without time zone,
+    file_name character varying(100) COLLATE pg_catalog."default",
+    file_type character varying(100) COLLATE pg_catalog."default",
+    total_entity integer,
+    planned integer,
+    asbuilt integer,
+    dormant integer,
+    applied_filter json,
+    sp_geometry geometry,
+    status character varying(100) COLLATE pg_catalog."default",
+    file_location character varying(500) COLLATE pg_catalog."default",
+    file_extension character varying COLLATE pg_catalog."default"
+)
 
 
+INSERT INTO public.file_type_master(
+	 file_type, file_extension, file_display_name, module_id, module_abbr, is_active, created_by, created_on)
+	VALUES ( 'ALLEXCEL', '.xls,.xlsx', 'All Data(Excel)', (select id from module_master where module_name='Export Association Report'), 'EXASSRPT', true, 0, now());
+
+INSERT INTO public.module_master(
+	 module_name, module_description, created_by, created_on, type, is_active, module_abbr,  is_offline_enabled)
+	VALUES ( 'Export Association Report', 'Export Association Report', 1, now(), 'Web', true, 'EXASSRPT', false);
+
+insert into role_module_mapping(role_id,module_id) values( (select role_id from user_master where user_name='admin') ,(select id from module_master where module_name='Export Association Report'))
+
+insert into user_module_mapping(user_id, module_id,created_by,created_on,modified_by) values((select user_id from user_master where user_name='admin'),(select id from module_master where module_name='Export Association Report'),1,now(),1)
+
+INSERT INTO public.res_resources
+(culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key)
+VALUES('en', 'SI_OSP_GBL_NET_GBL_279', 'Association Report', true, true, 'English', 'Smart Inventory_Osp_Global_Dot Net_', 0, now(), now(), 1, false, false);
+
+INSERT INTO public.res_resources
+(culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key)
+VALUES('hi', 'SI_OSP_GBL_NET_GBL_279', '???????? ???????', false, true, 'Hindi', 'Smart Inventory_Osp_Global_Dot Net_', 1, now(), now(), 1, false, false);
