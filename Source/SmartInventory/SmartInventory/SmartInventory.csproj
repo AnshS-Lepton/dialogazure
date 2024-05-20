@@ -1601,6 +1601,7 @@
     <Content Include="MigrationScripts\14-05-2024.sql" />
     <Content Include="MigrationScripts\16-04-2024.sql" />
     <Content Include="MigrationScripts\18-05-2024.sql" />
+    <Content Include="MigrationScripts\20-05-2024.sql" />
     <Content Include="MigrationScripts\2024-05-07_unique_constraint_lbl_clm_stng.sql" />
     <Content Include="MigrationScripts\2024_02_27_vodafone_issues.sql" />
     <Content Include="MigrationScripts\2024_02_25_vodafone_issues.sql" />
@@ -1947,6 +1948,10 @@
     <Content Include="Areas\Admin\Views\OTPAuthenticationSettings\EmailTemplateConfiguration.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\ViewSpecificationServices.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\SpecificationService.cshtml" />
+    <Content Include="Areas\Admin\Views\User\Viewfetools.cshtml" />
+    <Content Include="Areas\Admin\Views\User\AddFEtools.cshtml" />
+    <Content Include="Areas\Admin\Views\FeTools\AddFEtools.cshtml" />
+    <Content Include="Areas\Admin\Views\FeTools\Viewfetools.cshtml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
@@ -2351,6 +2356,7 @@
     <Compile Include="Areas\Admin\Controllers\DynamicFormController.cs" />
     <Compile Include="Areas\Admin\Controllers\DynamicThemeController.cs" />
     <Compile Include="Areas\Admin\Controllers\EmailSettingsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\FeToolsController.cs" />
     <Compile Include="Areas\Admin\Controllers\LongRunningQueriesController.cs" />
     <Compile Include="Areas\Admin\Controllers\OrthoImageLayerController.cs" />
     <Compile Include="Areas\Admin\Controllers\ConfigurationSettingsController.cs" />

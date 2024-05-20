@@ -2641,3 +2641,8 @@ tfoot tr td a:hover {
 .space-pad {
     padding: 15px;
 }
+.caledPose {
+    position: absolute;
+    top: 7px;
+    right: 13px;
+}

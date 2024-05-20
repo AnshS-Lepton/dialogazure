@@ -14589,7 +14589,7 @@ var Main = function () {
 
             if ($('#hdn_isgeoupdateallowed').val() == "1" && ($(obj).attr('entitytype') == 'Duct' || $(obj).attr('entitytype') == 'Cable')) {
                 $(obj).prop("checked", false);
-                showConfirm("Parent geometry will be superimposed on this entity and it's associated line entity", function () {
+                showConfirm("Parent geometry will be superimposed on this entity and it's associated line entity and splicing will be removed", function () {
                     $(obj).prop("checked", true);
                 });
             }
