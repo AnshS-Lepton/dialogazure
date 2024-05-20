@@ -1,0 +1,650 @@
+﻿@model Models.AssociationEntitiesReport
+@using System.Globalization;
+@{
+    string[] arrSelectedNetworkStatus = Model.objReportFilters.SelectedNetworkStatus == null ? new string[3] { "Planned", "As Built", "Dormant" } : Model.objReportFilters.SelectedNetworkStatus.ToArray();
+    var planned_count = 0;
+    var asbuilt_count = 0;
+    var dormant_count = 0;
+    var total_count = 0;
+}
+@using SmartInventory.Settings;
+<style>
+    .table-scroll {
+        position: relative;
+        width: 100%;
+        z-index: 1;
+        margin: auto;
+        overflow: auto;
+        height: 415px;
+    }
+
+    .table-wrap {
+        position: relative;
+    }
+
+    .table-scroll thead th {
+        /*  background: #00ba8a;*/
+        color: #fff;
+        position: -webkit-sticky;
+        position: sticky;
+        top: -1px;
+    }
+    /* safari and ios need the tfoot itself to be position:sticky also */
+    .table-scroll tfoot,
+    .table-scroll tfoot th,
+    .table-scroll tfoot td {
+        position: -webkit-sticky;
+        position: sticky;
+        bottom: 0;
+        z-index: 4;
+    }
+
+    /*.table-scroll a{
+        background: #00ba8a;
+    }*/
+
+    th:first-child {
+        position: -webkit-sticky;
+        position: sticky;
+        left: 0;
+        z-index: 2;
+    }
+
+    thead th:first-child, thead th:last-child,
+    tfoot th:first-child {
+        z-index: 5;
+    }
+
+    #tblSummaryAll > tfoot > tr > th {
+        padding: 3px;
+    }
+
+    .calendar {
+        top: 225px !important;
+        left: 500px !important;
+    }
+
+    .checkbox-custom-label {
+        position: inherit !important;
+    }
+</style>
+
+<!DOCTYPE html>
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+<div class="exportReportHeader">
+    <ul class="tab">
+        <li id="liFilter">@Resources.Resources.SI_OSP_GBL_NET_FRM_063</li>
+    </ul>
+</div>
+<div class="ExportReportbody">
+    @using (Ajax.BeginForm("EntityAssociationReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress", }, new { id = "frmAssociationEntitiesSummaryData", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        @Html.HiddenFor(m => m.objReportFilters.geom)
+        @Html.HiddenFor(m => m.objReportFilters.geomType)
+        @Html.HiddenFor(m => m.objReportFilters.radius)
+        @Html.HiddenFor(m => m.objReportFilters.SelectedParentUser, new { id = "hdnSelectedParentUsers" })
+        @Html.HiddenFor(m => m.objReportFilters.purpose, new { id = "purpose" })
+
+        <input type="hidden" name="IsRequestFromInfo" value="true" />
+        <div class="EEReport" id="divFilter">
+            <div class="scrollDiv space-pad">
+                @if (Model.objReportFilters.geom != null && Model.objReportFilters.geom != "")
+                {
+                    <div class="row form-group">
+                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_020:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedLayerId, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlLayers" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">Route Id:</div>
+                        <div class="col-md-9">
+
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_065:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedRegionId, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @onchange = "si.onChangeRegion();", @id = "ddlRegions", @disabled = "disabled" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_066:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedProvinceId, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlProvinces", @disabled = "disabled" })
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row form-group">
+                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_020:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedLayerId, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlLayers" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">Route Id:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_065:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedRegionId, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId.ToString(), Text = x.regionName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @onchange = "si.onChangeRegion();", @id = "ddlRegions" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_066:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedProvinceId, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlProvinces" })
+                        </div>
+                    </div>
+                }
+                <div class="row form-group">
+                    <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_067  :</div>
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(m => m.objReportFilters.SelectedNetworkStatus, new SelectList(Model.lstNetworkStatus.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "SelectedNetworkStatus" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_068:</div>
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(m => m.objReportFilters.SelectedParentUser, new SelectList(Model.lstParentUsers.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlParentUsers", @onchange = "si.onChangeParentUser();" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_069:</div>
+                    <div class="col-md-9">
+                        <select id="ddlUsers" name="objReportFilters.SelectedUserId" multiple class="chosen-select col-sm-12">
+
+                            @foreach (var attribute in Model.lstUsers.GroupBy(x => x.groupUser))
+                            {
+                                <optgroup value="@attribute.Key" label="@attribute.Key">
+                                    @foreach (var user in attribute)
+                                    {
+                                        <option value="@user.user_id">@user.user_name</option>
+                                    }
+                                </optgroup>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-3">@Resources.Resources.SI_GBL_GBL_GBL_GBL_147</div>
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(m => m.objReportFilters.SelectedOwnerShipType, new List<SelectListItem>
+                                {
+                                        new SelectListItem { Text = "Own", Value = "Own"},
+                                        new SelectListItem { Text = "Third Party", Value = "Third Party"},
+                                }, new { @class = "chosen-select", @id = "ddlFilterOwnershipType", @onchange = "onChangeOwnershipType()" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-3">@Resources.Resources.SI_GBL_GBL_GBL_GBL_148</div>
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(m => m.objReportFilters.SelectedThirdPartyVendorId, new SelectList(Model.list3rdPartyVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), new { @multiple = "multiple", @disabled = "disabled", @class = "chosen-select form-control ", id = "ddl3rdPartyVendor" })
+                    </div>
+                </div>
+                @if (Model.lstUserModule.Contains("PROJ"))
+                {
+                    <div class="row form-group">
+                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_070:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedProjectId, new SelectList(Model.lstBindProjectCode.Select(x => new { Value = x.system_id.ToString(), Text = x.project_code.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlProjectCode" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_008:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedPlanningId, new SelectList(Model.lstBindPlanningCode.Select(x => new { Value = x.system_id.ToString(), Text = x.planning_code.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlPlanningCode" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_009:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedWorkOrderId, new SelectList(Model.lstBindWorkorderCode.Select(x => new { Value = x.system_id.ToString(), Text = x.workorder_code.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlWorkorderCode" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_011:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedPurposeId, new SelectList(Model.lstBindPurposeCode.Select(x => new { Value = x.system_id.ToString(), Text = x.purpose_code.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlPurposeCode" })
+                        </div>
+                    </div>
+                }
+                <div class="row form-group">
+                    <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_071<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(m => m.objReportFilters.durationbasedon, new SelectList(Model.lstDurationBasedOn.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @id = "ddlDurationBasedOn" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_072<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-9">
+                        @Html.DropDownListFor(m => m.objReportFilters.customDate, new List<SelectListItem>{
+                                new SelectListItem { Text = "All", Value = "9"},
+                                new SelectListItem { Text = "Custom", Value = "1"},
+                                new SelectListItem { Text = "Today", Value = "2"},
+                                new SelectListItem { Text = "Previous Day", Value = "3"},
+                                new SelectListItem { Text = "Last 7 Days", Value = "4"},
+                                new SelectListItem { Text = "Last 30 Day", Selected=true, Value = "5"},
+                                new SelectListItem { Text = "Last 3 Months", Value = "6"},
+                                new SelectListItem { Text = "Last 6 Months", Value = "7"},
+                              new SelectListItem { Text = "Last 1 Year", Value = "8"},
+
+                            }, new { @class = "chosen-select", @onchange = "onChangeCustomDate();", @id = "customedate" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-9" style="display:flex">
+                        <div class="col-md-6" style="padding:0px;padding-right: 6px;">
+                            @Html.TextBoxFor(m => m.objReportFilters.fromDate, new { @id = "txtDateFrom", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_096, @tabindex = "4", @class = "input-sm form-control", @readonly = true, @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_096 })
+                            <img id="imgFromDate" class="export-report-cal" src="@Url.Content("~/Content/images/calendar.png")" style="right: 12px;">
+                        </div>
+                        <div class="col-md-6" style="padding:0px;">
+                            @Html.TextBoxFor(m => m.objReportFilters.toDate, new { @id = "txtDateTo", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_097, @tabindex = "4", @class = "input-sm form-control", @readonly = true, @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_097 })
+                            <img id="imgToDate" class="export-report-cal" src="@Url.Content("~/Content/images/calendar.png")">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ModalFooter d-flex">
+                <button type="button" class="btn btn-default ml-auto mr-05" id="btnEntityAssociationClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+
+
+                <div class="d-flex">
+                    <div class="ml-auto">
+                        <button type="button" class="btn btn-success dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                        <div class="dropbox dropBottomPos">
+                            @foreach (var item in Model.lstfiletypes)
+                            {
+                                <span onclick="AssociationSummaryDetail('@item.file_type')">@item.file_display_name</span>
+                            }
+                        </div>
+                    </div>
+                    <div id="dvReportProgress1" class="progress utili-prog-bar" style="display:none;">
+                        <div class="progress-bar progress-bar-striped" style="width:70%;background-color: darkgreen;">@Resources.Resources.SI_OSP_GBL_NET_FRM_073</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+</div>
+
+<script src="~/Content/js/Utility.js"></script>
+<script type="text/javascript">
+
+    function onChangeOwnershipType() {
+
+        if ($("#ddlFilterOwnershipType").val() == 'Own' || $("#ddlFilterOwnershipType").val() == null || $("#ddlFilterOwnershipType").val() == undefined) {
+            $('#ddl3rdPartyVendor').val('');
+            $('#ddl3rdPartyVendor').prop('disabled', true).trigger("chosen:updated");
+        }
+        else {
+            $('#ddl3rdPartyVendor').prop('disabled', false).trigger("chosen:updated");
+        }
+    }
+
+
+      $('.chosen-select').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
+
+
+    $(document).ready(function () {
+        $("#ddlFilterOwnershipType").attr('data-placeholder', "-All-").trigger("chosen:updated");
+
+        if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9) {
+            $("#customedate").val(5).trigger("chosen:updated");
+            onChangeCustomDate();
+        }
+
+        if ($("#customedate_chosen").children('a').text().trim() != "Custom") {
+
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        var SelectedRegionIds = '@Model.objReportFilters.SelectedRegionIds';
+        $("#ddlRegions").val(SelectedRegionIds.split(',')).trigger("chosen:updated");
+
+        var selectedProvinces = '@Model.objReportFilters.SelectedProvinceIds';
+        $("#ddlProvinces").val(selectedProvinces.split(',')).trigger("chosen:updated");
+
+        var selectedNetworkStatuses = '@Model.objReportFilters.SelectedNetworkStatues.Replace("'","")';
+        $("#SelectedNetworkStatus").val(selectedNetworkStatuses.split(',')).trigger("chosen:updated");
+
+        var SelectedParentUsers = '@Model.objReportFilters.SelectedParentUsers';
+        $("#ddlParentUsers").val(SelectedParentUsers.split(',')).trigger("chosen:updated");
+
+        var selectedLayerIds = '@Model.objReportFilters.SelectedLayerIds';
+        $("#ddlLayers").val(selectedLayerIds.split(',')).trigger("chosen:updated");
+
+        var selectedthirdpartyvalues = '@Model.objReportFilters.SelectedThirdPartyVendorIds';
+        $("#ddl3rdPartyVendor").val(selectedthirdpartyvalues.split(',')).trigger("chosen:updated");
+
+        var selectedownershiptype = '@Model.objReportFilters.SelectedOwnerShipType';
+        $("#ddlFilterOwnershipType").val(selectedownershiptype).trigger("chosen:updated");
+        onChangeOwnershipType();
+
+        var SelectedProjectIds = '@Model.objReportFilters.SelectedProjectIds';
+        $("#ddlProjectCode").val(SelectedProjectIds.split(',')).trigger("chosen:updated");
+
+        var SelectedPlanningIds = '@Model.objReportFilters.SelectedPlanningIds';
+        $("#ddlPlanningCode").val(SelectedPlanningIds.split(',')).trigger("chosen:updated");
+
+        var SelectedWorkOrderIds = '@Model.objReportFilters.SelectedWorkOrderIds';
+        $("#ddlWorkorderCode").val(SelectedWorkOrderIds.split(',')).trigger("chosen:updated");
+
+        var SelectedPurposeIds = '@Model.objReportFilters.SelectedPurposeIds';
+        $("#ddlPurposeCode").val(SelectedPurposeIds.split(',')).trigger("chosen:updated");
+
+        si.setDateTimeCalendar_ExportEntities("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+        if ($('#ddlParentUsers > option').length > 1) {
+            si.onChangeParentUser();
+            var SelectedUserIds = '@Model.objReportFilters.SelectedUserIds';
+            $("#ddlUsers").val(SelectedUserIds.split(',')).trigger("chosen:updated");
+        }
+
+        if ($('#ddlParentUsers > option').length == 1) {
+            $('#ddlParentUsers option:first-child').attr("selected", "selected").trigger("chosen:updated");
+
+            si.onChangeParentUser();
+            $('#hdnSelectedParentUsers').val($('#ddlParentUsers option:first-child').val());
+            $('#ddlParentUsers').attr("disabled", true).trigger("chosen:updated");
+
+            var SelectedUserIds = '@Model.objReportFilters.SelectedUserIds';
+            $("#ddlUsers").val(SelectedUserIds.split(',')).trigger("chosen:updated");
+        }
+        UpdateFormattedNumbers();
+    });
+
+    $('#btnEntityAssociationClear').on("click", function () {
+        ResetAssociationEntitesFilterValues();
+    });
+
+
+
+    function isValidReportFilter() {
+
+        if ($('#customedate option:selected').val() == 9) {
+            return true;
+        }
+        else {
+            if ($("#txtDateFrom").val() == "") {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
+                return false;
+            }
+            else if ($("#txtDateTo").val() == "") {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+
+    $("#btnShowReportData").on("click", function () {
+        if (isValidReportFilter()) {
+            //SHOW SUMMARY TAB
+            $("#divFilter").show();
+            document.getElementById("exportdrop").disabled = false;
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+
+    function ResetAssociationEntitesFilterValues() {
+        $('#ddlLayers').val(0).trigger("chosen:updated");
+        $('#SelectedNetworkStatus').val(0).trigger("chosen:updated");
+        $('#ddlRegions').val(0).trigger("chosen:updated");
+        $('#ddlProvinces').empty().trigger("chosen:updated");
+        $('#ddlProvinces').val(0).trigger("chosen:updated");
+        $('#ddlUsers').val(0).trigger("chosen:updated");
+        $('#ddlProjectCode').val('').trigger("chosen:updated");
+        $('#ddlPlanningCode').empty().trigger("chosen:updated");;
+        $('#ddlWorkorderCode').empty().trigger("chosen:updated");;
+        $('#ddlPurposeCode').empty().trigger("chosen:updated");;
+        $('#ddlDurationBasedOn').val("Created_On").trigger("chosen:updated");
+        $('#txtDateFrom').val('');
+        $('#txtDateTo').val('');
+        $('#customedate').val(9).trigger("chosen:updated");
+        $('#ddlFilterOwnershipType').val(0).trigger("chosen:updated");
+        $('#ddl3rdPartyVendor').val(0).trigger("chosen:updated");
+        onChangeOwnershipType();
+        onChangeCustomDate();
+
+        if ($('#ddlParentUsers > option').length == 1) {
+            $('#ddlParentUsers option:first-child').attr("selected", "selected").trigger("chosen:updated");
+
+            si.onChangeParentUser();
+            $('#hdnSelectedParentUsers').val($('#ddlParentUsers option:first-child').val());
+            $('#ddlParentUsers').attr("disabled", true).trigger("chosen:updated");
+
+            var SelectedUserIds = '@Model.objReportFilters.SelectedUserIds';
+        }
+        else {
+            $('#ddlParentUsers').val(0).trigger("chosen:updated");
+        }
+    }
+
+    function selectallentity(chkAll) {
+        if (!$(chkAll).is(":checked")) {
+            $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").removeAttr("checked");
+        }
+        else {
+            $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").prop("checked", true);
+        }
+        ManageHeaderCheckBox();
+    }
+
+    function ManageHeaderCheckBox() {
+        if ($("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").length ==
+            $("#tblSummaryAll input[type=checkbox]:not('#checkallentity'):checked").length) {
+            $("#thtotalName")[0].innerHTML = MultilingualKey.SI_OSP_GBL_GBL_GBL_041;
+            $("#checkallentity").prop("checked", true);
+        }
+        else if ($("#tblSummaryAll input[type=checkbox]:not('#checkallentity'):checked").length == 0) {
+            $("#thtotalName")[0].innerHTML = MultilingualKey.SI_OSP_GBL_GBL_GBL_041;
+        }
+        else {
+            $("#thtotalName")[0].innerHTML = MultilingualKey.SI_GBL_GBL_JQ_FRM_028;// "Selected Total";
+            $("#checkallentity").prop("checked", false);
+        }
+
+        //for sum of footer
+        var plannedTotal = parseInt(0);
+        var asBuildTotal = parseInt(0);
+        var dormantTotal = parseInt(0);
+        $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").each(function () {
+            var row = $(this).closest('tr');
+            var checkstatus = $(this).is(":checked")
+            if (row.find(".tdplannedcount")[0] != undefined) {
+                var plannedText = (row.find(".tdplannedcount")[0].innerText).replaceAll(',', '');
+                if (!isNaN(plannedText) && row.find(".tdplannedcount")[0].innerText.length != 0 && checkstatus == true) {
+                    plannedTotal += parseInt(plannedText);
+                }
+            }
+            if (row.find(".tdasbuiltcount")[0] != undefined) {
+                var asbuildText = (row.find(".tdasbuiltcount")[0].innerText).replaceAll(',', '');
+                if (!isNaN(asbuildText) && row.find(".tdasbuiltcount")[0].innerText.length != 0 && checkstatus == true) {
+                    asBuildTotal += parseInt(asbuildText);
+                }
+            }
+            if (row.find(".tddormantcount")[0] != undefined) {
+                var asdormantText = (row.find(".tddormantcount")[0].innerText).replaceAll(',', '');
+                if (!isNaN(asdormantText) && row.find(".tddormantcount")[0].innerText.length != 0 && checkstatus == true) {
+                    dormantTotal += parseInt(asdormantText);
+                }
+            }
+        })
+        if ($("#thplannedtotal")[0] != undefined) {
+            $("#thplannedtotal")[0].innerHTML = plannedTotal;
+        }
+        if ($("#thasbuilttotal")[0] != undefined) {
+            $("#thasbuilttotal")[0].innerHTML = asBuildTotal;
+        }
+        if ($("#thdormanttotal")[0] != undefined) {
+            $("#thdormanttotal")[0].innerHTML = dormantTotal;
+        }
+        $("#thalltotal")[0].innerHTML = (plannedTotal + asBuildTotal + dormantTotal);
+        UpdateFormattedNumbers();
+    }
+
+    function AssociationSummaryDetail(purpose) {
+        $("#purpose").val(purpose);
+        $("#frmAssociationEntitiesSummaryData").submit();
+
+    }
+
+    var downloadTimeout;
+
+    var checkDownloadCookie = function () {
+        if (getCookie("downloadStarted") == 1) {
+            setCookie("downloadStarted", false, 100); //Expiration could be anything... As long as we reset the value
+            $('#dvReportProgress1').hide();
+        } else {
+            downloadTimeout = setTimeout(checkDownloadCookie, 1000); //Re-run this function in 1 second.
+        }
+    }
+
+    var setCookie = function (name, value, expiracy) {
+        var exdate = new Date();
+        exdate.setTime(exdate.getTime() + expiracy * 1000);
+        var c_value = escape(value) + ((expiracy == null) ? "" : "; expires=" + exdate.toUTCString());
+        document.cookie = name + "=" + c_value + '; path=/';
+    };
+
+    var getCookie = function (name) {
+        var i, x, y, ARRcookies = document.cookie.split(";");
+        for (i = 0; i < ARRcookies.length; i++) {
+            x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+            y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+            x = x.replace(/^\s+|\s+$/g, "");
+            if (x == name) {
+                return y ? decodeURI(unescape(y.replace(/\+/g, ' '))) : y; //;//unescape(decodeURI(y));
+            }
+        }
+    };
+    //export-report-cal
+    function onChangeCustomDate() {
+        var value = $('#customedate option:selected').val();
+        SetFromAndToDate(value);
+    }
+
+    function SetFromAndToDate(value) {
+        var endDate = new Date();
+        var startDate = new Date();
+        var startDateDiff = 0;
+        var endDateDiff = 0;
+        if (value == 1) // custom
+        {
+            $('#txtDateFrom').val("");
+            $('#txtDateTo').val("");
+            $("#imgFromDate").show();
+            $('#imgToDate').show();
+            return;
+        }
+        else if (value == 2) { //Today
+            startDateDiff = 0;
+            endDateDiff = 0;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 3) { //previous day
+            startDateDiff = -1;
+            endDateDiff = -1;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 4) {//last 7 days
+            startDateDiff = -6;
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 5) {//last 30 days
+            startDateDiff = getDaysDiffByMonth(1);
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 6) {//last 3 Months
+            startDateDiff = getDaysDiffByMonth(3);
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 7) {//last 6 Months
+            startDateDiff = getDaysDiffByMonth(6);
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+        else if (value == 8) {//last 1 year
+            startDateDiff = getDaysDiffByMonth(12);
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+
+        startDate.setDate(startDate.getDate() + startDateDiff);
+        endDate.setDate(endDate.getDate() + endDateDiff);
+
+        var newStartDate = startDate.toDateString();
+        newStartDate = new Date(Date.parse(newStartDate));
+
+        var newEndDate = endDate.toDateString();
+        newEndDate = new Date(Date.parse(newEndDate));
+
+        $('#txtDateFrom').val(fncCurrentDate(newStartDate));
+        $('#txtDateTo').val(fncCurrentDate(newEndDate));
+        if (value == 0 || value == 9) {
+            $('#txtDateFrom').val('');
+            $('#txtDateTo').val('');
+            $('#imgFromDate').hide();
+            $('#imgToDate').hide();
+        }
+    }
+
+    function getDaysDiffByMonth(_monthCount) {
+        var previousDate = new Date();
+        previousDate.setMonth(previousDate.getMonth() - _monthCount);
+        return parseInt((previousDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24)) + 1;
+    }
+
+    $('#ddlProjectCode').on('change', function () {
+        si.BindPlanningDetailByProjectIds();
+    })
+
+    $('#ddlPlanningCode').on('change', function () {
+        si.BindWorkCodeDetailByPlanningIds();
+    })
+
+    $('#ddlWorkorderCode').on('change', function () {
+        si.BindPurposeCodeDetailByWorkOrderIds();
+    })
+
+    function UpdateFormattedNumbers() {
+        // Get the table element
+        const table = document.getElementById('tblSummaryAll');
+        if (table && table.rows && table != null && table != undefined) {
+            // Loop through the rows
+            for (let rowIndex = 0; rowIndex < table.rows.length; rowIndex++) {
+                const row = table.rows[rowIndex];
+
+                // Loop through the cells in the row
+                for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
+                    const cell = row.cells[cellIndex];
+
+                    // Extract data from the cell
+                    const cellData = cell.textContent.trim();
+
+                    // Do something with the cell data
+                    if ($.isNumeric(cellData))
+                        row.cells[cellIndex].textContent = getFormattedNumber(cellData);
+                }
+            }
+        }
+    }
+</script>

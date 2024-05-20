@@ -626,6 +626,10 @@ namespace DataAccess.DBContext
             modelBuilder.Entity<ExportReportLog>().ToTable("export_report_log", dbschema);
             # endregion
 
+            #region Association Report
+            modelBuilder.Entity<AssociationReportLog>().ToTable("association_report_log", dbschema);
+            # endregion
+
             #region SI_Dashboard //Added by Diksha Gupta
             modelBuilder.Entity<HierarchyMaster>().ToTable("vw_db_hierarchy", dbschema);
             modelBuilder.Entity<Kpi_Master>().ToTable("kpi_master", dbschema);

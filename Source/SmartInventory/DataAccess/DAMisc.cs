@@ -41,6 +41,15 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+        public List<DropDownMaster> GetAssociationDropDownList(string enType, string ddType = "")
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DropDownMaster>("fn_get_association_dropdownlist", new { entitytype = enType, dropdownType = ddType });
+            }
+            catch { throw; }
+        }
         public List<DropDownMaster> GetDropDownListJson(string enType, string ddType = "")
         {
             try
