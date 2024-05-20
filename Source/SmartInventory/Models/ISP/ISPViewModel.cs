@@ -508,6 +508,10 @@ namespace Models.ISP
         public List<string> lstUserModule { get; set; }
         [NotMapped]
         public string file_location { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
         public FDBInfo()
         {
             objPM = new PageMessage();
@@ -526,6 +530,7 @@ namespace Models.ISP
             purpose_id = 0;
             bom_sub_category = Convert.ToString(Bom_boq_category.Proposed);
             lstUserModule = new List<string>();
+            lstRouteInfo = new List<RouteInfo>();
         }
 
         public string barcode { get; set; }

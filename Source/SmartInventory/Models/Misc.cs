@@ -350,6 +350,12 @@ namespace Models
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
+        [NotMapped]
+        public string gis_design_id { get; set; }
         public ProjectSpecificView()
 		{
 			network_status = "";
@@ -358,6 +364,7 @@ namespace Models
 			lstBindWorkorderCode = new List<WorkorderCodeMaster>();
 			lstBindPurposeCode = new List<PurposeCodeMaster>();
             lstUserModule = new List<string>();
+            lstRouteInfo = new List<RouteInfo>();
         }
 
 		public string entity_sub_type { get; set; }

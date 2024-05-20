@@ -251,6 +251,7 @@ namespace SmartInventory.Settings
         public static int isCDBAttributeEnabled = 0;
         public static bool fetoolsenabled = true;
         public static int CableDefLabelMinZoom = 0;
+        public static int IsGeometryUpdateOnAssociationAllowed = 0;
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -863,6 +864,10 @@ namespace SmartInventory.Settings
                 if (objSetting.key == "CableDefLabelMinZoom")
                 {
                     CableDefLabelMinZoom = Convert.ToInt32(objSetting.value);
+                }
+                if (objSetting.key == "IsGeometryUpdateOnAssociationAllowed")
+                {
+                    IsGeometryUpdateOnAssociationAllowed = Convert.ToInt32(objSetting.value);
                 }
                 //if (objSetting.key == "allowedDocumentAttachmentType")
                 //{
