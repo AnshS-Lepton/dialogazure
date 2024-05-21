@@ -626,8 +626,8 @@ namespace SmartInventory.Areas.Admin.Controllers
                 dtReport.Columns.Remove("CREATED_BY_TEXT");
                 dtReport.Columns.Remove("TOTALRECORDS");
                 dtReport.Columns.Remove("MODIFIED_BY_TEXT");
-                dtReport.Columns.Remove("IMAGE_VALUE");
-                dtReport.Columns.Remove("DOCUMENT_VALUE");
+                //dtReport.Columns.Remove("IMAGE_VALUE");
+                //dtReport.Columns.Remove("DOCUMENT_VALUE");
                 dtReport.Columns.Remove("DATE_VALUE");
                
 
