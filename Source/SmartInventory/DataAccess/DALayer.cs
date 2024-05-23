@@ -984,7 +984,7 @@ namespace DataAccess
                 if (!string.IsNullOrEmpty(objReportFilter.connectionString))
                     connetionString = objReportFilter.connectionString;
                 var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
-                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view_csv_Cdb",
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view_Cdb",
                     new
                     {
                         p_regionids = objReportFilter.SelectedRegionIds,
