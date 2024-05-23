@@ -1605,6 +1605,7 @@
     <Content Include="MigrationScripts\2024-05-07_unique_constraint_lbl_clm_stng.sql" />
     <Content Include="MigrationScripts\2024_02_27_vodafone_issues.sql" />
     <Content Include="MigrationScripts\2024_02_25_vodafone_issues.sql" />
+    <Content Include="MigrationScripts\23-05-2024.sql" />
     <Content Include="MigrationScripts\30-04-2024.sql" />
     <Content Include="MultilingualJunkKeys\Content\Js\Alert.js" />
     <Content Include="Scripts\APIHandler.js" />

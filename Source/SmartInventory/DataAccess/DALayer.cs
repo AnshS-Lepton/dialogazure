@@ -694,7 +694,196 @@ namespace DataAccess
             catch { throw; }
         }
 
+        public List<Dictionary<string, string>> GetExportReportSummaryViewNewAdditional(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(objReportFilter.connectionString))
+                    connetionString = objReportFilter.connectionString;
+                var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view_Additional",
+                    new
+                    {
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_parentusers = objReportFilter.SelectedParentUsers,
+                        p_userids = objReportFilter.SelectedUserIds,
+                        p_layer_name = layerName,
+                        p_projectcodes = objReportFilter.SelectedProjectIds,
+                        p_planningcodes = objReportFilter.SelectedPlanningIds,
+                        p_workordercodes = objReportFilter.SelectedWorkOrderIds,
+                        p_purposecodes = objReportFilter.SelectedPurposeIds,
+                        p_durationbasedon = objReportFilter.durationbasedon,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_pageno = objReportFilter.currentPage,
+                        p_pagerecord = objReportFilter.pageSize,
+                        p_sortcolname = objReportFilter.sort,
+                        p_sorttype = objReportFilter.sortdir,
+                        p_advancefilter = objReportFilter.advancefilter,
+                        p_userid = objReportFilter.userId,
+                        p_roleid = objReportFilter.roleId,
+                        p_ownership_type = objReportFilter.SelectedOwnerShipType,
+                        p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
+                        p_culturename = Convert.ToString(currentLang),
+                        p_radious = objReportFilter.radius,
+                        p_route = objReportFilter.selected_route_ids
+                    }, true); ; ;
+                return lst;
+            }
+            catch { throw; }
+        }
+
+        public List<Dictionary<string, string>> GetExportReportSummaryViewNewCdb(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(objReportFilter.connectionString))
+                    connetionString = objReportFilter.connectionString;
+                var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view_Cdb",
+                    new
+                    {
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_parentusers = objReportFilter.SelectedParentUsers,
+                        p_userids = objReportFilter.SelectedUserIds,
+                        p_layer_name = layerName,
+                        p_projectcodes = objReportFilter.SelectedProjectIds,
+                        p_planningcodes = objReportFilter.SelectedPlanningIds,
+                        p_workordercodes = objReportFilter.SelectedWorkOrderIds,
+                        p_purposecodes = objReportFilter.SelectedPurposeIds,
+                        p_durationbasedon = objReportFilter.durationbasedon,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_pageno = objReportFilter.currentPage,
+                        p_pagerecord = objReportFilter.pageSize,
+                        p_sortcolname = objReportFilter.sort,
+                        p_sorttype = objReportFilter.sortdir,
+                        p_advancefilter = objReportFilter.advancefilter,
+                        p_userid = objReportFilter.userId,
+                        p_roleid = objReportFilter.roleId,
+                        p_ownership_type = objReportFilter.SelectedOwnerShipType,
+                        p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
+                        p_culturename = Convert.ToString(currentLang),
+                        p_radious = objReportFilter.radius,
+                        p_route = objReportFilter.selected_route_ids
+                    }, true); ; ;
+                return lst;
+            }
+            catch { throw; }
+        }
+
+
         public List<Dictionary<string, string>> GetExportReportSummaryView(ExportEntitiesSummaryViewFilter objReportFilter)
+        {
+            try
+            {
+                //    ExportReportLog exportReportLog = new ExportReportLog();
+                //    exportReportLog.applied_filter = JsonConvert.SerializeObject(objReportFilter);
+                //    exportReportLog = new DAExportReportLog().SaveExportReportLog(exportReportLog);
+                //}
+                //catch (Exception ex)
+                //{
+
+                //}
+                //try
+                //{
+                if (!string.IsNullOrEmpty(objReportFilter.connectionString))
+                    connetionString = objReportFilter.connectionString;
+                var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view",
+                    new
+                    {
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_parentusers = objReportFilter.SelectedParentUsers,
+                        p_userids = objReportFilter.SelectedUserIds,
+                        p_layer_name = objReportFilter.layerName,
+                        p_projectcodes = objReportFilter.SelectedProjectIds,
+                        p_planningcodes = objReportFilter.SelectedPlanningIds,
+                        p_workordercodes = objReportFilter.SelectedWorkOrderIds,
+                        p_purposecodes = objReportFilter.SelectedPurposeIds,
+                        p_durationbasedon = objReportFilter.durationbasedon,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_pageno = objReportFilter.currentPage,
+                        p_pagerecord = objReportFilter.pageSize,
+                        p_sortcolname = objReportFilter.sort,
+                        p_sorttype = objReportFilter.sortdir,
+                        p_advancefilter = objReportFilter.advancefilter,
+                        p_userid = objReportFilter.userId,
+                        p_roleid = objReportFilter.roleId,
+                        p_ownership_type = objReportFilter.SelectedOwnerShipType,
+                        p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
+                        p_culturename = Convert.ToString(currentLang),
+                        p_radious = objReportFilter.radius,
+                        p_route = objReportFilter.selected_route_ids
+                    }, true); ; ;
+                return lst;
+            }
+            catch { throw; }
+        }
+
+        public List<Dictionary<string, string>> GetExportReportSummaryViewCdb(ExportEntitiesSummaryViewFilter objReportFilter)
+        {
+            try
+            {
+                //    ExportReportLog exportReportLog = new ExportReportLog();
+                //    exportReportLog.applied_filter = JsonConvert.SerializeObject(objReportFilter);
+                //    exportReportLog = new DAExportReportLog().SaveExportReportLog(exportReportLog);
+                //}
+                //catch (Exception ex)
+                //{
+
+                //}
+                //try
+                //{
+                if (!string.IsNullOrEmpty(objReportFilter.connectionString))
+                    connetionString = objReportFilter.connectionString;
+                var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view",
+                    new
+                    {
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_parentusers = objReportFilter.SelectedParentUsers,
+                        p_userids = objReportFilter.SelectedUserIds,
+                        p_layer_name = objReportFilter.layerName,
+                        p_projectcodes = objReportFilter.SelectedProjectIds,
+                        p_planningcodes = objReportFilter.SelectedPlanningIds,
+                        p_workordercodes = objReportFilter.SelectedWorkOrderIds,
+                        p_purposecodes = objReportFilter.SelectedPurposeIds,
+                        p_durationbasedon = objReportFilter.durationbasedon,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_pageno = objReportFilter.currentPage,
+                        p_pagerecord = objReportFilter.pageSize,
+                        p_sortcolname = objReportFilter.sort,
+                        p_sorttype = objReportFilter.sortdir,
+                        p_advancefilter = objReportFilter.advancefilter,
+                        p_userid = objReportFilter.userId,
+                        p_roleid = objReportFilter.roleId,
+                        p_ownership_type = objReportFilter.SelectedOwnerShipType,
+                        p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
+                        p_culturename = Convert.ToString(currentLang),
+                        p_radious = objReportFilter.radius,
+                        p_route = objReportFilter.selected_route_ids
+                    }, true); ; ;
+                return lst;
+            }
+            catch { throw; }
+        }
+
+        public List<Dictionary<string, string>> GetExportReportSummaryViewAdditional(ExportEntitiesSummaryViewFilter objReportFilter)
         {
             try
             {
@@ -788,6 +977,90 @@ namespace DataAccess
             catch { throw; }
         }
 
+        public List<Dictionary<string, string>> GetExportReportSummaryViewCSVCdb(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(objReportFilter.connectionString))
+                    connetionString = objReportFilter.connectionString;
+                var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view_Cdb",
+                    new
+                    {
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_parentusers = objReportFilter.SelectedParentUsers,
+                        p_userids = objReportFilter.SelectedUserIds,
+                        p_layer_name = layerName,
+                        p_projectcodes = objReportFilter.SelectedProjectIds,
+                        p_planningcodes = objReportFilter.SelectedPlanningIds,
+                        p_workordercodes = objReportFilter.SelectedWorkOrderIds,
+                        p_purposecodes = objReportFilter.SelectedPurposeIds,
+                        p_durationbasedon = objReportFilter.durationbasedon,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_pageno = objReportFilter.currentPage,
+                        p_pagerecord = objReportFilter.pageSize,
+                        p_sortcolname = objReportFilter.sort,
+                        p_sorttype = objReportFilter.sortdir,
+                        p_advancefilter = objReportFilter.advancefilter,
+                        p_userid = objReportFilter.userId,
+                        p_roleid = objReportFilter.roleId,
+                        p_ownership_type = objReportFilter.SelectedOwnerShipType,
+                        p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
+                        p_culturename = Convert.ToString(currentLang),
+                        p_radious = objReportFilter.radius,
+                        p_route = objReportFilter.selected_route_ids
+                    }, true); ; ;
+                return lst;
+            }
+            catch { throw; }
+        }
+
+        public List<Dictionary<string, string>> GetExportReportSummaryViewCSVAdditional(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(objReportFilter.connectionString))
+                    connetionString = objReportFilter.connectionString;
+                var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view_csv_Additional",
+                    new
+                    {
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_parentusers = objReportFilter.SelectedParentUsers,
+                        p_userids = objReportFilter.SelectedUserIds,
+                        p_layer_name = layerName,
+                        p_projectcodes = objReportFilter.SelectedProjectIds,
+                        p_planningcodes = objReportFilter.SelectedPlanningIds,
+                        p_workordercodes = objReportFilter.SelectedWorkOrderIds,
+                        p_purposecodes = objReportFilter.SelectedPurposeIds,
+                        p_durationbasedon = objReportFilter.durationbasedon,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_pageno = objReportFilter.currentPage,
+                        p_pagerecord = objReportFilter.pageSize,
+                        p_sortcolname = objReportFilter.sort,
+                        p_sorttype = objReportFilter.sortdir,
+                        p_advancefilter = objReportFilter.advancefilter,
+                        p_userid = objReportFilter.userId,
+                        p_roleid = objReportFilter.roleId,
+                        p_ownership_type = objReportFilter.SelectedOwnerShipType,
+                        p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
+                        p_culturename = Convert.ToString(currentLang),
+                        p_radious = objReportFilter.radius,
+                        p_route = objReportFilter.selected_route_ids
+                    }, true); ; ;
+                return lst;
+            }
+            catch { throw; }
+        }
+
         public List<WebGridColumns> GetEntityWiseColumns(int entity_id, string entity_name, string setting_type, int user_id, int role_id)
         {
             try
@@ -835,6 +1108,7 @@ namespace DataAccess
             }
             catch { throw; }
         }
+    
         public List<WebGridColumns> GetLandBaseLayerWiseColumns(int entity_id, string layer_name, string setting_type, int user_id, int role_id)
         {
             try
@@ -852,6 +1126,7 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        
         public List<Dictionary<string, string>> GetBuildingStatusHistory(ExportEntitiesSummaryViewFilter objReportFilter)
         {
             try

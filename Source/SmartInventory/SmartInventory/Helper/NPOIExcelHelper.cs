@@ -127,6 +127,26 @@ namespace SmartInventory.Helper
             }
             return table;
         }
+
+        internal static void DataTableToSheet(DataTable dtReport, ISheet sheet1)
+        {
+            IRow headerRow = sheet1.CreateRow(0);
+            foreach (DataColumn column in dtReport.Columns)
+            {
+                headerRow.CreateCell(column.Ordinal).SetCellValue(column.ColumnName);
+            }
+
+            int rowIndex = 1;
+            foreach (DataRow row in dtReport.Rows)
+            {
+                IRow dataRow = sheet1.CreateRow(rowIndex);
+                foreach (DataColumn column in dtReport.Columns)
+                {
+                    dataRow.CreateCell(column.Ordinal).SetCellValue(row[column].ToString());
+                }
+                rowIndex++;
+            }
+        }
         public static DataTable KMLToTable_Old(string filepath, string geomTempColName, string latTempColName, string longTempColName, string entityType)
         {
             var table = new DataTable();

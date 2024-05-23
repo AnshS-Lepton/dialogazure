@@ -244,15 +244,47 @@ namespace BusinessLogics
         {
             return new DALayer().GetExportReportSummaryView(objReportFilter);
         }
-		public List<Dictionary<string, string>> GetExportReportSummaryViewNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        public List<Dictionary<string, string>> GetExportReportSummaryViewCdb(ExportEntitiesSummaryViewFilter objReportFilter)
+        {
+            return new DALayer().GetExportReportSummaryViewCdb(objReportFilter);
+        }
+
+        public List<Dictionary<string, string>> GetExportReportSummaryViewAdditional(ExportEntitiesSummaryViewFilter objReportFilter)
+        {
+            return new DALayer().GetExportReportSummaryViewAdditional(objReportFilter);
+        }
+
+        public List<Dictionary<string, string>> GetExportReportSummaryViewNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
 		{
 			return new DALayer().GetExportReportSummaryViewNew(objReportFilter, layerName);
 		}
-		public List<Dictionary<string, string>> GetExportReportSummaryViewCSV(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+
+        public List<Dictionary<string, string>> GetExportReportSummaryViewNewCdb(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetExportReportSummaryViewNewCdb(objReportFilter, layerName);
+        }
+
+        public List<Dictionary<string, string>> GetExportReportSummaryViewNewAdditional(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetExportReportSummaryViewNewAdditional(objReportFilter, layerName);
+        }
+        public List<Dictionary<string, string>> GetExportReportSummaryViewCSV(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
 		{
 			return new DALayer().GetExportReportSummaryViewCSV(objReportFilter, layerName);
 		}
-		public List<WebGridColumns> GetEntityWiseColumns(int entity_id, string entity_name, string setting_type, int user_id, int role_id)
+
+        public List<Dictionary<string, string>> GetExportReportSummaryViewCSVCdb(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetExportReportSummaryViewCSVCdb(objReportFilter, layerName);
+        }
+
+        public List<Dictionary<string, string>> GetExportReportSummaryViewCSVAdditional(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetExportReportSummaryViewCSVAdditional(objReportFilter, layerName);
+        }
+
+
+        public List<WebGridColumns> GetEntityWiseColumns(int entity_id, string entity_name, string setting_type, int user_id, int role_id)
         {
             return new DALayer().GetEntityWiseColumns(entity_id, entity_name, setting_type, user_id, role_id);
         }
