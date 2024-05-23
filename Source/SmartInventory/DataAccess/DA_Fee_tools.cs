@@ -7,6 +7,7 @@ using DataAccess.DBHelpers;
 using DataAccess.DBContext;
 using Models;
 using Models.Admin;
+using static Mono.Security.X509.X520;
 
 namespace DataAccess
 {
@@ -17,36 +18,45 @@ namespace DataAccess
             try
             {
                 var result1 = new userFeToolMapping() ;
-                if (ObjFeTools.id != 0)
+                var chkExistingUser = repo.GetById(m => m.user_id == ObjFeTools.user_id && m.tool_id == ObjFeTools.tool_id && m.barcode== ObjFeTools.barcode && m.serial_number ==ObjFeTools.serial_number);
+                if (chkExistingUser == null)
                 {
-                    var objExisiting = repo.GetById(m => m.id == ObjFeTools.id);
-                    
-                    if (objExisiting != null)
+                    if (ObjFeTools.id != 0)
                     {
-                        //if (objExisiting.image_value != false)
-                        //{
-                        //    ObjFeTools.image_value = objExisiting.image_value;
-                        //}
-                        //if (objExisiting.document_value != false)
-                        //{
-                        //    ObjFeTools.document_value = objExisiting.document_value;
-                        //}
-                        ObjFeTools.created_on= objExisiting.created_on; 
+                        var objExisiting = repo.GetById(m => m.id == ObjFeTools.id);
+
+                        if (objExisiting != null)
+                        {
+
+
+                            ObjFeTools.created_on = objExisiting.created_on;
+                            ObjFeTools.date_value = Convert.ToDateTime(ObjFeTools.date_v);
+                            ObjFeTools.modified_by = user_id;
+                            ObjFeTools.modified_on = DateTimeHelper.Now;
+                            repo.Update(ObjFeTools);
+                            result1.action_type = "Update";
+                        }
+                        else
+                        {
+                            result1.action_type = "Update";
+
+                        }
+                    }
+
+                    else
+                    {
                         ObjFeTools.date_value = Convert.ToDateTime(ObjFeTools.date_v);
-                        ObjFeTools.modified_by = user_id;
-                        ObjFeTools.modified_on = DateTimeHelper.Now;
-                        repo.Update(ObjFeTools);
-                        result1.action_type = "Update";
+
+                        ObjFeTools.created_by = user_id;
+                        ObjFeTools.created_on = DateTimeHelper.Now;
+                        result1 = repo.Insert(ObjFeTools);
+                        result1.action_type = "Save";
                     }
                 }
                 else
                 {
-                    ObjFeTools.date_value = Convert.ToDateTime(ObjFeTools.date_v);
+                    result1.action_type = "Duplicate";
 
-                    ObjFeTools.created_by = user_id;
-                    ObjFeTools.created_on = DateTimeHelper.Now;
-                    result1 = repo.Insert(ObjFeTools);
-                    result1.action_type = "Save";
                 }
                 return result1;
             }
@@ -72,7 +82,7 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public List<FE_Tools_Details> GetGroupList(CommonGridAttributes objGridAttributes)
+        public List<FE_Tools_Details> GetGroupList(CommonGridAttributes objGridAttributes,int userid)
         {
             try
             {
@@ -85,6 +95,7 @@ namespace DataAccess
                     P_SORTCOLNAME = objGridAttributes.sort,
                     P_SORTTYPE = objGridAttributes.orderBy,
                     P_TOTALRECORDS = objGridAttributes.totalRecord,
+                    p_user_id = userid
                 }, true);
             }
             catch { throw; }
@@ -94,6 +105,14 @@ namespace DataAccess
             try
             {
                 return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_user_details", new { }, true);
+            }
+            catch { throw; }
+        }
+        public List<KeyValueDropDown> GetFEUserDeatils(int roll_id,string active)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_user_details", new {ID =roll_id ,Active = active }, true);
             }
             catch { throw; }
         }
@@ -112,6 +131,21 @@ namespace DataAccess
                 }
 
 
+            }
+            catch { throw; }
+        }
+        public DateTime GetUserDetailsbyid(int userId)
+        {
+            
+            try
+            {
+                using (MainContext context = new MainContext())
+                {
+                    string query = string.Format(@"select created_on from vw_user_details where user_id = '{0}' ", userId);
+                    var date_value  = context.Database.SqlQuery<DateTime>(query).FirstOrDefault();
+                    //created_on = date_value.ToString("yyyy-MM-dd");
+                    return date_value;
+                }
             }
             catch { throw; }
         }
