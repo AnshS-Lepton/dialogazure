@@ -71,11 +71,11 @@
 
 <!DOCTYPE html>
 <input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
-<div class="exportReportHeader">
+@*<div class="exportReportHeader">
     <ul class="tab">
         <li id="liFilter">@Resources.Resources.SI_OSP_GBL_NET_FRM_063</li>
     </ul>
-</div>
+</div>*@
 <div class="ExportReportbody">
     @using (Ajax.BeginForm("EntityAssociationReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress", }, new { id = "frmAssociationEntitiesSummaryData", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
     {
@@ -295,6 +295,11 @@
 
 
     $(document).ready(function () {
+        var popupmessage = '@Model.popupmessage';
+        if (popupmessage != "" && popupmessage != null && popupmessage != undefined) {
+            alert(popupmessage);
+        }
+
         $("#ddlFilterOwnershipType").attr('data-placeholder', "-All-").trigger("chosen:updated");
 
         if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9) {

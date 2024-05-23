@@ -4512,7 +4512,9 @@ namespace SmartInventory.Controllers
             else
             {
 				DownloadAssociationEntityReport(objAssociationEntitiesReport.objReportFilters.purpose, objAssociationEntitiesReport.objReportFilters.SelectedLayerIds, 0, 0, 0);
+				objAssociationEntitiesReport.popupmessage = "Request is processing in background.Please check the export report log page.";
 				return PartialView("_EntityAssociationReport", objAssociationEntitiesReport);
+				
 			}
 
 		}
