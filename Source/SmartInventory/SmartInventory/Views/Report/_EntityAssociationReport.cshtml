@@ -295,6 +295,12 @@
 
 
     $(document).ready(function () {
+
+        var popupmessage = '@Model.popupmessage';
+        if (popupmessage != "" && popupmessage != null && popupmessage != undefined) {
+            alert(popupmessage);
+        }
+
         $("#ddlFilterOwnershipType").attr('data-placeholder', "-All-").trigger("chosen:updated");
 
         if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9) {

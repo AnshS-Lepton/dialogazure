@@ -25726,7 +25726,7 @@ var Main = function () {
             }
             if (eventParam != 'PolyLine') {
                 calculateArea();
-                google.maps.event.addListener(si.gMapObj.shapeObj, 'click', app.Entityreport.shapeClickInfoExportReport);
+                google.maps.event.addListener(si.gMapObj.shapeObj, 'click', app.EntityAssreport.shapeClickInfoAssociationReport);
             }
             si.gMapObj.shapeObj.setMap(si.map);
         },

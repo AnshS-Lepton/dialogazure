@@ -2960,6 +2960,8 @@ namespace Models
 		[NotMapped]
 		public List<int> selected_route_ids { get; set; }
 		[NotMapped]
+		public string popupmessage { get; set; }
+		[NotMapped]
 		public List<RouteInfo> lstRouteInfo { get; set; }
 		public AssociationEntitiesReport()
 		{
