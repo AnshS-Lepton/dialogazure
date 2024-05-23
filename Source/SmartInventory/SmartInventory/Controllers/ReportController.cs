@@ -1672,108 +1672,27 @@ namespace SmartInventory.Controllers
 									try
 									{
 										objExportEntitiesReport.objReportFilters.layerName = layer.layer_name;
+										var layer_name = layer.layer_name;	
 										var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 
 										EntitySummaryReport recordCount = entityExportSummaryData.lstReportData.Where(x => x.entity_name.ToUpper() == layer.layer_name.ToUpper()).FirstOrDefault();
 										int total_entity_count = 0;
 										if (recordCount != null)
 											total_entity_count = recordCount.planned_count + recordCount.as_built_count + recordCount.dormant_count;
-										List<Dictionary<string, string>> lstExportEntitiesDetail = null;
-										List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
-										List<Dictionary<string, string>> lstExportEntitiesDetailCdb = null;
 
+										Session["objExportEntitiesReport"] = null;
 
-										List<string> reportTypeString = reportType;
-										if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
-										{
-											if (reportTypeString.Contains("GIS"))
-											{
-												lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
-											}
-											else if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
-											{
-												lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
-											}
-											else if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
-											{
-												lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-											}
-											else
-											{
-												lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
-												if (objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
-												{
-													lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
-												}
-												if (layerDetail.is_dynamic_control_enable)
-												{
-													lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-												}
-											}
-										}
-										else
-										{
-											if (reportTypeString.Contains("GIS"))
-											{
-												lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
-											}
-											else if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
-											{
-												lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewNewCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
-											}
-											else if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
-											{
-												lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-											}
-											else
-											{
-												lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
-												if (layerDetail.is_dynamic_control_enable)
-												{
-													lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-												}
-												if (objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
-												{
-													lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewNewCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
+										Session["objExportEntitiesReport"] = objExportEntitiesReport;
+										bool textType = true;
+										var dataSet = GetDataSetFromDataTable(reportType, layer_name, layerDetail, total_entity_count, textType);
+										DataTable dtReport = dataSet.Tables[0];
+										DataTable dtReportCdb = dataSet.Tables[1];
+										DataTable dtReportAdditional = dataSet.Tables[2];
 
-												}
-											}
-
-
-
-										}
-										DataTable dtReport = new DataTable();
-										DataTable dtReportCdb = new DataTable();
-										DataTable dtReportAdditional = new DataTable();
-										dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
-										dtReportCdb = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetailCdb, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
-										dtReportAdditional = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetailAdditional, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
 										dtReport.TableName = layer.layer_title;
 
 										//dtReport.TableName = objExportEntitiesReport.objReportFilters.layerName;
-										if (dtReport != null && dtReport.Rows.Count > 0)
-										{
-											if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
-											if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
-											if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
-											if (dtReport.Columns.Contains("Fn Get Date")) { dtReport.Columns.Remove("Fn Get Date"); }
-										}
-
-										if (dtReportCdb != null && dtReportCdb.Rows.Count > 0)
-										{
-											if (dtReportCdb.Columns.Contains("S_NO")) { dtReportCdb.Columns.Remove("S_NO"); }
-											if (dtReportCdb.Columns.Contains("totalrecords")) { dtReportCdb.Columns.Remove("totalrecords"); }
-											if (dtReportCdb.Columns.Contains("Barcode")) { dtReportCdb.Columns.Remove("Barcode"); }
-											if (dtReportCdb.Columns.Contains("Fn Get Date")) { dtReportCdb.Columns.Remove("Fn Get Date"); }
-										}
-
-										if (dtReportAdditional != null && dtReportAdditional.Rows.Count > 0)
-										{
-											if (dtReportAdditional.Columns.Contains("S_NO")) { dtReportAdditional.Columns.Remove("S_NO"); }
-											if (dtReportAdditional.Columns.Contains("totalrecords")) { dtReportAdditional.Columns.Remove("totalrecords"); }
-											if (dtReportAdditional.Columns.Contains("Barcode")) { dtReportAdditional.Columns.Remove("Barcode"); }
-											if (dtReportAdditional.Columns.Contains("Fn Get Date")) { dtReportAdditional.Columns.Remove("Fn Get Date"); }
-										}
+										
 
 
 										if (dtReport.Rows.Count > 0)
@@ -1793,22 +1712,11 @@ namespace SmartInventory.Controllers
 												tempFileName = $"{parentFolder}/{dtReportAdditional.TableName}.csv";
 												StreamNewCSVInFolder(dtReportAdditional, tempFileName);
 											}
-											//if (dtReportCdb.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
-											//{
-											//    tempFileName = $"{parentFolder}/{dtReportCdb.TableName}.csv";
-											//    StreamNewCSVInFolder(dtReportCdb, tempFileName);
-											//}
-											//if (dtReportAdditional.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
-											//{
-											//    tempFileName = $"{parentFolder}/{dtReportAdditional.TableName}.csv";
-											//    StreamNewCSVInFolder(dtReportAdditional, tempFileName);
-											//}
+
 											else
 											{
 												//if()
 												tempFileName = $"{directoryPath}/{dtReport.TableName}.xlsx";
-												//    ExportDataNew(dtReport, fileName, tempFileName);
-
 												ExportDataExcelMerge(dtReport, dtReportCdb, dtReportAdditional, fileName, tempFileName); ;
 											}
 
@@ -1880,6 +1788,120 @@ namespace SmartInventory.Controllers
 			}
 
 		}
+
+		public DataSet GetDataSetFromDataTable(List<string> reportType, string layer_name, layerDetail layerDetail, Int64 total_entity_count, bool textType)
+		{
+			DataSet dataSet = new DataSet();
+			ExportEntitiesSummaryView objExportEntitiesReport = new ExportEntitiesSummaryView();
+			List<Dictionary<string, string>> lstExportEntitiesDetail = null;
+			List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
+			List<Dictionary<string, string>> lstExportEntitiesDetailCdb = null;
+
+			objExportEntitiesReport = (ExportEntitiesSummaryView)Session["objExportEntitiesReport"];
+			List<string> reportTypeString = reportType;
+
+				if (total_entity_count < ApplicationSettings.ExcelReportLimitCount || textType == true)
+				{
+				if (reportTypeString.Contains("GIS"))
+				{
+					lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer_name);
+				}
+				else if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+				{
+					lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewNewCdb(objExportEntitiesReport.objReportFilters, layer_name);
+				}
+				else if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+				{
+					lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer_name);
+				}
+				else
+				{
+					lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer_name);
+					if (layerDetail.is_dynamic_control_enable)
+					{
+						lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer_name);
+					}
+					if (objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+					{
+						lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewNewCdb(objExportEntitiesReport.objReportFilters, layer_name);
+
+					}
+				}
+			}
+				else
+				{				
+
+				if (reportTypeString.Contains("GIS"))
+				{
+					lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer_name);
+				}
+				else if (reportTypeString.Contains("CDB") && layer_name == EntityType.Cable.ToString())
+				{
+					lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer_name);
+				}
+				else if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+				{
+					lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer_name);
+				}
+				else
+				{
+					lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer_name);
+					if (objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+					{
+						lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer_name);
+					}
+					if (layerDetail.is_dynamic_control_enable)
+					{
+						lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer_name);
+					}
+				}
+
+			}
+
+           
+			DataTable dtReport = new DataTable();
+			DataTable dtReportCdb = new DataTable();
+			DataTable dtReportAdditional = new DataTable();
+			dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
+			dtReportCdb = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetailCdb, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
+			dtReportAdditional = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetailAdditional, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
+			// Create a new DataSet
+
+			if (dtReport != null && dtReport.Rows.Count > 0)
+			{
+				if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+				if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+				if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+				if (dtReport.Columns.Contains("Fn Get Date")) { dtReport.Columns.Remove("Fn Get Date"); }
+			}
+
+			if (dtReportCdb != null && dtReportCdb.Rows.Count > 0)
+			{
+				if (dtReportCdb.Columns.Contains("S_NO")) { dtReportCdb.Columns.Remove("S_NO"); }
+				if (dtReportCdb.Columns.Contains("totalrecords")) { dtReportCdb.Columns.Remove("totalrecords"); }
+				if (dtReportCdb.Columns.Contains("Barcode")) { dtReportCdb.Columns.Remove("Barcode"); }
+				if (dtReportCdb.Columns.Contains("Fn Get Date")) { dtReportCdb.Columns.Remove("Fn Get Date"); }
+			}
+
+			if (dtReportAdditional != null && dtReportAdditional.Rows.Count > 0)
+			{
+				if (dtReportAdditional.Columns.Contains("S_NO")) { dtReportAdditional.Columns.Remove("S_NO"); }
+				if (dtReportAdditional.Columns.Contains("totalrecords")) { dtReportAdditional.Columns.Remove("totalrecords"); }
+				if (dtReportAdditional.Columns.Contains("Barcode")) { dtReportAdditional.Columns.Remove("Barcode"); }
+				if (dtReportAdditional.Columns.Contains("Fn Get Date")) { dtReportAdditional.Columns.Remove("Fn Get Date"); }
+			}
+
+
+			// Add the DataTable to the DataSet
+			dataSet.Tables.Add(dtReport);
+			dataSet.Tables.Add(dtReportCdb);
+			dataSet.Tables.Add(dtReportAdditional);
+
+			// Return the DataSet
+			return dataSet;
+		}
+
+
 
 		public void StreamNewCSVInFolderMerge(DataTable dataTable, DataTable dataTableCdb, DataTable dataTableAdditional, string remoteFilePath)
 		{
@@ -8878,86 +8900,18 @@ namespace SmartInventory.Controllers
 										//LogHelper.GetInstance.WriteDebugLogTest($"Request Sent to get the data from database on: {DateTime.Now}", layer.layer_name);
 										var layerdetails = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 
-										List<Dictionary<string, string>> lstExportEntitiesDetail = null;
-										List<Dictionary<string, string>> lstExportEntitiesDetailCdb = null;
-										List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
-										List<string> reportTypeString = reportType;
 
-										if (reportTypeString.Contains("GIS"))
-										{
-											lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
-										}
-										else if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
-										{
-											lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
-										}
-										else if (reportTypeString.Contains("ADDITIONAL") && layerdetails.is_dynamic_control_enable)
-										{
-											lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-										}
-										else
-										{
-											lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
-											if (layerdetails.is_dynamic_control_enable)
-											{
-												lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-											}
-											if (objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
-											{
-												lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
-											}
-										}
-										DataTable dtReport = new DataTable();
-										DataTable dtReportCdb = new DataTable();
-										DataTable dtReportAdditional = new DataTable();
+										Session["objExportEntitiesReport"] = null;
 
-										if (lstExportEntitiesDetail.Count > 0)
-										{
-											dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//, true, ApplicationSettings.numberFormatType, new string[] { "" }
-																														//dtReport.TableName = layerDetail.layer_title;
-											dtReport.TableName = layer.layer_title;
-											if (dtReport != null && dtReport.Rows.Count > 0)
-											{
-												if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
-												if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
-												if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
-											}
-
-										}
-
-										if (lstExportEntitiesDetailCdb.Count > 0)
-										{
-											dtReportCdb = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetailCdb);//, true, ApplicationSettings.numberFormatType, new string[] { "" }
-																															  //dtReport.TableName = layerDetail.layer_title;
-											dtReportCdb.TableName = layer.layer_title;
-											if (dtReportCdb != null && dtReportCdb.Rows.Count > 0)
-											{
-												if (dtReportCdb.Columns.Contains("S_NO")) { dtReportCdb.Columns.Remove("S_NO"); }
-												if (dtReportCdb.Columns.Contains("totalrecords")) { dtReportCdb.Columns.Remove("totalrecords"); }
-												if (dtReportCdb.Columns.Contains("Barcode")) { dtReportCdb.Columns.Remove("Barcode"); }
-											}
-
-										}
-
-										if (lstExportEntitiesDetailAdditional.Count > 0)
-										{
-											dtReportAdditional = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetailAdditional);//, true, ApplicationSettings.numberFormatType, new string[] { "" }
-																																			//dtReport.TableName = layerDetail.layer_title;
-											dtReportAdditional.TableName = layer.layer_title;
-											if (dtReportAdditional != null && dtReportAdditional.Rows.Count > 0)
-											{
-												if (dtReportAdditional.Columns.Contains("S_NO")) { dtReportAdditional.Columns.Remove("S_NO"); }
-												if (dtReportAdditional.Columns.Contains("totalrecords")) { dtReportAdditional.Columns.Remove("totalrecords"); }
-												if (dtReportAdditional.Columns.Contains("Barcode")) { dtReportAdditional.Columns.Remove("Barcode"); }
-											}
-
-										}
+										Session["objExportEntitiesReport"] = objExportEntitiesReport;
+										bool textType = false;
+										var dataSet = GetDataSetFromDataTable(reportType, layer.layer_name, layerdetails, 0, textType);
+										DataTable dtReport = dataSet.Tables[0];
+										DataTable dtReportCdb = dataSet.Tables[1];
+										DataTable dtReportAdditional = dataSet.Tables[2];
 
 										objExportEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
 										objExportReportFilterNew.SelectedLayerId = SelectedLayerIdSummary;
-
-
-
 
 										if (dtReportCdb.Rows.Count > 0)
 										{
