@@ -108,7 +108,7 @@ namespace SmartInventory.Controllers
 				Response.End();
 			}
 		}
-		private void ExportDataNew(DataTable dtReport, string fileName,string tempfileName)
+		private void ExportDataNew(DataTable dtReport, string fileName, string tempfileName)
 		{
 
 			using (var exportData = new MemoryStream())
@@ -122,7 +122,7 @@ namespace SmartInventory.Controllers
 					FileStream xfile = new FileStream(tempfileName, FileMode.Create, System.IO.FileAccess.Write);
 					workbook.Write(xfile);
 					xfile.Close();
-				
+
 				}
 
 			}
@@ -161,14 +161,14 @@ namespace SmartInventory.Controllers
 					IWorkbook workbook = NPOIExcelHelper.DatasetToExcel("xlsx", dsReport, isDataContainBarcode);
 					workbook.Write(exportData);
 
-                    string tempfileName = fileName + ".xlsx";
-                    //commented by priyanka
-                    //string tempfilePath = Path.Combine(Server.MapPath("~/Uploads/Temp/ExportReportLog"), tempfileName);
-                    //end commented by priyanka
-                    string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
-                    string tempfilePath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"), tempfileName);
+					string tempfileName = fileName + ".xlsx";
+					//commented by priyanka
+					//string tempfilePath = Path.Combine(Server.MapPath("~/Uploads/Temp/ExportReportLog"), tempfileName);
+					//end commented by priyanka
+					string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
+					string tempfilePath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"), tempfileName);
 
-                    //upper updated by priyanka
+					//upper updated by priyanka
 
 					FileStream xfile = new FileStream(tempfilePath, FileMode.Create, System.IO.FileAccess.Write);
 					workbook.Write(xfile);
@@ -407,16 +407,16 @@ namespace SmartInventory.Controllers
 					LogHelper.GetInstance.WriteDebugLog("\r\n");
 					//workbook.Write(exportData);
 
-                    //string tempfileName = fileName + ".xlsx";
-                    //commented by priyanka
-                    //string directoryPath = Path.Combine(Server.MapPath("~/Uploads/Temp/ExportReportLog"));
-                    //string tempfilePath = Path.Combine(Server.MapPath("~/Uploads/Temp/ExportReportLog"), fileName);
-                    //commented by priyanka
-                    string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
-                    string directoryPath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"));
-                    string tempfilePath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"), fileName);
-                    if (Directory.Exists(directoryPath).Equals(false))
-                        Directory.CreateDirectory(directoryPath);
+					//string tempfileName = fileName + ".xlsx";
+					//commented by priyanka
+					//string directoryPath = Path.Combine(Server.MapPath("~/Uploads/Temp/ExportReportLog"));
+					//string tempfilePath = Path.Combine(Server.MapPath("~/Uploads/Temp/ExportReportLog"), fileName);
+					//commented by priyanka
+					string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
+					string directoryPath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"));
+					string tempfilePath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"), fileName);
+					if (Directory.Exists(directoryPath).Equals(false))
+						Directory.CreateDirectory(directoryPath);
 
 					//ftpfilePath = ftpfilePath + "ExportReportLog/";
 					using (FileStream xfile = new FileStream(tempfilePath, FileMode.Create, System.IO.FileAccess.Write))
@@ -453,8 +453,8 @@ namespace SmartInventory.Controllers
 			DateTime startTime = DateTime.Now;
 			var userdetails = (User)Session["userDetail"];
 
-            var moduleAbbr = "EXRPT";
-           // List<ConnectionMaster> con = new BLLayer().GetConnectionString(moduleAbbr);
+			var moduleAbbr = "EXRPT";
+			// List<ConnectionMaster> con = new BLLayer().GetConnectionString(moduleAbbr);
 			ConnectionMaster con = new BLLayer().GetConnectionString(moduleAbbr);
 			//foreach(var conn in con)
 			//{
@@ -462,8 +462,8 @@ namespace SmartInventory.Controllers
 			{
 				objExportEntitiesReport.objReportFilters.connectionString = con.connection_string;
 			}
-			
-           // }            
+
+			// }            
 
 			objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportEntitiesReport.objReportFilters.SelectedRegionId != null && objExportEntitiesReport.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedRegionId.ToArray()) : "";
 			objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportEntitiesReport.objReportFilters.SelectedProvinceId != null && objExportEntitiesReport.objReportFilters.SelectedProvinceId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToArray()) : "";
@@ -481,15 +481,15 @@ namespace SmartInventory.Controllers
 			//objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportEntitiesReport.objReportFilters.SelectedOwnerShipId != null && objExportEntitiesReport.objReportFilters.SelectedOwnerShipId.Count > 0 ? "'" + string.Join("','", objExportEntitiesReport.objReportFilters.SelectedOwnerShipId.ToArray()) + "'" : "";
 			objExportEntitiesReport.objReportFilters.SelectedOwnerShipType = objExportEntitiesReport.objReportFilters.SelectedOwnerShipType != null ? objExportEntitiesReport.objReportFilters.SelectedOwnerShipType : "";
 			objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorId != null && objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorId.ToArray()) : "";
-            objExportEntitiesReport.objReportFilters.selected_route_ids = objExportEntitiesReport.selected_route_ids != null && objExportEntitiesReport.selected_route_ids.Count > 0 ? string.Join(",", objExportEntitiesReport.selected_route_ids.ToArray()) : "";
-            //if (objExportEntitiesReport.objReportFilters.SelectedParentUser == null)
-            //{
-            //    objExportEntitiesReport.objReportFilters.SelectedParentUser = new List<int>();
-            //    //objExportEntitiesReport.objReportFilters.SelectedParentUser.Add(((User)Session["userDetail"]).user_id);
-            //    objExportEntitiesReport.objReportFilters.SelectedParentUser.Add(1);
-            //}
-            //if (objExportEntitiesReport.objReportFilters.fromDate != null || objExportEntitiesReport.objReportFilters.customDate==9)
-            var selectedLayers = objExportEntitiesReport.objReportFilters.SelectedLayerIds;
+			objExportEntitiesReport.objReportFilters.selected_route_ids = objExportEntitiesReport.selected_route_ids != null && objExportEntitiesReport.selected_route_ids.Count > 0 ? string.Join(",", objExportEntitiesReport.selected_route_ids.ToArray()) : "";
+			//if (objExportEntitiesReport.objReportFilters.SelectedParentUser == null)
+			//{
+			//    objExportEntitiesReport.objReportFilters.SelectedParentUser = new List<int>();
+			//    //objExportEntitiesReport.objReportFilters.SelectedParentUser.Add(((User)Session["userDetail"]).user_id);
+			//    objExportEntitiesReport.objReportFilters.SelectedParentUser.Add(1);
+			//}
+			//if (objExportEntitiesReport.objReportFilters.fromDate != null || objExportEntitiesReport.objReportFilters.customDate==9)
+			var selectedLayers = objExportEntitiesReport.objReportFilters.SelectedLayerIds;
 			if (!string.IsNullOrEmpty(IsRequestFromInfo) && Convert.ToBoolean(IsRequestFromInfo))
 			{
 				//LogHelper.GetInstance.WriteDebugLog($"Request Sent to get the data from database on: {DateTime.Now}");
@@ -541,8 +541,8 @@ namespace SmartInventory.Controllers
 			//Bind Layers..
 			objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
 			objExportEntitiesReport.lstRouteInfo = new BLLayer().getRouteInfo("0");
-            //Bind Regions..
-            objExportEntitiesReport.lstRegion = new BLLayer().GetAllRegion(new RegionIn() { userId = Convert.ToInt32(Session["user_id"]) });
+			//Bind Regions..
+			objExportEntitiesReport.lstRegion = new BLLayer().GetAllRegion(new RegionIn() { userId = Convert.ToInt32(Session["user_id"]) });
 			//Bind Provinces..
 			if (!string.IsNullOrWhiteSpace(objExportEntitiesReport.objReportFilters.SelectedRegionIds))
 			{
@@ -701,15 +701,15 @@ namespace SmartInventory.Controllers
 					DownloadEntityReportNewIntoPDFNEW(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount);
 				}
 				else if (fileType.ToUpper() == "ALLEXCEL")
-				{					
-			    	DownloadEntityReportIntoExcelAll(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType);					
+				{
+					DownloadEntityReportIntoExcelAll(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType);
 				}
 				else if (fileType.ToUpper() == "XML")
 				{
 					//DownloadEntitySummaryIntoKMLAll(entityids, fileType.ToUpper());
 					DownloadEntitySummaryIntoKMLAllNew(entityids, fileType.ToUpper(), totalPlannedCount, totalAsBuiltCount, totalDormantCount);
 				}
-				else if (fileType.ToUpper() == "KML" )
+				else if (fileType.ToUpper() == "KML")
 				{
 					//DownloadEntitySummaryIntoKMLAll(entityids, fileType.ToUpper());
 					DownloadEntitySummaryIntoAllKMLNew(entityids, fileType.ToUpper(), totalPlannedCount, totalAsBuiltCount, totalDormantCount);
@@ -729,7 +729,7 @@ namespace SmartInventory.Controllers
 				}
 				else if (fileType.ToUpper() == "ALLTXT")
 				{
-					DownloadEntityReportNewIntoCSVAll(entityids, fileType.ToUpper(), totalPlannedCount, totalAsBuiltCount, totalDormantCount,reportType);
+					DownloadEntityReportNewIntoCSVAll(entityids, fileType.ToUpper(), totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType);
 				}
 				else if (fileType.ToUpper() == "ALLCSV")
 				{
@@ -745,8 +745,8 @@ namespace SmartInventory.Controllers
 		public DataTable GetExportReportFilter(object obj)
 		{
 			var userdetails = (User)Session["userDetail"];
-            var isAttr = ((List<string>)Session["ApplicableModuleList"]);
-            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+			var isAttr = ((List<string>)Session["ApplicableModuleList"]);
+			CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
 			TextInfo textInfo = cultureInfo.TextInfo;
 			DataTable dt = new DataTable(Resources.Resources.SI_GBL_GBL_NET_FRM_165);
 			dt.Columns.Add(Resources.Resources.SI_GBL_GBL_NET_FRM_166);
@@ -757,17 +757,17 @@ namespace SmartInventory.Controllers
 			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_066; dt.Rows.Add(dr); dr = dt.NewRow();
 			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_GBL_GBL_063; dt.Rows.Add(dr); dr = dt.NewRow();
 			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_068; dt.Rows.Add(dr); dr = dt.NewRow();
-			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_069; dt.Rows.Add(dr); dr = dt.NewRow();		
+			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_069; dt.Rows.Add(dr); dr = dt.NewRow();
 			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_GBL_GBL_GBL_GBL_147; dt.Rows.Add(dr); dr = dt.NewRow();
 			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_GBL_FRM_030; dt.Rows.Add(dr); dr = dt.NewRow();
-            if (isAttr.Contains("PROJ"))
-            {
-                dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_GBL_GBL_074; dt.Rows.Add(dr); dr = dt.NewRow();
-                dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_GBL_GBL_076; dt.Rows.Add(dr); dr = dt.NewRow();
-                dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_GBL_010; dt.Rows.Add(dr); dr = dt.NewRow();
-                dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_GBL_011; dt.Rows.Add(dr); dr = dt.NewRow();
-            }
-            dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_071; dt.Rows.Add(dr); dr = dt.NewRow();
+			if (isAttr.Contains("PROJ"))
+			{
+				dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_GBL_GBL_074; dt.Rows.Add(dr); dr = dt.NewRow();
+				dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_GBL_GBL_076; dt.Rows.Add(dr); dr = dt.NewRow();
+				dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_GBL_010; dt.Rows.Add(dr); dr = dt.NewRow();
+				dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_GBL_011; dt.Rows.Add(dr); dr = dt.NewRow();
+			}
+			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_071; dt.Rows.Add(dr); dr = dt.NewRow();
 			dr[Resources.Resources.SI_GBL_GBL_NET_FRM_166] = Resources.Resources.SI_OSP_GBL_NET_FRM_072; dt.Rows.Add(dr); dr = dt.NewRow();
 			if (obj.GetType().GetProperty("advancefilter") != null)
 			{
@@ -825,19 +825,19 @@ namespace SmartInventory.Controllers
 			var planningCodeName = "";
 			var workOrderCodeName = "";
 			var purposeCodeName = "";
-            if (isAttr.Contains("PROJ"))
+			if (isAttr.Contains("PROJ"))
 			{
 				List<int> projectCodeIds = (List<int>)obj.GetType().GetProperty("SelectedProjectId").GetValue(obj, null);
-				 projectCodeName = projectCodeIds == null ? "All" : string.Join(",", new BusinessLogics.Admin.BLProject().getProjectCodeDetails(string.IsNullOrEmpty(networkStatus) ? "P" : networkStatus.ToUpper() == "PLANNED" ? "P" : networkStatus.ToUpper() == "AS BUILT" ? "A" : networkStatus.ToUpper() == "DORMANT" ? "D" : "P").Where(x => projectCodeIds.Contains(x.system_id)).Select(x => x.project_code).ToList());
+				projectCodeName = projectCodeIds == null ? "All" : string.Join(",", new BusinessLogics.Admin.BLProject().getProjectCodeDetails(string.IsNullOrEmpty(networkStatus) ? "P" : networkStatus.ToUpper() == "PLANNED" ? "P" : networkStatus.ToUpper() == "AS BUILT" ? "A" : networkStatus.ToUpper() == "DORMANT" ? "D" : "P").Where(x => projectCodeIds.Contains(x.system_id)).Select(x => x.project_code).ToList());
 
 				List<int> planningCodeIds = (List<int>)obj.GetType().GetProperty("SelectedPlanningId").GetValue(obj, null);
-				 planningCodeName = planningCodeIds == null ? "All" : string.Join(",", new BusinessLogics.Admin.BLProject().getPlanningDetailByProjectIds(projectCodeIds).Where(x => planningCodeIds.Contains(x.system_id)).Select(x => x.planning_code).ToList());
+				planningCodeName = planningCodeIds == null ? "All" : string.Join(",", new BusinessLogics.Admin.BLProject().getPlanningDetailByProjectIds(projectCodeIds).Where(x => planningCodeIds.Contains(x.system_id)).Select(x => x.planning_code).ToList());
 
 				List<int> workOrderCodeIds = (List<int>)obj.GetType().GetProperty("SelectedWorkOrderId").GetValue(obj, null);
-				 workOrderCodeName = workOrderCodeIds == null ? "All" : string.Join(",", new BusinessLogics.Admin.BLProject().getWorkorderDetailByPlanningIds(planningCodeIds).Where(x => workOrderCodeIds.Contains(x.system_id)).Select(x => x.workorder_code).ToList());
+				workOrderCodeName = workOrderCodeIds == null ? "All" : string.Join(",", new BusinessLogics.Admin.BLProject().getWorkorderDetailByPlanningIds(planningCodeIds).Where(x => workOrderCodeIds.Contains(x.system_id)).Select(x => x.workorder_code).ToList());
 
 				List<int> purposeCodeIds = (List<int>)obj.GetType().GetProperty("SelectedPurposeId").GetValue(obj, null);
-				 purposeCodeName = purposeCodeIds == null ? "All" : string.Join(",", new BusinessLogics.Admin.BLProject().getPurposeDetailByWorkOrderIds(workOrderCodeIds).Where(x => purposeCodeIds.Contains(x.system_id)).Select(x => x.purpose_code).ToList());
+				purposeCodeName = purposeCodeIds == null ? "All" : string.Join(",", new BusinessLogics.Admin.BLProject().getPurposeDetailByWorkOrderIds(workOrderCodeIds).Where(x => purposeCodeIds.Contains(x.system_id)).Select(x => x.purpose_code).ToList());
 			}
 			string duration = "";
 			string durationBasedOn = obj.GetType().GetProperty("durationbasedon").GetValue(obj, null).ToString().Replace("_", " ");
@@ -867,21 +867,21 @@ namespace SmartInventory.Controllers
 			dt.Rows[6][1] = ownershipType;
 			dt.Rows[7][1] = thirdPartyVendorName;
 
-            if (isAttr.Contains("PROJ"))
-            {
-                dt.Rows[8][1] = projectCodeName;
-                dt.Rows[9][1] = planningCodeName;
-                dt.Rows[10][1] = workOrderCodeName;
-                dt.Rows[11][1] = purposeCodeName;
-                dt.Rows[12][1] = durationBasedOn;
-                dt.Rows[13][1] = duration;
-            }
-            else
-            {
-                dt.Rows[8][1] = durationBasedOn;
-                dt.Rows[9][1] = duration;
-            }
-            return dt;
+			if (isAttr.Contains("PROJ"))
+			{
+				dt.Rows[8][1] = projectCodeName;
+				dt.Rows[9][1] = planningCodeName;
+				dt.Rows[10][1] = workOrderCodeName;
+				dt.Rows[11][1] = purposeCodeName;
+				dt.Rows[12][1] = durationBasedOn;
+				dt.Rows[13][1] = duration;
+			}
+			else
+			{
+				dt.Rows[8][1] = durationBasedOn;
+				dt.Rows[9][1] = duration;
+			}
+			return dt;
 		}
 		public void DownloadEntityReportNewIntoExcel(string entityids)
 		{
@@ -1043,8 +1043,8 @@ namespace SmartInventory.Controllers
 						exportReportLog.planned = totalPlannedCount;
 						exportReportLog.asbuilt = totalAsBuiltCount;
 						exportReportLog.dormant = totalDormantCount;
-						exportReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;						
-                        exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
+						exportReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+						exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
 
 						try
 						{
@@ -1456,8 +1456,8 @@ namespace SmartInventory.Controllers
 
 					objExportReportFilterNew = (ExportReportFilterNew)Session["ExportReportFilterNew"];
 
-                    objExportEntitiesReport.objReportFilters.connectionString = objExportReportFilterNew.connectionString;
-                    objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportReportFilterNew.SelectedRegionIds;
+					objExportEntitiesReport.objReportFilters.connectionString = objExportReportFilterNew.connectionString;
+					objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportReportFilterNew.SelectedRegionIds;
 					objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportReportFilterNew.SelectedProvinceIds;
 					objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportReportFilterNew.SelectedNetworkStatues;
 					objExportEntitiesReport.objReportFilters.SelectedParentUsers = objExportReportFilterNew.SelectedParentUsers;
@@ -1473,10 +1473,10 @@ namespace SmartInventory.Controllers
 					objExportEntitiesReport.objReportFilters.geom = objExportReportFilterNew.geom;
 					objExportEntitiesReport.objReportFilters.userId = objExportReportFilterNew.userId;
 					objExportEntitiesReport.objReportFilters.roleId = objExportReportFilterNew.roleId;
-					objExportEntitiesReport.objReportFilters.radius = objExportReportFilterNew.radius;                    
-                    // objExportEntitiesReport.objReportFilters.SelectedOwnerShipId = objExportReportFilterNew.SelectedOwnerShipId;
-                    // objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportReportFilterNew.SelectedOwnershipIds;
-                    objExportEntitiesReport.objReportFilters.SelectedOwnerShipType = objExportReportFilterNew.SelectedOwnerShipType;
+					objExportEntitiesReport.objReportFilters.radius = objExportReportFilterNew.radius;
+					// objExportEntitiesReport.objReportFilters.SelectedOwnerShipId = objExportReportFilterNew.SelectedOwnerShipId;
+					// objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportReportFilterNew.SelectedOwnershipIds;
+					objExportEntitiesReport.objReportFilters.SelectedOwnerShipType = objExportReportFilterNew.SelectedOwnerShipType;
 					objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objExportReportFilterNew.SelectedThirdPartyVendorIds;
 
 					objExportEntitiesReport.objReportFilters.currentPage = 0;
@@ -1518,44 +1518,44 @@ namespace SmartInventory.Controllers
 						exportReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
 						exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
 
-                        try
-                        {
-                            for (int i = 0; i < objExportEntitiesReport.lstLayers.Count; i++)
-                            {
-                                objExportEntitiesReport.objReportFilters.layerName = objExportEntitiesReport.lstLayers[i].layer_name;
-                                var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
-                                List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryView(objExportEntitiesReport.objReportFilters);
-                                // lstExportEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstExportEntitiesDetail);
-                                DataTable dtReport = new DataTable();
-                                dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail,true,ApplicationSettings.numberFormatType,new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
-                                dtReport.TableName = layerDetail.layer_title;
-                                //dtReport.TableName = objExportEntitiesReport.objReportFilters.layerName;
-                                if (dtReport != null && dtReport.Rows.Count > 0)
-                                {
-                                    if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
-                                    if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
-                                    if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
-                                    if (dtReport.Columns.Contains("Fn Get Date")) { dtReport.Columns.Remove("Fn Get Date"); }
-                                }
-                                if (dtReport.Rows.Count > 0)
-                                    ds.Tables.Add(dtReport);
-                                TotalEntityReport += dtReport.Rows.Count;
-                            }
-                            objExportEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
-                            objExportReportFilterNew.SelectedLayerId = SelectedLayerIdSummary;
-                            //ExportData(ds, fileName,);
-                            string tempFileName = fileName + exportReportLog.file_extension;
-                            //string ftpFolder = "ExportReportLog/";
-                            //string tempFileName = "ExportReportLog/" + fileName + "." + exportReportLog.file_type;
-                            string ftpFilePath = ApplicationSettings.FTPAttachment + ftpFolder;
-                            string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
-                            string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
-                            ExportData(ds, tempFileName, ftpFilePath, ftpUserName, ftpPwd);
-                            exportReportLog.export_ended_on = DateTime.Now;
-                            exportReportLog.status = "Success";
-                            exportReportLog.file_location = ftpFolder + tempFileName;
-                            //Thread.Sleep(10000);
-                            exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
+						try
+						{
+							for (int i = 0; i < objExportEntitiesReport.lstLayers.Count; i++)
+							{
+								objExportEntitiesReport.objReportFilters.layerName = objExportEntitiesReport.lstLayers[i].layer_name;
+								var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
+								List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryView(objExportEntitiesReport.objReportFilters);
+								// lstExportEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstExportEntitiesDetail);
+								DataTable dtReport = new DataTable();
+								dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
+								dtReport.TableName = layerDetail.layer_title;
+								//dtReport.TableName = objExportEntitiesReport.objReportFilters.layerName;
+								if (dtReport != null && dtReport.Rows.Count > 0)
+								{
+									if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+									if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+									if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+									if (dtReport.Columns.Contains("Fn Get Date")) { dtReport.Columns.Remove("Fn Get Date"); }
+								}
+								if (dtReport.Rows.Count > 0)
+									ds.Tables.Add(dtReport);
+								TotalEntityReport += dtReport.Rows.Count;
+							}
+							objExportEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
+							objExportReportFilterNew.SelectedLayerId = SelectedLayerIdSummary;
+							//ExportData(ds, fileName,);
+							string tempFileName = fileName + exportReportLog.file_extension;
+							//string ftpFolder = "ExportReportLog/";
+							//string tempFileName = "ExportReportLog/" + fileName + "." + exportReportLog.file_type;
+							string ftpFilePath = ApplicationSettings.FTPAttachment + ftpFolder;
+							string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
+							string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
+							ExportData(ds, tempFileName, ftpFilePath, ftpUserName, ftpPwd);
+							exportReportLog.export_ended_on = DateTime.Now;
+							exportReportLog.status = "Success";
+							exportReportLog.file_location = ftpFolder + tempFileName;
+							//Thread.Sleep(10000);
+							exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
 
 						}
 						catch (Exception ex)
@@ -1672,7 +1672,7 @@ namespace SmartInventory.Controllers
 									try
 									{
 										objExportEntitiesReport.objReportFilters.layerName = layer.layer_name;
-										var layer_name = layer.layer_name;	
+										var layer_name = layer.layer_name;
 										var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 
 										EntitySummaryReport recordCount = entityExportSummaryData.lstReportData.Where(x => x.entity_name.ToUpper() == layer.layer_name.ToUpper()).FirstOrDefault();
@@ -1680,8 +1680,9 @@ namespace SmartInventory.Controllers
 										if (recordCount != null)
 											total_entity_count = recordCount.planned_count + recordCount.as_built_count + recordCount.dormant_count;
 
+
 										bool textType = true;
-										var dataSet = GetDataSetFromDataTable(objExportEntitiesReport,reportType, layer_name, layerDetail, total_entity_count, textType);
+										var dataSet = GetDataSetFromDataTable(objExportEntitiesReport, reportType, layer_name, layerDetail, total_entity_count, textType);
 										DataTable dtReport = dataSet.Tables[0];
 										DataTable dtReportCdb = dataSet.Tables[1];
 										DataTable dtReportAdditional = dataSet.Tables[2];
@@ -1689,7 +1690,7 @@ namespace SmartInventory.Controllers
 										dtReport.TableName = layer.layer_title;
 
 										//dtReport.TableName = objExportEntitiesReport.objReportFilters.layerName;
-										
+
 
 
 										if (dtReport.Rows.Count > 0)
@@ -1786,7 +1787,7 @@ namespace SmartInventory.Controllers
 
 		}
 
-		public DataSet GetDataSetFromDataTable( ExportEntitiesSummaryView  objExportEntitiesReport,List<string> reportType, string layer_name, layerDetail layerDetail, Int64 total_entity_count, bool textType)
+		public DataSet GetDataSetFromDataTable(ExportEntitiesSummaryView objExportEntitiesReport, List<string> reportType, string layer_name, layerDetail layerDetail, Int64 total_entity_count, bool textType)
 		{
 			DataSet dataSet = new DataSet();
 			List<Dictionary<string, string>> lstExportEntitiesDetail = null;
@@ -1794,53 +1795,54 @@ namespace SmartInventory.Controllers
 			List<Dictionary<string, string>> lstExportEntitiesDetailCdb = null;
 
 			List<string> reportTypeString = reportType;
-				if (total_entity_count < ApplicationSettings.ExcelReportLimitCount || textType == true)
-				{
+
+			if (total_entity_count < ApplicationSettings.ExcelReportLimitCount || textType == true)
+			{
 				if (reportTypeString.Contains("GIS"))
 				{
 					lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer_name);
 				}
-				else if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+				if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
 				{
 					lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewNewCdb(objExportEntitiesReport.objReportFilters, layer_name);
 				}
-				else if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+				if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
 				{
 					lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer_name);
 				}
-				else
+				if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
 				{
 					lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer_name);
 					if (layerDetail.is_dynamic_control_enable)
 					{
 						lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer_name);
 					}
-					if (objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+					if (layer_name == EntityType.Cable.ToString())
 					{
 						lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewNewCdb(objExportEntitiesReport.objReportFilters, layer_name);
 
 					}
 				}
 			}
-				else
-				{				
+			else
+			{
 
 				if (reportTypeString.Contains("GIS"))
 				{
 					lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer_name);
 				}
-				else if (reportTypeString.Contains("CDB") && layer_name == EntityType.Cable.ToString())
+				 if (reportTypeString.Contains("CDB") && layer_name == EntityType.Cable.ToString())
 				{
 					lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer_name);
 				}
-				else if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+				 if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
 				{
 					lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer_name);
 				}
-				else
+				if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
 				{
 					lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer_name);
-					if (objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+					if (layer_name == EntityType.Cable.ToString())
 					{
 						lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer_name);
 					}
@@ -1852,7 +1854,7 @@ namespace SmartInventory.Controllers
 
 			}
 
-           
+
 			DataTable dtReport = new DataTable();
 			DataTable dtReportCdb = new DataTable();
 			DataTable dtReportAdditional = new DataTable();
@@ -2191,41 +2193,41 @@ namespace SmartInventory.Controllers
 							break;
 						}
 
-                        else if (row[0] == Resources.Resources.SI_OSP_GBL_GBL_GBL_041)
-                        {
-                            cell1 = new PdfPCell(new Phrase("" + row[column] + "", font));
-                            cell1.HorizontalAlignment = Element.ALIGN_CENTER;
-                            cell1.BackgroundColor = new BaseColor(0, 186, 138);
-                            cell1.FixedHeight = 25f;
-                            table1.AddCell(cell1);
-                        }
-                        else
-                        {
-                            cell1 = new PdfPCell(new Phrase("" + row[column] + "", font));
-                            cell1.HorizontalAlignment = Element.ALIGN_CENTER;
-                            cell1.FixedHeight = 25f;
-                            table1.AddCell(cell1);
-                        }
-                        cnt++;
-                    }
-                }
-            }
-            Document pdfDoc = new Document(PageSize.A4, 0f, 0f, 25f, 30f);
-            HTMLWorker htmlparser = new HTMLWorker(pdfDoc);
+						else if (row[0] == Resources.Resources.SI_OSP_GBL_GBL_GBL_041)
+						{
+							cell1 = new PdfPCell(new Phrase("" + row[column] + "", font));
+							cell1.HorizontalAlignment = Element.ALIGN_CENTER;
+							cell1.BackgroundColor = new BaseColor(0, 186, 138);
+							cell1.FixedHeight = 25f;
+							table1.AddCell(cell1);
+						}
+						else
+						{
+							cell1 = new PdfPCell(new Phrase("" + row[column] + "", font));
+							cell1.HorizontalAlignment = Element.ALIGN_CENTER;
+							cell1.FixedHeight = 25f;
+							table1.AddCell(cell1);
+						}
+						cnt++;
+					}
+				}
+			}
+			Document pdfDoc = new Document(PageSize.A4, 0f, 0f, 25f, 30f);
+			HTMLWorker htmlparser = new HTMLWorker(pdfDoc);
 
 
-            //commented by priyanka
-            //string directoryPath = Path.Combine(Server.MapPath("~/Uploads/Temp/ExportReportLog"));
-            //string tempfilePath = Path.Combine(Server.MapPath("~/Uploads/Temp/ExportReportLog"), fileName);
-            //end commented by priyanka
-            //implemented by priyanka
-            string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
-            string directoryPath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"));
-            string tempfilePath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"), fileName);
-            //implemented by priyanka
+			//commented by priyanka
+			//string directoryPath = Path.Combine(Server.MapPath("~/Uploads/Temp/ExportReportLog"));
+			//string tempfilePath = Path.Combine(Server.MapPath("~/Uploads/Temp/ExportReportLog"), fileName);
+			//end commented by priyanka
+			//implemented by priyanka
+			string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
+			string directoryPath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"));
+			string tempfilePath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"), fileName);
+			//implemented by priyanka
 
-            if (Directory.Exists(directoryPath).Equals(false))
-                Directory.CreateDirectory(directoryPath);
+			if (Directory.Exists(directoryPath).Equals(false))
+				Directory.CreateDirectory(directoryPath);
 
 			FileStream xfile = new FileStream(tempfilePath, FileMode.Create, System.IO.FileAccess.Write);
 
@@ -2334,8 +2336,8 @@ namespace SmartInventory.Controllers
 				ExportReportFilterNew objExportReportFilterNew = new ExportReportFilterNew();
 				objExportReportFilterNew = (ExportReportFilterNew)Session["ExportReportFilterNew"];
 
-                objExportEntitiesReport.objReportFilters.connectionString = objExportReportFilterNew.connectionString;
-                objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportReportFilterNew.SelectedRegionIds;
+				objExportEntitiesReport.objReportFilters.connectionString = objExportReportFilterNew.connectionString;
+				objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportReportFilterNew.SelectedRegionIds;
 				objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportReportFilterNew.SelectedProvinceIds;
 				objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportReportFilterNew.SelectedNetworkStatues;
 				objExportEntitiesReport.objReportFilters.SelectedParentUsers = objExportReportFilterNew.SelectedParentUsers;
@@ -2363,8 +2365,8 @@ namespace SmartInventory.Controllers
 				objExportEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objExportEntitiesReport.objReportFilters.SelectedLayerId;
 				objExportReportFilterNew.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objExportReportFilterNew.SelectedLayerId;
 
-				var userdetails = (User)Session["userDetail"];				
-                objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
+				var userdetails = (User)Session["userDetail"];
+				objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
 				var selectedlayerids = objExportEntitiesReport.objReportFilters.SelectedLayerId;
 				if (selectedlayerids != null)
 				{
@@ -2534,29 +2536,29 @@ namespace SmartInventory.Controllers
 								{
 
 									objExportEntitiesReport.objReportFilters.layerName = layer.layer_name;
-							//var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
-							List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetExportSummaryViewKMLNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
-						    //List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetExportSummaryViewKML(objExportEntitiesReport.objReportFilters);
-							DataTable dtReport = new DataTable();
-							dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//,true,ApplicationSettings.numberFormatType,new string[] {""}
+									//var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
+									List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetExportSummaryViewKMLNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
+									//List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetExportSummaryViewKML(objExportEntitiesReport.objReportFilters);
+									DataTable dtReport = new DataTable();
+									dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//,true,ApplicationSettings.numberFormatType,new string[] {""}
 
-							dtReport.TableName = layer.layer_title;
-							//if (dtReport.Rows.Count > 0)
-							//	ds.Tables.Add(dtReport);
+									dtReport.TableName = layer.layer_title;
+									//if (dtReport.Rows.Count > 0)
+									//	ds.Tables.Add(dtReport);
 
 
-							objExportEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
-							objExportReportFilterNew.SelectedLayerId = SelectedLayerIdSummary;
+									objExportEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
+									objExportReportFilterNew.SelectedLayerId = SelectedLayerIdSummary;
 
-							string fileName = layer.layer_title;
+									string fileName = layer.layer_title;
 
 									string TempkmlFileName = fileName + ".kml";
-							string finalkml = KMLHelper.GetKmlForEntityNew(dtReport, objExportEntitiesReport.lstLayers, dtFilter, TempkmlFileName, directoryPath);
-							dtReport = null;
-							string kmlDesFullPath = directoryPath + "\\" + TempkmlFileName;
-							System.IO.File.WriteAllText(kmlDesFullPath, finalkml.ToString());
+									string finalkml = KMLHelper.GetKmlForEntityNew(dtReport, objExportEntitiesReport.lstLayers, dtFilter, TempkmlFileName, directoryPath);
+									dtReport = null;
+									string kmlDesFullPath = directoryPath + "\\" + TempkmlFileName;
+									System.IO.File.WriteAllText(kmlDesFullPath, finalkml.ToString());
 
-							
+
 									//Thread.Sleep(10000);
 								}
 								catch (Exception)
@@ -2567,7 +2569,7 @@ namespace SmartInventory.Controllers
 						}
 						Task t = Task.WhenAll(tasks);
 						t.Wait();
-						
+
 						dtFilter = null;
 						// get FTP details
 						string ftpServer = ApplicationSettings.FTPAttachment + ftpFolder;
@@ -2580,9 +2582,9 @@ namespace SmartInventory.Controllers
 						// Below code for Convert parent folder to ZIP and delete parent folder after ZIP on server
 						using (var zip = new ZipFile())
 						{
-                            //zip.UseZip64WhenSaving = Zip64Option.Always;
-                            //zip.CompressionMethod = CompressionMethod.BZip2;
-                            zip.AddDirectory(directoryPath);
+							//zip.UseZip64WhenSaving = Zip64Option.Always;
+							//zip.CompressionMethod = CompressionMethod.BZip2;
+							zip.AddDirectory(directoryPath);
 							zip.Save(zipfilePath);
 						}
 						if (System.IO.File.Exists(zipfilePath))
@@ -2712,8 +2714,8 @@ namespace SmartInventory.Controllers
 				ExportReportFilterNew objExportReportFilterNew = new ExportReportFilterNew();
 				objExportReportFilterNew = (ExportReportFilterNew)Session["ExportReportFilterNew"];
 
-                objExportEntitiesReport.objReportFilters.connectionString = objExportReportFilterNew.connectionString;
-                objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportReportFilterNew.SelectedRegionIds;
+				objExportEntitiesReport.objReportFilters.connectionString = objExportReportFilterNew.connectionString;
+				objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportReportFilterNew.SelectedRegionIds;
 				objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportReportFilterNew.SelectedProvinceIds;
 				objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportReportFilterNew.SelectedNetworkStatues;
 				objExportEntitiesReport.objReportFilters.SelectedParentUsers = objExportReportFilterNew.SelectedParentUsers;
@@ -2918,7 +2920,7 @@ namespace SmartInventory.Controllers
 				try
 				{
 					//LogHelper.GetInstance.WriteDebugLog($"***********************************Shape logs start ***  {DateTime.Now}********************************");
-					
+
 					ExportEntitiesSummaryView objExportEntitiesReport = new ExportEntitiesSummaryView();
 					ExportReportFilterNew objExportReportFilterNew = new ExportReportFilterNew();
 					objExportReportFilterNew = (ExportReportFilterNew)Session["ExportReportFilterNew"];
@@ -2961,7 +2963,7 @@ namespace SmartInventory.Controllers
 					if (selectedlayerids != null)
 					{
 						if (selectedlayerids.Count > 0)
-							objExportEntitiesReport.lstLayers = objExportEntitiesReport.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).DistinctBy(o=>o.layer_id).ToList();
+							objExportEntitiesReport.lstLayers = objExportEntitiesReport.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).DistinctBy(o => o.layer_id).ToList();
 					}
 					DataTable dtFilter = GetExportReportFilter(objExportReportFilterNew);
 
@@ -3001,7 +3003,7 @@ namespace SmartInventory.Controllers
 							string parentFolder = $"Shape_{DateTimeHelper.Now.ToString("ddMMyyyy")}-{DateTimeHelper.Now.ToString("HHmmssfff")}_{userdetails.user_id}";
 							string attachmentLocalPath = Path.Combine(ApplicationSettings.AttachmentLocalPath, ftpFolder);
 							string pathWithParentFolder = Path.Combine(attachmentLocalPath, parentFolder);
-						    shapeFilePath = Path.Combine(Server.MapPath(pathWithParentFolder));
+							shapeFilePath = Path.Combine(Server.MapPath(pathWithParentFolder));
 
 							if (Directory.Exists(shapeFilePath).Equals(false))
 								Directory.CreateDirectory(shapeFilePath);
@@ -3014,7 +3016,7 @@ namespace SmartInventory.Controllers
 									try
 									{
 										//LogHelper.GetInstance.WriteDebugLogTest($"====================================={layer.layer_name}====Start  {DateTime.Now}========================", layer.layer_name);
-										
+
 										objExportEntitiesReport.objReportFilters.layerName = layer.layer_name;
 										//var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 										//LogHelper.GetInstance.WriteDebugLogTest($"==========================Layer Title==========={layer.layer_title}============================", layer.layer_name);
@@ -3080,9 +3082,9 @@ namespace SmartInventory.Controllers
 																		 //zip the shape file
 							using (var zip = new ZipFile())
 							{
-                                //zip.UseZip64WhenSaving = Zip64Option.Always;
-                                //zip.CompressionMethod = CompressionMethod.BZip2;
-                                zip.AddDirectory(shapeFilePath);
+								//zip.UseZip64WhenSaving = Zip64Option.Always;
+								//zip.CompressionMethod = CompressionMethod.BZip2;
+								zip.AddDirectory(shapeFilePath);
 								zip.Save(zipshapePath);
 							}
 							if (System.IO.File.Exists(zipshapePath))
@@ -3139,8 +3141,8 @@ namespace SmartInventory.Controllers
 					ExportReportFilterNew objExportReportFilterNew = new ExportReportFilterNew();
 					objExportReportFilterNew = (ExportReportFilterNew)Session["ExportReportFilterNew"];
 
-                    objExportEntitiesReport.objReportFilters.connectionString = objExportReportFilterNew.connectionString;
-                    objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportReportFilterNew.SelectedRegionIds;
+					objExportEntitiesReport.objReportFilters.connectionString = objExportReportFilterNew.connectionString;
+					objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportReportFilterNew.SelectedRegionIds;
 					objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportReportFilterNew.SelectedProvinceIds;
 					objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportReportFilterNew.SelectedNetworkStatues;
 					objExportEntitiesReport.objReportFilters.SelectedParentUsers = objExportReportFilterNew.SelectedParentUsers;
@@ -3305,10 +3307,10 @@ namespace SmartInventory.Controllers
 				objExportEntitiesReport.objReportFilters.roleId = objExportReportFilterNew.roleId;
 				objExportEntitiesReport.objReportFilters.SelectedOwnerShipType = objExportReportFilterNew.SelectedOwnerShipType;
 				objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objExportReportFilterNew.SelectedThirdPartyVendorIds;
-                objExportEntitiesReport.objReportFilters.selected_route_ids = objExportReportFilterNew.selected_route_ids ;
-                // objExportEntitiesReport.objReportFilters.SelectedOwnerShipId = objExportReportFilterNew.SelectedOwnerShipId;
-                // objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportReportFilterNew.SelectedOwnershipIds;
-                BindReportDropdownSummaryView(ref objExportEntitiesReport);
+				objExportEntitiesReport.objReportFilters.selected_route_ids = objExportReportFilterNew.selected_route_ids;
+				// objExportEntitiesReport.objReportFilters.SelectedOwnerShipId = objExportReportFilterNew.SelectedOwnerShipId;
+				// objExportEntitiesReport.objReportFilters.SelectedOwnershipIds = objExportReportFilterNew.SelectedOwnershipIds;
+				BindReportDropdownSummaryView(ref objExportEntitiesReport);
 
 				//rt
 				var userdetails = (User)Session["userDetail"];
@@ -4257,9 +4259,9 @@ namespace SmartInventory.Controllers
 														 //zip the shape file
 			using (var zip = new ZipFile())
 			{
-                //zip.UseZip64WhenSaving = Zip64Option.Always;
-                //zip.CompressionMethod = CompressionMethod.BZip2;
-                zip.AddDirectory(shapeFilePath);
+				//zip.UseZip64WhenSaving = Zip64Option.Always;
+				//zip.CompressionMethod = CompressionMethod.BZip2;
+				zip.AddDirectory(shapeFilePath);
 				zip.Save(zipshapePath);
 			}
 			if (System.IO.File.Exists(zipshapePath))
@@ -4356,9 +4358,9 @@ namespace SmartInventory.Controllers
 														 //zip the shape file
 			using (var zip = new ZipFile())
 			{
-                //zip.UseZip64WhenSaving = Zip64Option.Always;
-                //zip.CompressionMethod = CompressionMethod.BZip2;
-                zip.AddDirectory(shapeFilePath);
+				//zip.UseZip64WhenSaving = Zip64Option.Always;
+				//zip.CompressionMethod = CompressionMethod.BZip2;
+				zip.AddDirectory(shapeFilePath);
 				zip.Save(zipshapePath);
 			}
 			if (System.IO.File.Exists(zipshapePath))
@@ -4383,26 +4385,26 @@ namespace SmartInventory.Controllers
 		{
 			// LogHelper.GetInstance.WriteDebugLogTest($"====Shape File Start:-{dtReport.TableName} on {DateTime.Now}======", layerName);
 			string entity = string.Empty;
-				entity = dtReport.TableName;
-				if (dtReport.AsEnumerable().Where(x => x.Field<string>("geom") != null).ToList().Count > 0)
-				{
-					dtReport = dtReport.AsEnumerable().Where(x => x.Field<string>("geom") != null).CopyToDataTable();
-				}
-				else
-					dtReport.Clear();
-				if (dtReport.Rows.Count > 0)
-				{
-					var features = new List<Feature>();
-					string columnName = string.Empty, columnNameList = string.Empty;
+			entity = dtReport.TableName;
+			if (dtReport.AsEnumerable().Where(x => x.Field<string>("geom") != null).ToList().Count > 0)
+			{
+				dtReport = dtReport.AsEnumerable().Where(x => x.Field<string>("geom") != null).CopyToDataTable();
+			}
+			else
+				dtReport.Clear();
+			if (dtReport.Rows.Count > 0)
+			{
+				var features = new List<Feature>();
+				string columnName = string.Empty, columnNameList = string.Empty;
 
-					foreach (DataRow row in dtReport.Rows)
-					{
-						//add shape attribute and value
-						var geomFactory = new GeometryFactory(new PrecisionModel(), 4326);
-						var wktReader = new WKTReader(geomFactory);
-						var geometry = wktReader.Read(row["geom"].ToString());
-						var attributesTable = new AttributesTable();
-						columnNameList = string.Empty;
+				foreach (DataRow row in dtReport.Rows)
+				{
+					//add shape attribute and value
+					var geomFactory = new GeometryFactory(new PrecisionModel(), 4326);
+					var wktReader = new WKTReader(geomFactory);
+					var geometry = wktReader.Read(row["geom"].ToString());
+					var attributesTable = new AttributesTable();
+					columnNameList = string.Empty;
 					foreach (DataColumn column in dtReport.Columns)
 					{
 						if (!column.ColumnName.Equals("sp_geometry") && !column.ColumnName.Equals("geom"))
@@ -4424,29 +4426,29 @@ namespace SmartInventory.Controllers
 							columnNameList = columnNameList + "," + columnName + ",";
 							attributesTable.AddAttribute(columnName, row[column.ColumnName].ToString());
 						}
-					}                   
-						features.Add(new Feature(geometry, attributesTable));
 					}
+					features.Add(new Feature(geometry, attributesTable));
+				}
 
-					var shapeFileName = shapeFilePath + "\\" + entity;
-					var shapeFilePrjName = Path.Combine(shapeFilePath, entity + ".prj");
+				var shapeFileName = shapeFilePath + "\\" + entity;
+				var shapeFilePrjName = Path.Combine(shapeFilePath, entity + ".prj");
 				// LogHelper.GetInstance.WriteDebugLogTest($"=====shape file name:-{shapeFileName} ===", layerName);
 
 				// Create the shapefile
 				var outGeomFactory = GeometryFactory.Default;
-					var writer = new ShapefileDataWriter(shapeFileName, outGeomFactory);
-					var outDbaseHeader = ShapefileDataWriter.GetHeader(features[0], features.Count);
-					writer.Header = outDbaseHeader;
-					writer.Write(features);
+				var writer = new ShapefileDataWriter(shapeFileName, outGeomFactory);
+				var outDbaseHeader = ShapefileDataWriter.GetHeader(features[0], features.Count);
+				writer.Header = outDbaseHeader;
+				writer.Write(features);
 
-					// Create the projection file
-					using (var streamWriter = new StreamWriter(shapeFilePrjName))
-					{
-						streamWriter.Write(GeographicCoordinateSystem.WGS84.WKT);
-					}
-
+				// Create the projection file
+				using (var streamWriter = new StreamWriter(shapeFilePrjName))
+				{
+					streamWriter.Write(GeographicCoordinateSystem.WGS84.WKT);
 				}
-				dtReport.Clear();
+
+			}
+			dtReport.Clear();
 			// LogHelper.GetInstance.WriteDebugLogTest($"====Shape File END:-{dtReport.TableName} on {DateTime.Now}=====", layerName);
 
 		}
@@ -4469,7 +4471,7 @@ namespace SmartInventory.Controllers
 			{
 				objAssociationEntitiesReport.objReportFilters.connectionString = con.connection_string;
 			}
-         
+
 
 			objAssociationEntitiesReport.objReportFilters.SelectedRegionIds = objAssociationEntitiesReport.objReportFilters.SelectedRegionId != null && objAssociationEntitiesReport.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedRegionId.ToArray()) : "";
 			objAssociationEntitiesReport.objReportFilters.SelectedProvinceIds = objAssociationEntitiesReport.objReportFilters.SelectedProvinceId != null && objAssociationEntitiesReport.objReportFilters.SelectedProvinceId.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedProvinceId.ToArray()) : "";
@@ -4487,28 +4489,28 @@ namespace SmartInventory.Controllers
 			objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType = objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType != null ? objAssociationEntitiesReport.objReportFilters.SelectedOwnerShipType : "";
 			objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorId != null && objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorId.Count > 0 ? string.Join(",", objAssociationEntitiesReport.objReportFilters.SelectedThirdPartyVendorId.ToArray()) : "";
 			objAssociationEntitiesReport.objReportFilters.selected_route_ids = objAssociationEntitiesReport.selected_route_ids != null && objAssociationEntitiesReport.selected_route_ids.Count > 0 ? string.Join(",", objAssociationEntitiesReport.selected_route_ids.ToArray()) : "";
-			
+
 			var selectedLayers = objAssociationEntitiesReport.objReportFilters.SelectedLayerIds;
 
-				objAssociationEntitiesReport.lstReportData = new BLLayer().GetAssociationReportSummary(objAssociationEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
-			
+			objAssociationEntitiesReport.lstReportData = new BLLayer().GetAssociationReportSummary(objAssociationEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
+
 			objAssociationEntitiesReport.objReportFilters.SelectedLayerIds = selectedLayers;
 			Session["AssociationReportFilter"] = objAssociationEntitiesReport.objReportFilters;
 
 			BindAssociationReportDropdown(ref objAssociationEntitiesReport);
 			Session["EntityAssociationSummaryData"] = objAssociationEntitiesReport;
 			DateTime endTime = DateTime.Now;
-			if(objAssociationEntitiesReport.objReportFilters.purpose == "" || objAssociationEntitiesReport.objReportFilters.purpose == null)
-            {
+			if (objAssociationEntitiesReport.objReportFilters.purpose == "" || objAssociationEntitiesReport.objReportFilters.purpose == null)
+			{
 				return PartialView("_EntityAssociationReport", objAssociationEntitiesReport);
 
 			}
-            else
-            {
+			else
+			{
 				DownloadAssociationEntityReport(objAssociationEntitiesReport.objReportFilters.purpose, objAssociationEntitiesReport.objReportFilters.SelectedLayerIds, 0, 0, 0);
 				objAssociationEntitiesReport.popupmessage = "Request is processing in background.Please check the export report log page.";
 				return PartialView("_EntityAssociationReport", objAssociationEntitiesReport);
-				
+
 			}
 
 		}
@@ -4538,7 +4540,7 @@ namespace SmartInventory.Controllers
 				objAssociationEntitiesReport.lstParentUsers = new List<Models.User>();
 				objAssociationEntitiesReport.lstParentUsers.Add(userdetails);// new BLUser().GetUserDetailByID(Convert.ToInt32(Session["user_id"])));// new BLUser().GetUsersListByMGRIds(parentUser).Where(x=> x.user_id == Convert.ToInt32(Session["user_id"])).OrderBy(x => x.user_name).ToList();
 			}
-			
+
 			if (objAssociationEntitiesReport.objReportFilters.SelectedParentUser != null)
 			{
 				if (userdetails.role_id == 1 || userdetails.is_all_provience_assigned)
@@ -5073,7 +5075,7 @@ namespace SmartInventory.Controllers
 				{
 					throw ex;
 				}
-			}
+		}
 
 		public DataTable GetAssociationReportFilter(object obj)
 		{
@@ -5481,7 +5483,7 @@ namespace SmartInventory.Controllers
 					//int TotalEntityReport = 0;
 					AssociationReportLog associationReportLog = new AssociationReportLog();
 					associationReportLog.user_id = userdetails.user_id;
-					associationReportLog.export_started_on = DateTime.Now;					
+					associationReportLog.export_started_on = DateTime.Now;
 					associationReportLog.file_type = fileType;
 					associationReportLog.file_extension = ".zip";
 					associationReportLog.status = "InProgress";
@@ -6392,7 +6394,7 @@ namespace SmartInventory.Controllers
 							}
 							Task t = Task.WhenAll(tasks);
 							t.Wait();
-							
+
 							string ftpServer = ApplicationSettings.FTPAttachment + ftpFolder;
 							string ftpUsername = ApplicationSettings.FTPUserNameAttachment;
 							string ftpPassword = ApplicationSettings.FTPPasswordAttachment;
@@ -8015,9 +8017,9 @@ namespace SmartInventory.Controllers
 
 					using (var zip = new ZipFile())
 					{
-                        //zip.UseZip64WhenSaving = Zip64Option.Always;
-                        //zip.CompressionMethod = CompressionMethod.BZip2;
-                        zip.AddDirectory(desTempFolderPath);
+						//zip.UseZip64WhenSaving = Zip64Option.Always;
+						//zip.CompressionMethod = CompressionMethod.BZip2;
+						zip.AddDirectory(desTempFolderPath);
 						zip.Save(zipfilePath);
 					}
 					if (System.IO.File.Exists(zipfilePath))
@@ -8322,29 +8324,29 @@ namespace SmartInventory.Controllers
 				txtDatas.Add(new Files() { TableName = dt.TableName, Bytes = bytes });
 			}
 
-            using (ZipFile zip = new ZipFile())
-            {
-                zip.AlternateEncodingUsage = ZipOption.AsNecessary;
-                foreach (Files txtData in txtDatas)
-                {
-                    if (fileType == "ALLCSV")
-                    {
-                        zip.AddEntry(txtData.TableName + ".csv", txtData.Bytes);
-                    }
-                    else
-                    {
-                        zip.AddEntry(txtData.TableName + ".txt", txtData.Bytes);
-                    }
-                }
-                //Commented by priyanka
-                //string tempfilePath = Path.Combine(Server.MapPath("~/Uploads/Temp/ExportReportLog"), fileNameValue);
-                //Commented by priyanka end
+			using (ZipFile zip = new ZipFile())
+			{
+				zip.AlternateEncodingUsage = ZipOption.AsNecessary;
+				foreach (Files txtData in txtDatas)
+				{
+					if (fileType == "ALLCSV")
+					{
+						zip.AddEntry(txtData.TableName + ".csv", txtData.Bytes);
+					}
+					else
+					{
+						zip.AddEntry(txtData.TableName + ".txt", txtData.Bytes);
+					}
+				}
+				//Commented by priyanka
+				//string tempfilePath = Path.Combine(Server.MapPath("~/Uploads/Temp/ExportReportLog"), fileNameValue);
+				//Commented by priyanka end
 
-                string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
-                string tempfilePath =Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"), fileNameValue);
+				string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
+				string tempfilePath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"), fileNameValue);
 
-                zip.Save(tempfilePath);
-                CommonUtility.FTPFileUpload(tempfilePath, fileNameValue, ftpfilePath, ftpUserName, ftpPassword);
+				zip.Save(tempfilePath);
+				CommonUtility.FTPFileUpload(tempfilePath, fileNameValue, ftpfilePath, ftpUserName, ftpPassword);
 
 				System.IO.File.Delete(tempfilePath);
 				//Response.Clear();
@@ -8369,81 +8371,81 @@ namespace SmartInventory.Controllers
 			}
 		}
 
-        public void ExportReportCSV(DataSet ds, string fileNameValue, string delimiter, string fileType)
-        {
-            List<Files> txtDatas = new List<Files>();
-            foreach (DataTable dt in ds.Tables)
-            {
+		public void ExportReportCSV(DataSet ds, string fileNameValue, string delimiter, string fileType)
+		{
+			List<Files> txtDatas = new List<Files>();
+			foreach (DataTable dt in ds.Tables)
+			{
 
-                byte[] bytes = Encoding.ASCII.GetBytes(Utility.CommonUtility.ConvertDataTableToString(dt, delimiter)); //Convert DataTable to string with specific delimiter
-                txtDatas.Add(new Files() { TableName = dt.TableName, Bytes = bytes });
-            }
+				byte[] bytes = Encoding.ASCII.GetBytes(Utility.CommonUtility.ConvertDataTableToString(dt, delimiter)); //Convert DataTable to string with specific delimiter
+				txtDatas.Add(new Files() { TableName = dt.TableName, Bytes = bytes });
+			}
 
-            using (ZipFile zip = new ZipFile())
-            {
+			using (ZipFile zip = new ZipFile())
+			{
 
-                zip.AlternateEncodingUsage = ZipOption.AsNecessary;
-                foreach (Files txtData in txtDatas)
-                {
-                    if (fileType == "ALLCSV")
-                    {
+				zip.AlternateEncodingUsage = ZipOption.AsNecessary;
+				foreach (Files txtData in txtDatas)
+				{
+					if (fileType == "ALLCSV")
+					{
 
-                        zip.AddEntry(txtData.TableName + ".csv", txtData.Bytes);
-                    }
-                    else
-                    {
-                        zip.AddEntry(txtData.TableName + ".txt", txtData.Bytes);
-                    }
-                }
-
-
-                string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
-                string tempfilePath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"), fileNameValue + ".zip");
+						zip.AddEntry(txtData.TableName + ".csv", txtData.Bytes);
+					}
+					else
+					{
+						zip.AddEntry(txtData.TableName + ".txt", txtData.Bytes);
+					}
+				}
 
 
-                zip.Save(tempfilePath);
+				string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
+				string tempfilePath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"), fileNameValue + ".zip");
 
 
-                Response.Clear();
-                Response.BufferOutput = false;
-                if (fileType == "ALLCSV")
-                {
+				zip.Save(tempfilePath);
 
-                    string zipName = String.Format("{0}_CSV.zip", fileNameValue);
-                    Response.ContentType = "application/zip";
-                    Response.AddHeader("content-disposition", "attachment; filename=" + zipName);
-                    using (ZipFile zip1 = new ZipFile())
-                    {
-                        zip.AlternateEncodingUsage = ZipOption.AsNecessary;
-                        foreach (Files txtData in txtDatas)
-                        {
-                            zip1.AddEntry(txtData.TableName + ".csv", txtData.Bytes);
-                        }
-                        zip1.Save(Response.OutputStream);
-                    }
-                    //zip.Save(Response.OutputStream);
-                    Response.End();
-                }
-                else
-                {
 
-                    string zipName = String.Format("{0}.zip", fileNameValue);
-                    Response.ContentType = "application/zip";
-                    Response.AddHeader("content-disposition", "attachment; filename=" + zipName);
-                    using (ZipFile zip2 = new ZipFile())
-                    {
-                        zip.AlternateEncodingUsage = ZipOption.AsNecessary;
-                        foreach (Files txtData in txtDatas)
-                        {
-                            zip2.AddEntry(txtData.TableName + ".txt", txtData.Bytes);
-                        }
-                        zip2.Save(Response.OutputStream);
-                    }
-                    Response.End();
-                }
+				Response.Clear();
+				Response.BufferOutput = false;
+				if (fileType == "ALLCSV")
+				{
 
-            }
-        }
+					string zipName = String.Format("{0}_CSV.zip", fileNameValue);
+					Response.ContentType = "application/zip";
+					Response.AddHeader("content-disposition", "attachment; filename=" + zipName);
+					using (ZipFile zip1 = new ZipFile())
+					{
+						zip.AlternateEncodingUsage = ZipOption.AsNecessary;
+						foreach (Files txtData in txtDatas)
+						{
+							zip1.AddEntry(txtData.TableName + ".csv", txtData.Bytes);
+						}
+						zip1.Save(Response.OutputStream);
+					}
+					//zip.Save(Response.OutputStream);
+					Response.End();
+				}
+				else
+				{
+
+					string zipName = String.Format("{0}.zip", fileNameValue);
+					Response.ContentType = "application/zip";
+					Response.AddHeader("content-disposition", "attachment; filename=" + zipName);
+					using (ZipFile zip2 = new ZipFile())
+					{
+						zip.AlternateEncodingUsage = ZipOption.AsNecessary;
+						foreach (Files txtData in txtDatas)
+						{
+							zip2.AddEntry(txtData.TableName + ".txt", txtData.Bytes);
+						}
+						zip2.Save(Response.OutputStream);
+					}
+					Response.End();
+				}
+
+			}
+		}
 
 
 		public void DownloadEntityReportNewIntoCSVAll(string entityids, string fileType, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount, List<string> reportType)
@@ -8896,8 +8898,9 @@ namespace SmartInventory.Controllers
 										//LogHelper.GetInstance.WriteDebugLogTest($"Request Sent to get the data from database on: {DateTime.Now}", layer.layer_name);
 										var layerdetails = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 
+
 										bool textType = false;
-										var dataSet = GetDataSetFromDataTable(objExportEntitiesReport,reportType, layer.layer_name, layerdetails, 0, textType);
+										var dataSet = GetDataSetFromDataTable(objExportEntitiesReport, reportType, layer.layer_name, layerdetails, exportReportLog.total_entity, textType);
 										DataTable dtReport = dataSet.Tables[0];
 										DataTable dtReportCdb = dataSet.Tables[1];
 										DataTable dtReportAdditional = dataSet.Tables[2];
@@ -8907,19 +8910,19 @@ namespace SmartInventory.Controllers
 
 										if (dtReportCdb.Rows.Count > 0)
 										{
-											fileName = $"{parentFolder}/{dtReportCdb.TableName + "_CdbAttributes"}.csv";
+											fileName = $"{parentFolder}/{layer.layer_name + "_CdbAttributes"}.csv";
 											StreamNewCSVInFolder(dtReportCdb, fileName);
 											exportReportLog.file_location = ftpFolder + parentFolder + exportReportLog.file_extension;
 										}
 										if (dtReportAdditional.Rows.Count > 0)
 										{
-											fileName = $"{parentFolder}/{dtReportCdb.TableName + "_AdditionalAttributes"}.csv";
+											fileName = $"{parentFolder}/{layer.layer_name + "_AdditionalAttributes"}.csv";
 											StreamNewCSVInFolder(dtReportCdb, fileName);
 											exportReportLog.file_location = ftpFolder + parentFolder + exportReportLog.file_extension;
 										}
 										if (dtReport.Rows.Count > 0)
 										{
-											fileName = $"{parentFolder}/{dtReport.TableName + "_GisAttributes"}.csv";
+											fileName = $"{parentFolder}/{layer.layer_name + "_GisAttributes"}.csv";
 
 											StreamNewCSVInFolder(dtReport, fileName);
 											//StreamNewCSVInFolder(dtReportCdb, fileName);
