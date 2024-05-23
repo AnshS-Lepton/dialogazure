@@ -77,13 +77,14 @@
     .tablePad-bn .dropbox {
         top: 40px;
     }
-    .tablePad-bn .chosen-container{
-        min-width:100px;
-    }
-    .modal-md-new{
-        width:600px;
+
+    .tablePad-bn .chosen-container {
+        min-width: 100px;
     }
 
+    .modal-md-new {
+        width: 600px;
+    }
 </style>
 
 <!DOCTYPE html>
@@ -162,11 +163,11 @@
                     <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_067  :</div>
                     <div class="col-md-9">
                         @*@Html.DropDownListFor(m => m.objReportFilters.SelectedNetworkStatus, new List<SelectListItem>
-                {
-                        new SelectListItem { Text = "Planned", Value = "PLANNED"},
-                        new SelectListItem { Text = "As-Built", Value = "AS BUILT"},
-                        new SelectListItem { Text = "Dormant", Value = "DORMANT"},
-                }, new { @multiple = "multiple", @class = "chosen-select", @id = "SelectedNetworkStatus" })*@
+                            {
+                                    new SelectListItem { Text = "Planned", Value = "PLANNED"},
+                                    new SelectListItem { Text = "As-Built", Value = "AS BUILT"},
+                                    new SelectListItem { Text = "Dormant", Value = "DORMANT"},
+                            }, new { @multiple = "multiple", @class = "chosen-select", @id = "SelectedNetworkStatus" })*@
                         @Html.DropDownListFor(m => m.objReportFilters.SelectedNetworkStatus, new SelectList(Model.lstNetworkStatus.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "SelectedNetworkStatus" })
 
                     </div>
@@ -183,29 +184,29 @@
                         @*@Html.DropDownListFor(m => m.objReportFilters.SelectedUserId, new SelectList(Model.lstUserReport.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlUsers" })*@
 
                         @*<select id="ddlUsers" class="chosen-select col-sm-12" multiple name="objReportFilters.SelectedUserId">
-                @{
-                    var groupName = "";
-                    var count = 0;
-                }
-
-                @foreach (var attribute in Model.lstUserReport)
-                {
-                    count = count + 1;
-                    if (groupName != attribute.groupUser && attribute.groupUser == "Others")
-                    {
-                        groupName = attribute.groupUser;
-
-                        <optgroup label="Others">
+                            @{
+                                var groupName = "";
+                                var count = 0;
                             }
 
-                            <option value="@attribute.user_id">@attribute.user_name</option>
-
-                            if (count == Model.lstUserReport.Count() && attribute.groupUser == "Others")
+                            @foreach (var attribute in Model.lstUserReport)
                             {
-                        </optgroup>
-                            }
-                            }
-                        </select>*@
+                                count = count + 1;
+                                if (groupName != attribute.groupUser && attribute.groupUser == "Others")
+                                {
+                                    groupName = attribute.groupUser;
+
+                                    <optgroup label="Others">
+                                        }
+
+                                        <option value="@attribute.user_id">@attribute.user_name</option>
+
+                                        if (count == Model.lstUserReport.Count() && attribute.groupUser == "Others")
+                                        {
+                                    </optgroup>
+                                        }
+                                        }
+                                    </select>*@
                         <select id="ddlUsers" name="objReportFilters.SelectedUserId" multiple class="chosen-select col-sm-12">
 
                             @foreach (var attribute in Model.lstUsers.GroupBy(x => x.groupUser))
@@ -221,17 +222,17 @@
                     </div>
                 </div>
                 @*<div class="row form-group">
-            <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_020:</div>
-            <div class="col-md-9">
-                @Html.DropDownListFor(m => m.objReportFilters.SelectedLayerId, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlLayers" })
-            </div>
-        </div>*@
+                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_020:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedLayerId, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlLayers" })
+                        </div>
+                    </div>*@
                 @*<div class="row form-group">
-            <div class="col-md-3">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009:</div>
-            <div class="col-md-9">
-                @Html.DropDownListFor(m => m.objReportFilters.SelectedOwnerShipId, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlFilterOwnershipType" })
-            </div>
-        </div>*@
+                        <div class="col-md-3">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedOwnerShipId, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlFilterOwnershipType" })
+                        </div>
+                    </div>*@
 
                 <div class="row form-group">
                     <div class="col-md-3">@Resources.Resources.SI_GBL_GBL_GBL_GBL_147</div>
@@ -323,37 +324,37 @@
 
             @if (Model.lstReportData.Count > 0)
             {
-        <div class="tablePad-bn d-flex mb-15">
-            <div class="fw-bold">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<span data="spanTotalRowCount"> @Model.lstReportData.Count</span></div>
-            <div class="ml-auto d-flex --gap05">
-                <div class="d-flex --gap05">
-                    <label class="white-space">Report Attributes</label>
-                    @Html.DropDownListFor(m => m.objReportFilters.reportType, new List<SelectListItem>{
-                                                    new SelectListItem { Text = "All", Value = "ALL"},
-                                                    new SelectListItem { Text = "Gis Attribute", Value = "GIS"},
-                                                    new SelectListItem { Text = "CDB Attribute", Value = "CDB"},
-                                                    new SelectListItem { Text = "Additional Attribute", Value = "ADDITIONAL"},
+                <div class="tablePad-bn d-flex mb-15">
+                    <div class="fw-bold">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<span data="spanTotalRowCount"> @Model.lstReportData.Count</span></div>
+                    <div class="ml-auto d-flex --gap05">
+                        <div class="d-flex --gap05">
+                            <label class="white-space">Report Attributes</label>
+                            @Html.DropDownListFor(m => m.objReportFilters.reportType, new List<SelectListItem>{
+        @*new SelectListItem { Text = "All", Value = "ALL"},*@
+new SelectListItem { Text = "Gis Attribute", Value = "GIS"},
+new SelectListItem { Text = "CDB Attribute", Value = "CDB"},
+new SelectListItem { Text = "Additional Attribute", Value = "ADDITIONAL"},
 
-                                                }, new { @multiple = "multiple", @class = "chosen-select form-control", @id = "reportType" })
-                </div>
+}, new { @multiple = "multiple", @class = "chosen-select form-control", @id = "reportType" })
+                        </div>
 
-                <div>
-                    <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                        <div>
+                            <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
 
 
-                    <div class="dropbox">
+                            <div class="dropbox">
 
-                        @foreach (var item in Model.lstfiletypes)
-                        {
-                            <span onclick="ExportSummaryDetail('@item.file_type')">@item.file_display_name</span>
-                        }
+                                @foreach (var item in Model.lstfiletypes)
+                                {
+                                    <span onclick="ExportSummaryDetail('@item.file_type')">@item.file_display_name</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div id="dvReportProgress1" class="progress utili-prog-bar" style="display:none;">
+                        <div class="progress-bar progress-bar-striped" style="width:70%;background-color: darkgreen;">@Resources.Resources.SI_OSP_GBL_NET_FRM_073</div>
                     </div>
                 </div>
-            </div>
-                <div id="dvReportProgress1" class="progress utili-prog-bar" style="display:none;">
-                    <div class="progress-bar progress-bar-striped" style="width:70%;background-color: darkgreen;">@Resources.Resources.SI_OSP_GBL_NET_FRM_073</div>
-                </div>
-            </div>
             }
             <div class="expPad_LefRig">
                 <div class="overAuto exptReptHei table-scroll">
@@ -460,8 +461,8 @@
                 </div>
             </div>
         </div>
-            }
-        </div>
+    }
+</div>
 
 <script src="~/Content/js/Utility.js"></script>
 <script type="text/javascript">
@@ -505,12 +506,14 @@
     //$('#ddlUsers').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
     //$('#SelectedNetworkStatus').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
     //$('#customedate').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#ddlDurationBasedOn').chosen({ placeholder_text_multiple: '-All-', width: '100%' });  
+    //$('#ddlDurationBasedOn').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
     //$('#ddlLayers').chosen({ placeholder_text_multiple: '-Select-', width: '100%' });
       $('.chosen-select').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
 
 
     $(document).ready(function () {
+        $("#reportType").val('GIS').trigger('chosen:updated');
+
 
         //$("#dropfiles").on("click", function () {
         //    $(".dropbox").slideToggle();
@@ -597,7 +600,7 @@
             $("#reportTypes").val(selectedValues);
         });
 
-      
+
         UpdateFormattedNumbers();
     });
 
@@ -801,7 +804,7 @@
                 $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").each(function () {
                     var row = $(this).closest('tr');
                     var checkstatus = $(this).is(":checked")
-                   
+
                     if (row.find(".tdplannedcount")[0] != undefined) {
                         var plannedText = (row.find(".tdplannedcount")[0].innerText).replaceAll(',', '');
                         if (!isNaN(plannedText) && row.find(".tdplannedcount")[0].innerText.length != 0 && checkstatus == true) {
