@@ -6,11 +6,18 @@
 }
 
 <!-- jQuery UI library -->
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+@*<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">*@
 <style>
-    #ddl_fetools12_chosen {
-        width: 82% !important;
+    .form-control {
+        
+         height: auto;
     }
+    #ddl_fetools12_chosen {
+        width: 100% !important;
+    }
+   /* .ui-datepicker {
+        width: 100px !important;
+    }*/
 
     #dvUserDetail .chosen-container-single .chosen-single {
         height: 28px;
@@ -21,8 +28,21 @@
     }
 
     #ddl_Fename_chosen {
-        width: 82% !important;
+        width: 100% !important;
     }
+    .custom-file-upload {
+        display: inline-block;
+        cursor: pointer;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+        color: #333;
+    }
+
+        .custom-file-upload input[type="file"] {
+            display: none;
+        }
 </style>
 <script type="text/javascript">
 
@@ -65,9 +85,12 @@
     //    });
 
     //}
-
+    function getMonthNumber(monthName) {
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return months.indexOf(monthName);
+    }
     function IsValid() {
-    
+        debugger;
 
         if ($("#ddl_Fename option:selected").text() === "--Select--") {
             $('#ddl_Fename_chosen').addClass('input-validation-error');
@@ -112,6 +135,27 @@
         else {
             $('#datepicker').removeClass('input-validation-error');
         }
+        var choosedate = $('#datepicker').val(); // Assuming the format is '02-May-2024'
+        var userdate = $('#created_on_text').val(); // Assuming the format is '2023-06-29'
+        var currentDate = new Date();
+
+        // Parse the chosen date ('02-May-2024') into a JavaScript Date object
+        var chosenDateParts = choosedate.split('-');
+        var chosenDate = new Date(chosenDateParts[2], getMonthNumber(chosenDateParts[1]), chosenDateParts[0]);
+
+        // Given end date ('2023-06-29')
+        var endDateParts = userdate.split('-');
+        var endDate = new Date(endDateParts[0], endDateParts[1] - 1, endDateParts[2]); // Months are zero-indexed in JavaScript Date objects
+
+        // Check if the current date is between today and the end date
+        //if (chosenDate >= endDate )
+        //{
+           
+        //} else {
+        //    alert("The date must be between the user's account creation and the current date")
+        //    return false;
+        //}
+
         //if ($('#fuImgUpload12').val() == "") {
         //    $('#image_value').val('false');
         //} else {
@@ -159,6 +203,7 @@
         }
         handleFileChange();
     }
+  
    
     $(document).ready(function () {
 
@@ -178,6 +223,8 @@
                 return false;
             }
         });
+        var enddate = $('#created_on_text').val();
+        setDateTimeCalendar('datepicker', 'datepicker1', false, '2024-03-15');
 
         $('#fuAttachmentUploadfetools').on('change', function () {
 
@@ -238,8 +285,128 @@
 
             $('#fileErrorimage').text(errorMessage);
         });
+
     });
-   
+    function fn_getuserdeatisl() {
+      
+        var user_id = $("#ddl_Fename option:selected").val();
+        ajaxReq('FeTools/Getuserdetails', { userid: user_id }, false, function (resp) {
+            
+            if (resp.status == "OK")
+            {
+                // dateString = resp.result;
+                var dateString = new Date(resp.result).toISOString().split('T')[0]; // Extracting only the date portion
+                $('#created_on_text').val(dateString);
+
+
+            }
+           
+        }, true, true);
+    }
+    //function initializeDatepicker() {
+    //    var dateString = $('#created_on_text').val();
+    //    console.log("Date String:", dateString);
+
+    //    if (dateString) {
+    //        var givenDate = new Date(dateString);
+    //        var currentDate = new Date();
+
+    //        // Destroy any existing datepicker instance
+    //        $("#datepicker").datepicker("destroy");
+
+    //        // Initialize datepicker with new options
+    //        $("#datepicker").datepicker({
+    //            dateFormat: "dd-MM-yy",
+    //            minDate: givenDate,
+    //            maxDate: currentDate,
+    //            defaultDate: currentDate // Set defaultDate to the given date
+    //        });
+    //    } else {
+    //        console.log("No date value found in created_on_text field.");
+    //    }
+    //}
+
+    function setDateTimeCalendar(startdateid, startdateimgid, isFutureDateAllowed, endDate) {
+        //if (endDate != null) {
+        //    Calendar.setup({
+        //        inputField: endDate,   // id of the input field
+        //        button: startdateimgid,
+        //        ifFormat: "%d-%b-%Y",       // format of the input field datetime format %d-%b-%Y %I:%M %p
+        //        showsTime: false,
+        //        timeFormat: "12",
+        //        weekNumbers: false,
+
+        //        disableFunc: function (date) {
+                   
+
+                  
+        //            var enddateid = new Date(endDate);
+
+        //                var endDateValue = document.getElementById(enddateid).value;
+
+        //                var enddt = new Date(DateFormatter(enddateid));
+        //                enddt = new Date(enddt);
+        //                if (date.getTime() > enddt.getTime()) {
+        //                    return true;
+        //                }
+        //                ////
+        //                if (!isFutureDateAllowed) {
+        //                    var now = new Date();
+        //                    now.setDate(now.getDate());
+        //                    if (date.getTime() > now.getTime()) {
+        //                        return true;
+        //                    }
+        //                }
+                    
+        //        }
+        //    });
+        //}
+            Calendar.setup({
+                inputField: startdateid,
+                button: startdateimgid,
+                ifFormat: "%d-%b-%Y",
+                showsTime: false,
+                timeFormat: "12",
+                weekNumbers: false,
+                //maxDate: new Date(new Date().setMonth(new Date().getMonth() + 6)),
+                align: "Br",
+                //maxDate: "+6m",
+                disableFunc: function (date) {
+                   
+                    if (endDate != null) {
+                        //var endDateValue = document.getElementById(endDate).value;
+                        var enddt = DateFormatter(endDate);
+                        enddt = new Date(enddt);
+                    }
+                    var startDateValue = document.getElementById(startdateid).value;
+
+                    var startdt = DateFormatter(startDateValue);
+                    startdt = new Date(startdt);
+                    if (enddt != null) {
+                        if (enddt.getTime() > startdt.getTime()) {
+                            return true;
+                        }
+                    } else {
+                        if (date.getTime() < startdt.getTime()) {
+                            return true;
+                        }
+                    }
+                    if (!isFutureDateAllowed) {
+                        var now = new Date();
+                        now.setDate(now.getDate());
+                        if (date.getTime() > now.getTime()) {
+                            return true;
+                        }
+                    }
+
+                },
+
+            });
+     
+    }
+     
+    
+
 
 </script>
 
@@ -251,7 +418,8 @@
                                                     new { id = "frmAddFEtools", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal"/*,onsubmit = "handleFileChange()"*/ }))
     {
         @Html.HiddenFor(m => m.id);
-            @*@Html.HiddenFor(m => m.created_on);*@
+        @Html.HiddenFor(m => m.created_on,new {id ="created_on_text"})
+        @Html.HiddenFor(m => m.user_name, new { id = "createdon" })
         //@Html.HiddenFor(m => m.status);
         <input type="hidden" id="hdnMaxFileUploadSizeLimit" value="@ApplicationSettings.MaxFileUploadSizeLimit" />
         <input type="hidden" id="fdnMaxFileCountLimit" value="@ApplicationSettings.MaxFileCountLimit" />
@@ -261,11 +429,11 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-4">
-                        <label class="control-label">FE Name<i class="clsMandatory">*</i>:</label>
+                        <label class="control-label">User Name<i class="clsMandatory">*</i>:</label>
                     </div>
                     <div class="col-md-8">
                         @*@Html.TextBoxFor(model => model.user_name, new { @id = "txtGroupNameText", @class = "form-control", @maxlength = "40", @placeholder = "Enter Group Name" })*@
-                        @Html.DropDownListFor(m => m.user_id, new SelectList(Model.lstusername.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddl_Fename", @required = true })
+                        @Html.DropDownListFor(m => m.user_id, new SelectList(Model.lstusername.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @onchange = "fn_getuserdeatisl()", @id = "ddl_Fename", @required = true })
                         @Html.HiddenFor(m => m.user_id)
                     </div>
                 </div>
@@ -275,7 +443,7 @@
                 <div class="row">
                     <div class="col-md-4">
                         <label class="control-label">
-                            FE Tools<i class="clsMandatory">*</i>:
+                            Tools<i class="clsMandatory">*</i>:
                         </label>
                     </div>
                     <div class="col-md-8">
@@ -308,20 +476,36 @@
                     </div>
                 </div>
             </div>
+            <!--<div class="form-group">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="control-label">Date<i class="clsMandatory">*</i>:</label>
+            </div>
+            <div class="col-md-8">
+                @Html.TextBoxFor(model => model.date_v, new { @id = "datepicker", @class = "form-control", @maxlength = "10", @placeholder = "Enter Date ", @required = true })
+                <span class="input-group-addon caledPose" id="datepicker1">
+                    <i class="fa fa-calendar" ></i>
+                </span>-->
+            @*<input type="text" id="datepicker" class="form-control" />*@
+            <!--</div>
+        </div>
+    </div>-->
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-4">
                         <label class="control-label">Date<i class="clsMandatory">*</i>:</label>
                     </div>
                     <div class="col-md-8">
-                        @Html.TextBoxFor(model => model.date_v, new { @id = "datepicker", @class = "form-control", @maxlength = "10", @placeholder = "Enter Date ", @required = true })
-                        <span class="input-group-addon caledPose">
-                            <i class="fa fa-calendar"></i>
+                        @Html.TextBoxFor(model => model.date_v, "{0:dd-MMM-yyyy}", new { @id = "datepicker", @title = "Date To", @placeholder = "Date To", @class = "input-sm form-control", @readonly = true })
+
+                        <span class="input-group-addon caledPose" id="datepicker1">
+                            <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
                         </span>
                         @*<input type="text" id="datepicker" class="form-control" />*@
                     </div>
                 </div>
             </div>
+           
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-4">
@@ -329,7 +513,7 @@
                     </div>
 
                     <div class="col-md-4">
-                        <input type="file" name="fuImgUpload" id="fuImgUpload12" accept=".bmp,.gif,.png,.jpg,.jpeg">
+                        <input type="file" class="form-control" name="fuImgUpload" id="fuImgUpload12" accept=".bmp,.gif,.png,.jpg,.jpeg">
                         <span id="fileErrorimage" style="color: red;"></span>
 
                         @*<input type="file" name="photos" id="photos" class="form-control" />*@
@@ -338,13 +522,15 @@
                     </div>
                 </div>
             </div>
+
+
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-4">
                         <label class="control-label">Certificate</label>
                     </div>
                     <div class="col-md-4">
-                        <input type="file" name="fuAttachmentUpload" id="fuAttachmentUploadfetools" accept=".pdf">
+                        <input type="file" class="form-control" name="fuAttachmentUpload" id="fuAttachmentUploadfetools" accept=".pdf">
                         <span id="fileError" style="color: red;"></span>
                     </div>
                 </div>
@@ -376,14 +562,13 @@
     }
 </div>
 <script>
-
+    
 
     $(document).ready(function () {
         // Code to execute when the DOM is ready
-        $("#datepicker").datepicker({
-            dateFormat: "dd-MM-yy", // Adjust the date format as needed
-            maxDate: 0 // past and current date allowed
-        });
+        //initializeDatepicker()
+
+        // Call initializeDatepicker function
 
         $(".chosen-select").chosen({ search_contains: true });
         $('#ddl_Fename').on('change', function () {
@@ -402,6 +587,16 @@
                 //    alert('Please enter a valid date in the format YYYY-MM-DD.');
             }
         });
+
+        $('#fuImgUpload12').change(function () {
+            var fileName = $(this).val().split('\\').pop();
+            $('#fileLabel').text(fileName);
+        });
+        $('.custom-file-upload').click(function () {
+            $(this).find('input[type="file"]').click();
+        });
+
+
 
     });
 

@@ -1,5 +1,6 @@
 ﻿using DataAccess;
 using DataAccess.Admin;
+using DataAccess.WFM;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -27,13 +28,18 @@ namespace BusinessLogics
         {
             return new DA_Fee_tools().getfetoolid(id);
         }
-        public List<FE_Tools_Details> GetFettoollist(CommonGridAttributes objGridAttributes)
+        public List<FE_Tools_Details> GetFettoollist(CommonGridAttributes objGridAttributes,int userid)
         {
-            return new DA_Fee_tools().GetGroupList(objGridAttributes);
+            return new DA_Fee_tools().GetGroupList(objGridAttributes, userid);
         }
         public List<KeyValueDropDown> GetFEUserDeatils()
         {
             return new DA_Fee_tools().GetFEUserDeatils();
+
+        }
+        public List<KeyValueDropDown> GetFEUserDeatils(int roll_id,string active)
+        {
+            return new DA_Fee_tools().GetFEUserDeatils(roll_id, active);
 
         }
         public int DeleteFetoolsSpecificationById(int id)
@@ -41,6 +47,10 @@ namespace BusinessLogics
             return new DA_Fee_tools().DeleteFetoolsSpecificationById(id);
 
 
+        }
+        public  DateTime GetUserDetailsbyid(int UserId)
+        {
+            return (new DA_Fee_tools().GetUserDetailsbyid(UserId));
         }
 
     }
