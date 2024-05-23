@@ -8,6 +8,8 @@
     var total_count = 0;
 }
 @using SmartInventory.Settings;
+<input type="hidden" id="reportTypes" name="reportTypes" />
+
 <style>
     .table-scroll {
         position: relative;
@@ -67,6 +69,21 @@
     .checkbox-custom-label {
         position: inherit !important;
     }
+
+    .tablePad-bn .form-control {
+        height: 28px;
+    }
+
+    .tablePad-bn .dropbox {
+        top: 40px;
+    }
+    .tablePad-bn .chosen-container{
+        min-width:100px;
+    }
+    .modal-md-new{
+        width:600px;
+    }
+
 </style>
 
 <!DOCTYPE html>
@@ -306,51 +323,37 @@
 
             @if (Model.lstReportData.Count > 0)
             {
-                <div class="tablePad-bn d-flex mb-15">
-                    <div class="fw-bold">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<span data="spanTotalRowCount"> @Model.lstReportData.Count</span></div>
-                    @*<div class="ml-auto">
-                <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
-                <div class="dropbox">
-                    <span onclick="ExportSummaryDetail('PDF')">@Resources.Resources.SI_OSP_GBL_NET_GBL_004</span>
-                    <span onclick="ExportSummaryDetail('EXCEL')">@Resources.Resources.SI_OSP_GBL_NET_GBL_005</span>
-                    <span onclick="ExportSummaryDetail('ALLEXCEL')">@Resources.Resources.SI_OSP_GBL_NET_GBL_006</span>
-                    <span onclick="ExportSummaryDetail('ALLCSV')">All Data (CSV)</span>
-                    <span onclick="ExportSummaryDetail('KML')">@Resources.Resources.SI_OSP_GBL_NET_GBL_007</span>
-                    <span onclick="ExportSummaryDetail('ALLSHAPE')">@Resources.Resources.SI_OSP_GBL_NET_FRM_074</span>
-                    <span onclick="ExportSummaryDetail('DXF')">Record (DXF)</span>
-                    <span onclick="ExportSummaryDetail('ALLTXT')">All Data (TXT)</span>
-                    <span onclick="ExportSummaryDetail('XML')">Record (XML)</span>*@
-                    <div class="ml-auto">
-                        <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
-                        <div class="dropbox">
-                            @*@foreach (var item in Model.lstfiletypes)
+        <div class="tablePad-bn d-flex mb-15">
+            <div class="fw-bold">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<span data="spanTotalRowCount"> @Model.lstReportData.Count</span></div>
+            <div class="ml-auto d-flex --gap05">
+                <div class="d-flex --gap05">
+                    <label class="white-space">Report Attributes</label>
+                    @Html.DropDownListFor(m => m.objReportFilters.reportType, new List<SelectListItem>{
+                                                    new SelectListItem { Text = "All", Value = "ALL"},
+                                                    new SelectListItem { Text = "Gis Attribute", Value = "GIS"},
+                                                    new SelectListItem { Text = "CDB Attribute", Value = "CDB"},
+                                                    new SelectListItem { Text = "Additional Attribute", Value = "ADDITIONAL"},
+
+                                                }, new { @multiple = "multiple", @class = "chosen-select form-control", @id = "reportType" })
+                </div>
+
+                <div>
+                    <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+
+
+                    <div class="dropbox">
+
+                        @foreach (var item in Model.lstfiletypes)
                         {
-                            <span class="@(@item.file_type=="ALLEXCEL"?"roledisabled":"")" title="@(@item.file_type=="ALLEXCEL"?"For all data export, use CSV option. ":"")" onclick="ExportSummaryDetail('@item.file_type')">@item.file_display_name</span>
-                        }*@
-                            @foreach (var item in Model.lstfiletypes)
-                            {
-                                
-                                @*else if (item.file_type == "KML")
-                            {
-                                <span class="roledisabled" title="Temporarily unavailable. ">@item.file_display_name</span>
-
-                            }
-                            else if (item.file_type == "ALLSHAPE")
-                            {
-                                <span class="roledisabled" title="Temporarily unavailable. ">@item.file_display_name</span>
-
-                            }*@
-                                
-
-                                    <span onclick="ExportSummaryDetail('@item.file_type')">@item.file_display_name</span>
-                             
-                            }
-                        </div>
-                    </div>
-                    <div id="dvReportProgress1" class="progress utili-prog-bar" style="display:none;">
-                        <div class="progress-bar progress-bar-striped" style="width:70%;background-color: darkgreen;">@Resources.Resources.SI_OSP_GBL_NET_FRM_073</div>
+                            <span onclick="ExportSummaryDetail('@item.file_type')">@item.file_display_name</span>
+                        }
                     </div>
                 </div>
+            </div>
+                <div id="dvReportProgress1" class="progress utili-prog-bar" style="display:none;">
+                    <div class="progress-bar progress-bar-striped" style="width:70%;background-color: darkgreen;">@Resources.Resources.SI_OSP_GBL_NET_FRM_073</div>
+                </div>
+            </div>
             }
             <div class="expPad_LefRig">
                 <div class="overAuto exptReptHei table-scroll">
@@ -589,6 +592,12 @@
         }
         //$('.chosen-select').trigger("chosen:updated");
 
+        $("#reportType").on('change', function () {
+            var selectedValues = $(this).val();
+            $("#reportTypes").val(selectedValues);
+        });
+
+      
         UpdateFormattedNumbers();
     });
 
@@ -830,7 +839,8 @@
             setCookie('downloadStarted', 0, 3600); //Expiration could be anything... As long as we reset the value
             setTimeout(checkDownloadCookie, 1000); //Initiate the loop to check the cookie.
             //si.ExportEntityReportNew(purpose, entityids);
-            si.ExportEntityReportNewEnhancement(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount);
+            var reportType = $("#reportTypes").val();
+            si.ExportEntityReportNewEnhancement(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount, reportType);
             //$("#dvReportProgress").hide();
             $("#divSummary .dropfiles").trigger("click");
             var mm = "";

@@ -815,3 +815,10 @@
 .icon-view:before {
     content: "\e9c2";
 }
+.icon-smartPlanner:before {
+    content: "\e9c3";
+}
+
+.icon-associate_report:before {
+    content: "\e9c4";
+}

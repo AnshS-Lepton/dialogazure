@@ -19625,16 +19625,17 @@ var Main = function () {
         window.location = appRoot + 'Report/DownloadEntityReportNew?fileType=' + _fileType + '&entityids=' + entityids;
     }
 
-    this.ExportEntityReportNewEnhancement = function (_fileType, entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount) {
+    this.ExportEntityReportNewEnhancement = function (_fileType, entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType) {
 
         //window.open(appRoot + 'Report/DownloadEntityReportNew?fileType=' + _fileType + '&entityids=' + entityids + '&totalPlannedCount=' + totalPlannedCount + '&totalAsBuiltCount=' + totalAsBuiltCount + '&totalDormantCount=' + totalDormantCount, '_blank');
-
+        debugger;
         ajaxReq('Report/DownloadEntityReportNew', {
             fileType: _fileType,
             entityids: entityids,
             totalPlannedCount: totalPlannedCount,
             totalAsBuiltCount: totalAsBuiltCount,
-            totalDormantCount: totalDormantCount
+            totalDormantCount: totalDormantCount, 
+            reportType: reportType
         }, false, function (obj) {
             //if (obj.status == 'ERROR') {
             //    console.log(obj.message);
@@ -25726,7 +25727,7 @@ var Main = function () {
             }
             if (eventParam != 'PolyLine') {
                 calculateArea();
-                google.maps.event.addListener(si.gMapObj.shapeObj, 'click', app.Entityreport.shapeClickInfoExportReport);
+                google.maps.event.addListener(si.gMapObj.shapeObj, 'click', app.EntityAssreport.shapeClickInfoAssociationReport);
             }
             si.gMapObj.shapeObj.setMap(si.map);
         },
