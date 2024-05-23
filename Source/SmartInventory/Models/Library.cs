@@ -2815,8 +2815,9 @@ namespace Models
         public bool is_all_provience_assigned { get; set; }
 		public double radius { get; set; }
         public string connectionString { get; set; }
-        public List<int> selected_route_id { get; set; }//int[]
-        public string selected_route_ids { get; set; }
+		public List<int> selected_route_id { get; set; }//int[]
+		public List<string> reportType { get; set; }//int[]
+		public string selected_route_ids { get; set; }
     }
 
 	public class EntitySummaryReport
