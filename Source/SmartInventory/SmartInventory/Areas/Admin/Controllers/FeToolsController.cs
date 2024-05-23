@@ -48,6 +48,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                     var objLgnUsrDtl = (User)Session["userDetail"];
                     int user_id = objLgnUsrDtl.user_id;
                     //objfetools.lstusername = new BLUser().GetUsernameDetails();
+
                     objfetools.lstusername = new BL_Fe_Tools().GetFEUserDeatils();
                     objfetools.lstFEtool = new BLUser().BindFETool();
                 }
@@ -98,7 +99,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                         Session["tools_id"] = response.tool_id;
 
                         objMsg.status = ResponseStatus.OK.ToString();
-                        objMsg.message = " Saved successfully!";
+                        objMsg.message = "User details saved successfully!";
                     }
                     else if (response.action_type == "Update")
                     {
@@ -108,6 +109,13 @@ namespace SmartInventory.Areas.Admin.Controllers
 
                         objMsg.status = ResponseStatus.OK.ToString();
                         objMsg.message = " Updated successfully!";
+                    }
+                    else if (response.action_type == "Duplicate")
+                    {
+                        
+
+                        objMsg.status = ResponseStatus.OK.ToString();
+                        objMsg.message = "User details already exist.";
                     }
                     else if (string.IsNullOrEmpty(response.action_type))
                     {
@@ -138,6 +146,8 @@ namespace SmartInventory.Areas.Admin.Controllers
         }
         public ActionResult Viewfetools(ViewFETools objViewFetools, int page = 0, string sort = "", string sortdir = "")
         {
+            var userid = Convert.ToInt32(Session["user_id"]);
+
             BindSearchBy(objViewFetools);
             if (sort != "" || page != 0)
             {
@@ -147,7 +157,7 @@ namespace SmartInventory.Areas.Admin.Controllers
             objViewFetools.objGridAttributes.currentPage = page == 0 ? 1 : page;
             objViewFetools.objGridAttributes.sort = sort;
             objViewFetools.objGridAttributes.orderBy = sortdir;
-            objViewFetools.fetools = new BL_Fe_Tools().GetFettoollist(objViewFetools.objGridAttributes);
+            objViewFetools.fetools = new BL_Fe_Tools().GetFettoollist(objViewFetools.objGridAttributes, userid);
             objViewFetools.objGridAttributes.totalRecord = objViewFetools.fetools != null && objViewFetools.fetools.Count > 0 ? objViewFetools.fetools[0].totalRecords : 0;
             Session["viewfetools"] = objViewFetools.objGridAttributes;
             return View("Viewfetools", objViewFetools);
@@ -611,12 +621,14 @@ namespace SmartInventory.Areas.Admin.Controllers
                 List<FE_Tools_Details> lstViewGroupDetails = new List<FE_Tools_Details>();
                 objGridAttributes.currentPage = 0;
                 objGridAttributes.pageSize = 0;
-                lstViewGroupDetails = new BL_Fe_Tools().GetFettoollist(objGridAttributes);
+                var userid = Convert.ToInt32(Session["user_id"]);
+
+                lstViewGroupDetails = new BL_Fe_Tools().GetFettoollist(objGridAttributes, userid);
 
 
                 DataTable dtReport = new DataTable();
                 dtReport = MiscHelper.ListToDataTable<FE_Tools_Details>(lstViewGroupDetails);
-                dtReport.TableName = "View_FE_Tools_Details";
+                dtReport.TableName = "View_User_Tools_Details";
                 dtReport.Columns.Add("Date", typeof(string));
                 for (int i = 0; i < dtReport.Rows.Count; i++)
                 {
@@ -629,16 +641,18 @@ namespace SmartInventory.Areas.Admin.Controllers
                 //dtReport.Columns.Remove("IMAGE_VALUE");
                 //dtReport.Columns.Remove("DOCUMENT_VALUE");
                 dtReport.Columns.Remove("DATE_VALUE");
+                dtReport.Columns.Remove("ID");
                
 
-                dtReport.Columns["USER_NAME"].ColumnName = "FE Name";
-                dtReport.Columns["TOOL_NAME"].ColumnName = "FE Tool Name";
+                dtReport.Columns["USER_NAME"].ColumnName = "User Name";
+                dtReport.Columns["TOOL_NAME"].ColumnName = "Tool Name";
                 dtReport.Columns["BARCODE"].ColumnName = "Barcode";
                 dtReport.Columns["SERIAL_NUMBER"].ColumnName = "Serial Number";
+                dtReport.Columns["UPLOAD_TYPE"].ColumnName = "Upload Type";
                 //dtReport.Columns["DATE_VALUE"].ColumnName = "Date";
                 //dtReport.Columns["modified_by_text"].ColumnName = "Modified By";
                 //dtReport.Columns["modified on"].ColumnName = "Modified On";
-                var filename = "Export_FE_Tools";
+                var filename = "User_Tools";
                 ExportFEToolsDataTableToExcel(dtReport, "Export_" + filename + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));
             }
             
@@ -666,6 +680,33 @@ namespace SmartInventory.Areas.Admin.Controllers
             {
                 objResp.status = ResponseStatus.ERROR.ToString();
                 objResp.message = "Fe Name not deleted!";
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult Getuserdetails(string userid)
+        {
+            JsonResponse<string> objResp = new JsonResponse<string>();
+
+
+            try
+            {
+                var date_value = new BL_Fe_Tools().GetUserDetailsbyid(Convert.ToInt32(userid));
+
+                
+                //if (!string.IsNullOrEmpty(date_value))
+               // {
+                    objResp.status = ResponseStatus.OK.ToString();
+                    objResp.result = date_value.ToString();
+
+                //}
+
+            }
+            catch
+            {
+                objResp.status = ResponseStatus.ERROR.ToString();
+                objResp.result = "";
             }
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
