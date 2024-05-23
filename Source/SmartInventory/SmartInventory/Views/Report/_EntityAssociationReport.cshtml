@@ -84,7 +84,6 @@
         @Html.HiddenFor(m => m.objReportFilters.radius)
         @Html.HiddenFor(m => m.objReportFilters.SelectedParentUser, new { id = "hdnSelectedParentUsers" })
         @Html.HiddenFor(m => m.objReportFilters.purpose, new { id = "purpose" })
-
         <input type="hidden" name="IsRequestFromInfo" value="true" />
         <div class="EEReport" id="divFilter">
             <div class="scrollDiv space-pad">
@@ -363,7 +362,7 @@
             var SelectedUserIds = '@Model.objReportFilters.SelectedUserIds';
             $("#ddlUsers").val(SelectedUserIds.split(',')).trigger("chosen:updated");
         }
-        UpdateFormattedNumbers();
+        
     });
 
     $('#btnEntityAssociationClear').on("click", function () {
@@ -498,13 +497,11 @@
             $("#thdormanttotal")[0].innerHTML = dormantTotal;
         }
         $("#thalltotal")[0].innerHTML = (plannedTotal + asBuildTotal + dormantTotal);
-        UpdateFormattedNumbers();
     }
 
     function AssociationSummaryDetail(purpose) {
         $("#purpose").val(purpose);
         $("#frmAssociationEntitiesSummaryData").submit();
-
     }
 
     var downloadTimeout;
@@ -630,26 +627,4 @@
         si.BindPurposeCodeDetailByWorkOrderIds();
     })
 
-    function UpdateFormattedNumbers() {
-        // Get the table element
-        const table = document.getElementById('tblSummaryAll');
-        if (table && table.rows && table != null && table != undefined) {
-            // Loop through the rows
-            for (let rowIndex = 0; rowIndex < table.rows.length; rowIndex++) {
-                const row = table.rows[rowIndex];
-
-                // Loop through the cells in the row
-                for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
-                    const cell = row.cells[cellIndex];
-
-                    // Extract data from the cell
-                    const cellData = cell.textContent.trim();
-
-                    // Do something with the cell data
-                    if ($.isNumeric(cellData))
-                        row.cells[cellIndex].textContent = getFormattedNumber(cellData);
-                }
-            }
-        }
-    }
 </script>
