@@ -1794,7 +1794,6 @@ namespace SmartInventory.Controllers
 			List<Dictionary<string, string>> lstExportEntitiesDetailCdb = null;
 
 			List<string> reportTypeString = reportType;
-
 				if (total_entity_count < ApplicationSettings.ExcelReportLimitCount || textType == true)
 				{
 				if (reportTypeString.Contains("GIS"))
