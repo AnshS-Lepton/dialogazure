@@ -4491,9 +4491,10 @@ namespace SmartInventory.Controllers
 			objAssociationEntitiesReport.objReportFilters.selected_route_ids = objAssociationEntitiesReport.selected_route_ids != null && objAssociationEntitiesReport.selected_route_ids.Count > 0 ? string.Join(",", objAssociationEntitiesReport.selected_route_ids.ToArray()) : "";
 
 			var selectedLayers = objAssociationEntitiesReport.objReportFilters.SelectedLayerIds;
-
-			objAssociationEntitiesReport.lstReportData = new BLLayer().GetAssociationReportSummary(objAssociationEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
-
+			//if (!string.IsNullOrEmpty(IsRequestFromInfo) && Convert.ToBoolean(IsRequestFromInfo))
+			//{
+			//	objAssociationEntitiesReport.lstReportData = new BLLayer().GetAssociationReportSummary(objAssociationEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
+			//}
 			objAssociationEntitiesReport.objReportFilters.SelectedLayerIds = selectedLayers;
 			Session["AssociationReportFilter"] = objAssociationEntitiesReport.objReportFilters;
 
@@ -5322,15 +5323,15 @@ namespace SmartInventory.Controllers
 										if (recordCount != null)
 											total_entity_count = recordCount.planned_count + recordCount.as_built_count + recordCount.dormant_count;
 										List<Dictionary<string, string>> lstExportEntitiesDetail = null;
-										if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
-										{
-											lstExportEntitiesDetail = new BLLayer().GetAssociationReportSummaryViewCSV(objAssociationEntitiesReport.objReportFilters, layer.layer_name);
+										//if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
+										//{
+										////	lstExportEntitiesDetail = new BLLayer().GetAssociationReportSummaryViewCSV(objAssociationEntitiesReport.objReportFilters, layer.layer_name);
 
-										}
-										else
-										{
+										//}
+										//else
+										//{
 											lstExportEntitiesDetail = new BLLayer().GetAssociationReportSummaryView(objAssociationEntitiesReport.objReportFilters, layer.layer_name);
-										}
+										//}
 										// lstExportEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstExportEntitiesDetail);
 										DataTable dtReport = new DataTable();
 										dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
