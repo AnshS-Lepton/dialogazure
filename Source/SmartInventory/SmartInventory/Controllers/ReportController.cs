@@ -1680,11 +1680,8 @@ namespace SmartInventory.Controllers
 										if (recordCount != null)
 											total_entity_count = recordCount.planned_count + recordCount.as_built_count + recordCount.dormant_count;
 
-										Session["objExportEntitiesReport"] = null;
-
-										Session["objExportEntitiesReport"] = objExportEntitiesReport;
 										bool textType = true;
-										var dataSet = GetDataSetFromDataTable(reportType, layer_name, layerDetail, total_entity_count, textType);
+										var dataSet = GetDataSetFromDataTable(objExportEntitiesReport,reportType, layer_name, layerDetail, total_entity_count, textType);
 										DataTable dtReport = dataSet.Tables[0];
 										DataTable dtReportCdb = dataSet.Tables[1];
 										DataTable dtReportAdditional = dataSet.Tables[2];
@@ -1789,17 +1786,14 @@ namespace SmartInventory.Controllers
 
 		}
 
-		public DataSet GetDataSetFromDataTable(List<string> reportType, string layer_name, layerDetail layerDetail, Int64 total_entity_count, bool textType)
+		public DataSet GetDataSetFromDataTable( ExportEntitiesSummaryView  objExportEntitiesReport,List<string> reportType, string layer_name, layerDetail layerDetail, Int64 total_entity_count, bool textType)
 		{
 			DataSet dataSet = new DataSet();
-			ExportEntitiesSummaryView objExportEntitiesReport = new ExportEntitiesSummaryView();
 			List<Dictionary<string, string>> lstExportEntitiesDetail = null;
 			List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
 			List<Dictionary<string, string>> lstExportEntitiesDetailCdb = null;
 
-			objExportEntitiesReport = (ExportEntitiesSummaryView)Session["objExportEntitiesReport"];
 			List<string> reportTypeString = reportType;
-
 				if (total_entity_count < ApplicationSettings.ExcelReportLimitCount || textType == true)
 				{
 				if (reportTypeString.Contains("GIS"))
@@ -8902,12 +8896,8 @@ namespace SmartInventory.Controllers
 										//LogHelper.GetInstance.WriteDebugLogTest($"Request Sent to get the data from database on: {DateTime.Now}", layer.layer_name);
 										var layerdetails = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 
-
-										Session["objExportEntitiesReport"] = null;
-
-										Session["objExportEntitiesReport"] = objExportEntitiesReport;
 										bool textType = false;
-										var dataSet = GetDataSetFromDataTable(reportType, layer.layer_name, layerdetails, 0, textType);
+										var dataSet = GetDataSetFromDataTable(objExportEntitiesReport,reportType, layer.layer_name, layerdetails, 0, textType);
 										DataTable dtReport = dataSet.Tables[0];
 										DataTable dtReportCdb = dataSet.Tables[1];
 										DataTable dtReportAdditional = dataSet.Tables[2];
