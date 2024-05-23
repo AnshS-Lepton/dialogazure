@@ -1948,8 +1948,6 @@
     <Content Include="Areas\Admin\Views\OTPAuthenticationSettings\EmailTemplateConfiguration.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\ViewSpecificationServices.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\SpecificationService.cshtml" />
-    <Content Include="Areas\Admin\Views\User\Viewfetools.cshtml" />
-    <Content Include="Areas\Admin\Views\User\AddFEtools.cshtml" />
     <Content Include="Areas\Admin\Views\FeTools\AddFEtools.cshtml" />
     <Content Include="Areas\Admin\Views\FeTools\Viewfetools.cshtml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
