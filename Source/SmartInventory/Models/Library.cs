@@ -2746,6 +2746,9 @@ namespace Models
 		[NotMapped]
 		public string entityids { get; set; }
 		[NotMapped]
+		public Boolean isCdbEnabled { get; set; }
+
+		[NotMapped]
 		public string fileType { get; set; }
 		public List<fileTypes> lstfiletypes { get; set; }
 		[NotMapped]

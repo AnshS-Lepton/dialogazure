@@ -41,6 +41,11 @@ namespace BusinessLogics
             return objDAMisc.GetDropDownList(enType, ddType);
         }
 
+        public Boolean GetCdbEnabledValue()
+        {
+            return objDAMisc.GetCdbEnabledValue();
+        }
+
         public List<DropDownMaster> GetAssociationDropDownList(string enType, string ddType = "")
         {
             return objDAMisc.GetAssociationDropDownList(enType, ddType);
