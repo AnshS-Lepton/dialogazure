@@ -6,7 +6,7 @@
     var asbuilt_count = 0;
     var dormant_count = 0;
     var total_count = 0;
-    var  entityId = Model.lstReportData.Where(r => r.entity_name == "Cable").Select(r => r.entity_id).FirstOrDefault();
+    var  entityid_cable = Model.lstReportData.Where(r => r.entity_name == "Cable").Select(r => r.entity_id).FirstOrDefault();
 
 }
 @using SmartInventory.Settings;
@@ -492,8 +492,6 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
 
 
     $(document).ready(function () {
-        alert(entityIdddd);
-        console.log(entityIdddd);
         var list = ["GIS"];
         $("#reportType").val(list).trigger('chosen:updated');
         $("#reportTypes").val(list);
@@ -774,7 +772,7 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
             var list = ["CDB"];
             $("#reportType").val(list).trigger('chosen:updated');
             $("#reportTypes").val(list);
-            entityids = entityId;
+            entityids = @entityid_cable;
         }
         else {
 
@@ -859,6 +857,7 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
 
         }
     }
+
     var downloadTimeout;
     var checkDownloadCookie = function () {
         //console.log(getCookie("downloadStarted"));
