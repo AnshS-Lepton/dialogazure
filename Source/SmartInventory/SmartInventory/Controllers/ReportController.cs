@@ -689,7 +689,7 @@ namespace SmartInventory.Controllers
 				{
 					reportType = new List<string> { "ALL" };
 				}
-
+               
 				if (fileType.ToUpper() == "EXCEL")
 				{
 					//DownloadEntityReportNewIntoExcel(entityids);
@@ -1715,7 +1715,7 @@ namespace SmartInventory.Controllers
 											{
 												//if()
 												tempFileName = $"{directoryPath}/{dtReport.TableName}.xlsx";
-												ExportDataExcelMerge(dtReport, dtReportCdb, dtReportAdditional, fileName, tempFileName); ;
+												ExportDataExcelMerge(dtReport, dtReportCdb, dtReportAdditional, fileName, tempFileName);
 											}
 
 											exportReportLog.export_ended_on = DateTime.Now;
@@ -1798,19 +1798,19 @@ namespace SmartInventory.Controllers
 
 			if (total_entity_count < ApplicationSettings.ExcelReportLimitCount || textType == true)
 			{
-				if (reportTypeString.Contains("GIS"))
+				if (reportTypeString[0].Contains("GIS"))
 				{
 					lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer_name);
 				}
-				if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+				if (reportTypeString[0].Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
 				{
 					lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewNewCdb(objExportEntitiesReport.objReportFilters, layer_name);
 				}
-				if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+				if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
 				{
 					lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer_name);
 				}
-				if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
+				if (reportTypeString[0].Contains("ALL") )
 				{
 					lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer_name);
 					if (layerDetail.is_dynamic_control_enable)
@@ -1827,19 +1827,19 @@ namespace SmartInventory.Controllers
 			else
 			{
 
-				if (reportTypeString.Contains("GIS"))
+				if (reportTypeString[0].Contains("GIS"))
 				{
 					lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer_name);
 				}
-				 if (reportTypeString.Contains("CDB") && layer_name == EntityType.Cable.ToString())
+				 if (reportTypeString[0].Contains("CDB") && layer_name == EntityType.Cable.ToString())
 				{
 					lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer_name);
 				}
-				 if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+				 if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
 				{
 					lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer_name);
 				}
-				if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
+				if (reportTypeString[0].Contains("") || reportTypeString.Contains("ALL"))
 				{
 					lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer_name);
 					if (layer_name == EntityType.Cable.ToString())
@@ -8543,19 +8543,19 @@ namespace SmartInventory.Controllers
 								List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
 								List<string> reportTypeString = reportType;
 
-								if (reportTypeString.Contains("GIS"))
+								if (reportTypeString[0].Contains("GIS"))
 								{
 									lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryView(objExportEntitiesReport.objReportFilters);
 								}
-								else if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+								if (reportTypeString[0].Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
 								{
 									lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCdb(objExportEntitiesReport.objReportFilters);
 								}
-								else if (reportTypeString.Contains("ADDITIONAL") && layerdetails.is_dynamic_control_enable)
+								if (reportTypeString[0].Contains("ADDITIONAL") && layerdetails.is_dynamic_control_enable)
 								{
 									lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewAdditional(objExportEntitiesReport.objReportFilters);
 								}
-								else
+								if(reportTypeString[0].Contains("ALL"))
 								{
 									lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryView(objExportEntitiesReport.objReportFilters);
 									if (layerdetails.is_dynamic_control_enable)
@@ -8911,19 +8911,19 @@ namespace SmartInventory.Controllers
 
 										if (dtReportCdb.Rows.Count > 0)
 										{
-											fileName = $"{parentFolder}/{layer.layer_name + "_CdbAttributes"}.csv";
+											fileName = $"{parentFolder}/{layer.layer_title + "_CdbAttributes"}.csv";
 											StreamNewCSVInFolder(dtReportCdb, fileName);
 											exportReportLog.file_location = ftpFolder + parentFolder + exportReportLog.file_extension;
 										}
 										if (dtReportAdditional.Rows.Count > 0)
 										{
-											fileName = $"{parentFolder}/{layer.layer_name + "_AdditionalAttributes"}.csv";
+											fileName = $"{parentFolder}/{layer.layer_title + "_AdditionalAttributes"}.csv";
 											StreamNewCSVInFolder(dtReportCdb, fileName);
 											exportReportLog.file_location = ftpFolder + parentFolder + exportReportLog.file_extension;
 										}
 										if (dtReport.Rows.Count > 0)
 										{
-											fileName = $"{parentFolder}/{layer.layer_name + "_GisAttributes"}.csv";
+											fileName = $"{parentFolder}/{layer.layer_title + "_GisAttributes"}.csv";
 
 											StreamNewCSVInFolder(dtReport, fileName);
 											//StreamNewCSVInFolder(dtReportCdb, fileName);

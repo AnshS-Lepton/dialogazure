@@ -2745,6 +2745,7 @@ namespace Models
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
 		public string entityids { get; set; }
+		
 		[NotMapped]
 		public string fileType { get; set; }
 		public List<fileTypes> lstfiletypes { get; set; }
