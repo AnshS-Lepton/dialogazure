@@ -25,8 +25,6 @@ END
 $BODY$;
 
 
-
-
 CREATE OR REPLACE FUNCTION public.fn_get_export_report_summary_view_additional(
 	p_regionids character varying,
 	p_provinceids character varying,
