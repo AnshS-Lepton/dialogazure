@@ -592,7 +592,6 @@ namespace SmartInventory.Controllers
 			objExportEntitiesReport.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
 			objExportEntitiesReport.lstNetworkStatus = new BLMisc().GetDropDownList("", DropDownType.ddlNetworkStatus.ToString());
 			objExportEntitiesReport.lstUserModule = new BLLayer().GetUserModuleAbbrList(userdetails.user_id, UserType.Web.ToString());
-			objExportEntitiesReport.isCdbEnabled = new BLMisc().GetCdbEnabledValue();
 		}
 		public JsonResult GetUsersByParentUser(List<int> parentUser_ids)
 		{

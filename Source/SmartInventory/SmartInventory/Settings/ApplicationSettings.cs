@@ -253,6 +253,8 @@ namespace SmartInventory.Settings
         public static bool fetoolsenabled = true;
         public static int CableDefLabelMinZoom = 0;
         public static int IsGeometryUpdateOnAssociationAllowed = 0;
+        public static bool CdbEnabled = false;
+
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -855,7 +857,10 @@ namespace SmartInventory.Settings
                 }           
 				if (objSetting.key == "IsTraceEnabled")
 				{ IsTraceEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true; }
-				if (objSetting.key == "ExcelReportLimitCount")
+
+                if (objSetting.key == "isCDBAttributeEnabled")
+                { CdbEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true; }
+                if (objSetting.key == "ExcelReportLimitCount")
 				{
 					ExcelReportLimitCount = Convert.ToInt32(objSetting.value);
 				}

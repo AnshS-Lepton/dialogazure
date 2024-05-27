@@ -42,20 +42,7 @@ namespace DataAccess
             catch { throw; }
         }
 
-        public Boolean GetCdbEnabledValue()
-        {
-            try
-            {
-                return repo.ExecuteProcedure<Boolean>("fn_Check_Cdb_Enable",
-                  new {  }).FirstOrDefault();
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-
+       
         public List<DropDownMaster> GetAssociationDropDownList(string enType, string ddType = "")
         {
             try

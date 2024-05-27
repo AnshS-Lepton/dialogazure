@@ -1,29 +1,3 @@
-CREATE OR REPLACE FUNCTION public.fn_check_Cdb_Enable(
-)
-    RETURNS SETOF boolean 
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE STRICT PARALLEL UNSAFE
-    ROWS 1000
-
-AS $BODY$
-
-
-Declare V_STATUS boolean:=False;
-
-BEGIN
-
- if exists(select 1 from global_settings  where key ='isCDBAttributeEnabled' and value='1')
-               
-                then
-                   V_STATUS:=true;
-                end if;
-  Return Query
-  SELECT V_STATUS;
- 
-END
-$BODY$;
-
 
 CREATE OR REPLACE FUNCTION public.fn_get_export_report_summary_view_additional(
 	p_regionids character varying,

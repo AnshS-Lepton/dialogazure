@@ -6,6 +6,8 @@
     var asbuilt_count = 0;
     var dormant_count = 0;
     var total_count = 0;
+    var  entityId = Model.lstReportData.Where(r => r.entity_name == "Cable").Select(r => r.entity_id).FirstOrDefault();
+
 }
 @using SmartInventory.Settings;
 <input type="hidden" id="reportTypes" name="reportTypes" />
@@ -409,22 +411,24 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
                                                 }
                                             }
                                         }
-                                    <td>
-                                        <a href="#" onclick="si.ExportEntitySummaryView('@item.entity_name');" class="dropdown-toggle @(recordCounts == 0 ? "btnNotAllowed" : "")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_042">
-                                            @*@item.entity_name.Replace(" ", "")*@
-                                            <i class="glyphicon glyphicon-eye-open"></i>
-                                        </a>
-                                        @if (Model.isCdbEnabled == true && @item.entity_name =="Cable")
-                                        {
-                                    <a href="#" onclick="ExportSummaryDetail('ALLEXCEL', true)">
-                                        <i class="glyphicon glyphicon-download"></i>
-                                    </a>
-                                        }
+                                        <td>
+                                            <a href="#" onclick="si.ExportEntitySummaryView('@item.entity_name');" class="dropdown-toggle @(recordCounts == 0 ? "btnNotAllowed" : "")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_042">
+                                                @*@item.entity_name.Replace(" ", "")*@
+                                                <i class="glyphicon glyphicon-eye-open"></i>
+                                            </a>
+                                            @if (ApplicationSettings.CdbEnabled == true && @item.entity_name == "Cable")
+                                            {
+                                                <a href="#" onclick="ExportSummaryDetail('ALLEXCEL', true)">
+                                                    <i class="glyphicon glyphicon-download"></i>
+                                                </a>
+                                            }
 
 
-                                    </td>
+
+                                        </td>
                                     </tr>
                                 }
+
                             </tbody>
                             <tfoot>
                                 <tr>
@@ -488,6 +492,8 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
 
 
     $(document).ready(function () {
+        alert(entityIdddd);
+        console.log(entityIdddd);
         var list = ["GIS"];
         $("#reportType").val(list).trigger('chosen:updated');
         $("#reportTypes").val(list);
@@ -573,11 +579,11 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
         //$('.chosen-select').trigger("chosen:updated");
 
         $("#reportType").on('change', function () {
-            var selectedValues = $(this).val();            
+            var selectedValues = $(this).val();
             $("#reportTypes").val(selectedValues);
         });
-        
-       
+
+
 
         UpdateFormattedNumbers();
     });
@@ -768,14 +774,14 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
             var list = ["CDB"];
             $("#reportType").val(list).trigger('chosen:updated');
             $("#reportTypes").val(list);
-            entityids = '19';
+            entityids = entityId;
         }
-        else {     
-             
+        else {
+
         if (chkAll.checked == true) {
             entityids = '@Model.objReportFilters.SelectedLayerIds';
-            
-        }           
+
+        }
         else {
             //Fetch all rows of the Table.
             var rows = $("#tblSummaryAll input[type=checkbox]:not('#checkallentity'):checked"); //document.getElementById("tblSummaryAll").rows;
@@ -785,7 +791,7 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
                 entityids += entityids != "" ? ("," + rows[i].id) : rows[i].id;
                 //}
             }
-            }            
+            }
 
         }
 
