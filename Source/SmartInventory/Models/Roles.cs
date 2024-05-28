@@ -314,7 +314,16 @@ namespace Models
         public string serial_number { get; set; }
         public string barcode { get; set; }
         public DateTime date_value { get; set; }
-       
+        public bool is_accepted {  get; set; }
+        [NotMapped]
+        public int? created_by { get; set; }
+        [NotMapped]
+        public int user_id { get; set; }
+
+      
+
+
+
 
 
         public string upload_type { get; set; }
@@ -422,6 +431,7 @@ namespace Models
         }
         [NotMapped]
         public List<KeyValueDropDown> lstSearchBy { get; set; }
+        
     }
 
     public class ReportingRoleMapping

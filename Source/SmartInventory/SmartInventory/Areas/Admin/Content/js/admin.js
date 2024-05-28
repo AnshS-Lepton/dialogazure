@@ -3833,7 +3833,7 @@ function AddLayerGroups(_group_id) {
 function Addfeetool(_group_id) {
     
 
-    popup.LoadModalDialog('FeTools/AddFEtools', { group_id: _group_id }, 'Add FE Tools', 'modal-md');
+    popup.LoadModalDialog('FeTools/AddFEtools', { group_id: _group_id }, 'Add User Tools', 'modal-md');
 }
 
 
@@ -4810,11 +4810,11 @@ $(document).ready(function () {
 //---------------------fetools  start
 function Deletefetool(id) {
 
-    confirm("Are you sure you want to delete this Fe Name Record?", function () {
+    confirm("Are you sure you want to delete this User Name Record?", function () {
         ajaxReq('FeTools/DeleteFettolsSpecification', { id: id }, false, function (resp) {
             if (resp.status == "OK") {
                 $("#frmViewfetools").submit();
-                alert('Fe Name deleted successfully.');
+                alert('User Name deleted successfully.');
             }
             else
                 alert(resp.message);
@@ -4822,6 +4822,25 @@ function Deletefetool(id) {
     });
 }
 
+function fn_accepted_user_tools(id) {
+   
+
+    confirm("Are you sure you want to confirm this tool?", function () {
+ 
+        ajaxReq('FeTools/AcceptedUserTools', { id: id }, false, function (resp) {
+     
+            if (resp.status == "OK") {
+                $("#frmViewfetools").submit();
+                alert('User Tool accepted successfully.');
+            }
+            else {
+                alert(resp.message);
+            }
+        }, true, true);
+       
+
+    });
+}
 
 
 function handleFileChange() {

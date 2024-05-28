@@ -112,7 +112,9 @@ namespace SmartInventory.Areas.Admin.Controllers
                     }
                     else if (response.action_type == "Duplicate")
                     {
-                        
+                        Session["Fetools_id"] = objLyrGroup.id;
+                        Session["Fetuser_id"] = objLyrGroup.user_id;
+                        Session["tools_id"] = objLyrGroup.tool_id;
 
                         objMsg.status = ResponseStatus.OK.ToString();
                         objMsg.message = "User details already exist.";
@@ -147,6 +149,10 @@ namespace SmartInventory.Areas.Admin.Controllers
         public ActionResult Viewfetools(ViewFETools objViewFetools, int page = 0, string sort = "", string sortdir = "")
         {
             var userid = Convert.ToInt32(Session["user_id"]);
+            var objLgnUsrDtl = (User)Session["userDetail"];
+            ViewBag.user_id = userid;
+            ViewBag.created_by = objLgnUsrDtl.created_by;
+            ViewBag.roleid = objLgnUsrDtl.role_id;
 
             BindSearchBy(objViewFetools);
             if (sort != "" || page != 0)
@@ -158,6 +164,9 @@ namespace SmartInventory.Areas.Admin.Controllers
             objViewFetools.objGridAttributes.sort = sort;
             objViewFetools.objGridAttributes.orderBy = sortdir;
             objViewFetools.fetools = new BL_Fe_Tools().GetFettoollist(objViewFetools.objGridAttributes, userid);
+          
+
+
             objViewFetools.objGridAttributes.totalRecord = objViewFetools.fetools != null && objViewFetools.fetools.Count > 0 ? objViewFetools.fetools[0].totalRecords : 0;
             Session["viewfetools"] = objViewFetools.objGridAttributes;
             return View("Viewfetools", objViewFetools);
@@ -668,21 +677,48 @@ namespace SmartInventory.Areas.Admin.Controllers
                 if (output > 0)
                 {
                     objResp.status = ResponseStatus.OK.ToString();
-                    objResp.message = "Fe Name detail is deleted successfully!";
+                    objResp.message = "user Name detail is deleted successfully!";
                 }
                 else
                 {
                     objResp.status = ResponseStatus.FAILED.ToString();
-                    objResp.message = "Something went wrong while deleting Fe Name!";
+                    objResp.message = "Something went wrong while deleting User Name!";
                 }
             }
             catch
             {
                 objResp.status = ResponseStatus.ERROR.ToString();
-                objResp.message = "Fe Name not deleted!";
+                objResp.message = "user Name not deleted!";
             }
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
+        [HttpPost]
+        public JsonResult AcceptedUserTools(int id)
+        {
+            JsonResponse<string> objResp = new JsonResponse<string>();
+            try
+            {
+                var output = new BL_Fe_Tools().AcceptedUserTool(id);
+                if (output>0)
+                {
+                    objResp.status = ResponseStatus.OK.ToString();
+                    objResp.message = "User Tool is accepted successfully!";
+                }
+                else
+                {
+                    objResp.status = ResponseStatus.FAILED.ToString();
+                    objResp.message = "Something went wrong while accepting User Tool!";
+                }
+            }
+            catch(Exception ex)
+            {
+                objResp.status = ResponseStatus.FAILED.ToString();
+                objResp.message = "Something went wrong while accepting User Tool!";
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+
+        }
+
 
         [HttpPost]
         public JsonResult Getuserdetails(string userid)
