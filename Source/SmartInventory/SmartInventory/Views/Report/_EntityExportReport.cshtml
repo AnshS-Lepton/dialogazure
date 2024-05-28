@@ -6,8 +6,12 @@
     var asbuilt_count = 0;
     var dormant_count = 0;
     var total_count = 0;
+    var  entityid_cable = Model.lstReportData.Where(r => r.entity_name == "Cable").Select(r => r.entity_id).FirstOrDefault();
+
 }
 @using SmartInventory.Settings;
+<input type="hidden" id="reportTypes" name="reportTypes" />
+
 <style>
     .table-scroll {
         position: relative;
@@ -66,6 +70,22 @@
 
     .checkbox-custom-label {
         position: inherit !important;
+    }
+
+    .tablePad-bn .form-control {
+        height: 28px;
+    }
+
+    .tablePad-bn .dropbox {
+        top: 40px;
+    }
+
+    .tablePad-bn .chosen-container {
+        min-width: 100px;
+    }
+
+    .modal-md-new {
+        width: 600px;
     }
 </style>
 
@@ -145,11 +165,11 @@
                     <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_067  :</div>
                     <div class="col-md-9">
                         @*@Html.DropDownListFor(m => m.objReportFilters.SelectedNetworkStatus, new List<SelectListItem>
-                {
-                        new SelectListItem { Text = "Planned", Value = "PLANNED"},
-                        new SelectListItem { Text = "As-Built", Value = "AS BUILT"},
-                        new SelectListItem { Text = "Dormant", Value = "DORMANT"},
-                }, new { @multiple = "multiple", @class = "chosen-select", @id = "SelectedNetworkStatus" })*@
+                            {
+                                    new SelectListItem { Text = "Planned", Value = "PLANNED"},
+                                    new SelectListItem { Text = "As-Built", Value = "AS BUILT"},
+                                    new SelectListItem { Text = "Dormant", Value = "DORMANT"},
+                            }, new { @multiple = "multiple", @class = "chosen-select", @id = "SelectedNetworkStatus" })*@
                         @Html.DropDownListFor(m => m.objReportFilters.SelectedNetworkStatus, new SelectList(Model.lstNetworkStatus.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "SelectedNetworkStatus" })
 
                     </div>
@@ -166,29 +186,29 @@
                         @*@Html.DropDownListFor(m => m.objReportFilters.SelectedUserId, new SelectList(Model.lstUserReport.Select(x => new { Value = x.user_id.ToString(), Text = x.user_name.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlUsers" })*@
 
                         @*<select id="ddlUsers" class="chosen-select col-sm-12" multiple name="objReportFilters.SelectedUserId">
-                @{
-                    var groupName = "";
-                    var count = 0;
-                }
-
-                @foreach (var attribute in Model.lstUserReport)
-                {
-                    count = count + 1;
-                    if (groupName != attribute.groupUser && attribute.groupUser == "Others")
-                    {
-                        groupName = attribute.groupUser;
-
-                        <optgroup label="Others">
+                            @{
+                                var groupName = "";
+                                var count = 0;
                             }
 
-                            <option value="@attribute.user_id">@attribute.user_name</option>
-
-                            if (count == Model.lstUserReport.Count() && attribute.groupUser == "Others")
+                            @foreach (var attribute in Model.lstUserReport)
                             {
-                        </optgroup>
-                            }
-                            }
-                        </select>*@
+                                count = count + 1;
+                                if (groupName != attribute.groupUser && attribute.groupUser == "Others")
+                                {
+                                    groupName = attribute.groupUser;
+
+                                    <optgroup label="Others">
+                                        }
+
+                                        <option value="@attribute.user_id">@attribute.user_name</option>
+
+                                        if (count == Model.lstUserReport.Count() && attribute.groupUser == "Others")
+                                        {
+                                    </optgroup>
+                                        }
+                                        }
+                                    </select>*@
                         <select id="ddlUsers" name="objReportFilters.SelectedUserId" multiple class="chosen-select col-sm-12">
 
                             @foreach (var attribute in Model.lstUsers.GroupBy(x => x.groupUser))
@@ -204,17 +224,17 @@
                     </div>
                 </div>
                 @*<div class="row form-group">
-            <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_020:</div>
-            <div class="col-md-9">
-                @Html.DropDownListFor(m => m.objReportFilters.SelectedLayerId, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlLayers" })
-            </div>
-        </div>*@
+                        <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_020:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedLayerId, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlLayers" })
+                        </div>
+                    </div>*@
                 @*<div class="row form-group">
-            <div class="col-md-3">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009:</div>
-            <div class="col-md-9">
-                @Html.DropDownListFor(m => m.objReportFilters.SelectedOwnerShipId, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlFilterOwnershipType" })
-            </div>
-        </div>*@
+                        <div class="col-md-3">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009:</div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedOwnerShipId, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlFilterOwnershipType" })
+                        </div>
+                    </div>*@
 
                 <div class="row form-group">
                     <div class="col-md-3">@Resources.Resources.SI_GBL_GBL_GBL_GBL_147</div>
@@ -308,43 +328,28 @@
             {
                 <div class="tablePad-bn d-flex mb-15">
                     <div class="fw-bold">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:<span data="spanTotalRowCount"> @Model.lstReportData.Count</span></div>
-                    @*<div class="ml-auto">
-                <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
-                <div class="dropbox">
-                    <span onclick="ExportSummaryDetail('PDF')">@Resources.Resources.SI_OSP_GBL_NET_GBL_004</span>
-                    <span onclick="ExportSummaryDetail('EXCEL')">@Resources.Resources.SI_OSP_GBL_NET_GBL_005</span>
-                    <span onclick="ExportSummaryDetail('ALLEXCEL')">@Resources.Resources.SI_OSP_GBL_NET_GBL_006</span>
-                    <span onclick="ExportSummaryDetail('ALLCSV')">All Data (CSV)</span>
-                    <span onclick="ExportSummaryDetail('KML')">@Resources.Resources.SI_OSP_GBL_NET_GBL_007</span>
-                    <span onclick="ExportSummaryDetail('ALLSHAPE')">@Resources.Resources.SI_OSP_GBL_NET_FRM_074</span>
-                    <span onclick="ExportSummaryDetail('DXF')">Record (DXF)</span>
-                    <span onclick="ExportSummaryDetail('ALLTXT')">All Data (TXT)</span>
-                    <span onclick="ExportSummaryDetail('XML')">Record (XML)</span>*@
-                    <div class="ml-auto">
-                        <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
-                        <div class="dropbox">
-                            @*@foreach (var item in Model.lstfiletypes)
-                        {
-                            <span class="@(@item.file_type=="ALLEXCEL"?"roledisabled":"")" title="@(@item.file_type=="ALLEXCEL"?"For all data export, use CSV option. ":"")" onclick="ExportSummaryDetail('@item.file_type')">@item.file_display_name</span>
-                        }*@
-                            @foreach (var item in Model.lstfiletypes)
-                            {
-                                
-                                @*else if (item.file_type == "KML")
-                            {
-                                <span class="roledisabled" title="Temporarily unavailable. ">@item.file_display_name</span>
+                    <div class="ml-auto d-flex --gap05">
+                        <div class="d-flex --gap05">
+                            <label class="white-space">Report Attributes</label>
+                            @Html.DropDownListFor(m => m.objReportFilters.reportType, new List<SelectListItem>{
+        @*new SelectListItem { Text = "All", Value = "ALL"},*@
+new SelectListItem { Text = "Gis Attributes", Value = "GIS"},
+new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
 
-                            }
-                            else if (item.file_type == "ALLSHAPE")
-                            {
-                                <span class="roledisabled" title="Temporarily unavailable. ">@item.file_display_name</span>
+}, new { @multiple = "multiple", @class = "chosen-select form-control", @id = "reportType" })
+                        </div>
 
-                            }*@
-                                
+                        <div>
+                            <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
 
-                                    <span onclick="ExportSummaryDetail('@item.file_type')">@item.file_display_name</span>
-                             
-                            }
+
+                            <div class="dropbox">
+
+                                @foreach (var item in Model.lstfiletypes)
+                                {
+                                    <span onclick="ExportSummaryDetail('@item.file_type', false)">@item.file_display_name</span>
+                                }
+                            </div>
                         </div>
                     </div>
                     <div id="dvReportProgress1" class="progress utili-prog-bar" style="display:none;">
@@ -411,10 +416,19 @@
                                                 @*@item.entity_name.Replace(" ", "")*@
                                                 <i class="glyphicon glyphicon-eye-open"></i>
                                             </a>
+                                            @if (ApplicationSettings.CdbEnabled == true && @item.entity_name == "Cable")
+                                            {
+                                                <a href="#" onclick="ExportSummaryDetail('ALLEXCEL', true)">
+                                                    <i class="glyphicon glyphicon-download"></i>
+                                                </a>
+                                            }
+
+
 
                                         </td>
                                     </tr>
                                 }
+
                             </tbody>
                             <tfoot>
                                 <tr>
@@ -457,8 +471,8 @@
                 </div>
             </div>
         </div>
-            }
-        </div>
+    }
+</div>
 
 <script src="~/Content/js/Utility.js"></script>
 <script type="text/javascript">
@@ -471,43 +485,16 @@
         }
         else {
             $('#ddl3rdPartyVendor').prop('disabled', false).trigger("chosen:updated");
-            @*var selectedthirdpartyvalues = '@Model.objReportFilters.SelectedThirdPartyVendors.Replace("'","")';
-            $("#ddl3rdPartyVendor").val(selectedthirdpartyvalues.split(',')).trigger("chosen:updated");*@
         }
     }
-    function SwitchReportTabs(tabLinkId, tabDivId) {
-        if (tabDivId == "divSummary") {
-            if (isValidReportFilter()) {
-                $("#frmExportEntitiesSummaryData").submit();
-            }
-            else {
-                return;
-            }
-        }
-        else { $('.dropbox').css("display", "none"); $("#ddlRegions").focus(); }
-        $('.EEReport').not('#' + tabDivId).hide();
-        $('#' + tabDivId).show();
-        $('#ulRptTabs > li').removeClass("activerpt");
-        $('#' + tabLinkId).addClass("activerpt");
-    }
-    //$('#ddlProvinces').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#ddlProjectCode').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#ddlFilterOwnershipType').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#ddlParentUsers').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#ddl3rdPartyVendor').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#ddlPlanningCode').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#ddlWorkorderCode').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#ddlPurposeCode').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#ddlRegions').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#ddlUsers').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#SelectedNetworkStatus').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#customedate').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-    //$('#ddlDurationBasedOn').chosen({ placeholder_text_multiple: '-All-', width: '100%' });  
-    //$('#ddlLayers').chosen({ placeholder_text_multiple: '-Select-', width: '100%' });
+
       $('.chosen-select').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
 
 
     $(document).ready(function () {
+        var list = ["GIS"];
+        $("#reportType").val(list).trigger('chosen:updated');
+        $("#reportTypes").val(list);
 
         //$("#dropfiles").on("click", function () {
         //    $(".dropbox").slideToggle();
@@ -588,6 +575,13 @@
             $("#ddlUsers").val(SelectedUserIds.split(',')).trigger("chosen:updated");
         }
         //$('.chosen-select').trigger("chosen:updated");
+
+        $("#reportType").on('change', function () {
+            var selectedValues = $(this).val();
+            $("#reportTypes").val(selectedValues);
+        });
+
+
 
         UpdateFormattedNumbers();
     });
@@ -691,6 +685,21 @@
             $('#ddlParentUsers').val(0).trigger("chosen:updated");
         }
     }
+    function SwitchReportTabs(tabLinkId, tabDivId) {
+        if (tabDivId == "divSummary") {
+            if (isValidReportFilter()) {
+                $("#frmExportEntitiesSummaryData").submit();
+            }
+            else {
+                return;
+            }
+        }
+        else { $('.dropbox').css("display", "none"); $("#ddlRegions").focus(); }
+        $('.EEReport').not('#' + tabDivId).hide();
+        $('#' + tabDivId).show();
+        $('#ulRptTabs > li').removeClass("activerpt");
+        $('#' + tabLinkId).addClass("activerpt");
+    }
 
     function selectallentity(chkAll) {
         if (!$(chkAll).is(":checked")) {
@@ -753,15 +762,23 @@
         $("#thalltotal")[0].innerHTML = (plannedTotal + asBuildTotal + dormantTotal);
         UpdateFormattedNumbers();
     }
-    function ExportSummaryDetail(purpose) {
+    function ExportSummaryDetail(purpose, entityCheck) {
         var TotalPlannedCount = parseInt(0);
         var TotalAsBuiltCount = parseInt(0);
         var TotalDormantCount = parseInt(0);
-
-        var entityids = "";
         var chkAll = document.getElementById("checkallentity");
+        var entityids = "";
+        if (entityCheck == true) {
+            var list = ["CDB"];
+            $("#reportType").val(list).trigger('chosen:updated');
+            $("#reportTypes").val(list);
+            entityids = @entityid_cable;
+        }
+        else {
+
         if (chkAll.checked == true) {
             entityids = '@Model.objReportFilters.SelectedLayerIds';
+
         }
         else {
             //Fetch all rows of the Table.
@@ -772,14 +789,16 @@
                 entityids += entityids != "" ? ("," + rows[i].id) : rows[i].id;
                 //}
             }
+            }
+
         }
+
         if (chkAll.checked == false && entityids == "") {
             alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_109);//"Please select at least 1 record!"
         }
         else {
             if (purpose == "ALLEXCEL" || purpose == "KML" || purpose == "ALLCSV" || purpose == "DXF" || purpose == "ALLTXT" || purpose == "XML" || purpose == "ALLSHAPE") {
                 var SummaryTotal = parseInt(0);
-
                 //Loop through all checked CheckBoxes in GridView.
                 //$("#tblSummaryAll input[type=checkbox]:checked").each(function (index) {
                 //    var row = $(this).closest("tr")[0];
@@ -792,7 +811,7 @@
                 $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").each(function () {
                     var row = $(this).closest('tr');
                     var checkstatus = $(this).is(":checked")
-                   
+
                     if (row.find(".tdplannedcount")[0] != undefined) {
                         var plannedText = (row.find(".tdplannedcount")[0].innerText).replaceAll(',', '');
                         if (!isNaN(plannedText) && row.find(".tdplannedcount")[0].innerText.length != 0 && checkstatus == true) {
@@ -830,13 +849,15 @@
             setCookie('downloadStarted', 0, 3600); //Expiration could be anything... As long as we reset the value
             setTimeout(checkDownloadCookie, 1000); //Initiate the loop to check the cookie.
             //si.ExportEntityReportNew(purpose, entityids);
-            si.ExportEntityReportNewEnhancement(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount);
+            var reportType = $("#reportTypes").val();
+            si.ExportEntityReportNewEnhancement(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount, reportType);
             //$("#dvReportProgress").hide();
             $("#divSummary .dropfiles").trigger("click");
             var mm = "";
 
         }
     }
+
     var downloadTimeout;
     var checkDownloadCookie = function () {
         //console.log(getCookie("downloadStarted"));

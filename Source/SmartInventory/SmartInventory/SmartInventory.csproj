@@ -1597,9 +1597,15 @@
     <Content Include="MigrationScripts\03-05-2024.sql" />
     <Content Include="MigrationScripts\05-04-2024.sql" />
     <Content Include="MigrationScripts\06-05-2024.sql" />
+    <Content Include="MigrationScripts\06-05-2024_2.sql" />
+    <Content Include="MigrationScripts\14-05-2024.sql" />
     <Content Include="MigrationScripts\16-04-2024.sql" />
+    <Content Include="MigrationScripts\18-05-2024.sql" />
+    <Content Include="MigrationScripts\20-05-2024.sql" />
+    <Content Include="MigrationScripts\2024-05-07_unique_constraint_lbl_clm_stng.sql" />
     <Content Include="MigrationScripts\2024_02_27_vodafone_issues.sql" />
     <Content Include="MigrationScripts\2024_02_25_vodafone_issues.sql" />
+    <Content Include="MigrationScripts\23-05-2024.sql" />
     <Content Include="MigrationScripts\30-04-2024.sql" />
     <Content Include="MultilingualJunkKeys\Content\Js\Alert.js" />
     <Content Include="Scripts\APIHandler.js" />
@@ -1943,6 +1949,8 @@
     <Content Include="Areas\Admin\Views\OTPAuthenticationSettings\EmailTemplateConfiguration.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\ViewSpecificationServices.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\SpecificationService.cshtml" />
+    <Content Include="Areas\Admin\Views\FeTools\AddFEtools.cshtml" />
+    <Content Include="Areas\Admin\Views\FeTools\Viewfetools.cshtml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
@@ -2323,6 +2331,9 @@
     <Content Include="Views\Library\_CDBAttributes.cshtml" />
     <Content Include="Views\ISP\_AddDuctTP.cshtml" />
     <Content Include="Views\ISP\_AddISPDuct.cshtml" />
+    <Content Include="Views\Report\_EntityAssociationReport.cshtml" />
+    <Content Include="Views\Report\_EntityAssociationReportLog.cshtml" />
+    <Content Include="Views\Report\_EntityAssociationSummaryView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2344,6 +2355,7 @@
     <Compile Include="Areas\Admin\Controllers\DynamicFormController.cs" />
     <Compile Include="Areas\Admin\Controllers\DynamicThemeController.cs" />
     <Compile Include="Areas\Admin\Controllers\EmailSettingsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\FeToolsController.cs" />
     <Compile Include="Areas\Admin\Controllers\LongRunningQueriesController.cs" />
     <Compile Include="Areas\Admin\Controllers\OrthoImageLayerController.cs" />
     <Compile Include="Areas\Admin\Controllers\ConfigurationSettingsController.cs" />

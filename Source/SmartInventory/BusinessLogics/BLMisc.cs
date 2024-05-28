@@ -40,6 +40,11 @@ namespace BusinessLogics
         {
             return objDAMisc.GetDropDownList(enType, ddType);
         }
+
+        public List<DropDownMaster> GetAssociationDropDownList(string enType, string ddType = "")
+        {
+            return objDAMisc.GetAssociationDropDownList(enType, ddType);
+        }
         public List<DropDownMaster> GetPortRatio(string splitterType)
         {
             return objDAMisc.GetPortRatio(splitterType);

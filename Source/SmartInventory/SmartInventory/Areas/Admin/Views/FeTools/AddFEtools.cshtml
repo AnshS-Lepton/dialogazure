@@ -1,0 +1,549 @@
+﻿@model Models.userFeToolMapping
+@using SmartInventory.Settings;
+
+@{
+    Layout = null;
+}
+
+<!-- jQuery UI library -->
+@*<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">*@
+<style>
+    .form-control {
+        
+         height: auto;
+    }
+    #ddl_fetools12_chosen {
+        width: 100% !important;
+    }
+   /* .ui-datepicker {
+        width: 100px !important;
+    }*/
+
+    #dvUserDetail .chosen-container-single .chosen-single {
+        height: 28px;
+    }
+
+    #dvUserDetail .chosen-container-single .chosen-single {
+        height: 28px;
+    }
+
+    #ddl_Fename_chosen {
+        width: 100% !important;
+    }
+    .custom-file-upload {
+        display: inline-block;
+        cursor: pointer;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+        color: #333;
+    }
+
+        .custom-file-upload input[type="file"] {
+            display: none;
+        }
+</style>
+<script type="text/javascript">
+
+    $("#ddl_fetools12").on('change', function () {
+        CheckfetoolsRole();
+    });
+    $("#ddl_Fename").on('change', function () {
+        CheckfenameRole();
+    });
+    function CheckfenameRole() {
+        if ($("#ddl_Fename").val() == null || $("#ddl_Fename").val() == "") {
+            $('#ddl_Fename_chosen').css({ "border": "1px solid red", "border-radius": "0.25rem" });
+            return false;
+        }
+        else {
+            $('#ddl_Fename_chosen').css({ "border": "1px solid #ced4da", "border-radius": "0.25rem" });
+            return true;
+        }
+    };
+    function CheckfetoolsRole() {
+        if ($("#ddl_fetools12").val() == null || $("#ddl_fetools12").val() == "") {
+            $('#ddl_fetools12_chosen').css({ "border": "1px solid red", "border-radius": "0.25rem" });
+            return false;
+        }
+        else {
+            $('#ddl_fetools12_chosen').css({ "border": "1px solid #ced4da", "border-radius": "0.25rem" });
+            return true;
+        }
+    };
+  
+    //function ddlfenameblur() {
+    //    $('#ddl_Fename').on('blur', function () {
+    //        if ($(this).val() === "") {
+    //            $(this).addClass('input-validation-error');
+    //            alert("FE Name is required");
+    //            return false;
+    //        } else {
+    //            $(this).removeClass('input-validation-error');
+    //        }
+    //    });
+
+    //}
+    function getMonthNumber(monthName) {
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return months.indexOf(monthName);
+    }
+    function IsValid() {
+        debugger;
+        if ($("#ddl_Fename option:selected").text() === "--Select--") {
+            $('#ddl_Fename_chosen').addClass('input-validation-error');
+            //ddlfenameblur();
+            alert("FE Name  is required");
+            return false;
+        }
+        else {
+            $('#ddl_Fename_chosen').removeClass('input-validation-error');
+        }
+        if ($('#ddl_fetools12 option:selected').val() == "") {
+            $('#ddl_fetools12_chosen').addClass('input-validation-error');
+            alert("FE Tool option  is mandatory");
+            return false;
+        }
+        else {
+            $('#ddl_fetools12_chosen').removeClass('input-validation-error');
+        }
+
+        if ($('#txtbarcode ').val() == "") {
+            $('#txtbarcode').addClass('input-validation-error');
+            alert("Barcode is mandatory");
+            return false;
+        }
+        else {
+            $('#txtbarcode').removeClass('input-validation-error');
+        }
+
+        if ($('#txtserialnumber').val() == "") {
+            $('#txtserialnumber').addClass('input-validation-error');
+            alert("Serial Number is mandatory");
+            return false;
+        }
+        else {
+            $('#txtserialnumber').removeClass('input-validation-error');
+        }
+        if ($('#datepicker').val() == "") {
+            $('#datepicker').addClass('input-validation-error');
+            alert("Date is mandatory");
+            return false;
+        }
+        else {
+            $('#datepicker').removeClass('input-validation-error');
+        }
+        fn_getuserdeatisl();
+
+        var choosedate = $('#datepicker').val(); // Assuming the format is '02-May-2024'
+        var userdate = $('#created_on_text').val(); // Assuming the format is '2023-06-29'
+        var currentDate = new Date();
+
+        // Parse the chosen date ('02-May-2024') into a JavaScript Date object
+        var chosenDateParts = choosedate.split('-');
+        var chosenDate = new Date(chosenDateParts[2], getMonthNumber(chosenDateParts[1]), chosenDateParts[0]);
+
+        // Given end date ('2023-06-29')
+        var endDateParts = userdate.split('-');
+        var endDate = new Date(endDateParts[0], endDateParts[1] - 1, endDateParts[2]); // Months are zero-indexed in JavaScript Date objects
+
+        // Check if the current date is between today and the end date
+        if (chosenDate >= endDate )
+        {
+           
+        } else {
+            alert("The date must be between the user's account creation and the current date")
+            return false;
+        }
+
+        //if ($('#fuImgUpload12').val() == "") {
+        //    $('#image_value').val('false');
+        //} else {
+        //    $('#image_value').val('true')
+        //}
+        //if ($('#fuAttachmentUploadfetools').val() == "") {
+        //    $('#document_value').val('false');
+        //} else {
+        //    $('#document_value').val('true');
+
+        //}
+
+        //if ($('#fuImgUpload12').val() == "") {
+        //    $('#fuImgUpload12').addClass('input-validation-error');
+        //    alert("photo is mandatory");
+        //    return false;
+        //}
+        //else {
+        //    $('#fuImgUpload12').removeClass('input-validation-error');
+        //}
+
+        //if ($('#txtcertificate').val() == "") {
+        //    $('#txtcertificate').addClass('input-validation-error');
+        //    alert("certificate is mandatory");
+        //    return false;
+        //}
+        //else {
+        //    $('#txtcertificate').removeClass('input-validation-error');
+        //}
+    };
+    $(".onchang").keyup(function () { $('.onchang').removeClass('input-validation-error'); })
+
+    function OnSuccess(data) {
+
+        if (data.status == "OK") {
+          
+            $("#closeModalPopup").trigger("click");
+            setTimeout(function () {
+                window.location = appRoot + 'FeTools/Viewfetools';
+            }, 3000);
+            alert(data.message, 'Success', 'success');
+        }
+        else {
+            alert(data.message, 'Failed', 'Failed');
+        }
+        handleFileChange();
+    }
+  
+   
+    $(document).ready(function () {
+
+        $('#txtbarcode').keypress(function (event) {
+            var regex = /^[a-zA-Z0-9\s]+$/; // Regular expression to allow only alphanumeric characters and space
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+        $('#txtserialnumber').keypress(function (event) {
+            var regex = /^[a-zA-Z0-9\s]+$/; // Regular expression to allow only alphanumeric characters and space
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+        var enddate = $('#created_on_text').val();
+        setDateTimeCalendar('datepicker', 'datepicker1', false);
+
+        $('#fuAttachmentUploadfetools').on('change', function () {
+
+            var files = this.files;
+            var filesize = $('#hdnMaxFileUploadSizeLimit').val();
+            var Sizeinbytes = filesize * 1024;
+            var allowedExtensions = ["pdf"];
+            var errorMessage = '';
+
+            for (var i = 0; i < files.length; i++) {
+                var fileExtension = files[i].name.split('.').pop().toLowerCase();
+                if (allowedExtensions.indexOf(fileExtension) === -1) {
+                    $('#fuAttachmentUploadfetools').val('');
+                    errorMessage = "Only PDF file is allowed.";
+                    break;
+                }
+                if (files[i].name.length > 100) {
+                    $('#fuAttachmentUploadfetools').val('');
+
+                    alert("File Name length should be less than <b>100</b>.</br>Current file name length: " + uploadedfil[i].name.lengt + "");
+                    return false;
+                }
+                if (files[i].size > Sizeinbytes) {
+                    alert(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_109, (filesize / 1024).toFixed(2))));
+                    return false;
+                }
+            }
+
+            $('#fileError').text(errorMessage);
+        });
+//-----------------------------------------------------------------------------------------
+        $('#fuImgUpload12').on('change', function () {
+            var files = this.files;
+            var filesize = $('#hdnMaxFileUploadSizeLimit').val();
+            var Sizeinbytes = filesize * 1024;
+            var allowedExtensions = ["jpg", "jpeg", "png", "bmp"];
+            var errorMessage = '';
+
+            for (var i = 0; i < files.length; i++) {
+                var fileExtension = files[i].name.split('.').pop().toLowerCase();
+                if (allowedExtensions.indexOf(fileExtension) === -1) {
+                    $('#fuImgUpload12').val('');
+                    errorMessage = "Only JPG,JPEG, and PNG files are allowed.";
+                    break;
+                }
+                if (files[i].name.length > 100) {
+                    $('#fuImgUpload12').val('');
+
+                    alert("File Name length should be less than <b>100</b>.</br>Current file name length: " + uploadedfil[i].name.lengt + "");
+                    return false;
+                }
+                if (files[i].size > Sizeinbytes) {
+                    alert(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_109, (filesize / 1024).toFixed(2))));
+                    $('#fuImgUpload12').val('');
+                    return false;
+                }
+            }
+
+            $('#fileErrorimage').text(errorMessage);
+        });
+
+    });
+    function fn_getuserdeatisl() {
+      
+        var user_id = $("#ddl_Fename option:selected").val();
+        ajaxReq('FeTools/Getuserdetails', { userid: user_id }, false, function (resp) {
+            
+            if (resp.status == "OK")
+            {
+                // dateString = resp.result;
+                var dateString = new Date(resp.result).toISOString().split('T')[0]; // Extracting only the date portion
+                $('#created_on_text').val(dateString);
+
+
+            }
+           
+        }, true, true);
+    }
+    //function initializeDatepicker() {
+    //    var dateString = $('#created_on_text').val();
+    //    console.log("Date String:", dateString);
+
+    //    if (dateString) {
+    //        var givenDate = new Date(dateString);
+    //        var currentDate = new Date();
+
+    //        // Destroy any existing datepicker instance
+    //        $("#datepicker").datepicker("destroy");
+
+    //        // Initialize datepicker with new options
+    //        $("#datepicker").datepicker({
+    //            dateFormat: "dd-MM-yy",
+    //            minDate: givenDate,
+    //            maxDate: currentDate,
+    //            defaultDate: currentDate // Set defaultDate to the given date
+    //        });
+    //    } else {
+    //        console.log("No date value found in created_on_text field.");
+    //    }
+    //}
+
+    function setDateTimeCalendar(startdateid, startdateimgid, isFutureDateAllowed) {
+   Calendar.setup({
+    inputField: startdateid,   // id of the input field
+    button: startdateimgid,
+    ifFormat: "%d-%b-%Y",       // format of the input field datetime format %d-%b-%Y %I:%M %p
+    showsTime: false,
+    timeFormat: "12",
+    weekNumbers: false,
+    disableFunc: function (date) {
+        if (!isFutureDateAllowed) {
+            var now = new Date();
+            now.setDate(now.getDate());
+            if (date.getTime() > now.getTime()) {
+                return true;
+            }
+        }
+    }
+});
+   }
+    
+
+
+</script>
+
+
+
+<div id="dvUserDetail">
+    @using (Ajax.BeginForm("SaveFETools", "FeTools",
+                                                    new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divAddFEtools", OnSuccess = "OnSuccess", },
+                                                    new { id = "frmAddFEtools", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal"/*,onsubmit = "handleFileChange()"*/ }))
+    {
+        @Html.HiddenFor(m => m.id);
+        @Html.HiddenFor(m => m.created_on,new {id ="created_on_text"})
+        @Html.HiddenFor(m => m.user_name, new { id = "createdon" })
+        //@Html.HiddenFor(m => m.status);
+        <input type="hidden" id="hdnMaxFileUploadSizeLimit" value="@ApplicationSettings.MaxFileUploadSizeLimit" />
+        <input type="hidden" id="fdnMaxFileCountLimit" value="@ApplicationSettings.MaxFileCountLimit" />
+        <input type="hidden" id="allowedDocumentAttachmentType" value="@ApplicationSettings.validDocumentTypes" />
+        <input type="hidden" id="allowedImageAttachmentType" value="@ApplicationSettings.validImageTypes" />
+        <div class="--pad-15">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">User Name<i class="clsMandatory">*</i>:</label>
+                    </div>
+                    <div class="col-md-8">
+                        @*@Html.TextBoxFor(model => model.user_name, new { @id = "txtGroupNameText", @class = "form-control", @maxlength = "40", @placeholder = "Enter Group Name" })*@
+                        @Html.DropDownListFor(m => m.user_id, new SelectList(Model.lstusername.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @onchange = "fn_getuserdeatisl()", @id = "ddl_Fename", @required = true })
+                        @Html.HiddenFor(m => m.user_id)
+                    </div>
+                </div>
+            </div>
+
+            <div id="divfetool" class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">
+                            Tools<i class="clsMandatory">*</i>:
+                        </label>
+                    </div>
+                    <div class="col-md-8">
+                        @*@Html.TextBoxFor(model => model.user_name, new { @id = "txtGroupNameText", @class = "form-control", @maxlength = "40", @placeholder = "Enter Group Name" })*@
+                        @*@Html.DropDownListFor(m => m.tool_id, new SelectList(Model.lstFEtool.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12 chosenfetool", @id = "ddl_fetools", @required = true })*@
+                        @Html.DropDownListFor(m => m.tool_id, new SelectList(Model.lstFEtool.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddl_fetools12", @required = true })
+                        @Html.HiddenFor(m => m.tool_id)
+                        @*@Html.DropDownListFor(m => m.user_type, new SelectList(Model.lstUserType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddluser_type" })*@
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">Barcode<i class="clsMandatory">*</i>:</label>
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.barcode, new { @id = "txtbarcode", @class = "form-control", @maxlength = "100", @placeholder = "Enter Barcode", @required = true })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">Serial Number<i class="clsMandatory">*</i>:</label>
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.serial_number, new { @id = "txtserialnumber", @class = "form-control", @maxlength = "100", @placeholder = "Enter Serial Number", @required = true })
+                    </div>
+                </div>
+            </div>
+            <!--<div class="form-group">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="control-label">Date<i class="clsMandatory">*</i>:</label>
+            </div>
+            <div class="col-md-8">
+                @Html.TextBoxFor(model => model.date_v, new { @id = "datepicker", @class = "form-control", @maxlength = "10", @placeholder = "Enter Date ", @required = true })
+                <span class="input-group-addon caledPose" id="datepicker1">
+                    <i class="fa fa-calendar" ></i>
+                </span>-->
+            @*<input type="text" id="datepicker" class="form-control" />*@
+            <!--</div>
+        </div>
+    </div>-->
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">Date<i class="clsMandatory">*</i>:</label>
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.date_v, "{0:dd-MMM-yyyy}", new { @id = "datepicker", @title = "Date To", @placeholder = "Date To", @class = "input-sm form-control", @readonly = true })
+
+                        <span class="input-group-addon caledPose" id="datepicker1">
+                            <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </span>
+                        @*<input type="text" id="datepicker" class="form-control" />*@
+                    </div>
+                </div>
+            </div>
+           
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">Photos</label>
+                    </div>
+
+                    <div class="col-md-4">
+                        <input type="file" class="form-control" name="fuImgUpload" id="fuImgUpload12" accept=".bmp,.gif,.png,.jpg,.jpeg">
+                        <span id="fileErrorimage" style="color: red;"></span>
+
+                        @*<input type="file" name="photos" id="photos" class="form-control" />*@
+                        @*@Html.ValidationMessageFor(model => model.photos, "", new { @class = "text-danger" })*@
+                        @*@Html.TextBoxFor(model => model.photos, new { @id = "txtGroupDescription1", @class = "form-control", @maxlength = "100", @placeholder = "Enter Group Description" })*@
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">Certificate</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="file" class="form-control" name="fuAttachmentUpload" id="fuAttachmentUploadfetools" accept=".pdf">
+                        <span id="fileError" style="color: red;"></span>
+                    </div>
+                </div>
+            </div>
+            @if (Model.id > 0)
+            {
+                <div class="row">
+                    <div class="col-md-11">
+                        <p style="background-color:#cce6ff;color:#0044cc;padding:4px;white-space: initial;font-size: 12px;">
+
+                            Image and document will be overridden with the previous ones in the case of upload
+                        </p>
+                    </div>
+                </div>
+            }
+
+        </div>
+        <div class="ModalFooter" id="dvBtnAction">
+            <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+            @if (Model.id > 0)
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveLyrGrp" value="Update" />
+            }
+            else
+            {
+                <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveLyrGrp" value="Save" />
+            }
+        </div>
+    }
+</div>
+<script>
+    
+
+    $(document).ready(function () {
+        // Code to execute when the DOM is ready
+        //initializeDatepicker()
+
+        // Call initializeDatepicker function
+
+        $(".chosen-select").chosen({ search_contains: true });
+        $('#ddl_Fename').on('change', function () {
+            var selectedValue = $(this).val();
+            console.log("Selected value: " + selectedValue);
+        });
+        $("#btnCancel").on("click", function () {
+            $("#closeModalPopup").trigger("click");
+        });
+        $('#datepicker').on('input', function () {
+            var input = $(this).val();
+            var regex = /^\d{4}-\d{2}-\d{2}$/;
+
+            if (!regex.test(input)) {
+                $(this).val('');
+                //    alert('Please enter a valid date in the format YYYY-MM-DD.');
+            }
+        });
+
+        $('#fuImgUpload12').change(function () {
+            var fileName = $(this).val().split('\\').pop();
+            $('#fileLabel').text(fileName);
+        });
+        $('.custom-file-upload').click(function () {
+            $(this).find('input[type="file"]').click();
+        });
+
+
+
+    });
+
+
+</script>
+
+
+
+

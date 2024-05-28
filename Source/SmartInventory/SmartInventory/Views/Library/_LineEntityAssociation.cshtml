@@ -47,7 +47,7 @@
         @pageMessage()
         if (Model.listLineEntityInfo.Count() > 0)
         {
-
+            <input type="hidden" id="hdn_isgeoupdateallowed" value="@SmartInventory.Settings.ApplicationSettings.IsGeometryUpdateOnAssociationAllowed.ToString()"/>
             <div class="d-flex tablePad-bn jc-sb">
                 <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp; @Model.listLineEntityInfo.Count()</b>
                 <div class="d-flex">

@@ -305,13 +305,133 @@ namespace Models
         public int user_id { get; set; }
     }
 
+   
+    public class FE_Tools_Details
+    {
+        public int id { get; set; }
+        public string user_name { get; set; }
+        public string tool_name { get; set; }
+        public string serial_number { get; set; }
+        public string barcode { get; set; }
+        public DateTime date_value { get; set; }
+        public bool is_accepted {  get; set; }
+        [NotMapped]
+        public int? created_by { get; set; }
+        [NotMapped]
+        public int user_id { get; set; }
+
+      
+
+
+
+
+
+        public string upload_type { get; set; }
+        
+        [NotMapped]
+        public int totalRecords { get; set; }
+        [NotMapped]
+        public string created_by_text { get; set; }
+        [NotMapped]
+        public string modified_by_text { get; set; }
+        [NotMapped]
+        public PageMessage pageMsg { get; set; }
+
+
+    }
     public class userFeToolMapping
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         public int user_id { get; set; }
         public int tool_id { get; set; }
         [NotMapped]
         public string tool_name { get; set; }
+        [NotMapped]
+        public string user_name { get; set; }
+        [NotMapped]
+        public string fe_tool { get; set; }
+        [Required(ErrorMessage = "Serial Number is required.")]
+        public string serial_number { get; set; }
+        
+        [Required(ErrorMessage = "Barcode is required.")]
+        public string barcode { get; set; }
+
+        public int? created_by { get; set; }
+        public DateTime created_on { get; set; }
+        public int? modified_by { get; set; }
+        public DateTime? modified_on { get; set; }
+        public DateTime? date_value { get; set; }
+        [NotMapped]
+        public string date_v { get; set; }
+      
+
+      
+
+        [NotMapped]
+        public List<KeyValueDropDown> lstusername { get; set; }
+
+        [NotMapped]
+        public List<KeyValueDropDown> lstFEtool { get; set; }
+
+        [NotMapped]
+        public PageMessage pageMsg { get; set; }
+        [NotMapped]
+        public string action_type { get; set; }
+    }
+    public class FE_Tools
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
+        public int id { get; set; }
+        public int user_id { get; set; }
+        public int tool_id { get; set; }
+        [NotMapped]
+        public string user_name { get; set; }
+        [NotMapped]
+        public string fe_tool { get; set; }
+        [NotMapped]
+        public string tool_name { get; set; }
+        public string serial_number { get; set; }
+        public string barcode { get; set; }
+        public string certificate { get; set; }
+
+        public string image_path { get; set; }
+        public int? created_by { get; set; }
+        public DateTime created_on { get; set; }
+        public int? modified_by { get; set; }
+        public DateTime? modified_on { get; set; }
+        public DateTime? date_value { get; set; }
+
+        [NotMapped]
+        public List<KeyValueDropDown> lstusername { get; set; }
+
+        [NotMapped]
+        public List<KeyValueDropDown> lstFEtool { get; set; }
+
+        [NotMapped]
+        public PageMessage pageMsg { get; set; }
+        [NotMapped]
+        public string action_type { get; set; }
+
+
+    }
+
+    public class ViewFETools
+    {
+        public List<FE_Tools_Details> fetools { get; set; }
+        public CommonGridAttributes objGridAttributes { get; set; }
+        public ViewFETools()
+        {
+            objGridAttributes = new CommonGridAttributes();
+            objGridAttributes.searchText = string.Empty;
+            objGridAttributes.is_active = true;
+        }
+        [NotMapped]
+        public List<KeyValueDropDown> lstSearchBy { get; set; }
+        
     }
 
     public class ReportingRoleMapping

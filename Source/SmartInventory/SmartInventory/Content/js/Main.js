@@ -81,6 +81,8 @@ var Main = function () {
     this.filterFaultvalue = '';
     this.filterOwnershipvalue = '';
     this.filterPODvalue = '';
+    this.selectedRoutevalue = '';
+    this.filterRoutevalue = '';
     this.projectcodevalue = '0';
     this.ownership = '0';
     this.primary_pod_system_id = '0';
@@ -101,6 +103,8 @@ var Main = function () {
     this.cable_category = '';
     this.sector_type = '';
     this.frequency = '';
+    this.filterdesignId = '';
+    this.selected_design_id = '';
     this.buildingRFSFilter = '';
     this.ActiveBuildingRFSFilter = [];
     this.layerDetails = [];
@@ -168,6 +172,7 @@ var Main = function () {
     this.fmsGeoJson = {};
     this.ontGeoJson = {};
     this.treeGeoJson = {};
+    this.treeFilteredGeoJson = [];
     this.buildingGeoJson = {};
     this.podGeoJson = {};
     this.cabinetGeoJson = {};
@@ -196,6 +201,10 @@ var Main = function () {
     this.cableLabelDataFiltered = [];
     this.trenchLabelData = [];
 
+    this.areaFilteredGeoJson = [];
+    this.subareaFilteredGeoJson = []; 
+    this.dsaFilteredGeoJson = [];
+    this.csaFilteredGeoJson = [];
     this.poleFilteredGeoJson = [];
     this.manholeFilteredGeoJson = [];
     this.wallmountFilteredGeoJson = [];
@@ -219,24 +228,30 @@ var Main = function () {
     this.microductFilteredGeoJson = [];
 
     this.customerGeoJson = {};
+    this.customerFilteredGeoJson = [];
     this.rowGeoJson = {};
     this.rowLabelData = [];
     this.handholeGeoJson = {};
     this.structureGeoJson = {};
 
     this.rackGeoJson = {};
+    this.rackFilteredGeoJson = [];
     this.patchpanelGeoJson = {};
     this.htbGeoJson = {};
     this.equipmentGeoJson = {};
+    this.equipmentFilteredGeoJson = [];
     this.slackGeoJson = {};
+    this.slackFilteredGeoJson = [];
     this.sectorGeoJson = {};
     this.towerGeoJson = {};
 
-
+    this.buildingFilteredGeoJson = [];
 
     this.loopGeoJson = {};
+    this.loopFilteredGeoJson = [];
     this.antennaGeoJson = {};
     this.faultGeoJson = {};
+    this.faultFilteredGeoJson = [];
     this.LayerStyles = [];
     this.ActivePlannedVectorlayers = [];
     this.ActiveAsBuiltVectorlayers = [];
@@ -1338,9 +1353,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Area";
         });
+        app.filterAreaGeoJsonData();
         return new GeoJsonLayer({
             id: 'area',
-            data: app.filterDataWithProvinceGeom(app.areaGeoJson, "FeatureCollection", "ARA"),//app.areaGeoJson
+            data: app.filterDataWithProvinceGeom(app.areaFilteredGeoJson, "FeatureCollection", "ARA"),//app.areaGeoJson
             pickable: true,
             stroked: true,
             filled: true,
@@ -1364,9 +1380,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "SubArea";
         });
+        app.filterSubAreaGeoJsonData();
         return new GeoJsonLayer({
             id: 'subarea',
-            data: app.filterDataWithProvinceGeom(app.subareaGeoJson, "FeatureCollection", "SBA"), //app.subareaGeoJson,
+            data: app.filterDataWithProvinceGeom(app.subareaFilteredGeoJson, "FeatureCollection", "SBA"), //app.subareaGeoJson,
             pickable: true,
             stroked: true,
             filled: true,
@@ -1422,9 +1439,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "DSA";
         });
+        app.filterDSAGeoJsonData();
         return new GeoJsonLayer({
             id: 'dsa',
-            data: app.filterDataWithProvinceGeom(app.dsaGeoJson, "FeatureCollection", "DSA"), //app.dsaGeoJson,
+            data: app.filterDataWithProvinceGeom(app.dsaFilteredGeoJson, "FeatureCollection", "DSA"), //app.dsaGeoJson,
             pickable: true,
             stroked: true,
             filled: true,
@@ -1449,9 +1467,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "CSA";
         });
+        app.filterCSAGeoJsonData();
         return new GeoJsonLayer({
             id: 'csa',
-            data: app.filterDataWithProvinceGeom(app.csaGeoJson, "FeatureCollection", "CSA"), //app.csaGeoJson,
+            data: app.filterDataWithProvinceGeom(app.csaFilteredGeoJson, "FeatureCollection", "CSA"), //app.csaGeoJson,
             pickable: true,
             stroked: true,
             filled: true,
@@ -2054,9 +2073,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Tree";
         });
+        app.filterTreeGeoJsonData();
         return new GeoJsonLayer({
             id: "tree",
-            data: app.filterDataWithProvinceGeom(app.treeGeoJson, "FeatureCollection", "TRE"), //app.treeGeoJson,
+            data: app.filterDataWithProvinceGeom(app.treeFilteredGeoJson, "FeatureCollection", "TRE"), //app.treeGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -2117,9 +2137,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Building";
         });
+        app.filterBuildingGeoJsonData();
         return new GeoJsonLayer({
             id: "building",
-            data: app.filterDataWithProvinceGeom(app.buildingGeoJson, "FeatureCollection", "BLDP,BLD,BLDC"), //app.buildingGeoJson,
+            data: app.filterDataWithProvinceGeom(app.buildingFilteredGeoJson, "FeatureCollection", "BLDP,BLD,BLDC"), //app.buildingGeoJson,
             filled: true,
             stroked: true,
             opacity: .2,
@@ -2861,9 +2882,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Customer";
         });
+        app.filterCustomerGeoJsonData();
         return new GeoJsonLayer({
             id: "cus",
-            data: app.filterDataWithProvinceGeom(app.customerGeoJson, "FeatureCollection", "CUS"), //app.ontGeoJson,
+            data: app.filterDataWithProvinceGeom(app.customerFilteredGeoJson, "FeatureCollection", "CUS"), //app.ontGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3165,9 +3187,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Rack";
         });
+        app.filterRackGeoJsonData();
         return new GeoJsonLayer({
             id: "rack",
-            data: app.filterDataWithProvinceGeom(app.rackGeoJson, "FeatureCollection", "RCK"), //app.ontGeoJson,
+            data: app.filterDataWithProvinceGeom(app.rackFilteredGeoJson, "FeatureCollection", "RCK"), //app.ontGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3347,9 +3370,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Slack";
         });
+        app.filterSlackGeoJsonData();
         return new GeoJsonLayer({
             id: "Slack",
-            data: app.filterDataWithProvinceGeom(app.slackGeoJson, "FeatureCollection", "SLK"),
+            data: app.filterDataWithProvinceGeom(app.slackFilteredGeoJson, "FeatureCollection", "SLK"),
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3529,9 +3553,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Equipment";
         });
+        app.filterEquipmentGeoJsonData();
         return new GeoJsonLayer({
             id: "EQPMNT",
-            data: app.filterDataWithProvinceGeom(app.equipmentGeoJson, "FeatureCollection", "EQPMNT"), //app.ontGeoJson,
+            data: app.filterDataWithProvinceGeom(app.equipmentFilteredGeoJson, "FeatureCollection", "EQPMNT"), //app.ontGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3589,9 +3614,10 @@ var Main = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Loop";
         });
+        app.filterLoopGeoJsonData();
         return new GeoJsonLayer({
             id: "LOP",
-            data: app.filterDataWithProvinceGeom(app.loopGeoJson, "FeatureCollection", "LOP"), //app.ontGeoJson,
+            data: app.filterDataWithProvinceGeom(app.loopFilteredGeoJson, "FeatureCollection", "LOP"), //app.ontGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3645,8 +3671,7 @@ var Main = function () {
             },
         })
     };
-    this.getAntennaLayer = function () {
-        debugger;
+    this.getAntennaLayer = function () {        
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Antenna";
         });
@@ -3709,13 +3734,13 @@ var Main = function () {
     };
 
     this.getFaultLayer = function () {
-        debugger;
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Fault";
         });
+        app.filterFaultGeoJsonData();
         return new GeoJsonLayer({
             id: "FAU",
-            data: app.filterDataWithProvinceGeom(app.faultGeoJson, "FeatureCollection", "FAU"), //app.ontGeoJson,
+            data: app.filterDataWithProvinceGeom(app.faultFilteredGeoJson, "FeatureCollection", "FAU"), //app.ontGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3816,16 +3841,89 @@ var Main = function () {
         }
     }
     // }
+    this.filterAreaGeoJsonData = function (eType) {       
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        app.areaFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.areaGeoJson.features.reduce(function (result, feature) {
+                if (sDesignId == '' || feature.properties.gis_design_id == sDesignId) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterSubAreaGeoJsonData = function (eType) {
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        app.subareaFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.subareaGeoJson.features.reduce(function (result, feature) {
+                if (sDesignId == '' || feature.properties.gis_design_id == sDesignId) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterDSAGeoJsonData = function (eType) {
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        app.dsaFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.dsaGeoJson.features.reduce(function (result, feature) {
+                if (sDesignId == '' || feature.properties.gis_design_id == sDesignId) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterCSAGeoJsonData = function (eType) {
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        app.csaFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.csaGeoJson.features.reduce(function (result, feature) {
+                if (sDesignId == '' || feature.properties.gis_design_id == sDesignId) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
     this.filterCableGeoJsonData = function () {
         let sCable_Type = '';
         let sCable_Category = '';
         var systemIdSet = new Set();
+        let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
         if (app.cable_type != '0' && app.cable_type != undefined) {
             sCable_Type = app.cable_type;
         }
         if (app.cable_category != '0' && app.cable_category != undefined) {
             sCable_Category = app.cable_category;
+        }
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
         }
         if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
             sThirdPartyVendor = app.thirdpartyvendor;
@@ -3835,7 +3933,9 @@ var Main = function () {
                 type: "FeatureCollection",
                 features: app.cableGeoJson.features.reduce(function (result, feature) {
                     if ((sCable_Type == '' || feature.properties.cable_type == sCable_Type) &&
+                        (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                         (sCable_Category == '' || feature.properties.cable_category == sCable_Category) &&
+                        (sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                         (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
                         result.push(feature);
                     }
@@ -3864,6 +3964,12 @@ var Main = function () {
         let sSplitter_type = '';
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+      
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
         if (app.splitter_type != '0' && app.splitter_type != undefined) {
             sSplitter_type = app.splitter_type;
         }
@@ -3873,13 +3979,17 @@ var Main = function () {
         if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
             sThirdPartyVendor = app.thirdpartyvendor;
         }
-
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId =  '\'' + app.selectedRoutevalue.join('\',\'') + '\'';      
+        }
         app.splitterFilteredGeoJson = {
             type: "FeatureCollection",
             features: app.splitterGeoJson.features.reduce(function (result, feature) {
                 if ((sSplitter_type == '' || feature.properties.splitter_type == sSplitter_type) &&
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -3889,6 +3999,15 @@ var Main = function () {
     this.filterPoleGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -3899,7 +4018,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.poleGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -3909,6 +4030,15 @@ var Main = function () {
     this.filterManholeGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -3919,7 +4049,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.manholeGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -3929,6 +4061,15 @@ var Main = function () {
     this.filterWallMountGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -3939,7 +4080,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.wallmountGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -3949,6 +4092,15 @@ var Main = function () {
     this.filterFMSGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -3959,7 +4111,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.fmsGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -3969,6 +4123,15 @@ var Main = function () {
     this.filterONTGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -3979,7 +4142,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.ontGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -3989,6 +4154,15 @@ var Main = function () {
     this.filterPODGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -3999,7 +4173,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.podGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4009,6 +4185,15 @@ var Main = function () {
     this.filterFDBGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4019,7 +4204,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.fdbGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4029,17 +4216,28 @@ var Main = function () {
     this.filterBDBGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
         if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
             sThirdPartyVendor = app.thirdpartyvendor;
         }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         app.bdbFilteredGeoJson = {
             type: "FeatureCollection",
             features: app.bdbGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4049,6 +4247,15 @@ var Main = function () {
     this.filterADBGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4059,17 +4266,27 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.adbGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
             }, [])
         };
     }
-    this.filterSpliceClosureGeoJsonData = function (eType) {
-        debugger;
+    this.filterSpliceClosureGeoJsonData = function (eType) {        
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4080,7 +4297,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.spliceclosureGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4090,6 +4309,15 @@ var Main = function () {
     this.filterTrenchGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4100,7 +4328,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.trenchGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4110,6 +4340,15 @@ var Main = function () {
     this.filterDuctGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4120,7 +4359,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.ductGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4131,6 +4372,15 @@ var Main = function () {
     this.filterHandholeGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4141,7 +4391,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.handholeGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4153,6 +4405,15 @@ var Main = function () {
     this.filterCabinetGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4163,7 +4424,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.cabinetGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4175,6 +4438,15 @@ var Main = function () {
     this.filterPatchPanelGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4185,7 +4457,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.patchpanelGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4197,6 +4471,15 @@ var Main = function () {
     this.filterHTBGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4207,7 +4490,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.htbGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4219,6 +4504,15 @@ var Main = function () {
     this.filterAntennaGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4229,7 +4523,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.antennaGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4240,6 +4536,15 @@ var Main = function () {
     this.filterCDBGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4250,7 +4555,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.cdbGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4261,6 +4568,15 @@ var Main = function () {
     this.filterSectorGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4271,7 +4587,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.sectorGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4282,6 +4600,15 @@ var Main = function () {
     this.filterTowerGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4292,7 +4619,9 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.towerGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
@@ -4303,6 +4632,15 @@ var Main = function () {
     this.filterMicroductGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
         if (app.ownership != '' && app.ownership != undefined) {
             sOwnership = app.ownership;
         }
@@ -4313,14 +4651,183 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.microductGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                    (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
                     result.push(feature);
                 }
                 return result;
             }, [])
         };
     }
+    this.filterSlackGeoJsonData = function (eType) {       
+        let sRouteId = '';
+        let sDesignId = '';
 
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
+        app.slackFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.slackGeoJson.features.reduce(function (result, feature) {
+                if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterEquipmentGeoJsonData = function (eType) {
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
+        app.equipmentFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.equipmentGeoJson.features.reduce(function (result, feature) {
+                if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterRackGeoJsonData = function (eType) {
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
+        app.rackFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.rackGeoJson.features.reduce(function (result, feature) {
+                if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterTreeGeoJsonData = function (eType) {
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
+        app.treeFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.treeGeoJson.features.reduce(function (result, feature) {
+                if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterCustomerGeoJsonData = function (eType) {
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
+        app.customerFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.customerGeoJson.features.reduce(function (result, feature) {
+                if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterLoopGeoJsonData = function (eType) {
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
+        app.loopFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.loopGeoJson.features.reduce(function (result, feature) {
+                if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterFaultGeoJsonData = function (eType) {
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
+        app.faultFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.faultGeoJson.features.reduce(function (result, feature) {
+                if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
+    this.filterBuildingGeoJsonData = function (eType) {
+        let sRouteId = '';
+        let sDesignId = '';
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
+        app.buildingFilteredGeoJson = {
+            type: "FeatureCollection",
+            features: app.buildingGeoJson.features.reduce(function (result, feature) {
+                if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
     this.fetchVectorLayerData = function (vectorPrvinceSelected, _entityName) {
         //console.log("Request Fetch Time:" + app.vectorFetchTime);
         //app.LoadLayerIconMapping();
@@ -7948,12 +8455,26 @@ var Main = function () {
             app.filterPODvalue = "1 = 1";
         }
     }
+    this.SetRouteFilters = function () {       
+        app.filterRoutevalue = "";
+        app.selectedRoutevalue = $("#txtrouteInfo").val();
+        if (app.selectedRoutevalue != "" && app.selectedRoutevalue != undefined) {
+            app.filterRoutevalue += " ([route_cable_id] in (" + '\'' + app.selectedRoutevalue.join('\',\'') + '\'' + "))";            
+        } 
+    }
     this.SetfilterNetworkTicketFilters = function (_isNetworkTicketRequest, _ticketId) {
         app.filterNetworkTicketValue = "1 = 1";
         if (_isNetworkTicketRequest) {
             app.filterNetworkTicketValue = " ([source_ref_id] ='" + _ticketId + "') and [source_ref_type]='Network_Ticket'";
         }
 
+    } 
+    this.SetDesignIdFilters = function () {
+        app.filterdesignId = "";
+        app.selected_design_id = $("#txtgisdesignid").val();
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            app.filterdesignId = " ([gis_design_id] ='" + app.selected_design_id + "')";
+        }
     }
     this.SetRegionProvinceFilters = function () {
         app.RegionFilter = '';
@@ -8008,7 +8529,9 @@ var Main = function () {
         }
         app.SetSplitterFilter();
         app.SetPODFilters();
-        app.SetfilterNetworkTicketFilters(false, 0);
+        app.SetDesignIdFilters();
+        app.SetfilterNetworkTicketFilters(false, 0);       
+        app.SetRouteFilters();
         var layerValidation = (app.ActiveRegionlayers.length == 0 && app.ActiveProvincelayers.length == 0);
         //if (this.role_Id == 1) {
         //    layerValidation = (app.ActiveRegionlayers.length == 0)
@@ -13919,7 +14442,6 @@ var Main = function () {
     }
 
     this.associateRoute = function (systemId, entityType, networkId) {
-        debugger;
         var modelClass = getPopUpModelClass('');
 
         var titleText = $.validator.format(MultilingualKey.SI_OSP_GBL_JQ_GBL_116, getLayerTltle(entityType), $('#hdnAssociateEntityBuffer').val()) //entityType + " " + Res_elm;
@@ -14064,10 +14586,18 @@ var Main = function () {
             if ((($('#tblLineEnLstInfo tbody :checkbox:checked:not(".disabledcheckbox")').length) + ($('#tblLineEnLstInfo tbody .disabledcheckbox').length)) == $('#tblLineEnLstInfo tbody tr').length) {
                 $('#checkAllAssociation').prop("checked", true);
             }
+
+            if ($('#hdn_isgeoupdateallowed').val() == "1" && ($(obj).attr('entitytype') == 'Duct' || $(obj).attr('entitytype') == 'Cable')) {
+                $(obj).prop("checked", false);
+                showConfirm("Parent geometry will be superimposed on this entity and it's associated line entity and splicing will be removed", function () {
+                    $(obj).prop("checked", true);
+                });
+            }
+            
+
         } else { $('#checkAllAssociation').prop("checked", false); }
     }
     this.saveLineEntityAssociation = function () {
-
         var isChanged = false;
         var messageHTML = '<table border="1" class="alertgrid"><tr><td><b>Entity</b></td><td><b>Network Id<b/></td><td><b>Display Name</b></tr>';
         $('#tblLineEnLstInfo input:checkbox:not(:checked)').each(function () {
@@ -14092,7 +14622,6 @@ var Main = function () {
     }
 
     this.saveRouteAssociation = function () {
-        debugger;
         var isChanged = false;
         var messageHTML = '<table border="1" class="alertgrid"><tr><td><b>Route Id<b/></td><td><b>Route Name</b></tr>';
         $('#tblLineEnLstInfo input:checkbox:not(:checked)').each(function () {
@@ -17466,8 +17995,7 @@ var Main = function () {
         });
     }
 
-    this.ProjectSpeciFilter = function () {
-        ////;
+    this.ProjectSpeciFilter = function () {       
         var hasAdvSelectVal = $(".AdvanceFilterCHK").find("select").filter(function () {
             return $(this).val() !== '' && $(this).val() !== null && $(this).val() !== "0";
         }).length > 0;
@@ -17932,14 +18460,17 @@ var Main = function () {
 
                     var parentCable = resp.result.parentCableNetworkId;
 
-                    var firstCableNetworkId = parentCable + '_01';
+                   // var firstCableNetworkId = parentCable + '_01'; //Commented by Nikhil
+                    var firstCableNetworkId = '';
+                    
                     $('#cable_one_network_id').val(firstCableNetworkId);
                     /* $('#cable_one_name').val(firstCableNetworkId);*/
                     $('#cable_one_name').val(displayname);
                     $('#cable_one_a_location').val(resp.result.cable1_a_location);
                     $('#cable_one_b_location').val(splitEnityNetworkId);
 
-                    var secondCableNetworkId = parentCable + '_02';
+                  //  var secondCableNetworkId = parentCable + '_02'; //Commented by Nikhil
+                    var secondCableNetworkId = '';
                     $('#cable_two_network_id').val(secondCableNetworkId);
                     /* $('#cable_two_name').val(secondCableNetworkId);*/
                     $('#cable_two_name').val(displayname);
@@ -19093,16 +19624,18 @@ var Main = function () {
 
         window.location = appRoot + 'Report/DownloadEntityReportNew?fileType=' + _fileType + '&entityids=' + entityids;
     }
-    this.ExportEntityReportNewEnhancement = function (_fileType, entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount) {
+
+    this.ExportEntityReportNewEnhancement = function (_fileType, entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType) {
 
         //window.open(appRoot + 'Report/DownloadEntityReportNew?fileType=' + _fileType + '&entityids=' + entityids + '&totalPlannedCount=' + totalPlannedCount + '&totalAsBuiltCount=' + totalAsBuiltCount + '&totalDormantCount=' + totalDormantCount, '_blank');
-
+        debugger;
         ajaxReq('Report/DownloadEntityReportNew', {
             fileType: _fileType,
             entityids: entityids,
             totalPlannedCount: totalPlannedCount,
             totalAsBuiltCount: totalAsBuiltCount,
-            totalDormantCount: totalDormantCount
+            totalDormantCount: totalDormantCount, 
+            reportType: reportType
         }, false, function (obj) {
             //if (obj.status == 'ERROR') {
             //    console.log(obj.message);
@@ -19115,6 +19648,7 @@ var Main = function () {
 
         //window.location = appRoot + 'Report/DownloadEntityReportNew?fileType=' + _fileType + '&entityids=' + entityids + '&totalPlannedCount=' + totalPlannedCount + '&totalAsBuiltCount=' + totalAsBuiltCount + '&totalDormantCount=' + totalDormantCount;
     }
+
     this.ExportSummaryView = function (_fileType) {
 
         ajaxReq('Report/DownloadEntitySummaryView', {
@@ -19123,7 +19657,6 @@ var Main = function () {
             alert(obj.message);
         });
     }
-
 
     this.ResetExportEntitesFilterValue = function () {
         $('#ddlLayers').val(0).trigger("chosen:updated");
@@ -23288,6 +23821,8 @@ var Main = function () {
             app.mapReport.clearSelection();
             app.SetSplitterFilter();
             app.SetPODFilters();
+            app.SetDesignIdFilters();
+            app.SetRouteFilters();
             app.SetfilterNetworkTicketFilters(true, _ticketId);
             app.layerNetworkManager = [];
             var polygonLayer = app.getActivePolygonlayer(false);
@@ -25034,6 +25569,229 @@ var Main = function () {
             si.Entityreport.EntityExportReport(lnglat, selectionType, circleRadius);
         }
     }
+
+    this.EntityAssreport = {
+        showMenu: function (divObj) {
+            app.addRemoveActiveClass(divObj);
+            app.showhideChildMenu('#ExportReportToolBar', '.childtoolbar');
+        },
+        EntityAssociationReport: function (geom, modeType, radius, obj) {
+            if (obj) {
+                $('#MainReportToolBar .iconBaricomoon').find(".activeToolBar").removeClass('activeToolBar');
+                //if ($(obj).hasClass('activeToolBar')) { $(obj).removeClass('activeToolBar'); } else { $('#ExportReportToolBar >.iconBaricomoon >a').removeClass('activeToolBar'); $(obj).addClass('activeToolBar'); }
+
+            }
+            if (geom != '' && geom != null) {
+                ajaxReq('Report/ValidatePotentialArea', {
+                    geom: geom, geomType: modeType, buff_Radius: radius
+                }, true, function (resp) {
+                    if (resp.status == 'FAILED' || resp.status == 'ERROR') {
+                        alert(resp.message);
+                        return false;
+                    }
+                    else {
+                        popup.LoadModalDialog('PARENT', 'Report/EntityAssociationReport', {
+                            'objReportFilters.geom': geom, 'objReportFilters.geomType': modeType, 'objReportFilters.radius': radius, 'objReportFilters.layerName': ''
+                        }, "Association Report", 'modal-md-new');
+                    }
+                }, true, true, true);
+            }
+            else {
+                popup.LoadModalDialog('PARENT', 'Report/EntityAssociationReport', {
+                    eType: ''
+                }, "Association Report", 'modal-md-new');
+            }
+        },
+
+        EntityAssociationReportLog: function (geom, modeType, radius, obj) {
+            si.resetShapeTools();
+            popup.LoadModalDialog('PARENT', 'Report/EntityAssociationReportLog', {
+                eType: ''
+            }, "Association Report Log", 'modal-lg');
+        },
+
+        initiateDrawingsAssociationReport: function (obj, shapeFlag) {
+            if (si.PointentityOBJ.length > 0) {
+                for (var k = 0; k < si.PointentityOBJ.length; k++) {
+                    si.PointentityOBJ[k].setMap(null);
+                }
+                app.PointentityOBJ = [];
+            }
+            $(app.DE.SplicingDiv).hide();
+            si.resetShapeTools();
+            $('#MainReportToolBar').find(".activeToolBar").removeClass('activeToolBar');
+            if ($(obj).hasClass('activeToolBar')) { $(obj).removeClass('activeToolBar'); } else { $('#AssociationReportToolBar >.iconBaricomoon >a').removeClass('activeToolBar'); $(obj).addClass('activeToolBar'); }
+            if (si.gMapObj.shapeObj)
+                si.gMapObj.shapeObj.setMap(null);
+            si.removeEventListnrs('click');
+            si.gMapObj.shapeType = shapeFlag;
+            si.gMapObj.purposeType = "AssociationReport";
+            si.gMapObj.shapeArr = [];
+
+            google.maps.event.addListener(si.map, 'click', app.EntityAssreport.handleShapeAssociationReportEvents);
+        },
+
+        handleShapeAssociationReportEvents: function (eventParam) {
+            if (si.gMapObj.shapeObj)
+                si.gMapObj.shapeObj.setMap(null);
+            switch (si.gMapObj.shapeType) {
+                case 'Polygon':
+                    si.gMapObj.shapeArr.push(eventParam.latLng);
+                    si.gMapObj.shapeObj = new google.maps.Polygon({
+                        paths: si.gMapObj.shapeArr,
+                        strokeColor: '#FF8800',
+                        strokeOpacity: 0.6,
+                        strokeWeight: 2,
+                        fillColor: '#FF8800',
+                        fillOpacity: 0.35,
+                        zIndex: 1,
+                        editable: true,
+                        draggable: true
+                    });
+                    google.maps.event.addListener(si.gMapObj.shapeObj, 'mouseup', calculateArea);
+                    google.maps.event.addListener(si.gMapObj.shapeObj, 'rightclick', function (event) {
+                        if (event.vertex == undefined) {
+                            return;
+                        } else {
+                            removeVertex(si.gMapObj.shapeObj, event.vertex);
+                        }
+                    });
+
+                    google.maps.event.addListener(si.gMapObj.shapeObj.getPath(), 'set_at', function (indx) {
+                        var newPath = si.gMapObj.shapeObj.getPath();
+                        si.gMapObj.shapeArr = newPath.getArray();
+                    });
+
+                    google.maps.event.addListener(si.gMapObj.shapeObj.getPath(), 'insert_at', function (indx) {
+                        var newPath = si.gMapObj.shapeObj.getPath();
+                        si.gMapObj.shapeArr = newPath.getArray();
+                    });
+                    break;
+                case 'Rectangle':
+                    si.gMapObj.shapeArr.push(eventParam.latLng);
+                    var rectBound = validateBounds();
+                    si.gMapObj.shapeObj = new google.maps.Rectangle({
+                        strokeColor: '#FF8800',
+                        strokeOpacity: 0.6,
+                        strokeWeight: 2,
+                        fillColor: '#FF8800',
+                        fillOpacity: 0.35,
+                        editable: true,
+                        draggable: true,
+                        bounds: rectBound
+                    });
+                    google.maps.event.addListener(si.gMapObj.shapeObj, 'bounds_changed', calculateArea);
+
+                    break;
+                case 'Circle':
+                    si.gMapObj.shapeArr = [];
+                    si.gMapObj.shapeObj = new google.maps.Circle({
+                        strokeColor: '#FF8800',
+                        strokeOpacity: 0.6,
+                        strokeWeight: 2,
+                        fillColor: '#FF8800',
+                        fillOpacity: 0.35,
+                        center: eventParam.latLng, //new google.maps.LatLng(34.052234, -118.243684),   //event.latLng,     //circlArry[0],
+                        radius: 200,
+                        editable: true,
+                        draggable: true
+                    });
+                    google.maps.event.addListener(si.gMapObj.shapeObj, 'radius_changed', calculateArea);
+                    google.maps.event.addListener(si.gMapObj.shapeObj, 'rightclick', function (event) {
+                        if (event.vertex == undefined) {
+                            return;
+                        } else {
+                            removeVertex(si.gMapObj.shapeObj, event.vertex);
+                        }
+                    });
+
+                    break;
+                case 'PolyLine':
+
+                    si.gMapObj.shapeArr.push(eventParam.latLng);
+                    si.gMapObj.shapeObj = new google.maps.Polyline({
+                        path: si.gMapObj.shapeArr,
+                        strokeColor: '#FF8800',
+                        strokeOpacity: 1,
+                        strokeWeight: 2,
+                        draggable: true
+
+                    });
+
+                    google.maps.event.addListener(si.gMapObj.RulerLine, 'click', function (event) {
+                        addPolyPoint
+                    });
+
+                    si.gMapObj.RulerFlag = true;
+                    break;
+            }
+            if (eventParam != 'PolyLine') {
+                calculateArea();
+                google.maps.event.addListener(si.gMapObj.shapeObj, 'click', app.EntityAssreport.shapeClickInfoAssociationReport);
+            }
+            si.gMapObj.shapeObj.setMap(si.map);
+        },
+
+        shapeClickInfoAssociationReport: function () {
+
+            switch (si.gMapObj.shapeType) {
+                case 'Polygon':
+                    app.EntityAssreport.showAssociationReportDetail(si.gMapObj.shapeObj.getPath().getArray(), 'polygon', si.gMapObj.purposeType);
+                    break;
+                case 'Rectangle':
+                    app.EntityAssreport.showAssociationReportDetail(getRectanglePath(si.gMapObj.shapeObj), 'polygon', si.gMapObj.purposeType);
+                    break;
+                case 'Circle':
+                    //getCirclePotential('circle', si.gMapObj.purposeType);
+                    app.EntityAssreport.getCircleAssociationReport('circle', si.gMapObj.purposeType);
+                    break;
+            }
+        },
+
+        showAssociationReportDetail: function (latLongArr, selectionType, purposeType) {
+            var longLatArr = '';
+            if (latLongArr.length > 0) {
+                for (i = 0; i < latLongArr.length; i++) {
+                    longLatArr += (longLatArr == '' ? '' : ',') + latLongArr[i].lng() + ' ' + latLongArr[i].lat();
+                }
+                longLatArr += (longLatArr == '' ? '' : ',') + latLongArr[0].lng() + ' ' + latLongArr[0].lat();
+                si.EntityAssreport.EntityAssociationReport(longLatArr, selectionType);
+            }
+        },
+
+        getCircleAssociationReport: function (selectionType) {
+            var lnglat = si.gMapObj.shapeObj.getCenter().lng() + ' ' + si.gMapObj.shapeObj.getCenter().lat();
+            var circleRadius = si.gMapObj.shapeObj.getRadius();
+
+            si.BulkProcessInfo.geom = lnglat;
+            si.BulkProcessInfo.selection_type = selectionType;
+            si.BulkProcessInfo.buff_Radius = circleRadius;
+            si.BulkProcessInfo.ntk_type = 'P';
+            si.EntityAssreport.EntityAssociationReport(lnglat, selectionType, circleRadius);
+        }
+
+    }
+
+    this.AssociationEntitySummaryView = function (_eType) {
+        popup.LoadModalDialog('CHILD', 'Report/AssociationSummaryView', {
+            'objReportFilters.layerName': _eType
+        }, "View Report", 'modal-xl');
+    }
+
+    this.AssociationEntityReportNewEnhancement = function (_fileType, entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount) {
+
+        ajaxReq('Report/DownloadAssociationEntityReport', {
+            fileType: _fileType,
+            entityids: entityids,
+            totalPlannedCount: totalPlannedCount,
+            totalAsBuiltCount: totalAsBuiltCount,
+            totalDormantCount: totalDormantCount
+        }, false, function (obj) {
+            alert(obj.message);
+
+        });
+    }
+
     this.initiateDrawingsPrintMap = function (obj, shapeFlag) {
         si.resetShapeTools();
         $('#PrintMapToolBar').find('.activeToolBar').removeClass('activeToolBar');
@@ -25330,7 +26088,6 @@ var Main = function () {
         }
     }
 
-
     this.mapReport = {
         clearSelection: function () {
             let $printMap = $('#printMapReport');
@@ -25623,13 +26380,6 @@ var Main = function () {
     }
 
     this.SiteInfo = {
-        //addSiteInfoResponse: function (_systemId,_objPM) {
-        //    ////;
-        //    if (_systemId > 0) {
-        //        alert('Site Customer has been updated successfully!');
-        //    } else { alert('Site Customer has been added successfully!'); }
-        //    $('#ChildPopUp #closeChildPopup').trigger("click"); 
-        //},
         attachment: {
             upload: function (siteId, parentEntityType, parentSystemId) {
                 ////;

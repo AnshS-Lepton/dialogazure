@@ -74,6 +74,7 @@ namespace SmartInventory.Settings
         public static int DefaultFloorLength = 0;
         public static int DefaultFloorWidth = 0;
         public static string validDocumentTypes = "";
+        public static string validDocumentTypesFetools = "";
         public static string validImageTypes = "";
         public static int ConnectionPathFinderGridPaging = 0;
         public static string validationNotForRFS_Status = "";
@@ -251,6 +252,9 @@ namespace SmartInventory.Settings
         public static int isCDBAttributeEnabled = 0;
         public static bool fetoolsenabled = true;
         public static int CableDefLabelMinZoom = 0;
+        public static int IsGeometryUpdateOnAssociationAllowed = 0;
+        public static bool CdbEnabled = false;
+
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -325,6 +329,11 @@ namespace SmartInventory.Settings
                 {
                     validDocumentTypes = objSetting.value;
                 }
+                if (objSetting.key == "validDocumentTypesFetools")
+                {
+                    validDocumentTypesFetools = objSetting.value;
+                }
+                
                 if (objSetting.key == "validImageTypes")
                 {
                     validImageTypes = objSetting.value;
@@ -848,7 +857,10 @@ namespace SmartInventory.Settings
                 }           
 				if (objSetting.key == "IsTraceEnabled")
 				{ IsTraceEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true; }
-				if (objSetting.key == "ExcelReportLimitCount")
+
+                if (objSetting.key == "isCDBAttributeEnabled")
+                { CdbEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true; }
+                if (objSetting.key == "ExcelReportLimitCount")
 				{
 					ExcelReportLimitCount = Convert.ToInt32(objSetting.value);
 				}
@@ -863,6 +875,10 @@ namespace SmartInventory.Settings
                 if (objSetting.key == "CableDefLabelMinZoom")
                 {
                     CableDefLabelMinZoom = Convert.ToInt32(objSetting.value);
+                }
+                if (objSetting.key == "IsGeometryUpdateOnAssociationAllowed")
+                {
+                    IsGeometryUpdateOnAssociationAllowed = Convert.ToInt32(objSetting.value);
                 }
                 //if (objSetting.key == "allowedDocumentAttachmentType")
                 //{
