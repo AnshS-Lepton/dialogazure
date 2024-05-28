@@ -4,7 +4,7 @@
 <div id="dvviewfetools">
     <div class="update_panel fullWidth">
         <div class="title">
-            <h4>View FE Tools</h4>
+            <h4>View User Tools</h4>
         </div>
 
         @{
@@ -69,23 +69,36 @@
             columns: grid.Columns(
 
      grid.Column("", "Action", format:
-                                                    @<text>
-                                                        <a href="#" onclick="Addfeetool(@item.id);" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
-                                                        <a href="#" onclick="Deletefetool(@item.id);" class="auto" title="Delete"> <i class="fa fa-trash action_icon fa-fw m-r-xs"></i></a>
-                                                        @if (item.upload_type == "Image" || item.upload_type == "Both")
-                                                        {
-                                                            <a href="#" onclick="ShowFeimage(@item.id,'Image');" title="Download Image"> <i class="fa fa-file-image-o" style="font-size: 13px; color: #f50000;"></i></a>
-                                                        }
-                                                        @if (item.upload_type == "Document" || item.upload_type == "Both")
-                                                        {
-                                                            <a href="#" onclick="ShowFeimage(@item.id,'Document');" title="Download Certificate"> <i class="fa fa-file-pdf-o" style="font-size: 13px; color: #f50000;"></i></a>
-                                                        }
-                                                    </text>),
+                                                                            @<text>
+                                                                                @if (item.is_accepted == false && ViewBag.user_id == item.user_id)
+                                                                                {
+                                                                                    @*<input type="button" class="btn btn-primary" onclick="fn_accepted_user_tools(@item.id)" value="Accept" />*@
+                                                                                    <a href="#" onclick="fn_accepted_user_tools(@item.id);" class="auto" title="Accept"> <i class="fa fa-thumbs-up action_icon fa-fw m-r-xs"></i></a>
+
+                                                                                }
+                                                                                @if (ViewBag.user_id != item.user_id || ViewBag.roleid == 1)
+                                                                                {
+                                                                                    <a href="#" onclick="Addfeetool(@item.id);" class="auto" title="Edit"> <i class="fa fa-pencil action_icon fa-fw m-r-xs"></i></a>
+
+                                                                                }
+                                                                                <a href="#" onclick="Deletefetool(@item.id);" class="auto" title="Delete"> <i class="fa fa-trash action_icon fa-fw m-r-xs"></i></a>
+                                                                                @if (item.upload_type == "Image" || item.upload_type == "Both")
+                                                                                {
+                                                                                    <a href="#" onclick="ShowFeimage(@item.id,'Image');" title="Download Image"> <i class="fa fa-file-image-o" style="font-size: 13px; color: #f50000;"></i></a>
+                                                                                }
+                                                                                @if (item.upload_type == "Document" || item.upload_type == "Both")
+                                                                                {
+                                                                                    <a href="#" onclick="ShowFeimage(@item.id,'Document');" title="Download Certificate"> <i class="fa fa-file-pdf-o" style="font-size: 13px; color: #f50000;"></i></a>
+                                                                                }
+
+                                                                            </text>),
 grid.Column("user_name", "User Name", format: @<text>@item.user_name</text>),
 grid.Column("tool_name", "Tool Name", format: @<text>@item.tool_name</text>),
 grid.Column("barcode", "Barcode", format: @<text>@item.barcode </text>),
 grid.Column("serial_number", "Serial Number", format: @<text>@item.serial_number </text>),
-grid.Column("date_value", "Date", format: @<text>@item.date_value.ToString("dd-MMM-yyyy")</text>)
+grid.Column("date_value", "Date", format: @<text>@item.date_value.ToString("dd-MMM-yyyy")</text>),
+
+grid.Column("is_accepted", "Is Accepted", format: @<text>@(item.is_accepted ==true?"Yes":"No")</text>)
 
 ))
                             @Html.Hidden("dir", grid.SortDirection)

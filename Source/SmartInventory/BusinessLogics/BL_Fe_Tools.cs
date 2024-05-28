@@ -48,6 +48,10 @@ namespace BusinessLogics
 
 
         }
+        public int AcceptedUserTool(int id)
+        {
+            return new DA_Fee_tools().AcceptedUserTool(id);
+        }
         public  DateTime GetUserDetailsbyid(int UserId)
         {
             return (new DA_Fee_tools().GetUserDetailsbyid(UserId));

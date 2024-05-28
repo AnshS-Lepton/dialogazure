@@ -149,5 +149,20 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+        public  int AcceptedUserTool(int id)
+        {
+            try
+            {
+                using (MainContext context =new MainContext())
+                {
+                    string query = string.Format(@"update user_tools_mapping utm set is_accepted ='True' where utm.id ={0}", id);
+                    var value_ = context.Database.ExecuteSqlCommand(query);
+                    //context.Database.SqlQuery<bool>(query).FirstOrDefault();
+                    return value_;
+                }
+            }
+            catch { throw; }
+        }
     }
 }
