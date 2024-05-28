@@ -187,7 +187,8 @@
         'btnNextStep2': '#btnNextStep2',
         'btnTemplateCancel': '#btnTemplateCancel',
         'liImportDataUtility': '#liImportDataUtility',
-        'liFileUploadUtility': '#liFileUploadUtility'
+        'liFileUploadUtility': '#liFileUploadUtility',
+        'aFileUploadUtility': '#aFileUploadUtility'
     }
     this.activeTab = function () {
         return $(app.DE.liImportDataUtility).hasClass('active');
@@ -195,7 +196,7 @@
 
     this.initActiveTab = () => {
         if ($("#liImportDataUtility").length == 0) {
-            $("#aFileUploadUtility").trigger("click");
+            $("aFileUploadUtility").trigger("click");
         }
     }
 

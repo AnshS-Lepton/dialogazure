@@ -91,7 +91,6 @@
     }
     function IsValid() {
         debugger;
-
         if ($("#ddl_Fename option:selected").text() === "--Select--") {
             $('#ddl_Fename_chosen').addClass('input-validation-error');
             //ddlfenameblur();
@@ -135,6 +134,8 @@
         else {
             $('#datepicker').removeClass('input-validation-error');
         }
+        fn_getuserdeatisl();
+
         var choosedate = $('#datepicker').val(); // Assuming the format is '02-May-2024'
         var userdate = $('#created_on_text').val(); // Assuming the format is '2023-06-29'
         var currentDate = new Date();
@@ -148,13 +149,13 @@
         var endDate = new Date(endDateParts[0], endDateParts[1] - 1, endDateParts[2]); // Months are zero-indexed in JavaScript Date objects
 
         // Check if the current date is between today and the end date
-        //if (chosenDate >= endDate )
-        //{
+        if (chosenDate >= endDate )
+        {
            
-        //} else {
-        //    alert("The date must be between the user's account creation and the current date")
-        //    return false;
-        //}
+        } else {
+            alert("The date must be between the user's account creation and the current date")
+            return false;
+        }
 
         //if ($('#fuImgUpload12').val() == "") {
         //    $('#image_value').val('false');
@@ -224,7 +225,7 @@
             }
         });
         var enddate = $('#created_on_text').val();
-        setDateTimeCalendar('datepicker', 'datepicker1', false, '2024-03-15');
+        setDateTimeCalendar('datepicker', 'datepicker1', false);
 
         $('#fuAttachmentUploadfetools').on('change', function () {
 
@@ -326,85 +327,25 @@
     //    }
     //}
 
-    function setDateTimeCalendar(startdateid, startdateimgid, isFutureDateAllowed, endDate) {
-        //if (endDate != null) {
-        //    Calendar.setup({
-        //        inputField: endDate,   // id of the input field
-        //        button: startdateimgid,
-        //        ifFormat: "%d-%b-%Y",       // format of the input field datetime format %d-%b-%Y %I:%M %p
-        //        showsTime: false,
-        //        timeFormat: "12",
-        //        weekNumbers: false,
-
-        //        disableFunc: function (date) {
-                   
-
-                  
-        //            var enddateid = new Date(endDate);
-
-        //                var endDateValue = document.getElementById(enddateid).value;
-
-        //                var enddt = new Date(DateFormatter(enddateid));
-        //                enddt = new Date(enddt);
-        //                if (date.getTime() > enddt.getTime()) {
-        //                    return true;
-        //                }
-        //                ////
-        //                if (!isFutureDateAllowed) {
-        //                    var now = new Date();
-        //                    now.setDate(now.getDate());
-        //                    if (date.getTime() > now.getTime()) {
-        //                        return true;
-        //                    }
-        //                }
-                    
-        //        }
-        //    });
-        //}
-            Calendar.setup({
-                inputField: startdateid,
-                button: startdateimgid,
-                ifFormat: "%d-%b-%Y",
-                showsTime: false,
-                timeFormat: "12",
-                weekNumbers: false,
-                //maxDate: new Date(new Date().setMonth(new Date().getMonth() + 6)),
-                align: "Br",
-                //maxDate: "+6m",
-                disableFunc: function (date) {
-                   
-                    if (endDate != null) {
-                        //var endDateValue = document.getElementById(endDate).value;
-                        var enddt = DateFormatter(endDate);
-                        enddt = new Date(enddt);
-                    }
-                    var startDateValue = document.getElementById(startdateid).value;
-
-                    var startdt = DateFormatter(startDateValue);
-                    startdt = new Date(startdt);
-                    if (enddt != null) {
-                        if (enddt.getTime() > startdt.getTime()) {
-                            return true;
-                        }
-                    } else {
-                        if (date.getTime() < startdt.getTime()) {
-                            return true;
-                        }
-                    }
-                    if (!isFutureDateAllowed) {
-                        var now = new Date();
-                        now.setDate(now.getDate());
-                        if (date.getTime() > now.getTime()) {
-                            return true;
-                        }
-                    }
-
-                },
-
-            });
-     
+    function setDateTimeCalendar(startdateid, startdateimgid, isFutureDateAllowed) {
+   Calendar.setup({
+    inputField: startdateid,   // id of the input field
+    button: startdateimgid,
+    ifFormat: "%d-%b-%Y",       // format of the input field datetime format %d-%b-%Y %I:%M %p
+    showsTime: false,
+    timeFormat: "12",
+    weekNumbers: false,
+    disableFunc: function (date) {
+        if (!isFutureDateAllowed) {
+            var now = new Date();
+            now.setDate(now.getDate());
+            if (date.getTime() > now.getTime()) {
+                return true;
+            }
+        }
     }
-     
+});
+   }
     
 
 
