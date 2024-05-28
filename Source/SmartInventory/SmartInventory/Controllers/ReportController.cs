@@ -2873,9 +2873,6 @@ namespace SmartInventory.Controllers
                                     objExportReportFilterNew.SelectedLayerId = SelectedLayerIdSummary;
 
 
-                                    
-
-
                                     //Thread.Sleep(10000);
                                 }
                                 catch (Exception)
