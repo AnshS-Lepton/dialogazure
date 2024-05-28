@@ -712,7 +712,7 @@ namespace SmartInventory.Controllers
                 else if (fileType.ToUpper() == "KML")
                 {
                     //DownloadEntitySummaryIntoKMLAll(entityids, fileType.ToUpper());
-                    DownloadEntitySummaryIntoAllKMLNew(entityids, fileType.ToUpper(), totalPlannedCount, totalAsBuiltCount, totalDormantCount);
+                    DownloadEntitySummaryIntoAllKMLNew(entityids, fileType.ToUpper(), totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType);
                 }
                 else if (fileType.ToUpper() == "DXF")
                 {
@@ -725,7 +725,7 @@ namespace SmartInventory.Controllers
                 {
                     //DownloadEntityReportNewIntoShapeAll(entityids);
                     //DownloadEntityReportNewIntoShapeAllNew(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount);
-                    DownloadEntityReportIntoShapeAllNew(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount);
+                    DownloadEntityReportIntoShapeAllNew(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType);
                 }
                 else if (fileType.ToUpper() == "ALLTXT")
                 {
@@ -1695,19 +1695,19 @@ namespace SmartInventory.Controllers
                                         List<string> reportTypeString = reportType;
                                         if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
                                         {
-                                            if (reportTypeString.Contains("GIS"))
+                                            if (reportTypeString[0].Contains("GIS"))
                                             {
                                                 lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            else if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+                                            if (reportTypeString[0].Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
                                             {
                                                 lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            else if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
                                             {
                                                 lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            else
+                                            if(reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
                                             {
                                                 lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                                 if (objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
@@ -1722,19 +1722,19 @@ namespace SmartInventory.Controllers
                                         }
                                         else
                                         {
-                                            if (reportTypeString.Contains("GIS"))
+                                            if (reportTypeString[0].Contains("GIS"))
                                             {
                                                 lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            else if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+                                            if (reportTypeString[0].Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
                                             {
                                                 lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewNewCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            else if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
                                             {
                                                 lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            else
+                                            if(reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
                                             {
                                                 lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                                 if (layerDetail.is_dynamic_control_enable)
@@ -1747,8 +1747,6 @@ namespace SmartInventory.Controllers
 
                                                 }
                                             }
-
-
 
                                         }
 
@@ -1771,36 +1769,27 @@ namespace SmartInventory.Controllers
                                             objExportEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
                                             objExportReportFilterNew.SelectedLayerId = SelectedLayerIdSummary;
                                             fileName = $"{dtReport.TableName}";
+                                            dtReport.TableName = dtReport.TableName + "_GisAttribute";
                                             dtReportCdb.TableName = dtReport.TableName + "_CdbAttribute";
                                             dtReportAdditional.TableName = dtReport.TableName + "_AdditionalAttribute";
 
                                             if (dtReport.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
                                             {
                                                 tempFileName = $"{parentFolder}/{dtReport.TableName}.csv";
-                                                StreamNewCSVInFolder(dtReport, tempFileName);
-                                                tempFileName = $"{parentFolder}/{dtReportCdb.TableName}.csv";
-                                                StreamNewCSVInFolder(dtReportCdb, tempFileName);
-                                                tempFileName = $"{parentFolder}/{dtReportAdditional.TableName}.csv";
-                                                StreamNewCSVInFolder(dtReportAdditional, tempFileName);
-                                            }
-
-                                            if (dtReport.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
-                                            {
-                                                tempFileName = $"{parentFolder}/{dtReport.TableName}.csv";
                                                 StreamNewCSVInFolder(dtReport, tempFileName);                                                
                                             }
+                                         
                                             if (dtReportCdb.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
                                             {
                                                 tempFileName = $"{parentFolder}/{dtReportCdb.TableName}.csv";
                                                 StreamNewCSVInFolder(dtReportCdb, tempFileName);
                                             }
+                                           
                                             if (dtReportAdditional.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
                                             {
                                                 tempFileName = $"{parentFolder}/{dtReportAdditional.TableName}.csv";
                                                 StreamNewCSVInFolder(dtReportAdditional, tempFileName);
                                             }
-
-
 
                                             else
                                             {
@@ -1817,6 +1806,11 @@ namespace SmartInventory.Controllers
                                             dtReportCdb = null;
                                             dtReportAdditional = null;
                                         }
+                                   
+                                    
+                                    
+                                    
+                                    
                                     }
                                     catch (Exception)
                                     {
@@ -2150,6 +2144,43 @@ namespace SmartInventory.Controllers
 
                     ISheet sheet3 = workbook.CreateSheet("Additional_Attribute");
                     NPOIExcelHelper.DataTableToSheet(dtReportAdditional, sheet3);
+                }
+
+                // Write the workbook to the MemoryStream
+                workbook.Write(exportData);
+
+                // Write the MemoryStream to the file
+                FileStream xfile = new FileStream(tempfileName, FileMode.Create, System.IO.FileAccess.Write);
+
+                workbook.Write(xfile);
+                xfile.Close();
+
+            }
+        }
+
+        private void ExportDataExcelMergeWithoutCdb(DataTable dtReport,  DataTable dtReportAdditional, string fileName, string tempfileName)
+        {
+            using (var exportData = new MemoryStream())
+            {
+                IWorkbook workbook = new XSSFWorkbook(); // Create a new workbook
+
+                if (dtReport != null && dtReport.Rows.Count > 0)
+                {
+                    if (string.IsNullOrEmpty(dtReport.TableName))
+                        dtReport.TableName = "Gis_Attribute"; // Default table name if empty
+
+                    ISheet sheet1 = workbook.CreateSheet("Gis_Attribute");
+                    NPOIExcelHelper.DataTableToSheet(dtReport, sheet1);
+                }
+
+                
+                if (dtReportAdditional != null && dtReportAdditional.Rows.Count > 0)
+                {
+                    if (string.IsNullOrEmpty(dtReportAdditional.TableName))
+                        dtReportAdditional.TableName = "Additional_Attribute"; // Default table name if empty
+
+                    ISheet sheet2 = workbook.CreateSheet("Additional_Attribute");
+                    NPOIExcelHelper.DataTableToSheet(dtReportAdditional, sheet2);
                 }
 
                 // Write the workbook to the MemoryStream
@@ -2601,7 +2632,7 @@ namespace SmartInventory.Controllers
                 });
             }
         }
-        public void DownloadEntitySummaryIntoAllKMLNew(string entityids, string fileType, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+        public void DownloadEntitySummaryIntoAllKMLNew(string entityids, string fileType, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount, List<string> reportType)
         {
             if (Session["ExportReportFilterNew"] != null)
             {
@@ -2610,6 +2641,10 @@ namespace SmartInventory.Controllers
                 ExportEntitiesSummaryView objExportEntitiesReport = new ExportEntitiesSummaryView();
                 ExportReportFilterNew objExportReportFilterNew = new ExportReportFilterNew();
                 objExportReportFilterNew = (ExportReportFilterNew)Session["ExportReportFilterNew"];
+
+                ExportEntitiesReportNew entityExportSummaryData = new ExportEntitiesReportNew();
+
+                entityExportSummaryData = (ExportEntitiesReportNew)Session["EntityExportSummaryData"];
 
                 objExportEntitiesReport.objReportFilters.connectionString = objExportReportFilterNew.connectionString;
                 objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportReportFilterNew.SelectedRegionIds;
@@ -2687,27 +2722,158 @@ namespace SmartInventory.Controllers
                                 {
 
                                     objExportEntitiesReport.objReportFilters.layerName = layer.layer_name;
-                                    //var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
-                                    List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetExportSummaryViewKMLNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                    //List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetExportSummaryViewKML(objExportEntitiesReport.objReportFilters);
-                                    DataTable dtReport = new DataTable();
-                                    dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//,true,ApplicationSettings.numberFormatType,new string[] {""}
 
+                                    var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
+
+                                    EntitySummaryReport recordCount = entityExportSummaryData.lstReportData.Where(x => x.entity_name.ToUpper() == layer.layer_name.ToUpper()).FirstOrDefault();
+                                    int total_entity_count = 0;
+                                    if (recordCount != null)
+                                        total_entity_count = recordCount.planned_count + recordCount.as_built_count + recordCount.dormant_count;
+
+
+
+
+                                    //var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
+                                    //LogHelper.GetInstance.WriteDebugLogTest($"==========================Layer Title==========={layer.layer_title}============================", layer.layer_name);
+                                    List<Dictionary<string, string>> lstExportEntitiesDetailKml = null;
+                                    List<Dictionary<string, string>> lstExportEntitiesDetail = null;
+                                    List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
+                                   
+                                    lstExportEntitiesDetailKml = new BLLayer().GetExportSummaryViewKMLNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
+
+                                                             
+                                    var layerdetails = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
+
+                                    if (layerdetails.is_dynamic_control_enable == null)
+                                    {
+                                        layerdetails.is_dynamic_control_enable = false;
+                                    }
+
+
+                                    List<string> reportTypeString = reportType;
+
+                                    if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
+                                    {
+                                        if (reportTypeString[0].Contains("GIS"))
+                                        {
+                                            lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                        }
+                                        if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                        {
+                                            lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                        }
+                                        if (reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
+                                        {
+                                            lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
+
+                                            if (layerDetail.is_dynamic_control_enable)
+                                            {
+                                                lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (reportTypeString[0].Contains("GIS"))
+                                        {
+                                            lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                        }
+                                        if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                        {
+                                            lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                        }
+                                        if (reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
+                                        {
+                                            lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                            if (layerDetail.is_dynamic_control_enable)
+                                            {
+                                                lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                            }
+                                        }
+
+                                    }
+
+                                    DataTable dtReportKml = new DataTable();
+                                    DataTable dtReport = new DataTable();
+                                    DataTable dtReportAdditional = new DataTable();
+
+                                    dtReportKml = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetailKml);//,true,ApplicationSettings.numberFormatType,new string[] { ""}
+                                    dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
+                                    dtReportAdditional = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetailAdditional, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
+
+                                    dtReportKml.TableName = layer.layer_title;
                                     dtReport.TableName = layer.layer_title;
-                                    //if (dtReport.Rows.Count > 0)
-                                    //	ds.Tables.Add(dtReport);
+                                    dtReportAdditional.TableName = layer.layer_title;
+                                    string tempFileName = String.Empty;
+                                    string fileName = layer.layer_title;
+                                    string TempkmlFileName = fileName + ".kml";
+                                    string finalkml = KMLHelper.GetKmlForEntityNew(dtReportKml, objExportEntitiesReport.lstLayers, dtFilter, TempkmlFileName, directoryPath);
+                                    string kmlDesFullPath = directoryPath + "\\" + TempkmlFileName;
+                                    
+
+
+                                    if (lstExportEntitiesDetail != null && lstExportEntitiesDetail.Count > 0)
+                                    {
+                                        dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//, true, ApplicationSettings.numberFormatType, new string[] { "" }
+                                                                                                                    //dtReport.TableName = layerDetail.layer_title;
+                                        dtReport.TableName = layer.layer_title;
+                                        if (dtReport != null && dtReport.Rows.Count > 0)
+                                        {
+                                            if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+                                            if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+                                            if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+                                        }
+
+                                    }
+
+                                    if (lstExportEntitiesDetailAdditional != null && lstExportEntitiesDetailAdditional.Count > 0)
+                                    {
+                                        dtReportAdditional = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetailAdditional);//, true, ApplicationSettings.numberFormatType, new string[] { "" }
+                                                                                                                                        //dtReport.TableName = layerDetail.layer_title;
+                                        dtReportAdditional.TableName = layer.layer_title;
+                                        if (dtReportAdditional != null && dtReportAdditional.Rows.Count > 0)
+                                        {
+                                            if (dtReportAdditional.Columns.Contains("S_NO")) { dtReportAdditional.Columns.Remove("S_NO"); }
+                                            if (dtReportAdditional.Columns.Contains("totalrecords")) { dtReportAdditional.Columns.Remove("totalrecords"); }
+                                            if (dtReportAdditional.Columns.Contains("Barcode")) { dtReportAdditional.Columns.Remove("Barcode"); }
+                                        }
+
+                                    }
+
+                                    if (dtReport.Rows.Count > 0 || dtReportAdditional.Rows.Count > 0)
+                                    {
+                                        if (dtReport.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
+                                        {
+                                            dtReport.TableName = dtReport.TableName + "_GisAttribute";
+                                            tempFileName = $"{parentFolder}/{dtReport.TableName}.csv";
+                                            StreamNewCSVInFolder(dtReport, tempFileName);
+                                        }
+                                        if (dtReportAdditional.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
+                                        {
+                                            dtReportAdditional.TableName = dtReport.TableName + "_AdditionalAttribute";
+                                            tempFileName = $"{parentFolder}/{dtReportAdditional.TableName}.csv";
+                                            StreamNewCSVInFolder(dtReportAdditional, tempFileName);
+                                        }
+                                        else
+                                        {
+                                            fileName = $"{parentFolder}/{layer.layer_title}.xlsx";
+                                            var tempshapeFilePath = $"{directoryPath}/{layer.layer_title}.xlsx";
+                                            ExportDataExcelMergeWithoutCdb(dtReport, dtReportAdditional, fileName, tempshapeFilePath);
+                                        }
+                                    }
+
+
+                                    System.IO.File.WriteAllText(kmlDesFullPath, finalkml.ToString());
+                                    dtReportKml = null;
+                                    dtReport = null;
+                                    dtReportAdditional = null;                                  
 
 
                                     objExportEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
                                     objExportReportFilterNew.SelectedLayerId = SelectedLayerIdSummary;
 
-                                    string fileName = layer.layer_title;
 
-                                    string TempkmlFileName = fileName + ".kml";
-                                    string finalkml = KMLHelper.GetKmlForEntityNew(dtReport, objExportEntitiesReport.lstLayers, dtFilter, TempkmlFileName, directoryPath);
-                                    dtReport = null;
-                                    string kmlDesFullPath = directoryPath + "\\" + TempkmlFileName;
-                                    System.IO.File.WriteAllText(kmlDesFullPath, finalkml.ToString());
+                                    
 
 
                                     //Thread.Sleep(10000);
@@ -2769,6 +2935,8 @@ namespace SmartInventory.Controllers
                         if (Directory.Exists(directoryPath).Equals(true))
                             Directory.Delete(directoryPath, true);
                     }
+              
+                
                 });
             }
         }
@@ -3064,7 +3232,7 @@ namespace SmartInventory.Controllers
                 }
             }
         }
-        public void DownloadEntityReportIntoShapeAllNew(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+        public void DownloadEntityReportIntoShapeAllNew(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount, List<string> reportType)
         {
             if (Session["ExportReportFilterNew"] != null)
             {
@@ -3075,6 +3243,10 @@ namespace SmartInventory.Controllers
                     ExportEntitiesSummaryView objExportEntitiesReport = new ExportEntitiesSummaryView();
                     ExportReportFilterNew objExportReportFilterNew = new ExportReportFilterNew();
                     objExportReportFilterNew = (ExportReportFilterNew)Session["ExportReportFilterNew"];
+
+                    ExportEntitiesReportNew entityExportSummaryData = new ExportEntitiesReportNew();
+
+                    entityExportSummaryData = (ExportEntitiesReportNew)Session["EntityExportSummaryData"];
 
                     objExportEntitiesReport.objReportFilters.connectionString = objExportReportFilterNew.connectionString;
                     objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportReportFilterNew.SelectedRegionIds;
@@ -3118,7 +3290,6 @@ namespace SmartInventory.Controllers
                     }
                     DataTable dtFilter = GetExportReportFilter(objExportReportFilterNew);
 
-
                     //DataSet ds = new DataSet();
 
 
@@ -3144,13 +3315,10 @@ namespace SmartInventory.Controllers
                         {
 
                             string tempFileName = String.Empty;
-                            //string ftpFolder = "ExportReportLog/";
-                            //string tempFileName = "ExportReportLog/" + fileName + "." + exportReportLog.file_type;
                             string ftpFilePath = ApplicationSettings.FTPAttachment + ftpFolder;
                             string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
                             string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
-                            //string shapeFilePath = System.Web.Hosting.HostingEnvironment.MapPath("~/public/Attachments/SI_Shape_" + Guid.NewGuid().ToString().Substring(0, 8));
-                            //string parentFolder = $"SI_Shape_{Guid.NewGuid().ToString().Substring(0, 8)}_{userdetails.user_id}";
+
                             string parentFolder = $"Shape_{DateTimeHelper.Now.ToString("ddMMyyyy")}-{DateTimeHelper.Now.ToString("HHmmssfff")}_{userdetails.user_id}";
                             string attachmentLocalPath = Path.Combine(ApplicationSettings.AttachmentLocalPath, ftpFolder);
                             string pathWithParentFolder = Path.Combine(attachmentLocalPath, parentFolder);
@@ -3169,27 +3337,155 @@ namespace SmartInventory.Controllers
                                         //LogHelper.GetInstance.WriteDebugLogTest($"====================================={layer.layer_name}====Start  {DateTime.Now}========================", layer.layer_name);
 
                                         objExportEntitiesReport.objReportFilters.layerName = layer.layer_name;
+                                        var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
+
+                                        EntitySummaryReport recordCount = entityExportSummaryData.lstReportData.Where(x => x.entity_name.ToUpper() == layer.layer_name.ToUpper()).FirstOrDefault();
+                                        int total_entity_count = 0;
+                                        if (recordCount != null)
+                                            total_entity_count = recordCount.planned_count + recordCount.as_built_count + recordCount.dormant_count;
+
+
+
+
                                         //var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
                                         //LogHelper.GetInstance.WriteDebugLogTest($"==========================Layer Title==========={layer.layer_title}============================", layer.layer_name);
-                                        List<Dictionary<string, string>> lstExportEntitiesDetail = new BLLayer().GetExportSummaryViewKMLNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                        List<Dictionary<string, string>> lstExportEntitiesDetailShape = null;
+                                        List<Dictionary<string, string>> lstExportEntitiesDetail = null;
+                                        List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
+                                         lstExportEntitiesDetailShape = new BLLayer().GetExportSummaryViewKMLNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
 
-                                        // LogHelper.GetInstance.WriteDebugLogTest($"data received from database on: {DateTime.Now}", layer.layer_name);
-                                        // LogHelper.GetInstance.WriteDebugLogTest($"Received data count: {lstExportEntitiesDetail.Count}", layer.layer_name); 
-                                        DataTable dtReport = new DataTable();
-                                        dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//,true,ApplicationSettings.numberFormatType,new string[] { ""}
-                                        dtReport.TableName = layer.layer_title;
-                                        if (dtReport != null && dtReport.Rows.Count > 0)
+                                        var layerdetails = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
+
+                                        if (layerdetails.is_dynamic_control_enable == null)
                                         {
-                                            if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
-                                            if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
-                                            if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+                                            layerdetails.is_dynamic_control_enable = false;
                                         }
-                                        //if (dtReport.Rows.Count > 0)
-                                        //	ds.Tables.Add(dtReport);
-                                        GetShapeFileOne(dtReport, "ExportReport", ftpFilePath, ftpUserName, ftpPwd, shapeFilePath, layer.layer_name);
-                                        dtReport = null;
-                                        // LogHelper.GetInstance.WriteDebugLogTest($"====================================={layer.layer_name}====END {DateTime.Now}========================", layer.layer_name);
 
+                                      
+                                        List<string> reportTypeString = reportType;
+
+                                        if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
+                                        {
+                                            if (reportTypeString[0].Contains("GIS"))
+                                            {
+                                                lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                            }
+                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                            {
+                                                lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                            }
+                                            if (reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
+                                            {
+                                                lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                                
+                                                if (layerDetail.is_dynamic_control_enable)
+                                                {
+                                                    lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (reportTypeString[0].Contains("GIS"))
+                                            {
+                                                lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                            }
+                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                            {
+                                                lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                            }
+                                            if (reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
+                                            {
+                                                lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                                if (layerDetail.is_dynamic_control_enable)
+                                                {
+                                                    lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                                }                                                
+                                            }
+
+                                        }
+
+
+
+                                        DataTable dtReportShape = new DataTable();
+                                        DataTable dtReport = new DataTable();
+                                        DataTable dtReportAdditional = new DataTable();
+
+                                        dtReportShape = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetailShape);//,true,ApplicationSettings.numberFormatType,new string[] { ""}
+                                        dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
+                                        dtReportAdditional = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetailAdditional, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });
+
+                                        dtReportShape.TableName = layer.layer_title;
+                                        dtReport.TableName = layer.layer_title;
+                                        dtReportAdditional.TableName = layer.layer_title;
+
+                                        string fileName = $"{parentFolder}.csv";
+
+                                        if (dtReportShape.Rows.Count > 0)
+                                        {
+                                            if (dtReportShape != null && dtReportShape.Rows.Count > 0)
+                                            {
+                                                if (dtReportShape.Columns.Contains("S_NO")) { dtReportShape.Columns.Remove("S_NO"); }
+                                                if (dtReportShape.Columns.Contains("totalrecords")) { dtReportShape.Columns.Remove("totalrecords"); }
+                                                if (dtReportShape.Columns.Contains("Barcode")) { dtReportShape.Columns.Remove("Barcode"); }
+                                            }
+                                            GetShapeFileOne(dtReportShape, "ExportReport", ftpFilePath, ftpUserName, ftpPwd, shapeFilePath, layer.layer_name);
+                                        }
+
+
+                                        if (lstExportEntitiesDetail != null && lstExportEntitiesDetail.Count > 0)
+                                        {
+                                            dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);//, true, ApplicationSettings.numberFormatType, new string[] { "" }
+                                                                                                                        //dtReport.TableName = layerDetail.layer_title;
+                                            dtReport.TableName = layer.layer_title;
+                                            if (dtReport != null && dtReport.Rows.Count > 0)
+                                            {
+                                                if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+                                                if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+                                                if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+                                            }
+
+                                        }
+
+                                        if (lstExportEntitiesDetailAdditional != null && lstExportEntitiesDetailAdditional.Count > 0)
+                                        {
+                                            dtReportAdditional = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetailAdditional);//, true, ApplicationSettings.numberFormatType, new string[] { "" }
+                                                                                                                                            //dtReport.TableName = layerDetail.layer_title;
+                                            dtReportAdditional.TableName = layer.layer_title;
+                                            if (dtReportAdditional != null && dtReportAdditional.Rows.Count > 0)
+                                            {
+                                                if (dtReportAdditional.Columns.Contains("S_NO")) { dtReportAdditional.Columns.Remove("S_NO"); }
+                                                if (dtReportAdditional.Columns.Contains("totalrecords")) { dtReportAdditional.Columns.Remove("totalrecords"); }
+                                                if (dtReportAdditional.Columns.Contains("Barcode")) { dtReportAdditional.Columns.Remove("Barcode"); }
+                                            }
+
+                                        }                                       
+                                        
+                                        if (dtReport.Rows.Count > 0 || dtReportAdditional.Rows.Count > 0) { 
+                                            if (dtReport.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
+                                            {
+                                                dtReport.TableName = dtReport.TableName + "_GisAttribute";
+                                                tempFileName = $"{parentFolder}/{dtReport.TableName}.csv";
+                                                StreamNewCSVInFolder(dtReport, tempFileName);
+                                            }
+                                            if (dtReportAdditional.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
+                                            {
+                                                dtReportAdditional.TableName = dtReport.TableName + "_AdditionalAttribute";
+                                                tempFileName = $"{parentFolder}/{dtReportAdditional.TableName}.csv";
+                                                StreamNewCSVInFolder(dtReportAdditional, tempFileName);
+                                            }
+                                            else
+                                            {
+                                                //if()
+                                               fileName = $"{parentFolder}/{layer.layer_title}.xlsx";
+                                               var tempshapeFilePath= $"{shapeFilePath}/{layer.layer_title}.xlsx";
+                                               ExportDataExcelMergeWithoutCdb(dtReport, dtReportAdditional, fileName, tempshapeFilePath);
+                                            }
+                                        }
+                                        dtReportShape = null;
+                                        dtReport = null;
+                                        dtReportAdditional = null;
+                                        // LogHelper.GetInstance.WriteDebugLogTest($"====================================={layer.layer_name}====END {DateTime.Now}========================", layer.layer_name);
                                     }
                                     catch (Exception)
                                     {
@@ -4597,11 +4893,9 @@ namespace SmartInventory.Controllers
                 {
                     streamWriter.Write(GeographicCoordinateSystem.WGS84.WKT);
                 }
-
-            }
+            }                 
+                       
             dtReport.Clear();
-            // LogHelper.GetInstance.WriteDebugLogTest($"====Shape File END:-{dtReport.TableName} on {DateTime.Now}=====", layerName);
-
         }
 
         #endregion Export Entites Report
@@ -9065,19 +9359,19 @@ namespace SmartInventory.Controllers
                                         List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
                                         List<string> reportTypeString = reportType;
 
-                                        if (reportTypeString.Contains("GIS"))
+                                        if (reportTypeString[0].Contains("GIS"))
                                         {
                                             lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                         }
-                                        else if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+                                        if (reportTypeString[0].Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
                                         {
                                             lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                         }
-                                        else if (reportTypeString.Contains("ADDITIONAL") && layerdetails.is_dynamic_control_enable)
+                                        if (reportTypeString[0].Contains("ADDITIONAL") && layerdetails.is_dynamic_control_enable)
                                         {
                                             lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                         }
-                                        else
+                                        if(reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
                                         {
                                             lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             if (layerdetails.is_dynamic_control_enable)
