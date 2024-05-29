@@ -70,10 +70,11 @@
 
      grid.Column("", "Action", format:
                                                                                 @<text>
-                                                                                    @if (item.is_accepted == false && ViewBag.user_id == item.user_id)
+                                                                                    @if (item.is_accepted == "No" && ViewBag.user_id == item.user_id)
                                                                                     {
                                                                                         @*<input type="button" class="btn btn-primary" onclick="fn_accepted_user_tools(@item.id)" value="Accept" />*@
                                                                                         <a href="#" onclick="fn_accepted_user_tools(@item.id);" class="auto" title="Accept"> <i class="fa fa-thumbs-up action_icon fa-fw m-r-xs"></i></a>
+                                                                                        <a href="#" onclick="fn_rejected_user_tools(@item.id);" class="auto" title="Reject"> <i class="fa fa-thumbs-down action_icon fa-fw m-r-xs"></i></a>
 
                                                                                     }
                                                                                     @if (ViewBag.user_id != item.user_id || ViewBag.roleid == 1)
@@ -98,7 +99,7 @@ grid.Column("barcode", "Barcode", format: @<text>@item.barcode </text>),
 grid.Column("serial_number", "Serial Number", format: @<text>@item.serial_number </text>),
 grid.Column("date_value", "Date", format: @<text>@item.date_value.ToString("dd-MMM-yyyy")</text>),
 
-grid.Column("is_accepted", "Is Accepted", format: @<text>@(item.is_accepted ==true?"Yes":"No")</text>)
+grid.Column("is_accepted", "Is Accepted", format: @<text>@item.is_accepted</text>)
 
 ))
                             @Html.Hidden("dir", grid.SortDirection)

@@ -4841,6 +4841,26 @@ function fn_accepted_user_tools(id) {
 
     });
 }
+function fn_rejected_user_tools
+(id) {
+
+
+    confirm("Are you sure you want to Reject this tool?", function () {
+
+        ajaxReq('FeTools/RejectedUserTools', { id: id }, false, function (resp) {
+
+            if (resp.status == "OK") {
+                $("#frmViewfetools").submit();
+                alert('User Tool rejected successfully.');
+            }
+            else {
+                alert(resp.message);
+            }
+        }, true, true);
+
+
+    });
+}
 
 
 function handleFileChange() {
