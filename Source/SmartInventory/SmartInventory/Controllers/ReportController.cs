@@ -1687,7 +1687,7 @@ namespace SmartInventory.Controllers
                                         List<Dictionary<string, string>> lstExportEntitiesDetail = null;
                                         List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
                                         List<Dictionary<string, string>> lstExportEntitiesDetailCdb = null;
-                                        if(layerDetail.is_dynamic_control_enable == null)
+                                        if (layerDetail.is_dynamic_control_enable == null)
                                         {
                                             layerDetail.is_dynamic_control_enable = false;
                                         }
@@ -1695,19 +1695,19 @@ namespace SmartInventory.Controllers
                                         List<string> reportTypeString = reportType;
                                         if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
                                         {
-                                            if (reportTypeString[0].Contains("GIS"))
+                                            if (reportTypeString.Contains("GIS"))
                                             {
                                                 lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            if (reportTypeString[0].Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+                                            if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
                                             {
                                                 lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                            if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
                                             {
                                                 lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            if(reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
+                                            if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
                                             {
                                                 lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                                 if (objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
@@ -1722,19 +1722,19 @@ namespace SmartInventory.Controllers
                                         }
                                         else
                                         {
-                                            if (reportTypeString[0].Contains("GIS"))
+                                            if (reportTypeString.Contains("GIS"))
                                             {
                                                 lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            if (reportTypeString[0].Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+                                            if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
                                             {
                                                 lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewNewCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                            if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
                                             {
                                                 lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            if(reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
+                                            if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
                                             {
                                                 lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                                 if (layerDetail.is_dynamic_control_enable)
@@ -1768,35 +1768,60 @@ namespace SmartInventory.Controllers
                                         {
                                             objExportEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
                                             objExportReportFilterNew.SelectedLayerId = SelectedLayerIdSummary;
-                                            fileName = $"{dtReport.TableName}";
-                                            dtReport.TableName = dtReport.TableName + "_GisAttribute";
-                                            dtReportCdb.TableName = dtReport.TableName + "_CdbAttribute";
-                                            dtReportAdditional.TableName = dtReport.TableName + "_AdditionalAttribute";
-
-                                            if (dtReport.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
+                                            
+                                            
+                                            if (dtReport.Rows.Count > 0)
                                             {
-                                                tempFileName = $"{parentFolder}/{dtReport.TableName}.csv";
-                                                StreamNewCSVInFolder(dtReport, tempFileName);                                                
-                                            }
-                                         
-                                            if (dtReportCdb.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
-                                            {
-                                                tempFileName = $"{parentFolder}/{dtReportCdb.TableName}.csv";
-                                                StreamNewCSVInFolder(dtReportCdb, tempFileName);
-                                            }
-                                           
-                                            if (dtReportAdditional.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
-                                            {
-                                                tempFileName = $"{parentFolder}/{dtReportAdditional.TableName}.csv";
-                                                StreamNewCSVInFolder(dtReportAdditional, tempFileName);
+                                                if (dtReport.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
+                                                {
+                                                    dtReport.TableName = dtReport.TableName + "_GisAttribute";
+                                                    fileName = $"{dtReport.TableName}";
+                                                    tempFileName = $"{parentFolder}/{dtReport.TableName}.csv";
+                                                    StreamNewCSVInFolder(dtReport, tempFileName);
+                                                }
+                                                else
+                                                {
+                                                    IWorkbook workbook = new XSSFWorkbook();
+                                                    //if()
+                                                    fileName = $"{dtReport.TableName}";
+                                                    tempFileName = $"{directoryPath}/{dtReport.TableName}.xlsx";
+                                                    ExportDataExcelMerge(workbook,dtReport, dtReportCdb, dtReportAdditional, fileName, tempFileName);
+                                                }
                                             }
 
-                                            else
+                                            if (dtReportCdb.Rows.Count > 0)
                                             {
-                                                //if()
-                                                tempFileName = $"{directoryPath}/{dtReport.TableName}.xlsx";
-                                                ExportDataExcelMerge(dtReport, dtReportCdb, dtReportAdditional, fileName, tempFileName);
+                                                if (dtReportCdb.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
+                                                {
+                                                    dtReportCdb.TableName = dtReportCdb.TableName + "_CdbAttribute";
+                                                    tempFileName = $"{parentFolder}/{dtReportCdb.TableName}.csv";
+                                                    StreamNewCSVInFolder(dtReportCdb, tempFileName);
+                                                }
+                                                else
+                                                {
+                                                    fileName = $"{dtReportCdb.TableName}";
+                                                    IWorkbook workbook = new XSSFWorkbook();
+                                                    tempFileName = $"{directoryPath}/{dtReport.TableName}.xlsx";
+                                                    ExportDataExcelMerge(workbook,dtReport, dtReportCdb, dtReportAdditional, fileName, tempFileName);
+                                                }
                                             }
+                                            if (dtReportAdditional.Rows.Count > 0)
+                                            {
+                                                if (dtReportAdditional.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
+                                                {
+                                                    dtReportAdditional.TableName = dtReportAdditional.TableName + "_AdditionalAttribute";
+                                                    tempFileName = $"{parentFolder}/{dtReportAdditional.TableName}.csv";
+                                                    StreamNewCSVInFolder(dtReportAdditional, tempFileName);
+                                                }
+                                                else
+                                                {
+                                                    fileName = $"{dtReportAdditional.TableName}";
+                                                    IWorkbook workbook = new XSSFWorkbook();
+                                                    tempFileName = $"{directoryPath}/{dtReportAdditional.TableName}.xlsx";
+                                                    ExportDataExcelMerge(workbook,dtReport, dtReportCdb, dtReportAdditional, fileName, tempFileName);
+                                                }
+                                            }
+
 
                                             exportReportLog.export_ended_on = DateTime.Now;
                                             exportReportLog.status = "Success";
@@ -1806,11 +1831,11 @@ namespace SmartInventory.Controllers
                                             dtReportCdb = null;
                                             dtReportAdditional = null;
                                         }
-                                   
-                                    
-                                    
-                                    
-                                    
+
+
+
+
+
                                     }
                                     catch (Exception)
                                     {
@@ -1871,7 +1896,7 @@ namespace SmartInventory.Controllers
             }
 
         }
-        
+
         public DataSet GetDataSetFromDataTable(ExportEntitiesSummaryView objExportEntitiesReport, List<string> reportType, string layer_name, layerDetail layerDetail, Int64 total_entity_count, bool textType)
         {
             DataSet dataSet = new DataSet();
@@ -1883,19 +1908,19 @@ namespace SmartInventory.Controllers
 
             if (!textType && total_entity_count > ApplicationSettings.ExcelReportLimitCount)
             {
-                if (reportTypeString[0].Contains("GIS"))
+                if (reportTypeString.Contains("GIS"))
                 {
                     lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer_name);
                 }
-                if (reportTypeString[0].Contains("CDB") && layer_name == EntityType.Cable.ToString())
+                if (reportTypeString.Contains("CDB") && layer_name == EntityType.Cable.ToString())
                 {
                     lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer_name);
                 }
-                if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
                 {
                     lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer_name);
                 }
-                if (reportTypeString[0].Contains("") || reportTypeString.Contains("ALL"))
+                if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
                 {
                     lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer_name);
                     if (layer_name == EntityType.Cable.ToString())
@@ -1910,19 +1935,19 @@ namespace SmartInventory.Controllers
             }
             else if (!textType && total_entity_count < ApplicationSettings.ExcelReportLimitCount)
             {
-                if (reportTypeString[0].Contains("GIS"))
+                if (reportTypeString.Contains("GIS"))
                 {
                     lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer_name);
                 }
-                if (reportTypeString[0].Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+                if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
                 {
                     lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewNewCdb(objExportEntitiesReport.objReportFilters, layer_name);
                 }
-                if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
                 {
                     lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer_name);
                 }
-                if (reportTypeString[0].Contains("ALL"))
+                if (reportTypeString.Contains("ALL"))
                 {
                     lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer_name);
                     if (layerDetail.is_dynamic_control_enable)
@@ -1942,19 +1967,19 @@ namespace SmartInventory.Controllers
             {
                 if (total_entity_count < ApplicationSettings.ExcelReportLimitCount)
                 {
-                    if (reportTypeString[0].Contains("GIS"))
+                    if (reportTypeString.Contains("GIS"))
                     {
                         lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer_name);
                     }
-                    if (reportTypeString[0].Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+                    if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
                     {
                         lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewNewCdb(objExportEntitiesReport.objReportFilters, layer_name);
                     }
-                    if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                    if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
                     {
                         lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer_name);
                     }
-                    if (reportTypeString[0].Contains("ALL"))
+                    if (reportTypeString.Contains("ALL"))
                     {
                         lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer_name);
                         if (layerDetail.is_dynamic_control_enable)
@@ -1970,19 +1995,19 @@ namespace SmartInventory.Controllers
                 }
                 else
                 {
-                    if (reportTypeString[0].Contains("GIS"))
+                    if (reportTypeString.Contains("GIS"))
                     {
                         lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer_name);
                     }
-                    if (reportTypeString[0].Contains("CDB") && layer_name == EntityType.Cable.ToString())
+                    if (reportTypeString.Contains("CDB") && layer_name == EntityType.Cable.ToString())
                     {
                         lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer_name);
                     }
-                    if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                    if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
                     {
                         lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer_name);
                     }
-                    if (reportTypeString[0].Contains("") || reportTypeString.Contains("ALL"))
+                    if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
                     {
                         lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer_name);
                         if (layer_name == EntityType.Cable.ToString())
@@ -2113,11 +2138,11 @@ namespace SmartInventory.Controllers
         }
 
 
-        private void ExportDataExcelMerge(DataTable dtReport, DataTable dtReportCdb, DataTable dtReportAdditional, string fileName, string tempfileName)
+        private void ExportDataExcelMerge(IWorkbook workbook,DataTable dtReport, DataTable dtReportCdb, DataTable dtReportAdditional, string fileName, string tempfileName)
         {
             using (var exportData = new MemoryStream())
             {
-                IWorkbook workbook = new XSSFWorkbook(); // Create a new workbook
+                 // Create a new workbook
 
                 if (dtReport != null && dtReport.Rows.Count > 0)
                 {
@@ -2158,7 +2183,7 @@ namespace SmartInventory.Controllers
             }
         }
 
-        private void ExportDataExcelMergeWithoutCdb(DataTable dtReport,  DataTable dtReportAdditional, string fileName, string tempfileName)
+        private void ExportDataExcelMergeWithoutCdb(DataTable dtReport, DataTable dtReportAdditional, string fileName, string tempfileName)
         {
             using (var exportData = new MemoryStream())
             {
@@ -2173,7 +2198,7 @@ namespace SmartInventory.Controllers
                     NPOIExcelHelper.DataTableToSheet(dtReport, sheet1);
                 }
 
-                
+
                 if (dtReportAdditional != null && dtReportAdditional.Rows.Count > 0)
                 {
                     if (string.IsNullOrEmpty(dtReportAdditional.TableName))
@@ -2738,10 +2763,10 @@ namespace SmartInventory.Controllers
                                     List<Dictionary<string, string>> lstExportEntitiesDetailKml = null;
                                     List<Dictionary<string, string>> lstExportEntitiesDetail = null;
                                     List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
-                                   
+
                                     lstExportEntitiesDetailKml = new BLLayer().GetExportSummaryViewKMLNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
 
-                                                             
+
                                     var layerdetails = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 
                                     if (layerdetails.is_dynamic_control_enable == null)
@@ -2754,15 +2779,15 @@ namespace SmartInventory.Controllers
 
                                     if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
                                     {
-                                        if (reportTypeString[0].Contains("GIS"))
+                                        if (reportTypeString.Contains("GIS"))
                                         {
                                             lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                         }
-                                        if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                        if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
                                         {
                                             lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                         }
-                                        if (reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
+                                        if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
                                         {
                                             lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
 
@@ -2774,15 +2799,15 @@ namespace SmartInventory.Controllers
                                     }
                                     else
                                     {
-                                        if (reportTypeString[0].Contains("GIS"))
+                                        if (reportTypeString.Contains("GIS"))
                                         {
                                             lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                         }
-                                        if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                        if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
                                         {
                                             lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                         }
-                                        if (reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
+                                        if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
                                         {
                                             lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             if (layerDetail.is_dynamic_control_enable)
@@ -2809,7 +2834,7 @@ namespace SmartInventory.Controllers
                                     string TempkmlFileName = fileName + ".kml";
                                     string finalkml = KMLHelper.GetKmlForEntityNew(dtReportKml, objExportEntitiesReport.lstLayers, dtFilter, TempkmlFileName, directoryPath);
                                     string kmlDesFullPath = directoryPath + "\\" + TempkmlFileName;
-                                    
+
 
 
                                     if (lstExportEntitiesDetail != null && lstExportEntitiesDetail.Count > 0)
@@ -2866,7 +2891,7 @@ namespace SmartInventory.Controllers
                                     System.IO.File.WriteAllText(kmlDesFullPath, finalkml.ToString());
                                     dtReportKml = null;
                                     dtReport = null;
-                                    dtReportAdditional = null;                                  
+                                    dtReportAdditional = null;
 
 
                                     objExportEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
@@ -2932,8 +2957,8 @@ namespace SmartInventory.Controllers
                         if (Directory.Exists(directoryPath).Equals(true))
                             Directory.Delete(directoryPath, true);
                     }
-              
-                
+
+
                 });
             }
         }
@@ -3349,7 +3374,7 @@ namespace SmartInventory.Controllers
                                         List<Dictionary<string, string>> lstExportEntitiesDetailShape = null;
                                         List<Dictionary<string, string>> lstExportEntitiesDetail = null;
                                         List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
-                                         lstExportEntitiesDetailShape = new BLLayer().GetExportSummaryViewKMLNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                        lstExportEntitiesDetailShape = new BLLayer().GetExportSummaryViewKMLNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
 
                                         var layerdetails = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 
@@ -3358,23 +3383,23 @@ namespace SmartInventory.Controllers
                                             layerdetails.is_dynamic_control_enable = false;
                                         }
 
-                                      
+
                                         List<string> reportTypeString = reportType;
 
                                         if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
                                         {
-                                            if (reportTypeString[0].Contains("GIS"))
+                                            if (reportTypeString.Contains("GIS"))
                                             {
                                                 lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                            if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
                                             {
                                                 lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            if (reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
+                                            if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
                                             {
                                                 lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                                
+
                                                 if (layerDetail.is_dynamic_control_enable)
                                                 {
                                                     lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
@@ -3383,21 +3408,21 @@ namespace SmartInventory.Controllers
                                         }
                                         else
                                         {
-                                            if (reportTypeString[0].Contains("GIS"))
+                                            if (reportTypeString.Contains("GIS"))
                                             {
                                                 lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                            if (reportTypeString.Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
                                             {
                                                 lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            if (reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
+                                            if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
                                             {
                                                 lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                                 if (layerDetail.is_dynamic_control_enable)
                                                 {
                                                     lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                                }                                                
+                                                }
                                             }
 
                                         }
@@ -3456,9 +3481,10 @@ namespace SmartInventory.Controllers
                                                 if (dtReportAdditional.Columns.Contains("Barcode")) { dtReportAdditional.Columns.Remove("Barcode"); }
                                             }
 
-                                        }                                       
-                                        
-                                        if (dtReport.Rows.Count > 0 || dtReportAdditional.Rows.Count > 0) { 
+                                        }
+
+                                        if (dtReport.Rows.Count > 0 || dtReportAdditional.Rows.Count > 0)
+                                        {
                                             if (dtReport.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
                                             {
                                                 dtReport.TableName = dtReport.TableName + "_GisAttribute";
@@ -3474,9 +3500,9 @@ namespace SmartInventory.Controllers
                                             else
                                             {
                                                 //if()
-                                               fileName = $"{parentFolder}/{layer.layer_title}.xlsx";
-                                               var tempshapeFilePath= $"{shapeFilePath}/{layer.layer_title}.xlsx";
-                                               ExportDataExcelMergeWithoutCdb(dtReport, dtReportAdditional, fileName, tempshapeFilePath);
+                                                fileName = $"{parentFolder}/{layer.layer_title}.xlsx";
+                                                var tempshapeFilePath = $"{shapeFilePath}/{layer.layer_title}.xlsx";
+                                                ExportDataExcelMergeWithoutCdb(dtReport, dtReportAdditional, fileName, tempshapeFilePath);
                                             }
                                         }
                                         dtReportShape = null;
@@ -4890,8 +4916,8 @@ namespace SmartInventory.Controllers
                 {
                     streamWriter.Write(GeographicCoordinateSystem.WGS84.WKT);
                 }
-            }                 
-                       
+            }
+
             dtReport.Clear();
         }
 
@@ -8985,19 +9011,19 @@ namespace SmartInventory.Controllers
                                 List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
                                 List<string> reportTypeString = reportType;
 
-                                if (reportTypeString[0].Contains("GIS"))
+                                if (reportTypeString.Contains("GIS"))
                                 {
                                     lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryView(objExportEntitiesReport.objReportFilters);
                                 }
-                                if (reportTypeString[0].Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+                                if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
                                 {
                                     lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCdb(objExportEntitiesReport.objReportFilters);
                                 }
-                                if (reportTypeString[0].Contains("ADDITIONAL") && layerdetails.is_dynamic_control_enable)
+                                if (reportTypeString.Contains("ADDITIONAL") && layerdetails.is_dynamic_control_enable)
                                 {
                                     lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewAdditional(objExportEntitiesReport.objReportFilters);
                                 }
-                                if (reportTypeString[0].Contains("ALL"))
+                                if (reportTypeString.Contains("ALL"))
                                 {
                                     lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryView(objExportEntitiesReport.objReportFilters);
                                     if (layerdetails.is_dynamic_control_enable)
@@ -9341,7 +9367,7 @@ namespace SmartInventory.Controllers
                                         //LogHelper.GetInstance.WriteDebugLogTest($"Request Sent to get the data from database on: {DateTime.Now}", layer.layer_name);
                                         var layerdetails = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 
-                                        if (layerdetails.is_dynamic_control_enable== null)
+                                        if (layerdetails.is_dynamic_control_enable == null)
                                         {
                                             layerdetails.is_dynamic_control_enable = false;
                                         }
@@ -9356,19 +9382,19 @@ namespace SmartInventory.Controllers
                                         List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
                                         List<string> reportTypeString = reportType;
 
-                                        if (reportTypeString[0].Contains("GIS"))
+                                        if (reportTypeString.Contains("GIS"))
                                         {
                                             lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                         }
-                                        if (reportTypeString[0].Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
+                                        if (reportTypeString.Contains("CDB") && objExportEntitiesReport.objReportFilters.layerName == EntityType.Cable.ToString())
                                         {
                                             lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                         }
-                                        if (reportTypeString[0].Contains("ADDITIONAL") && layerdetails.is_dynamic_control_enable)
+                                        if (reportTypeString.Contains("ADDITIONAL") && layerdetails.is_dynamic_control_enable)
                                         {
                                             lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                         }
-                                        if(reportTypeString[0].Contains("") || reportTypeString[0].Contains("ALL"))
+                                        if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
                                         {
                                             lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             if (layerdetails.is_dynamic_control_enable)
