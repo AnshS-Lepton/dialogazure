@@ -7,7 +7,9 @@
     var dormant_count = 0;
     var total_count = 0;
     var  entityid_cable = Model.lstReportData.Where(r => r.entity_name == "Cable").Select(r => r.entity_id).FirstOrDefault();
-
+    var totalPlannedCount = Model.lstReportData.Where(x => x.entity_title == "Cable").Select(x => x.planned_count).FirstOrDefault();
+    var totalasbuiltCount = Model.lstReportData.Where(x => x.entity_title == "Cable").Select(x => x.as_built_count).FirstOrDefault();
+    var totalDormatCount = Model.lstReportData.Where(x => x.entity_title == "Cable").Select(x => x.dormant_count).FirstOrDefault();
 }
 @using SmartInventory.Settings;
 <input type="hidden" id="reportTypes" name="reportTypes" />
@@ -773,6 +775,10 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
             $("#reportType").val(list).trigger('chosen:updated');
             $("#reportTypes").val(list);
             entityids = @entityid_cable;
+            TotalPlannedCount = parseInt(@totalPlannedCount);
+            TotalAsBuiltCount = parseInt(@totalasbuiltCount);
+            TotalDormantCount = parseInt(@totalDormatCount);
+
         }
         else {
 
@@ -852,7 +858,9 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
             var reportType = $("#reportTypes").val();
             si.ExportEntityReportNewEnhancement(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount, reportType);
             //$("#dvReportProgress").hide();
-            $("#divSummary .dropfiles").trigger("click");
+            if (entityCheck == false) {
+                $("#divSummary .dropfiles").trigger("click");
+            }
             var mm = "";
 
         }
