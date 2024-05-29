@@ -336,6 +336,7 @@
                             @Html.DropDownListFor(m => m.objReportFilters.reportType, new List<SelectListItem>{
         @*new SelectListItem { Text = "All", Value = "ALL"},*@
 new SelectListItem { Text = "Gis Attributes", Value = "GIS"},
+new SelectListItem { Text = "Cdb Attributes", Value = "CDB"},
 new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
 
 }, new { @multiple = "multiple", @class = "chosen-select form-control", @id = "reportType" })
