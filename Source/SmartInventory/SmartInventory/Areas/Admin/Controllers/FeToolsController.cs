@@ -733,13 +733,13 @@ namespace SmartInventory.Areas.Admin.Controllers
                 else
                 {
                     objResp.status = ResponseStatus.FAILED.ToString();
-                    objResp.message = "Something went wrong while accepting User Tool!";
+                    objResp.message = "Something went wrong while rejecting User Tool!";
                 }
             }
             catch (Exception ex)
             {
                 objResp.status = ResponseStatus.FAILED.ToString();
-                objResp.message = "Something went wrong while accepting User Tool!";
+                objResp.message = "Something went wrong while rejecting User Tool!";
             }
             return Json(objResp, JsonRequestBehavior.AllowGet);
 
