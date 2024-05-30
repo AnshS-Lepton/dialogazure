@@ -1719,6 +1719,7 @@ namespace SmartInventory.Controllers
                                             //        lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             //    }
                                             //}
+
                                         }
                                         else
                                         {
