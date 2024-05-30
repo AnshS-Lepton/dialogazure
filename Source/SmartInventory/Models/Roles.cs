@@ -314,7 +314,7 @@ namespace Models
         public string serial_number { get; set; }
         public string barcode { get; set; }
         public DateTime date_value { get; set; }
-        public bool is_accepted {  get; set; }
+        public string is_accepted {  get; set; }
         [NotMapped]
         public int? created_by { get; set; }
         [NotMapped]

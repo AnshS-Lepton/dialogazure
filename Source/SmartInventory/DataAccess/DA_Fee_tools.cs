@@ -156,7 +156,21 @@ namespace DataAccess
             {
                 using (MainContext context =new MainContext())
                 {
-                    string query = string.Format(@"update user_tools_mapping utm set is_accepted ='True' where utm.id ={0}", id);
+                    string query = string.Format(@"update user_tools_mapping utm set is_accepted ='Accept' where utm.id ={0}", id);
+                    var value_ = context.Database.ExecuteSqlCommand(query);
+                    //context.Database.SqlQuery<bool>(query).FirstOrDefault();
+                    return value_;
+                }
+            }
+            catch { throw; }
+        }
+        public int RejectedUserTool(int id)
+        {
+            try
+            {
+                using (MainContext context = new MainContext())
+                {
+                    string query = string.Format(@"update user_tools_mapping utm set is_accepted ='Reject' where utm.id ={0}", id);
                     var value_ = context.Database.ExecuteSqlCommand(query);
                     //context.Database.SqlQuery<bool>(query).FirstOrDefault();
                     return value_;
