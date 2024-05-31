@@ -28,20 +28,29 @@ namespace Utility
                 })
                 .ToDictionary(t => t.DbColName, t => t.TemplateColName);
         }
-        public static string GetFormattedNumber(decimal number,string formatType)
+        public static string GetFormattedNumber(decimal number, string formatType)
         {
-            if(formatType.ToLower()=="saarc")
+            if (formatType.ToLower() == "saarc")
                 return number.ToString("N0");
             else if (formatType.ToLower() == "europe")
                 return number.ToString("N0", CultureInfo.GetCultureInfo("en-US"));
-            else 
+            else
                 return number.ToString();
 
         }
         public static string GetFormattedNumber(double number, string formatType)
         {
             if (formatType.ToLower() == "saarc")
-                return number.ToString("N0");
+            {
+                if (number % 1 == 0) // Check if the number is an integer
+                {
+                    return number.ToString("N0"); 
+                }
+                else
+                {
+                    return number.ToString("N2"); 
+                }
+            }
             else if (formatType.ToLower() == "europe")
                 return number.ToString("N0", CultureInfo.GetCultureInfo("en-US"));
             else
@@ -67,7 +76,7 @@ namespace Utility
             else
                 return number.ToString();
         }
-        
+
         public static List<Mapping> GetBulkUploadColumnMappingTemplate(string filepath)
         {
             List<Mapping> lstMapping = new List<Mapping>();
@@ -355,7 +364,7 @@ namespace Utility
         public static string FTPFileUpload(string filePathToUpload, string filename, string ftpPath, string sUserName, string sPassword)
         {
 
-             WebClient client = null;
+            WebClient client = null;
             try
             {
 
