@@ -718,6 +718,33 @@ namespace SmartInventory.Areas.Admin.Controllers
             return Json(objResp, JsonRequestBehavior.AllowGet);
 
         }
+        [HttpPost]
+        public JsonResult RejectedUserTools(int id)
+        {
+            JsonResponse<string> objResp = new JsonResponse<string>();
+            try
+            {
+                var output = new BL_Fe_Tools().RejectedUserTool(id);
+                if (output > 0)
+                {
+                    objResp.status = ResponseStatus.OK.ToString();
+                    objResp.message = "User Tool is rejected successfully!";
+                }
+                else
+                {
+                    objResp.status = ResponseStatus.FAILED.ToString();
+                    objResp.message = "Something went wrong while rejecting User Tool!";
+                }
+            }
+            catch (Exception ex)
+            {
+                objResp.status = ResponseStatus.FAILED.ToString();
+                objResp.message = "Something went wrong while rejecting User Tool!";
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+
+        }
+        
 
 
         [HttpPost]

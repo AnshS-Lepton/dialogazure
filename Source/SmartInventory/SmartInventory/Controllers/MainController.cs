@@ -1878,7 +1878,8 @@ namespace SmartInventory.Controllers
             Models.Admin.ListTemplateForDropDown objTemplateForDropDown = new Models.Admin.ListTemplateForDropDown();
             objTemplateForDropDown.lstBindProject = new BLProject().BindProject(objEntityLstCount.objFilterAttributes.dd_networkStatus).OrderBy(m => m.key).ToList();
             objEntityLstCount.lstBindProjectCode = objTemplateForDropDown.lstBindProject;
-
+            objTemplateForDropDown.lstBindRoot = new BLProject().BindRootId();
+            objEntityLstCount.lstBindRootId = objTemplateForDropDown.lstBindRoot;
             objEntityLstCount.objFilterAttributes.SelectedParentUsers = objEntityLstCount.objFilterAttributes.SelectedParentUser != null && objEntityLstCount.objFilterAttributes.SelectedParentUser.Count > 0 ? string.Join(",", objEntityLstCount.objFilterAttributes.SelectedParentUser.ToArray()) : "";
             objEntityLstCount.objFilterAttributes.SelectedUserIds = objEntityLstCount.objFilterAttributes.SelectedUserId != null && objEntityLstCount.objFilterAttributes.SelectedUserId.Count > 0 ? string.Join(",", objEntityLstCount.objFilterAttributes.SelectedUserId.ToArray()) : "";
 

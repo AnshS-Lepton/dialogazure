@@ -920,14 +920,15 @@ namespace DataAccess
                 return repo.ExecuteProcedure<bulkDeleteOperation>("fn_delete_bulkoperation_entities",
                     new
                     {
-                        p_geom = objBulkDelete.geom,
+                        p_geom = objBulkDelete.geom,//
                         p_userid = objBulkDelete.user_id,
                         p_selectiontype = objBulkDelete.selection_type,
                         p_radius = objBulkDelete.buff_Radius,
                         p_network_status = objBulkDelete.ntk_type,
                         p_entity_type = objBulkDelete.entity_select,
                         P_entity_sub_type = objBulkDelete.entity_sub_type,
-                        p_system_id = objBulkDelete.system_id
+                        p_system_id = objBulkDelete.system_id,
+                        p_root_id = objBulkDelete.rootid
                     }).ToList();
 
             }
