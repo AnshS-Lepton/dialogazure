@@ -17761,7 +17761,8 @@ var Main = function () {
         popup.LoadModalDialog('CHILD', 'Library/GetPodDetailsInBulk', { geom: _geom, entity_sub_type: _entitySubtype }, pageTitleText, modalClass);
     }
     this.funBulkDeleteEntity = function (_networkStatus, _entitytype, _entitySubtype, system_id) {
-
+        debugger;
+        var rootid = $("#ddl_RootId").val();
         var _data = {
             geom: $('#objFilterAttributes_geom').val(),
             selection_type: $('#objFilterAttributes_selection_type').val(),
@@ -17770,6 +17771,7 @@ var Main = function () {
             entity_select: _entitytype.replace(/ /g, ''),
             entity_sub_type: _entitySubtype,
             system_id: parseInt(system_id),
+            rootid: rootid,
         };
         ////;
         //var confirmAlertMsg = '<b>In the selected region, All the '+_entitytype+' Entities will be deleted permanently</b>,<br> Do you Want to Continue?</br>';

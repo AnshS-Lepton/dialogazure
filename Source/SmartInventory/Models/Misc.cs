@@ -286,6 +286,7 @@ namespace Models
 		public string entity_select { get; set; }
 		public string entity_sub_type { get; set; }
         public int system_id { get; set; }
+        public int rootid { get; set; }
     }
 	public class ProjectSpecificView : IProjectSpecification, IOwnershipInfo
 	{
@@ -716,9 +717,9 @@ namespace Models
 		[NotMapped]
 		public IList<DropDownMaster> lstNetworkStatus { get; set; }
 	public List<KeyValueDropDown> lstBindProjectCode { get; set; }
-	
+        public List<KeyValueDropDown> lstBindRootId { get; set; }
 
-}
+    }
 	public class BulkAsBuiltFilterAttribute : CommonGridAttributes
 	{
 		public int userid { get; set; }
@@ -728,7 +729,8 @@ namespace Models
 		public double buff_Radius { get; set; }
 		public string entityType { get; set; }
         public string lstBindProjectCode { get; set; }
-		public List<int> SelectedParentUser { get; set; }
+        public string lstBindRootId { get; set; }
+        public List<int> SelectedParentUser { get; set; }
 		public List<int> SelectedUserId { get; set; }
 		public int roleid { get; set; }
 		public string SelectedParentUsers { get; set; }
