@@ -91,7 +91,12 @@ namespace BusinessLogics.Admin
             return new DAProject().BindProject(network_stage);
 
         }
+        public List<KeyValueDropDown> BindRootId()
+        {
 
+            return new DAProject().BindRootId();
+
+        }
         public List<KeyValueDropDown> BindPlanning(string network_stage, int ddlproject_id)
         {
 

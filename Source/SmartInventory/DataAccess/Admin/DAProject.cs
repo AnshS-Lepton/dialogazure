@@ -119,6 +119,16 @@ namespace DataAccess.Admin
             catch { throw; }
 
         }
+        public List<KeyValueDropDown> BindRootId()
+        {
+            try
+            {
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_rootId_list", new { }, true);
+
+            }
+            catch { throw; }
+
+        }
         public List<KeyValueDropDown> BindPlanning(string network_stage, int ddlproject_id)
         {
             try
