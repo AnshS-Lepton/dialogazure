@@ -240,76 +240,7 @@
                     </li>
                     <li class="techSep"></li>
                 }
-                @if (Model.lstUserModule.Contains("SAP") || (Model.lstUserModule.Contains("SFS")) || (Model.lstUserModule.Contains("SPI")))
-                {
-                    //int count = 0;
-                    <li>
-                        @*pk*@
-                        <a href="#" class="iconBaricomoon" title="SAP" onclick="si.SAP.OpenSap();">
-                            <span class="icon-SAP"></span>
-                        </a>
-                        @*endpk*@
-                        @*<a href="#" class="iconBaricomoon" title="Launchpad" id="Launchpad" onclick="si.SAP.showSAPMenu();">
-                    <span class="icon-ENTITYSELECTION"></span>
-                </a>
-                @if (Model.lstUserModule.Contains("SAP") == true || Model.lstUserModule.Contains("SFS") == true || Model.lstUserModule.Contains("SFS") == true)
-                {
-                    count++;
-                }
-                @if (count > 0)
-                {
-                    <ul id="showLaunchpadMenu">
-                        @if (Model.lstUserModule.Contains("SAP"))
-                        {
-                            <li>
-                                <a href="#" class="iconBaricomoon " title="SAP" onclick="si.SAP.OpenSap();">
-                                    <span class="icon-SAP"></span>
-                                </a>
-                            </li>
-                        }
-                        @if (Model.lstUserModule.Contains("SFS") && ApplicationSettings.isFeasibilityEnabled)
-                        {
-                            <li class="techSep"></li>
-                            <li>
-                                <a href="#" target="_blank" class="iconBaricomoon" id="Cpfinder" title="@Resources.Resources.SI_GBL_GBL_NET_GBL_001" onclick="si.SAP.OpenSFS();">
-
-                                    <span class="icon-Connection-Path-finder"></span>
-
-                                </a>
-
-                            </li>
-                        }
-                        @if (Model.lstUserModule.Contains("SPI") && ApplicationSettings.isSmartPlannerEnabled)
-                        {
-                            <li class="techSep"></li>
-                            <li>
-                                <a href="#" class="iconBaricomoon" onclick="si.showPlannerIntegration()" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_039">
-                                    <span class="icon-Shift"></span>
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                }
-                else
-                {
-                    <ul style="opacity:0; visibility:hidden;"></ul>
-
-                }*@
-                    </li>
-                    <li class="techSep"></li>
-                }
-                @*@if (Model.lstUserModule.Contains("GXML"))
-        {
-
-            <li>
-                <a href="#" class="iconBaricomoon" title="XML DashBoard" onclick="si.XMLDashboard.showXMLDetails();">
-                    <span class="icon-dashboard"></span>
-                </a>
-            </li>
-            <li class="techSep"></li>
-        }*@
-
-
+                                
                 @if (Model.lstUserModule.Contains("P-XML"))
                 {
                     <li>
