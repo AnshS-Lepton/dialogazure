@@ -250,7 +250,7 @@ hr {
     }
 
 #planInfo {
-    background-image: url('../../Content/images/loading_new.gif') !important;
+    background-image: url('../../Content/images/loading_new.gif');
     background-position: center;
     background-repeat: no-repeat;
 }

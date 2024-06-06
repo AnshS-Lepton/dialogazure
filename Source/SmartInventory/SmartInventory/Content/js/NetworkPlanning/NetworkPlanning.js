@@ -190,8 +190,8 @@ var NetworkPlanning = function () {
     }
 
     this.ViewAutoPlanningData = function () {
-         
-       
+
+
         if (app.autoplanningplanid > 0 || si.autoplanid > 0) {
             si.autoplanid = 0;
             app.autoplanningplanid = 0;
@@ -201,8 +201,8 @@ var NetworkPlanning = function () {
         ajaxReq('Plan/GetPlanData', {}, true, function (resp) {
             $("#planInfo").html(resp);
             // $("#planInfo").css('padding-left', '11px');
-            //$("#planInfo").css('padding-top', '10px');
-            //$("#planInfo").css('background-image', 'none');
+           //$("#planInfo").css('padding-top', '10px');
+            $("#planInfo").css('background-image', 'none');
         }, false, false);
     }
 

@@ -236,11 +236,14 @@
             $("#closeModalPopup").trigger("click");
         }
         if (data.pageMsg.status == "Update") {
-            if ('@Model.source' == "")
+            if ('@Model.source' == '') {
                 $("#closeChildPopup").trigger("click");
-            else
+                $("#btnResetSearchFilter").trigger("click");
+            }
+            else {
                 $("#closeModalPopup").trigger("click");
-            $("#btnTicketData").trigger("click");
+                $("#btnResetSearchFilter").trigger("click");
+            }
         }
         alert(data.pageMsg.message, 'Success', MultilingualKey.GBL_GBL_GBL_JQ_GBL_001);
         si.clearDraggableLibrary();
