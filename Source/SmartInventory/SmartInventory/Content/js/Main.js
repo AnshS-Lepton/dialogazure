@@ -5905,7 +5905,7 @@ var Main = function () {
         app.distanceWidget_A = app.getNewDistanceWidget(radius, center, marker);
     }
     this.getNewDistanceWidget = function (radius, center, marker) {
-        return new DistanceWidget({
+        return new Distance_Widget({
             map: app.map,
             distance: radius,
             center: center,

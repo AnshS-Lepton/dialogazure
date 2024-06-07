@@ -1,4 +1,4 @@
-function DistanceWidget(opt_options) {
+function Distance_Widget(opt_options) {
     var options = opt_options || {};
 
     this.setValues(options);
@@ -16,7 +16,7 @@ function DistanceWidget(opt_options) {
     
 
     // Create a new radius widget
-    var radiusWidget = new RadiusWidget(options['distance'] || 0 , marker);
+    var radiusWidget = new Radius_Widget(options['distance'] || 0 , marker);
     ;
     if (options['distance'] == 0) {
         marker.setLabel("");
@@ -39,7 +39,7 @@ function DistanceWidget(opt_options) {
 }
 
 // prototype
-DistanceWidget.prototype = new google.maps.MVCObject();
+Distance_Widget.prototype = new google.maps.MVCObject();
 
 //To set the widget at center 
 //DistanceWidget.prototype.fitCenter = function () {
@@ -47,7 +47,7 @@ DistanceWidget.prototype = new google.maps.MVCObject();
 //    si.map.setCenter(new_center_point);
 //};
 
-function RadiusWidget(opt_distance, marker) {
+function Radius_Widget(opt_distance, marker) {
     var circle = new google.maps.Circle({
         strokeWeight: 0.5,
         strokeColor: '#EE9A4D',
@@ -70,9 +70,9 @@ function RadiusWidget(opt_distance, marker) {
     this.gCircle = circle;
 }
 
-RadiusWidget.prototype = new google.maps.MVCObject();
+Radius_Widget.prototype = new google.maps.MVCObject();
 
-RadiusWidget.prototype.distance_changed = function () {
+Radius_Widget.prototype.distance_changed = function () {
     this.set('radius', this.get('distance') * 1);
 };
 
