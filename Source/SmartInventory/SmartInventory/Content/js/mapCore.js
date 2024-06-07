@@ -21,7 +21,12 @@ function checkLastZoom() {
                 let isValid = (arrActiveRegionlayers.length > 0 || arrActiveProvincelayers.length > 0);
                 if (isValid) {
                     si.reqver++;
-                    si.LoadLayersOnMap(false);
+                    if (si.isNetworkTicketReq) {                       
+                        si.Networkticket.shoNWTNetwork(si.ticketId);
+                        si.Networkticket.removeExistingNetwork();
+                    }
+                    else
+                        si.LoadLayersOnMap(false);
                     if (si.IsVecorLayerEnabled) {
                         si.fetchVectorDelta();
                         si.RenderVectorLayer(-1);
