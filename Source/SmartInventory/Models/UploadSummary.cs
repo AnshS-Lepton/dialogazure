@@ -32,6 +32,8 @@ namespace Models
         public bool is_child_entity { get; set; }
         [NotMapped]
         public List<ErrorMessage> lstErrorMessage { get; set; }
+        [NotMapped]
+        public List<int> lstuploadId { get; set; }
     }
 
     [NotMapped]

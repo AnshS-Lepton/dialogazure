@@ -125,6 +125,7 @@
         'btnImpDataPrevious3': '#btnImpDataPrevious3',
 
         "divUpdExcel": "#divUpdExcel",
+        "divkmlUpdExcel": "#divkmlUpdExcel",
         "divUpdJson": "#divUpdJson",
         "divUpdKML": "#divUpdKML",
         "divUpdTab": "#divUpdTab",
@@ -938,6 +939,9 @@
                 for (var i = 0; i < kml.length; i++) {
                     fileData.append(kml[i].name, kml[i]);
                 }
+                //for (var i = 0; i < kmlexcel.length; i++) {
+                //    fileData.append(kmlexcel[i].name, kmlexcel[i]);
+                //}
             }
 
             if (_templateType == "SHP") {
@@ -1109,7 +1113,10 @@
                 app.resetValue();
                 $(app.DE.uploadcontrols).show();
                 $(app.DE.DownloadTemplate).show();
-
+                if (entityType == "Cable") {
+                    $(app.DE.divkmlUpdExcel).show();
+                }
+                else { $(app.DE.divkmlUpdExcel).hide(); }
                 //commented by shazia 
                 //var _templateType = $('#ddlTemplateType :selected').val();
                 //if (_templateType == "DXF") {
@@ -1533,11 +1540,11 @@
         $(app.DE.divUpdDxf).hide();
         $(app.DE.divUpdShape).hide();
         switch (_templateType) {
-            case 'KML': { $(app.DE.divUpdKML).show(); $(app.DE.divDxfSourceId).hide(); $(app.DE.DownloadTemplate).removeAttr('disabled'); break; }
-            case 'SHP': { $(app.DE.divUpdShape).show(); $(app.DE.divDxfSourceId).hide(); $(app.DE.DownloadTemplate).removeAttr('disabled'); break; }
+            case 'KML': { $(app.DE.divUpdKML).show(); $(app.DE.divkmlUpdExcel).show(); $(app.DE.divDxfSourceId).hide(); $(app.DE.DownloadTemplate).removeAttr('disabled'); break; }
+            case 'SHP': { $(app.DE.divUpdShape).show(); $(app.DE.divkmlUpdExcel).hide(); $(app.DE.divDxfSourceId).hide(); $(app.DE.DownloadTemplate).removeAttr('disabled'); break; }
             case 'DXF': {
 
-
+                $(app.DE.divkmlUpdExcel).hide();
                 $(app.DE.divUpdDxf).show();
                 $(app.DE.divDxfSourceId).show();
                 $(app.DE.DownloadTemplate).removeAttr('disabled');
@@ -1586,7 +1593,7 @@
                 $(app.DE.DownloadTemplate).removeAttr('disabled');
                 break;
             }
-            default: { $(app.DE.divUpdExcel).show(); $(app.DE.divDxfSourceId).hide(); break; }
+            default: { $(app.DE.divUpdExcel).show(); $(app.DE.divDxfSourceId).hide(); $(app.DE.divkmlUpdExcel).hide(); break; }
         }
 
     }
