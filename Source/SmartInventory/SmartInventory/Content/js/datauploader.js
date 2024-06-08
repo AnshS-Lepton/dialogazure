@@ -1539,8 +1539,9 @@
         $(app.DE.divUpdTab).hide();
         $(app.DE.divUpdDxf).hide();
         $(app.DE.divUpdShape).hide();
+        $(app.DE.divkmlUpdExcel).hide();
         switch (_templateType) {
-            case 'KML': { $(app.DE.divUpdKML).show(); $(app.DE.divkmlUpdExcel).show(); $(app.DE.divDxfSourceId).hide(); $(app.DE.DownloadTemplate).removeAttr('disabled'); break; }
+            case 'KML': { $(app.DE.divUpdKML).show(); $(app.DE.divkmlUpdExcel).hide(); $(app.DE.divDxfSourceId).hide(); $(app.DE.DownloadTemplate).removeAttr('disabled'); break; }
             case 'SHP': { $(app.DE.divUpdShape).show(); $(app.DE.divkmlUpdExcel).hide(); $(app.DE.divDxfSourceId).hide(); $(app.DE.DownloadTemplate).removeAttr('disabled'); break; }
             case 'DXF': {
 
