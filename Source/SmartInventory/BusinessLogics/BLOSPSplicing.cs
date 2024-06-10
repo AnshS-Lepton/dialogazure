@@ -111,9 +111,19 @@ namespace BusinessLogics
             return new DAConnectionInfo().utilizationReset(listConnection);
         }
 
-        public DbMessage uploadBulkConnections(string listConnectionInfo, int userId)
+        //public DbMessage uploadBulkConnections(string listConnectionInfo, int userId)
+        //{
+        //    return new DATempConnectionInfo().uploadBulkConnections(listConnectionInfo, userId);
+        //}
+
+        public DbMessage uploadBulkConnections(string splicing_type, int userId)
         {
-            return new DATempConnectionInfo().uploadBulkConnections(listConnectionInfo, userId);
+            return new DATempConnectionInfo().uploadBulkConnection(splicing_type, userId);
+        }
+
+        public DbMessage BulkUploadvalidateTempConnection(int userId, string splcing_type)
+        {
+            return new DATempConnectionInfo().BulkUploadvalidateTempConnection(userId, splcing_type);
         }
         public void BulkUploadTempConnection(List<TempConnectionInfoMaster> listConnectionInfo)
         {
