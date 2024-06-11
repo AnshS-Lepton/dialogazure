@@ -230,6 +230,8 @@ namespace SmartInventory.Controllers
                             fname = Path.Combine(Server.MapPath("~/Uploads/"), fname);
 
                             file.SaveAs(fname);
+                            Session["file_Name"] = fname;
+                            lstfilename.Add(fname);
                             //string FileName = Path.GetFileNameWithoutExtension(fname);
                             var SourceId = "";
                             if (Path.GetExtension(fname) == ".dxf")
@@ -308,6 +310,9 @@ namespace SmartInventory.Controllers
                                 summary = blDataUploader.Save(summary);
                                 summary.status_message = ConstantsKeys.PROCESSING;
                                 count = summary.id;
+                                fluploadid.Add(count);
+                                //lstfilename.Add(file.FileName);
+                                columnMappingTemplate.lst_UploadId = fluploadid;
                             }
                             blDataUploader.UpdateStatus(summary);
                             //status = uploadExcelOrKML.UploadExcelorKML(summary, file, fname, EnumEntityType, dataTable);
