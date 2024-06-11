@@ -1,0 +1,162 @@
+﻿@model Models.trenchExecutionList
+@using Models;
+
+<style>
+    .removeAT {
+        color: red;
+        cursor: pointer;
+        text-align: center;
+        line-height: 1.5;
+        font-weight: bold;
+    }
+
+    .referenceRowAdd {
+        margin: 2px 14px 0px 0px;
+    }
+
+    .col-md-2 {
+        width: 16.66666667%;
+    }
+
+    .form_referance_Bg {
+        padding: 0px;
+        margin: 0px;
+        position: relative;
+        padding-top: 3.4rem;
+    }
+
+        .form_referance_Bg .referance_Label_Header {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+
+    .form-horizontal .control-label {
+        padding-top: 0px;
+    }
+
+    .referance_Label_Header .control-label {
+        font-weight: bold;
+    }
+
+    #dvAT .libDetail {
+        float: left;
+    }
+
+    #dvAT {
+        overflow-x: hidden;
+    }
+
+    #divATAttachment {
+        overflow: auto;
+    }
+
+    .form-group {
+        display: flex;
+        align-items: center;
+    }
+
+        .form-group .col-md-3, .form-group .col-md-2, .form-group .col-md-1 {
+            padding: 0 10px;
+        }
+
+    .icon-close, .referenceRowAdd {
+        cursor: pointer;
+        margin-left: 5px;
+    }
+</style>
+
+<!DOCTYPE html>
+<span class="referenceRowAdd" id="btnAddExecutionRow" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_042"></span>
+<div id="dvExecution" class="space-pad accp-Overflow">
+    @if (Model.listExecutionRecords.Count > 0)
+    {
+
+        for (int i = 0; i < Model.listExecutionRecords.Count(); i++)
+        {
+            <div class="form-group row d-flex align-items-center">
+                @Html.HiddenFor(m => m.listExecutionRecords[i].id, new { Name = string.Format("ExecutionMethod.listExecutionRecords[{0}].id", i) });
+                @Html.HiddenFor(m => m.listExecutionRecords[i].execution_length, new { Name = string.Format("ExecutionMethod.listExecutionRecords[{0}].execution_length", i) });
+                <label class="control-label col-md-2 col-sm-2"for="ddl_Execution">Execution Method:</label>
+                <div class="col-md-4">
+                    <select id="ddl_Execution" name="@string.Format("ExecutionMethod.listExecutionRecords[{0}].execution_method", i)" class="chosen-select form-group" onchange="removeBorder(this)">
+                        <option value="0">-Select-</option>
+                        @if (Model.listExecutionmethod.Count > 0)
+                        {
+                            foreach (var entityRef in Model.listExecutionmethod)
+                            {
+                                var selected = entityRef.dropdown_value == Model.listExecutionRecords[i].execution_method ? "selected" : "";
+                                <option value="@entityRef.dropdown_value" data-planningname="@entityRef.dropdown_key" @selected>@entityRef.dropdown_value</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <label class="control-label col-md-2 col-sm-2" for="txtExLength">Execution Length:</label>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(m => m.listExecutionRecords[i].execution_length, new { Name = string.Format("ExecutionMethod.listExecutionRecords[{0}].execution_length", i), @class = "form-control", @maxlength = "150" })
+                </div>
+                <div class="d-flex">
+                    <span class="icon-close removeAT" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" onclick="delRow1"></span>
+                </div>
+            </div>
+        }
+
+    }
+    else
+    {
+
+        <input name="ExecutionMethod.listExecutionRecords[0].execution_method" id="listExecution_0_method" type="hidden" value="@Model.execution_method">
+        <input name="ExecutionMethod.listExecutionRecords[0].execution_length" id="listExecution_0_length" type="hidden" value="@Model.execution_length">
+        <div class="row AT_row_1 len">
+            <div class="form-group row d-flex align-items-center">
+                <label class="control-label col-md-2 col-sm-2" for="ddl_Execution">Execution Method:</label>
+                <div class="col-md-4">
+                    <select id="ddl_Execution" name="@string.Format("ExecutionMethod.listExecutionRecords[{0}].execution_method", 0)" class="chosen-select form-group" onchange="removeBorder(this)">
+                        <option value="0">-Select-</option>
+                        @if (Model.listExecutionmethod.Count > 0)
+                        {
+                            foreach (var entityRef in Model.listExecutionmethod)
+                            {
+                                <option value="@entityRef.dropdown_value" data-planningname="@entityRef.dropdown_key">@entityRef.dropdown_value</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <label class="control-label col-md-2 col-sm-2" for="txtExLength">Execution Length:</label>
+                <div class="col-md-4">
+                    <input type="number" class="form-control"  id="execution_length" name="@string.Format("ExecutionMethod.listExecutionRecords[{0}].execution_length", 0)" maxlength="150"/>
+                </div>
+                <div class="d-flex">
+                    <span class="icon-close removeAT" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" onclick="delRow1(0)"></span>
+                </div>
+            </div>
+        </div>
+
+    }
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '100%' });
+        //for(var i=0;i<$('#dvATAcceptance .assign-calen').length;i++)
+        //{
+        //    si.setSurveyDateTimeCalendar('ATAcceptance.listAtStatusRecords['+i+'].status_date', 'imgTargetDate_'+i+'', '', true);
+        //}
+        $("#btnAddExecutionRow").on("click", function () {
+            debugger;
+            var RowIndex = $('#dvExecution .row ').length;
+            AddExecutionRow(RowIndex,@Model.systemId, @Model.createdBy, '@Model.entityType');
+        });
+    });
+
+    $(document).on('keyup keypress', function(e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+</script>

@@ -265,6 +265,7 @@
     <Compile Include="BLUser.cs" />
     <Compile Include="BLWorkSpace.cs" />
     <Compile Include="BLIntegrationSuperSet.cs" />
+    <Compile Include="BLExecution.cs" />
     <Compile Include="Feasibility\BLFeasibility.cs" />
     <Compile Include="Feasibility\CommonHelpers.cs" />
     <Compile Include="GlobalSuppressions.cs" />

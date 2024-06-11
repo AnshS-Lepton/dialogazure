@@ -158,6 +158,7 @@
     <Compile Include="DADataProcessing.cs" />
     <Compile Include="DADeviceSearch.cs" />
     <Compile Include="DADsa.cs" />
+    <Compile Include="DAExecution.cs" />
     <Compile Include="DAGipipe.cs" />
     <Compile Include="DADuct.cs" />
     <Compile Include="DADynamicAttributes.cs" />

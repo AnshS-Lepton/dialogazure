@@ -991,6 +991,8 @@ var rowIndexForDelte;
 function AddATStatusRow(RowIndex, SystemId, CreatedBy, entitytype) {
     //<span class="shaftRowDelete removeAT" title="Delete" style="">x</span>
     //// 
+    debugger;
+
     rowIndexForDelte = RowIndex;
     var Row = "";
     if (RowIndex <= 50) {
@@ -1073,6 +1075,91 @@ function delRow(rowIndex) {
 
 
 }
+
+function delRow1(rowIndex) {
+    debugger;
+    var dvID = 'AT_row_' + rowIndex;
+    var len = $('#dvExecution > .len').length;
+    if (len == 1) {
+        alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_145);//Atleast 1 status row required!
+    }
+    else {
+        //Are you sure you want to delete this row?
+        confirm(MultilingualKey.SI_OSP_GBL_JQ_GBL_006, function () {
+
+            $('.' + dvID).remove();
+            //// 
+            var statusRow = $("#dvExecution .row");
+
+            statusRow.each(function (i, val) {
+
+                if (rowIndex <= i) {
+                    $(this).find("input,select,span").each(function (n, nval) {
+
+                        if ($(this).attr('name') != undefined)
+                            $(this).attr('name', $(this).attr('name').replace(/\[\d+\]/, "[" + (i) + "]"));
+
+                        if ($(this).attr('id') != undefined)
+                            $(this).attr('id', $(this).attr('id').replace(/\_\d+\_/, "_" + (i) + "_"));
+
+                        if ($(this).attr('onclick') != undefined)
+                            $(this).attr('onclick', $(this).attr('onclick').replace(/\(\d+\)/, "(" + (i) + ")"));
+
+
+                    });
+
+                }
+
+                var cls = $(val).attr('class').replace(/[0-9]/, i);
+                $(val).removeClass();
+                $(val).addClass(cls);
+
+            });
+
+        });
+    }
+
+
+}
+
+function AddExecutionRow(RowIndex, SystemId, CreatedBy, entitytype) {
+    debugger; 
+    rowIndexForDelte = RowIndex;
+    var Row = "";
+    if (RowIndex <= 50) {
+        Row = '<div class="row AT_row_' + RowIndex + ' len">';
+
+        Row += '<div class="col-md-3"><label for="ddl_Execution" class="form-label">Execution Method</label><select id="ddl_Execution" name="ExecutionMethod.listExecutionRecords[' + RowIndex + '].execution_method" class="chosen-select form-group" onchange="removeBorder(this)"><option value="0">-Select-</option><option value="OT" data-planningname="OT">OT</option><option value="HDD" data-planningname="HDD">HDD</option><option value="PCC" data-planningname="PCC">PCC</option><option value="Clamping" data-planningname="Clamping">Clamping</option><option value="Other" data-planningname="Other">Other</option></select></div>';
+
+        Row += '<div class="col-md-4" ><label for="ddl_Execution" class="form-label">Execution Length</label><input class="form-control" id="execution_length" name="ExecutionMethod.listExecutionRecords[' + RowIndex + '].execution_length"  maxlength="150" name="execution_length" type="number" value=""></div>';
+
+        Row += '<div class="col-md-1" ><span class="icon-close removeAT" onclick="delRow(' + RowIndex + ')" title="' + MultilingualKey.SI_GBL_GBL_GBL_GBL_002 + '" style=""></span></div>';
+
+       /* Row += '<input name="listExecutionRecords[' + RowIndex + '].id" data-val="true" data-val-number="The field id must be a number." data-val-required="The id field is required." id="listExecution_' + RowIndex + '__id" type="hidden" value="0">';
+
+        Row += '<input name="listExecutionRecords[' + RowIndex + '].created_by" data-val="true" data-val-number="The field created_by must be a number." data-val-required="The created_by field is required." id="listExecution_' + RowIndex + '__created_by" type="hidden" value="' + CreatedBy + '">';
+
+        Row += '<input name="listExecutionRecords[' + RowIndex + '].system_id" data-val="true" data-val-number="The field system_id must be a number." data-val-required="The system_id field is required." id="listExecution_' + RowIndex + '__system_id" type="hidden" value="' + SystemId + '">';
+
+        Row += '<input name="listExecutionRecords[' + RowIndex + '].entity_type" id="listAtAcceptance_0__entity_type" type="hidden" value="' + entitytype + '">';
+
+        Row += '<input name="listExecutionRecords[' + RowIndex + '].modified_on" data-val="true" data-val-date="The field modified_on must be a date." id="listExecution_' + RowIndex + '__modified_on" type="hidden" value="">';
+
+        Row += '<input name="listExecutionRecords[' + RowIndex + '].modified_by" data-val="true" data-val-number="The field modified_by must be a number." id="listExecution_' + RowIndex + '__modified_by" type="hidden" value="">'
+*/
+        Row += '</div>';
+
+         $('#dvExecution').append(Row);
+         $('.chosen-select').chosen({ width: '100%' });
+
+         
+         
+    }
+    else {
+        alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_007);//Maximum 50 rows can be added!
+    }
+}
+
 
 function AddRemarkRow(RowIndex, SystemId, rowStage, _rowRemarks) {
     rowIndexForDelte = RowIndex;

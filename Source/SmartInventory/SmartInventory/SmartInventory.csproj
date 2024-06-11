@@ -2314,6 +2314,7 @@
     <Content Include="Views\Library\_CDBAttributes.cshtml" />
     <Content Include="Views\ISP\_AddDuctTP.cshtml" />
     <Content Include="Views\ISP\_AddISPDuct.cshtml" />
+    <Content Include="Views\Library\_trenchExecution.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

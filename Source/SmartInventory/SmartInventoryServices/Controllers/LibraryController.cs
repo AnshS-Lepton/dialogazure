@@ -6760,7 +6760,11 @@ namespace SmartInventoryServices.Controllers
 					{
 						SaveATAcceptance(objTrench.ATAcceptance, objTrench.system_id, objTrench.user_id);
 					}
-				}
+                    if (objTrench.ExecutionMethod != null && objTrench.system_id > 0)
+                    {
+                        SaveExecutionmethod(objTrench.ExecutionMethod, objTrench.system_id, objTrench.user_id);
+                    }
+                }
 				else
 				{
 					objTrench.objPM.status = ResponseStatus.VALIDATION_FAILED.ToString();
@@ -6817,19 +6821,21 @@ namespace SmartInventoryServices.Controllers
 			objTrenchIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objTrenchIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
 			objTrenchIn.lstTrenchServingType = objDDL.Where(x => x.dropdown_type == DropDownType.trench_serving_type.ToString()).ToList();
-		}
-		#endregion
+            //objTrenchIn.ExecutionMethodsIn = objDDL.Where(x => x.dropdown_type == DropDownType.execution_method.ToString()).ToList();
 
-		#endregion
+        }
+        #endregion
 
-		#region FMS
-		#region Add FMS
-		/// <summary> Add FMS </summary>
-		/// <param name="data">networkIdType,systemId,geom,userId</param>
-		/// <returns>FMS Details</returns>
-		/// <CreatedBy>Antra Mathurf</CreatedBy>
+        #endregion
 
-		public ApiResponse<FMSMaster> AddFMS(ReqInput data)
+        #region FMS
+        #region Add FMS
+        /// <summary> Add FMS </summary>
+        /// <param name="data">networkIdType,systemId,geom,userId</param>
+        /// <returns>FMS Details</returns>
+        /// <CreatedBy>Antra Mathurf</CreatedBy>
+
+        public ApiResponse<FMSMaster> AddFMS(ReqInput data)
 		{
 			var response = new ApiResponse<FMSMaster>();
 			try
@@ -12104,12 +12110,16 @@ namespace SmartInventoryServices.Controllers
 			BLATAcceptance.Instance.SaveATAcceptance(objList.listAtStatusRecords, system_id, userId);
 
 		}
-		#endregion
-		#region Save VSAT 
-		/// <summary>Save Save VSAT  </summary>
-		/// <CreatedBy>Rajesh Kumar</CreatedBy>
-		///<Created Date>11-Jan-2020</Created Date>
-		private void SaveVsat(BuildingMaster objBM)
+        private void SaveExecutionmethod(trenchExecutionList objList, int system_id, int userId)
+        {
+            BLExecution.Instance.SaveExecutionmethod(objList.listExecutionRecords, system_id, userId);
+        }
+        #endregion
+        #region Save VSAT 
+        /// <summary>Save Save VSAT  </summary>
+        /// <CreatedBy>Rajesh Kumar</CreatedBy>
+        ///<Created Date>11-Jan-2020</Created Date>
+        private void SaveVsat(BuildingMaster objBM)
 		{
 			var geom = objBM.longitude + " " + objBM.latitude;
 			PageMessage objMsg = new PageMessage();

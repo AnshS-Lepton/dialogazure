@@ -443,11 +443,11 @@
                         <div class="form-group row">
                             <label class="control-label col-md-2 col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_CAB_NET_FRM_013<i class="clsMandatory">*</i>:</label>
                             <div class="col-md-4 col-sm-4">
-                                @Html.TextBoxFor(m => m.route_id, new { @class = "form-control", @maxlength = "20" })
+                                @Html.TextBoxFor(m => m.route_id, new { @class = "form-control", @maxlength = "30" })
                             </div>
                             <label class="control-label col-md-2 col-sm-2">Route Name<i class="clsMandatory">*</i>:</label>
                             <div class="col-md-4 col-sm-4">
-                                @Html.TextBoxFor(m => m.route_name, new { @class = "form-control", @maxlength = "20" })
+                                @Html.TextBoxFor(m => m.route_name, new { @class = "form-control", @maxlength = "30" })
                             </div>
                         </div>
                         @if (Model.calculated_length_remark != null)

@@ -7409,9 +7409,9 @@ namespace SmartInventory.Controllers
 			objTrenchIn.StrataTypeIn = objDDL.Where(x => x.dropdown_type == DropDownType.Strata_Type.ToString()).ToList();
 			objTrenchIn.SurfaceTypeIn = objDDL.Where(x => x.dropdown_type == DropDownType.Surface_Type.ToString()).ToList();
 			objTrenchIn.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-		}
+        }
 
-		public TrenchMaster GetTrenchDetail(LineEntityIn objIn)
+        public TrenchMaster GetTrenchDetail(LineEntityIn objIn)
 		{
 			TrenchMaster objTrench = new TrenchMaster();
 			var userdetails = (User)Session["userDetail"];
@@ -7463,7 +7463,7 @@ namespace SmartInventory.Controllers
 
 		public ActionResult SaveTrench(TrenchMaster objTrench, bool isDirectSave = false)
 		{
-
+			
 			//ModelState.Clear();
 			//PageMessage objPM = new PageMessage();
 			//if (objTrench.networkIdType == NetworkIdType.A.ToString() && objTrench.system_id == 0)
@@ -7769,10 +7769,25 @@ namespace SmartInventory.Controllers
 			return PartialView("_AtAttachments", lstDocument);
 		}
 
-		#endregion
+        public PartialViewResult GetExecutionmethod(int entityId, string entityType)
+        {
+            var objDDL = new BLMisc().GetDropDownList(entityType, DropDownType.execution_Method.ToString());
+            trenchExecutionList objExMethodStatus = new trenchExecutionList();
+            objExMethodStatus.listExecutionRecords = BLExecution.Instance.GetExecutionStatus(entityId, entityType);//FillATAcceptance(entityId, entityType);
+            objExMethodStatus.listExecutionmethod = objDDL.ToList();
+            objExMethodStatus.systemId = entityId;
+            objExMethodStatus.entityType = entityType;
+            objExMethodStatus.createdBy = Convert.ToInt32(Session["user_id"]);
+            return PartialView("_trenchExecution", objExMethodStatus);
+        }
+        private void SaveExecutionmethod(trenchExecutionList objList, int system_id)
+        {
+            BLExecution.Instance.SaveExecutionmethod(objList.listExecutionRecords, system_id, Convert.ToInt32(Session["user_id"]));
+        }
+        #endregion
 
-		#region Maintainence Charges
-		public PartialViewResult AddMaintenanceCharge(int systemId, int entityId, string entityType)
+        #region Maintainence Charges
+        public PartialViewResult AddMaintenanceCharge(int systemId, int entityId, string entityType)
 		{
 			EntityMaintainenceCharges objMaintenanceCharge = new EntityMaintainenceCharges();
 			objMaintenanceCharge.entity_id = entityId;
@@ -12976,6 +12991,6 @@ namespace SmartInventory.Controllers
         }
 
         #endregion
-
+      
     }
 }
