@@ -5120,6 +5120,11 @@ namespace Models
         [NotMapped]
         public List<DropDownMaster> lstFiber { get; set; }
     }
+	public class splicingmodel
+	{
+		public string splicingtype { get; set; }
+	}
+
 }
 
 
