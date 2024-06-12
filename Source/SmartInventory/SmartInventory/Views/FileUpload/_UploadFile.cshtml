@@ -1,5 +1,24 @@
 ﻿@model Models.ModelExternalDataDetails
 @using SmartInventory.Settings;
+<style>
+    .libDetail {
+        overflow-y: initial;
+    }
+
+    .boxMaxHeight {
+        padding: 15px;
+        max-height: 500px;
+    }
+
+    #form-rows .form-group {
+        margin-bottom: 0.7rem;
+    }
+
+    #form-rows .btn {
+        padding: 3px 8px;
+        min-width: 30px;
+    }
+</style>
 <!DOCTYPE html>
 <div class="libDetail">
     <div class="libTabs">
@@ -8,7 +27,7 @@
                 <li><a href="#UploadAttachment" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_192</a></li>
                 <li><a href="#UploadRefLink" data-toggle="tab">Ref. Link</a></li>*@
             <li class="@(Model.lstUserModule.Contains("ENT-UID-I")?"active":"roledisabled")" title="@Resources.Resources.SI_OSP_UPP_NET_FRM_001 @(Model.lstUserModule.Contains("ENT-UID-I")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-UID-I") ? "" : "block;")"><a href="@(Model.lstUserModule.Contains("ENT-UID-I")?"#UploadImage":"")" data-toggle="tab">@Resources.Resources.SI_OSP_UPP_NET_FRM_001</a></li>
-            <li class="@(Model.lstUserModule.Contains("ENT-UID-D")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_192 @(Model.lstUserModule.Contains("ENT-UID-D")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-UID-D") ? "" : "block;")"><a href="@(Model.lstUserModule.Contains("ENT-UID-D")?"#UploadAttachment":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_192</a></li>
+            <li class="@(Model.lstUserModule.Contains("ENT-UID-D")?"":"roledisabled")"  title="@Resources.Resources.SI_OSP_GBL_NET_FRM_192 @(Model.lstUserModule.Contains("ENT-UID-D")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-UID-D") ? "" : "block;")"><a href="@(Model.lstUserModule.Contains("ENT-UID-D")?"#UploadAttachment":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_192</a></li>
             <li class="@(Model.lstUserModule.Contains("ENT-UID-RL")?"":"roledisabled")" title="Ref. Link @(Model.lstUserModule.Contains("ENT-UID-RL")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-UID-RL") ? "" : "block;")"><a href="@(Model.lstUserModule.Contains("ENT-UID-RL")?"#UploadRefLink" :"")" data-toggle="tab">Ref. Link</a></li>
         </ul>
     </div>
@@ -44,31 +63,35 @@
                 </div>
             </div>
             <div class="tab-pane" id="UploadAttachment">
-                <div class="space-pad">
+                <div class="space-pad boxMaxHeight">
                     <fieldset class="the-fieldset">
                         <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_194</legend>
-                        <div class="form-group row">
-                            <label class="control-label col-sm-2" for="txtCableCode">
-                                @Resources.Resources.SI_OSP_GBL_NET_FRM_192:
-                            </label>
-                            <div class="col-md-10">
-                                <input type="file" name="fuAttachmentUpload" id="fuAttachmentUpload" multiple>
+                        <div id="form-rows">
+                            <div class="form-group d-flex --gap10">
+                                <div class="uploadDropDown">
+                                    @Html.DropDownListFor(m => m.document_type, new SelectList(Model.doctypeddllist.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @id = "UploadDocType_0" })
+                                </div>
+                                <div>
+                                    <input type="file" name="UploadDoc_0" id="UploadDoc_0" class="UploadDoc uploadfileWidth" multiple>
+                                </div>
+                                <div id="form-rows">
+                                    <button type="button" class="btn btn-primary" onclick="addRow()">+</button>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group d-flex">
-                            <label class="control-label ml-auto flex-cont" for="txtCableCode"><i class="clsMandatory">*</i>Supported file formats:dwg,pdf,jpeg,jpg,doc,docx,xls,xlsx,csv,vsd,ppt,pptx,png,htm,html,rar,zip,msg</label>
+                            <label class="control-label fileUploaderfs" for="txtCableCode"><i class="clsMandatory">*</i>Supported file formats:dwg,pdf,jpeg,jpg,doc,docx,xls,xlsx,csv,vsd,ppt,pptx,png,htm,html,rar,zip,msg</label>
                         </div>
                         <div class="form-group d-flex">
-                            <label class="ml-auto flex-cont" for="txtLatitude"><i class="clsMandatory">*</i>Maximum document file size: @(ApplicationSettings.MaxFileUploadSizeLimit/1000) MB</label>
+                            <label class="control-label fileUploaderfs" for="txtLatitude"><i class="clsMandatory">*</i>Maximum document file size: @(ApplicationSettings.MaxFileUploadSizeLimit/1000) MB</label>
                         </div>
                     </fieldset>
                 </div>
                 <div class="d-flex ModalFooter" id="dvBtnAction">
                     <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
-                    <button type="submit" class="btn btn-primary ml-10" onclick="si.uploadMultipleDocumentFile();" id="btnSaveDocumentFile">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                    <button type="submit" class="btn btn-primary ml-10" onclick="si.uploadMultiDocFileWithfileType();" id="btnSaveDocumentFile">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
                 </div>
             </div>
-
             <div class="tab-pane" id="UploadRefLink">
                 <div class="space-pad">
                     <fieldset class="the-fieldset">
@@ -99,3 +122,51 @@
         </div>
     </div>
 </div>
+
+<script>
+    let rowCount = 1;
+    const maxRows = @(ApplicationSettings.MaxAdddocumentRowNumber);
+
+    function addRow() {
+        if (rowCount >= maxRows) {
+            alert("You can only add up to" +" " + @(ApplicationSettings.MaxAdddocumentRowNumber)+ " " + "rows.");
+            return;
+        }
+        const formRows = document.getElementById('form-rows');
+        const newRow = document.createElement('div');
+        newRow.classList.add('form-group', 'd-flex', '--gap10');
+        newRow.id = `row_${rowCount}`;
+
+        newRow.innerHTML = `
+            <div class="uploadDropDown">
+                <select class="chosen-select col-sm-12" id="UploadDocType_${rowCount}" name="UploadDocType_${rowCount}">
+                    @foreach (var item in Model.doctypeddllist)
+                    {
+                        <option value="@item.dropdown_key">@item.dropdown_value</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <input type="file" name="UploadDoc_${rowCount}" id="UploadDoc_${rowCount}" class="UploadDoc uploadfileWidth" multiple>
+            </div>
+            <div>
+                <button type="button" class="btn btn-warning" onclick="removeRow(this)">-</button>
+            </div>
+        `;
+
+        formRows.appendChild(newRow);
+        $(`#UploadDocType_${rowCount}`).chosen();
+        rowCount++;
+    }
+    function removeRow(button) {
+        const row = button.parentElement.parentElement;
+        row.remove();
+        rowCount--;
+        if (rowCount < 1) {
+            rowCount = 1;
+        }
+    }
+    $(document).ready(function () {
+        $('.chosen-select').chosen({ width: '100%' });
+    });
+</script>

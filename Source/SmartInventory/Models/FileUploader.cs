@@ -65,8 +65,8 @@ namespace Models
         public DateTime uploaded_on { get; set; } 
         public bool is_barcode_image { get; set; }
         public bool is_meter_reading_image { get; set; }
-
-	}
+        public string document_type { get; set; }
+    }
     public class VailidateAttachment 
     {
         public string invalidattachmentType { get; set; }
@@ -123,6 +123,7 @@ namespace Models
         public DateTime Uploaded_on { get; set; }
         public string File_ShortName { get; set; }        
         public string categorytype { get; set; } = "";
+        public string document_type { get; set; } 
         [NotMapped]
         public Boolean delete_action { get; set; } = false;
     }
@@ -137,12 +138,16 @@ namespace Models
         public ExternalDataFilter objExternalDataFilter { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
-
+        [NotMapped]
+        public string document_type { get; set; }
+        [NotMapped]
+        public List<DropDownMaster> doctypeddllist { get; set; }
         public ModelExternalDataDetails()
         {
             lstFileDetails = new List<ExternalDataFileList>();
             objExternalDataFilter = new ExternalDataFilter();
             lstUserModule = new List<string>();
+            doctypeddllist = new List<DropDownMaster>();
         }
     }
 

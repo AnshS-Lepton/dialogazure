@@ -3158,14 +3158,15 @@ namespace SmartInventoryServices.Controllers
                     var entityType = HttpContext.Current.Request.Params["entityType"];
                     var featureName = HttpContext.Current.Request.Params["featureName"];
                     var attachmentType = HttpContext.Current.Request.Params["uploadType"];
+                    var uploadedtype = HttpContext.Current.Request.Params["documenttype"];
                     var UserId = HttpContext.Current.Request.Params["userId"];
                     var validDocumentTypes = ApplicationSettings.validDocumentTypes.Split(new string[] { "," }, StringSplitOptions.None);
                     var validImageTypes = ApplicationSettings.validImageTypes.Split(new string[] { "," }, StringSplitOptions.None);
                     var isBarcodeImage = HttpContext.Current.Request.Params["is_barcode_image"];
-					var isMeterReadingImage = HttpContext.Current.Request.Params["is_meter_reading_image"];
+                    var isMeterReadingImage = HttpContext.Current.Request.Params["is_meter_reading_image"];
                     if (attachmentType.ToUpper() == "DOCUMENT") { obj = ValidateDocumentFileType(HttpContext.Current.Request.Files); }
                     else {  obj = ValidateImageFileType(HttpContext.Current.Request.Files); }
-                       
+
                     if (!string.IsNullOrEmpty(obj.invalidattachmentType))
                     {
                         response.error_message = obj.invalidattachmentType;
@@ -3187,9 +3188,10 @@ namespace SmartInventoryServices.Controllers
                         return response;
 
                     }
+                    var fileuploadtypes = uploadedtype?.Split(',');
                     for (int i = 0; i < HttpContext.Current.Request.Files.Count; i++)
                     {
-
+                        string uploaddocType = fileuploadtypes != null && fileuploadtypes.Length > i ? fileuploadtypes[i] : null;
                         string FileName = files[i].FileName;
                         var fileExtension = Path.GetExtension(FileName);
 
@@ -3232,15 +3234,15 @@ namespace SmartInventoryServices.Controllers
                         if (entityType == EntityType.ROW.ToString() && !string.IsNullOrEmpty(featureName))
                         {
                             attachmentType = "";
-                            strFilePath = ReqHelper.UploadfileOnFTP(featureName, systemId, files[i], attachmentType, strNewfilename, entityType);
+                            strFilePath = ReqHelper.UploadfileOnFTP(featureName, systemId, files[i], attachmentType, strNewfilename, entityType, uploaddocType);
                         }
                         else if (!string.IsNullOrEmpty(featureName))
                         {
-                            strFilePath = ReqHelper.UploadfileOnFTP(entityType, systemId, files[i], attachmentType, strNewfilename, featureName);
+                            strFilePath = ReqHelper.UploadfileOnFTP(entityType, systemId, files[i], attachmentType, strNewfilename, featureName, uploaddocType);
                         }
                         else
                         {
-                            strFilePath = ReqHelper.UploadfileOnFTP(entityType, systemId, files[i], attachmentType, strNewfilename);
+                            strFilePath = ReqHelper.UploadfileOnFTP(entityType, systemId, files[i], attachmentType, strNewfilename, null, uploaddocType);
                         }
                         LibraryAttachment objAttachment = new LibraryAttachment();
                         objAttachment.entity_system_id = Convert.ToInt32(systemId);
@@ -3255,9 +3257,10 @@ namespace SmartInventoryServices.Controllers
                         objAttachment.file_size = files[i].ContentLength;
                         objAttachment.uploaded_on = DateTime.Now;
                         objAttachment.is_barcode_image = Convert.ToBoolean(isBarcodeImage);
-						objAttachment.is_meter_reading_image = Convert.ToBoolean(isMeterReadingImage);
-						//Save Image on FTP and related detail in database..
-						var savefile = new BLAttachment().SaveLibraryAttachment(objAttachment);
+                        objAttachment.is_meter_reading_image = Convert.ToBoolean(isMeterReadingImage);
+                        objAttachment.document_type = uploaddocType;
+                        //Save Image on FTP and related detail in database..
+                        var savefile = new BLAttachment().SaveLibraryAttachment(objAttachment);
                         if (Convert.ToBoolean(isBarcodeImage) && entityType== Convert.ToString(EntityType.FDB))//"FDB"
                         {
                             BLISP.Instance.UpdateManualBarcode(Convert.ToInt32(systemId));
