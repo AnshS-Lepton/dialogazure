@@ -60,7 +60,14 @@ namespace DataAccess
                     return repo.Update(objFiberDetail);
                 }
                 objFiberLink.created_on = DateTimeHelper.Now;
-                objFiberLink.fiber_link_status = "Free"; 
+                if (objFiberLink.CreateFL == 1)
+                {
+                    objFiberLink.fiber_link_status = "Associated";
+                }
+                else
+                {
+                    objFiberLink.fiber_link_status = "Free";
+                }
                 objFiberLink.created_by = userId; 
                 objFiberLink.pageMsg.isNewEntity = true; 
                 var resultItem = repo.Insert(objFiberLink);
