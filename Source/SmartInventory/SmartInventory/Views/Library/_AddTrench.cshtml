@@ -48,7 +48,7 @@
     var strataType = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.strata_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var surfaceType = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.surface_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var mcgWard = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.mcgm_ward.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
-    var manuFactureYear = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.manufacture_year.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var manuFactureYear = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.manufacture_year.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;    
 }
 <!DOCTYPE html>
 <div>
@@ -81,8 +81,8 @@
         //Add the other_info as hidden field for additional attributes
         @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
         //@Html.HiddenFor(m => m.trench_name, new { @id = "hdnProvinceAbbr" })
-        @Html.HiddenFor(model => model.ExecutionMethod.execution_method)
-        @Html.HiddenFor(model => model.ExecutionMethod.execution_length)
+        @*@Html.HiddenFor(model => model.ExecutionMethod.execution_method)
+        @Html.HiddenFor(model => model.ExecutionMethod.execution_length)*@
 
         <!-- Message Pop-up -->
         <!-- Message Pop-up -->
@@ -455,9 +455,9 @@
             }
             $("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
             si.upperCaseNetWorkId();
-         //For AdditionalAttributes to set json and saving
-                        additionalAttributesUtility.SetJsonValue("#frmOtherInfo", "#hdnOtherInfo");
-                        //end region Additional-Attributes
+            //For AdditionalAttributes to set json and saving
+            additionalAttributesUtility.SetJsonValue("#frmOtherInfo", "#hdnOtherInfo");            
+            //end region Additional-Attributes
             if (!entityReferencevalidation())
                 return false;
 

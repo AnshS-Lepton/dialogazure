@@ -6762,7 +6762,12 @@ namespace SmartInventoryServices.Controllers
 					}
                     if (objTrench.ExecutionMethod != null && objTrench.system_id > 0)
                     {
-                        SaveExecutionmethod(objTrench.ExecutionMethod, objTrench.system_id, objTrench.user_id);
+						objTrench.ExecutionMethod.listExecutionRecords.ForEach(record =>
+						{
+							record.system_id = objTrench.system_id;
+							record.entity_type = EntityType.Trench.ToString();
+						});
+						SaveExecutionmethod(objTrench.ExecutionMethod, objTrench.system_id, objTrench.user_id);
                     }
                 }
 				else

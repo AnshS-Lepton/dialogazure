@@ -1123,36 +1123,22 @@ function delRow1(rowIndex) {
 }
 
 function AddExecutionRow(RowIndex, SystemId, CreatedBy, entitytype) {
-    debugger; 
-    rowIndexForDelte = RowIndex;
+    debugger;
+    rowIndexForDelte = RowIndex +1;
     var Row = "";
     if (RowIndex <= 50) {
-        Row = '<div class="row AT_row_' + RowIndex + ' len">';
+        Row = '<div class="row form-group d-flex align-items-center AT_row_' + RowIndex + ' len">';
 
-        Row += '<div class="col-md-3"><label for="ddl_Execution" class="form-label">Execution Method</label><select id="ddl_Execution" name="ExecutionMethod.listExecutionRecords[' + RowIndex + '].execution_method" class="chosen-select form-group" onchange="removeBorder(this)"><option value="0">-Select-</option><option value="OT" data-planningname="OT">OT</option><option value="HDD" data-planningname="HDD">HDD</option><option value="PCC" data-planningname="PCC">PCC</option><option value="Clamping" data-planningname="Clamping">Clamping</option><option value="Other" data-planningname="Other">Other</option></select></div>';
+        Row += '<label for="ddl_Execution" class="form-label col-md-2 col-sm-2 white-space">Execution Method</label> <div class="col-md-4 col-sm-4"><select id="ddl_Execution" name="ExecutionMethod.listExecutionRecords[' + RowIndex + '].execution_method" class="chosen-select form-group" onchange="removeBorder(this)"><option value="0">-Select-</option><option value="OT" data-planningname="OT">OT</option><option value="HDD" data-planningname="HDD">HDD</option><option value="PCC" data-planningname="PCC">PCC</option><option value="Clamping" data-planningname="Clamping">Clamping</option><option value="Other" data-planningname="Other">Other</option></select></div>';
 
-        Row += '<div class="col-md-4" ><label for="ddl_Execution" class="form-label">Execution Length</label><input class="form-control" id="execution_length" name="ExecutionMethod.listExecutionRecords[' + RowIndex + '].execution_length"  maxlength="150" name="execution_length" type="number" value=""></div>';
+        Row += '<label for="ddl_Execution" class="form-label col-md-2 col-sm-2 white-space">Execution Length</label><div class="col-md-4 col-sm-4"><input class="form-control" id="execution_length" name="ExecutionMethod.listExecutionRecords[' + RowIndex + '].execution_length"  maxlength="15" name="execution_length" type="number" value=""></div>';
 
-        Row += '<div class="col-md-1" ><span class="icon-close removeAT" onclick="delRow(' + RowIndex + ')" title="' + MultilingualKey.SI_GBL_GBL_GBL_GBL_002 + '" style=""></span></div>';
+        Row += '<span class="icon-close removeAT" onclick="delRow(' + RowIndex + ')" title="' + MultilingualKey.SI_GBL_GBL_GBL_GBL_002 + '" style=""></span>';
 
-       /* Row += '<input name="listExecutionRecords[' + RowIndex + '].id" data-val="true" data-val-number="The field id must be a number." data-val-required="The id field is required." id="listExecution_' + RowIndex + '__id" type="hidden" value="0">';
-
-        Row += '<input name="listExecutionRecords[' + RowIndex + '].created_by" data-val="true" data-val-number="The field created_by must be a number." data-val-required="The created_by field is required." id="listExecution_' + RowIndex + '__created_by" type="hidden" value="' + CreatedBy + '">';
-
-        Row += '<input name="listExecutionRecords[' + RowIndex + '].system_id" data-val="true" data-val-number="The field system_id must be a number." data-val-required="The system_id field is required." id="listExecution_' + RowIndex + '__system_id" type="hidden" value="' + SystemId + '">';
-
-        Row += '<input name="listExecutionRecords[' + RowIndex + '].entity_type" id="listAtAcceptance_0__entity_type" type="hidden" value="' + entitytype + '">';
-
-        Row += '<input name="listExecutionRecords[' + RowIndex + '].modified_on" data-val="true" data-val-date="The field modified_on must be a date." id="listExecution_' + RowIndex + '__modified_on" type="hidden" value="">';
-
-        Row += '<input name="listExecutionRecords[' + RowIndex + '].modified_by" data-val="true" data-val-number="The field modified_by must be a number." id="listExecution_' + RowIndex + '__modified_by" type="hidden" value="">'
-*/
         Row += '</div>';
 
          $('#dvExecution').append(Row);
-         $('.chosen-select').chosen({ width: '100%' });
-
-         
+         $('.chosen-select').chosen({ width: '100%' });         
          
     }
     else {
@@ -1820,7 +1806,6 @@ function notAllowZero(objControlls) {
     });
 }
 function disabledItem(event) {
-    console.log('disabled item');
     event.stopPropagation();
     return false;
 }
