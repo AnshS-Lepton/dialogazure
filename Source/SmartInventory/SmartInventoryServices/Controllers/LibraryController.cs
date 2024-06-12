@@ -6767,6 +6767,16 @@ namespace SmartInventoryServices.Controllers
 							record.system_id = objTrench.system_id;
 							record.entity_type = EntityType.Trench.ToString();
 						});
+
+
+
+						trenchExecutionList objExMethodStatus = new trenchExecutionList();
+						objExMethodStatus.listExecutionRecords = BLExecution.Instance.GetExecutionStatus(objTrench.system_id, EntityType.Trench.ToString());//FillATAcceptance(entityId, entityType);
+						if(objExMethodStatus.listExecutionRecords.Count> 0)
+                        {
+							var output = BLExecution.Instance.DeleteExecutionStatus(objTrench.system_id, EntityType.Trench.ToString());
+						}                      
+
 						SaveExecutionmethod(objTrench.ExecutionMethod, objTrench.system_id, objTrench.user_id);
                     }
                 }
@@ -12119,12 +12129,14 @@ namespace SmartInventoryServices.Controllers
         {
             BLExecution.Instance.SaveExecutionmethod(objList.listExecutionRecords, system_id, userId);
         }
-        #endregion
-        #region Save VSAT 
-        /// <summary>Save Save VSAT  </summary>
-        /// <CreatedBy>Rajesh Kumar</CreatedBy>
-        ///<Created Date>11-Jan-2020</Created Date>
-        private void SaveVsat(BuildingMaster objBM)
+
+
+		#endregion
+		#region Save VSAT 
+		/// <summary>Save Save VSAT  </summary>
+		/// <CreatedBy>Rajesh Kumar</CreatedBy>
+		///<Created Date>11-Jan-2020</Created Date>
+		private void SaveVsat(BuildingMaster objBM)
 		{
 			var geom = objBM.longitude + " " + objBM.latitude;
 			PageMessage objMsg = new PageMessage();

@@ -36,6 +36,24 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public int DeleteExecutionStatus(int system_id, string entitytype)
+        {
+            try
+            {
+                var objId =  repo.GetAll(m => m.system_id == system_id && m.entity_type.ToUpper() == entitytype.ToUpper()).ToList();
+                if (objId != null)
+                {
+                    return repo.DeleteRange(objId);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            catch { throw; }
+        }      
+
+
         public void SaveExecutionmethod(List<TrenchExecution> objExecution, int system_id, int userId)
         {
             try
@@ -63,4 +81,5 @@ namespace DataAccess
         }
 
     }
+
 }
