@@ -548,6 +548,27 @@ namespace DataAccess
     }
     public class DATempConnectionInfo : Repository<TempConnectionInfoMaster>
     {
+
+
+        public DbMessage BulkUploadvalidateTempConnection(int UserId, string splicing_type)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DbMessage>("fn_validate_splicing", new { P_Userid = UserId, P_Splicing_Type = splicing_type }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+
+        public DbMessage uploadBulkConnection(string spcing_type, int userId)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DbMessage>("fn_splicing_bulk_upload", new { p_splicing = spcing_type, p_user_id = userId }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+
+
         public DbMessage uploadBulkConnections(string listConnectionInfo, int userId)
         {
             try

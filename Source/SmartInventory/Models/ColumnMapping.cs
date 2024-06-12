@@ -59,14 +59,15 @@ namespace Models
         public bool is_province_uploader_template { get; set; }
         [NotMapped]
         public string boundary_type { get; set; }
-        
+        [NotMapped]
+        public List<int> lst_UploadId { get; set; }
         public ColumnMappingTemplate()
         {
             listMappedColumns = new List<ColumnMapping>();
             listImportedColumns = new List<string>();
             listTemplates = new List<ColumnMappingTemplate>();
             objPM = new PageMessage();
-
+            lst_UploadId = new List<int>();
         }
     }
     public class NewColumns {

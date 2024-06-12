@@ -196,7 +196,11 @@ namespace Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
+
         public int connection_id { get; set; }
+        public int source_tray_system_id { get; set; }
+        public int destination_tray_system_id { get; set; }
         public string source_system_id { get; set; }
         public string source_network_id { get; set; }
         public string source_entity_type { get; set; }
@@ -208,9 +212,14 @@ namespace Models
         public string destination_port_no { get; set; }
         public string destination_port_type { get; set; }
         public bool is_customer_connected { get; set; }
+        public bool is_through_connection { get; set; }
+        public bool is_cable_a_end { get; set; }
         public DateTime? created_on { get; set; }
         public string created_by { get; set; }
         public string approved_by { get; set; }
+        public string equipment_network_id { get; set; }
+        public string equipment_entity_type { get; set; }
+        public int equipment_system_id { get; set; }
         public DateTime? approved_on { get; set; }
         public bool is_valid { get; set; }
         public string error_msg { get; set; }

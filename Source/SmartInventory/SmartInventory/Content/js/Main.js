@@ -8,7 +8,7 @@ let CollisionFilterExtension = deck.CollisionFilterExtension;
 //let ICON_MAPPING = null;
 var Main = function () {
     var app = this;
-    this.IsVecorLayerEnabled = true;// $("#hdnIsWMSLayerLoadingEnabled").val() == 'False' ? true : false;
+    this.IsVecorLayerEnabled = true; //$("#hdnIsWMSLayerLoadingEnabled").val() == 'False' ? true : false;
     this.layoutMap = undefined;
     this.map = undefined;
     this.infowindow = new google.maps.InfoWindow();
@@ -286,6 +286,8 @@ var Main = function () {
     this.LastEditedMarking = 0;
     this.MaxCableLength = 0;
     this.LengthUnit = "";
+    this.isNetworkTicketReq = false;
+    this.ticketStatus = '';
     this.LayerLoadingStatusMap = new Map();
     this.DE = {
         "frmAddHTB": "#frmAddHTB",
@@ -5903,7 +5905,7 @@ var Main = function () {
         app.distanceWidget_A = app.getNewDistanceWidget(radius, center, marker);
     }
     this.getNewDistanceWidget = function (radius, center, marker) {
-        return new DistanceWidget({
+        return new Distance_Widget({
             map: app.map,
             distance: radius,
             center: center,
@@ -8465,7 +8467,15 @@ var Main = function () {
     this.SetfilterNetworkTicketFilters = function (_isNetworkTicketRequest, _ticketId) {
         app.filterNetworkTicketValue = "1 = 1";
         if (_isNetworkTicketRequest) {
-            app.filterNetworkTicketValue = " ([source_ref_id] ='" + _ticketId + "') and [source_ref_type]='Network_Ticket'";
+            if (app.ticketStatus == 'InProgress' || app.ticketStatus == 'Rejected') {
+                app.filterNetworkTicketValue = " ([source_ref_id] ='" + _ticketId + "') and [source_ref_type]='Network_Ticket' and [is_new_entity]=true";
+            }
+            if (app.ticketStatus == 'Approved') {
+                app.filterNetworkTicketValue = " ([source_ref_id] ='" + _ticketId + "') and [source_ref_type]='Network_Ticket' and [is_new_entity]=false";
+            }
+        }
+        else {
+            app.filterNetworkTicketValue = " [status]='A' and [is_new_entity]=false";
         }
 
     } 
@@ -8510,9 +8520,9 @@ var Main = function () {
         app.addRemoveActiveClass('');
     }
     this.LoadLayersOnMap = function (_isClearMapObject) {
-
         if (_isClearMapObject == undefined) _isClearMapObject = true;
-
+        app.isNetworkTicketReq = false;     
+        app.ticketStatus = '';
         app.layerDetails = [];
         LayerFilters = [];
         app.SetRegionProvinceFilters();
@@ -23878,6 +23888,7 @@ var Main = function () {
         LoadLayersOnMap: function (_ticketId) {
             app.layerDetails = [];
             LayerFilters = [];
+            app.isNetworkTicketReq = true;
             app.SetRegionProvinceFilters();
             app.SetProjectSpecFilters();
             app.SetCableFilters();
@@ -24010,7 +24021,7 @@ var Main = function () {
         },
         showExistingNetwork: function (_ticketId) {
             $(app.DE.lyrRefresh).trigger("click");
-            app.Networkticket.LoadLayersOnMap(_ticketId);
+            //app.Networkticket.LoadLayersOnMap(_ticketId);
             if ($('#chkTicketNetwork').is(':checked')) { setLayerOpacity('', 0.3); }
         },
         removeExistingNetwork: function () {
@@ -24028,48 +24039,39 @@ var Main = function () {
             app.removeNetworkAllWMSLayers();
             setLayerOpacity('', 1);
         },
-        showNetworkOnMap: function (_ticketId, _networkId, _regionId, _provinceId, _ticketName) {
-            app.ticketId = _ticketId;
-            var isExistingNetworkVisible = $("#hdnisExistingNetworkVisible").val();
+        showNetworkOnMap: function (_ticketId, _networkId, _regionId, _provinceId, _ticketName, ticket_status) {
+            app.ticketId = _ticketId;   
+            app.ticketStatus = ticket_status;
             $(popup.DE.MinimizeModel).trigger("click");
-
             $('#spnTicketNetworkId').text(_networkId + '(' + _ticketName + ')');
             $('#chk_rLyr_' + _regionId + '').prop('checked', true);
             $('#chk_pLyr_' + _provinceId + '').prop('checked', true);
-            $('#chkExistingNetwork').prop('checked', true);
+            //$('#chkExistingNetwork').prop('checked', true);
             if (!$('#checkAll').is(':checked')) {
                 $('#checkAll').trigger("click");
             }
             app.Networkticket.getEntityBounds(_ticketId);
-
-            if (JSON.parse(isExistingNetworkVisible.toLowerCase())) {
-                si.LoadLayersOnMap();
-            }
-            else {
-                app.Networkticket.shoNWTNetwork(_ticketId);
-                app.Networkticket.showExistingNetwork(_ticketId);
-
-                $("#dvShowNetworkOnmap").show();
-                $('#chkTicketNetwork').prop('checked', true);
-                app.Networkticket.removeNWTNetwork();
-                $('#chkExistingNetwork').unbind('click').on("click", function () {
-                    if ($(this).is(':checked')) {
-                        app.Networkticket.showExistingNetwork(_ticketId);
-                    } else {
-                        app.Networkticket.removeExistingNetwork();
-                    }
-                });
-                //$('#chkExistingNetwork').trigger("click");
-                $('#chkTicketNetwork').unbind('click').on("click", function () {
-                    if ($(this).is(':checked')) {
-                        app.Networkticket.shoNWTNetwork(_ticketId);
-                    } else {
-                        app.Networkticket.removeNWTNetwork();
-                    }
-                });
-            }
+            $("#dvShowNetworkOnmap").show();
+            app.Networkticket.shoNWTNetwork(_ticketId);
+           
+            $('#chkTicketNetwork').prop('checked', true);            
+           
+            //$('#chkTicketNetwork').trigger("click");
+            $('#chkTicketNetwork').unbind('click').on("click", function () {
+                if ($(this).is(':checked')) {                    
+                    app.isNetworkTicketReq = true;
+                    app.Networkticket.shoNWTNetwork(_ticketId);
+                    app.Networkticket.removeExistingNetwork();
+                } else {
+                    app.isNetworkTicketReq = false; 
+                    app.ticketStatus = '';
+                    app.Networkticket.showExistingNetwork(_ticketId);
+                    app.Networkticket.removeNWTNetwork();
+                }
+            });
 
             si.ShowEntityOnMap(_ticketId, 'Network_Ticket', 'Polygon');
+            app.Networkticket.removeExistingNetwork();
             //$('#chkTicketNetwork').trigger("click");
         },
         RedirectNetworkOnMap: function (_ticketId, _networkId, _regionId, _provinceId, _ticketName) {
@@ -24084,7 +24086,7 @@ var Main = function () {
 
         cleanNetwork: function () {
             $('#dvShowNetworkOnmap').hide();
-            $('#chkExistingNetwork,#chkTicketNetwork').prop('checked', false);
+            $('#chkTicketNetwork').prop('checked', false);
             si.Networkticket.removeNWTNetwork();
         },
         clearNetworkticket: function (region_id, province_id) {

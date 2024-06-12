@@ -48,7 +48,7 @@
     var strataType = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.strata_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var surfaceType = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.surface_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var mcgWard = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.mcgm_ward.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
-    var manuFactureYear = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.manufacture_year.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var manuFactureYear = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.manufacture_year.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;    
 }
 <!DOCTYPE html>
 <div>
@@ -81,6 +81,8 @@
         //Add the other_info as hidden field for additional attributes
         @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
         //@Html.HiddenFor(m => m.trench_name, new { @id = "hdnProvinceAbbr" })
+        @*@Html.HiddenFor(model => model.ExecutionMethod.execution_method)
+        @Html.HiddenFor(model => model.ExecutionMethod.execution_length)*@
 
         <!-- Message Pop-up -->
         <!-- Message Pop-up -->
@@ -355,6 +357,9 @@
                                 @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @maxlength = "1000" })
                             </div>
                         </div>
+                        <div id="Execution">
+                            <a href="#Execution"></a>
+                        </div>
                     </fieldset>
                     @if (Model.lstUserModule.Contains("PROJ"))
                     {
@@ -373,6 +378,7 @@
                 <div id="dvRefrence" class="tab-pane"></div>
                 <div class="tab-pane" id="PODAssoctn"></div>
                 <div class="tab-pane" id="dvAT"></div>
+                <div class="tab-pane" id="Execution"></div>
                 <div class="tab-pane" id="dvMaintainenceCharges"></div>
                 <div id="NwEntityHistory" class="tab-pane"></div>
                 <!--Reigon Additional Attribute to show the partial view-->
@@ -423,6 +429,16 @@
         $('.chosen-select').chosen({ width: '100%' });
 
 
+        ajaxReq('Library/GetExecutionmethod', {
+            entityId: '@Model.system_id', entityType: 'Trench'
+        }, true, function (resp) {
+            $("#Execution").html(resp);
+            if ('@Model.system_id' > 0) {
+                popup.disablebuttonWhenEditDisabled('@editPermission.ToString()');
+            }
+            $("#Execution").css('background-image', 'none');
+        }, false, false);
+
         EnableDisableUpdateButton("frmAddTrench", @Model.system_id > 0 ? "btnUpdateSubArea" : "btnSaveTrench");
 
         //APPLY INPUT MASK ON NETWORK ID..
@@ -439,9 +455,9 @@
             }
             $("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
             si.upperCaseNetWorkId();
-         //For AdditionalAttributes to set json and saving
-                        additionalAttributesUtility.SetJsonValue("#frmOtherInfo", "#hdnOtherInfo");
-                        //end region Additional-Attributes
+            //For AdditionalAttributes to set json and saving
+            additionalAttributesUtility.SetJsonValue("#frmOtherInfo", "#hdnOtherInfo");            
+            //end region Additional-Attributes
             if (!entityReferencevalidation())
                 return false;
 

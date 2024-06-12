@@ -82,6 +82,7 @@
 <div class="form-group ModalFooter" id="dvAssociateLinkFooter" style="border-top: 1px solid #bdbcbc;width: 280px;">
     <div class="col-md-6 col-sm-6 ModalFooterControll">
         <input type="button" class="btn btn-primary" id="btnok" name="btnaction" value="@(Model.link_system_id==0?"Save":"Update")" onclick="fiberLink.AssociatelinkId();" />
+        <button type="button" id="btncreate" class="btn btn-primary" onclick="fiberLink.btncreatelink();" style="float: left;margin-left: -70px;" disabled>Create</button>
         <button type="button" id="btnclear" class="btn btn-default" onclick="fiberLink.btnclearLinkId();" style="float: left;margin-left: -150px;"> @Resources.Resources.SI_GBL_GBL_GBL_GBL_129</button>
     </div>
 </div>

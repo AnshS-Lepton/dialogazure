@@ -215,6 +215,8 @@ namespace Models
         public List<PurposeCodeMaster> lstBindPurposeCode { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
         public Customer()
         {
             objPM = new PageMessage();
@@ -225,6 +227,7 @@ namespace Models
             lstFloorInfo = new List<Models.StructureFloorInfo>();
             entityType = "Customer";
             lstUserModule = new List<string>();
+            lstRouteInfo = new List<RouteInfo>();
 
         }
     } 

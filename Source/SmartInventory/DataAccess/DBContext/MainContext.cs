@@ -651,6 +651,7 @@ namespace DataAccess.DBContext
             //modelBuilder.Entity<FE_Tools>().ToTable("user_fe_tool_mapping1", dbschema);
             modelBuilder.Entity<FETOOLS_Attachment>().ToTable("user_tools_attachment", dbschema);
 
+            modelBuilder.Entity<TrenchExecution>().ToTable("att_entity_execution_method", dbschema);
         }
 
     }

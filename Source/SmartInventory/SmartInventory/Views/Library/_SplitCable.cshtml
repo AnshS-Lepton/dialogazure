@@ -279,10 +279,10 @@
     });
     function isFormValid() {
          
-        if ($('#cable_one_network_id').val() == "" && $('#cable_one_network_id').val() == "") {
-            alert('Please click on process cable !');
-        }
-        else {
+        //if ($('#cable_one_network_id').val() == "" && $('#cable_one_network_id').val() == "") {
+        //    alert('Please click on process cable !');
+        //}
+        //else {
             if (startEndReading == null) {
                 //---------------------------------------------------------------------------------------------------------------------
                 if ((parseFloat($('#cable_one_end_reading').val()) != 0 || parseFloat($('#cable_one_start_reading').val()) != 0) && (parseFloat($('#cable_one_end_reading').val()) <= parseFloat($('#cable_one_start_reading').val()))) {
@@ -349,7 +349,7 @@
                     return false;
                 }
             }
-        }
+        //}
 
     }
     $('.Cable_address').click(function () {

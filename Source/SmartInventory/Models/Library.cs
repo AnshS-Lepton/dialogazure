@@ -5120,6 +5120,36 @@ namespace Models
         [NotMapped]
         public List<DropDownMaster> lstFiber { get; set; }
     }
+
+    //   public interface TrenchExecution
+    //   {
+    //       int system_id { get; set; }
+    //       string entity_type { get; set; }
+    //       string execution_method { get; set; }
+    //       string execution_length { get; set; }
+    //       int created_by { get; set; }
+    //       DateTime created_on { get; set; }
+    //       int? modified_by { get; set; }
+    //       DateTime? modified_on { get; set; }
+    //       [NotMapped]
+    //       IList<DropDownMaster> ExecutionMethodsIn { get; set; }
+    //   }
+    //public interface trenchExecutionList
+    //{
+    //	int systemId { get; set; }
+    //	string entityType { get; set; }
+    //	int createdBy { get; set; }
+    //	IList<DropDownMaster> listATStatus { get; set; }
+    //	List<TrenchExecution> listAtStatusRecords { get; set; }
+
+    //}
+    
+
+	public class splicingmodel
+	{
+		public string splicingtype { get; set; }
+	}
+
 }
 
 

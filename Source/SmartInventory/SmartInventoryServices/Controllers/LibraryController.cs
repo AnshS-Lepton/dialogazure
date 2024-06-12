@@ -7046,7 +7046,26 @@ namespace SmartInventoryServices.Controllers
 					{
 						SaveATAcceptance(objTrench.ATAcceptance, objTrench.system_id, objTrench.user_id);
 					}
-				}
+                    if (objTrench.ExecutionMethod != null && objTrench.system_id > 0)
+                    {
+						objTrench.ExecutionMethod.listExecutionRecords.ForEach(record =>
+						{
+							record.system_id = objTrench.system_id;
+							record.entity_type = EntityType.Trench.ToString();
+						});
+
+
+
+						trenchExecutionList objExMethodStatus = new trenchExecutionList();
+						objExMethodStatus.listExecutionRecords = BLExecution.Instance.GetExecutionStatus(objTrench.system_id, EntityType.Trench.ToString());//FillATAcceptance(entityId, entityType);
+						if(objExMethodStatus.listExecutionRecords.Count> 0)
+                        {
+							var output = BLExecution.Instance.DeleteExecutionStatus(objTrench.system_id, EntityType.Trench.ToString());
+						}                      
+
+						SaveExecutionmethod(objTrench.ExecutionMethod, objTrench.system_id, objTrench.user_id);
+                    }
+                }
 				else
 				{
 					objTrench.objPM.status = ResponseStatus.VALIDATION_FAILED.ToString();
@@ -7103,19 +7122,21 @@ namespace SmartInventoryServices.Controllers
 			objTrenchIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objTrenchIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
 			objTrenchIn.lstTrenchServingType = objDDL.Where(x => x.dropdown_type == DropDownType.trench_serving_type.ToString()).ToList();
-		}
-		#endregion
+            //objTrenchIn.ExecutionMethodsIn = objDDL.Where(x => x.dropdown_type == DropDownType.execution_method.ToString()).ToList();
 
-		#endregion
+        }
+        #endregion
 
-		#region FMS
-		#region Add FMS
-		/// <summary> Add FMS </summary>
-		/// <param name="data">networkIdType,systemId,geom,userId</param>
-		/// <returns>FMS Details</returns>
-		/// <CreatedBy>Antra Mathurf</CreatedBy>
+        #endregion
 
-		public ApiResponse<FMSMaster> AddFMS(ReqInput data)
+        #region FMS
+        #region Add FMS
+        /// <summary> Add FMS </summary>
+        /// <param name="data">networkIdType,systemId,geom,userId</param>
+        /// <returns>FMS Details</returns>
+        /// <CreatedBy>Antra Mathurf</CreatedBy>
+
+        public ApiResponse<FMSMaster> AddFMS(ReqInput data)
 		{
 			var response = new ApiResponse<FMSMaster>();
 			try
@@ -12437,6 +12458,12 @@ namespace SmartInventoryServices.Controllers
 			BLATAcceptance.Instance.SaveATAcceptance(objList.listAtStatusRecords, system_id, userId);
 
 		}
+        private void SaveExecutionmethod(trenchExecutionList objList, int system_id, int userId)
+        {
+            BLExecution.Instance.SaveExecutionmethod(objList.listExecutionRecords, system_id, userId);
+        }
+
+
 		#endregion
 		#region Save VSAT 
 		/// <summary>Save Save VSAT  </summary>

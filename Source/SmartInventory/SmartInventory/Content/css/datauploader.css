@@ -163,7 +163,7 @@
     width: 100px;
 }
 
-.dataUploader #updKML, .dataUploader #updExcel, .dataUploader #updSHP, .dataUploader #updJson, .dataUploader #updTab {
+.dataUploader #updKML, .dataUploader #updExcel, .dataUploader #updkmlExcel, .dataUploader #updSHP, .dataUploader #updJson, .dataUploader #updTab {
     border: 1px solid #cccccc;
     width: 100%;
     padding: 3px;
@@ -175,7 +175,7 @@
     margin-left: 285px;
 }
 
-.dataUploader #clearKMLFile, .dataUploader #clearExcelFile, .dataUploader #clearJsonFile {
+.dataUploader #clearKMLFile, .dataUploader #clearExcelFile, .dataUploader #clearkmlExcelFile, .dataUploader #clearJsonFile {
     border: 0;
     color: red;
     background: none;

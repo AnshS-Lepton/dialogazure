@@ -964,5 +964,43 @@ namespace SmartInventory.Controllers
                 objResp.message = Resources.Resources.SI_GBL_GBL_NET_FRM_125;
             }
         }
+        public ActionResult CreateFiberLink(FiberLink objFiberLink)
+        {
+            ModelState.Clear();
+            objFiberLink.CreateFL = 1;
+            if (TryValidateModel(objFiberLink))
+            {
+                if (objFiberLink.system_id == 0)
+                {
+                    var FLNetworkId = new BLFiberLink().GetFiberLinkNetworkId();
+                    objFiberLink.network_id = FLNetworkId.network_id;
+                }
+                var result = new BLFiberLink().SaveFiberLink(objFiberLink, Convert.ToInt32(Session["user_id"]));
+                if (string.IsNullOrEmpty(result.pageMsg.message))
+                {
+                    if (objFiberLink.pageMsg.isNewEntity)
+                    {
+                        objFiberLink.pageMsg.message = Resources.Resources.SI_OSP_GBL_NET_FRM_422;
+                        objFiberLink.pageMsg.status = ResponseStatus.OK.ToString();
+                    }
+                    else
+                    {
+                        objFiberLink.pageMsg.message = Resources.Resources.SI_OSP_GBL_GBL_FRM_029;
+                        objFiberLink.pageMsg.status = ResponseStatus.OK.ToString();
+                    }
+                }
+                else
+                {
+                    objFiberLink.pageMsg.status = ResponseStatus.FAILED.ToString();
+                    objFiberLink.pageMsg.message = Resources.Resources.SI_GBL_GBL_NET_FRM_115;
+                }
+            }
+            else
+            {
+                objFiberLink.pageMsg.status = ResponseStatus.FAILED.ToString();
+                objFiberLink.pageMsg.message = getFirstErrorFromModelState();
+            }
+            return Json(objFiberLink, JsonRequestBehavior.AllowGet);
+        }
     }
 }

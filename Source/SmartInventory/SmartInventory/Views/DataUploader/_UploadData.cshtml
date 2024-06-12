@@ -203,8 +203,8 @@
                                             <input type="radio" name="OperationTypes" id="rdbtnNew" checked value="1"> New
                                         </label>
                                         @*<label class="radio-inline">
-                                                <input type="radio" name="OperationTypes" id="rdbtnUpdate" value="2"> Update
-                                            </label>*@
+                    <input type="radio" name="OperationTypes" id="rdbtnUpdate" value="2"> Update
+                </label>*@
                                     </div>
                                 </div>
                                 <div class="form-group" id="divChooseFileType">
@@ -213,27 +213,27 @@
                                         <select id="ddlTemplateType" class="chosen-select form-control" onchange="dataUploader.templateType();">
                                             <option label="" value="0">-Select-</option>
                                             @*<option value="KML">KML/KMZ</option>
-                                                <option value="EXL">Excel</option>
-                                                <option value="SHP">Shape</option>*@
+                    <option value="EXL">Excel</option>
+                    <option value="SHP">Shape</option>*@
                                             @*commented by Ram as DXF does not contains the attribute info
-                                                and it is not feasibile to upload entity using geometry information only.*@
+                    and it is not feasibile to upload entity using geometry information only.*@
                                             @*<option value="DXF">DXF</option>*@
                                             @*<option value="TAB">Tab</option>
-                                                <option value="JSON">Json</option>*@
+                    <option value="JSON">Json</option>*@
                                             @foreach (var file in Model.lstfiletypes)
                                             {
                                                 <option label="@file.file_type" value="@file.file_type">@file.file_display_name</option>
                                             }
                                         </select>
                                         @*<label class="radio-inline">
-                                                <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" data-template-type="KML" onchange="dataUploader.templateType(this);"> KML/KMZ
-                                            </label>
-                                            <label class="radio-inline">
-                                                <input type="radio" name="inlineRadioOptions" id="inlineRadio2" checked value="option2" data-template-type="EXL" onchange="dataUploader.templateType(this);"> Excel
-                                            </label>
-                                            <label class="radio-inline">
-                                                <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3" data-template-type="SHP" onchange="dataUploader.templateType(this);"> Shape
-                                            </label>*@
+                    <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" data-template-type="KML" onchange="dataUploader.templateType(this);"> KML/KMZ
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="inlineRadioOptions" id="inlineRadio2" checked value="option2" data-template-type="EXL" onchange="dataUploader.templateType(this);"> Excel
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3" data-template-type="SHP" onchange="dataUploader.templateType(this);"> Shape
+                </label>*@
                                     </div>
                                 </div>
                                 <div class="form-group" id="divDxfSourceId">
@@ -243,7 +243,7 @@
                                         <div id="demo-input-picker" style="position:relative;">
                                         </div>
                                         @*<select id="ddlSourceList" class="chosen-select form-control">
-                                            </select>*@
+                </select>*@
 
                                     </div>
                                 </div>
@@ -268,7 +268,7 @@
                                 <div class="form-group" id="divUpdKML">
                                     <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_013<i class="clsMandatory">*</i>:</label>
                                     <div class="col-md-8 form-inline">
-                                        <input type="file" id="updKML" accept=".kml,.kmz"><input type="button" id="clearKMLFile" class="cancel" value="X">
+                                        <input type="file" id="updKML" name="file[]" multiple accept=".kml,.kmz"><input type="button" id="clearKMLFile" class="cancel" value="X">
                                     </div>
                                 </div>
                                 <div class="form-group" id="divUpdShape">
@@ -283,6 +283,14 @@
                                         <input type="file" id="updJson" accept=".json"><input type="button" id="clearJsonFile" class="cancel" value="X">
                                     </div>
                                 </div>
+                                <div class="form-group" id="divkmlUpdExcel" style="display:none;">
+                                    <label class="col-md-4 control-label">@Resources.Resources.SI_OSP_DU_NET_FRM_021<i class="clsMandatory">*</i>:</label>
+
+                                    <div class="col-md-8 form-inline">
+                                        <input type="file" id="updkmlExcel" name="files[]" multiple accept=".xls,.xlsx">
+                                        <input type="button" id="clearkmlExcelFile" class="cancel" value="X">
+                                    </div>
+                                </div>
                                 <div class="form-group">
                                     <div class="col-md-4"></div>
                                     <div class="col-md-8">
@@ -291,10 +299,10 @@
                                     </div>
                                 </div>
                                 @*<div class="form-group">
-                                    <input class="form-control" id="demo">
-                                    <div id="demo-input-picker" style="position:relative;right:585px;top:-1150px;">
+        <input class="form-control" id="demo">
+        <div id="demo-input-picker" style="position:relative;right:585px;top:-1150px;">
 
-                                    </div>*@
+        </div>*@
                                 <div class="form-group">
                                     <div class="lblMessage-container">
                                         <label id="lblMessage" class="red"></label>

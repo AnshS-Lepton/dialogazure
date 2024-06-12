@@ -149,7 +149,7 @@ namespace SmartInventory.Controllers
             }
             objAudit.lstGeometryData = BLConvertMLanguage.MultilingualConvert(objAudit.lstGeometryData, arrIgnoreColumns);
             objAudit.objFilterAttributes.totalRecord = lstReportData.Count > 0 ? Convert.ToInt32(lstReportData[0].FirstOrDefault().Value) : 0;
-            //Session["viewAuditHistory"] = objAudit.objFilterAttributes;
+            Session["_viewAuditHistory"] = objAudit.objFilterAttributes;
             return PartialView("_AuditGeometryHistory", objAudit);
         }
         public void DownloadAuditGeometryHistory(string fileType)
@@ -177,13 +177,13 @@ namespace SmartInventory.Controllers
         public void DownloadAuditGeometryHistoryIntoExcel()
         {
 
-            if (Session["viewAuditHistory"] != null)
+            if (Session["_viewAuditHistory"] != null)
             {
 
                 try
                 {
                     ViewAuditMasterModel objAudit = new ViewAuditMasterModel();
-                    objAudit.objFilterAttributes = (FilterHistoryAttr)Session["viewAuditHistory"];
+                    objAudit.objFilterAttributes = (FilterHistoryAttr)Session["_viewAuditHistory"];
                     objAudit.objFilterAttributes.currentPage = 0;
                     List<Dictionary<string, string>> lstReportData = new BLMisc().GetAuditEntityGeometryDetail(objAudit.objFilterAttributes.systemid, objAudit.objFilterAttributes.entityType.ToUpper(), objAudit.objFilterAttributes.currentPage, objAudit.objFilterAttributes.pageSize, objAudit.objFilterAttributes.sort, objAudit.objFilterAttributes.orderBy);
                     lstReportData = BLConvertMLanguage.ExportMultilingualConvert(lstReportData);

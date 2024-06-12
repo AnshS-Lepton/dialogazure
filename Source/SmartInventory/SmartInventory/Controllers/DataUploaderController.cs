@@ -35,6 +35,7 @@ using System.ComponentModel;
 using Lepton.Utility;
 using Models;
 using Models.TempUpload;
+using System.Collections;
 
 namespace SmartInventory.Controllers
 {
@@ -84,6 +85,10 @@ namespace SmartInventory.Controllers
             UploadSummary summary = new UploadSummary();
             string entityname = Request.Form["entity"].ToString();
 
+            ColumnMappingTemplate columnMappingTemplate = new ColumnMappingTemplate();
+            List<int> fluploadid = new List<int>();
+            List<string> lstfilename = new List<string>();
+
             summary.entity_type = entityname;
             EntityType EnumEntityType = (EntityType)Enum.Parse(typeof(EntityType), entityname);
             if (Request.Files.Count > 0)
@@ -118,7 +123,7 @@ namespace SmartInventory.Controllers
                             }
 
                             fname = Path.Combine(Server.MapPath("~/Uploads/"), fname);
-
+                            Session["file_Name"] = fname;
                             file.SaveAs(fname);
 
                         }
@@ -126,6 +131,8 @@ namespace SmartInventory.Controllers
                     for (int i = 0; i < files.Count; i++)
                     {
                         HttpPostedFileBase file = files[i];
+
+                        var extensiones = Path.GetExtension(file.FileName).ToLower();
                         // string fname;
                         // Checking for Internet Explorer  
                         if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
@@ -137,105 +144,195 @@ namespace SmartInventory.Controllers
                         {
                             fname = file.FileName;
                         }
-                        string FileName = Path.GetFileNameWithoutExtension(fname);
-                        var extension = Path.GetExtension(file.FileName).ToLower();
-
-                        fname = Path.Combine(Server.MapPath("~/Uploads/"), fname);
-
-                        file.SaveAs(fname);
-                        //string FileName = Path.GetFileNameWithoutExtension(fname);
-                        var SourceId = "";
-                        if (Path.GetExtension(fname) == ".dxf")
+                        if (extensiones == ".kml" || extensiones == ".kmz")
                         {
-                            SourceId = Request.Form["SourceId"];
+                            string extension1 = Path.GetExtension(file.FileName).ToLower();
+                            fname = Path.Combine(Server.MapPath("~/Uploads/"), fname);
+                            file.SaveAs(fname);
+                            Session["fileName"] = fname;
+                            Session["file_Name"] = fname;
+                            lstfilename.Add(fname);
+                            getFileData(summary.entity_type);
+                            int userId = Convert.ToInt32(Session["user_id"]);
+                            if (!isSupportFile(fname))
+                            {
+
+                                Session["fileName"] = fname;
+                                //getFileData(summary.entity_type);
+                                //if (!file.FileName.Contains("kml"))
+                                //{
+
+                                // dataTable = NPOIExcelHelper.ExcelToTable(fname);
+                                dataTable = CommonUtility.CheckDataTableForBlankRecords(dataTable);
+
+                                if (dataTable.Rows.Count == 0)
+                                {
+                                    summary.file_name = file.FileName;
+                                    summary.entity_type = entityname;
+                                    summary.start_on = DateTimeHelper.Now;
+                                    summary.status = StatusCodes.INVALID_FILE.ToString();
+                                    summary.status_message = StatusCodes.FAILED.ToString();
+                                    summary.err_description = Resources.Resources.SI_OSP_GBL_NET_FRM_519;
+                                    summary.end_on = DateTimeHelper.Now;
+                                    //summary = blDataUploader.Save(summary);
+
+                                    return Json(summary);
+                                }
+                                Session["FileCoulms"] = dataTable.Columns;
+
+                                summary.user_id = userId;
+                                int maxUploadCount = 0;
+                                bool ValidCount = CheckMaximumRecordAllowed(dataTable.Rows.Count, EnumEntityType, out maxUploadCount);
+                                if (!ValidCount)
+                                {
+                                    summary.file_name = file.FileName;
+                                    summary.entity_type = entityname;
+                                    summary.start_on = DateTimeHelper.Now;
+                                    summary.status = StatusCodes.FAILED.ToString();
+                                    summary.status_message = StatusCodes.FAILED.ToString();
+                                    summary.end_on = DateTimeHelper.Now;
+                                    summary.err_description = string.Format(Resources.Resources.SI_OSP_DU_NET_FRM_031, maxUploadCount);
+                                    //Maximum 1000 records can be uploaded at a time!
+                                    //summary = blDataUploader.Save(summary);
+
+                                    return Json(summary);
+                                }
+
+                            }
+
+                          
+                            if (count >= 0 && dataTable != null)
+                            {
+                                summary.user_id = userId;
+                                summary.total_record = dataTable.Rows.Count;
+                                summary.success_record = 0;
+                                summary.failed_record = 0;
+                                summary.other_record = 0;
+                                summary.entity_type = entityname;
+                                summary.start_on = DateTimeHelper.Now;
+                                summary.status = StatusCodes.OK.ToString();
+                                summary.file_name = file.FileName;
+                                summary.execution_type = ConstantsKeys.START;
+                                summary = blDataUploader.Save(summary);
+                                summary.status_message = ConstantsKeys.PROCESSING;
+                                count = summary.id;
+                                fluploadid.Add(count);
+                                //lstfilename.Add(file.FileName);
+                                columnMappingTemplate.lst_UploadId = fluploadid;
+                            }
+                            blDataUploader.UpdateStatus(summary);
                         }
                         else
                         {
-                            SourceId = "";
-                        }
+                            string FileName = Path.GetFileNameWithoutExtension(fname);
+                            var extension = Path.GetExtension(file.FileName).ToLower();
 
-                        if (extension == ".dxf" || extension == ".dat")
-                        {
-                            dataTable = CheckUploadedFiles(FileName, Path.GetExtension(fname).Replace(".", ""), SourceId);
+                            fname = Path.Combine(Server.MapPath("~/Uploads/"), fname);
+
                             file.SaveAs(fname);
-                        }
-                        int userId = Convert.ToInt32(Session["user_id"]);
-                        if (!isSupportFile(fname))
-                        {
+                            Session["file_Name"] = fname;
+                            lstfilename.Add(fname);
+                            //string FileName = Path.GetFileNameWithoutExtension(fname);
+                            var SourceId = "";
+                            if (Path.GetExtension(fname) == ".dxf")
+                            {
+                                SourceId = Request.Form["SourceId"];
+                            }
+                            else
+                            {
+                                SourceId = "";
+                            }
 
-                            Session["fileName"] = fname;
-                            getFileData(summary.entity_type);
-                            //if (!file.FileName.Contains("kml"))
+                            if (extension == ".dxf" || extension == ".dat")
+                            {
+                                dataTable = CheckUploadedFiles(FileName, Path.GetExtension(fname).Replace(".", ""), SourceId);
+                                file.SaveAs(fname);
+                            }
+                            int userId = Convert.ToInt32(Session["user_id"]);
+                            if (!isSupportFile(fname))
+                            {
+
+                                Session["fileName"] = fname;
+                                getFileData(summary.entity_type);
+                                //if (!file.FileName.Contains("kml"))
+                                //{
+
+                                // dataTable = NPOIExcelHelper.ExcelToTable(fname);
+                                dataTable = CommonUtility.CheckDataTableForBlankRecords(dataTable);
+
+                                if (dataTable.Rows.Count == 0)
+                                {
+                                    summary.file_name = file.FileName;
+                                    summary.entity_type = entityname;
+                                    summary.start_on = DateTimeHelper.Now;
+                                    summary.status = StatusCodes.INVALID_FILE.ToString();
+                                    summary.status_message = StatusCodes.FAILED.ToString();
+                                    summary.err_description = Resources.Resources.SI_OSP_GBL_NET_FRM_519;
+                                    summary.end_on = DateTimeHelper.Now;
+                                    //summary = blDataUploader.Save(summary);
+
+                                    return Json(summary);
+                                }
+                                Session["FileCoulms"] = dataTable.Columns;
+
+                                summary.user_id = userId;
+                                int maxUploadCount = 0;
+                                bool ValidCount = CheckMaximumRecordAllowed(dataTable.Rows.Count, EnumEntityType, out maxUploadCount);
+                                if (!ValidCount)
+                                {
+                                    summary.file_name = file.FileName;
+                                    summary.entity_type = entityname;
+                                    summary.start_on = DateTimeHelper.Now;
+                                    summary.status = StatusCodes.FAILED.ToString();
+                                    summary.status_message = StatusCodes.FAILED.ToString();
+                                    summary.end_on = DateTimeHelper.Now;
+                                    summary.err_description = string.Format(Resources.Resources.SI_OSP_DU_NET_FRM_031, maxUploadCount);
+                                    //Maximum 1000 records can be uploaded at a time!
+                                    //summary = blDataUploader.Save(summary);
+
+                                    return Json(summary);
+                                }
+
+                            }
+
+                            if (count == 0 && dataTable != null)
+                            {
+                                summary.user_id = userId;
+                                summary.total_record = dataTable.Rows.Count;
+                                summary.success_record = 0;
+                                summary.failed_record = 0;
+                                summary.other_record = 0;
+                                summary.entity_type = entityname;
+                                summary.start_on = DateTimeHelper.Now;
+                                summary.status = StatusCodes.OK.ToString();
+                                summary.file_name = file.FileName;
+                                summary.execution_type = ConstantsKeys.START;
+                                summary = blDataUploader.Save(summary);
+                                summary.status_message = ConstantsKeys.PROCESSING;
+                                count = summary.id;
+                                fluploadid.Add(count);
+                                //lstfilename.Add(file.FileName);
+                                columnMappingTemplate.lst_UploadId = fluploadid;
+                            }
+                            blDataUploader.UpdateStatus(summary);
+                            //status = uploadExcelOrKML.UploadExcelorKML(summary, file, fname, EnumEntityType, dataTable);
+                            //if (!status.is_valid)
                             //{
-
-                            // dataTable = NPOIExcelHelper.ExcelToTable(fname);
-                            dataTable = CommonUtility.CheckDataTableForBlankRecords(dataTable);
-
-                            if (dataTable.Rows.Count == 0)
-                            {
-                                summary.file_name = file.FileName;
-                                summary.entity_type = entityname;
-                                summary.start_on = DateTimeHelper.Now;
-                                summary.status = StatusCodes.INVALID_FILE.ToString();
-                                summary.status_message = StatusCodes.FAILED.ToString();
-                                summary.err_description = Resources.Resources.SI_OSP_GBL_NET_FRM_519;
-                                summary.end_on = DateTimeHelper.Now;
-                                //summary = blDataUploader.Save(summary);
-
-                                return Json(summary);
-                            }
-                            Session["FileCoulms"] = dataTable.Columns;
-
-                            summary.user_id = userId;
-                            int maxUploadCount = 0;
-                            bool ValidCount = CheckMaximumRecordAllowed(dataTable.Rows.Count, EnumEntityType, out maxUploadCount);
-                            if (!ValidCount)
-                            {
-                                summary.file_name = file.FileName;
-                                summary.entity_type = entityname;
-                                summary.start_on = DateTimeHelper.Now;
-                                summary.status = StatusCodes.FAILED.ToString();
-                                summary.status_message = StatusCodes.FAILED.ToString();
-                                summary.end_on = DateTimeHelper.Now;
-                                summary.err_description = string.Format(Resources.Resources.SI_OSP_DU_NET_FRM_031, maxUploadCount);
-                                //Maximum 1000 records can be uploaded at a time!
-                                //summary = blDataUploader.Save(summary);
-
-                                return Json(summary);
-                            }
-
+                            //    summary.status_message = status.error_msg;
+                            //    blDataUploader.UpdateStatus(summary);
+                            //    break;
+                            //}
                         }
-
-                        if (count == 0 && dataTable != null)
-                        {
-                            summary.user_id = userId;
-                            summary.total_record = dataTable.Rows.Count;
-                            summary.success_record = 0;
-                            summary.failed_record = 0;
-                            summary.other_record = 0;
-                            summary.entity_type = entityname;
-                            summary.start_on = DateTimeHelper.Now;
-                            summary.status = StatusCodes.OK.ToString();
-                            summary.file_name = file.FileName;
-                            summary.execution_type = ConstantsKeys.START;
-                            summary = blDataUploader.Save(summary);
-                            summary.status_message = ConstantsKeys.PROCESSING;
-                            count = summary.id;
-                        }
-                        blDataUploader.UpdateStatus(summary);
-                        //status = uploadExcelOrKML.UploadExcelorKML(summary, file, fname, EnumEntityType, dataTable);
-                        //if (!status.is_valid)
-                        //{
-                        //    summary.status_message = status.error_msg;
-                        //    blDataUploader.UpdateStatus(summary);
-                        //    break;
-                        //}
                     }
                     //}
                     count = 0;
                     status.status = StatusCodes.OK.ToString();
                     if (status.status != StatusCodes.INVALID_INPUTS.ToString())
                     {
+                        summary.lstuploadId = fluploadid;
+                        columnMappingTemplate.lst_UploadId = fluploadid;
+                        Session["uploadId"] = fluploadid;
+                        Session["File_name"] = lstfilename;
                         blDataUploader.UpdateStatus(summary);
                     }
                     if (status.status == StatusCodes.OK.ToString())
@@ -359,6 +456,77 @@ namespace SmartInventory.Controllers
                 }
             }
         }
+        public void getFileDatabkp(string entityType, string fname)
+        {
+            string geomTempColName = string.Empty;
+            string latTempColName = string.Empty;
+            string longTempColName = string.Empty;
+            //string fname = (string)Session["fileName"];
+
+            List<Mapping> lstMapping = blDataUploader.GetMappings(entityType);
+
+            if (entityType == EntityType.Cable.ToString() || entityType == EntityType.Duct.ToString() || entityType == EntityType.Trench.ToString() || entityType == EntityType.Microduct.ToString() || entityType == EntityType.LandBase.ToString())
+            {
+                geomTempColName = lstMapping.Where(m => m.DbColName.ToLower() == "sp_geometry").FirstOrDefault().TemplateColName;
+            }
+            else
+            {
+                latTempColName = lstMapping.Where(m => m.DbColName.ToLower() == "latitude").FirstOrDefault().TemplateColName;
+                longTempColName = lstMapping.Where(m => m.DbColName.ToLower() == "longitude").FirstOrDefault().TemplateColName;
+            }
+
+            switch (Path.GetExtension(fname).ToUpper())
+            {
+                case ".KMZ":
+                    {
+                        string kmlPath = string.Empty;
+                        using (StreamReader sr = new StreamReader(Path.Combine(Server.MapPath("~/Uploads/"), fname)))
+                        {
+                            using (var kmzFile = KmzFile.Open(sr.BaseStream))
+                            {
+                                string kml = kmzFile.ReadKml();
+                                fname = Path.Combine(Server.MapPath("~/Uploads/"), Path.GetFileNameWithoutExtension(fname) + ".kml");
+                                System.IO.File.WriteAllText(fname, kml);
+
+                            }
+                        }
+                        dataTable = NPOIExcelHelper.KMLToTable(fname, geomTempColName, latTempColName, longTempColName, entityType);
+                    }
+                    break;
+                case ".KML":
+                    {
+                        dataTable = NPOIExcelHelper.KMLToTable(fname, geomTempColName, latTempColName, longTempColName, entityType); break;
+                    }
+                case ".XLSX": { dataTable = NPOIExcelHelper.ExcelToTable(fname, geomTempColName); break; }
+                case ".XLX": { dataTable = NPOIExcelHelper.ExcelToTable(fname, geomTempColName); break; }
+                case ".SHP": { dataTable = NPOIExcelHelper.ShapeToDataTable(fname); break; }
+                case ".TAB":
+                    {
+                        Convertor converter = new Convertor();
+                        ConvertorResponse response = converter.getKMLfromTabFile(Path.GetDirectoryName(fname), Path.GetFileNameWithoutExtension(fname), Path.GetExtension(fname));
+                        if (response.Status == true)
+                        {
+                            // dataTable = NPOIExcelHelper.KMLToTable(response.OutputFile, geomTempColName, latTempColName, longTempColName, entityType);
+
+                            dataTable = converter.readkml(response.OutputFile);
+                        }
+                        break;
+                    }
+                //case ".DXF": { var converter = new Lepton.GISConvertor.Convertor();
+                //        //dataTable = converter.}
+                case ".JSON":
+                    {
+                        dataTable = JsonToDataTable(entityType, fname);
+                        break;
+                    }
+            }
+            ////This will remove all empty rows from datable:
+            if (dataTable != null)
+            {
+                dataTable = dataTable.Rows.Cast<DataRow>().Where(row => !row.ItemArray.All(field => field is DBNull || string.IsNullOrWhiteSpace(field as string ?? field.ToString()))).CopyToDataTable();
+            }
+        }
+
         public void getFileData(string entityType)
         {
             string geomTempColName = string.Empty;
@@ -653,12 +821,26 @@ namespace SmartInventory.Controllers
             objPM.status = StatusCodes.VALIDATION_FAILED.ToString();
             if (objTemplate.isFinalMapping)
             {
-                List<NewColumns> listNewColumn = new List<NewColumns>();
+                var uploadId = Session["uploadId"];
+                int fileindex = 0;
+                foreach (var items in (IEnumerable)uploadId)
+                {
+                    int id = Convert.ToInt32(items);
+                    UploadSummary summary = blDataUploader.Get(id);
+
+                    List<NewColumns> listNewColumn = new List<NewColumns>();
                 ErrorMessage status = new ErrorMessage();
-                UploadSummary summary = blDataUploader.Get(objTemplate.uploadId);
+                //UploadSummary summary = blDataUploader.Get(objTemplate.uploadId);
                 var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_id == objTemplate.layer_id).FirstOrDefault();
                 summary.entity_type = layerDetail.layer_name;
-                getFileData(layerDetail.layer_name);
+                    var file_name = Session["file_Name"] as IEnumerable<string>; ;
+                    var flnames = file_name.ElementAt(fileindex);
+
+
+                    string ffilepath = flnames.ToString();
+                    getFileDatabkp(layerDetail.layer_name, ffilepath);
+
+                    //getFileData(layerDetail.layer_name);
                 List<Mapping> lstMapping = blDataUploader.GetMappings(layerDetail.layer_name);
                 foreach (var item in objTemplate.listMappedColumns)
                 {
@@ -701,10 +883,10 @@ namespace SmartInventory.Controllers
                 }
                 EntityType EnumEntityType = (EntityType)Enum.Parse(typeof(EntityType), summary.entity_type);
                 string fname = (string)Session["fileName"];
-                Path.GetFileName(fname);
+                    //Path.GetFileName(fname);
+                    Path.GetFileName(flnames);
 
-
-                DataColumnCollection columns = dataTable.Columns;
+                    DataColumnCollection columns = dataTable.Columns;
                 if (!columns.Contains("is_valid"))
                 {
                     DataColumn colIsValid = dataTable.Columns.Add("is_valid", typeof(bool));
@@ -794,7 +976,7 @@ namespace SmartInventory.Controllers
                     }
                 }
 
-                new BLDataUploader().DeleteRecordFromTempTable(EnumEntityType.ToString(),summary.id);
+                new BLDataUploader().DeleteRecordFromTempTable(EnumEntityType.ToString(), summary.id);
                 status = uploadExcelOrKML.UploadExcelorKML(summary, null, null, EnumEntityType, dataTable);
                 if (ApplicationSettings.isCDBAttributeEnabled == 1 && layerDetail.layer_name == "Cable")
                 {
@@ -805,6 +987,8 @@ namespace SmartInventory.Controllers
                     summary.status_message = status.error_msg;
                     blDataUploader.UpdateStatus(summary);
                     //break;
+                }
+                    fileindex++;
                 }
             }
             else
@@ -861,24 +1045,49 @@ namespace SmartInventory.Controllers
 
         public ActionResult ValidateData(int uploadId)
         {
-            UploadSummary summary = blDataUploader.Get(uploadId);
-            EntityType EnumEntityType = (EntityType)Enum.Parse(typeof(EntityType), summary.entity_type);
-            summary = tempToMainTable.Validate(EnumEntityType, summary);
+            UploadSummary summary = null;
+            var fileuploadId = Session["uploadId"];
+            //var DynamicArray1 = Session["DynamicArray"] as IEnumerable<NewColumns>;
+
+            foreach (var item in (IEnumerable)fileuploadId)
+            {
+                int col = Convert.ToInt32(item);
+                summary = blDataUploader.Get(col);
+                EntityType EnumEntityType = (EntityType)Enum.Parse(typeof(EntityType), summary.entity_type);
+                summary = tempToMainTable.Validate(EnumEntityType, summary);
+            }
             return Json(summary);
         }
 
         public ActionResult ProcessData(int uploadId)
         {
-            UploadSummary summary = blDataUploader.Get(uploadId);
+            UploadSummary summary = null;
+             summary = blDataUploader.Get(uploadId);
             try
             {
-                EntityType EnumEntityType = (EntityType)Enum.Parse(typeof(EntityType), summary.entity_type);
-                summary = tempToMainTable.InsertDataInMainTable(EnumEntityType, summary);
-                BLDataUploader bLDataUploader = new BLDataUploader();
-                if (summary.lstErrorMessage == null || summary.lstErrorMessage.Count == 0)
+                var uploadid = Session["uploadId"];
+                foreach (var item in (IEnumerable)uploadid)
                 {
-                    bLDataUploader.DeleteDataFromTempTable(summary);
+
+                    int id = Convert.ToInt32(item);
+                    summary = blDataUploader.Get(id);
+
+                    EntityType EnumEntityType = (EntityType)Enum.Parse(typeof(EntityType), summary.entity_type);
+                    summary = tempToMainTable.InsertDataInMainTable(EnumEntityType, summary);
+                    BLDataUploader bLDataUploader = new BLDataUploader();
+                    if (summary.lstErrorMessage == null || summary.lstErrorMessage.Count == 0)
+                    {
+                        bLDataUploader.DeleteDataFromTempTable(summary);
+                    }
+
                 }
+                //EntityType EnumEntityType = (EntityType)Enum.Parse(typeof(EntityType), summary.entity_type);
+                //summary = tempToMainTable.InsertDataInMainTable(EnumEntityType, summary);
+                //BLDataUploader bLDataUploader = new BLDataUploader();
+                //if (summary.lstErrorMessage == null || summary.lstErrorMessage.Count == 0)
+                //{
+                //    bLDataUploader.DeleteDataFromTempTable(summary);
+                //}
                 return Json(summary);
             }
             catch (Exception ex)

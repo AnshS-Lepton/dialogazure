@@ -269,6 +269,7 @@
     <Compile Include="BLWorkSpace.cs" />
     <Compile Include="BLIntegrationSuperSet.cs" />
     <Compile Include="BL_Fe_Tools.cs" />
+    <Compile Include="BLExecution.cs" />
     <Compile Include="Feasibility\BLFeasibility.cs" />
     <Compile Include="Feasibility\CommonHelpers.cs" />
     <Compile Include="GlobalSuppressions.cs" />
