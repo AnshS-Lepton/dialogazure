@@ -169,6 +169,11 @@ namespace Models
         public string b_region { get; set; }
         public string a_city { get; set; }
         public string b_city { get; set; }
+        [NotMapped]
+        public string entity_type { get; set; }
+        [NotMapped]
+        public trenchExecutionList ExecutionMethod { get; set; }
+
         public TrenchMaster()
         {
             objPM = new PageMessage();

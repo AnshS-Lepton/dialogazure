@@ -1008,14 +1008,47 @@ namespace Models
 			listAtAttachments = new List<LibraryAttachment>();
 		}
 	}
+    public class TrenchExecution
+    {
+        [Key]
+        public int id { get; set; }
+        public int system_id { get; set; }
+        public string entity_type { get; set; }
+        public string execution_method { get; set; }
+        public string execution_length { get; set; }
+        public int created_by { get; set; }
+        public DateTime created_on { get; set; }
+        public int? modified_by { get; set; }
+        public DateTime? modified_on { get; set; }
+        [NotMapped]
+        public IList<DropDownMaster> ExecutionMethodsIn { get; set; }
 
-	#endregion
+    }
+    public class trenchExecutionList
+    {
+        public int systemId { get; set; }
+        public string entityType { get; set; }
+        public int createdBy { get; set; }
+        public string execution_method { get; set; }
+        public string execution_length { get; set; }
+        public IList<DropDownMaster> listExecutionmethod { get; set; }
+        public List<TrenchExecution> listExecutionRecords { get; set; }
+        //public List<LibraryAttachment> listAtAttachments { get; set; }
+        public trenchExecutionList()
+        {
+            listExecutionRecords = new List<TrenchExecution>();
+            //listAtAttachments = new List<ATAcceptanceAttachments>();
+            //listAtAttachments = new List<LibraryAttachment>();
+        }
+    }
+
+    #endregion
 
 
 
-	#region Maintainence Charges
+    #region Maintainence Charges
 
-	public class EMCExport
+    public class EMCExport
 	{
 		public string entity_network_id { get; set; }
 		public string type_of_activity_charge { get; set; }
@@ -3027,5 +3060,6 @@ namespace Models
             return objEmailSettingsModel;
         }
     }
+
 }
 

@@ -991,6 +991,8 @@ var rowIndexForDelte;
 function AddATStatusRow(RowIndex, SystemId, CreatedBy, entitytype) {
     //<span class="shaftRowDelete removeAT" title="Delete" style="">x</span>
     //// 
+    debugger;
+
     rowIndexForDelte = RowIndex;
     var Row = "";
     if (RowIndex <= 50) {
@@ -1073,6 +1075,77 @@ function delRow(rowIndex) {
 
 
 }
+
+function delRow1(rowIndex) {
+    debugger;
+    var dvID = 'AT_row_' + rowIndex;
+    var len = $('#dvExecution > .len').length;
+    if (len == 1) {
+        alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_145);//Atleast 1 status row required!
+    }
+    else {
+        //Are you sure you want to delete this row?
+        confirm(MultilingualKey.SI_OSP_GBL_JQ_GBL_006, function () {
+
+            $('.' + dvID).remove();
+            //// 
+            var statusRow = $("#dvExecution .row");
+
+            statusRow.each(function (i, val) {
+
+                if (rowIndex <= i) {
+                    $(this).find("input,select,span").each(function (n, nval) {
+
+                        if ($(this).attr('name') != undefined)
+                            $(this).attr('name', $(this).attr('name').replace(/\[\d+\]/, "[" + (i) + "]"));
+
+                        if ($(this).attr('id') != undefined)
+                            $(this).attr('id', $(this).attr('id').replace(/\_\d+\_/, "_" + (i) + "_"));
+
+                        if ($(this).attr('onclick') != undefined)
+                            $(this).attr('onclick', $(this).attr('onclick').replace(/\(\d+\)/, "(" + (i) + ")"));
+
+
+                    });
+
+                }
+
+                var cls = $(val).attr('class').replace(/[0-9]/, i);
+                $(val).removeClass();
+                $(val).addClass(cls);
+
+            });
+
+        });
+    }
+
+
+}
+
+function AddExecutionRow(RowIndex, SystemId, CreatedBy, entitytype) {
+    debugger;
+    rowIndexForDelte = RowIndex +1;
+    var Row = "";
+    if (RowIndex <= 50) {
+        Row = '<div class="row form-group d-flex align-items-center AT_row_' + RowIndex + ' len">';
+
+        Row += '<label for="ddl_Execution" class="form-label col-md-2 col-sm-2 white-space">Execution Method</label> <div class="col-md-4 col-sm-4"><select id="ddl_Execution" name="ExecutionMethod.listExecutionRecords[' + RowIndex + '].execution_method" class="chosen-select form-group" onchange="removeBorder(this)"><option value="0">-Select-</option><option value="OT" data-planningname="OT">OT</option><option value="HDD" data-planningname="HDD">HDD</option><option value="PCC" data-planningname="PCC">PCC</option><option value="Clamping" data-planningname="Clamping">Clamping</option><option value="Other" data-planningname="Other">Other</option></select></div>';
+
+        Row += '<label for="ddl_Execution" class="form-label col-md-2 col-sm-2 white-space">Execution Length</label><div class="col-md-4 col-sm-4"><input class="form-control" id="execution_length" name="ExecutionMethod.listExecutionRecords[' + RowIndex + '].execution_length"  maxlength="15" name="execution_length" type="number" value=""></div>';
+
+        Row += '<span class="icon-close removeAT" onclick="delRow(' + RowIndex + ')" title="' + MultilingualKey.SI_GBL_GBL_GBL_GBL_002 + '" style=""></span>';
+
+        Row += '</div>';
+
+         $('#dvExecution').append(Row);
+         $('.chosen-select').chosen({ width: '100%' });         
+         
+    }
+    else {
+        alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_007);//Maximum 50 rows can be added!
+    }
+}
+
 
 function AddRemarkRow(RowIndex, SystemId, rowStage, _rowRemarks) {
     rowIndexForDelte = RowIndex;
@@ -1734,7 +1807,6 @@ function notAllowZero(objControlls) {
     });
 }
 function disabledItem(event) {
-    console.log('disabled item');
     event.stopPropagation();
     return false;
 }

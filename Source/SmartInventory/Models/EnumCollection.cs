@@ -271,7 +271,8 @@ namespace Models
         Operator_Type_LOV,
         Fiber_Type_LOV,
         Route_Type,
-        type
+        type,
+        execution_Method
     }
     public enum VendorType
     {
