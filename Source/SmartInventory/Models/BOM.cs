@@ -141,7 +141,11 @@ namespace Models
         public IList<DropDownMaster> lstNetworkStatus { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
-        
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
+
 
         public BomBoqExportReport()
         {
@@ -159,6 +163,7 @@ namespace Models
             //listOwnership = new List<DropDownMaster>();
             list3rdPartyVendorId = new List<KeyValueDropDown>();
             lstUserModule = new List<string>();
+            lstRouteInfo = new List<RouteInfo>();
 
         }
 
@@ -213,6 +218,7 @@ namespace Models
         public int systemId { get; set; }
         public string entityType { get; set; }
         public string connectionString { get; set; }
+        public string selected_route_ids { get; set; }
     }
 
     public class BomBoqAdAttribute

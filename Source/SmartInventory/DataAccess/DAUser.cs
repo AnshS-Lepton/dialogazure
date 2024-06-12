@@ -17,6 +17,7 @@ using System.IO;
 using System.Net;
 using Utility;
 using static Mono.Security.X509.X520;
+using Models.Admin;
 
 namespace DataAccess
 {
@@ -75,7 +76,7 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-               throw;
+                throw;
             }
         }
 
@@ -97,11 +98,11 @@ namespace DataAccess
             }
         }
 
-        public string UpdateNotificationForFastLane(string NotificationType,string JobOrderId,string IsMailSent)
+        public string UpdateNotificationForFastLane(string NotificationType, string JobOrderId, string IsMailSent)
         {
             using (var context = new MainContext())
             {
-                wfm_notification entity = context.wfm_notification.Where(m => m.notification_type == NotificationType && m.hpsmid== JobOrderId).SingleOrDefault();
+                wfm_notification entity = context.wfm_notification.Where(m => m.notification_type == NotificationType && m.hpsmid == JobOrderId).SingleOrDefault();
                 if (entity != null)
                 {
                     entity.email_id = IsMailSent;
@@ -328,7 +329,7 @@ namespace DataAccess
         {
             try
             {
-                email= MiscHelper.Encrypt(email);
+                email = MiscHelper.Encrypt(email);
                 var userDetail = repo.Get(x => x.user_email.ToLower() == email.ToLower() && x.user_name.ToLower() == userName.ToLower() && x.is_active == true);
                 if (userDetail != null)
                 {
@@ -348,6 +349,25 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+
+        public List<KeyValueDropDown> GetUsernameDetails()
+        {
+            try
+            {
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_user_details", new { }, true);
+            }
+            catch { throw; }
+        }
+
+        public List<KeyValueDropDown> GetUsernameDetails(int id )
+        {
+            try
+            {
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_user_details", new {ID =id }, true);
+            }
+            catch { throw; }
+        }
         #region sapna
 
         public List<KeyValueDropDown> BindReportingManager(int RoleId, int user_id)
@@ -359,6 +379,35 @@ namespace DataAccess
             catch { throw; }
 
         }
+        public List<KeyValueDropDown> BindFETool(int user_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_user_tool_data", new { p_userId = user_id }, true);
+            }
+            catch { throw; }
+
+        }
+        public List<KeyValueDropDown> BindFETooldropdown(int user_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_fe_tool_data", new { p_userId = user_id }, true);
+            }
+            catch { throw; }
+
+        }
+        
+        public List<KeyValueDropDown> BindFETool()
+        {
+            try
+            {
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_user_tool_data", new {}, true);
+            }
+            catch { throw; }
+
+        }
+
 
         public List<KeyValueDropDown> BindWarehouseCode()
         {
@@ -533,6 +582,8 @@ namespace DataAccess
             }
             catch { throw; }
         }
+      
+
         public List<User> GetUsersListByMGRIds(List<int> mgrIds)
         {
             return repo.GetAll().Where(p => mgrIds.Contains(p.manager_id)).ToList();
@@ -558,7 +609,7 @@ namespace DataAccess
         {
             try
             {
-                
+
                 return repo.ExecuteProcedure<UserLoginHistory>("fn_get_user_login_history_details", new
                 {
                     p_searchby = objGridAttributes.searchBy,
@@ -699,7 +750,7 @@ namespace DataAccess
                 List<User_Master> objList = new List<User_Master>();
                 try
                 {
-                    
+
                     {
 
                         string query = string.Format(@"select * from vw_multimanager_user_details where managerids = '{0}' ", userId);
@@ -933,11 +984,11 @@ namespace DataAccess
                 var _objUserLogin = repo.Get(u => u.login_id == objUserLogin.login_id && u.source.ToUpper() == "WEB");
                 if (_objUserLogin != null)
                 {
-                    _objUserLogin.client_ip =objUserLogin.client_ip;
-                    _objUserLogin.browser_name=objUserLogin.browser_name;
+                    _objUserLogin.client_ip = objUserLogin.client_ip;
+                    _objUserLogin.browser_name = objUserLogin.browser_name;
                     _objUserLogin.browser_version = objUserLogin.browser_version;
-                    _objUserLogin.server_ip=objUserLogin.server_ip;
-                    _objUserLogin.session_id = objUserLogin.session_id;            
+                    _objUserLogin.server_ip = objUserLogin.server_ip;
+                    _objUserLogin.session_id = objUserLogin.session_id;
                     return repo.Update(_objUserLogin);
                 }
                 return repo.Get(u => u.login_id == objUserLogin.login_id && u.source.ToUpper() == "WEB");
@@ -963,12 +1014,12 @@ namespace DataAccess
         {
             try
             {
-                var objUserLogin = repo.Get(u => u.user_id == userId && u.source.ToUpper()==source.ToUpper());
+                var objUserLogin = repo.Get(u => u.user_id == userId && u.source.ToUpper() == source.ToUpper());
                 if (objUserLogin != null && objUserLogin.history_id == historyId)
                 {
                     objUserLogin.logout_time = DateTimeHelper.Now;
                     objUserLogin.signout_type = signOut_type;
-                   
+
                     repo.Update(objUserLogin);
                 }
                 return true;
@@ -979,9 +1030,9 @@ namespace DataAccess
         {
             return repo.Get(m => m.user_id == userId && m.source.ToUpper() == Source.ToUpper());
         }
-        public int GetUserLoginHistoryId(int userId,string tokenSourceName)
+        public int GetUserLoginHistoryId(int userId, string tokenSourceName)
         {
-            var result = repo.Get(m => m.user_id == userId && m.source.ToUpper()== tokenSourceName.ToUpper());
+            var result = repo.Get(m => m.user_id == userId && m.source.ToUpper() == tokenSourceName.ToUpper());
             if (result != null)
             {
                 return result.history_id;
@@ -1019,11 +1070,11 @@ namespace DataAccess
             catch { throw; }
         }
 
-        public DbMessage ValidateUser(string user_name, string user_token, string fsa_id,string integration_source)
+        public DbMessage ValidateUser(string user_name, string user_token, string fsa_id, string integration_source)
         {
             try
             {
-                return repo.ExecuteProcedure<DbMessage>("fn_validate_user", new { p_user_name = user_name, p_user_token= user_token, p_fsa_id= fsa_id }).FirstOrDefault();
+                return repo.ExecuteProcedure<DbMessage>("fn_validate_user", new { p_user_name = user_name, p_user_token = user_token, p_fsa_id = fsa_id }).FirstOrDefault();
 
             }
             catch (Exception ex)
@@ -1039,8 +1090,8 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        
-        
+
+
     }
 
 
@@ -1125,7 +1176,7 @@ namespace DataAccess
 
     public class DAUserReportMapping : Repository<UserReportMapping>
     {
-        public List<UserReportMappingVw> SaveUserReportMapping(List<UserReportMapping> lstUserReportMapping, int user_id,bool is_all_users_mapped)
+        public List<UserReportMappingVw> SaveUserReportMapping(List<UserReportMapping> lstUserReportMapping, int user_id, bool is_all_users_mapped)
         {
             //List<UserReportMapping> OldLst = GetUserReportMapping(user_id);
             //repo.DeleteRange(OldLst);
@@ -1133,9 +1184,10 @@ namespace DataAccess
             //return lstUserReportMapping;
             var selectedUserMappingSerialize = JsonConvert.SerializeObject(lstUserReportMapping);
             var lst = repo.ExecuteProcedure<UserReportMappingVw>("fn_save_user_report_mapping",
-                new { 
-                    p_jsonobj = selectedUserMappingSerialize ,
-                    p_user_id = user_id ,
+                new
+                {
+                    p_jsonobj = selectedUserMappingSerialize,
+                    p_user_id = user_id,
                     p_is_all_users_mapped = is_all_users_mapped
                 });
             return lst;
@@ -1253,7 +1305,7 @@ namespace DataAccess
 
     public class DAUserLoginHistoryInfo : Repository<UserLoginHistoryInfo>
     {
-        public bool UpdateUserLogOutTime(int userId, int historyId,string signOut_type=null)
+        public bool UpdateUserLogOutTime(int userId, int historyId, string signOut_type = null)
         {
             try
             {
@@ -1541,7 +1593,7 @@ namespace DataAccess
             catch (Exception e) { throw; }
         }
 
-        public  bool SendOTPToUserMobile(string smsChannel, string sMobileNo, string sEmail, string sOTP)
+        public bool SendOTPToUserMobile(string smsChannel, string sMobileNo, string sEmail, string sOTP)
         {
             bool btRetVal = true;
             //if (btRetVal == true)
@@ -1694,9 +1746,26 @@ namespace DataAccess
         public List<UserManagerMapping> GetManagerMapping(int user_id)
         {
             return repo.GetAll(m => m.user_id == user_id).ToList();
-           // return repo.GetAll(m => m.manager_id == user_id).ToList();
+            // return repo.GetAll(m => m.manager_id == user_id).ToList();
         }
     }
+    public class DAUserToolMapping : Repository<userFeToolMapping>
+    {
+        public List<userFeToolMapping> SaveUserToolMapping(List<userFeToolMapping> lstUserToolsMapping, int user_id)
+        {
+            List<userFeToolMapping> OldLst = GetToolMapping(user_id);
+            repo.DeleteRange(OldLst);
+            repo.Insert(lstUserToolsMapping);
+            return lstUserToolsMapping;
+        }
+        public List<userFeToolMapping> GetToolMapping(int user_id)
+        {
+            return repo.GetAll(m => m.user_id == user_id).ToList();
+            // return repo.GetAll(m => m.manager_id == user_id).ToList();
+        }
+
+    }
+
 
     public class DAWarehouseCodeMapping : Repository<UserWarehouseCodeMapping>
     {
@@ -1767,7 +1836,7 @@ namespace DataAccess
                     return repo.Update(userHistory);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }

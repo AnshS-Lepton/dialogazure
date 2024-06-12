@@ -1830,6 +1830,7 @@ namespace SmartInventory.Controllers
                 {
                     int userId = Convert.ToInt32(Session["user_id"]);
                     var objfile = Request.Files[0];
+                    var splcing_type = Request.Form[1].ToString();
                     var fileName = AppendTimeStamp(Request.Files[0].FileName);
                     var filepath = Path.Combine(Server.MapPath("~\\Content\\UploadedFiles\\Splicing\\"), fileName);
                     objfile.SaveAs(filepath);
@@ -1895,6 +1896,13 @@ namespace SmartInventory.Controllers
 
                                 objTempConnection.created_by = Convert.ToString(userId);
                                 objTempConnection.created_on = DateTimeHelper.Now;
+                                objTempConnection.connection_id = 0;
+                                objTempConnection.is_customer_connected = false;
+                                objTempConnection.is_cable_a_end = false;
+                                objTempConnection.is_through_connection = false;
+                                objTempConnection.destination_tray_system_id = 0;
+                                objTempConnection.source_tray_system_id = 0;
+                                objTempConnection.equipment_system_id = 0;
 
                                 objTempConnection.source_network_id = Convert.ToString(dr[dicColumnMapping["source_network_id"]]);
                                 objTempConnection.source_entity_type = Convert.ToString(dr[dicColumnMapping["source_entity_type"]]);
@@ -1905,6 +1913,8 @@ namespace SmartInventory.Controllers
                                 objTempConnection.destination_entity_type = Convert.ToString(dr[dicColumnMapping["destination_entity_type"]]);
                                 objTempConnection.destination_port_no = Convert.ToString(dr[dicColumnMapping["destination_port_no"]]);
                                 objTempConnection.destination_port_type = Convert.ToString(dr[dicColumnMapping["destination_port_type"]]);
+                                objTempConnection.equipment_network_id = Convert.ToString(dr[dicColumnMapping["equipment_network_id"]]);
+                                objTempConnection.equipment_entity_type = Convert.ToString(dr[dicColumnMapping["equipment_entity_type"]]);
 
                                 objTempConnection.uploaded_by = userId;
                                 lstTempConnections.Add(objTempConnection);
@@ -1917,13 +1927,11 @@ namespace SmartInventory.Controllers
                                 if (PerformAction == "Insert")
                                 {
                                     //SAVE DATA INTO TEMP CONNECTION TABLE
-                                    new BLOSPSplicing().BulkUploadTempConnection(lstTempConnections.Where(m => m.is_valid == false).ToList());
-
-                                    var validRecords = lstTempConnections.Where(m => m.is_valid == true).ToList();
-                                    if (validRecords.Count() > 0)
+                                    new BLOSPSplicing().BulkUploadTempConnection(lstTempConnections);
+                                    var msgstatus = new BLOSPSplicing().BulkUploadvalidateTempConnection(Convert.ToInt32(userId), splcing_type);
+                                    if (msgstatus.status == true)
                                     {
-                                        string connections = JsonConvert.SerializeObject(validRecords);
-                                        result = new BLOSPSplicing().uploadBulkConnections(connections, userId);
+                                        result = new BLOSPSplicing().uploadBulkConnections(splcing_type, Convert.ToInt32(userId));
                                     }
                                     else
                                     {
@@ -1939,7 +1947,21 @@ namespace SmartInventory.Controllers
                                 }
                             }
                             var getTotalUploadBuildingfailureAndSuccess = new BLOSPSplicing().getTotalUploadConnectionfailureAndSuccess(userId);
-                            var GetTotalCountOfSuccesAndFailure = "<table border='1' class='alertgrid'><thead><tr><td><b>Status</b></td><td><b>Count</b></td></tr></thead><tbody><tr><td>Success</td><td>" + getTotalUploadBuildingfailureAndSuccess.Item1 + "</td></tr><tr><td>failure</td><td>" + getTotalUploadBuildingfailureAndSuccess.Item2 + "</td></tr></tbody>";
+                            var GetTotalCountOfSuccesAndFailure = "<table border='1' class='alertgrid'>" +
+                                                            "<thead>" +
+                                                            "<tr>" +
+                                                            "<td><b>Status</b></td>" +
+                                                            "<td><b>Count</b></td>" +
+                                                            "</tr>" +
+                                                            "</thead>" +
+                                                            "<tbody>" +
+                                                            "<tr>" +
+                                                            "<td>Success</td><td>" + getTotalUploadBuildingfailureAndSuccess.Item1 + "</td>" +
+                                                            "</tr>" +
+                                                            "<tr>" +
+                                                            "<td>failure</td><td>" + getTotalUploadBuildingfailureAndSuccess.Item2 + "</td>" +
+                                                            "</tr>" +
+                                                            "</tbody>";
                             strReturn = string.Format(Resources.Resources.SI_GBL_GBL_NET_FRM_050, GetTotalCountOfSuccesAndFailure);//"Splicing data processed successfully." + "</br>" + GetTotalCountOfSuccesAndFailure
                         }
                         else
@@ -2525,6 +2547,10 @@ namespace SmartInventory.Controllers
             if (Status != PortStatus.Connected.ToString())
             {
                 obj.listPortStatus = obj.listPortStatus.Where(i => i.status != PortStatus.Connected.ToString()).ToList();
+            }
+            else
+            {
+                obj.listPortStatus = obj.listPortStatus.Where(i => i.status != PortStatus.Vacant.ToString() && i.status != PortStatus.Reserved.ToString()).ToList();
             }
             if (entitySystemId != 0)
             {

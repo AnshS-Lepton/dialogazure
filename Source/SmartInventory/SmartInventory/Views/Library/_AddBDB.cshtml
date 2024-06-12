@@ -237,10 +237,10 @@
                         </div>
                         <div class="form-group row">
                             @*<label class="control-label col-sm-2" for="txtPinCode">Pin Code:</label>
-                <div class="col-sm-45">
-                    @Html.TextBoxFor(m => m.pincode, new { @class = "form-control", @id = "txtPinCode", @onkeypress = "return si.allowOnlyNumber(event);", @onpaste = "return false;", @maxlength = "6", @minlength = "6" })
-                    @Html.ValidationMessageFor(m => m.pincode)
-                </div>*@
+            <div class="col-sm-45">
+                @Html.TextBoxFor(m => m.pincode, new { @class = "form-control", @id = "txtPinCode", @onkeypress = "return si.allowOnlyNumber(event);", @onpaste = "return false;", @maxlength = "6", @minlength = "6" })
+                @Html.ValidationMessageFor(m => m.pincode)
+            </div>*@
                             <label class="control-label col-sm-2" for="txtParentCode">@Resources.Resources.SI_OSP_GBL_GBL_GBL_004<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control", @id = "txtParentCode", @readonly = true })
@@ -251,6 +251,12 @@
                         </div>
                         <div class="form-group row">
                             @AcquireFrom()
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtRouteName">Route ID:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id + " - (" + x.entity_network_id + ")" }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
+                            </div>
                         </div>
                         <div>@AdditionalFields()</div>
                         <div class="form-group row">
@@ -334,7 +340,8 @@
         callFormValidator("frmAddBDB");
         $('.chosen-select').chosen({ width: '100%' });
         EnableDisableUpdateButton("frmAddBDB", '@Model.system_id' > 0 ? "btnUpdateBDBDetail" : "btnSaveBDBDetail");
-
+     var selectedRouteIds = '@string.Join(",", Model.selected_route_ids.ToList().Select(n => n.ToString()).ToArray())';
+$("#txtrouteInfo").val(selectedRouteIds.split(',')).trigger("chosen:updated");
         //APPLY INPUT MASK ON NETWORK ID..
         getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
         $("#frmAddBDB").on("submit", function () {

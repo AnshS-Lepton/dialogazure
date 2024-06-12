@@ -20,6 +20,8 @@ using System.Web.Security;
 using static Mono.Security.X509.X520;
 using Models.WFM;
 using static NPOI.HSSF.Util.HSSFColor;
+using System.Configuration;
+using System.Net;
 //using Models.API;
 
 namespace SmartInventory.Areas.Admin.Controllers
@@ -60,7 +62,7 @@ namespace SmartInventory.Areas.Admin.Controllers
 
                 }
                 objUser.lstRole = new BLUser().GetAllRole(objLgnUsrDtl.role_id, user_id);
-    objUser.lstRM = GetReportingManagers(objUser.role_id);
+                objUser.lstRM = GetReportingManagers(objUser.role_id);
                 objUser.lstWarehouseCode = new BLUser().BindWarehouseCode();
 
                 objUser.lstUserModule = new BLMisc().GetRoleModule(objUser.role_id);// new BLMisc().GetUserModuleMasterList();
@@ -130,6 +132,14 @@ namespace SmartInventory.Areas.Admin.Controllers
                             objUser.multi_manager_ids = Convert.ToString(objUser.manager_id);
                         }
                     }
+                    if (ApplicationSettings.fetoolsenabled)
+                    {
+                        objUser.multi_tool_ids = string.Join(",", new BLUserToolMapping().GetToolMapping(objUser.user_id).Select(x => x.tool_id).ToList());
+                        if (string.IsNullOrEmpty(objUser.multi_tool_ids))
+                        {
+                            objUser.multi_tool_ids = Convert.ToString(objUser.multi_tool_ids);
+                        }
+                    }
                 }
                 objUser.multi_warhouse_code = Convert.ToString(objUser.warehouse_code);
                 objUser.multi_warhouse_code = string.Join(",", new BLUserWarehouseCodeMapping().GetWarehouseCodeMapping(objUser.user_id).Select(x => x.warehouse_code).ToList());
@@ -142,6 +152,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                 {
                     objUser.user_type = objUser.lstUserType.FirstOrDefault().dropdown_value;
                 }
+                objUser.lstFEtool = new BLUser().BindFETool(0);
             }
 
 
@@ -257,7 +268,7 @@ namespace SmartInventory.Areas.Admin.Controllers
             List<UserSeviceFacilityMapping> lstUserSeviceFacilityMapping = null;
             List<UserJoTypeMapping> lstUserJoTypeMapping = null;
             List<UserManagerMapping> lstUserManagerMapping = new List<UserManagerMapping>();
-
+            List<userFeToolMapping> lstUserToolMapping = new List<userFeToolMapping>();
             List<UserJoCategoryMapping> lstUserJoCategoryMapping = null;
             List<UserWarehouseCodeMapping> lstUserWarehouseCodeMapping = new List<UserWarehouseCodeMapping>();
 
@@ -343,6 +354,16 @@ namespace SmartInventory.Areas.Admin.Controllers
                     }
                 }
                 lstUserManagerMapping = new BLUserManagerMapping().SaveUserManagerMapping(lstUserManagerMapping, objUser.user_id);
+
+                if (objUser.multi_tool_ids != null)
+                {
+                    var listToolsId = objUser.multi_tool_ids.Split(',').ToList();
+                    foreach (string item in listToolsId)
+                    {
+                        lstUserToolMapping.Add(new userFeToolMapping() { user_id = objUser.user_id, tool_id = Convert.ToInt32(item) });
+                    }
+                }
+                lstUserToolMapping = new BLUserToolMapping().SaveUserToolMapping(lstUserToolMapping, objUser.user_id);
                 if (objUser.multi_warhouse_code != null)
                 {
                     var listWarehouseCode = objUser.multi_warhouse_code.Split(',').ToList();
@@ -411,8 +432,7 @@ namespace SmartInventory.Areas.Admin.Controllers
             objUser.lstWarehouseCode = new BLUser().BindWarehouseCode();
 
             objUser.lstUserType = new BLMisc().GetDropDownList("", DropDownType.UserType.ToString());
-
-
+            objUser.lstFEtool = new BLUser().BindFETool(0);//.OrderBy(m => m.key).ToList();
             objUser.role_id = objUser.role_id;
             objUser.manager_id = objUser.manager_id;
             objUser.warehouse_code = objUser.warehouse_code;
@@ -563,7 +583,7 @@ namespace SmartInventory.Areas.Admin.Controllers
             var objLgnUsrDtl = (User)Session["userDetail"];
 
             User objUser = new User();
-            objUser.lstRM = GetReportingManagers(); ;
+            objUser.lstRM = GetReportingManagers();
             objUser = new BLUser().GetUserDetailByID(id);
             objUser.password = Convert.ToString(Utility.MiscHelper.DecodeTo64(objUser.password));
             objUser.lstRole = new BLUser().GetAllRole(objLgnUsrDtl.role_id, objLgnUsrDtl.user_id);
@@ -1178,7 +1198,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                         if (cnt > 0)
                             objEventEmailTemplateDetail[0].recipient_list = managerEmailId;
                     }
-                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objUserDict, objHttpPostedFileBase,EmailSettings.AllEmailSettings, null,"", EmailEventList.UserDeletion.ToString()));
+                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objUserDict, objHttpPostedFileBase, EmailSettings.AllEmailSettings, null, "", EmailEventList.UserDeletion.ToString()));
                     //commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objUserDict, objHttpPostedFileBase);
                     #endregion
 
@@ -1899,5 +1919,548 @@ namespace SmartInventory.Areas.Admin.Controllers
             return Json(lstBlock, JsonRequestBehavior.AllowGet);
         }
 
+
+
+        //#region
+        //[HttpPost]
+        //public ActionResult AddFEtools(int group_id = 0)
+        //{
+        //    FE_Tools objfetools = new FE_Tools();
+
+        //    if (group_id == 0)
+        //    {
+        //        var objLgnUsrDtl = (User)Session["userDetail"];
+        //        int user_id = objLgnUsrDtl.user_id;
+        //        objfetools.lstusername = new BLUser().GetUsernameDetails();
+        //        objfetools.lstFEtool = new BLUser().BindFETool();
+        //    }
+        //    else
+        //    {
+        //        //List<FE_Tools> fE_Tools= new List<FE_Tools>();
+        //        //fE_Tools = new BL_Fe_Tools().getfetooldetails(group_id);
+        //        objfetools = new BL_Fe_Tools().getfetoolid(group_id);
+        //        //foreach (var item in fE_Tools)
+        //        //{
+        //        objfetools.lstusername = new BLUser().GetUsernameDetails(objfetools.user_id);
+        //        objfetools.lstFEtool = new BLUser().BindFETooldropdown(objfetools.tool_id);
+
+
+                
+        //        //}
+
+        //    }
+        //    return View("AddFEtools", objfetools);
+        //}
+        //[HttpPost]
+        //public JsonResult SaveFETools(FE_Tools objLyrGroup)
+        //{
+        //    ModelState.Clear();
+        //    var userid = Convert.ToInt32(Session["user_id"]);
+        //    //objLyrGroup.user_id = Convert.ToInt32(objLyrGroup.user_name);
+        //    //objLyrGroup.tool_id = Convert.ToInt32(objLyrGroup.fe_tool);
+        //    PageMessage objMsg = new PageMessage();
+        //    if (objLyrGroup.user_id != 0 && objLyrGroup.tool_id != 0)
+        //    {
+
+        //        var response = new BL_Fe_Tools().SaveFeToolsdetails(objLyrGroup, userid);
+        //        if (response.action_type == "Save")
+        //        {
+        //            Session["Fetools_id"] = response.id;
+        //            objMsg.status = ResponseStatus.OK.ToString();
+        //            objMsg.message = " Saved successfully!";
+        //        }
+        //        else if (response.action_type == "Update")
+        //        {
+        //            Session["Fetools_id"] = response.id;
+        //            objMsg.status = ResponseStatus.OK.ToString();
+        //            objMsg.message = " Updated successfully!";
+        //        }
+        //        else if (string.IsNullOrEmpty(response.action_type))
+        //        {
+        //            objMsg.status = ResponseStatus.FAILED.ToString();
+        //            objMsg.message = "Unable to update FE Tools as it is already been mapped!";
+        //        }
+        //    }
+        //    else
+        //    {
+        //        objMsg.status = ResponseStatus.FAILED.ToString();
+        //        objMsg.message = "Mandatory fields required";
+        //    }
+        //    objLyrGroup.pageMsg = objMsg;
+        //    return Json(objMsg, JsonRequestBehavior.AllowGet);
+        //}
+        //public IList<KeyValueDropDown> BindSearchBy(ViewFETools vwlyrgrp)
+        //{
+        //    List<KeyValueDropDown> items = new List<KeyValueDropDown>();
+        //    items.Add(new KeyValueDropDown { key = "User Name", value = "user_name" });
+        //    return vwlyrgrp.lstSearchBy = items.OrderBy(m => m.key).ToList();
+        //}
+        //public ActionResult Viewfetools(ViewFETools objViewGroup, int page = 0, string sort = "", string sortdir = "")
+        //{
+        //    BindSearchBy(objViewGroup);
+        //    if (sort != "" || page != 0)
+        //    {
+        //        objViewGroup.objGridAttributes = (CommonGridAttributes)Session["viewfetools"];
+        //    }
+        //    objViewGroup.objGridAttributes.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
+        //    objViewGroup.objGridAttributes.currentPage = page == 0 ? 1 : page;
+        //    objViewGroup.objGridAttributes.sort = sort;
+        //    objViewGroup.objGridAttributes.orderBy = sortdir;
+        //    objViewGroup.fetools = new BL_Fe_Tools().GetFettoollist(objViewGroup.objGridAttributes);
+        //    objViewGroup.objGridAttributes.totalRecord = objViewGroup.fetools != null && objViewGroup.fetools.Count > 0 ? objViewGroup.fetools[0].totalRecords : 0;
+        //    Session["viewfetools"] = objViewGroup.objGridAttributes;
+        //    return View("Viewfetools", objViewGroup);
+        //}
+        //[HttpPost]
+        //public ActionResult UploadFTEImage(FormCollection collection)
+        //{
+        //    JsonResponse<string> jResp = new JsonResponse<string>();
+
+        //    if (Request.Files.Count > 0)
+        //    {
+        //        try
+        //        {
+        //            //var systemId = "fe_tools"//collection["system_Id"];
+        //            var entityType = "fe_tools";//collection["entity_type"];
+        //            //var featureName = collection["feature_name"];
+        //            var attachmentType = collection["document_type"];
+        //            int systemId = Convert.ToInt32(Session["Fetools_id"]);
+        //            if (systemId != 0)
+        //            {
+
+        //                HttpFileCollectionBase files = Request.Files;
+        //                VailidateAttachment obj = ValidateDocumentFileType1(files);
+        //                if (!string.IsNullOrEmpty(obj.invalidattachmentType))
+        //                {
+        //                    jResp.message = obj.invalidattachmentType;
+        //                    jResp.status = StatusCodes.INVALID_FILE.ToString();
+        //                    return Json(jResp, JsonRequestBehavior.AllowGet);
+
+        //                }
+        //                else if (!string.IsNullOrEmpty(obj.invalidattachmentsize))
+        //                {
+        //                    jResp.message = obj.invalidattachmentsize;
+        //                    jResp.status = StatusCodes.INVALID_FILE.ToString();
+        //                    return Json(jResp, JsonRequestBehavior.AllowGet);
+
+        //                }
+        //                else if (!string.IsNullOrEmpty(obj.invalidattachmentename))
+        //                {
+        //                    jResp.message = obj.invalidattachmentename;
+        //                    jResp.status = StatusCodes.INVALID_FILE.ToString();
+        //                    return Json(jResp, JsonRequestBehavior.AllowGet);
+
+        //                }
+        //                else
+        //                {
+        //                    for (int i = 0; i < files.Count; i++)
+        //                    {
+        //                        HttpPostedFileBase file = files[i];
+        //                        string FileName = file.FileName;
+        //                        string strNewfilename = Path.GetFileNameWithoutExtension(FileName) + "_" + MiscHelper.getTimeStamp() + Path.GetExtension(FileName);
+
+        //                        //strFilePath = feTOOLSUploadfileOnFTP(entityType, systemId, file, attachmentType, strNewfilename);
+        //                        string strFilePath = feTOOLSUploadfileOnFTP(entityType, systemId, file, "Images", strNewfilename);
+
+        //                        // }
+
+        //                        // get User Detail..
+        //                        User objUser = (User)(Session["userDetail"]);
+        //                        FETOOLS_Attachment objAttachment = new FETOOLS_Attachment();
+        //                        objAttachment.fe_tool_id = Convert.ToInt32(systemId);
+        //                        objAttachment.entity_type = entityType;
+        //                        objAttachment.file_name = strNewfilename;
+        //                        objAttachment.file_extension = Path.GetExtension(FileName);
+        //                        objAttachment.file_location = strFilePath;
+        //                        objAttachment.upload_type = attachmentType;
+        //                        objAttachment.uploaded_by = objUser.user_id.ToString();
+        //                        objAttachment.file_size = file.ContentLength;
+        //                        objAttachment.uploaded_on = DateTime.Now;
+        //                        //Save Image on FTP and related detail in database..
+        //                        var savefile = new BLFetools_Attachement().SaveFetools_attachement(objAttachment);
+        //                    }
+        //                    jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_154;
+        //                    jResp.status = StatusCodes.OK.ToString();
+        //                    return Json(jResp, JsonRequestBehavior.AllowGet);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                jResp.message = "Oops Something went wrong!.";
+        //                jResp.status = StatusCodes.INVALID_INPUTS.ToString();
+        //                return Json(jResp, JsonRequestBehavior.AllowGet);
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            ErrorLogHelper.WriteErrorLog("UploadDocument()", "Main", ex);
+        //            jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_243;
+        //            jResp.status = StatusCodes.UNKNOWN_ERROR.ToString();
+        //            return Json(jResp, JsonRequestBehavior.AllowGet);
+        //            //Error Logging...
+        //        }
+        //    }
+        //    else
+        //    {
+        //        jResp.message = "No files selected.";
+        //        jResp.status = StatusCodes.INVALID_INPUTS.ToString();
+        //        return Json(jResp, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
+
+        //[HttpPost]
+        //public ActionResult UploadFTEDocument(FormCollection collection)
+        //{
+        //    JsonResponse<string> jResp = new JsonResponse<string>();
+
+        //    if (Request.Files.Count > 0)
+        //    {
+        //        try
+        //        {
+        //           // var systemId = collection["system_Id"];
+        //            var entityType = "fe_tools";
+        //            //var featureName = collection["feature_name"];
+        //            var attachmentType = "Document";
+        //            int systemId = Convert.ToInt32(Session["Fetools_id"]);
+        //            if (systemId != 0)
+        //            {
+
+        //                HttpFileCollectionBase files = Request.Files;
+        //                VailidateAttachment obj = ValidateDocumentFileType1(files);
+        //                if (!string.IsNullOrEmpty(obj.invalidattachmentType))
+        //                {
+        //                    jResp.message = obj.invalidattachmentType;
+        //                    jResp.status = StatusCodes.INVALID_FILE.ToString();
+        //                    return Json(jResp, JsonRequestBehavior.AllowGet);
+
+        //                }
+        //                else if (!string.IsNullOrEmpty(obj.invalidattachmentsize))
+        //                {
+        //                    jResp.message = obj.invalidattachmentsize;
+        //                    jResp.status = StatusCodes.INVALID_FILE.ToString();
+        //                    return Json(jResp, JsonRequestBehavior.AllowGet);
+
+        //                }
+        //                else if (!string.IsNullOrEmpty(obj.invalidattachmentename))
+        //                {
+        //                    jResp.message = obj.invalidattachmentename;
+        //                    jResp.status = StatusCodes.INVALID_FILE.ToString();
+        //                    return Json(jResp, JsonRequestBehavior.AllowGet);
+
+        //                }
+        //                else
+        //                {
+        //                    for (int i = 0; i < files.Count; i++)
+        //                    {
+        //                        HttpPostedFileBase file = files[i];
+        //                        string FileName = file.FileName;
+        //                        string strNewfilename = Path.GetFileNameWithoutExtension(FileName) + "_" + MiscHelper.getTimeStamp() + Path.GetExtension(FileName);
+        //                        string strFilePath = "";
+        //                        strFilePath = feTOOLSUploadfileOnFTP(entityType, systemId, file, attachmentType, strNewfilename);
+
+
+        //                        // get User Detail..
+        //                        User objUser = (User)(Session["userDetail"]);
+        //                        FETOOLS_Attachment objAttachment = new FETOOLS_Attachment();
+        //                        objAttachment.fe_tool_id = Convert.ToInt32(systemId);
+        //                        objAttachment.entity_type = entityType;
+        //                        objAttachment.file_name = strNewfilename;
+        //                        objAttachment.file_extension = Path.GetExtension(FileName);
+        //                        objAttachment.file_location = strFilePath;
+        //                        objAttachment.upload_type = attachmentType;
+        //                        objAttachment.uploaded_by = objUser.user_id.ToString();
+        //                        objAttachment.file_size = file.ContentLength;
+        //                        objAttachment.uploaded_on = DateTime.Now;
+        //                        //Save Image on FTP and related detail in database..
+        //                        var savefile = new BLFetools_Attachement().SaveFetools_attachement(objAttachment);
+        //                    }
+        //                    jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_154;
+        //                    jResp.status = StatusCodes.OK.ToString();
+        //                    return Json(jResp, JsonRequestBehavior.AllowGet);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                jResp.message = "Oops Something went wrong!.";
+        //                jResp.status = StatusCodes.INVALID_INPUTS.ToString();
+        //                return Json(jResp, JsonRequestBehavior.AllowGet);
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            ErrorLogHelper.WriteErrorLog("UploadDocument()", "Main", ex);
+        //            jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_243;
+        //            jResp.status = StatusCodes.UNKNOWN_ERROR.ToString();
+        //            return Json(jResp, JsonRequestBehavior.AllowGet);
+        //            //Error Logging...
+        //        }
+        //    }
+        //    else
+        //    {
+        //        jResp.message = "No files selected.";
+        //        jResp.status = StatusCodes.INVALID_INPUTS.ToString();
+        //        return Json(jResp, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
+        //static string feTOOLSUploadfileOnFTP(string sEntityType, int sEntityId, HttpPostedFileBase postedFile, string sUploadType, string newfilename, string featureType = null)
+        //{
+        //    try
+        //    {
+        //        string strFTPFilePath = "";
+        //        string strFTPPath = ConfigurationManager.AppSettings["FTPAttachment"];
+        //        string strFTPUserName = ConfigurationManager.AppSettings["FTPUserNameAttachment"];
+        //        string strFTPPassWord = ConfigurationManager.AppSettings["FTPPasswordAttachment"];
+
+        //        if (isValidfeFTPConnection(strFTPPath, strFTPUserName, strFTPPassWord))
+        //        {
+        //            // Create Directory if not exists and get Final FTP path to save file..
+        //            strFTPFilePath = CreateNestedDirectoryOnFTP(strFTPPath, strFTPUserName, strFTPPassWord, featureType, sEntityType,  sUploadType);
+
+        //            //Prepare FTP Request..
+        //            if (sUploadType.ToUpper() == "IMAGES")
+        //            {
+        //                string thumnailImageName = "Thumb_" + newfilename;
+        //                FtpWebRequest ftpThumbnailImage = (FtpWebRequest)WebRequest.Create(strFTPFilePath + thumnailImageName);
+        //                ftpThumbnailImage.Credentials = new NetworkCredential(strFTPUserName.Normalize(), strFTPPassWord.Normalize());
+        //                ftpThumbnailImage.Method = WebRequestMethods.Ftp.UploadFile;
+        //                ftpThumbnailImage.UseBinary = true;
+        //                // var image = System.Drawing.Image.FromStream(postedFile.InputStream);
+        //                System.Drawing.Bitmap bmThumb = new System.Drawing.Bitmap(postedFile.InputStream);
+        //                System.Drawing.Image bmp2 = bmThumb.GetThumbnailImage(100, 100, null, IntPtr.Zero);
+        //                string saveThumnailPath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]);
+        //                bmp2.Save(saveThumnailPath + @"\" + thumnailImageName);
+        //                byte[] c = System.IO.File.ReadAllBytes(@"" + saveThumnailPath + "/" + thumnailImageName);
+        //                ftpThumbnailImage.ContentLength = c.Length;
+        //                using (Stream s = ftpThumbnailImage.GetRequestStream())
+        //                {
+        //                    s.Write(c, 0, c.Length);
+        //                }
+
+        //                try
+        //                {
+        //                    ftpThumbnailImage.GetResponse();
+        //                }
+        //                catch { throw; }
+        //                finally
+        //                {
+                            
+        //                }
+                        
+        //            }
+        //            FtpWebRequest ftpReq = (FtpWebRequest)WebRequest.Create(strFTPFilePath + newfilename);
+        //            ftpReq.Credentials = new NetworkCredential(strFTPUserName.Normalize(), strFTPPassWord.Normalize());
+        //            ftpReq.Method = WebRequestMethods.Ftp.UploadFile;
+        //            ftpReq.UseBinary = true;
+
+        //            //Save file temporarily on local path..
+        //            string savepath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]);
+        //            postedFile.SaveAs(savepath + @"\" + newfilename);
+        //            byte[] b = System.IO.File.ReadAllBytes(@"" + savepath + "/" + newfilename);
+        //            ftpReq.ContentLength = b.Length;
+        //            using (Stream s = ftpReq.GetRequestStream())
+        //            {
+        //                s.Write(b, 0, b.Length);
+        //            }
+
+        //            try
+        //            {
+        //                ftpReq.GetResponse();
+        //            }
+        //            catch { throw; }
+        //            finally
+        //            {
+        //                //Delete from local path.. 
+        //                System.IO.File.Delete(@"" + savepath + "/" + newfilename);
+        //            }
+        //        }
+        //        return strFTPFilePath.Replace(strFTPPath, ""); // return file path
+        //    }
+        //    catch { throw; }
+        //}
+        //private static string CreateNestedDirectoryOnFTP(string strFTPPath, string strUserName, string strPassWord, params string[] directories)
+        //{
+        //    try
+        //    {
+        //        FtpWebRequest reqFTP;
+        //        string strFTPFilePath = strFTPPath;
+        //        foreach (string directory in directories)
+        //        {
+        //            if (!string.IsNullOrEmpty(directory) && directory.Trim() != "")
+        //            {
+        //                strFTPFilePath += directory + "/";
+        //                try
+        //                {
+        //                    reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(strFTPFilePath));
+        //                    reqFTP.Method = WebRequestMethods.Ftp.MakeDirectory;
+        //                    reqFTP.UseBinary = true;
+        //                    reqFTP.Credentials = new NetworkCredential(strUserName, strPassWord);
+        //                    FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
+        //                    Stream ftpStream = response.GetResponseStream();
+        //                    ftpStream.Close();
+        //                    response.Close();
+        //                }
+        //                catch (WebException ex)
+        //                {
+        //                    FtpWebResponse response = (FtpWebResponse)ex.Response;
+        //                    //Directory already exists
+        //                    if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable) { response.Close(); }
+        //                    //Error in creating new directory on FTP..
+        //                    else { throw new Exception("Error in creating directory/sub-directory!", ex); }
+        //                }
+        //            }
+        //        }
+        //        return strFTPFilePath;
+        //    }
+        //    catch { throw; }
+        //}
+        //private static bool isValidfeFTPConnection(string ftpUrl, string strUserName, string strPassWord)
+        //{
+        //    try
+        //    {
+        //        FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpUrl);
+        //        request.Method = WebRequestMethods.Ftp.ListDirectory;
+        //        request.Credentials = new NetworkCredential(strUserName, strPassWord);
+        //        request.GetResponse();
+        //    }
+        //    catch (WebException ex) { throw new Exception("Unable to connect to FTP Server", ex); }
+        //    return true;
+        //}
+        //public VailidateAttachment ValidateDocumentFileType1(HttpFileCollectionBase files)
+        //{
+        //    VailidateAttachment obj = new VailidateAttachment();
+        //    int maxallowedAttachmentSize = ApplicationSettings.MaxFileUploadSizeLimit * ApplicationSettings.MaxFileCountLimit * 1024;
+        //    List<string> invalidAttachmentType = new List<string>();
+        //    List<string> invalidAttachmentName = new List<string>();
+        //    int totalUploadedAttachmentSize = 0;
+        //    for (int i = 0; i < files.Count; i++)
+        //    {
+        //        // var allowedFileTypes = ApplicationSettings.allowedDocumentAttachmentType;
+        //        var validDocumentTypes = ApplicationSettings.validDocumentTypes.Split(new string[] { "," }, StringSplitOptions.None);
+        //        var fileExtension = Path.GetExtension(files[i].FileName);//var fileExtension = files[i].FileName.Split('.').LastOrDefault()?.ToLower();
+        //        totalUploadedAttachmentSize = totalUploadedAttachmentSize + files[i].ContentLength;
+        //        if (!validDocumentTypes.Contains(fileExtension.ToLower()))//if (allowedFileTypes.IndexOf(fileExtension) == -1)
+        //        {
+        //            invalidAttachmentType.Add(files[i].FileName);
+        //        }
+        //        if (files[i].FileName.Length > 100)
+        //        {
+        //            invalidAttachmentName.Add(files[i].FileName);
+
+        //        }
+        //    }
+        //    if (totalUploadedAttachmentSize > maxallowedAttachmentSize)
+        //    {
+        //        totalUploadedAttachmentSize = 0;
+        //        obj.invalidattachmentsize = "Total file size is too large.Maximum total file size allowed is, " + maxallowedAttachmentSize / 1024 + " MB";
+        //    }
+        //    obj.invalidattachmentType = invalidAttachmentType.Count > 0 ? "The following files are not of allowed file type are " + string.Join(", ", invalidAttachmentType) : string.Empty;
+        //    obj.invalidattachmentename = invalidAttachmentName.Count > 0 ? "File Name length should be less than 100 characters. invalid files are " + string.Join(", ", invalidAttachmentType) : string.Empty;
+        //    return obj;
+        //}
+
+        //public FileResult DownloadfE_toolsFiles(string json, string entity_type = "")
+        //{
+        //    var listPathName = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ImageDownload>>(json);
+        //    string zipName = string.Empty;
+        //    try
+        //    {
+        //        string FtpUrl = Convert.ToString(ConfigurationManager.AppSettings["FTPAttachment"]);
+        //        string UserName = Convert.ToString(ConfigurationManager.AppSettings["FTPUserNameAttachment"]);
+        //        string PassWord = Convert.ToString(ConfigurationManager.AppSettings["FTPPasswordAttachment"]);
+
+        //        using (Ionic.Zip.ZipFile zip = new Ionic.Zip.ZipFile())
+        //        {
+        //            zip.AlternateEncodingUsage = Ionic.Zip.ZipOption.AsNecessary;
+        //            //zip.AddDirectoryByName("Files");
+        //            #region Get the slected files
+        //            foreach (var item in listPathName)
+        //            {
+        //                string fullPath = "", FileName = "", localPath = "";
+        //                if (item.location.ToLower() == "image")
+        //                {
+        //                    var data = new BLFetools_Attachement().getFE_toolsAttachmentsbyid(item.systemId);
+        //                    if (data != null)
+        //                    {
+        //                        fullPath = FtpUrl + data.file_location + "/" + data.file_name;
+        //                        FileName = data.file_location + "/" + data.file_name;
+        //                        localPath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["ReportFolderPath"]) + "/" + data.file_name + "";
+        //                    }
+        //                }
+        //                else if (item.location.ToLower() == "document")
+        //                {
+        //                    var data = new BLFetools_Attachement().getFE_toolsAttachmentsbyid(item.systemId);
+        //                    if (data != null)
+        //                    {
+        //                        fullPath = FtpUrl + data.file_location + "/" + data.file_name;
+        //                        FileName = data.file_location + "/" + data.file_name;
+        //                        localPath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["ReportFolderPath"]) + "/" + data.file_name + "";
+        //                    }
+        //                }
+        //                var request = (FtpWebRequest)WebRequest.Create(fullPath);
+        //                request.Method = WebRequestMethods.Ftp.DownloadFile;
+        //                request.Credentials = new NetworkCredential(UserName, PassWord);
+        //                request.UseBinary = true;
+        //                try
+        //                {
+        //                    using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+        //                    {
+        //                        using (Stream responseStream = response.GetResponseStream())
+        //                        {
+        //                            using (FileStream fs = new FileStream(localPath, FileMode.Create))
+        //                            {
+        //                                byte[] buffer = new byte[102400];
+        //                                int read = 0;
+
+        //                                while (true)
+        //                                {
+        //                                    read = responseStream.Read(buffer, 0, buffer.Length);
+        //                                    if (read == 0)
+        //                                        break;
+
+        //                                    fs.Write(buffer, 0, read);
+        //                                }
+        //                                fs.Close();
+        //                            }
+        //                        }
+        //                    }
+        //                    zip.AddFile(localPath, "");
+        //                }
+        //                catch (Exception)
+        //                {
+        //                }
+        //                //zip.AddFile(localPath, "Files");
+
+        //            }
+        //            #endregion
+        //            zipName = String.Format("{0}{1}{2}{3}.zip", entity_type, DateTimeHelper.Now.ToString("ddMMyyyy"), "-", DateTimeHelper.Now.ToString("HHmmss"));
+        //            using (MemoryStream memoryStream = new MemoryStream())
+        //            {
+        //                zip.Save(memoryStream);
+        //                return File(memoryStream.ToArray(), "application/zip", zipName);
+        //            }
+        //            System.IO.File.Delete(zipName);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //       //context.Response.ContentType = "text/plain";
+        //       //context.Response.Write(ex.Message);
+        //    }
+        //    finally
+        //    {
+        //        string FileAddress = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]) + "/Attachments";
+        //        System.IO.DirectoryInfo di = new DirectoryInfo(FileAddress);
+        //        foreach (FileInfo file in di.GetFiles())
+        //        {
+        //            file.Delete();
+        //        }
+        //    }
+        //    return null;
+        //}
+
+        //#endregion
     }
+
+
+
 }

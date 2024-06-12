@@ -34,4 +34,12 @@
 		<DbColName>destination_port_type</DbColName>
 		<TemplateColName>destination_port_type</TemplateColName>
 	</Mapping>
+	<Mapping id="8">
+		<DbColName>equipment_network_id</DbColName>
+		<TemplateColName>connector_id</TemplateColName>
+	</Mapping>
+	<Mapping id="9">
+		<DbColName>equipment_entity_type</DbColName>
+		<TemplateColName>connector_type</TemplateColName>
+	</Mapping>
 </Mappings>

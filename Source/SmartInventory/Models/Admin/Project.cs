@@ -288,7 +288,8 @@ namespace Models.Admin
 
         [NotMapped]
         public List<KeyValueDropDown> lstBindProject { get; set; }
-
+        [NotMapped]
+        public List<KeyValueDropDown> lstBindRoot { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> lstBindPlanning { get; set; }
 

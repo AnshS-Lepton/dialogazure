@@ -28,7 +28,7 @@
         <div class="libTabContent">
             <!-- Tab panes -->
             <div class="tab-content">
-                <div class="tab-pane active AdvanceFilterCHK" id="GISInfo">                    
+                <div class="tab-pane active AdvanceFilterCHK" id="GISInfo">
                     @if (Model.lstUserModule.Contains("PROJ"))
                     {
                         <fieldset class="the-fieldset">
@@ -140,6 +140,24 @@
                             </div>
                         </div>
                     </fieldset>
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">Design Id Filter</legend>
+                        <div class="form-group row">
+                            <label class="control-label col-md-2 col-sm-2" for="RdOwnershipType">Design Id:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control", @id = "txtgisdesignid", @maxlength = "50" })
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">Route Filter</legend>
+                        <div class="form-group row">
+                            <label class="control-label col-md-2 col-sm-2" for="RdOwnershipType">Route Id:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
+                            </div>
+                        </div>
+                    </fieldset>
                     @if (lstLayers.Where(x => x.layerName.ToUpper() == "SECTOR").Count() > 0)
                     {
 
@@ -230,6 +248,9 @@
         }
         if (si.secondary_pod_system_id != undefined) {
             $("#ddlSecondaryPOD").val(si.secondary_pod_system_id).trigger("chosen:updated");
+        }
+        if (si.selectedRoutevalue != undefined) {
+            $("#txtrouteInfo").val(si.selectedRoutevalue).trigger("chosen:updated");
         }
     });
     function getThirdPartyType() {

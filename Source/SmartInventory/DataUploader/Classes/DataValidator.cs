@@ -1130,5 +1130,25 @@ namespace DataUploader
             public string network_id { get; set; }
             public string parent_network_id { get; set; }
         }
+        public static List<T> ConvertDataTableToListForCDB<T>(DataTable dt, UploadSummary summary)
+        {
+            try
+            {
+                List<Mapping> lstMapping = new BLDataUploader().GetMappingsForCDBCable(summary.entity_type);
+                List<T> data = new List<T>();
+                foreach (DataRow row in dt.Rows)
+                {
+                    T item = GetItem<T>(row, lstMapping);
+                    data.Add(item);
+                }
+                return data;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("DataValidator", "ConvertDataTableToListForCDB", ex);
+                throw;
+            }
+        }
+
     }
 }

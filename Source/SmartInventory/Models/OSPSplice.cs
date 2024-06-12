@@ -34,7 +34,7 @@ namespace Models
 
         public List<ConnectionInfoForOpticalLinkBudget> lstConnectionLinkBudgetData { get; set; }
         public bool isControllEnable { get; set; }
-     
+
         [NotMapped]
         public List<connectedCusotmer> lstConnectedCustomer { get; set; }
         [NotMapped]
@@ -196,7 +196,11 @@ namespace Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
+
         public int connection_id { get; set; }
+        public int source_tray_system_id { get; set; }
+        public int destination_tray_system_id { get; set; }
         public string source_system_id { get; set; }
         public string source_network_id { get; set; }
         public string source_entity_type { get; set; }
@@ -208,9 +212,14 @@ namespace Models
         public string destination_port_no { get; set; }
         public string destination_port_type { get; set; }
         public bool is_customer_connected { get; set; }
+        public bool is_through_connection { get; set; }
+        public bool is_cable_a_end { get; set; }
         public DateTime? created_on { get; set; }
         public string created_by { get; set; }
         public string approved_by { get; set; }
+        public string equipment_network_id { get; set; }
+        public string equipment_entity_type { get; set; }
+        public int equipment_system_id { get; set; }
         public DateTime? approved_on { get; set; }
         public bool is_valid { get; set; }
         public string error_msg { get; set; }
@@ -431,7 +440,7 @@ namespace Models
         public bool is_middleware_entity { get; set; }
         public bool is_virtual { get; set; }
         public bool is_virtual_entity { get; set; }
-      
+
         public string layer_title { get; set; }
         public string layer_abbr { get; set; }
         public string layer_display_abbr { get; set; }
@@ -509,7 +518,7 @@ namespace Models
         public bool is_virtual_entity { get; set; }
         public string unauthorisedmessage { get; set; }
 
-	}
+    }
     public class PatchingViewModel
     {
 
@@ -579,7 +588,7 @@ namespace Models
         public string tray_name { get; set; }
         public bool is_through_connection { get; set; }
         public bool is_virtual { get; set; }
-       
+
         public string destination_display_name { get; set; }
         public string via_display_name { get; set; }
     }
@@ -650,12 +659,15 @@ namespace Models
         public string splicing_type { get; set; }
         public bool is_middleware_entity { get; set; }
         public List<ExportSplicing> listSplicingReport { get; set; }
+        [NotMapped]
+        public List<string> lstUserModule { get; set; }
         public connectionInput()
         {
             listConnector = new List<connectors>();
             listSplicingReport = new List<ExportSplicing>();
-            
+
         }
+        public int user_id { get; set; }
     }
     public class connectors
     {
@@ -929,7 +941,7 @@ namespace Models
     public class SchematicView
     {
         public string nodes { get; set; }
-        public string edges { get; set; }        
+        public string edges { get; set; }
         public string legends { get; set; }
         public string cables { get; set; }
         public List<legend> lstlegend { get; set; }
@@ -940,7 +952,7 @@ namespace Models
         public string downstreamCables { get; set; }
         public List<legend> lstdownStremaLegend { get; set; }
         public List<CableLegend> lstDownStreamCableLegend { get; set; }
-        
+
     }
     public class legend
     {
@@ -957,7 +969,7 @@ namespace Models
     public class CableLegend
     {
         public string color_code { get; set; }
-        public string text { get; set; }       
+        public string text { get; set; }
         public bool upstream { get; set; }
     }
     public class VizButterFlyNetwork
@@ -1058,7 +1070,7 @@ namespace Models
         public string port_comment { get; set; }
         public DateTime? created_on { get; set; }
     }
-  public class ExportSplicing
+    public class ExportSplicing
     {
         public string source { get; set; }
         public string source_entity_type { get; set; }
@@ -1091,6 +1103,42 @@ namespace Models
         public string network_id { get; set; }
     }
 
+    public class SplicingInputReq
+    {
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+        public double bufferRadius { get; set; }
+        public int role_id { get; set; }
+        public int user_id { get; set; }
+    }
+    public class ViewSplicingEntity
+    {
+        public List<SplicingEntity> SplicingLst { get; set; }
+        public ViewSplicingEntity()
+        {
+            SplicingLst = new List<SplicingEntity>();
+        }
+    }
+    public class AvailabePortReq
+    {
+        public int systemId { get; set; }
+        public string entityType { get; set; }
+    }
+    public class ConnectionInfoMasterInput
+    {
+        public List<ConnectionInfoMaster> connections { get; set; }
+        public User user { get; set; }
+    }
+    public class bulkSplicingInput
+    {
+        public int systemId { get; set; }
+        public string networkId { get; set; }
+        public string entityType { get; set; }
+        public bool isCableAend { get; set; }
+        public string connectionType { get; set; }
+        public int from { get; set; }
+        public int to { get; set; }
+    }
 
 }
 

@@ -34,10 +34,10 @@
         <!-- Tab panes -->
         <div class="tab-content">
             <div class="tab-pane active" id="bulkopr">
-                <div class="d-flex tablePad-bn forBtns flex-wrap">
+                <div class="d-flex forBtns tablePad-bn flex-wrap">
                     @Html.DropDownListFor(m => m.objFilterAttributes.dd_networkStatus, new SelectList(Model.lstNetworkStatus.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text", "Planned"), new { @class = "chosen-select", @id = "dd_networkstatus", @style = "padding:0;" })
                     @*@if (userModuleList.Contains("PROJ"))
-                    {*@
+                        {*@
                     @Html.DropDownListFor(m => m.objFilterAttributes.lstBindProjectCode, new SelectList(Model.lstBindProjectCode.Select(x => new { Value = x.value, Text = x.key.Split('(')[0] }), "Value", "Text"), "-Select Project-", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddl_ProjectCode" })
                     @*}*@
 
@@ -55,90 +55,96 @@
                             </optgroup>
                         }
                     </select>
+
+                    @Html.DropDownListFor(m => m.objFilterAttributes.lstBindRootId, new SelectList(Model.lstBindRootId.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "-Select RouteId-", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddl_RootId" })
+
                     @*<div class="col-md-4">
-            <select id="ddl_Projectcode" name="@Html.NameFor(m=> m.lstBindProjectCode)" class="chosen-select col-sm-12">
-                <option value="0">--select--</option>
-                @if (Model.lstBindProjectCode.Count > 0)
-                {
-                    foreach (var projspeci in Model.lstBindProjectCode)
-                    {
-                        var item = projspeci.key.Split('(');
-                        <option value="@projspeci.value" data-projectname="@item[0]">@item[0]</option>
-                    }
-                }
-            </select>
-        </div>*@
-                    @if (Model.objFilterAttributes.dd_networkStatus == "P")
-                    {
+                            <select id="ddl_Projectcode" name="@Html.NameFor(m=> m.lstBindProjectCode)" class="chosen-select col-sm-12">
+                                <option value="0">--select--</option>
+                                @if (Model.lstBindProjectCode.Count > 0)
+                                {
+                                    foreach (var projspeci in Model.lstBindProjectCode)
+                                    {
+                                        var item = projspeci.key.Split('(');
+                                        <option value="@projspeci.value" data-projectname="@item[0]">@item[0]</option>
+                                    }
+                                }
+                            </select>
+                        </div>*@
+                    <div class="d-flex forBtns">
 
-
-                        if (userModuleList.Contains("BLA") && objUser.role_id != 1)
+                        @if (Model.objFilterAttributes.dd_networkStatus == "P")
                         {
-                            <button type="button" class="btn btn-primary" id="btnBulkAsBuilt" onclick="si.funBulkasBuiltChange(this)" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_030" name="A"> @Resources.Resources.SI_OSP_GBL_NET_RPT_035</button>
+
+
+                            if (userModuleList.Contains("BLA") && objUser.role_id != 1)
+                            {
+                                <button type="button" class="btn btn-primary" id="btnBulkAsBuilt" onclick="si.funBulkasBuiltChange(this)" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_030" name="A"> @Resources.Resources.SI_OSP_GBL_NET_RPT_035</button>
+                            }
+                            if (ApplicationSettings.IsDormantEnabled)
+                            {
+                                if (userModuleList.Contains("BDT") && objUser.role_id != 1)
+                                {
+                                    <button type="button" class="btn btn-primary" id="btnBulkDormant" onclick="si.funBulkasBuiltChange(this)" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_031" name="D">@Resources.Resources.SI_OSP_GBL_NET_RPT_034</button>
+                                }
+                            }
+                            if (userModuleList.Contains("BPD") && objUser.role_id != 1 /*&& userModuleList.Contains("PROJ")*/)
+                            {
+                                <button type="button" class="btn btn-primary" id="btnBulkProcess" onclick="si.SaveBulkProjSpec('All','');">@Resources.Resources.SI_OSP_GBL_NET_RPT_032</button>
+                            }
+                            if (objUser.role_id != 1 && isPODAssociationEnabled)
+                            {
+                                <button type="button" class="btn btn-primary" id="btnPopAssociationProcess" onclick="si.BulkasPopAssociation('All','');">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159</button>
+                            }
+                            if (objUser.role_id == 1 || userModuleList.Contains("BDEL"))
+                            {
+                                <button type="button" class="btn btn-primary" id="btnBulkDeleteOperation" onclick="si.funBulkDeleteEntity('P','','',@Model.objFilterAttributes.lstBindProjectCode);">@Resources.Resources.SI_GBL_GBL_NET_FRM_086</button>
+                            }
                         }
-                        if (ApplicationSettings.IsDormantEnabled)
+                        else if (Model.objFilterAttributes.dd_networkStatus == "A")
                         {
+                            if (userModuleList.Contains("BLP") && objUser.role_id != 1)
+                            {
+                                <button type="button" class="btn btn-primary" id="btnPlanned" onclick="si.funBulkasBuiltChange(this)" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_189" name="P"> @Resources.Resources.SI_OSP_GBL_NET_RPT_033</button>
+                            }
                             if (userModuleList.Contains("BDT") && objUser.role_id != 1)
                             {
                                 <button type="button" class="btn btn-primary" id="btnBulkDormant" onclick="si.funBulkasBuiltChange(this)" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_031" name="D">@Resources.Resources.SI_OSP_GBL_NET_RPT_034</button>
                             }
+                            if (userModuleList.Contains("BPD") && objUser.role_id != 1 /*&& userModuleList.Contains("PROJ")*/)
+                            {
+                                <button type="button" class="btn btn-primary" id="btnBulkProcess" onclick="si.SaveBulkProjSpec('All','');">@Resources.Resources.SI_OSP_GBL_NET_RPT_032</button>
+                            }
+                            if (objUser.role_id != 1)
+                            {
+                                <button type="button" class="btn btn-primary" id="btnPopAssociationProcess" onclick="si.BulkasPopAssociation('All','');">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159</button>
+                            }
+                            if (objUser.role_id == 1 || userModuleList.Contains("BDEL"))
+                            {
+                                <button type="button" class="btn btn-primary" id="btnBulkDeleteOperation" onclick="si.funBulkDeleteEntity('A','','',@Model.objFilterAttributes.lstBindProjectCode);">@Resources.Resources.SI_GBL_GBL_NET_FRM_086</button>
+                            }
                         }
-                        if (userModuleList.Contains("BPD") && objUser.role_id != 1 /*&& userModuleList.Contains("PROJ")*/)
+                        else
                         {
-                            <button type="button" class="btn btn-primary" id="btnBulkProcess" onclick="si.SaveBulkProjSpec('All','');">@Resources.Resources.SI_OSP_GBL_NET_RPT_032</button>
-                        }
-                        if (objUser.role_id != 1 && isPODAssociationEnabled)
-                        {
-                            <button type="button" class="btn btn-primary" id="btnPopAssociationProcess" onclick="si.BulkasPopAssociation('All','');">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159</button>
-                        }
-                        if (objUser.role_id == 1 || userModuleList.Contains("BDEL"))
-                        {
-                            <button type="button" class="btn btn-primary" id="btnBulkDeleteOperation" onclick="si.funBulkDeleteEntity('P','','',@Model.objFilterAttributes.lstBindProjectCode);">@Resources.Resources.SI_GBL_GBL_NET_FRM_086</button>
-                        }
-                    }
-                    else if (Model.objFilterAttributes.dd_networkStatus == "A")
-                    {
-                        if (userModuleList.Contains("BLP") && objUser.role_id != 1)
-                        {
-                            <button type="button" class="btn btn-primary" id="btnPlanned" onclick="si.funBulkasBuiltChange(this)" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_189" name="P"> @Resources.Resources.SI_OSP_GBL_NET_RPT_033</button>
-                        }
-                        if (userModuleList.Contains("BDT") && objUser.role_id != 1)
-                        {
-                            <button type="button" class="btn btn-primary" id="btnBulkDormant" onclick="si.funBulkasBuiltChange(this)" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_031" name="D">@Resources.Resources.SI_OSP_GBL_NET_RPT_034</button>
-                        }
-                        if (userModuleList.Contains("BPD") && objUser.role_id != 1 /*&& userModuleList.Contains("PROJ")*/)
-                        {
-                            <button type="button" class="btn btn-primary" id="btnBulkProcess" onclick="si.SaveBulkProjSpec('All','');">@Resources.Resources.SI_OSP_GBL_NET_RPT_032</button>
-                        }
-                        if (objUser.role_id != 1)
-                        {
-                            <button type="button" class="btn btn-primary" id="btnPopAssociationProcess" onclick="si.BulkasPopAssociation('All','');">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159</button>
-                        }
-                        if (objUser.role_id == 1 || userModuleList.Contains("BDEL"))
-                        {
-                            <button type="button" class="btn btn-primary" id="btnBulkDeleteOperation" onclick="si.funBulkDeleteEntity('A','','',@Model.objFilterAttributes.lstBindProjectCode);">@Resources.Resources.SI_GBL_GBL_NET_FRM_086</button>
-                        }
-                    }
-                    else
-                    {
-                        if (userModuleList.Contains("BLP") && objUser.role_id != 1)
-                        {
-                            <button type="button" class="btn btn-primary" id="btnPlanned" onclick="si.funBulkasBuiltChange(this)" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_189" name="P"> @Resources.Resources.SI_OSP_GBL_NET_RPT_033</button>
-                        }
-                        if (userModuleList.Contains("BPD") && objUser.role_id != 1 /*&& userModuleList.Contains("PROJ")*/)
-                        {
-                            <button type="button" class="btn btn-primary" id="btnBulkProcess" onclick="si.SaveBulkProjSpec('All','');">@Resources.Resources.SI_OSP_GBL_NET_RPT_032</button>
-                        }
-                        if (objUser.role_id != 1)
-                        {
-                            <button type="button" class="btn btn-primary" id="btnPopAssociationProcess" onclick="si.BulkasPopAssociation('All','');">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159</button>
-                        }
+                            if (userModuleList.Contains("BLP") && objUser.role_id != 1)
+                            {
+                                <button type="button" class="btn btn-primary" id="btnPlanned" onclick="si.funBulkasBuiltChange(this)" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_189" name="P"> @Resources.Resources.SI_OSP_GBL_NET_RPT_033</button>
+                            }
+                            if (userModuleList.Contains("BPD") && objUser.role_id != 1 /*&& userModuleList.Contains("PROJ")*/)
+                            {
+                                <button type="button" class="btn btn-primary" id="btnBulkProcess" onclick="si.SaveBulkProjSpec('All','');">@Resources.Resources.SI_OSP_GBL_NET_RPT_032</button>
+                            }
+                            if (objUser.role_id != 1)
+                            {
+                                <button type="button" class="btn btn-primary" id="btnPopAssociationProcess" onclick="si.BulkasPopAssociation('All','');">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159</button>
+                            }
 
-                        if (objUser.role_id == 1 || userModuleList.Contains("BDEL"))
-                        {
-                            <button type="button" class="btn btn-primary" id="btnBulkDeleteOperation" onclick="si.funBulkDeleteEntity('D','','',@Model.objFilterAttributes.lstBindProjectCode);">@Resources.Resources.SI_GBL_GBL_NET_FRM_086</button>
+                            if (objUser.role_id == 1 || userModuleList.Contains("BDEL"))
+                            {
+                                <button type="button" class="btn btn-primary" id="btnBulkDeleteOperation" onclick="si.funBulkDeleteEntity('D','','',@Model.objFilterAttributes.lstBindProjectCode);">@Resources.Resources.SI_GBL_GBL_NET_FRM_086</button>
+                            }
                         }
-                    }
+                    </div>
                 </div>
                 <!--project code combo  -->
             </div>
@@ -193,19 +199,19 @@
                     </text>),//added by ankit
 
 grid.Column("entity_type", Resources.Resources.SI_OSP_GBL_NET_FRM_020, format:
-                @<text>
+        @<text>
 
-                    @if (@item.isheader == "true")
-                    {@item.entity_type }
-                else
-                {
-                    <span>&nbsp;&nbsp;&nbsp;@item.entity_sub_type</span>
+            @if (@item.isheader == "true")
+            {@item.entity_type }
+        else
+        {
+            <span>&nbsp;&nbsp;&nbsp;@item.entity_sub_type</span>
 
-                }
+        }
 
-                </text>),
-  grid.Column("entity_count", Resources.Resources.SI_OSP_GBL_NET_FRM_188, format: @<text>@item.entity_count</text>),
-                @*grid.Column("network_status", "Network Status", format: @<text>@item.network_status </text>),*@
+        </text>),
+grid.Column("entity_count", Resources.Resources.SI_OSP_GBL_NET_FRM_188, format: @<text>@item.entity_count</text>),
+@*grid.Column("network_status", "Network Status", format: @<text>@item.network_status </text>),*@
 grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format:
                                                             @<text>
                                                                 @{
@@ -247,11 +253,11 @@ grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format:
 
                                                                     }
                                                                     @*<span class="bulkEntityLstAction @(!item.is_project_spec_allowed ? "roledisabled" : "")" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_032" onclick="si.SaveBulkProjSpec( '@item.entity_type')">
-                                                        </span>*@
+                                                                        </span>*@
                                                                     //if (userModuleList.Contains("PROJ"))
                                                                     //{
-                                                                        <span class="bulkEntityLstAction @(!item.is_project_spec_allowed || !editPermission ? "roledisabled" : "")" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_032" onclick="@(!item.is_project_spec_allowed || !editPermission ? "disabledItem(event);" : "si.SaveBulkProjSpec( '" + item.entity_type + "','" + item.entity_sub_type + "')")">
-                                                                        </span>
+                                                                    <span class="bulkEntityLstAction @(!item.is_project_spec_allowed || !editPermission ? "roledisabled" : "")" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_032" onclick="@(!item.is_project_spec_allowed || !editPermission ? "disabledItem(event);" : "si.SaveBulkProjSpec( '" + item.layer_name + "','" + item.entity_sub_type + "')")">
+                                                                    </span>
                                                                     //}
                                                                     if (isPODAssociationEnabled)
                                                                     {
@@ -265,7 +271,7 @@ grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format:
                                                                 }
 
                                                             </text>)
-                  ))
+           ))
 
                 </div>
 

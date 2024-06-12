@@ -81,6 +81,8 @@ namespace Models
         public string request_approved_by { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
         public ROWMaster()
         {
             project_id = 0;
@@ -93,6 +95,7 @@ namespace Models
             lstBindWorkorderCode = new List<WorkorderCodeMaster>();
             lstBindPurposeCode = new List<PurposeCodeMaster>();
             lstUserModule = new List<string>();
+            lstRouteInfo = new List<RouteInfo>();
         }
 
     }

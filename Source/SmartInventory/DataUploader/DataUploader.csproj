@@ -69,6 +69,7 @@
     <Compile Include="TempUploadObjects\UploadTempBuilding.cs" />
     <Compile Include="TempUploadObjects\UploadTempCabinet.cs" />
     <Compile Include="TempUploadObjects\UploadTempCDB.cs" />
+    <Compile Include="TempUploadObjects\UploadTempCDBAttributes.cs" />
     <Compile Include="TempUploadObjects\UploadTempCoupler.cs" />
     <Compile Include="TempUploadObjects\UploadTempCustomerWireless.cs" />
     <Compile Include="TempUploadObjects\UploadTempGipipe.cs" />
@@ -120,6 +121,10 @@
     <ProjectReference Include="..\BusinessLogics\BusinessLogics.csproj">
       <Project>{1FD26F85-E70F-4E77-8234-2769F4051C24}</Project>
       <Name>BusinessLogics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
+      <Project>{90B844A2-B75F-484B-A688-8977BF04A7EA}</Project>
+      <Name>DataAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{2e40e756-53a0-4a32-9614-15f0a7e126db}</Project>

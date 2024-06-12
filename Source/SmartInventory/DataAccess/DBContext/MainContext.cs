@@ -535,6 +535,7 @@ namespace DataAccess.DBContext
             modelBuilder.Entity<ConnectedDeviceRequest>().ToTable("tbl_wfm_connected_device_request", dbschema);
 
             modelBuilder.Entity<UserManagerMapping>().ToTable("user_manager_mapping", dbschema);
+            modelBuilder.Entity<userFeToolMapping>().ToTable("user_tools_mapping", dbschema);
 
             modelBuilder.Entity<UserWarehouseCodeMapping>().ToTable("user_warehousecode_mapping", dbschema);
 
@@ -625,6 +626,10 @@ namespace DataAccess.DBContext
             modelBuilder.Entity<ExportReportLog>().ToTable("export_report_log", dbschema);
             # endregion
 
+            #region Association Report
+            modelBuilder.Entity<AssociationReportLog>().ToTable("association_report_log", dbschema);
+            # endregion
+
             #region SI_Dashboard //Added by Diksha Gupta
             modelBuilder.Entity<HierarchyMaster>().ToTable("vw_db_hierarchy", dbschema);
             modelBuilder.Entity<Kpi_Master>().ToTable("kpi_master", dbschema);
@@ -642,6 +647,10 @@ namespace DataAccess.DBContext
 
             modelBuilder.Entity<ViewSpecificationServiceList>().ToTable("item_template_service_master", dbschema);
             modelBuilder.Entity<CDBAttribute>().ToTable("att_details_cable_cdb", dbschema);
+            modelBuilder.Entity<TempCDBAttributes>().ToTable("temp_du_att_details_cable_cdb", dbschema);
+            //modelBuilder.Entity<FE_Tools>().ToTable("user_fe_tool_mapping1", dbschema);
+            modelBuilder.Entity<FETOOLS_Attachment>().ToTable("user_tools_attachment", dbschema);
+
             modelBuilder.Entity<TrenchExecution>().ToTable("att_entity_execution_method", dbschema);
         }
 

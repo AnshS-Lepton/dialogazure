@@ -9,7 +9,7 @@ namespace SmartInventory.Areas.Admin
         {
             bundles.Add(new ScriptBundle("~/bundles/AdminScripts").Include(
                               //"~/Areas/Admin/Content/js/jquery-1.9.1.js",
-                              "~/Areas/Admin/Content/js/jquery-3.6.0.js",
+                              "~/Areas/Admin/Content/js/jquery-3.7.1.js",
                              "~/Areas/Admin/Content/js/bootstrap.bundle.min.js",
                             "~/Areas/Admin/Content/js/admin.js",
                              "~/Areas/Admin/Content/js/gChart.js",

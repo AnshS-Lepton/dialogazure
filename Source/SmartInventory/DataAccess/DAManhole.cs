@@ -24,7 +24,7 @@ namespace DataAccess
                         objManholeMaster.objPM = objPageValidate;
                         return objManholeMaster;
                     }
-
+                    objManholeItem.mcgm_ward = objManholeMaster.mcgm_ward;
                     objManholeItem.manhole_name = objManholeMaster.manhole_name;                 
                     objManholeItem.address = objManholeMaster.address;
                     objManholeItem.is_virtual = objManholeMaster.is_virtual;

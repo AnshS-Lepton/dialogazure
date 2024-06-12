@@ -1,3 +1,4 @@
 # SmartInventory-3.0
 SmartInventory Repository
-# Product Master Branch - 'master'
+# develop-spaceworld 
+Only difference is the number of licenses

@@ -158,6 +158,8 @@
     <Compile Include="DADataProcessing.cs" />
     <Compile Include="DADeviceSearch.cs" />
     <Compile Include="DADsa.cs" />
+    <Compile Include="DAAssociationReportLog.cs" />
+    <Compile Include="DAFetools_Attachement.cs" />
     <Compile Include="DAExecution.cs" />
     <Compile Include="DAGipipe.cs" />
     <Compile Include="DADuct.cs" />
@@ -232,6 +234,7 @@
     <Compile Include="DATrench.cs" />
     <Compile Include="DAUser.cs" />
     <Compile Include="DAWorkSpace.cs" />
+    <Compile Include="DA_Fee_tools.cs" />
     <Compile Include="DBContext\MainContext.cs" />
     <Compile Include="DBHelpers\ProcHelper.cs" />
     <Compile Include="DLProcess.cs" />
@@ -255,6 +258,7 @@
     <Compile Include="TempUpload\DATempCabinet.cs" />
     <Compile Include="TempUpload\DATempCable.cs" />
     <Compile Include="TempUpload\DATempCDB.cs" />
+    <Compile Include="TempUpload\DATempCDBAttributes.cs" />
     <Compile Include="TempUpload\DATempCoupler.cs" />
     <Compile Include="TempUpload\DATempGipipe.cs" />
     <Compile Include="TempUpload\DATempDuct.cs" />

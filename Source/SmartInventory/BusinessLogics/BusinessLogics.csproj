@@ -137,12 +137,15 @@
     <Compile Include="Admin\BLConfigurationSetting.cs" />
     <Compile Include="BLCompetitor.cs" />
     <Compile Include="BLDashboard.cs" />
+    <Compile Include="BLAssociationReportLog.cs" />
+    <Compile Include="BLFetools_Attachement.cs" />
     <Compile Include="BLGipipe.cs" />
     <Compile Include="BLFATConnection.cs" />
     <Compile Include="BLExportData.cs" />
     <Compile Include="BLExportReportLog.cs" />
     <Compile Include="BLKPIMaster.cs" />
     <Compile Include="BLSlack.cs" />
+    <Compile Include="BLTemp\BLTempCDBAttributes.cs" />
     <Compile Include="BLTemp\BLTempRow.cs" />
     <Compile Include="BLWebRequestLog.cs" />
     <Compile Include="BLTemp\BLTempGipipe.cs" />
@@ -265,6 +268,7 @@
     <Compile Include="BLUser.cs" />
     <Compile Include="BLWorkSpace.cs" />
     <Compile Include="BLIntegrationSuperSet.cs" />
+    <Compile Include="BL_Fe_Tools.cs" />
     <Compile Include="BLExecution.cs" />
     <Compile Include="Feasibility\BLFeasibility.cs" />
     <Compile Include="Feasibility\CommonHelpers.cs" />

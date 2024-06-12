@@ -45,7 +45,7 @@ namespace Models
         Area,
         SubArea,
         SurveyArea,
-        RestrictedArea,
+        Restricted_Area,
         Structure,
         POD,
         Pole,
@@ -199,6 +199,7 @@ namespace Models
         Customer_Type,
         Customer_Service_Type,
         Export_Report,
+        Association_Report,
         LMC_TYPE,
         SITE_TYPE,
         Structure_Type,
@@ -270,6 +271,7 @@ namespace Models
         Operator_Type_LOV,
         Fiber_Type_LOV,
         Route_Type,
+        type,
         execution_Method
     }
     public enum VendorType
@@ -340,6 +342,7 @@ namespace Models
     public enum PortStatus
     {
         Vacant,
+        Reserved,
         Connected
     }
     public enum UnitInputType
@@ -381,6 +384,15 @@ namespace Models
         vendor,
         gipipe_type,
         gipipe_color,
+        route_id,
+        route_name,
+        gis_design_id,
+        type,
+        brand,
+        model,
+        construction,
+        activation,
+        accessibility
     }
     public enum formFeatureType
     {

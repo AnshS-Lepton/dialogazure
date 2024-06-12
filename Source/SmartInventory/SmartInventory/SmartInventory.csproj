@@ -299,8 +299,8 @@
     <Content Include="Areas\Admin\Content\js\jquery-1.10.2.js" />
     <Content Include="Areas\Admin\Content\js\jquery-1.10.2.min.js" />
     <Content Include="Areas\Admin\Content\js\jquery-1.9.1.js" />
-    <Content Include="Areas\Admin\Content\js\jquery-3.6.0.js" />
-    <Content Include="Areas\Admin\Content\js\jquery-3.6.0.min.js" />
+    <Content Include="Areas\Admin\Content\js\jquery-3.7.1.js" />
+    <Content Include="Areas\Admin\Content\js\jquery-3.7.1.min.js" />
     <Content Include="Areas\Admin\Content\js\spectrum.js" />
     <Content Include="Areas\Admin\Content\images\handle.png" />
     <Content Include="Areas\Admin\Content\images\sort_asc.png" />
@@ -758,6 +758,7 @@
     <Content Include="Content\images\icons\lib\Legend\Electrical.svg" />
     <Content Include="Content\images\icons\lib\Legend\electric_pole.png" />
     <Content Include="Content\images\icons\lib\Legend\EQUIPMENT.png" />
+    <Content Include="Content\images\icons\lib\Legend\Fault.svg" />
     <Content Include="Content\images\icons\lib\Legend\FDB.png" />
     <Content Include="Content\images\icons\lib\Legend\FDB.svg" />
     <Content Include="Content\images\icons\lib\Legend\fms.png" />
@@ -772,6 +773,7 @@
     <Content Include="Content\images\icons\lib\Legend\LightPole.png" />
     <Content Include="Content\images\icons\lib\Legend\logo_black.png" />
     <Content Include="Content\images\icons\lib\Legend\loop-bold.png" />
+    <Content Include="Content\images\icons\lib\Legend\Loop.svg" />
     <Content Include="Content\images\icons\lib\Legend\loop_back %282%29.png" />
     <Content Include="Content\images\icons\lib\Legend\loop_back %283%29.png" />
     <Content Include="Content\images\icons\lib\Legend\loop_back-1.png" />
@@ -1539,6 +1541,8 @@
     <Content Include="Content\images\StructureHeader.png" />
     <Content Include="Content\images\tick_1.gif" />
     <Content Include="Content\images\timer.svg" />
+    <Content Include="Content\images\top_bg_blue.png" />
+    <Content Include="Content\images\top_bg_dBlue.png" />
     <Content Include="Content\images\top_bg_red.png" />
     <Content Include="Content\images\UnlinkAll.svg" />
     <Content Include="Content\images\warinng.png" />
@@ -1569,7 +1573,9 @@
     <Content Include="Content\js\inputpicker\jquery.inputpicker1.js" />
     <Content Include="Content\js\inputpicker\popper.min.js" />
     <Content Include="Content\js\jquery-1.9.1.min.js" />
-    <Content Include="Content\js\jquery-3.6.0.js" />
+    <Content Include="Content\js\jquery-3.7.1.js" />
+    <Content Include="Content\js\jquery-ui.js" />
+    <Content Include="Content\js\jquery-ui.min.js" />
     <Content Include="Content\js\jquery.serializejson.js" />
     <Content Include="Content\js\LandBase.js" />
     <Content Include="Content\js\gmaps-large-polygon.js" />
@@ -1588,8 +1594,21 @@
     <Content Include="Content\js\vis_4_18_1.min.js" />
     <Content Include="Content\sort_asc.png" />
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
+    <Content Include="MigrationScripts\03-05-2024.sql" />
+    <Content Include="MigrationScripts\05-04-2024.sql" />
+    <Content Include="MigrationScripts\06-05-2024.sql" />
+    <Content Include="MigrationScripts\06-05-2024_2.sql" />
+    <Content Include="MigrationScripts\07-06-2024.sql" />
+    <Content Include="MigrationScripts\12-06-2024.sql" />
+    <Content Include="MigrationScripts\14-05-2024.sql" />
+    <Content Include="MigrationScripts\16-04-2024.sql" />
+    <Content Include="MigrationScripts\18-05-2024.sql" />
+    <Content Include="MigrationScripts\20-05-2024.sql" />
+    <Content Include="MigrationScripts\2024-05-07_unique_constraint_lbl_clm_stng.sql" />
     <Content Include="MigrationScripts\2024_02_27_vodafone_issues.sql" />
     <Content Include="MigrationScripts\2024_02_25_vodafone_issues.sql" />
+    <Content Include="MigrationScripts\23-05-2024.sql" />
+    <Content Include="MigrationScripts\30-04-2024.sql" />
     <Content Include="MultilingualJunkKeys\Content\Js\Alert.js" />
     <Content Include="Scripts\APIHandler.js" />
     <Content Include="Content\js\canvg.min.js" />
@@ -1749,8 +1768,6 @@
     <Content Include="Content\js\InputMask\dx.common.css" />
     <Content Include="Content\js\InputMask\dx.light.css" />
     <Content Include="Content\js\jquery-1.10.2.js" />
-    <Content Include="Content\js\jquery-ui.js" />
-    <Content Include="Content\js\jquery-ui.min.js" />
     <Content Include="Content\js\jquery.cookie.js" />
     <Content Include="Content\js\jquery.js" />
     <Content Include="Content\js\jquery.treeview.js" />
@@ -1934,11 +1951,13 @@
     <Content Include="Areas\Admin\Views\OTPAuthenticationSettings\EmailTemplateConfiguration.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\ViewSpecificationServices.cshtml" />
     <Content Include="Areas\Admin\Views\VendorSepcification\SpecificationService.cshtml" />
-    <None Include="Scripts\jquery-3.6.0.intellisense.js" />
-    <Content Include="Scripts\jquery-3.6.0.js" />
-    <Content Include="Scripts\jquery-3.6.0.min.js" />
-    <Content Include="Scripts\jquery-3.6.0.slim.js" />
-    <Content Include="Scripts\jquery-3.6.0.slim.min.js" />
+    <Content Include="Areas\Admin\Views\FeTools\AddFEtools.cshtml" />
+    <Content Include="Areas\Admin\Views\FeTools\Viewfetools.cshtml" />
+    <None Include="Scripts\jquery-3.7.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.7.1.js" />
+    <Content Include="Scripts\jquery-3.7.1.min.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.js" />
     <Content Include="Scripts\jquery.signalR-2.4.1.js" />
     <Content Include="Scripts\jquery.signalR-2.4.1.min.js" />
     <Content Include="Uploads\SHAPE\RegionProvince\save\test.txt" />
@@ -2232,8 +2251,8 @@
     </None>
     <Content Include="Content\js\chartist.min.js.map" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\jquery-3.6.0.slim.min.map" />
-    <Content Include="Scripts\jquery-3.6.0.min.map" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.7.1.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
@@ -2314,6 +2333,9 @@
     <Content Include="Views\Library\_CDBAttributes.cshtml" />
     <Content Include="Views\ISP\_AddDuctTP.cshtml" />
     <Content Include="Views\ISP\_AddISPDuct.cshtml" />
+    <Content Include="Views\Report\_EntityAssociationReport.cshtml" />
+    <Content Include="Views\Report\_EntityAssociationReportLog.cshtml" />
+    <Content Include="Views\Report\_EntityAssociationSummaryView.cshtml" />
     <Content Include="Views\Library\_trenchExecution.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -2336,6 +2358,7 @@
     <Compile Include="Areas\Admin\Controllers\DynamicFormController.cs" />
     <Compile Include="Areas\Admin\Controllers\DynamicThemeController.cs" />
     <Compile Include="Areas\Admin\Controllers\EmailSettingsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\FeToolsController.cs" />
     <Compile Include="Areas\Admin\Controllers\LongRunningQueriesController.cs" />
     <Compile Include="Areas\Admin\Controllers\OrthoImageLayerController.cs" />
     <Compile Include="Areas\Admin\Controllers\ConfigurationSettingsController.cs" />
@@ -2847,7 +2870,6 @@
     <Folder Include="Content\UploadedFiles\Fiber\" />
     <Folder Include="Content\UploadedFiles\Resources\" />
     <Folder Include="Content\UploadedFiles\VendorSpecifications\" />
-    <Folder Include="ErrorLogs\" />
     <Folder Include="shp2kml_convertor\" />
     <Folder Include="Uploads\ExternalData\KMZ\" />
     <Folder Include="Uploads\LayerStyleMaster\" />

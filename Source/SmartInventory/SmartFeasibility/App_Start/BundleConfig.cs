@@ -20,7 +20,7 @@ namespace SmartFeasibility
             #endregion
 
             bundles.Add(new ScriptBundle("~/bundles/Scripts").Include(
-                        "~/Content/js/jquery-3.6.0.js",
+                        "~/Content/js/jquery-3.7.1.js",
                         "~/Content/js/jquery-ui.min.js",
                         "~/Scripts/jquery.unobtrusive-ajax.min.js",
                         "~/Scripts/jquery.validate.min.js",

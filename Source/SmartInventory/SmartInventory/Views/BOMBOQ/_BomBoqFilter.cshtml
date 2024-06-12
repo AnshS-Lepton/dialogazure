@@ -45,6 +45,12 @@
                         </div>
                     </div>
                 }
+                <div class="row form-group">
+                    <div class="col-md-4">Route Id:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
+                    </div>
+                </div>
 
                 <div class="row form-group">
                     <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_067:</div>
@@ -105,17 +111,17 @@
                 @if (Model.lstUserModule.Contains("PROJ"))
                 {
                     <div class="row form-group">
-                       <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_070:</div>
-                       <div class="col-md-8">
-                           @Html.DropDownListFor(m => m.objReportFilters.SelectedProjectId, new SelectList(Model.lstBindProjectCode.Select(x => new { Value = x.system_id.ToString(), Text = x.project_code.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlProjectCode" })
-                       </div>
-                   </div>
-                           <div class="row form-group">
-                       <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_008:</div>
-                       <div class="col-md-8">
-                           @Html.DropDownListFor(m => m.objReportFilters.SelectedPlanningId, new SelectList(Model.lstBindPlanningCode.Select(x => new { Value = x.system_id.ToString(), Text = x.planning_code.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlPlanningCode" })
-                       </div>
-                   </div>
+                        <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_070:</div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedProjectId, new SelectList(Model.lstBindProjectCode.Select(x => new { Value = x.system_id.ToString(), Text = x.project_code.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlProjectCode" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_008:</div>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedPlanningId, new SelectList(Model.lstBindPlanningCode.Select(x => new { Value = x.system_id.ToString(), Text = x.planning_code.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlPlanningCode" })
+                        </div>
+                    </div>
                     <div class="row form-group">
                         <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_009:</div>
                         <div class="col-md-8">
@@ -129,43 +135,43 @@
                         </div>
                     </div>
                 }
-                    <div class="row form-group">
-                        <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_071<i class="clsMandatory">*</i>:</div>
-                        <div class="col-md-8">
-                            @Html.DropDownListFor(m => m.objReportFilters.durationbasedon, new SelectList(Model.lstDurationBasedOn.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @id = "ddlDurationBasedOn" })
-                        </div>
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_071<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.objReportFilters.durationbasedon, new SelectList(Model.lstDurationBasedOn.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @id = "ddlDurationBasedOn" })
                     </div>
-                    <div class="row form-group">
-                        <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_072<i class="clsMandatory">*</i>:</div>
-                        <div class="col-md-8">
-                            @Html.DropDownListFor(m => m.objReportFilters.customDate, new List<SelectListItem>{
-                                    new SelectListItem { Text = "All", Value = "9"},
-                                    new SelectListItem { Text = "Custom", Value = "1"},
-                                    new SelectListItem { Text = "Today", Value = "2"},
-                                    new SelectListItem { Text = "Previous Day", Value = "3"},
-                                    new SelectListItem { Text = "Last 7 Days", Value = "4"},
-                                    new SelectListItem { Text = "Last 30 Day", Selected=true, Value = "5"},
-                                    new SelectListItem { Text = "Last 3 Months", Value = "6"},
-                                    new SelectListItem { Text = "Last 6 Months", Value = "7"},
-                                    new SelectListItem { Text = "Last 1 Year", Value = "8"},
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">@Resources.Resources.SI_OSP_GBL_NET_FRM_072<i class="clsMandatory">*</i>:</div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.objReportFilters.customDate, new List<SelectListItem>{
+                                new SelectListItem { Text = "All", Value = "9"},
+                                new SelectListItem { Text = "Custom", Value = "1"},
+                                new SelectListItem { Text = "Today", Value = "2"},
+                                new SelectListItem { Text = "Previous Day", Value = "3"},
+                                new SelectListItem { Text = "Last 7 Days", Value = "4"},
+                                new SelectListItem { Text = "Last 30 Day", Selected=true, Value = "5"},
+                                new SelectListItem { Text = "Last 3 Months", Value = "6"},
+                                new SelectListItem { Text = "Last 6 Months", Value = "7"},
+                                new SelectListItem { Text = "Last 1 Year", Value = "8"},
 
-                                }, new { @class = "chosen-select", @onchange = "onChangeCustomDate();", @id = "customedate" })
-                        </div>
+                            }, new { @class = "chosen-select", @onchange = "onChangeCustomDate();", @id = "customedate" })
                     </div>
-                    <div class="form-group d-flex">
-                        <div class="flexBoqFC">
-                        </div>
-                        <div class="flexBoq pos-rel">
-                            @Html.TextBoxFor(m => m.objReportFilters.fromDate, new { @id = "txtDateFrom", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_096, @tabindex = "4", @class = "input-sm form-control", @readonly = true, @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_096 })
-                            <img id="imgFromDate" class="export-report-cal bomCalTop" src="@Url.Content("~/Content/images/calendar.png")">
-                        </div>
-                        <div class="flexBoq pos-rel ml-10">
-                            @Html.TextBoxFor(m => m.objReportFilters.toDate, new { @id = "txtDateTo", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_097, @tabindex = "4", @class = "input-sm form-control", @readonly = true, @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_097 })
-                            <img id="imgToDate" class="export-report-cal bomCalTop" src="@Url.Content("~/Content/images/calendar.png")">
-                        </div>
+                </div>
+                <div class="form-group d-flex">
+                    <div class="flexBoqFC">
                     </div>
+                    <div class="flexBoq pos-rel">
+                        @Html.TextBoxFor(m => m.objReportFilters.fromDate, new { @id = "txtDateFrom", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_096, @tabindex = "4", @class = "input-sm form-control", @readonly = true, @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_096 })
+                        <img id="imgFromDate" class="export-report-cal bomCalTop" src="@Url.Content("~/Content/images/calendar.png")">
+                    </div>
+                    <div class="flexBoq pos-rel ml-10">
+                        @Html.TextBoxFor(m => m.objReportFilters.toDate, new { @id = "txtDateTo", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_097, @tabindex = "4", @class = "input-sm form-control", @readonly = true, @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_097 })
+                        <img id="imgToDate" class="export-report-cal bomCalTop" src="@Url.Content("~/Content/images/calendar.png")">
+                    </div>
+                </div>
 
-                </fieldset>
+            </fieldset>
 
 
             <div style="@(Model.lstUserModule.Contains("dBLOSS")?"": "cursor: not-allowed;")" title="@(Model.lstUserModule.Contains("dBLOSS")?"": @Resources.Resources.SI_GBL_GBL_GBL_GBL_1436)">
@@ -473,13 +479,13 @@
     }
 
 
-    $('#ddlProjectCode').change(function () {
+    $('#ddlProjectCode').on('change', function () {
         si.BindPlanningDetailByProjectIds();
     })
-    $('#ddlPlanningCode').change(function () {
+    $('#ddlPlanningCode').on('change', function () {
         si.BindWorkCodeDetailByPlanningIds();
     })
-    $('#ddlWorkorderCode').change(function () {
+    $('#ddlWorkorderCode').on('change', function () {
         si.BindPurposeCodeDetailByWorkOrderIds();
     })
 </script>

@@ -40,6 +40,11 @@ namespace BusinessLogics
         {
             return objDAMisc.GetDropDownList(enType, ddType);
         }
+
+        public List<DropDownMaster> GetAssociationDropDownList(string enType, string ddType = "")
+        {
+            return objDAMisc.GetAssociationDropDownList(enType, ddType);
+        }
         public List<DropDownMaster> GetPortRatio(string splitterType)
         {
             return objDAMisc.GetPortRatio(splitterType);
@@ -496,6 +501,10 @@ namespace BusinessLogics
         public List<RouteInfo> getRouteEntityInLineBuffer(int systemId, string entityType)
         {
             return new DAMisc().getRouteEntityInLineBuffer(systemId, entityType);
+        }
+        public List<RouteInfo> getRouteEntityInLineBuffer(string geom)
+        {
+            return new DAMisc().getRouteEntityInLineBuffer(geom);
         }
         public List<LineEntityInfo> getAutoLineEntityInLineBuffer(int systemId, string entityType, int pSystemId, string pEntityType, string pParentGeom, string pParentGeomType)
         {

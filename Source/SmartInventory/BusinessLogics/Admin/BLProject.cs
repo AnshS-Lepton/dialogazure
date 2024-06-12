@@ -1,4 +1,5 @@
-﻿using DataAccess.Admin;
+﻿using DataAccess;
+using DataAccess.Admin;
 using Models;
 using Models.Admin;
 using System;
@@ -91,7 +92,12 @@ namespace BusinessLogics.Admin
             return new DAProject().BindProject(network_stage);
 
         }
+        public List<KeyValueDropDown> BindRootId(int userdId,string geom,string selection_type, double buff_Radius,string  networkStatus)
+        {
 
+            return new DAProject().BindRootId(userdId,geom, selection_type, buff_Radius, networkStatus);
+
+        }
         public List<KeyValueDropDown> BindPlanning(string network_stage, int ddlproject_id)
         {
 

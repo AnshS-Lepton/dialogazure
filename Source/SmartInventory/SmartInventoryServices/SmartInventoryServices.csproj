@@ -335,6 +335,7 @@
     <Content Include="Content\Images\icons\lib\Legend\D_WC.png" />
     <Content Include="Content\Images\icons\lib\Legend\Electrical.png" />
     <Content Include="Content\Images\icons\lib\Legend\electric_pole.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Fault.svg" />
     <Content Include="Content\Images\icons\lib\Legend\FDB.png" />
     <Content Include="Content\Images\icons\lib\Legend\fms.png" />
     <Content Include="Content\Images\icons\lib\Legend\HTB.png" />
@@ -342,6 +343,7 @@
     <Content Include="Content\Images\icons\lib\Legend\Light.png" />
     <Content Include="Content\Images\icons\lib\Legend\LightPole.png" />
     <Content Include="Content\Images\icons\lib\Legend\loop-bold.png" />
+    <Content Include="Content\Images\icons\lib\Legend\Loop.svg" />
     <Content Include="Content\Images\icons\lib\Legend\loop_back %282%29.png" />
     <Content Include="Content\Images\icons\lib\Legend\loop_back %283%29.png" />
     <Content Include="Content\Images\icons\lib\Legend\loop_back-1.png" />
@@ -350,6 +352,7 @@
     <Content Include="Content\Images\icons\lib\Legend\manhole.png" />
     <Content Include="Content\Images\icons\lib\Legend\MicroPOD.png" />
     <Content Include="Content\Images\icons\lib\Legend\MPOD.png" />
+    <Content Include="Content\Images\icons\lib\Legend\MPOD.svg" />
     <Content Include="Content\Images\icons\lib\Legend\N-RFECommercial+Residential.png" />
     <Content Include="Content\Images\icons\lib\Legend\N-RFECommercialHighRise.png" />
     <Content Include="Content\Images\icons\lib\Legend\N-RFECommercialLowRise.png" />
@@ -544,7 +547,7 @@
     <Content Include="Content\js\chosen.jquery.min.js" />
     <Content Include="Content\js\HPSMTicket.js" />
     <Content Include="Content\js\jquery-1.10.2.min.js" />
-    <Content Include="Content\js\jquery-3.6.0.min.js" />
+    <Content Include="Content\js\jquery-3.7.1.min.js" />
     <Content Include="Content\js\jquery-swapsies.js" />
     <Content Include="Content\js\jquery-ui.min.js" />
     <Content Include="Content\js\jquery.js" />
@@ -563,11 +566,11 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <None Include="Scripts\jquery-3.6.0.intellisense.js" />
-    <Content Include="Scripts\jquery-3.6.0.js" />
-    <Content Include="Scripts\jquery-3.6.0.min.js" />
-    <Content Include="Scripts\jquery-3.6.0.slim.js" />
-    <Content Include="Scripts\jquery-3.6.0.slim.min.js" />
+    <None Include="Scripts\jquery-3.7.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.7.1.js" />
+    <Content Include="Scripts\jquery-3.7.1.min.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -608,6 +611,7 @@
     <Compile Include="Controllers\ResourcesController.cs" />
     <Compile Include="Controllers\SignInController.cs" />
     <Compile Include="Controllers\SplicingController.cs" />
+    <Compile Include="Controllers\ConnectionController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="Controllers\TicketManagerController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -687,8 +691,8 @@
     <Content Include="Views\Splicing\_Splicing.cshtml" />
     <Content Include="Views\Shared\_ModalPopUp.cshtml" />
     <Content Include="Views\TicketManager\_HPSMTicket.cshtml" />
-    <Content Include="Scripts\jquery-3.6.0.slim.min.map" />
-    <Content Include="Scripts\jquery-3.6.0.min.map" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.7.1.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

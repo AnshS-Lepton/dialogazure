@@ -564,7 +564,7 @@
             }
         });
 
-        $('#txtitemtype').change(function (event) {
+        $('#txtitemtype').on('change', function (event) {
              
             var e = document.getElementById('txtitemtype');
             var item_type_value = e.options[e.selectedIndex].value;

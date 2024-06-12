@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Mono.Security.X509.X520;
 
 namespace DataAccess.Admin
 {
@@ -114,6 +115,17 @@ namespace DataAccess.Admin
             try
             {
                 return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_ProjectCode_list", new { network_stage = network_stage }, true);
+
+            }
+            catch { throw; }
+
+        }
+        public List<KeyValueDropDown> BindRootId(int userdId,string geom, string selection_type, double buff_Radius, string networkStatus)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_rootId_list", 
+                    new { p_userId = userdId, p_geom = geom, p_selectiontype= selection_type, p_radius= buff_Radius , p_network_status = networkStatus }, true);
 
             }
             catch { throw; }

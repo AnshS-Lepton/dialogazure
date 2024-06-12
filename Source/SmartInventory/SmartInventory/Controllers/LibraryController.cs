@@ -199,7 +199,7 @@ namespace SmartInventory.Controllers
 			obj.system_id = systemId;
 			obj.geom = geom;
 			string url = "api/Library/EntityOperations";
-			var response = WebAPIRequest.PostIntegrationAPIRequest<RestrictedArea>(url, obj, EntityType.RestrictedArea.ToString(), EntityAction.Get.ToString());
+			var response = WebAPIRequest.PostIntegrationAPIRequest<RestrictedArea>(url, obj, EntityType.Restricted_Area.ToString(), EntityAction.Get.ToString());
 			return PartialView("_AddRestrictedArea", response.results);
 		}
 
@@ -209,7 +209,7 @@ namespace SmartInventory.Controllers
 			objArea.geom = geom;
 			objArea.networkIdType = networkIdType;
 
-			var objDDL = new BLMisc().GetDropDownList(EntityType.RestrictedArea.ToString());
+			var objDDL = new BLMisc().GetDropDownList(EntityType.Restricted_Area.ToString());
 			DropDownMaster drp = new DropDownMaster();
 			//objDDL.Insert(0, new DropDownMaster { dropdown_key = "Select", dropdown_status = false, dropdown_type = DropDownType.Area_RFS.ToString(), dropdown_value = "0" });
 
@@ -219,12 +219,12 @@ namespace SmartInventory.Controllers
 				//NEW ENTITY->Fill Region and Province Detail..
 				fillRegionProvinceDetail(objArea, GeometryType.Polygon.ToString(), geom);
 				//Fill Parent detail...              
-				fillParentDetail(objArea, new NetworkCodeIn() { eType = EntityType.RestrictedArea.ToString(), gType = GeometryType.Polygon.ToString(), eGeom = objArea.geom }, networkIdType);
+				fillParentDetail(objArea, new NetworkCodeIn() { eType = EntityType.Restricted_Area.ToString(), gType = GeometryType.Polygon.ToString(), eGeom = objArea.geom }, networkIdType);
 			}
 			else
 			{
 				// Get entity detail by Id...
-				objArea = new BLMisc().GetEntityDetailById<RestrictedArea>(systemId, EntityType.RestrictedArea);
+				objArea = new BLMisc().GetEntityDetailById<RestrictedArea>(systemId, EntityType.Restricted_Area);
 			}
 
 			objArea.lstRestrictedAreaRFS = objDDL.Where(x => x.dropdown_type == DropDownType.RestrictedArea_RFS.ToString()).ToList();
@@ -235,7 +235,7 @@ namespace SmartInventory.Controllers
 			objResArea.isDirectSave = isDirectSave;
 			objResArea.user_id = Convert.ToInt32(Session["user_id"]);
 			string url = "api/Library/EntityOperations";
-			var response = WebAPIRequest.PostIntegrationAPIRequest<RestrictedArea>(url, objResArea, EntityType.RestrictedArea.ToString(), EntityAction.Save.ToString());
+			var response = WebAPIRequest.PostIntegrationAPIRequest<RestrictedArea>(url, objResArea, EntityType.Restricted_Area.ToString(), EntityAction.Save.ToString());
 			if (isDirectSave)
 			{
 				return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
@@ -3655,8 +3655,9 @@ namespace SmartInventory.Controllers
 		{
 			var objDDL = new BLMisc().GetDropDownList(EntityType.Manhole.ToString());
 			objManholeMaster.listConstructionType = objDDL.Where(x => x.dropdown_type == DropDownType.Construction_Type.ToString()).ToList();
-			//objManholeMaster.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
-			objManholeMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
+            //objManholeMaster.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
+            objManholeMaster.MCGMWardIn = objDDL.Where(x => x.dropdown_type == DropDownType.MCGM_Ward.ToString()).ToList();
+            objManholeMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
 		}
 		#endregion
 
@@ -5034,130 +5035,130 @@ namespace SmartInventory.Controllers
 			//objHTB.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objHTB.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
 		}
-		public ActionResult SaveHTB(HTBInfo model, string networkIdType, bool isDirectSave = false)
+		public ActionResult SaveHTB(HTBInfo objHTB, string networkIdType, bool isDirectSave = false)
 		{
-			//ModelState.Clear();
-			//PageMessage objPM = new PageMessage();
-			//// int structure_id = model.objIspEntityMap.structure_id;
-			//// int? floor_id = model.objIspEntityMap.floor_id;
-			////int? shaft_id = model.objIspEntityMap.shaft_id;
-			//model.userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-			//if (model.networkIdType == NetworkIdType.A.ToString() && model.system_id == 0)
-			//{
-			//    //GET AUTO NETWORK CODE... new NetworkCodeIn() { eType = EntityType.BDB.ToString(), gType = GeometryType.Point.ToString(), eGeom = objBDB.geom, parent_eType = pEntityType, parent_sysId = pSystemId }, networkIdType)
-			//    //var objISPNetworkCode = new BLMisc().GetISPNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.geom, parent_eType = "", parent_sysId = 0 });
-			//    var objISPNetworkCode = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.geom, parent_eType = "", parent_sysId = 0 });
-			//    model.longitude = Convert.ToDouble(model.geom.Split(' ')[0]);
-			//    model.latitude = Convert.ToDouble(model.geom.Split(' ')[1]);
-			//    //NEW ENTITY->Fill Region and Province Detail..
-			//    // fillRegionProvinceDetail(model, GeometryType.Point.ToString(), model.geom);
+            //ModelState.Clear();
+            //PageMessage objPM = new PageMessage();
+            //// int structure_id = model.objIspEntityMap.structure_id;
+            //// int? floor_id = model.objIspEntityMap.floor_id;
+            ////int? shaft_id = model.objIspEntityMap.shaft_id;
+            //model.userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+            //if (model.networkIdType == NetworkIdType.A.ToString() && model.system_id == 0)
+            //{
+            //    //GET AUTO NETWORK CODE... new NetworkCodeIn() { eType = EntityType.BDB.ToString(), gType = GeometryType.Point.ToString(), eGeom = objBDB.geom, parent_eType = pEntityType, parent_sysId = pSystemId }, networkIdType)
+            //    //var objISPNetworkCode = new BLMisc().GetISPNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.geom, parent_eType = "", parent_sysId = 0 });
+            //    var objISPNetworkCode = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.geom, parent_eType = "", parent_sysId = 0 });
+            //    model.longitude = Convert.ToDouble(model.geom.Split(' ')[0]);
+            //    model.latitude = Convert.ToDouble(model.geom.Split(' ')[1]);
+            //    //NEW ENTITY->Fill Region and Province Detail..
+            //    // fillRegionProvinceDetail(model, GeometryType.Point.ToString(), model.geom);
 
-			//    // fillParentDetail(model, new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.geom, parent_eType = "", parent_sysId = 0 }, networkIdType);
+            //    // fillParentDetail(model, new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.geom, parent_eType = "", parent_sysId = 0 }, networkIdType);
 
 
-			//    if (isDirectSave == true)
-			//    {
-			//        //objONTMaster.pSystemId, objONTMaster.pEntityType, objONTMaster.networkIdType, objONTMaster.system_id, objONTMaster.geom
-			//        model = getHTBInfo(model.networkIdType, model.templateId, model.system_id, model.geom);
-			//        // model.objIspEntityMap.floor_id = floor_id;
-			//        // model.objIspEntityMap.structure_id = structure_id;
-			//        // model.objIspEntityMap.shaft_id = shaft_id;
-			//        model.htb_name = objISPNetworkCode.network_code;
-			//    }
-			//    model.network_id = objISPNetworkCode.network_code;
-			//    model.sequence_id = objISPNetworkCode.sequence_id;
+            //    if (isDirectSave == true)
+            //    {
+            //        //objONTMaster.pSystemId, objONTMaster.pEntityType, objONTMaster.networkIdType, objONTMaster.system_id, objONTMaster.geom
+            //        model = getHTBInfo(model.networkIdType, model.templateId, model.system_id, model.geom);
+            //        // model.objIspEntityMap.floor_id = floor_id;
+            //        // model.objIspEntityMap.structure_id = structure_id;
+            //        // model.objIspEntityMap.shaft_id = shaft_id;
+            //        model.htb_name = objISPNetworkCode.network_code;
+            //    }
+            //    model.network_id = objISPNetworkCode.network_code;
+            //    model.sequence_id = objISPNetworkCode.sequence_id;
 
-			//}
+            //}
 
-			////var structureDetails = new BLISP().GetStructureById(structure_id);
-			////if (structureDetails != null)
-			////{
-			////    model.region_id = structureDetails.First().region_id;
-			////    model.province_id = structureDetails.First().province_id;
-			////    model.latitude = structureDetails.First().latitude;
-			////    model.longitude = structureDetails.First().longitude;
-			////}
-			//if (TryValidateModel(model))
-			//{
-			//    model.objIspEntityMap.structure_id = Convert.ToInt32(model.objIspEntityMap.AssociateStructure);
-			//    model.objIspEntityMap.shaft_id = model.objIspEntityMap.AssoType == "Floor" ? 0 : model.objIspEntityMap.shaft_id;
-			//    if (string.IsNullOrEmpty(model.objIspEntityMap.AssoType))
-			//    {
-			//        model.objIspEntityMap.shaft_id = 0; model.objIspEntityMap.floor_id = 0;
-			//    }
-			//    bool isNew = model.system_id == 0 ? true : false;
-			//    if (model.unitValue != null && model.unitValue.Contains(":"))
-			//    {
-			//        model.no_of_input_port = Convert.ToInt32(model.unitValue.Split(':')[0]);
-			//        model.no_of_output_port = Convert.ToInt32(model.unitValue.Split(':')[1]);
-			//    }
-			//    if (model.objIspEntityMap.structure_id == 0)
-			//    {
-			//        var objIn = new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.longitude + " " + model.latitude };
-			//        var parentDetails = new BLMisc().getParentInfo(objIn);
-			//        if (parentDetails != null)
-			//        {
-			//            model.parent_system_id = parentDetails.p_system_id;
-			//            model.parent_network_id = parentDetails.p_network_id;
-			//            model.parent_entity_type = parentDetails.p_entity_type;
-			//        }
-			//    }
-			//    var result = new BLISP().SaveHTBDetails(model, Convert.ToInt32(Session["user_id"]));
-			//    if (string.IsNullOrEmpty(result.objPM.message))
-			//    {
-			//        string[] LayerName = { EntityType.HTB.ToString() };
-			//        if (model.EntityReference != null && result.system_id > 0)
-			//        {
-			//            SaveReference(model.EntityReference, result.system_id);
-			//        }
-			//        if (isNew)
-			//        {
-			//            objPM.status = ResponseStatus.OK.ToString(); ;
-			//            objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);
-			//        }
-			//        else
-			//        {
-			//            if (result.isPortConnected == true)
-			//            {
-			//                objPM.status = ResponseStatus.OK.ToString();
-			//                objPM.message = BLConvertMLanguage.MultilingualMessageConvert(result.message);//result.message;
-			//            }
-			//            else
-			//            {
-			//                objPM.status = ResponseStatus.OK.ToString();
-			//                objPM.message = BLConvertMLanguage.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
-			//            }
-			//        }
-			//        model.objPM = objPM;
-			//    }
+            ////var structureDetails = new BLISP().GetStructureById(structure_id);
+            ////if (structureDetails != null)
+            ////{
+            ////    model.region_id = structureDetails.First().region_id;
+            ////    model.province_id = structureDetails.First().province_id;
+            ////    model.latitude = structureDetails.First().latitude;
+            ////    model.longitude = structureDetails.First().longitude;
+            ////}
+            //if (TryValidateModel(model))
+            //{
+            //    model.objIspEntityMap.structure_id = Convert.ToInt32(model.objIspEntityMap.AssociateStructure);
+            //    model.objIspEntityMap.shaft_id = model.objIspEntityMap.AssoType == "Floor" ? 0 : model.objIspEntityMap.shaft_id;
+            //    if (string.IsNullOrEmpty(model.objIspEntityMap.AssoType))
+            //    {
+            //        model.objIspEntityMap.shaft_id = 0; model.objIspEntityMap.floor_id = 0;
+            //    }
+            //    bool isNew = model.system_id == 0 ? true : false;
+            //    if (model.unitValue != null && model.unitValue.Contains(":"))
+            //    {
+            //        model.no_of_input_port = Convert.ToInt32(model.unitValue.Split(':')[0]);
+            //        model.no_of_output_port = Convert.ToInt32(model.unitValue.Split(':')[1]);
+            //    }
+            //    if (model.objIspEntityMap.structure_id == 0)
+            //    {
+            //        var objIn = new NetworkCodeIn() { eType = EntityType.HTB.ToString(), gType = GeometryType.Point.ToString(), eGeom = model.longitude + " " + model.latitude };
+            //        var parentDetails = new BLMisc().getParentInfo(objIn);
+            //        if (parentDetails != null)
+            //        {
+            //            model.parent_system_id = parentDetails.p_system_id;
+            //            model.parent_network_id = parentDetails.p_network_id;
+            //            model.parent_entity_type = parentDetails.p_entity_type;
+            //        }
+            //    }
+            //    var result = new BLISP().SaveHTBDetails(model, Convert.ToInt32(Session["user_id"]));
+            //    if (string.IsNullOrEmpty(result.objPM.message))
+            //    {
+            //        string[] LayerName = { EntityType.HTB.ToString() };
+            //        if (model.EntityReference != null && result.system_id > 0)
+            //        {
+            //            SaveReference(model.EntityReference, result.system_id);
+            //        }
+            //        if (isNew)
+            //        {
+            //            objPM.status = ResponseStatus.OK.ToString(); ;
+            //            objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);
+            //        }
+            //        else
+            //        {
+            //            if (result.isPortConnected == true)
+            //            {
+            //                objPM.status = ResponseStatus.OK.ToString();
+            //                objPM.message = BLConvertMLanguage.MultilingualMessageConvert(result.message);//result.message;
+            //            }
+            //            else
+            //            {
+            //                objPM.status = ResponseStatus.OK.ToString();
+            //                objPM.message = BLConvertMLanguage.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+            //            }
+            //        }
+            //        model.objPM = objPM;
+            //    }
 
-			//}
-			//else
-			//{
-			//    objPM.status = ResponseStatus.FAILED.ToString();
-			//    objPM.message = getFirstErrorFromModelState();
-			//    model.objPM = objPM;
-			//}
-			//if (isDirectSave == true)
-			//{
-			//    //RETURN MESSAGE AS JSON FOR DIRECT SAVE
-			//    return Json(model.objPM, JsonRequestBehavior.AllowGet);
-			//}
-			//else
-			//{
-			//    BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.HTB.ToString());
-			//    BindHTBDropDown(model);
-			//    new MiscHelper().BindPortDetails(model, EntityType.HTB.ToString(), DropDownType.Htb_Port_Ratio.ToString());
-			//    fillProjectSpecifications(model);
-			//    model.entityType = EntityType.HTB.ToString();
-			//    return PartialView("_AddHTB", model);
-			//}
-			model.isDirectSave = isDirectSave;
-			model.networkIdType = networkIdType;
-			model.user_id = Convert.ToInt32(Session["user_id"]);
+            //}
+            //else
+            //{
+            //    objPM.status = ResponseStatus.FAILED.ToString();
+            //    objPM.message = getFirstErrorFromModelState();
+            //    model.objPM = objPM;
+            //}
+            //if (isDirectSave == true)
+            //{
+            //    //RETURN MESSAGE AS JSON FOR DIRECT SAVE
+            //    return Json(model.objPM, JsonRequestBehavior.AllowGet);
+            //}
+            //else
+            //{
+            //    BLItemTemplate.Instance.BindItemDropdowns(model, EntityType.HTB.ToString());
+            //    BindHTBDropDown(model);
+            //    new MiscHelper().BindPortDetails(model, EntityType.HTB.ToString(), DropDownType.Htb_Port_Ratio.ToString());
+            //    fillProjectSpecifications(model);
+            //    model.entityType = EntityType.HTB.ToString();
+            //    return PartialView("_AddHTB", model);
+            //}
+            objHTB.isDirectSave = isDirectSave;
+            objHTB.networkIdType = networkIdType;
+            objHTB.user_id = Convert.ToInt32(Session["user_id"]);
 			
 			string url = "api/Library/EntityOperations";
-			var response = WebAPIRequest.PostIntegrationAPIRequest<HTBInfo>(url, model, EntityType.HTB.ToString(), EntityAction.Save.ToString());
+			var response = WebAPIRequest.PostIntegrationAPIRequest<HTBInfo>(url, objHTB, EntityType.HTB.ToString(), EntityAction.Save.ToString());
 			if (isDirectSave)
 			{
 				return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
@@ -6083,8 +6084,7 @@ namespace SmartInventory.Controllers
 				model.parent_entity_type = cableDetail.parent_entity_type;
 				model.parent_network_id = cableDetail.parent_network_id;
 
-				var SplitCablesEntity = new BLMisc().getSplitCableEntity(model.split_entity_system_id, model.split_entity_type, model.split_cable_system_id, EntityType.Cable.ToString());
-
+				var SplitCablesEntity = new BLMisc().getSplitCableEntity(model.split_entity_system_id, model.split_entity_type, model.split_cable_system_id, EntityType.Cable.ToString());				
 				var cableobjCable1 = getCableObject(1, model, cableDetail, model.cable_one_a_location, model.cable_one_b_location, model.cable_one_measured_length, model.cable_one_calculated_length, model.cable_one_name, model.cable_one_network_id, SplitCablesEntity.geom_cable1);
 				cableobjCable1.a_system_id = SplitCablesEntity.cable1_a_system_id ?? 0;
 				cableobjCable1.a_entity_type = SplitCablesEntity.cable1_a_entity_type;
@@ -6093,6 +6093,13 @@ namespace SmartInventory.Controllers
 				cableobjCable1.b_system_id = SplitCablesEntity.cable1_b_system_id ?? 0;
 				cableobjCable1.b_entity_type = SplitCablesEntity.cable1_b_entity_type;
 				cableobjCable1.b_location = model.cable_one_b_location;
+				cableobjCable1.gis_design_id = cableDetail.gis_design_id;
+				var start_network_id = "";
+				var end_network_id = "";
+				var networkCodeDetail = new BLMisc().GetLineNetworkCode(start_network_id, end_network_id, "Cable", SplitCablesEntity.geom_cable1 , "OSP");
+				cableobjCable1.network_id = networkCodeDetail.network_code;
+				cableobjCable1.cable_name= networkCodeDetail.network_code;
+				cableobjCable1.sequence_id = networkCodeDetail.sequence_id;
 				SaveCable(cableobjCable1, "CableInfo", false);
 				//-- Add LMC Attribute IF Existes
 				CableMaster objCablemaster1 = new CableMaster();
@@ -6135,7 +6142,13 @@ namespace SmartInventory.Controllers
 				cableobjCable2.b_system_id = SplitCablesEntity.cable2_b_system_id ?? 0;
 				cableobjCable2.b_entity_type = SplitCablesEntity.cable2_b_entity_type;
 				cableobjCable2.b_location = model.cable_two_b_location;
+				cableobjCable2.gis_design_id = cableDetail.gis_design_id;
+				var networkCodeDetail2 = new BLMisc().GetLineNetworkCode(start_network_id, end_network_id, "Cable", SplitCablesEntity.geom_cable2, "OSP");
+				cableobjCable2.network_id = networkCodeDetail2.network_code;
+				cableobjCable2.cable_name = networkCodeDetail2.network_code;
+				cableobjCable2.sequence_id= networkCodeDetail2.sequence_id;
 				SaveCable(cableobjCable2, "CableInfo", false);
+
 				//-- Add LMC Attribute IF Existes
 				CableMaster objCablemaster2 = new CableMaster();
 				objCablemaster2.LMCCableInfo = new BLLmcInfo().GetLMCIfo(model.split_cable_system_id);
@@ -6151,10 +6164,10 @@ namespace SmartInventory.Controllers
 				//---END; 
 				cableTwoSystemid = cableobjCable2.system_id;
 				// make connection with split cable
-				BLCable.Instance.SetConnectionWithSplitCable(model.cable_one_network_id, model.cable_two_network_id, model.split_cable_system_id, model.split_entity_system_id, model.split_entity_networkId, model.split_entity_type, model.userId, model.splicing_source);
+				BLCable.Instance.SetConnectionWithSplitCable(networkCodeDetail.network_code, networkCodeDetail2.network_code, model.split_cable_system_id, model.split_entity_system_id, model.split_entity_networkId, model.split_entity_type, model.userId, model.splicing_source);
 
 				// accociate split cables
-				new BLMisc().AssociateSplitEntities(cableOneSystemid, cableTwoSystemid, model.cable_one_network_id, model.cable_two_network_id, EntityType.Cable.ToString(), model.split_cable_system_id);
+				new BLMisc().AssociateSplitEntities(cableOneSystemid, cableTwoSystemid, networkCodeDetail.network_code, networkCodeDetail2.network_code, EntityType.Cable.ToString(), model.split_cable_system_id);
 
 				//BLCable.Instance.DeleteCableById(model.split_cable_system_id);
 				// Delete parent cable
@@ -7880,7 +7893,8 @@ namespace SmartInventory.Controllers
 			objLib.lstBindPlanningCode = new BLProject().getPlanningDetailByIdList(Convert.ToInt32(objLib.project_id ?? 0));
 			objLib.lstBindWorkorderCode = new BLProject().getWorkorderDetailByIdList(Convert.ToInt32(objLib.planning_id ?? 0));
 			objLib.lstBindPurposeCode = new BLProject().getPurposeDetailByIdList(Convert.ToInt32(objLib.workorder_id ?? 0));
-		}
+            objLib.lstRouteInfo = new BLLayer().getRouteInfo("0");
+        }
 
 		private void fillCableDetails(dynamic objLib)
 		{
@@ -12358,7 +12372,9 @@ namespace SmartInventory.Controllers
 					});
 				}
 			}
-			return Json(lstImageResult, JsonRequestBehavior.AllowGet);
+			var jsonResult = Json(lstImageResult, JsonRequestBehavior.AllowGet);
+		    jsonResult.MaxJsonLength = int.MaxValue;
+			return jsonResult;
 		}
 
 		private static bool ExistFile(string remoteAddress, string FtpUser, string FtpPass)

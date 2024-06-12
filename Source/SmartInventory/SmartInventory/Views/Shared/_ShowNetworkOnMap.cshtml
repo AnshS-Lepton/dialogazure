@@ -45,9 +45,7 @@
 
 <!DOCTYPE html>
 <div id="dvShowNetworkOnmap" style="display:none;" class="NetworkOnMap">
-    <div class="checkboxes">
-        <input type="checkbox" class="chkutl checkbox-custom" id="chkExistingNetwork"/>
-        <b><label for="chkExistingNetwork" class="checkbox-custom-label"><span>Existing Network</span></label></b>
+    <div class="checkboxes">       
         <input type="checkbox" class="chkutl checkbox-custom" id="chkTicketNetwork" />
         <b><label for="chkTicketNetwork" class="checkbox-custom-label"><span id="spnTicketNetworkId">GRT-PLN000004</span></label></b> 
     </div>
@@ -56,6 +54,8 @@
 <script>
     $(document).ready(function () {
         $('#closeShowNetowkOnMap').on("click", function () {
+            si.isNetworkTicketReq = false;
+            si.ticketStatus = '';
             si.Networkticket.cleanNetwork();
         });
     });

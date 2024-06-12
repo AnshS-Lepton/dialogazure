@@ -21,6 +21,7 @@ namespace SmartInventory.Settings
         public static double DefaultFloorHeight = 0;
         public static double DefaultFloorLength = 0;
         public static double DefaultFloorWidth = 0;
+        public static int MaxFileCountLimit = 0;
         //public static double Floor_Length_Mtr = 0;
         //public static double Floor_Width_Mtr = 0;
         //public static double Floor_Height_Mtr = 0;
@@ -179,6 +180,8 @@ namespace SmartInventory.Settings
                 {
                     IsUserActivityLogEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true;
                 }
+                if (objSetting.key == "MaxFileCountLimit")
+                    MaxFileCountLimit = Convert.ToInt32(objSetting.value);
                 //Mayank 
                 if (objSetting.key == "Policies")
                 {

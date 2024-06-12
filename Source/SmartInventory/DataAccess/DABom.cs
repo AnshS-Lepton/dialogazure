@@ -96,6 +96,7 @@ namespace DataAccess
                         p_userids = objFilter.SelectedUserIds,
                         p_systemId = objFilter.systemId,
                         p_entityType = objFilter.entityType,
+                        p_route = objFilter.selected_route_ids
                     }, true);
                 return lst;
             }

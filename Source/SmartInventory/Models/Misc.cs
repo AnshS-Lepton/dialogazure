@@ -286,6 +286,7 @@ namespace Models
 		public string entity_select { get; set; }
 		public string entity_sub_type { get; set; }
         public int system_id { get; set; }
+        public int rootid { get; set; }
     }
 	public class ProjectSpecificView : IProjectSpecification, IOwnershipInfo
 	{
@@ -350,6 +351,12 @@ namespace Models
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
+        [NotMapped]
+        public List<int> selected_route_ids { get; set; }
+        [NotMapped]
+        public List<RouteInfo> lstRouteInfo { get; set; }
+        [NotMapped]
+        public string gis_design_id { get; set; }
         public ProjectSpecificView()
 		{
 			network_status = "";
@@ -358,6 +365,7 @@ namespace Models
 			lstBindWorkorderCode = new List<WorkorderCodeMaster>();
 			lstBindPurposeCode = new List<PurposeCodeMaster>();
             lstUserModule = new List<string>();
+            lstRouteInfo = new List<RouteInfo>();
         }
 
 		public string entity_sub_type { get; set; }
@@ -648,6 +656,7 @@ namespace Models
     }
     public class RouteInfo
     {
+        public int id { get; set; }
         public int cable_id { get; set; }
         public int entity_id { get; set; }
         public string entity_type { get; set; }
@@ -708,9 +717,9 @@ namespace Models
 		[NotMapped]
 		public IList<DropDownMaster> lstNetworkStatus { get; set; }
 	public List<KeyValueDropDown> lstBindProjectCode { get; set; }
-	
+        public List<KeyValueDropDown> lstBindRootId { get; set; }
 
-}
+    }
 	public class BulkAsBuiltFilterAttribute : CommonGridAttributes
 	{
 		public int userid { get; set; }
@@ -720,7 +729,8 @@ namespace Models
 		public double buff_Radius { get; set; }
 		public string entityType { get; set; }
         public string lstBindProjectCode { get; set; }
-		public List<int> SelectedParentUser { get; set; }
+        public string lstBindRootId { get; set; }
+        public List<int> SelectedParentUser { get; set; }
 		public List<int> SelectedUserId { get; set; }
 		public int roleid { get; set; }
 		public string SelectedParentUsers { get; set; }
