@@ -274,7 +274,7 @@
        
     }
     this.bindAssociateLinkEvents = function () {
-         
+
         $(app.DE.chosen_select).chosen({ width: '164%' });
        // $(app.DE.dvAssociateLink).draggable({ containment: "parent" });
         if ($(app.DE.hdnModelLinkSystemId).val() > 0) {
@@ -285,6 +285,7 @@
             source: function (request, response) {
                 var res = ajaxReq('main/GetAutoFiberLinkId', { SearchText: request.term }, true, function (data) {
                     if (data.geonames.length == 0) {
+                        $("#btncreate").prop("disabled", false);
                         var result = [
                             {
                                 //label: 'No match Found'
@@ -294,6 +295,7 @@
                         response(result);
                     }
                     else {
+                        $("#btncreate").prop("disabled", true);
                         response($.map(data.geonames, function (item) {
                             return {
                                 label: item.link_id, value: item.link_id
@@ -306,9 +308,11 @@
             minLength: 2,
             select: function (event, ui) {
                 if (ui.item.label == 'No match Found') { 
+                    $("#btncreate").prop("disabled", false);
                     event.preventDefault();
                 }
                 else { 
+                    $("#btncreate").prop("disabled", true);
                     if (ui.item.entityName != null) {
                         $(app.DE.txtCableFiberLinkId).val(ui.item.value + ':' + ui.item.label);
                     }
@@ -862,7 +866,7 @@
     }
 
     this.validateLinkId = function(_searchText, _columnName) {
-        
+
         if (_searchText.trim().length > 0) {
 
             ajaxReq('FiberLink/validateLinkIdByText', { searchText: _searchText.trim(), columnName: _columnName.trim() }, true, function (resp) {
@@ -971,12 +975,32 @@
         window.location = appRoot + 'Audit/' + downloadEntity;
     }
     this.btnclearLinkId = function () {
-       
+
         $(app.DE.txtFiberLinkId).val('');
         $(app.DE.txtFiberLinkId).css('border-color', '');
         $(app.DE.crossIcon).css('display', 'none');
         $(app.DE.tickIcon).css('display', 'none');
-   }
+    }
+    this.btncreatelink = function () {
+        var _linkId = $(app.DE.txtFiberLinkId).val();
+        if (_linkId == "") {
+            $(app.DE.txtFiberLinkId).css('border-color', 'red');
+        }
+        else {
+            $(app.DE.txtFiberLinkId).css('border-color', '');
+            var _fiberNo = $(app.DE.hdnFiberNumber).val();
+            showConfirm("Fiber link will be created and automatically associated. Do you want to continue?", function () {
+                ajaxReq('FiberLink/CreateFiberLink', {
+                    system_id: 0, link_id: $(app.DE.txtFiberLinkId).val(), link_name: "Fiber_link", link_type: "Spur Link"
+                }, false, function (resp) {
+                    $(app.DE.lblGrdLinkId_ + _fiberNo).html($(app.DE.txtFiberLinkId).val());
+                    app.AssociatelinkId();
+                    app.closepopup();
+                }, false, true);
+
+            });
+        }
+    }
     this.closepopup = function () {
         
         $(app.DE.dvAssociateLink).hide();
@@ -1052,6 +1076,6 @@
                 $(app.DE.tickIcon).css('display', 'none');
             } 
         });
-    }
+    }  
      
 }

@@ -76,12 +76,15 @@ namespace Models
 
         [NotMapped]
         public List<LibraryAttachment> lstFiberLinkAttachments { get; set; }
+        [NotMapped]
+        public int CreateFL { get; set; }
         public FiberLink()
         {
             pageMsg = new PageMessage(); 
             lstUserName = new List<Models.userName>();
             lstFiberLinkAttachments = new List<LibraryAttachment>();
             lstLinkType = new List<DropDownMaster>();
+            CreateFL = 0;
         } 
         [NotMapped]
         public int user_role_id { get; set; }
