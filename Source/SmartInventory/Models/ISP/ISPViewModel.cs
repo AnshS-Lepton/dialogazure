@@ -271,7 +271,7 @@ namespace Models.ISP
         [NotMapped]
         public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
         [NotMapped]
-        public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+        public List<KeyValueDropDown> listOwnVendorId { get; set; }
         [NotMapped]
         public IList<DropDownMaster> listOwnership { get; set; }
         [NotMapped]
@@ -428,7 +428,7 @@ namespace Models.ISP
         public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 
         [NotMapped]
-        public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+        public List<KeyValueDropDown> listOwnVendorId { get; set; }
 
         [NotMapped]
         public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
@@ -806,7 +806,7 @@ namespace Models.ISP
         [NotMapped]
         public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
         [NotMapped]
-        public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+        public List<KeyValueDropDown> listOwnVendorId { get; set; }
         [NotMapped]
         public IList<DropDownMaster> listOwnership { get; set; }
         [NotMapped]

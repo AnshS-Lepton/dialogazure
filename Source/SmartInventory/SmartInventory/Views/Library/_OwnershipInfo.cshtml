@@ -10,7 +10,7 @@
                 <label class="col-md-3"><input type="radio" name="rdbOwnershipType" onchange="getThirdPartyType()" id="rdb_Own" value="Own"><span>@Resources.Resources.SI_GBL_GBL_GBL_GBL_150</span></label>
 
                 <div class="col-md-8 col-sm-8">
-                    @Html.DropDownListFor(m => m.own_vendor_id, new SelectList(Model.listOwnPartyVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "txt3rdPartyVendor", @onchange = "onChangeThirdParyVendor()" })
+                    @Html.DropDownListFor(m => m.own_vendor_id, new SelectList(Model.listOwnVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "txtOwnVendor"})
                 </div>
             </div>
 
@@ -88,12 +88,12 @@
 
         function onChangeThirdParyVendor() {
 
-            var selectedVal = $('#txt3rdPartyVendor').val();
+            @*var selectedVal = $('#txt3rdPartyVendor').val();
             if (selectedVal != '' && selectedVal != null) {
                 $('#txt3rdPartyVendor').next().removeClass('input-validation-error');
             }
             else {
                 $('#txt3rdPartyVendor').next().addClass('input-validation-error');
-            }
+            }*@
         }
 </script>

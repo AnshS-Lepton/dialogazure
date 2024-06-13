@@ -46,7 +46,7 @@ namespace Models
 		[NotMapped]
 		List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		List<KeyValueDropDown> listOwnVendorId { get; set; }
 	}
 
 
@@ -148,7 +148,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -300,7 +300,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<NELoopDetails> lstLoopMangment { get; set; }
 		//[NotMapped]
@@ -490,7 +490,8 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
+		
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -655,7 +656,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -944,7 +945,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -1114,7 +1115,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -1252,7 +1253,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -1426,7 +1427,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -1598,7 +1599,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -1773,7 +1774,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -1962,7 +1963,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<NELoopDetails> lstLoopMangment { get; set; }
 		[NotMapped]
@@ -2334,7 +2335,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 
 		[NotMapped]
 		public int user_id { get; set; }
@@ -2484,7 +2485,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -3781,7 +3782,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 
 		[NotMapped]
 		public List<NELoopDetails> lstLoopMangment { get; set; }
@@ -3931,6 +3932,7 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
@@ -3938,7 +3940,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<NELoopDetails> lstLoopMangment { get; set; }
 		[NotMapped]
@@ -4107,7 +4109,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -4265,7 +4267,7 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
 		[NotMapped]
-		public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]

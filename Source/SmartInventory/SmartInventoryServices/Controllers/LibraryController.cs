@@ -1368,7 +1368,7 @@ namespace SmartInventoryServices.Controllers
 			var objDDL = new BLMisc().GetDropDownList(EntityType.Pole.ToString());
 			objPoleMaster.lstPoleType = objDDL.Where(x => x.dropdown_type == DropDownType.Pole_Type.ToString()).ToList();
 			objPoleMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objPoleMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objPoleMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList("");
 			objPoleMaster.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
            
@@ -1588,7 +1588,7 @@ namespace SmartInventoryServices.Controllers
 			objManholeMaster.lstManholeType = objDDL.Where(x => x.dropdown_type == DropDownType.Manhole_types.ToString()).ToList();
             objManholeMaster.MCGMWardIn = objDDL.Where(x => x.dropdown_type == DropDownType.MCGM_Ward.ToString()).ToList();
             objManholeMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-            objManholeMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+            objManholeMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList("");
 			objManholeMaster.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			objManholeMaster.listaerialLocation = obj_DDL.Where(x => x.dropdown_type == DropDownType.Aerial_Location.ToString()).ToList();
@@ -1862,7 +1862,7 @@ namespace SmartInventoryServices.Controllers
 			var objDDL = new BLMisc().GetDropDownList(EntityType.WallMount.ToString());
 			//objWallMountMaster.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objWallMountMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objWallMountMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objWallMountMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList("");
 			objWallMountMaster.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//objWallMountMaster.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -2143,7 +2143,7 @@ namespace SmartInventoryServices.Controllers
 			var obj_DDL = new BLMisc().GetDropDownList(EntityType.POD.ToString());
 			objPOD.listPODType = obj_DDL.Where(x => x.dropdown_type == DropDownType.POD_Type.ToString()).ToList();
 			objPOD.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objPOD.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objPOD.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var objDDL_ = new BLMisc().GetDropDownList("");
 			objPOD.lstBOMSubCategory = objDDL_.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objPOD.lstServedByRing = objDDL_.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -2457,7 +2457,7 @@ namespace SmartInventoryServices.Controllers
 			}
 			if (objMPOD.objIspEntityMap.entity_type == null) { objMPOD.objIspEntityMap.entity_type = EntityType.MPOD.ToString(); }
 			objMPOD.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objMPOD.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objMPOD.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList(EntityType.MPOD.ToString());
 			objMPOD.listMPODType = obj_DDL.Where(x => x.dropdown_type == DropDownType.MPOD_Type.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
@@ -2694,7 +2694,7 @@ namespace SmartInventoryServices.Controllers
 			var objDDL = new BLMisc().GetDropDownList(EntityType.SpliceClosure.ToString());
 			//objSCMaster.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objSCMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objSCMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objSCMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objSCMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			objSCMaster.listaerialLocation = _objDDL.Where(x => x.dropdown_type == DropDownType.Aerial_Location.ToString()).ToList();
@@ -3187,7 +3187,7 @@ namespace SmartInventoryServices.Controllers
 			objCableIn.listExecutionMethod = objDDL.Where(x => x.dropdown_type == DropDownType.Execution_Method.ToString()).ToList();
 			objCableIn.listcableType = objDDL.Where(x => x.dropdown_type == DropDownType.Cable_Type.ToString()).ToList();
 			objCableIn.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objCableIn.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objCableIn.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
             objCableIn.LstCDBAttribute.lstRoute = objDDL.Where(x => x.dropdown_type == DropDownType.Route_Type.ToString()).ToList();
             objCableIn.LstCDBAttribute.lstFiber = objDDL.Where(x => x.dropdown_type == DropDownType.Fiber_Type_LOV.ToString()).ToList();
             objCableIn.LstCDBAttribute.lstOperator = objDDL.Where(x => x.dropdown_type == DropDownType.Operator_Type_LOV.ToString()).ToList();
@@ -3607,7 +3607,7 @@ namespace SmartInventoryServices.Controllers
 			//objSplitterMaster.lstSplRatio = objDDL.Where(x => x.dropdown_type == DropDownType.Splitter_Ratio.ToString()).ToList();
 			new BLMisc().BindPortDetails(objSplitterMaster, EntityType.Splitter.ToString(), DropDownType.Splitter_Ratio.ToString());
 			objSplitterMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objSplitterMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objSplitterMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objSplitterMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objSplitterMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -3918,7 +3918,7 @@ namespace SmartInventoryServices.Controllers
 			var objDDL = new BLMisc().GetDropDownList(EntityType.ADB.ToString());
 			// objADBMaster.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objADBMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objADBMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objADBMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objADBMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//  objADBMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -4602,7 +4602,7 @@ namespace SmartInventoryServices.Controllers
 			}
 			if (objONT.objIspEntityMap.entity_type == null) { objONT.objIspEntityMap.entity_type = EntityType.ONT.ToString(); }
 			objONT.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objONT.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objONT.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			objONT.lstCpeType = new BLMisc().GetDropDownList("", "CPE TYPE");
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objONT.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
@@ -4917,7 +4917,7 @@ namespace SmartInventoryServices.Controllers
 				objFDB.objIspEntityMap.isFloorElement = layerDetails.is_floor_element;
 			}
 			objFDB.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objFDB.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objFDB.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			new BLMisc().BindPortDetails(objFDB, EntityType.FDB.ToString(), DropDownType.Fdb_Port_Ratio.ToString());
 
 			var obj_DDL = new BLMisc().GetDropDownList("");
@@ -5513,7 +5513,7 @@ namespace SmartInventoryServices.Controllers
 			var entityTypeDDL = new BLMisc().GetDropDownList(EntityType.BDB.ToString(), DropDownType.Entity_Type.ToString());
 			objBDB.lstEntityType = entityTypeDDL;
 			objBDB.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objBDB.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objBDB.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList("");
 			objBDB.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//   objBDB.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -5817,7 +5817,7 @@ namespace SmartInventoryServices.Controllers
 			var objDDL = new BLMisc().GetDropDownList(EntityType.CDB.ToString());
 			//objCDBMaster.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objCDBMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objCDBMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objCDBMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objCDBMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//  objCDBMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -6629,7 +6629,7 @@ namespace SmartInventoryServices.Controllers
 			objDuctIn.DuctCount = objDDL.Where(x => x.dropdown_type == DropDownType.Duct_Count.ToString()).ToList();
 			objDuctIn.DuctColorIn = objDDL.Where(x => x.dropdown_type == DropDownType.Duct_Color.ToString()).ToList();
 			objDuctIn.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objDuctIn.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objDuctIn.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objDuctIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objDuctIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -6643,7 +6643,7 @@ namespace SmartInventoryServices.Controllers
             objMicroductIn.MicroductCount = objDDL.Where(x => x.dropdown_type == DropDownType.Duct_Count.ToString()).ToList();
             objMicroductIn.MicroductColorIn = objDDL.Where(x => x.dropdown_type == DropDownType.Duct_Color.ToString()).ToList();
             objMicroductIn.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-            objMicroductIn.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+            objMicroductIn.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
             objMicroductIn.lstNoOfWays = objDDL.Where(x => x.dropdown_type == DropDownType.Number_of_Ways.ToString()).ToList();
             objMicroductIn.lstInternalDiameter = objDDL.Where(x => x.dropdown_type == DropDownType.Internal_Diameter.ToString()).ToList();
             objMicroductIn.lstExternalDiameter = objDDL.Where(x => x.dropdown_type == DropDownType.External_Diameter.ToString()).ToList();
@@ -6664,7 +6664,7 @@ namespace SmartInventoryServices.Controllers
 			objGipipeIn.GipipeTypeIn = objDDL.Where(x => x.dropdown_type == DropDownType.Gipipe_Type.ToString()).ToList();
 			objGipipeIn.GipipeColorIn = objDDL.Where(x => x.dropdown_type == DropDownType.Gipipe_Color.ToString()).ToList();
 			objGipipeIn.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objGipipeIn.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objGipipeIn.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objGipipeIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objDuctIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -6886,7 +6886,7 @@ namespace SmartInventoryServices.Controllers
 			objConduitIn.ConduitTypeIn = objDDL.Where(x => x.dropdown_type == DropDownType.conduit_Type.ToString()).ToList();
 			objConduitIn.ConduitColorIn = objDDL.Where(x => x.dropdown_type == DropDownType.Conduit_Color.ToString()).ToList();
 			objConduitIn.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objConduitIn.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objConduitIn.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objConduitIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//objConduitIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -7138,7 +7138,7 @@ namespace SmartInventoryServices.Controllers
 			objTrenchIn.StrataTypeIn = objDDL.Where(x => x.dropdown_type == DropDownType.Strata_Type.ToString()).ToList();
 			objTrenchIn.SurfaceTypeIn = objDDL.Where(x => x.dropdown_type == DropDownType.Surface_Type.ToString()).ToList();
 			objTrenchIn.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objTrenchIn.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objTrenchIn.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objTrenchIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objTrenchIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -7425,7 +7425,7 @@ namespace SmartInventoryServices.Controllers
 		private void BindFMSDropDown(FMSMaster objFMSMaster)
 		{
 			objFMSMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objFMSMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objFMSMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var objDDL = new BLMisc().GetDropDownList("");
 			objFMSMaster.lstBOMSubCategory = objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objFMSMaster.lstServedByRing = objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -7720,7 +7720,7 @@ namespace SmartInventoryServices.Controllers
 			if (objOpticalRepeater.objIspEntityMap.entity_type == null) { objOpticalRepeater.objIspEntityMap.entity_type = EntityType.OpticalRepeater.ToString(); }
 			//objHTB.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objOpticalRepeater.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objOpticalRepeater.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objOpticalRepeater.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var objOpticalDDL = new BLMisc().GetDropDownList(EntityType.OpticalRepeater.ToString());
 			objOpticalRepeater.lstAmplifierType = objOpticalDDL.Where(x => x.dropdown_type == DropDownType.Amplifier_Type.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
@@ -8043,7 +8043,7 @@ namespace SmartInventoryServices.Controllers
 			if (objHTB.objIspEntityMap.entity_type == null) { objHTB.objIspEntityMap.entity_type = EntityType.HTB.ToString(); }
 			//objHTB.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objHTB.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objHTB.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objHTB.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList("");
 			objHTB.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//  objHTB.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -9482,7 +9482,7 @@ namespace SmartInventoryServices.Controllers
 			var objDDL = new BLMisc().GetDropDownList(EntityType.Coupler.ToString());
 			objCouplerMaster.listCouplerType = objDDL.Where(x => x.dropdown_type == DropDownType.Coupler.ToString()).ToList();
 			objCouplerMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objCouplerMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objCouplerMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objCouplerMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objCouplerMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -9577,7 +9577,7 @@ namespace SmartInventoryServices.Controllers
 		private void BindISPPODDropDown(PODMaster objPODMaster)
 		{
 			objPODMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objPODMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objPODMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var objDDL = new BLMisc().GetDropDownList("");
 			objPODMaster.lstBOMSubCategory = objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objPODMaster.lstServedByRing = objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -9800,7 +9800,7 @@ namespace SmartInventoryServices.Controllers
 		private void BindISPMPODDropDown(MPODMaster objMPODMaster)
 		{
 			objMPODMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objMPODMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objMPODMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var objDDL = new BLMisc().GetDropDownList("");
 			objMPODMaster.lstBOMSubCategory = objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//  objMPODMaster.lstServedByRing = objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -10042,7 +10042,7 @@ namespace SmartInventoryServices.Controllers
 		{
 			var objDDL = new BLMisc().GetDropDownList(EntityType.FMS.ToString());
 			ObjONT.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			ObjONT.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			ObjONT.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			ObjONT.lstCpeType = new BLMisc().GetDropDownList("", "CPE TYPE");
 			var _objDDL = new BLMisc().GetDropDownList("");
 			ObjONT.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
@@ -10277,7 +10277,7 @@ namespace SmartInventoryServices.Controllers
 			var objDDL = new BLBDB().GetShaftFloorByStrucId(objBDB.parent_system_id);
 			//objBDB.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objBDB.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objBDB.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objBDB.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var objOpticalDDL = new BLMisc().GetDropDownList(EntityType.OpticalRepeater.ToString());
 			objBDB.lstAmplifierType = objOpticalDDL.Where(x => x.dropdown_type == DropDownType.Amplifier_Type.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
@@ -10515,7 +10515,7 @@ namespace SmartInventoryServices.Controllers
 			var objDDL = new BLBDB().GetShaftFloorByStrucId(objBDB.parent_system_id);
 			//objBDB.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objBDB.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objBDB.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objBDB.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList("");
 			objBDB.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//  objBDB.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -10760,7 +10760,7 @@ namespace SmartInventoryServices.Controllers
 		private void BindISPFDBDropdown(FDBInfo objFDB)
 		{
 			objFDB.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objFDB.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objFDB.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var objDDL = new BLMisc().GetDropDownList("");
 			objFDB.lstBOMSubCategory = objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//  objFDB.lstServedByRing = objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -11028,7 +11028,7 @@ namespace SmartInventoryServices.Controllers
 			var objTypDDL = new BLMisc().GetDropDownList(EntityType.BDB.ToString(), DropDownType.Entity_Type.ToString());
 			objBDB.lstEntityType = objTypDDL;
 			objBDB.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objBDB.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objBDB.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objBDB.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 
@@ -11330,7 +11330,7 @@ namespace SmartInventoryServices.Controllers
 			var objTypDDL = new BLMisc().GetDropDownList(EntityType.SpliceClosure.ToString(), DropDownType.Entity_Type.ToString());
 			objSC.lstEntityType = objTypDDL;
 			objSC.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objSC.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objSC.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objSC.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//   objSC.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -11611,7 +11611,7 @@ namespace SmartInventoryServices.Controllers
 			var objTypDDL = new BLMisc().GetDropDownList(EntityType.ADB.ToString(), DropDownType.Entity_Type.ToString());
 			objADB.lstEntityType = objTypDDL;
 			objADB.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objADB.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objADB.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objADB.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 
@@ -11912,7 +11912,7 @@ namespace SmartInventoryServices.Controllers
 			var objTypDDL = new BLMisc().GetDropDownList(EntityType.CDB.ToString(), DropDownType.Entity_Type.ToString());
 			objCDB.lstEntityType = objTypDDL;
 			objCDB.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objCDB.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objCDB.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objCDB.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//    objCDB.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -13071,7 +13071,7 @@ namespace SmartInventoryServices.Controllers
 		{
 			var objDDL = new BLMisc().GetDropDownList(EntityType.FMS.ToString());
 			objFMS.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objFMS.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objFMS.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objFMS.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//  objFMS.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -13333,7 +13333,7 @@ namespace SmartInventoryServices.Controllers
 			}
 			if (objCabinet.objIspEntityMap.entity_type == null) { objCabinet.objIspEntityMap.entity_type = EntityType.Cabinet.ToString(); }
 			objCabinet.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objCabinet.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objCabinet.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList(EntityType.Cabinet.ToString());
 			objCabinet.listCabinetType = obj_DDL.Where(x => x.dropdown_type == DropDownType.Cabinet_Type.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
@@ -13553,7 +13553,7 @@ namespace SmartInventoryServices.Controllers
 		private void BindISPCabinetDropDown(CabinetMaster objCabinetMaster)
 		{
 			objCabinetMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objCabinetMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objCabinetMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var objDDL = new BLMisc().GetDropDownList("");
 			objCabinetMaster.lstBOMSubCategory = objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//  objCabinetMaster.lstServedByRing = objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -13790,7 +13790,7 @@ namespace SmartInventoryServices.Controllers
 			}
 			if (objVault.objIspEntityMap.entity_type == null) { objVault.objIspEntityMap.entity_type = EntityType.Vault.ToString(); }
 			objVault.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objVault.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objVault.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList(EntityType.Vault.ToString());
 			objVault.listVaultType = obj_DDL.Where(x => x.dropdown_type == DropDownType.Vault_Type.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
@@ -14296,7 +14296,7 @@ namespace SmartInventoryServices.Controllers
 			objEntityMaster.lstTenancy = objDDL.Where(x => x.dropdown_type == DropDownType.Tenancy.ToString()).ToList();
 
 			objEntityMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objEntityMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objEntityMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList("");
 			objEntityMaster.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			//  objEntityMaster.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -14574,7 +14574,7 @@ namespace SmartInventoryServices.Controllers
 			objHandholeMaster.listConstructionType = objDDL.Where(x => x.dropdown_type == DropDownType.Construction_Type.ToString()).ToList();
 			//objHandholeMaster.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
 			objHandholeMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objHandholeMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objHandholeMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objHandholeMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objHandholeMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -14846,7 +14846,7 @@ namespace SmartInventoryServices.Controllers
 			var objDDL = new BLMisc().GetDropDownList(EntityType.PatchPanel.ToString());
 			objPatchPanelMaster.listPatchPanelType = objDDL.Where(x => x.dropdown_type == DropDownType.PatchPanel_type.ToString()).ToList();
 			objPatchPanelMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objPatchPanelMaster.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objPatchPanelMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objPatchPanelMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objPatchPanelMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
@@ -14936,7 +14936,7 @@ namespace SmartInventoryServices.Controllers
 		{
 			var objDDL = new BLMisc().GetDropDownList(EntityType.PatchPanel.ToString());
 			objPatchPanel.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
-			objPatchPanel.listOwnPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+			objPatchPanel.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			objPatchPanel.listPatchPanelType = objDDL.Where(x => x.dropdown_type == DropDownType.PatchPanel_type.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objPatchPanel.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();

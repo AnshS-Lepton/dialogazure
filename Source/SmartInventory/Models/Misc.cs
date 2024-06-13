@@ -351,7 +351,9 @@ namespace Models
 		public string thirdparty_circuit_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
-        [NotMapped]
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
+		[NotMapped]
         public List<string> lstUserModule { get; set; }
         [NotMapped]
         public List<int> selected_route_ids { get; set; }
