@@ -9,6 +9,7 @@
     var formInput_construction = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.construction.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var formInput_activation = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.activation.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var formInput_accessibility = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.accessibility.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var formInput_hierarchy_type = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.hierarchy_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
 }
 <!DOCTYPE html>
 <div class="form-group">
@@ -65,6 +66,17 @@
         @Html.DropDownListFor(m => m.accessibility, new SelectList(Model.lstAccessibility.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Accessibility", new { @class = "chosen-select col-sm-45", @style = "padding:0;", @id = "ddlClosureAccessibility" })
     </div>
 </div>
+<div class="form-group">
+    <label class="control-label col-sm-2" for="ddlHeirarchyType">
+        @Resources.Resources.SI_OSP_GBL_NET_GBL_280 @if (formInput_type.is_required)
+    {<i class="clsMandatory">*</i>}
+    else { }:
+    </label>
+    <div class="col-sm-45">
+        @Html.DropDownListFor(m => m.hierarchy_type, new SelectList(Model.lsthierarchytype.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Heirarchy Type", new { @class = "chosen-select col-sm-45", @style = "padding:0;", @id = "ddlHeirarchyType" })
+    </div>
+</div>
+
 <script>
     function fnSetValue() {
         $('#hdnModel').val($('#ddlmodelNew').val());
@@ -73,16 +85,17 @@
 <script type="text/javascript">
     $(document).ready(function () {
         if ('@formInput_type.is_required' == 'True' && '@formInput_brand.is_required' == 'True' && '@formInput_model.is_required' == 'True'
-            && '@formInput_construction.is_required' == 'True' && '@formInput_activation.is_required' == 'True' && '@formInput_accessibility.is_required' == 'True') {
+            && '@formInput_construction.is_required' == 'True' && '@formInput_activation.is_required' == 'True' && '@formInput_accessibility.is_required' == 'True'  && '@formInput_hierarchy_type.is_required' == 'True') {
             $('#ddlType').attr('onchange', "ddlChangeRemoveCss(this.id, 'Type');");
             $('#ddlBrand').attr('onchange', "ddlChangeRemoveCss(this.id, 'Brand');");
             $('#ddlmodel').attr('onchange', "ddlChangeRemoveCss(this.id, 'Model');");
             $('#ddlClosureConstruction').attr('onchange', "ddlChangeRemoveCss(this.id, 'Construction Stage');");
             $('#ddlClosureActivation').attr('onchange', "ddlChangeRemoveCss(this.id, 'Activation Stage');");
             $('#ddlClosureAccessibility').attr('onchange', "ddlChangeRemoveCss(this.id, 'Accessibility');");
+            $('#ddlHeirarchyType').attr('onchange', "ddlChangeRemoveCss(this.id, 'Heirarchy Type');");
         }
         else {
-            $("#ddlType, #ddlBrand, #ddlmodel, #ddlClosureConstruction, #ddlClosureActivation, #ddlClosureAccessibility").addClass('ignore');
+            $("#ddlType, #ddlBrand, #ddlmodel, #ddlClosureConstruction, #ddlClosureActivation, #ddlClosureAccessibility, #ddlHeirarchyType").addClass('ignore');
         }
     });
 </script>

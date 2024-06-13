@@ -343,6 +343,8 @@ namespace Models
 		public string entityType { get; set; }
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]

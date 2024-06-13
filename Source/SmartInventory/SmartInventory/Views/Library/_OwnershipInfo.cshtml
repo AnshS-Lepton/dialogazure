@@ -4,16 +4,29 @@
 <!DOCTYPE html>
 <div class="form-group row">
     <label class="control-label col-md-2 col-sm-2" for="RdOwnershipType">@Resources.Resources.SI_GBL_GBL_GBL_GBL_147<i class="clsMandatory">*</i>:</label>
-    <div class="col-md-4 col-sm-4">
+    <div class="col-md-10 col-sm-10 row">
         <div class="radio whiteSpace">
-            <label class="col-md-6"><input type="radio" name="rdbOwnershipType" onchange="getThirdPartyType()" id="rdb_Own" value="Own"><span>@Resources.Resources.SI_GBL_GBL_GBL_GBL_150</span></label>
-            <label class="col-md-6"><input type="radio" name="rdbOwnershipType" onchange="getThirdPartyType()" id="rdb_ThirdParty" value="Third Party"><span>@Resources.Resources.SI_GBL_GBL_GBL_GBL_151</span></label>
+            <div class="col-md-6 col-sm-6 row">
+                <label class="col-md-3"><input type="radio" name="rdbOwnershipType" onchange="getThirdPartyType()" id="rdb_Own" value="Own"><span>@Resources.Resources.SI_GBL_GBL_GBL_GBL_150</span></label>
+
+                <div class="col-md-8 col-sm-8">
+                    @Html.DropDownListFor(m => m.own_vendor_id, new SelectList(Model.listOwnPartyVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "txt3rdPartyVendor", @onchange = "onChangeThirdParyVendor()" })
+                </div>
+            </div>
+
+            <div class="col-md-6 col-sm-6 row">
+                <label class="col-md-5"><input type="radio" name="rdbOwnershipType" onchange="getThirdPartyType()" id="rdb_ThirdParty" value="Third Party"><span>@Resources.Resources.SI_GBL_GBL_GBL_GBL_151</span></label>
+
+                <div class="col-md-7 col-sm-7">
+                    @*<label class="control-label col-md-2 col-sm-2" for="txt3rdprtyvndr">@Resources.Resources.SI_GBL_GBL_GBL_GBL_148</label>*@
+                    @Html.DropDownListFor(m => m.third_party_vendor_id, new SelectList(Model.list3rdPartyVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "txt3rdPartyVendor", @onchange = "onChangeThirdParyVendor()" })
+                </div>
+            </div>
+
+
         </div>
     </div>
-    <label class="control-label col-md-2 col-sm-2" for="txt3rdprtyvndr">@Resources.Resources.SI_GBL_GBL_GBL_GBL_148</label>
-    <div class="col-md-4 col-sm-4">
-        @Html.DropDownListFor(m => m.third_party_vendor_id, new SelectList(Model.list3rdPartyVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "txt3rdPartyVendor", @onchange = "onChangeThirdParyVendor()" })
-    </div>
+   
 </div>
 @if (!string.IsNullOrWhiteSpace(Model.entityType) && Model.entityType.ToUpper() == "CABLE")
 {

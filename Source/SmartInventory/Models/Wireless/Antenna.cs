@@ -141,8 +141,9 @@ namespace Models
         public string pEntityType { get; set; }
         [NotMapped]
         public string pNetworkId { get; set; }
-
         public string third_party_vendor_id { get; set; }
+        public string own_vendor_id { get; set; }
+
         [NotMapped]
         public string circuit_id { get; set; }
         public string model_number { get; set; }

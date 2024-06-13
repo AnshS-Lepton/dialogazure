@@ -171,6 +171,8 @@ namespace Models
         [NotMapped]
         public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
         [NotMapped]
+        public List<KeyValueDropDown> listOwnPartyVendorId { get; set; }
+        [NotMapped]
         public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
         [NotMapped]
         public List<PlanningCodeMaster> lstBindPlanningCode { get; set; }
