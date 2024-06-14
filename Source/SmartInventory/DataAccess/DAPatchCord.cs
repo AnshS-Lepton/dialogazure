@@ -71,6 +71,7 @@ namespace DataAccess
                     objPatchCord.b_system_id = objPatch.b_system_id > 0 ? objPatch.b_system_id : objPatchCord.b_system_id; ;
                     objPatchCord.b_entity_type = !string.IsNullOrWhiteSpace(objPatch.b_entity_type) ? objPatch.b_entity_type : objPatchCord.b_entity_type;
                     objPatchCord.audit_item_master_id = objPatch.audit_item_master_id;
+                    objPatchCord.hierarchy_type = objPatch.hierarchy_type;                    
                     var response = repo.Update(objPatchCord);
                     return response;
                 }

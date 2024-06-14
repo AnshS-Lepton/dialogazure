@@ -92,6 +92,8 @@ namespace DataAccess
                     objADB.origin_ref_code = objADBMaster.origin_ref_code;
                     objADB.bom_sub_category = objADBMaster.bom_sub_category;
                     objADB.gis_design_id = objADBMaster.gis_design_id;
+                    objADB.hierarchy_type = objADBMaster.hierarchy_type;
+                    objADB.own_vendor_id = objADBMaster.own_vendor_id;
                     //objADB.served_by_ring = objADBMaster.served_by_ring;
                     var ADBResp = repo.Update(objADB);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(ADBResp.system_id, Models.EntityType.ADB.ToString(), ADBResp.province_id, 1);

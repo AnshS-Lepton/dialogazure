@@ -397,7 +397,16 @@ namespace Resources {
                    return resourceProvider.GetResource("SI_GBL_GBL_GBL_GBL_148", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
-            
+
+        /// <summary>Own Vendor:</summary>
+        public static string SI_GBL_GBL_GBL_GBL_166
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_GBL_GBL_GBL_GBL_166", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+
         /// <summary>Customer/Telco Name</summary>
         public static string SI_OSP_GBL_NET_FRM_393 {
                get {

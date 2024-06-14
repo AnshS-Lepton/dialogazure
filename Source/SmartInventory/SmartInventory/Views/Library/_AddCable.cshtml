@@ -647,6 +647,10 @@
             $('#txt3rdPartyVendor').next().addClass('input-validation-error');
             return false;
         }
+        if (selected_ownership == 'Own' && $('#txtOwnVendor').val() == "") {
+            $('#txtOwnVendor').next().addClass('input-validation-error');
+            return false;
+        }
 
         else if (selected_ownership == 'Third Party' && $('#thirdparty_circuit_id').val() == "") {
             $('#thirdparty_circuit_id').addClass('input-validation-error');

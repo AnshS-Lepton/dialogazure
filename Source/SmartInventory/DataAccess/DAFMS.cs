@@ -114,6 +114,8 @@ namespace DataAccess
                     objFMSItem.origin_ref_code = objFMSMaster.origin_ref_code;
                     objFMSItem.bom_sub_category = objFMSMaster.bom_sub_category;
                     objFMSItem.gis_design_id = objFMSMaster.gis_design_id;
+                    objFMSItem.own_vendor_id = objFMSMaster.own_vendor_id;
+                    objFMSItem.hierarchy_type = objFMSMaster.hierarchy_type;
                     //objFMSItem.served_by_ring=objFMSMaster.served_by_ring;
                     var FMSResp = repo.Update(objFMSItem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(FMSResp.system_id, Models.EntityType.FMS.ToString(), FMSResp.province_id, 1);

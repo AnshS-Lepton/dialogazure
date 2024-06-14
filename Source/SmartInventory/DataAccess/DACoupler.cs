@@ -68,6 +68,8 @@ namespace DataAccess
                     objCouplerItem.origin_ref_code = objCouplerMaster.origin_ref_code;
                     objCouplerItem.bom_sub_category=objCouplerMaster.bom_sub_category;
                     objCouplerItem.gis_design_id = objCouplerMaster.gis_design_id;
+                    objCouplerItem.hierarchy_type = objCouplerMaster.hierarchy_type;
+                    objCouplerItem.own_vendor_id = objCouplerMaster.own_vendor_id;
                     //objCouplerItem.served_by_ring=objCouplerMaster.served_by_ring;
                     var CouplerResp =  repo.Update(objCouplerItem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(CouplerResp.system_id, Models.EntityType.Coupler.ToString(), CouplerResp.province_id, 1);
