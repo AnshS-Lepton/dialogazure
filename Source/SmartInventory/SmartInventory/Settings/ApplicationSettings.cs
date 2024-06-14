@@ -234,6 +234,7 @@ namespace SmartInventory.Settings
         public static int splitterTypeForFat = 0;
         public static int splitterTypeForFdc = 0;
         public static bool IsWMSLayerLoadingEnabled = false;
+        public static bool IsVectorLayerEnabled = false;
         public static int IsSignalRIsEnable = 0;
 		public static bool IsTraceEnabled = false;
 		public static int ExcelReportLimitCount = 0;
@@ -850,6 +851,10 @@ namespace SmartInventory.Settings
                 if (objSetting.key == "IsWMSLayerLoadingEnabled")
                 {
                     IsWMSLayerLoadingEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true;
+                }
+                if (objSetting.key == "IsVectorLayerEnabled")
+                {
+                    IsVectorLayerEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true;
                 }
                 if (objSetting.key == "IsSignalRIsEnable")
                 {
