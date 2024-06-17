@@ -1473,14 +1473,17 @@ namespace SmartInventoryServices.Controllers
                     foreach (var itm in objManholeMaster.lstRouteInfo)
                     {
                         bool f = false;
-                        foreach (var ids in objManholeMaster.selected_route_ids)
-                        {
-                            if (ids == itm.cable_id)
-                            {
-                                f = true;
+						if (objManholeMaster.selected_route_ids != null)
+						{
+							foreach (var ids in objManholeMaster.selected_route_ids)
+							{
+								if (ids == itm.cable_id)
+								{
+									f = true;
 
-                            }
-                        }
+								}
+							}
+						}
                         RouteInfo objS = new RouteInfo();
                         objS.entity_id = resultItem.system_id;
                         objS.entity_type = EntityType.Manhole.ToString();

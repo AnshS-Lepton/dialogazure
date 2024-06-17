@@ -12985,12 +12985,14 @@ var Main = function () {
 
 
     this.drawAddLineEntity = function (latLng, libItem) {
-        if (si.MaxCableLength > parseInt($('#hdnMaxLineEntityLength').val()) && si.LengthUnit != 'meter') {
-            alert("Maximum " + parseInt($('#hdnMaxLineEntityLength').val()) + " KM length of an entity can be created!");
-            $('#btnCancelTP').click();
-            si.MaxCableLength = 0;
-            si.LengthUnit = "";
-            return false;
+        if ($('#hdnMaxLineEntityLength').val() != '') {
+            if (si.MaxCableLength > parseInt($('#hdnMaxLineEntityLength').val()) && si.LengthUnit != 'meter') {
+                alert("Maximum " + parseInt($('#hdnMaxLineEntityLength').val()) + " KM length of an entity can be created!");
+                $('#btnCancelTP').click();
+                si.MaxCableLength = 0;
+                si.LengthUnit = "";
+                return false;
+            }
         }
         app.clearTempNewEntity();
         LandBase.clearTempNewEntity();
