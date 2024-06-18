@@ -18,22 +18,24 @@ using Newtonsoft.Json;
 using Lepton.Entities;
 using System.IO;
 using System.Web.SessionState;
+using NPOI.POIFS.FileSystem;
+using System.DirectoryServices;
 
 namespace SmartInventory.Controllers
-{ 
+{
 
     //[AllowAnonymous]
     [HandleException]
     public class LoginController : Controller
     {
-       
+
         int count = 0;
         //
         // GET: /Login/
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public ActionResult Index()
 
-        {         
+        {
             string cookie = "";
             if (Session["Language"] != null)
             {
@@ -51,7 +53,41 @@ namespace SmartInventory.Controllers
                 return View();
             }
         }
+        private bool isAuthenticated(string username, string password)
+        {
+            string LDAPIP = ConfigurationManager.AppSettings["LDAP_IP"].ToString();
+            //string domain = ConfigurationManager.AppSettings["Domain"].ToString();
+            string errMsg = "";
+            if (String.IsNullOrWhiteSpace(LDAPIP) || String.IsNullOrEmpty(LDAPIP))
+            {
 
+                return true;
+            }
+            else
+            {
+                try
+                {
+                    System.DirectoryServices.DirectoryEntry entry = default(System.DirectoryServices.DirectoryEntry);
+                    DirectorySearcher searcher = default(DirectorySearcher);
+                    entry = new System.DirectoryServices.DirectoryEntry(LDAPIP);
+                    entry.Username = username;// +"@" + domain;
+                    entry.Password = password;
+                    entry.AuthenticationType = AuthenticationTypes.Secure;
+                    searcher = new DirectorySearcher(entry);
+                    //searcher.PropertiesToLoad.Add("cn");
+                    System.DirectoryServices.SearchResult result = searcher.FindOne();
+                    if (null == result)
+                        return false;
+                }
+                catch (Exception ex)
+                {
+                    errMsg = ex.Message;
+                    return false;
+
+                }
+                return true;
+            }
+        }
         [HttpPost]
         public ActionResult Index(User usr, string returnUrl)
         {
@@ -113,6 +149,8 @@ namespace SmartInventory.Controllers
                             //var PRMSAuthURL = ApplicationSettings.PRMSAuthURL;
                             if (!String.IsNullOrEmpty(ADFSEndPoint) && u != null && u.role_id != 1 && u.user_type.ToLower() == "own")
                             {
+
+
                                 ADFSInput objADFSInput = new ADFSInput();
                                 objADFSInput.user_name = u.user_name;
                                 objADFSInput.user_email = MiscHelper.Decrypt(u.user_email);
@@ -136,7 +174,13 @@ namespace SmartInventory.Controllers
                                     }
                                     ModelState.AddModelError("Error", ADFSDetail.errorMsg);
                                 }
+
                             }
+                            else if (ApplicationSettings.isLDAPEnabled == 1 && u.user_type.ToLower() == "own")
+                            {
+                                is_UserAuthenticated = isAuthenticated(usr.user_name, usr.password);
+                            }
+
                             else
                             {
 
@@ -289,7 +333,7 @@ namespace SmartInventory.Controllers
                             ModelState.AddModelError("Error", Resources.Resources.SI_GBL_GBL_NET_FRM_010);
                     }
                     else
-                        ModelState.AddModelError("Error", Resources.Resources.SI_OSP_GBL_NET_FRM_370); 
+                        ModelState.AddModelError("Error", Resources.Resources.SI_OSP_GBL_NET_FRM_370);
                 }
             }
             else
@@ -507,7 +551,7 @@ namespace SmartInventory.Controllers
             //get user image
             user.userImgBytes = getUserProfileImage(user.user_id, user.user_img);
             Session["userDetail"] = user;
-            var userLoginHistory = new BLUserLogin().GetUserLoginDetailById(user.user_id,Source);
+            var userLoginHistory = new BLUserLogin().GetUserLoginDetailById(user.user_id, Source);
             UpdateBrowserInfo(userLoginHistory.login_id);
             Session["userLoginHistory"] = userLoginHistory;
 
@@ -516,12 +560,12 @@ namespace SmartInventory.Controllers
             /* To tightly couple session id with the form auth ticket,
              adding session ID to Forms Authentication ticket */
             FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
-                1, 
-                user.user_name, 
-                DateTime.Now, 
-                DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes), 
+                1,
+                user.user_name,
+                DateTime.Now,
+                DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes),
                 false, // persistent
-                Session.SessionID 
+                Session.SessionID
             );
             string encryptedTicket = FormsAuthentication.Encrypt(ticket);
             HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
@@ -566,7 +610,7 @@ namespace SmartInventory.Controllers
         void UpdateBrowserInfo(int login_id)
         {
             UserLogin objUserLogin = new UserLogin();
-            
+
             try
             {
                 objUserLogin.client_ip = IPHelper.GetIPAddress();
@@ -600,9 +644,9 @@ namespace SmartInventory.Controllers
         public ActionResult logout()
         {
             var loginHistory = (UserLogin)Session["userLoginHistory"];
-            var signOut_type ="Manual";
+            var signOut_type = "Manual";
             int historyId = loginHistory != null ? loginHistory.history_id : 0;
-            if (Request.IsAuthenticated && loginHistory!=null)
+            if (Request.IsAuthenticated && loginHistory != null)
             {
                 new BLUserLogin().UpdateLogOutTime(Convert.ToInt32(Session["user_id"]), historyId, loginHistory.source, signOut_type);
                 new BLUserLoginHistoryInfo().UpdateUserLogOutTime(Convert.ToInt32(Session["user_id"]), historyId, signOut_type);
@@ -646,9 +690,9 @@ namespace SmartInventory.Controllers
 
         public string getUserProfileImage(int usrId, string userImgName)
         {
-            
+
             string userImgBytes = "";
-            
+
             string FtpUrl = Convert.ToString(ConfigurationManager.AppSettings["FTPAttachment"]);
             string UserName = Convert.ToString(ConfigurationManager.AppSettings["FTPUserNameAttachment"]);
             string PassWord = Convert.ToString(ConfigurationManager.AppSettings["FTPPasswordAttachment"]);
@@ -679,7 +723,7 @@ namespace SmartInventory.Controllers
             return userImgBytes;
 
             //Uploads/profiles/big.png
-           
+
         }
         [HttpPost]
         public ActionResult validateuser(string userName)
@@ -695,7 +739,7 @@ namespace SmartInventory.Controllers
                     objUser = new BLUser().ValidateUser(userName, "", UserType.Web.ToString());
                     if (objUser != null)
                     {
-                        var userLoginDetails = new BLUserLogin().GetUserLoginDetailById(objUser.user_id,"Web");
+                        var userLoginDetails = new BLUserLogin().GetUserLoginDetailById(objUser.user_id, "Web");
                         if (userLoginDetails != null)
                         {
                             if (userLoginDetails.logout_time == null)
@@ -840,7 +884,7 @@ namespace SmartInventory.Controllers
                         User usr = new BLUser().GetUserDetailByUserName(sendOPTDeliveryOption.user_name);
                         LogUserIn(usr, "Web");
                         TokenDetail td = (TokenDetail)Session["OTPTokenDetail"];
-                        Session["TokenDetail"] = WebAPIRequest.GetRefreshToken(td.refresh_token,td.access_token);
+                        Session["TokenDetail"] = WebAPIRequest.GetRefreshToken(td.refresh_token, td.access_token);
                         ModelState.Clear();
                         if (usr.role_id == 1) // for super Admin only...
                         {
@@ -1025,7 +1069,7 @@ namespace SmartInventory.Controllers
                                         }
                                         else
                                         {
-                                            LogUserIn(u,"Web");
+                                            LogUserIn(u, "Web");
                                             //Session["TokenDetail"] = WebAPIRequest.GetAPIToken(MiscHelper.EncodeTo64(usr.user_name), MiscHelper.EncodeTo64(usr.password).ToString());
                                             TokenDetail td = (TokenDetail)Session["TokenDetail"];
                                             Session["TokenDetail"] = WebAPIRequest.GetRefreshToken(td.refresh_token, td.access_token);
@@ -1042,7 +1086,7 @@ namespace SmartInventory.Controllers
                                     ModelState.AddModelError("AzureError", Resources.Resources.SI_GBL_GBL_NET_FRM_010);
                             }
                             else
-                                ModelState.AddModelError("AzureError", username+": " +Resources.Resources.SI_GBL_GBL_NET_FRM_011);
+                                ModelState.AddModelError("AzureError", username + ": " + Resources.Resources.SI_GBL_GBL_NET_FRM_011);
                         }
                         else
                         {
