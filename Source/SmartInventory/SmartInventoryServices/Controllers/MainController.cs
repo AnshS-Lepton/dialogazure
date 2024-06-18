@@ -11,7 +11,7 @@ using NPOI.XSSF.UserModel;
 using SmartInventory.Settings;
 using SmartInventoryServices.Filters;
 using SmartInventoryServices.Helper;
-//using SmartInventoryServices.WebService;
+using SmartInventoryServices.WebService;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,10 +35,10 @@ using Utility;
 
 namespace SmartInventoryServices.Controllers
 {
-    //[System.Web.Http.Authorize]
-    //[CustomAuthorization]
+    [System.Web.Http.Authorize]
+    [CustomAuthorization]
     [APIExceptionFilter]
-    //[CustomAction]
+    [CustomAction]
     public class MainController : ApiController
     {
 
