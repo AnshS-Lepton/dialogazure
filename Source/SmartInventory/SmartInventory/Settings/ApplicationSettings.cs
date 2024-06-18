@@ -251,10 +251,12 @@ namespace SmartInventory.Settings
         static string smsapi = "";
         public static int MaxLineEntityLength = 0;
         public static int isCDBAttributeEnabled = 0;
+        
         public static bool fetoolsenabled = true;
         public static int CableDefLabelMinZoom = 0;
         public static int IsGeometryUpdateOnAssociationAllowed = 0;
         public static bool CdbEnabled = false;
+        public static int isLDAPEnabled = 0;
 
         public static void InitializeGlobalSettings()
         {            
@@ -893,6 +895,10 @@ namespace SmartInventory.Settings
                 //{
                 //    allowedImageAttachmentType = objSetting.value;
                 //}
+                if (objSetting.key == "isLDAPEnabled")
+                {
+                    isLDAPEnabled = Convert.ToInt32(objSetting.value);
+                }
             }
         }
     }
