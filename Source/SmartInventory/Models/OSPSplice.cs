@@ -1140,6 +1140,27 @@ namespace Models
         public int to { get; set; }
     }
 
+    public class splicingReport
+    {
+        [Required(ErrorMessage = "Source System ID is required")]
+        public int source_system_id { get; set; }
+        public string source_type { get; set; }
+        [Required(ErrorMessage = " is source connected is required")]
+        public bool is_source_connected { get; set; }
+        [Required(ErrorMessage = " connecting entity is required")]
+        public string connecting_entity { get; set; }
+        [Required(ErrorMessage = " destination type is required")]
+        public string destination_type { get; set; }
+        [Required(ErrorMessage = " destination system id is required")]
+        public int destination_system_id { get; set; }
+        [Required(ErrorMessage = " is_destination_connected is required")]
+        public bool is_destination_connected { get; set; }
+        [Required(ErrorMessage = " exportTypeis required")]
+        public string exportType { get; set; }
+        [Required(ErrorMessage = " exportKey is required")]
+        public string exportKey { get; set; }
+        public string customer_Ids { get; set; }
+    }
 }
 
 
