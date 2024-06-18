@@ -1765,6 +1765,32 @@ namespace SmartInventory.Controllers
                                         dtReportCdb.TableName = layer.layer_title;
                                         dtReportAdditional.TableName = layer.layer_title;
 
+                                        if (dtReport != null && dtReport.Rows.Count > 0)
+                                        {
+                                            if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+                                            if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+                                            if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+                                            if (dtReport.Columns.Contains("Fn Get Date")) { dtReport.Columns.Remove("Fn Get Date"); }
+                                        }
+
+                                        if (dtReportCdb != null && dtReportCdb.Rows.Count > 0)
+                                        {
+                                            if (dtReportCdb.Columns.Contains("S_NO")) { dtReportCdb.Columns.Remove("S_NO"); }
+                                            if (dtReportCdb.Columns.Contains("totalrecords")) { dtReportCdb.Columns.Remove("totalrecords"); }
+                                            if (dtReportCdb.Columns.Contains("Barcode")) { dtReportCdb.Columns.Remove("Barcode"); }
+                                            if (dtReportCdb.Columns.Contains("Fn Get Date")) { dtReportCdb.Columns.Remove("Fn Get Date"); }
+                                        }
+
+                                        if (dtReportAdditional != null && dtReportAdditional.Rows.Count > 0)
+                                        {
+                                            if (dtReportAdditional.Columns.Contains("S_NO")) { dtReportAdditional.Columns.Remove("S_NO"); }
+                                            if (dtReportAdditional.Columns.Contains("totalrecords")) { dtReportAdditional.Columns.Remove("totalrecords"); }
+                                            if (dtReportAdditional.Columns.Contains("Barcode")) { dtReportAdditional.Columns.Remove("Barcode"); }
+                                            if (dtReportAdditional.Columns.Contains("Fn Get Date")) { dtReportAdditional.Columns.Remove("Fn Get Date"); }
+                                        }
+
+
+
                                         if (dtReport.Rows.Count > 0 || dtReportCdb.Rows.Count > 0 || dtReportAdditional.Rows.Count > 0)
                                         {
                                             objExportEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
