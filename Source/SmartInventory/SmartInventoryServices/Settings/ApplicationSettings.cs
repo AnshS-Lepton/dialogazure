@@ -63,6 +63,7 @@ namespace SmartInventory.Settings
         public static int splitterTypeForFdc = 0;
         public static string DuctOffset = "";
         public static string MicroductOffset = "";
+        public static bool isLDAPEnabled = false;
 
         public static void InitializeGlobalSettings()
         {
@@ -233,6 +234,10 @@ namespace SmartInventory.Settings
                 if (objSetting.key == "MicroductOffset")
                 {
                     MicroductOffset = (objSetting.value);
+                }
+                if (objSetting.key == "isLDAPEnabled")
+                {
+                    isLDAPEnabled = Convert.ToInt32(objSetting.value) == 1;
                 }
             }
 
