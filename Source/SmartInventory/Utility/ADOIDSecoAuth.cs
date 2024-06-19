@@ -367,7 +367,7 @@ namespace Utility
             }
         }
 
-        public bool GenerateLdapSecoToken(string userName, string password, bool isAgent, string source, out SecoApiResponse secoApiResponce, out LDAPAuthentication aLDAPAuthentication)
+        public bool GenerateLdapToken(string userName, string password, bool isAgent, string source, out SecoApiResponse secoApiResponce, out LDAPAuthentication aLDAPAuthentication)
         {
             secoApiResponce = new SecoApiResponse();
             bool ldap = false;

@@ -176,11 +176,6 @@ namespace SmartInventory.Controllers
                                 }
 
                             }
-                            //else if (ApplicationSettings.isLDAPEnabled == 1 && u.user_type.ToLower() == "own")
-                            //{
-                            //    is_UserAuthenticated = isAuthenticated(usr.user_name, usr.password);
-                            //}
-
                             else
                             {
 

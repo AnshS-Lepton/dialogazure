@@ -454,7 +454,7 @@ namespace SmartInventoryServices.Providers
                                 LDAPAuthentication aLDAPAuthentication = null;
                                 ADOIDSecoAuth aDOIDSecoAuth = new ADOIDSecoAuth();
                                 bool ldap = false;
-                                ldap = aDOIDSecoAuth.GenerateLdapSecoToken(userName, MiscHelper.DecodeTo64(password), false, Source, out secoApiResponse, out aLDAPAuthentication);
+                                ldap = aDOIDSecoAuth.GenerateLdapToken(userName, MiscHelper.DecodeTo64(password), false, Source, out secoApiResponse, out aLDAPAuthentication);
                                 if (!ldap)
                                 {
                                     user = null;
