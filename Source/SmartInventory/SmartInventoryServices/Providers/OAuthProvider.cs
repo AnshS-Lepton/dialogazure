@@ -307,7 +307,6 @@ namespace SmartInventoryServices.Providers
                 
                 var password = context.Password;
                 bool isADOIDEnabled = false;
-                bool isldapEnable = false;
                 bool isPRMSEnabled = false;
 
                 objBLUser = new BLUser();
@@ -448,7 +447,7 @@ namespace SmartInventoryServices.Providers
                                     user = objBLUser.ValidateUser(userName, password, Source);
                                 }
                             }
-                            else if (Convert.ToBoolean(isldapEnable) && user.user_type.ToLower() == "own")
+                            else if (ApplicationSettings.isLDAPEnabled && user.user_type.ToLower() == "own")
                             {
                                 SecoApiResponse secoApiResponse = null;
                                 LDAPAuthentication aLDAPAuthentication = null;
