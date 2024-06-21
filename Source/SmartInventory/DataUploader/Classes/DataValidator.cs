@@ -1062,6 +1062,20 @@ namespace DataUploader
                                                 dbDropdownColName += mandatoryField.TemplateColName + ",";
                                             }
                                             break;
+                                        case "hierarchy_type":
+                                            if (lstentity_dropdown.Count(x => x.dropdown_type.Equals(dbColName, StringComparison.OrdinalIgnoreCase) && x.dropdown_value.Equals(recordvalue, StringComparison.OrdinalIgnoreCase)) == 0)
+                                            {
+                                                isInValid = true;
+                                                dbDropdownColName += mandatoryField.TemplateColName + ",";
+                                            }
+                                            break;
+                                        case "aerial_location":
+                                            if (lstentity_dropdown.Count(x => x.dropdown_type.Equals(dbColName, StringComparison.OrdinalIgnoreCase) && x.dropdown_value.Equals(recordvalue, StringComparison.OrdinalIgnoreCase)) == 0)
+                                            {
+                                                isInValid = true;
+                                                dbDropdownColName += mandatoryField.TemplateColName + ",";
+                                            }
+                                            break;
                                         default:
                                             if (lstentity_dropdown.Count(x => x.dropdown_type.Equals(dbColName, StringComparison.OrdinalIgnoreCase) && x.dropdown_value.Equals(recordvalue, StringComparison.OrdinalIgnoreCase)) == 0)
                                             {
