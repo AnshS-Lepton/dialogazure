@@ -58,9 +58,9 @@ namespace BusinessLogics
         {
             return objDAMisc.GetDropDownListParent(layerName, ddType);
         }
-        public List<EntityDetail> getNearByEntities(double latitude, double longitude, int bufferInMtr, int user_id = 0)
+        public List<EntityDetail> getNearByEntities(double latitude, double longitude, int bufferInMtr, string source_ref_id, string source_ref_type, int user_id = 0)
         {
-            return objDAMisc.getNearByEntities(latitude, longitude, bufferInMtr, user_id);
+            return objDAMisc.getNearByEntities(latitude, longitude, bufferInMtr, source_ref_id, source_ref_type, user_id);
 
         }
         public List<EntityDetailWithAttribute> GetNearByEntitiesWithAttribute(double latitude, double longitude, int bufferInMtr, int ticket_id, int user_id = 0)

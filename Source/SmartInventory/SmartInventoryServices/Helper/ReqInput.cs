@@ -280,6 +280,8 @@ namespace SmartInventoryServices.Helper
         public string entity_name { get; set; }
         public int userId { get; set; }
         public int ticket_id { get; set; }
+        public string source_ref_id { get; set; }
+        public string source_ref_type { get; set; }
     }
 
     public class NearByEntitiesByType

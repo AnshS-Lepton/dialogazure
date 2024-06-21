@@ -347,7 +347,9 @@ namespace SmartInventory.Controllers
         public ActionResult GetNearByEntities(double latitude, double longitude, int bufferInMtrs)
         {
             var usrDetail = (User)Session["userDetail"];
-            var lstEntities = new BLMisc().getNearByEntities(latitude, longitude, bufferInMtrs, usrDetail.user_id);
+            var source_ref_id = "";
+            var source_ref_type = "";
+            var lstEntities = new BLMisc().getNearByEntities(latitude, longitude, bufferInMtrs, source_ref_id, source_ref_type, usrDetail.user_id);
 
             return PartialView("_Information", lstEntities);
         }
@@ -373,7 +375,9 @@ namespace SmartInventory.Controllers
         public JsonResult GetNearByCables(double latitude, double longitude, int bufferInMtrs, int user_id = 0)
         {
             var usrDetail = (User)Session["userDetail"];
-            var lstEntities = new BLMisc().getNearByEntities(latitude, longitude, bufferInMtrs, usrDetail.user_id).Where(x => x.entity_type == "Cable");
+            var source_ref_id = "";
+            var source_ref_type = "";
+            var lstEntities = new BLMisc().getNearByEntities(latitude, longitude, bufferInMtrs, source_ref_id, source_ref_type, usrDetail.user_id).Where(x => x.entity_type == "Cable");
             return Json(lstEntities, JsonRequestBehavior.AllowGet);
         }
 
