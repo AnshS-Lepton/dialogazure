@@ -1,7 +1,7 @@
 ﻿var FiberLink = function () {
     var app = this;
     //var infowindow = new google.maps.InfoWindow();
-
+    this.CableFiberButton = false;
     this.StatusMessages = {
         CONFIRM_DELETE_LINK: MultilingualKey.SI_GBL_GBL_JQ_FRM_061,
         CONFIRM_EDIT_LINK: MultilingualKey.SI_GBL_GBL_JQ_FRM_062,
@@ -801,24 +801,27 @@
 
 
     this.createUpdateLink = function (IsNewLink) {
-
+        
         if ($('#ddlLinkType').val() == "") {
-            $(app.DE.ddlLinkType).css('border-color', 'red');
+            alert("Please select Link Type!");
             return false;
         } else {
 
             $(app.DE.ddlLinkType).css('border-color', '');
         }
+        if ($('#txtLinkName').val() == "") {
+            alert("Please select Link Name!");
+            return false;
+        }
         if (($('#ddlLinkType').val() == "Redundant Link") && ($('#ddlMainlinktype').val() == "")) {
-            $('#ddlMainlinktype_chosen a').css('border-color', 'red');
+            alert("Please select Main Link Type!");
             return false;
         } else {
 
             $('#ddlMainlinktype_chosen a').css('border-color', '');
         }
         if (($('#ddlLinkType').val() == "Redundant Link") && ($('#txtmainlinkid').val() == "")) {
-            $('#txtmainlinkid').css('border-color', 'red');
-
+            alert("Please select Main Link Id!");
             return false;
         } else {
 
@@ -827,15 +830,14 @@
 
 
         if (($('#ddlLinkType').val() == "Main Link") && ($('#ddlredundantlinktype').val() == "")) {
-            $('#ddlredundantlinktype_chosen a').css('border-color', 'red');
+            alert("Please select Redundant Link Type!");
             return false;
         } else {
 
             $('#ddlredundantlinktype_chosen a').css('border-color', '');
         }
         if (($('#ddlLinkType').val() == "Main Link") && ($('#txtredundantlinkid').val() == "")) {
-            $('#txtredundantlinkid').css('border-color', 'red');
-
+            alert("Please select Redundant Link Id!");
             return false;
         } else {
             $('#txtredundantlinkid').css('border-color', '');
@@ -862,6 +864,10 @@
         }
         if (IsNewLink) {
             $(app.DE.frmAddFiberLink).submit();
+            if (app.CableFiberButton == true) {
+                $("#closeChildPopup").click();
+                app.AssociatelinkId();
+            }
         }
     }
 
@@ -949,7 +955,9 @@
             alert(objFiberLink.pageMsg.message);
         }
         else {
-            alert(objFiberLink.pageMsg.message);
+            if (objFiberLink.CreateFL== 0) {
+                alert(objFiberLink.pageMsg.message);
+            }
             ajaxReq('FiberLink/AddFiberLink', { system_id: 0 }, false, function (resp) {
                 $(app.DE.CreateFiberLink).html(resp);
             }, false, true);
@@ -982,23 +990,13 @@
         $(app.DE.tickIcon).css('display', 'none');
     }
     this.btncreatelink = function () {
+        app.CableFiberButton = true;
         var _linkId = $(app.DE.txtFiberLinkId).val();
         if (_linkId == "") {
             $(app.DE.txtFiberLinkId).css('border-color', 'red');
         }
         else {
-            $(app.DE.txtFiberLinkId).css('border-color', '');
-            var _fiberNo = $(app.DE.hdnFiberNumber).val();
-            showConfirm("Fiber link will be created and automatically associated. Do you want to continue?", function () {
-                ajaxReq('FiberLink/CreateFiberLink', {
-                    system_id: 0, link_id: $(app.DE.txtFiberLinkId).val(), link_name: "Fiber_link", link_type: "Spur Link"
-                }, false, function (resp) {
-                    $(app.DE.lblGrdLinkId_ + _fiberNo).html($(app.DE.txtFiberLinkId).val());
-                    app.AssociatelinkId();
-                    app.closepopup();
-                }, false, true);
-
-            });
+            popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: _linkId }, "Create Link", 'modal-xl');
         }
     }
     this.closepopup = function () {
@@ -1074,6 +1072,11 @@
             else { 
                 $(app.DE.crossIcon).css('display', 'block');
                 $(app.DE.tickIcon).css('display', 'none');
+                if (app.CableFiberButton == true) {
+                    alert(resp.message);
+                    $(app.DE.dvAssociateLink).hide();
+                    app.CableFiberButton = false;
+                }
             } 
         });
     }  
