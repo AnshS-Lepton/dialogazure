@@ -1077,6 +1077,10 @@
                     $(app.DE.dvAssociateLink).hide();
                     app.CableFiberButton = false;
                 }
+                else {
+                    alert("Fiber Link is not associated as ODF to ODF connectivity not found!");
+                    $(app.DE.dvAssociateLink).hide();
+                }
             } 
         });
     }  
