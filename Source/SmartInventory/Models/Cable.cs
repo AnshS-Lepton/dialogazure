@@ -223,6 +223,13 @@ namespace Models
         public string generic_section_name { get; set; }
         [NotMapped]
         public CDBAttribute LstCDBAttribute { get; set; }
+        public string parent_cable_netwok_id { get; set; }
+        public string parent_cable_system_id { get; set; }
+        public string splited_by { get; set; }
+        public string splitted_on { get; set; }
+        public string splitting_system_id { get; set; }
+        public string splitting_netwok_id { get; set; }
+        public string splitting_entitytype { get; set; }
         public CableMaster()
         {
             objPM = new PageMessage();

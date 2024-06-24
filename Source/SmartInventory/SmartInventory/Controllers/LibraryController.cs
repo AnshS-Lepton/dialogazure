@@ -5701,7 +5701,7 @@ namespace SmartInventory.Controllers
 				objCbl.isDirectSave = isDirectSave;
 				objCbl.actionTab = actionTab;
 				objCbl.user_id = Convert.ToInt32(Session["user_id"]);
-				if (Session["NWTicketDetails"] != null)
+                if (Session["NWTicketDetails"] != null)
 				{
 					var NWTicketDetails = (NetworkTicket)Session["NWTicketDetails"];
 					DataTable DT = new BLNetworkTicket().GetNetworkTicketDetailsById(NWTicketDetails.ticket_id);
@@ -6116,7 +6116,14 @@ namespace SmartInventory.Controllers
 				cableobjCable1.network_id = networkCodeDetail.network_code;
 				cableobjCable1.cable_name= networkCodeDetail.network_code;
 				cableobjCable1.sequence_id = networkCodeDetail.sequence_id;
-				SaveCable(cableobjCable1, "CableInfo", false);
+                cableobjCable1.parent_cable_system_id = model.split_cable_system_id.ToString();
+                cableobjCable1.parent_cable_netwok_id = model.cable_one_name;
+                cableobjCable1.splited_by = model.userId.ToString();
+                cableobjCable1.splitted_on = DateTime.Now.ToString();
+                cableobjCable1.splitting_system_id = model.split_entity_system_id.ToString();
+                cableobjCable1.splitting_netwok_id = model.split_entity_networkId;
+                cableobjCable1.splitting_entitytype = model.split_entity_type;
+                SaveCable(cableobjCable1, "CableInfo", false);
 				//-- Add LMC Attribute IF Existes
 				CableMaster objCablemaster1 = new CableMaster();
 				objCablemaster1.LMCCableInfo = new BLLmcInfo().GetLMCIfo(model.split_cable_system_id);
@@ -6163,7 +6170,14 @@ namespace SmartInventory.Controllers
 				cableobjCable2.network_id = networkCodeDetail2.network_code;
 				cableobjCable2.cable_name = networkCodeDetail2.network_code;
 				cableobjCable2.sequence_id= networkCodeDetail2.sequence_id;
-				SaveCable(cableobjCable2, "CableInfo", false);
+				cableobjCable2.parent_cable_system_id = model.split_cable_system_id.ToString(); ;
+				cableobjCable2.parent_cable_netwok_id = model.cable_one_name;
+				cableobjCable2.splited_by = model.userId.ToString();
+                cableobjCable2.splitted_on = DateTime.Now.ToString();
+                cableobjCable2.splitting_system_id = model.split_entity_system_id.ToString();
+                cableobjCable2.splitting_netwok_id = model.split_entity_networkId;
+                cableobjCable2.splitting_entitytype = model.split_entity_type;
+                SaveCable(cableobjCable2, "CableInfo", false);
 
 				//-- Add LMC Attribute IF Existes
 				CableMaster objCablemaster2 = new CableMaster();

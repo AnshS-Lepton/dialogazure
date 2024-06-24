@@ -2618,100 +2618,122 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
         [HttpPost]
         public ActionResult UploadDocument(FormCollection collection)
         {
+            return ProcessUpload(collection, isMultiple: false);
+        }
+        [HttpPost]
+        public ActionResult UploadMultipleDocumentWithfiletype(FormCollection collection)
+        {
+            return ProcessUpload(collection, isMultiple: true);
+        }
+        private ActionResult ProcessUpload(FormCollection collection, bool isMultiple)
+        {
             JsonResponse<string> jResp = new JsonResponse<string>();
 
-            if (Request.Files.Count > 0)
-            {
-                try
-                {
-                    var systemId = collection["system_Id"];
-                    var entityType = collection["entity_type"];
-                    var featureName = collection["feature_name"];
-                    var attachmentType = "Document";
-                    HttpFileCollectionBase files = Request.Files;
-                    VailidateAttachment obj  = ValidateDocumentFileType(files);
-                    if (!string.IsNullOrEmpty(obj.invalidattachmentType))
-                    {
-                        jResp.message = obj.invalidattachmentType;
-                        jResp.status = StatusCodes.INVALID_FILE.ToString();
-                        return Json(jResp, JsonRequestBehavior.AllowGet);
-                        
-                    }
-                    else if (!string.IsNullOrEmpty(obj.invalidattachmentsize))
-                    {
-                        jResp.message = obj.invalidattachmentsize;
-                        jResp.status = StatusCodes.INVALID_FILE.ToString();
-                        return Json(jResp, JsonRequestBehavior.AllowGet);
-
-                    }
-                    else if (!string.IsNullOrEmpty(obj.invalidattachmentename))
-                    {
-                        jResp.message = obj.invalidattachmentename;
-                        jResp.status = StatusCodes.INVALID_FILE.ToString();
-                        return Json(jResp, JsonRequestBehavior.AllowGet);
-
-                    }
-                    else
-                    {
-                        for (int i = 0; i < files.Count; i++)
-                        {
-                            HttpPostedFileBase file = files[i];
-                            string FileName = file.FileName;
-                            string strNewfilename = Path.GetFileNameWithoutExtension(FileName) + "_" + MiscHelper.getTimeStamp() + Path.GetExtension(FileName);
-                            string strFilePath = "";
-                            if (entityType == EntityType.ROW.ToString() && !string.IsNullOrEmpty(featureName))
-                            {
-                                attachmentType = (!string.IsNullOrEmpty(collection["attachment_type"]) ? collection["attachment_type"] : attachmentType);
-                                strFilePath = UploadfileOnFTP(featureName, systemId, file, attachmentType, strNewfilename, entityType);
-                            }
-                            else if (!string.IsNullOrEmpty(featureName))
-                            {
-                                strFilePath = UploadfileOnFTP(entityType, systemId, file, attachmentType, strNewfilename, featureName);
-                            }
-                            else
-                            {
-                                strFilePath = UploadfileOnFTP(entityType, systemId, file, attachmentType, strNewfilename);
-                            }
-
-                            // get User Detail..
-                            User objUser = (User)(Session["userDetail"]);
-                            LibraryAttachment objAttachment = new LibraryAttachment();
-                            objAttachment.entity_system_id = Convert.ToInt32(systemId);
-                            objAttachment.entity_type = entityType;
-                            objAttachment.org_file_name = FileName;
-                            objAttachment.file_name = strNewfilename;
-                            objAttachment.file_extension = Path.GetExtension(FileName);
-                            objAttachment.file_location = strFilePath;
-                            objAttachment.upload_type = attachmentType;
-                            objAttachment.uploaded_by = objUser.user_id.ToString();
-                            objAttachment.entity_feature_name = featureName;
-                            objAttachment.file_size = file.ContentLength;
-                            objAttachment.uploaded_on = DateTime.Now;
-                            //Save Image on FTP and related detail in database..
-                            var savefile = new BLAttachment().SaveLibraryAttachment(objAttachment);
-                        }
-                        jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_154;
-                        jResp.status = StatusCodes.OK.ToString();
-                        return Json(jResp, JsonRequestBehavior.AllowGet);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ErrorLogHelper.WriteErrorLog("UploadDocument()", "Main", ex);
-                    jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_243;
-                    jResp.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                    return Json(jResp, JsonRequestBehavior.AllowGet);
-                    //Error Logging...
-                }
-            }
-            else
+            if (Request.Files.Count == 0)
             {
                 jResp.message = "No files selected.";
                 jResp.status = StatusCodes.INVALID_INPUTS.ToString();
                 return Json(jResp, JsonRequestBehavior.AllowGet);
             }
-        }
 
+            try
+            {
+                var systemId = collection["system_Id"];
+                var entityType = collection["entity_type"];
+                var featureName = collection["feature_name"];
+                var attachmentType = "Document";
+                var uploadedtype = collection["document_type"];
+                HttpFileCollectionBase files = Request.Files;
+
+                VailidateAttachment validation = ValidateDocumentFileType(files);
+                if (!string.IsNullOrEmpty(validation.invalidattachmentType))
+                {
+                    return CreateErrorResponse(jResp, validation.invalidattachmentType, StatusCodes.INVALID_FILE);
+                }
+                if (!string.IsNullOrEmpty(validation.invalidattachmentsize))
+                {
+                    return CreateErrorResponse(jResp, validation.invalidattachmentsize, StatusCodes.INVALID_FILE);
+                }
+                if (!string.IsNullOrEmpty(validation.invalidattachmentename))
+                {
+                    return CreateErrorResponse(jResp, validation.invalidattachmentename, StatusCodes.INVALID_FILE);
+                }
+
+                ProcessFiles(collection, systemId, entityType, featureName, attachmentType, uploadedtype, files, isMultiple);
+
+                jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_154;
+                jResp.status = StatusCodes.OK.ToString();
+                return Json(jResp, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("UploadDocument()", "Main", ex);
+                jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_243;
+                jResp.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                return Json(jResp, JsonRequestBehavior.AllowGet);
+            }
+        }
+        private void ProcessFiles(FormCollection collection, string systemId, string entityType, string featureName, string attachmentType, string uploadedtype, HttpFileCollectionBase files, bool isMultiple)
+        {
+            User objUser = (User)(Session["userDetail"]);
+            var fileuploadtypes = uploadedtype?.Split(',');
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                string uploaddocType = isMultiple && fileuploadtypes != null && fileuploadtypes.Length > i ? fileuploadtypes[i] : null;
+                HttpPostedFileBase file = files[i];
+                string FileName = file.FileName;
+                string strNewfilename = Path.GetFileNameWithoutExtension(FileName) + "_" + MiscHelper.getTimeStamp() + Path.GetExtension(FileName);
+
+                string strFilePath = UploadFileToFTP(collection, systemId, entityType, featureName, attachmentType, file, strNewfilename, uploaddocType);
+
+                SaveFileDetails(systemId, entityType, featureName, attachmentType, objUser, file, FileName, strNewfilename, strFilePath, uploaddocType);
+            }
+        }
+        private string UploadFileToFTP(FormCollection collection, string systemId, string entityType, string featureName, string attachmentType, HttpPostedFileBase file, string strNewfilename, string uploaddocType)
+        {
+            string strFilePath = "";
+            if (entityType == EntityType.ROW.ToString() && !string.IsNullOrEmpty(featureName))
+            {
+                attachmentType = !string.IsNullOrEmpty(collection["attachment_type"]) ? collection["attachment_type"] : attachmentType;
+                strFilePath = UploadfileOnFTP(featureName, systemId, file, attachmentType, strNewfilename, entityType, uploaddocType);
+            }
+            else if (!string.IsNullOrEmpty(featureName))
+            {
+                strFilePath = UploadfileOnFTP(entityType, systemId, file, attachmentType, strNewfilename, featureName, uploaddocType);
+            }
+            else
+            {
+                strFilePath = UploadfileOnFTP(entityType, systemId, file, attachmentType, strNewfilename, null, uploaddocType);
+            }
+            return strFilePath;
+        }
+        private void SaveFileDetails(string systemId, string entityType, string featureName, string attachmentType, User objUser, HttpPostedFileBase file, string FileName, string strNewfilename, string strFilePath, string uploaddocType)
+        {
+            LibraryAttachment objAttachment = new LibraryAttachment
+            {
+                entity_system_id = Convert.ToInt32(systemId),
+                entity_type = entityType,
+                org_file_name = FileName,
+                file_name = strNewfilename,
+                file_extension = Path.GetExtension(FileName),
+                file_location = strFilePath,
+                upload_type = attachmentType,
+                uploaded_by = objUser.user_id.ToString(),
+                entity_feature_name = featureName,
+                file_size = file.ContentLength,
+                uploaded_on = DateTime.Now,
+                document_type = uploaddocType
+            };
+            new BLAttachment().SaveLibraryAttachment(objAttachment);
+        }
+        private ActionResult CreateErrorResponse(JsonResponse<string> jResp, string message, StatusCodes statusCode)
+        {
+            jResp.message = message;
+            jResp.status = statusCode.ToString();
+            return Json(jResp, JsonRequestBehavior.AllowGet);
+        }
+        
         #region Acceptance Testing       
 
         [HttpGet]
@@ -2757,7 +2779,7 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
 
         }
         #endregion
-        static string UploadfileOnFTP(string sEntityType, string sEntityId, HttpPostedFileBase postedFile, string sUploadType, string newfilename, string featureType = null)
+        static string UploadfileOnFTP(string sEntityType, string sEntityId, HttpPostedFileBase postedFile, string sUploadType, string newfilename, string featureType = null, string uploaddocType = null)
         {
             try
             {
@@ -2769,7 +2791,7 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
                 if (isValidFTPConnection(strFTPPath, strFTPUserName, strFTPPassWord))
                 {
                     // Create Directory if not exists and get Final FTP path to save file..
-                    strFTPFilePath = CreateNestedDirectoryOnFTP(strFTPPath, strFTPUserName, strFTPPassWord, featureType, sEntityType, sEntityId, sUploadType);
+                    strFTPFilePath = CreateNestedDirectoryOnFTP(strFTPPath, strFTPUserName, strFTPPassWord, featureType, sEntityType, sEntityId, sUploadType, uploaddocType);
 
                     //Prepare FTP Request..
                     if (sUploadType.ToUpper() == "IMAGES")
@@ -4211,7 +4233,7 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
             }
             return PartialView("_DocumentList", lstDocumentResult);
         }
-
+        
         public ActionResult UploadRefLink(FormCollection collection)
         {
             JsonResponse<string> jResp = new JsonResponse<string>();
@@ -4557,7 +4579,8 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
                     UploadType = item.UploadType,
                     file_size = BytesToString(Convert.ToInt32(item.file_size)),
                     File_ShortName = Utility.CommonUtility.ConvertStringToShortFormat(item.OrgFileName, 19, 10, 9),
-                    categorytype = item.categorytype
+                    categorytype = item.categorytype,
+                    document_type = item.document_type
                 });
 
             }

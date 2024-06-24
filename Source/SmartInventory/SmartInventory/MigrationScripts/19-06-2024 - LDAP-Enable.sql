@@ -1,0 +1,1 @@
+update global_settings set is_mobile_key=true where key='isLDAPEnabled'

@@ -49,7 +49,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                     int user_id = objLgnUsrDtl.user_id;
                     //objfetools.lstusername = new BLUser().GetUsernameDetails();
 
-                    objfetools.lstusername = new BL_Fe_Tools().GetFEUserDeatils();
+                    objfetools.lstusername = new BL_Fe_Tools().GetFEUserDeatils(user_id,"true");
                     objfetools.lstFEtool = new BLUser().BindFETool();
                 }
                 else

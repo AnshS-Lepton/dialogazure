@@ -529,6 +529,14 @@ namespace DataAccess
             catch { throw; }
         }
 
+        public List<DropDownMaster> GetDropDownList(string doctype)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DropDownMaster>("fn_get_upload_dropdownlist", new { dropdownType = doctype }); //"LinkType"
+            }
+            catch { throw; }
+        }
         public List<layerDetail> GetLayerDetailsForHistory()
         {
 

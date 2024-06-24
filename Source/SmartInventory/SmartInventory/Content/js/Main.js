@@ -8,7 +8,8 @@ let CollisionFilterExtension = deck.CollisionFilterExtension;
 //let ICON_MAPPING = null;
 var Main = function () {
     var app = this;
-    this.IsVecorLayerEnabled = true; //$("#hdnIsWMSLayerLoadingEnabled").val() == 'False' ? true : false;
+    this.IsVecorLayerEnabled = $("#hdnIsVectorLayerEnabled").val() == 'False' ? false : true;;
+    //$("#hdnIsWMSLayerLoadingEnabled").val() == 'False' ? true : false;
     this.layoutMap = undefined;
     this.map = undefined;
     this.infowindow = new google.maps.InfoWindow();
@@ -218,6 +219,7 @@ var Main = function () {
     this.trenchFilteredGeoJson = [];
     this.ductFilteredGeoJson = [];
     this.handholeFilteredGeoJson = [];
+    this.structureFilteredGeoJson = [];
     this.cabinetFilteredGeoJson = [];
     this.patchpanelFilteredGeoJson = [];
     this.htbFilteredGeoJson = [];
@@ -288,6 +290,10 @@ var Main = function () {
     this.LengthUnit = "";
     this.isNetworkTicketReq = false;
     this.ticketStatus = '';
+    this.fSource_ref_id = '';
+    this.fSource_ref_type = '';
+    this.fIs_new_entity = false;
+    this.fStatus = '';
     this.LayerLoadingStatusMap = new Map();
     this.DE = {
         "frmAddHTB": "#frmAddHTB",
@@ -3061,9 +3067,10 @@ var Main = function () {
             //console.log("Handhole called");
             return item.layer_name == "Structure";
         });
+        app.filterStructureGeoJsonData();
         return new GeoJsonLayer({
             id: "structure",
-            data: app.filterDataWithProvinceGeom(app.structureGeoJson, "FeatureCollection", "STRP,STR,STRC"), //app.ontGeoJson,
+            data: app.filterDataWithProvinceGeom(app.structureFilteredGeoJson, "FeatureCollection", "STRP,STR,STRC"), //app.ontGeoJson,
             filled: true,
             pickable: true,
             useDevicePixels: app.useDevicePixelsInVectorLayer,
@@ -3845,14 +3852,34 @@ var Main = function () {
     // }
     this.filterAreaGeoJsonData = function (eType) {       
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
         app.areaFilteredGeoJson = {
             type: "FeatureCollection",
             features: app.areaGeoJson.features.reduce(function (result, feature) {
-                if (sDesignId == '' || feature.properties.gis_design_id == sDesignId) {
+                if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -3861,14 +3888,34 @@ var Main = function () {
     }
     this.filterSubAreaGeoJsonData = function (eType) {
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
         app.subareaFilteredGeoJson = {
             type: "FeatureCollection",
             features: app.subareaGeoJson.features.reduce(function (result, feature) {
-                if (sDesignId == '' || feature.properties.gis_design_id == sDesignId) {
+                if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -3877,14 +3924,34 @@ var Main = function () {
     }
     this.filterDSAGeoJsonData = function (eType) {
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
         app.dsaFilteredGeoJson = {
             type: "FeatureCollection",
             features: app.dsaGeoJson.features.reduce(function (result, feature) {
-                if (sDesignId == '' || feature.properties.gis_design_id == sDesignId) {
+                if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -3893,14 +3960,34 @@ var Main = function () {
     }
     this.filterCSAGeoJsonData = function (eType) {
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
         app.csaFilteredGeoJson = {
             type: "FeatureCollection",
             features: app.csaGeoJson.features.reduce(function (result, feature) {
-                if (sDesignId == '' || feature.properties.gis_design_id == sDesignId) {
+                if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -3914,7 +4001,23 @@ var Main = function () {
         let sOwnership = '';
         let sThirdPartyVendor = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
@@ -3938,7 +4041,11 @@ var Main = function () {
                         (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                         (sCable_Category == '' || feature.properties.cable_category == sCable_Category) &&
                         (sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
-                        (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1))) {
+                        (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
+                        (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                        (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                        (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                        (sStatus == '' || feature.properties.status == sStatus)) {
                         result.push(feature);
                     }
                     return result;
@@ -3968,7 +4075,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
-      
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
@@ -3991,7 +4114,11 @@ var Main = function () {
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4002,7 +4129,12 @@ var Main = function () {
         let sOwnership = '';
         let sThirdPartyVendor = '';
         let sRouteId = '';
-        let sDesignId = '';
+        let sDesignId = '';    
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4016,13 +4148,29 @@ var Main = function () {
         if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
             sThirdPartyVendor = app.thirdpartyvendor;
         }
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }       
         app.poleFilteredGeoJson = {
             type: "FeatureCollection",
             features: app.poleGeoJson.features.reduce(function (result, feature) {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4034,7 +4182,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
@@ -4053,7 +4217,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4065,7 +4233,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
@@ -4084,19 +4268,39 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
             }, [])
         };
     }
-    this.filterFMSGeoJsonData = function (eType) {
+    this.filterFMSGeoJsonData = function (eType) {        
         let sOwnership = '';
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
@@ -4115,7 +4319,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4127,7 +4335,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
@@ -4146,7 +4370,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4158,7 +4386,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
@@ -4177,7 +4421,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4189,7 +4437,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
@@ -4208,7 +4472,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4220,7 +4488,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
@@ -4239,7 +4523,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4251,7 +4539,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
@@ -4270,7 +4574,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4282,7 +4590,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
         }
@@ -4301,7 +4625,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4313,6 +4641,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4332,7 +4677,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4344,6 +4693,22 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4363,7 +4728,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4376,6 +4745,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4395,7 +4781,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4403,12 +4793,71 @@ var Main = function () {
         };
     }
 
+    this.filterStructureGeoJsonData = function (eType) {      
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
 
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
+
+        if (app.selected_design_id != "" && app.selected_design_id != undefined) {
+            sDesignId = app.selected_design_id;
+        }
+        if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
+        }
+        if (app.ownership != '' && app.ownership != undefined) {
+            sOwnership = app.ownership;
+        }
+        if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
+            sThirdPartyVendor = app.thirdpartyvendor;
+        }
+        app.structureFilteredGeoJson = {            
+            type: "FeatureCollection",
+            features: app.structureGeoJson.features.reduce(function (result, feature) {
+                if ((sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
+                    result.push(feature);
+                }
+                return result;
+            }, [])
+        };
+    }
     this.filterCabinetGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4428,7 +4877,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4442,6 +4895,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4461,7 +4931,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4475,6 +4949,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4494,7 +4985,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4508,6 +5003,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4527,7 +5039,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4540,6 +5056,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4559,7 +5092,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4572,6 +5109,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4591,7 +5145,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4604,6 +5162,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4623,7 +5198,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4636,6 +5215,23 @@ var Main = function () {
         let sThirdPartyVendor = '';
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4655,7 +5251,11 @@ var Main = function () {
                 if ((sOwnership == '' || feature.properties.ownership_type == sOwnership) &&
                     (sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
                     (sThirdPartyVendor == '' || (app.thirdpartyvendor.indexOf(feature.properties.third_party_vendor_id.toString()) > -1)) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4665,6 +5265,23 @@ var Main = function () {
     this.filterSlackGeoJsonData = function (eType) {       
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4676,7 +5293,11 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.slackGeoJson.features.reduce(function (result, feature) {
                 if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4686,6 +5307,23 @@ var Main = function () {
     this.filterEquipmentGeoJsonData = function (eType) {
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4697,7 +5335,11 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.equipmentGeoJson.features.reduce(function (result, feature) {
                 if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4707,6 +5349,23 @@ var Main = function () {
     this.filterRackGeoJsonData = function (eType) {
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4718,7 +5377,11 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.rackGeoJson.features.reduce(function (result, feature) {
                 if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4728,6 +5391,23 @@ var Main = function () {
     this.filterTreeGeoJsonData = function (eType) {
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4739,7 +5419,11 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.treeGeoJson.features.reduce(function (result, feature) {
                 if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4749,6 +5433,23 @@ var Main = function () {
     this.filterCustomerGeoJsonData = function (eType) {
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4760,7 +5461,11 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.customerGeoJson.features.reduce(function (result, feature) {
                 if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4770,6 +5475,23 @@ var Main = function () {
     this.filterLoopGeoJsonData = function (eType) {
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4781,7 +5503,11 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.loopGeoJson.features.reduce(function (result, feature) {
                 if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4791,6 +5517,23 @@ var Main = function () {
     this.filterFaultGeoJsonData = function (eType) {
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4802,7 +5545,11 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.faultGeoJson.features.reduce(function (result, feature) {
                 if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -4812,6 +5559,23 @@ var Main = function () {
     this.filterBuildingGeoJsonData = function (eType) {
         let sRouteId = '';
         let sDesignId = '';
+        let sSource_ref_id = '';
+        let sSource_ref_type = '';
+        let sIs_new_entity = '';
+        let sStatus = '';
+
+        if (app.fSource_ref_id != "" && app.fSource_ref_id != undefined) {
+            sSource_ref_id = app.fSource_ref_id;
+        }
+        if (app.fSource_ref_type != "" && app.fSource_ref_type != undefined) {
+            sSource_ref_type = app.fSource_ref_type;
+        }
+        if (app.fIs_new_entity != "" && app.fIs_new_entity != undefined) {
+            sIs_new_entity = app.fIs_new_entity;
+        }
+        if (app.fStatus != "" && app.fStatus != undefined) {
+            sStatus = app.fStatus;
+        }
 
         if (app.selected_design_id != "" && app.selected_design_id != undefined) {
             sDesignId = app.selected_design_id;
@@ -4823,7 +5587,11 @@ var Main = function () {
             type: "FeatureCollection",
             features: app.buildingGeoJson.features.reduce(function (result, feature) {
                 if ((sDesignId == '' || feature.properties.gis_design_id == sDesignId) &&
-                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1))) {
+                    (sRouteId == '' || (app.selectedRoutevalue.indexOf(feature.properties.route_cable_id.toString()) > -1)) &&
+                    (sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
+                    (sSource_ref_type == '' || feature.properties.source_ref_type == sSource_ref_type) &&
+                    (sIs_new_entity == '' || feature.properties.is_new_entity == sIs_new_entity) &&
+                    (sStatus == '' || feature.properties.status == sStatus)) {
                     result.push(feature);
                 }
                 return result;
@@ -5272,7 +6040,7 @@ var Main = function () {
                 }
                 else {
                     app.updateLayerLoadingStatus(_entityName);
-                    console.log('error');
+                    console.log('error_'+_entityName);
                     reject("There is some error");
                 }
 
@@ -8467,14 +9235,26 @@ var Main = function () {
     this.SetfilterNetworkTicketFilters = function (_isNetworkTicketRequest, _ticketId) {
         app.filterNetworkTicketValue = "1 = 1";
         if (_isNetworkTicketRequest) {
-            if (app.ticketStatus == 'InProgress' || app.ticketStatus == 'Rejected') {
+            if (app.ticketStatus == 'InProgress' || app.ticketStatus == 'Rejected' || 'Completed') {
+                app.fSource_ref_id = _ticketId;
+                app.fSource_ref_type = 'Network_Ticket';
+                app.fIs_new_entity = true;
+                app.fStatus = '';
                 app.filterNetworkTicketValue = " ([source_ref_id] ='" + _ticketId + "') and [source_ref_type]='Network_Ticket' and [is_new_entity]=true";
             }
             if (app.ticketStatus == 'Approved') {
+                app.fSource_ref_id = _ticketId;
+                app.fSource_ref_type = 'Network_Ticket';
+                app.fIs_new_entity = false;
+                app.fStatus = '';
                 app.filterNetworkTicketValue = " ([source_ref_id] ='" + _ticketId + "') and [source_ref_type]='Network_Ticket' and [is_new_entity]=false";
             }
         }
         else {
+            app.fSource_ref_id = '';
+            app.fSource_ref_type = '';
+            app.fIs_new_entity = false;
+            app.fStatus = 'A';
             app.filterNetworkTicketValue = " [status]='A' and [is_new_entity]=false";
         }
 
@@ -10181,7 +10961,6 @@ var Main = function () {
     }
 
     function OpenNewWorkspace(wrkspcID) {
-        //debugger;
         app.OldWorkSpaceId = wrkspcID;
         $("[name='divmarking_" + app.createMrkngs + "']").removeClass('toolBoxShow');
         app.Markingflag = 0;
@@ -12206,12 +12985,14 @@ var Main = function () {
 
 
     this.drawAddLineEntity = function (latLng, libItem) {
-        if (si.MaxCableLength > parseInt($('#hdnMaxLineEntityLength').val()) && si.LengthUnit != 'meter') {
-            alert("Maximum " + parseInt($('#hdnMaxLineEntityLength').val()) + " KM length of an entity can be created!");
-            $('#btnCancelTP').click();
-            si.MaxCableLength = 0;
-            si.LengthUnit = "";
-            return false;
+        if ($('#hdnMaxLineEntityLength').val() != '') {
+            if (si.MaxCableLength > parseInt($('#hdnMaxLineEntityLength').val()) && si.LengthUnit != 'meter') {
+                alert("Maximum " + parseInt($('#hdnMaxLineEntityLength').val()) + " KM length of an entity can be created!");
+                $('#btnCancelTP').click();
+                si.MaxCableLength = 0;
+                si.LengthUnit = "";
+                return false;
+            }
         }
         app.clearTempNewEntity();
         LandBase.clearTempNewEntity();
@@ -19759,7 +20540,7 @@ var Main = function () {
         //    }
         //    $("#dvDocument").addClass('hideloader').removeClass('showloader');
         //}, true, true);
-    }
+    }    
 
     this.downloadall = function () {
         var system_Id = $('#infoTB').attr('att_systemid');
@@ -19997,10 +20778,10 @@ var Main = function () {
         if (uploadedfile.length > 0) {
             for (var i = 0; i < uploadedfile.length; i++) {
                 frmData.append('images[]', uploadedfile[i]);
-                //if (uploadedfile[i].size > Sizeinbytes) {                 
+                //if (uploadedfile[i].size > Sizeinbytes) {
                 //    alert(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_109, (filesize / 1024).toFixed(2))));
                 //    return false;
-                //}               
+                //}
                 if (uploadedfile[i].name.length > 100) {
                     alert("File Name length should be less than <b>100</b>.</br>Current file name length: " + uploadedfil[i].name.lengt + "");
                     return false;
@@ -20068,6 +20849,73 @@ var Main = function () {
             alert(MultilingualKey.SI_OSP_GBL_GBL_GBL_099);
             return false;
         }
+    }
+    this.uploadMultiDocFileWithfileType = function () {
+        var frmData = new FormData();
+        var filesize = parseInt($('#hdnMaxFileUploadSizeLimit').val(), 10);
+        var maxFileCountLimit = parseInt($('#fdnMaxFileCountLimit').val(), 10);
+        var Sizeinbytes = filesize * 1024;
+        var TotalSizeinBytes = Sizeinbytes * maxFileCountLimit;
+        var invalidFiles = [];
+        var allowedFileTypes = $('#allowedDocumentAttachmentType').val().split(',');
+        var totalFilesize = 0;
+
+        $('#form-rows .form-group').each(function () {            
+            var documentType = $(this).find('select').val();
+            var uploadedFiles = $(this).find('input[type="file"]')[0].files;
+            if (uploadedFiles) {
+                for (var i = 0; i < uploadedFiles.length; i++) {
+                    var uploadedFile = uploadedFiles[i];
+                    if (uploadedFile) {
+                        if (uploadedFile.name.length > 100) {
+                            invalidFiles.push(uploadedFile.name + " - File Name length should be less than 100.");
+                            return true;
+                        }
+
+                        var fileExtension = '.' + uploadedFile.name.split('.').pop().toLowerCase();
+                        if (!allowedFileTypes.includes(fileExtension)) {
+                            invalidFiles.push(uploadedFile.name + " - Invalid file type.");
+                            return true;
+                        }
+
+                        totalFilesize += uploadedFile.size;
+                        if (totalFilesize > TotalSizeinBytes) {
+                            alert("Total file size exceeds the maximum allowed size.");
+                            return false;
+                        }
+                        frmData.append('document_type', documentType);
+                        frmData.append('uploadedfile', uploadedFile);
+                    }
+                }
+            }
+        });
+
+        if (invalidFiles.length > 0) {
+            alert("The following files are not of allowed file type or exceed the name length limit:\n" + invalidFiles.join("\n"));
+            return false;
+        }
+
+        frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
+        frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+
+        ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
+            if (resp.status == "OK" || resp.status == "DUPLICATE_EXIST") {
+                ajaxReqforFileUpload('Main/UploadMultipleDocumentWithfiletype', frmData, true, function (resp) {
+                    if (resp.status == "OK") {
+                        $('#closeModalPopup').trigger("click");
+                        app.getElementImages();
+                        console.log("MSG true:" + resp.message);
+                        alert(resp.message);
+                    } else {
+                        console.log("MSG false:" + resp.message);
+                        alert(resp.message);
+                    }
+                }, true);
+            } else {
+                console.log("MSG false:" + resp.message);
+                alert(resp.message);
+            }
+        }, true);
     }
     this.uploadDocumentFile = function () {
         //;
@@ -23844,52 +24692,59 @@ var Main = function () {
             var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
             app.addNewNetworkOverlay(overlayLayer);
 
-
-            //--------Map request-- OPTIMIZATION ---- START---WITHOUT LABEL
-
-
-            //var genericLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
-
-            //app.getAllActiveNetworkLayers(genericLayerFilter, false, true);
-
-            //var layerParam = { Name: app.allActiveLayers.length > 0 ? app.allActiveLayers.join(",") : '', DisplayName: "All_Layers", Filters: genericLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'ALL', isWithLabel: false };
-            //var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
-            //app.addNewNetworkOverlay(overlayLayer);
-
-            //--------Map request-- OPTIMIZATION ---- END---WITH LABEL
-
-
-            //--------OLD Map request ---- START---WITH LABEL
+            var hdnIsWMSLayerLoadingEnabled = $("#hdnIsWMSLayerLoadingEnabled").val();
+           
 
             //load planned layers..
             app.ActivePlannedlayers = app.getActiveNetworkLayers('P', false);
             //if (app.ActivePlannedlayers.length > 0) {
 
-            var plannedLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
-            var layerParam = { Name: app.ActivePlannedlayers.length > 0 ? app.ActivePlannedlayers.join(",") : '', DisplayName: "Planned_Layers", Filters: plannedLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'P', isWithLabel: false };
-            var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
-            app.addNewNetworkOverlay(overlayLayer);
+            if (hdnIsWMSLayerLoadingEnabled == "True") {
 
-            //}
+                var plannedLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+                var layerParam = { Name: app.ActivePlannedlayers.length > 0 ? app.ActivePlannedlayers.join(",") : '', DisplayName: "Planned_Layers", Filters: plannedLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'P', isWithLabel: false };
 
-            ////load As Built layers..
+                var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
+                app.addNewNetworkOverlay(overlayLayer);
+            }
+            else {
+                var plannedLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+                var layerParam = { Name: app.ActivePlannedlayers.length > 0 ? app.ActivePlannedlayers.join(",") : '', DisplayName: "Planned_Layers", Filters: plannedLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'P', isWithLabel: false };
+                LayerFilters.push(layerParam);
+            }
+           
             app.ActiveAsBuiltlayers = app.getActiveNetworkLayers('A', false);
             //if (app.ActiveAsBuiltlayers.length > 0) {
 
-            var AsBuiltLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
-            var layerParam = { Name: app.ActiveAsBuiltlayers.length > 0 ? app.ActiveAsBuiltlayers.join(",") : '', DisplayName: "AsBuilt_Layers", Filters: AsBuiltLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'A', isWithLabel: false };
-            var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
-            app.addNewNetworkOverlay(overlayLayer);
+
+            if (hdnIsWMSLayerLoadingEnabled == "True") {
+                var AsBuiltLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+                var layerParam = { Name: app.ActiveAsBuiltlayers.length > 0 ? app.ActiveAsBuiltlayers.join(",") : '', DisplayName: "AsBuilt_Layers", Filters: AsBuiltLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'A', isWithLabel: false };
+                var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
+                app.addNewNetworkOverlay(overlayLayer);
+            }
+            else {
+                var AsBuiltLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+                var layerParam = { Name: app.ActiveAsBuiltlayers.length > 0 ? app.ActiveAsBuiltlayers.join(",") : '', DisplayName: "AsBuilt_Layers", Filters: AsBuiltLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'A', isWithLabel: false };
+                LayerFilters.push(layerParam);
+            }
             //--------OLD Map request ---- START---WITH LABEL
             /////////////////// Layer with labels 
 
             var polygonLayerWithLabel = app.getActivePolygonlayer(true);
 
-            var polygonlayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
-            var layerParam = { Name: polygonLayerWithLabel.length > 0 ? polygonLayerWithLabel.join(",") : '', DisplayName: "Polygon Layer with lebel", Filters: polygonlayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: '', isWithLabel: false };
-            var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
-            app.addNewNetworkOverlay(overlayLayer);
 
+            if (hdnIsWMSLayerLoadingEnabled == "True") {
+                var polygonlayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+                var layerParam = { Name: polygonLayerWithLabel.length > 0 ? polygonLayerWithLabel.join(",") : '', DisplayName: "Polygon Layer with lebel", Filters: polygonlayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: '', isWithLabel: false };
+                var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
+                app.addNewNetworkOverlay(overlayLayer);
+            }
+            else {
+                var polygonlayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+                var layerParam = { Name: polygonLayerWithLabel.length > 0 ? polygonLayerWithLabel.join(",") : '', DisplayName: "Polygon Layer with lebel", Filters: polygonlayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: '', isWithLabel: false };
+                LayerFilters.push(layerParam);
+            }
 
             //--------Map request-- OPTIMIZATION ---- START---WITH LABEL
             //var genericLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
@@ -23908,21 +24763,34 @@ var Main = function () {
             ////load planned layers with labels
             app.ActivePlannedlayersWithlabels = app.getActiveNetworkLayers('P', true);
             //if (app.ActivePlannedlayersWithlabels.length > 0) {
-
-            var plannedLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
-            var layerParam = { Name: app.ActivePlannedlayersWithlabels.length > 0 ? app.ActivePlannedlayersWithlabels.join(",") : '', DisplayName: "Planned_LayersLabels", Filters: plannedLayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: 'P', isWithLabel: true };
-            var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
-            app.addNewNetworkOverlay(overlayLayer);
-
+            if (hdnIsWMSLayerLoadingEnabled == "True") {
+                var plannedLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+                var layerParam = { Name: app.ActivePlannedlayersWithlabels.length > 0 ? app.ActivePlannedlayersWithlabels.join(",") : '', DisplayName: "Planned_LayersLabels", Filters: plannedLayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: 'P', isWithLabel: true };
+                var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
+                app.addNewNetworkOverlay(overlayLayer);
+            }
+            else {
+                var plannedLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+                var layerParam = { Name: app.ActivePlannedlayersWithlabels.length > 0 ? app.ActivePlannedlayersWithlabels.join(",") : '', DisplayName: "Planned_LayersLabels", Filters: plannedLayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: 'P', isWithLabel: true };
+                LayerFilters.push(layerParam);
+            }
             //}
             //load As-Built layers with labels
             app.ActiveAsBuiltlayersWithlabels = app.getActiveNetworkLayers('A', true);
             //if (app.ActiveAsBuiltlayersWithlabels.length > 0) {
 
-            var AsBuiltLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
-            var layerParam = { Name: app.ActiveAsBuiltlayersWithlabels.length > 0 ? app.ActiveAsBuiltlayersWithlabels.join(",") : '', DisplayName: "AsBuilt_LayersLabels", Filters: AsBuiltLayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: 'A', isWithLabel: true };
-            var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
-            app.addNewNetworkOverlay(overlayLayer);
+            if (hdnIsWMSLayerLoadingEnabled == "True") {
+                var AsBuiltLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+                var layerParam = { Name: app.ActiveAsBuiltlayersWithlabels.length > 0 ? app.ActiveAsBuiltlayersWithlabels.join(",") : '', DisplayName: "AsBuilt_LayersLabels", Filters: AsBuiltLayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: 'A', isWithLabel: true };
+                var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
+                app.addNewNetworkOverlay(overlayLayer);
+            }
+            else {
+                var AsBuiltLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+                var layerParam = { Name: app.ActiveAsBuiltlayersWithlabels.length > 0 ? app.ActiveAsBuiltlayersWithlabels.join(",") : '', DisplayName: "AsBuilt_LayersLabels", Filters: AsBuiltLayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: 'A', isWithLabel: true };
+                var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
+                LayerFilters.push(layerParam);
+            }
             //--------OLD Map request ---- END---WITH LABEL
             app.reLoadNetworkGoogleLayers();
 
@@ -23966,11 +24834,21 @@ var Main = function () {
         },
         shoNWTNetwork: function (_ticketId) {
             app.Networkticket.LoadLayersOnMap(_ticketId);
+            app.layerChekedState = app.GetLayerEnableState();
+          
+            if (app.IsVecorLayerEnabled) {
+                app.RefreshVectorDataAndLayer();
+            }
             setLayerOpacity('', 0.3);
         },
         removeNWTNetwork: function () {
             app.removeNetworkAllWMSLayers();
             setLayerOpacity('', 1);
+
+            if (app.IsVecorLayerEnabled) {
+                $(app.DE.lyrRefresh).trigger("click");
+               
+            }
         },
         showNetworkOnMap: function (_ticketId, _networkId, _regionId, _provinceId, _ticketName, ticket_status) {
             app.ticketId = _ticketId;   
@@ -23991,13 +24869,26 @@ var Main = function () {
            
             //$('#chkTicketNetwork').trigger("click");
             $('#chkTicketNetwork').unbind('click').on("click", function () {
-                if ($(this).is(':checked')) {                    
+                if ($(this).is(':checked')) { 
                     app.isNetworkTicketReq = true;
+                    app.fSource_ref_id = _ticketId;
+                    app.fSource_ref_type = 'Network_Ticket';
+                    if (ticket_status == 'Approved')
+                        app.fIs_new_entity = false;
+                    else
+                        app.fIs_new_entity = true;
+                    app.fStatus = '';
+                    app.ticketStatus = ticket_status;
                     app.Networkticket.shoNWTNetwork(_ticketId);
                     app.Networkticket.removeExistingNetwork();
                 } else {
                     app.isNetworkTicketReq = false; 
                     app.ticketStatus = '';
+                    app.fSource_ref_id = '';
+                    app.fSource_ref_type = '';
+                    app.fIs_new_entity = false;
+                    app.fStatus = 'A';
+                  
                     app.Networkticket.showExistingNetwork(_ticketId);
                     app.Networkticket.removeNWTNetwork();
                 }
