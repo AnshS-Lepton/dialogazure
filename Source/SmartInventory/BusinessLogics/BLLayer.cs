@@ -257,7 +257,7 @@ namespace BusinessLogics
         public List<Dictionary<string, string>> GetExportReportSummaryViewNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
 		{
 			return new DALayer().GetExportReportSummaryViewNew(objReportFilter, layerName);
-		}
+		}        
 
         public List<Dictionary<string, string>> GetExportReportSummaryViewNewCdb(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
@@ -272,6 +272,18 @@ namespace BusinessLogics
 		{
 			return new DALayer().GetExportReportSummaryViewCSV(objReportFilter, layerName);
 		}
+        public List<Dictionary<string, string>> GetSplitReportSummaryViewAllExcel(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetSplitReportSummaryViewAllExcel(objReportFilter, layerName);
+        }
+        public List<Dictionary<string, string>> GetSplitReportSummaryViewCSV(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetSplitReportSummaryViewCSV(objReportFilter, layerName);
+        }
+        public List<Dictionary<string, string>> GetSplitReportSummaryViewAllShape(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetSplitReportSummaryViewAllShape(objReportFilter, layerName);
+        }
 
         public List<Dictionary<string, string>> GetExportReportSummaryViewCSVCdb(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {

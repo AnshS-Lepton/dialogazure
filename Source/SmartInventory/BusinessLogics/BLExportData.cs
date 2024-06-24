@@ -20,5 +20,9 @@ namespace BusinessLogics
         {
             return new DAfiletype().getFileType(moduleAbbr);
         }
+        public List<fileTypes> getfiletype_withcablesplit(string moduleAbbr, bool iscablesplit)
+        {
+            return new DAfiletype().getfiletype_withcablesplit(moduleAbbr, iscablesplit);
+        }
     }
 }

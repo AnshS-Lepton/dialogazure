@@ -22,5 +22,14 @@ namespace DataAccess
                 throw ;
             }
         }
+        public List<fileTypes> getfiletype_withcablesplit(string moduleAbbr, bool iscablesplit)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<fileTypes>("fn_get_file_type_for_splitcable", new { p_module_abbr = moduleAbbr, p_splitcable = iscablesplit }, true);
+            }
+            catch
+            { throw; }
+        }
     }
 }

@@ -2339,6 +2339,7 @@
     <Content Include="Views\Report\_EntityAssociationReportLog.cshtml" />
     <Content Include="Views\Report\_EntityAssociationSummaryView.cshtml" />
     <Content Include="Views\Library\_trenchExecution.cshtml" />
+    <Content Include="Views\Report\_CableSplitExportReport.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
