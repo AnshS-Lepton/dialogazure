@@ -230,8 +230,7 @@ namespace SmartInventory.Controllers
                             fname = Path.Combine(Server.MapPath("~/Uploads/"), fname);
 
                             file.SaveAs(fname);
-                            Session["file_Name"] = fname;
-                            lstfilename.Add(fname);
+                       
                             //string FileName = Path.GetFileNameWithoutExtension(fname);
                             var SourceId = "";
                             if (Path.GetExtension(fname) == ".dxf")
@@ -249,8 +248,9 @@ namespace SmartInventory.Controllers
                                 file.SaveAs(fname);
                             }
                             int userId = Convert.ToInt32(Session["user_id"]);
-                            if (!isSupportFile(fname))
-                            {
+                           
+                                if (!isSupportFile(fname))
+                                {
 
                                 Session["fileName"] = fname;
                                 getFileData(summary.entity_type);
@@ -310,7 +310,8 @@ namespace SmartInventory.Controllers
                                 summary = blDataUploader.Save(summary);
                                 summary.status_message = ConstantsKeys.PROCESSING;
                                 count = summary.id;
-                                fluploadid.Add(count);
+                                fluploadid.Add(count);                               
+                                lstfilename.Add(fname);
                                 //lstfilename.Add(file.FileName);
                                 columnMappingTemplate.lst_UploadId = fluploadid;
                             }
@@ -456,7 +457,7 @@ namespace SmartInventory.Controllers
                 }
             }
         }
-        public void getFileDatabkp(string entityType, string fname)
+        public void getFilesData(string entityType, string fname)
         {
             string geomTempColName = string.Empty;
             string latTempColName = string.Empty;
@@ -838,7 +839,7 @@ namespace SmartInventory.Controllers
 
 
                     string ffilepath = flnames.ToString();
-                    getFileDatabkp(layerDetail.layer_name, ffilepath);
+                    getFilesData(layerDetail.layer_name, ffilepath);
 
                     //getFileData(layerDetail.layer_name);
                 List<Mapping> lstMapping = blDataUploader.GetMappings(layerDetail.layer_name);
