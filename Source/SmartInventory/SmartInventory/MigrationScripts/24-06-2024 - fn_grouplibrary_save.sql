@@ -94,7 +94,7 @@ END IF;
 -- GET New Network-Id....
 SELECT clone.status, clone.message, clone.o_p_system_id , clone.o_p_network_id, clone.o_p_entity_type, clone.o_sequence_id into
 new_status, new_network_id, s_p_system_id , s_p_network_id, s_p_entity_type, s_sequence_id
-FROM fn_get_clone_network_code01(v_entity_type,p_gtype, v_longitude||' '||v_latitude::character varying,0,'') as clone limit 1;
+FROM fn_get_clone_network_code(v_entity_type,p_gtype, v_longitude||' '||v_latitude::character varying,0,'') as clone limit 1;
 
 select id into v_province_id from province_boundary province where ST_Within(St_Geomfromtext('POINT('||v_longitude||' '||v_latitude||')',4326),province.sp_geometry);
 select id into v_region_id from region_boundary region where ST_Within(St_Geomfromtext('POINT('||v_longitude||' '||v_latitude||')',4326),region.sp_geometry);
@@ -205,7 +205,7 @@ THEN
  LOOP
 
 SELECT * INTO V_STATUS FROM
- fn_save_child_group_library01(V_AROW.ENTITY_TYPE,NEW_NETWORK_ID, CURRENTSYSTEM_ID, v_entity_type,V_LONGITUDE::DOUBLE PRECISION,V_LATITUDE::DOUBLE PRECISION,v_user_id,V_AROW.ID);
+ fn_save_child_group_library(V_AROW.ENTITY_TYPE,NEW_NETWORK_ID, CURRENTSYSTEM_ID, v_entity_type,V_LONGITUDE::DOUBLE PRECISION,V_LATITUDE::DOUBLE PRECISION,v_user_id,V_AROW.ID);
  
  END LOOP;
 END IF;
