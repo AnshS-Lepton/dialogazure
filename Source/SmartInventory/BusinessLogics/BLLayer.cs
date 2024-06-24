@@ -415,7 +415,10 @@ namespace BusinessLogics
         {
             return new DALayer().GetAssociationSummaryViewKMLNew(objReportFilter, layerName);
         }
-
+        public List<DropDownMaster> GetDropDownList(string doctype)
+        {
+            return new DALayer().GetDropDownList(doctype);
+        }
         // End Association Report
 
     }

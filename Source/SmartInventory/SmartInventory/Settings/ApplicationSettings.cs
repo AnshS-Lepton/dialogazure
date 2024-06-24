@@ -81,6 +81,7 @@ namespace SmartInventory.Settings
         public static int DefaultBulkOperationPaging = 0;
         public static int MaxFileUploadSizeLimit = 0; 
         public static int MaxFileCountLimit = 0;
+        public static int MaxAdddocumentRowNumber = 0;
 
         //public static string allowedDocumentAttachmentType ="";
         //public static string allowedImageAttachmentType = "";
@@ -887,6 +888,9 @@ namespace SmartInventory.Settings
                 {
                     IsGeometryUpdateOnAssociationAllowed = Convert.ToInt32(objSetting.value);
                 }
+                if (objSetting.key == "AdddocumentRowNumber")
+                    MaxAdddocumentRowNumber = Convert.ToInt32(objSetting.value);
+
                 //if (objSetting.key == "allowedDocumentAttachmentType")
                 //{
                 //    allowedDocumentAttachmentType = objSetting.value;
