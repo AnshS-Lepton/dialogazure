@@ -15,373 +15,374 @@
 }, new { id = "frmAddFiberLink", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
 {
     @Html.HiddenFor(m => m.system_id, new { @id = "hdnFiberLinkSystemId" })
+    @Html.HiddenFor(m => m.CreateFL)
     <div id="CreateFiberLink" class="tab-pane fade in active show">
-            <div class="space-pad fiber--min-height">
-                <fieldset class="the-fieldset">
-                    <legend class="the-legend">@Resources.Resources.SI_GBL_GBL_NET_FRM_126</legend>
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_001:</label>
-                        <div class="col-md-4">
-                            @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly", @id = "txtNetworkId", @readonly = true })
-                        </div>
-                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_102:</label>
-                        <div class="col-md-4">
-                            @Html.TextBoxFor(m => m.service_id, new { @class = "form-control", @id = "txtServiceId", @maxlength = "100" })
-                        </div>
+        <div class="space-pad fiber--min-height">
+            <fieldset class="the-fieldset">
+                <legend class="the-legend">@Resources.Resources.SI_GBL_GBL_NET_FRM_126</legend>
+                <div class="form-group row">
+                    <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_001:</label>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly", @id = "txtNetworkId", @readonly = true })
                     </div>
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_153 <i class="clsMandatory">*</i>:</label>
+                    <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_102:</label>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.service_id, new { @class = "form-control", @id = "txtServiceId", @maxlength = "100" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_153 <i class="clsMandatory">*</i>:</label>
+                    <div class="col-md-4">
+                        <div class="TickCrossicon">
+                            <img src="~/Content/images/cross.gif" class="GifImg crossIcon @(Model.system_id==0?" crossIcon":"")" id="IconCross" title="Link Id Already Exist!" />
+                            <img src="~/Content/images/tick_1.gif" class="GifImg tickIcon @(Model.system_id>0?" tickIcon":"")" id="ImgTick" />
+
+                        </div>
+                        @if (Model.system_id == 0)
+                        {
+                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @id = "txtLinkId", @maxlength = "100", @onblur = "fiberLink.validateLinkId(this.value,'link_id');" })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @id = "txtLinkId", @maxlength = "100", @readonly = true })
+                        }
+
+                    </div>
+                    <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_GBL_155 <i class="clsMandatory">*</i> :</label>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(m => m.link_type, new SelectList(Model.lstLinkType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlLinkType" })
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_206:</label>
+
+                    <div class="col-md-4">
+
+                        @Html.DropDownListFor(m => m.main_link_type, new List<SelectListItem>
+                         {
+                          new SelectListItem{ Text="-Select-", Value = ""},
+                            new SelectListItem{ Text="Optical", Value = "Optical"},
+                            new SelectListItem{ Text="MW", Value = "MW"  }
+                         }, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                         {
+                             @class = "chosen-select form-control",
+                             @style = "padding:0;",
+                         }, new { @id = "ddlMainlinktype", @tabindex = "2", @title = "Status" }))
+                    </div>
+
+                    <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_GBL_190:</label>
+
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.main_link_id, new { @class = "form-control", @maxlength = "50", @id = "txtmainlinkid" })
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="control-label col-sm-2" for="entities">
+
+                        @Resources.Resources.SI_OSP_GBL_NET_GBL_191                                                :
+
+                    </label>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(m => m.redundant_link_type, new List<SelectListItem>
+                         {
+                          new SelectListItem{ Text="-Select-", Value = ""},
+                            new SelectListItem{ Text="Optical", Value = "Optical"},
+                            new SelectListItem{ Text="MW", Value = "MW"  }
+                         }, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                         {
+                             @class = "chosen-select form-control",
+                             @style = "padding:0;",
+                         }, new { @id = "ddlredundantlinktype", @tabindex = "2", @title = "Status" }))
+                    </div>
+
+                    <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_GBL_192:</label>
+
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.redundant_link_id, new { @class = "form-control", @maxlength = "50", @id = "txtredundantlinkid" })
+
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_127 <i class="clsMandatory">*</i>:</label>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.link_name, new { @class = "form-control remove-white-space", @maxlength = "100", @id = "txtLinkName" })
+                    </div>
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("start_point_type"))
+                    {
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_128:</label>
+                        <div class="col-md-4">
+
+                            @Html.DropDownListFor(x => x.start_point_type, new SelectList(Model.lstStartPointType.Select(x => new { Value = x.layer_title, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlStartPointtype", @onchange = "fiberLink.GetStartPoint();" })
+                        </div>
+                    }
+                </div>
+                <div class="form-group row">
+
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("start_point_network_id"))
+                    {
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_129:</label>
+                        <div class="col-md-4 ui-widget">
+                            <div class="TickCrossicon">
+                                <img src="~/Content/images/cross.gif" class="GifImg crossStartIcon @(Model.system_id==0?" crossStartIcon":"")" id="crossStartIcon" />
+                                <img src="~/Content/images/tick_1.gif" class="GifImg tickStartIcon @(Model.system_id>0?" tickStartIcon":"")" id="tickStartIcon" />
+                            </div>
+                            @Html.TextBoxFor(m => m.start_point_network_id, new { @class = "form-control ui-autocomplete-input", @maxlength = "50", @id = "txtStartPointNwkID", @onblur = "fiberLink.validateStartPointNetworkId(this.value);", @disabled = "true" })
+                        </div>
+                    }
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("start_point_location"))
+                    {
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_130:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.start_point_location, new { @class = "form-control", @maxlength = "100", @id = "txtStartPointLocation" })
+                        </div>
+                    }
+
+                </div>
+
+                <div class="form-group row">
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("end_point_type"))
+                    {
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_131:</label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(x => x.end_point_type, new SelectList(Model.lstEndPointType.Select(x => new { Value = x.layer_title, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlEndPointtype", @onchange = "fiberLink.GetEndPoint();" })
+                        </div>
+                    }
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("end_point_network_id"))
+                    {
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_132:</label>
                         <div class="col-md-4">
                             <div class="TickCrossicon">
-                                <img src="~/Content/images/cross.gif" class="GifImg crossIcon @(Model.system_id==0?" crossIcon":"")" id="IconCross" title="Link Id Already Exist!" />
-                                <img src="~/Content/images/tick_1.gif" class="GifImg tickIcon @(Model.system_id>0?" tickIcon":"")" id="ImgTick" />
-
+                                <img src="~/Content/images/cross.gif" class="GifImg crossEndIcon @(Model.system_id==0?" crossEndIcon":"")" id="crossEndIcon" />
+                                <img src="~/Content/images/tick_1.gif" class="GifImg tickEndIcon @(Model.system_id>0?" tickEndIcon":"")" id="tickEndIcon" />
                             </div>
-                            @if (Model.system_id == 0)
-                            {
-                                @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @id = "txtLinkId", @maxlength = "100", @onblur = "fiberLink.validateLinkId(this.value,'link_id');" })
-                            }
-                            else
-                            {
-                                @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @id = "txtLinkId", @maxlength = "100", @readonly = true })
-                            }
-
-                        </div>
-                        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_GBL_155 <i class="clsMandatory">*</i> :</label>
-                        <div class="col-md-4">
-                            @Html.DropDownListFor(m => m.link_type, new SelectList(Model.lstLinkType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlLinkType" })
-                        </div>
-                    </div>
-                    <div class="form-group row">
-
-                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_206:</label>
-
-                        <div class="col-md-4">
-
-                            @Html.DropDownListFor(m => m.main_link_type, new List<SelectListItem>
-                             {
-                              new SelectListItem{ Text="-Select-", Value = ""},
-                                new SelectListItem{ Text="Optical", Value = "Optical"},
-                                new SelectListItem{ Text="MW", Value = "MW"  }
-                             }, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
-                             {
-                                 @class = "chosen-select form-control",
-                                 @style = "padding:0;",
-                             }, new { @id = "ddlMainlinktype", @tabindex = "2", @title = "Status" }))
-                        </div>
-
-                        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_GBL_190:</label>
-
-                        <div class="col-md-4">
-                            @Html.TextBoxFor(m => m.main_link_id, new { @class = "form-control", @maxlength = "50", @id = "txtmainlinkid" })
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="entities">
-
-                            @Resources.Resources.SI_OSP_GBL_NET_GBL_191                                                :
-
-                        </label>
-                        <div class="col-md-4">
-                            @Html.DropDownListFor(m => m.redundant_link_type, new List<SelectListItem>
-                             {
-                              new SelectListItem{ Text="-Select-", Value = ""},
-                                new SelectListItem{ Text="Optical", Value = "Optical"},
-                                new SelectListItem{ Text="MW", Value = "MW"  }
-                             }, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
-                             {
-                                 @class = "chosen-select form-control",
-                                 @style = "padding:0;",
-                             }, new { @id = "ddlredundantlinktype", @tabindex = "2", @title = "Status" }))
-                        </div>
-
-                        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_GBL_192:</label>
-
-                        <div class="col-md-4">
-                            @Html.TextBoxFor(m => m.redundant_link_id, new { @class = "form-control", @maxlength = "50", @id = "txtredundantlinkid" })
-
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_127 <i class="clsMandatory">*</i>:</label>
-                        <div class="col-md-4">
-                            @Html.TextBoxFor(m => m.link_name, new { @class = "form-control remove-white-space", @maxlength = "100", @id = "txtLinkName" })
-                        </div>
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("start_point_type"))
-                        {
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_128:</label>
-                            <div class="col-md-4">
-
-                                @Html.DropDownListFor(x => x.start_point_type, new SelectList(Model.lstStartPointType.Select(x => new { Value = x.layer_title, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlStartPointtype", @onchange = "fiberLink.GetStartPoint();" })
-                            </div>
-                        }
-                    </div>
-                    <div class="form-group row">
-
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("start_point_network_id"))
-                        {
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_129:</label>
-                            <div class="col-md-4 ui-widget">
-                                <div class="TickCrossicon">
-                                    <img src="~/Content/images/cross.gif" class="GifImg crossStartIcon @(Model.system_id==0?" crossStartIcon":"")" id="crossStartIcon" />
-                                    <img src="~/Content/images/tick_1.gif" class="GifImg tickStartIcon @(Model.system_id>0?" tickStartIcon":"")" id="tickStartIcon" />
-                                </div>
-                                @Html.TextBoxFor(m => m.start_point_network_id, new { @class = "form-control ui-autocomplete-input", @maxlength = "50", @id = "txtStartPointNwkID", @onblur = "fiberLink.validateStartPointNetworkId(this.value);", @disabled = "true" })
-                            </div>
-                        }
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("start_point_location"))
-                        {
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_130:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.start_point_location, new { @class = "form-control", @maxlength = "100", @id = "txtStartPointLocation" })
-                            </div>
-                        }
-
-                    </div>
-
-                    <div class="form-group row">
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("end_point_type"))
-                        {
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_131:</label>
-                            <div class="col-md-4">
-                                @Html.DropDownListFor(x => x.end_point_type, new SelectList(Model.lstEndPointType.Select(x => new { Value = x.layer_title, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlEndPointtype", @onchange = "fiberLink.GetEndPoint();" })
-                            </div>
-                        }
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("end_point_network_id"))
-                        {
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_132:</label>
-                            <div class="col-md-4">
-                                <div class="TickCrossicon">
-                                    <img src="~/Content/images/cross.gif" class="GifImg crossEndIcon @(Model.system_id==0?" crossEndIcon":"")" id="crossEndIcon" />
-                                    <img src="~/Content/images/tick_1.gif" class="GifImg tickEndIcon @(Model.system_id>0?" tickEndIcon":"")" id="tickEndIcon" />
-                                </div>
-                                @Html.TextBoxFor(m => m.end_point_network_id, new { @class = "form-control", @maxlength = "50", @id = "txtEndPointNwkID", @onblur = "fiberLink.validateEndPointNetworkId(this.value);", @disabled = "true" })
-                            </div>
-                        }
-
-                    </div>
-                    <div class="form-group row">
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("end_point_location"))
-                        {
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_133:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.end_point_location, new { @class = "form-control", @maxlength = "100", @id = "txtEndPointLocation" })
-                            </div>
-                        }
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("no_of_lmc"))
-                        {
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_134:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.no_of_lmc, new { @class = "form-control  numbers-only", @maxlength = "3", @id = "txtNoOFLMC", @onkeypress = "return allowNumberOnly(event,this);" })
-                            </div>
-                        }
-
-                    </div>
-                    <div class="form-group row">
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("each_lmc_length"))
-                        {
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_135:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.each_lmc_length, new { @class = "form-control", @maxlength = "10", @id = "txtEachLMCLength", @onkeypress = "return ValidateNumberDecimal(this,event,4,2);" })
-                            </div>
-                        }
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("total_route_length"))
-                        {
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_136:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.total_route_length, new { @class = "form-control", @maxlength = "10", @id = "txtTotalRouteLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtTotalRouteLength');" })
-                            </div>
-                        }
-
-                    </div>
-                    <div class="form-group row">
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("gis_length"))
-                        {
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_137:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.gis_length, new { @class = "form-control", @maxlength = "10", @id = "txtGISLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtGISLength');" })
-                            </div>
-                        }
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("otdr_distance"))
-                        {
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_138:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.otdr_distance, new { @class = "form-control", @maxlength = "10", @id = "txtOTDRDistance", @onkeypress = "return si.allowNumberwithOneDot(event,'txtOTDRDistance');" })
-                            </div>
-                        }
-
-                    </div>
-                    <div class="form-group row">
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("handover_date"))
-                        {
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_139:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.handover_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @style = "background:#fff;", @id = "txtHandoverDate" })
-                                <img id="imgHandoverDate" class="assign-calen" src="~/Content/images/calendar.png" />
-                            </div>
-                        }
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("hoto_signoff_date"))
-                        {<label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_140:</label>
-                        <div class="col-md-4">
-                            @Html.TextBoxFor(m => m.hoto_signoff_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @style = "background:#fff;", @id = "txtHotoDate" })
-                            <img id="imgHoToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                            @Html.TextBoxFor(m => m.end_point_network_id, new { @class = "form-control", @maxlength = "50", @id = "txtEndPointNwkID", @onblur = "fiberLink.validateEndPointNetworkId(this.value);", @disabled = "true" })
                         </div>
                     }
 
-                    </div>
-                    <div class="form-group row">
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("no_of_pair"))
-                        {
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_141:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.no_of_pair, new { @class = "form-control", @maxlength = "3", @id = "txtnoOfPairs", @onkeypress = "return allowNumberOnly(event,this);" })
-                            </div>
-                        }
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("tube_and_core_details"))
-                        {
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_142:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.tube_and_core_details, new { @class = "form-control", @maxlength = "100", @id = "txtTubeCoreDetails" })
-                            </div>
-                        }
-
-                    </div>
-
-                    <div class="form-group row">
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("existing_route_length_otdr"))
-                        {
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_143:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.existing_route_length_otdr, new { @class = "form-control", @maxlength = "4", @id = "txtExistingRouteLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtExistingRouteLength');" })
-                            </div>
-                        }
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("new_building_route_length"))
-                        {
-                            <label class="control-label col-sm-2" >@Resources.Resources.SI_GBL_GBL_NET_FRM_144:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.new_building_route_length, new { @class = "form-control", @maxlength = "4", @id = "txtNewBuildRouteLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtNewBuildRouteLength');" })
-                            </div>
-                        }
-
-                    </div>
-                    <div class="form-group row">
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("otm_length"))
-                        {
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_145:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.otm_length, new { @class = "form-control", @maxlength = "4", @id = "txtOTMLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtOTMLength');" })
-                            </div>
-                        }
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("otl_length"))
-                        {
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_146:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.otl_length, new { @class = "form-control", @maxlength = "4", @id = "txtOTLLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtOTLLength');" })
-                            </div>
-                        }
-
-                    </div>
-
-                    @if (Model.lstFiberLinkColumnsMapping.Contains("Any_row_portion"))
+                </div>
+                <div class="form-group row">
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("end_point_location"))
                     {
-                        <div class="form-group row">
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_147:</label>
-                            <div class="col-md-4">
-                                <label class="col-md-4 d-flex">
-                                    @Html.RadioButtonFor(m => m.any_row_portion, true, new { id = "radioAnyROWPortionTrue", @class = "mr05", @onclick = "fiberLink.enableDisableBasedOnAnyRowPortion(true);" })Yes
-                                </label>
-                                <label class="col-md-4 d-flex">
-                                    @Html.RadioButtonFor(m => m.any_row_portion, false, new { id = "radioAnyROWPortionFalse", @class = "mr05", @onclick = "fiberLink.enableDisableBasedOnAnyRowPortion(false);" })No
-                                </label>
-                            </div>
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_148:</label>
-                            <div class="col-md-4 mrgn_btm ui-widget">
-                                @if (Model.any_row_portion)
-                                {
-                                    @Html.TextBoxFor(m => m.row_authority, new { @class = "form-control ui-autocomplete-input", @maxlength = "10", @id = "txtROWAuthority", @onkeyup = "si.GetAutoROWAuthority();" })
-                                }
-                                else
-                                { @Html.TextBoxFor(m => m.row_authority, new { @class = "form-control", @readonly = true, @maxlength = "10", @id = "txtROWAuthority", @onkeyup = "si.GetAutoROWAuthority();" })}
-
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_149:</label>
-                            <div class="col-md-4">
-                                @if (Model.any_row_portion)
-                                {
-                                    @Html.TextBoxFor(m => m.total_row_segments, new { @class = "form-control", @maxlength = "4", @id = "txtROWSegments", @onkeypress = "return allowNumberOnly(event,this);" })
-                                }
-                                else
-                                { @Html.TextBoxFor(m => m.total_row_segments, new { @class = "form-control", @readonly = true, @maxlength = "4", @id = "txtROWSegments", @onkeypress = "return allowNumberOnly(event,this);" })}
-                            </div>
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_150:</label>
-                            <div class="col-md-4">
-                                @if (Model.any_row_portion)
-                                {
-                                    @Html.TextBoxFor(m => m.total_row_length, new { @class = "form-control", @maxlength = "4", @id = "txtROWLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtROWLength');" })
-                                }
-                                else
-                                {
-                                    @Html.TextBoxFor(m => m.total_row_length, new { @class = "form-control", @maxlength = "4", @readonly = true, @id = "txtROWLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtROWLength');" })
-                                }
-
-                            </div>
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_133:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.end_point_location, new { @class = "form-control", @maxlength = "100", @id = "txtEndPointLocation" })
                         </div>
                     }
-                    <div class="form-group row">
-                        @if (Model.lstFiberLinkColumnsMapping.Contains("Any_row_portion"))
-                        {
-                            <label class="control-label col-sm-2" for="entities">@Html.Raw(Resources.Resources.SI_GBL_GBL_NET_FRM_201):</label>
-                            @*<label class="control-label col-sm-2" for="entities">Total ROW Recurring <br /> Charges/Annum(Rs.):</label>*@
-                            <div class="col-md-4">
-                                @if (Model.any_row_portion)
-                                {@Html.TextBoxFor(m => m.total_row_reccuring_charges, new { @class = "form-control", @maxlength = "4", @id = "txtTotalRecurringCharges", @onkeypress = "return si.allowNumberwithOneDot(event,'txtTotalRecurringCharges');" })}
-                            else
-                            { @Html.TextBoxFor(m => m.total_row_reccuring_charges, new { @class = "form-control", @maxlength = "4", @id = "txtTotalRecurringCharges", @readonly = true, @onkeypress = "return si.allowNumberwithOneDot(event,'txtTotalRecurringCharges');" })}
-                            </div>
-                        }
-
-                    </div>
-
-                    @if (Model.lstFiberLinkColumnsMapping.Contains("remarks"))
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("no_of_lmc"))
                     {
-                        <div class="form-group row">
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.remarks, new { @class = "form-control", @maxlength = "200", @id = "txtRemarks", @style = "width: 679px;" })
-                            </div>
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_134:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.no_of_lmc, new { @class = "form-control  numbers-only", @maxlength = "3", @id = "txtNoOFLMC", @onkeypress = "return allowNumberOnly(event,this);" })
                         </div>
                     }
 
-                </fieldset>
-                @if (Model.system_id > 0)
-                {
-                    <fieldset class="the-fieldset">
-                        <legend class="the-legend">@Resources.Resources.SI_GBL_GBL_NET_FRM_152</legend>
-                        <div class="col-md-12 col-sm-12 UploadAction">
-                            <div class="col-md-6 col-sm-6 d-flex" id="divDocumentUpload">
-                                <input type="file" class="file" name="FiberLinkDocUpload" id="FiberLinkDocUpload">
-                                <a href="#" class="fiberLInk" onclick="fiberLink.attachment.upload(@Model.system_id,'','');" value="Upload" id="btnUploadDocument">@Resources.Resources.SI_OSP_STR_NET_FRM_037</a>
-                                <a href="#" class="fiberLInk" onclick="fiberLink.attachment.clear();" value="Clear" id="btnClearDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</a>
-                            </div>
-                            <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
+                </div>
+                <div class="form-group row">
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("each_lmc_length"))
+                    {
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_135:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.each_lmc_length, new { @class = "form-control", @maxlength = "10", @id = "txtEachLMCLength", @onkeypress = "return ValidateNumberDecimal(this,event,4,2);" })
                         </div>
-
-                        <div id="divFiberLinkAttachment" class="tab-pane y-scroll">
-
-                            @Html.Partial("~/Views/Library/_ViewFiberLinkAttachment.cshtml", Model.lstFiberLinkAttachments)
+                    }
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("total_route_length"))
+                    {
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_136:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.total_route_length, new { @class = "form-control", @maxlength = "10", @id = "txtTotalRouteLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtTotalRouteLength');" })
                         </div>
-                    </fieldset>
+                    }
+
+                </div>
+                <div class="form-group row">
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("gis_length"))
+                    {
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_137:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.gis_length, new { @class = "form-control", @maxlength = "10", @id = "txtGISLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtGISLength');" })
+                        </div>
+                    }
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("otdr_distance"))
+                    {
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_138:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.otdr_distance, new { @class = "form-control", @maxlength = "10", @id = "txtOTDRDistance", @onkeypress = "return si.allowNumberwithOneDot(event,'txtOTDRDistance');" })
+                        </div>
+                    }
+
+                </div>
+                <div class="form-group row">
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("handover_date"))
+                    {
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_139:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.handover_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @style = "background:#fff;", @id = "txtHandoverDate" })
+                            <img id="imgHandoverDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                    }
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("hoto_signoff_date"))
+                    {<label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_140:</label>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.hoto_signoff_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @style = "background:#fff;", @id = "txtHotoDate" })
+                        <img id="imgHoToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                    </div>
                 }
 
-            </div>
-            <div class="ModalFooter d-flex">
-                <button type="button" id="btnclear" class="btn btn-default ml-auto" onclick="fiberLink.resetCreateLink();"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
-                <button type="button" id="btnCreateLink" class="btn btn-success ml-10" onclick="fiberLink.createUpdateLink(true);">@(Model.system_id == 0 ? Resources.Resources.SI_OSP_GBL_GBL_GBL_038 : Resources.Resources.GBL_GBL_GBL_GBL_GBL_003)</button>
-             </div>
+                </div>
+                <div class="form-group row">
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("no_of_pair"))
+                    {
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_141:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.no_of_pair, new { @class = "form-control", @maxlength = "3", @id = "txtnoOfPairs", @onkeypress = "return allowNumberOnly(event,this);" })
+                        </div>
+                    }
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("tube_and_core_details"))
+                    {
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_142:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.tube_and_core_details, new { @class = "form-control", @maxlength = "100", @id = "txtTubeCoreDetails" })
+                        </div>
+                    }
+
+                </div>
+
+                <div class="form-group row">
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("existing_route_length_otdr"))
+                    {
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_143:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.existing_route_length_otdr, new { @class = "form-control", @maxlength = "4", @id = "txtExistingRouteLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtExistingRouteLength');" })
+                        </div>
+                    }
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("new_building_route_length"))
+                    {
+                        <label class="control-label col-sm-2" >@Resources.Resources.SI_GBL_GBL_NET_FRM_144:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.new_building_route_length, new { @class = "form-control", @maxlength = "4", @id = "txtNewBuildRouteLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtNewBuildRouteLength');" })
+                        </div>
+                    }
+
+                </div>
+                <div class="form-group row">
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("otm_length"))
+                    {
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_145:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.otm_length, new { @class = "form-control", @maxlength = "4", @id = "txtOTMLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtOTMLength');" })
+                        </div>
+                    }
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("otl_length"))
+                    {
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_146:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.otl_length, new { @class = "form-control", @maxlength = "4", @id = "txtOTLLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtOTLLength');" })
+                        </div>
+                    }
+
+                </div>
+
+                @if (Model.lstFiberLinkColumnsMapping.Contains("Any_row_portion"))
+                {
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_147:</label>
+                        <div class="col-md-4">
+                            <label class="col-md-4 d-flex">
+                                @Html.RadioButtonFor(m => m.any_row_portion, true, new { id = "radioAnyROWPortionTrue", @class = "mr05", @onclick = "fiberLink.enableDisableBasedOnAnyRowPortion(true);" })Yes
+                            </label>
+                            <label class="col-md-4 d-flex">
+                                @Html.RadioButtonFor(m => m.any_row_portion, false, new { id = "radioAnyROWPortionFalse", @class = "mr05", @onclick = "fiberLink.enableDisableBasedOnAnyRowPortion(false);" })No
+                            </label>
+                        </div>
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_148:</label>
+                        <div class="col-md-4 mrgn_btm ui-widget">
+                            @if (Model.any_row_portion)
+                            {
+                                @Html.TextBoxFor(m => m.row_authority, new { @class = "form-control ui-autocomplete-input", @maxlength = "10", @id = "txtROWAuthority", @onkeyup = "si.GetAutoROWAuthority();" })
+                            }
+                            else
+                            { @Html.TextBoxFor(m => m.row_authority, new { @class = "form-control", @readonly = true, @maxlength = "10", @id = "txtROWAuthority", @onkeyup = "si.GetAutoROWAuthority();" })}
+
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_149:</label>
+                        <div class="col-md-4">
+                            @if (Model.any_row_portion)
+                            {
+                                @Html.TextBoxFor(m => m.total_row_segments, new { @class = "form-control", @maxlength = "4", @id = "txtROWSegments", @onkeypress = "return allowNumberOnly(event,this);" })
+                            }
+                            else
+                            { @Html.TextBoxFor(m => m.total_row_segments, new { @class = "form-control", @readonly = true, @maxlength = "4", @id = "txtROWSegments", @onkeypress = "return allowNumberOnly(event,this);" })}
+                        </div>
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_150:</label>
+                        <div class="col-md-4">
+                            @if (Model.any_row_portion)
+                            {
+                                @Html.TextBoxFor(m => m.total_row_length, new { @class = "form-control", @maxlength = "4", @id = "txtROWLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtROWLength');" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.total_row_length, new { @class = "form-control", @maxlength = "4", @readonly = true, @id = "txtROWLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtROWLength');" })
+                            }
+
+                        </div>
+                    </div>
+                }
+                <div class="form-group row">
+                    @if (Model.lstFiberLinkColumnsMapping.Contains("Any_row_portion"))
+                    {
+                        <label class="control-label col-sm-2" for="entities">@Html.Raw(Resources.Resources.SI_GBL_GBL_NET_FRM_201):</label>
+                        @*<label class="control-label col-sm-2" for="entities">Total ROW Recurring <br /> Charges/Annum(Rs.):</label>*@
+                        <div class="col-md-4">
+                            @if (Model.any_row_portion)
+                            {@Html.TextBoxFor(m => m.total_row_reccuring_charges, new { @class = "form-control", @maxlength = "4", @id = "txtTotalRecurringCharges", @onkeypress = "return si.allowNumberwithOneDot(event,'txtTotalRecurringCharges');" })}
+                        else
+                        { @Html.TextBoxFor(m => m.total_row_reccuring_charges, new { @class = "form-control", @maxlength = "4", @id = "txtTotalRecurringCharges", @readonly = true, @onkeypress = "return si.allowNumberwithOneDot(event,'txtTotalRecurringCharges');" })}
+                        </div>
+                    }
+
+                </div>
+
+                @if (Model.lstFiberLinkColumnsMapping.Contains("remarks"))
+                {
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.remarks, new { @class = "form-control", @maxlength = "200", @id = "txtRemarks", @style = "width: 679px;" })
+                        </div>
+                    </div>
+                }
+
+            </fieldset>
+            @if (Model.system_id > 0)
+            {
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_GBL_GBL_NET_FRM_152</legend>
+                    <div class="col-md-12 col-sm-12 UploadAction">
+                        <div class="col-md-6 col-sm-6 d-flex" id="divDocumentUpload">
+                            <input type="file" class="file" name="FiberLinkDocUpload" id="FiberLinkDocUpload">
+                            <a href="#" class="fiberLInk" onclick="fiberLink.attachment.upload(@Model.system_id,'','');" value="Upload" id="btnUploadDocument">@Resources.Resources.SI_OSP_STR_NET_FRM_037</a>
+                            <a href="#" class="fiberLInk" onclick="fiberLink.attachment.clear();" value="Clear" id="btnClearDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</a>
+                        </div>
+                        <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
+                    </div>
+
+                    <div id="divFiberLinkAttachment" class="tab-pane y-scroll">
+
+                        @Html.Partial("~/Views/Library/_ViewFiberLinkAttachment.cshtml", Model.lstFiberLinkAttachments)
+                    </div>
+                </fieldset>
+            }
+
+        </div>
+        <div class="ModalFooter d-flex">
+            <button type="button" id="btnclear" class="btn btn-default ml-auto" onclick="fiberLink.resetCreateLink();"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+            <button type="button" id="btnCreateLink" class="btn btn-success ml-10" onclick="fiberLink.createUpdateLink(true);">@(Model.system_id == 0 ? Resources.Resources.SI_OSP_GBL_GBL_GBL_038 : Resources.Resources.GBL_GBL_GBL_GBL_GBL_003)</button>
+        </div>
     </div>
 }
 <script type="text/javascript">
