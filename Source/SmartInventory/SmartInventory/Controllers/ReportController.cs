@@ -5726,8 +5726,7 @@ namespace SmartInventory.Controllers
                 try
                 {
                     AssociationEntitiesReport entityAssociationSummaryData = new AssociationEntitiesReport();
-
-                    entityAssociationSummaryData = (AssociationEntitiesReport)Session["EntityAssociationSummaryData"];
+                                        entityAssociationSummaryData = (AssociationEntitiesReport)Session["EntityAssociationSummaryData"];
                     AssociationEntitiesSummaryView objAssociationEntitiesReport = new AssociationEntitiesSummaryView();
 
                     AssociationReportFilter objAssociationReportFilter = new AssociationReportFilter();
