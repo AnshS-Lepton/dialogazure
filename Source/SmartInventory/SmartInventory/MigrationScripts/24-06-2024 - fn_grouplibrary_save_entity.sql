@@ -142,7 +142,7 @@ ELSIF((select upper(type) from temp_entity_details limit 1) = upper('Point'))
 THEN
 select library_id,type into V_LIBRARY_ID,V_GTYPE from temp_entity_details limit 1;
 
-PERFORM(fn_grouplibrary_save_point_entity01(V_LIBRARY_ID,V_GTYPE));
+PERFORM(fn_grouplibrary_save_point_entity(V_LIBRARY_ID,V_GTYPE));
 NEW_STATUS=TRUE;
 
 END IF;
