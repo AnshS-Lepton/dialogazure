@@ -7019,10 +7019,169 @@ CREATE OR REPLACE VIEW public.vw_att_details_pole_report
 
 
 
+alter table temp_du_cable add column generic_section_name character varying(1000);
+alter table temp_du_cable add column section_name character varying(1000);
+alter table temp_du_cable add column aerial_location character varying(1000);
+alter table temp_du_cable add column hierarchy_type character varying(1000);
+
+alter table temp_du_manhole add column generic_section_name character varying(1000);
+alter table temp_du_manhole add column section_name character varying(1000);
+alter table temp_du_manhole add column aerial_location character varying(1000);
+alter table temp_du_manhole add column hierarchy_type character varying(1000);
+alter table temp_du_manhole add column route_id character varying(1000);
+
+
+alter table temp_du_spliceclosure add column generic_section_name character varying(1000);
+alter table temp_du_spliceclosure add column section_name character varying(1000);
+alter table temp_du_spliceclosure add column aerial_location character varying(1000);
+alter table temp_du_spliceclosure add column hierarchy_type character varying(1000);
+alter table temp_du_spliceclosure add column route_id character varying(1000);
 
 
 
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (19, 'section_name', 'varchar', 'section_name', false, 'section name', 'section A',
+            42, 100, 1, now(), false, 'Alphanumeric', true,
+            true, true, false, true, true, 
+            false, false);
 
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (19, 'generic_section_name', 'varchar', 'generic_section_name', false, 'Generic section name', 'Generic section A',
+            43, 100, 1, now(), false, 'Alphanumeric', true,
+            true, true, false, true, true, 
+            false, false);
+            
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (19, 'hierarchy_type', 'varchar', 'hierarchy_type', false, '', '',
+            44, 100, 1, now(), true, 'Character Varying', true,
+            true, true, false, true, true, 
+            false, false);           
+            
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (19, 'aerial_location', 'varchar', 'aerial_location', false, '', '',
+            45, 100, 1, now(), true, 'Character Varying', true,
+            true, true, false, true, true, 
+            false, false);
+			
+			
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (13, 'section_name', 'varchar', 'section_name', false, 'section name', 'section A',
+            16, 100, 1, now(), false, 'Alphanumeric', true,
+            true, true, false, true, true, 
+            false, false);
+
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (13, 'generic_section_name', 'varchar', 'generic_section_name', false, 'Generic section name', 'Generic section A',
+            17, 100, 1, now(), false, 'Alphanumeric', true,
+            true, true, false, true, true, 
+            false, false);
+            
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (13, 'hierarchy_type', 'varchar', 'hierarchy_type', false, '', '',
+            18, 100, 1, now(), true, 'Character Varying', true,
+            true, true, false, true, true, 
+            false, false);           
+            
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (13, 'aerial_location', 'varchar', 'aerial_location', false, '', '',
+            19, 100, 1, now(), true, 'Character Varying', true,
+            true, true, false, true, true, 
+            false, false);
+			
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (13, 'route_id', 'varchar', 'Route_Id', false, 'route Id', '101',
+            20, 100, 1, now(), false, 'character varying', true,
+            false, true, false, true, true, 
+            false, false);		
+			
+			
+			
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (20, 'section_name', 'varchar', 'section_name', false, 'section name', 'section A',
+            15, 100, 1, now(), false, 'Alphanumeric', true,
+            true, true, false, true, true, 
+            false, false);
+
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (20, 'generic_section_name', 'varchar', 'generic_section_name', false, 'Generic section name', 'Generic section A',
+            16, 100, 1, now(), false, 'Alphanumeric', true,
+            true, true, false, true, true, 
+            false, false);
+            
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (20, 'hierarchy_type', 'varchar', 'hierarchy_type', false, '', '',
+            17, 100, 1, now(), true, 'Character Varying', true,
+            true, true, false, true, true, 
+            false, false);           
+            
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (20, 'aerial_location', 'varchar', 'aerial_location', false, '', '',
+            18, 100, 1, now(), true, 'Character Varying', true,
+            true, true, false, true, true, 
+            false, false);
+			
+INSERT INTO public.data_uploader_template(
+	 layer_id, db_column_name, db_column_data_type, template_column_name, is_mandatory, description, example_value,
+     column_sequence, max_length, created_by, created_on,  is_dropdown, display_column_data_type, is_kml_attribute,
+     is_nullable, is_excel_attribute, is_template_column_required, is_enable_for_template_column,  is_allowed_for_update, 
+    is_allowed_for_update_admin, is_cdb_attributes)
+	VALUES (20, 'route_id', 'varchar', 'Route_Id', false, 'route Id', '101',
+            19, 100, 1, now(), false, 'character varying', true,
+            false, true, false, true, true, 
+            false, false);			
+			
 
 
 
