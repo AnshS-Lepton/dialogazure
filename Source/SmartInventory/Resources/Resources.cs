@@ -397,7 +397,16 @@ namespace Resources {
                    return resourceProvider.GetResource("SI_GBL_GBL_GBL_GBL_148", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
-            
+
+        /// <summary>Own Vendor:</summary>
+        public static string SI_GBL_GBL_GBL_GBL_166
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_GBL_GBL_GBL_GBL_166", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+
         /// <summary>Customer/Telco Name</summary>
         public static string SI_OSP_GBL_NET_FRM_393 {
                get {
@@ -10358,7 +10367,34 @@ namespace Resources {
                    return resourceProvider.GetResource("SI_OSP_CAB_NET_FRM_072", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
-            
+
+        /// <summary>Cable  Section Name.</summary>
+        public static string SI_OSP_CAB_NET_FRM_073
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_CAB_NET_FRM_073", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+
+        /// <summary>Cable  Generic Section Name.</summary>
+        public static string SI_OSP_CAB_NET_FRM_074
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_CAB_NET_FRM_074", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+
+        /// <summary>Cable Arial Location.</summary>
+        public static string SI_OSP_CAB_NET_FRM_075
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_CAB_NET_FRM_075", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+
         /// <summary>Select two cables by clicking them on map: (For Merging of cables)</summary>
         public static string SI_OSP_GBL_GBL_FRM_153 {
                get {
@@ -27110,6 +27146,16 @@ namespace Resources {
             get
             {
                 return resourceProvider.GetResource("SI_OSP_GBL_NET_GBL_279", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+
+
+        /// <summary>Hierarchy type</summary>
+        public static string SI_OSP_GBL_NET_GBL_280
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_GBL_280", CultureInfo.CurrentUICulture.Name) as string;
             }
         }
 

@@ -39,11 +39,14 @@ namespace Models
 	{
 		string ownership_type { get; set; }
 		string third_party_vendor_id { get; set; }
+		string own_vendor_id { get; set; }
 		string circuit_id { get; set; }
 		string thirdparty_circuit_id { get; set; }
 		string entityType { get; set; }
 		[NotMapped]
 		List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		List<KeyValueDropDown> listOwnVendorId { get; set; }
 	}
 
 
@@ -135,6 +138,7 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
@@ -143,6 +147,8 @@ namespace Models
 		public int? secondary_pod_system_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -285,12 +291,16 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
 		public string thirdparty_circuit_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<NELoopDetails> lstLoopMangment { get; set; }
 		//[NotMapped]
@@ -471,12 +481,17 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
 		public string thirdparty_circuit_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
+		
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -630,6 +645,8 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
@@ -638,6 +655,8 @@ namespace Models
 		public int? secondary_pod_system_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -912,6 +931,8 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
@@ -923,6 +944,8 @@ namespace Models
 		public bool is_acquire_from { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -993,6 +1016,9 @@ namespace Models
         public string route_name { get; set; }
         public string area { get; set; }
         public string authority { get; set; }
+        public string aerial_location { get; set; }
+        public string section_name { get; set; }
+        public string generic_section_name { get; set; }
         [NotMapped]
 		public string pEntityType { get; set; }
 		[NotMapped]
@@ -1003,7 +1029,10 @@ namespace Models
         public int pSystemId { get; set; }
         [NotMapped]
         public List<RouteInfo> lstRouteInfo { get; set; }
-        [NotMapped]
+		[NotMapped]
+		public IList<DropDownMaster> listaerialLocation { get; set; }
+
+		[NotMapped]
         public List<int> selected_route_ids { get; set; }
         public ManholeMaster()
 		{
@@ -1075,6 +1104,8 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		public int? primary_pod_system_id { get; set; }
 		public int? secondary_pod_system_id { get; set; }
 		[NotMapped]
@@ -1083,6 +1114,8 @@ namespace Models
 		public string thirdparty_circuit_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -1209,6 +1242,8 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
@@ -1217,6 +1252,8 @@ namespace Models
 		public int? secondary_pod_system_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -1379,6 +1416,8 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
@@ -1387,6 +1426,8 @@ namespace Models
 		public int? secondary_pod_system_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -1505,8 +1546,10 @@ namespace Models
 		public string subcode { get; set; }
 		public string acquire_from { get; set; }
 		public bool is_buried { get; set; }
-
+		public string aerial_location { get; set; }
 		public string address { get; set; }
+		public string section_name { get; set; }
+		public string generic_section_name { get; set; }
 		public string remarks { get; set; }
 		public int created_by { get; set; }
 		[NotMapped]
@@ -1545,6 +1588,8 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
@@ -1553,6 +1598,8 @@ namespace Models
 		public int? secondary_pod_system_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -1590,8 +1637,10 @@ namespace Models
 		[NotMapped]
 		public List<SpliceTrayInfo> lstSpliceTrayInfo { get; set; }
         [NotMapped]
-        public List<RouteInfo> lstRouteInfo { get; set; }        
-        public string status_remark { get; set; }
+        public List<RouteInfo> lstRouteInfo { get; set; }
+		[NotMapped]
+		public IList<DropDownMaster> listaerialLocation { get; set; }
+		public string status_remark { get; set; }
 		public bool is_new_entity { get; set; }
 		[NotMapped]
 		public int split_cable_system_id { get; set; }
@@ -1714,6 +1763,8 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
@@ -1722,6 +1773,8 @@ namespace Models
 		public int? secondary_pod_system_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -1899,6 +1952,8 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
@@ -1907,7 +1962,8 @@ namespace Models
 		public int? secondary_pod_system_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
-
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<NELoopDetails> lstLoopMangment { get; set; }
 		[NotMapped]
@@ -2270,12 +2326,17 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
 		public string thirdparty_circuit_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
+
 		[NotMapped]
 		public int user_id { get; set; }
 		[NotMapped]
@@ -2413,6 +2474,8 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
@@ -2421,6 +2484,8 @@ namespace Models
 		public int? secondary_pod_system_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -3708,12 +3773,16 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
 		public string thirdparty_circuit_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 
 		[NotMapped]
 		public List<NELoopDetails> lstLoopMangment { get; set; }
@@ -3863,13 +3932,15 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
 		public string thirdparty_circuit_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
-
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<NELoopDetails> lstLoopMangment { get; set; }
 		[NotMapped]
@@ -4025,6 +4096,8 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
@@ -4035,6 +4108,8 @@ namespace Models
 		public bool is_acquire_from { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]
@@ -4181,6 +4256,8 @@ namespace Models
 		[Required]
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
@@ -4189,6 +4266,8 @@ namespace Models
 		public int? secondary_pod_system_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]

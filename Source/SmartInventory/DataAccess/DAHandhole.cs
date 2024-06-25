@@ -77,6 +77,8 @@ namespace DataAccess
                     objHandholeItem.other_info = objHandholeMaster.other_info; //for Additional-Attributes
                     //objHandholeItem.served_by_ring= objHandholeMaster.served_by_ring;
                     objHandholeItem.gis_design_id = objHandholeMaster.gis_design_id;
+                    objHandholeItem.own_vendor_id = objHandholeMaster.own_vendor_id;
+                    objHandholeItem.hierarchy_type = objHandholeMaster.hierarchy_type;
                     var HandholeResp = repo.Update(objHandholeItem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(HandholeResp.system_id, Models.EntityType.Handhole.ToString(), HandholeResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Handhole.ToString(), HandholeResp.province_id);

@@ -113,6 +113,8 @@ namespace DataAccess
                     objPatchPanelItem.origin_ref_code = objPatchPanelMaster.origin_ref_code;
                     objPatchPanelItem.bom_sub_category=objPatchPanelMaster.bom_sub_category;
                     objPatchPanelItem.gis_design_id = objPatchPanelMaster.gis_design_id;
+                    objPatchPanelItem.own_vendor_id = objPatchPanelMaster.own_vendor_id;
+                    objPatchPanelItem.hierarchy_type = objPatchPanelMaster.hierarchy_type;
                     // objPatchPanelItem.served_by_ring=objPatchPanelMaster.served_by_ring;
                     var PPResp = repo.Update(objPatchPanelItem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(PPResp.system_id, Models.EntityType.PatchPanel.ToString(), PPResp.province_id, 1);
