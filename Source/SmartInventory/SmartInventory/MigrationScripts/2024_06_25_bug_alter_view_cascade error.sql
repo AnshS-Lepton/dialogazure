@@ -1,326 +1,17 @@
 alter table att_details_cable add column hierarchy_type character varying(1000); 
-alter table att_details_manhole add column hierarchy_type character varying(1000); 
-
- DROP MATERIALIZED VIEW IF EXISTS "APP_LCO"."LCO_REPORT";
-
-CREATE MATERIALIZED VIEW IF NOT EXISTS "APP_LCO"."LCO_REPORT"
-TABLESPACE pg_default
-AS
- WITH fsa AS (
-         SELECT jc.zonename,
-            jc.jiostatecode,
-            jc.jiostatename,
-            jc.maintenancezonecode,
-            jc.maintenancezonename,
-            jc.sap_id AS jc_sap_id,
-            jc.jiocentername,
-            fsa_1.system_id AS fsa_system_id,
-            fsa_1.subarea_name AS fsa_code,
-            fsa_1.network_id AS fsa_network_id,
-            fsa_1.vendor_id,
-            fsa_1.prms_id,
-            fsa_1.no_of_home_pass AS fsa_no_of_home_pass
-           FROM att_details_subarea fsa_1,
-            province_boundary pb,
-            rjio_jc_boundary jc
-          WHERE fsa_1.province_id = pb.id AND pb.province_abbreviation::text = jc.sapplantcode::text
-        ), dsa AS (
-         SELECT fsa_1.fsa_system_id,
-            count(*) AS dsa_count,
-            sum(dsa_1.no_of_home_pass) AS dsa_no_of_home_pass
-           FROM att_details_dsa dsa_1,
-            fsa fsa_1
-          WHERE dsa_1.parent_system_id = fsa_1.fsa_system_id
-          GROUP BY fsa_1.fsa_system_id
-        ), csa AS (
-         SELECT fsa_1.fsa_system_id,
-            count(*) AS csa_count,
-            sum(csa_1.no_of_home_pass) AS csa_no_of_home_pass
-           FROM att_details_csa csa_1,
-            att_details_dsa dsa_1,
-            fsa fsa_1
-          WHERE csa_1.parent_system_id = dsa_1.system_id AND dsa_1.parent_system_id = fsa_1.fsa_system_id
-          GROUP BY fsa_1.fsa_system_id
-        ), fat AS (
-         SELECT fat_1.subarea_system_id,
-            count(*) AS fat_count
-           FROM isp_fdb_info fat_1,
-            fsa fsa_1
-          WHERE fat_1.subarea_system_id = fsa_1.fsa_system_id
-          GROUP BY fat_1.subarea_system_id
-        ), fat_status AS (
-         SELECT fat_1.subarea_system_id,
-            count(
-                CASE
-                    WHEN fat_1.network_status::text = 'P'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "FAT_PLANNED_COUNT",
-            count(
-                CASE
-                    WHEN fat_1.network_status::text = 'A'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "FAT_ASBUILT_COUNT"
-           FROM isp_fdb_info fat_1,
-            fsa fsa_1
-          WHERE fat_1.subarea_system_id = fsa_1.fsa_system_id
-          GROUP BY fat_1.subarea_system_id, fat_1.network_status
-        ), fdc AS (
-         SELECT fdc_1.subarea_system_id,
-            count(*) AS fdc_count
-           FROM att_details_bdb fdc_1,
-            fsa fsa_1
-          WHERE fdc_1.subarea_system_id = fsa_1.fsa_system_id
-          GROUP BY fdc_1.subarea_system_id
-        ), fdc_status AS (
-         SELECT fdc_1.subarea_system_id,
-            count(
-                CASE
-                    WHEN fdc_1.network_status::text = 'P'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "FDC_PLANNED_COUNT",
-            count(
-                CASE
-                    WHEN fdc_1.network_status::text = 'A'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "FDC_ASBUILT_COUNT"
-           FROM att_details_bdb fdc_1,
-            fsa fsa_1
-          WHERE fdc_1.subarea_system_id = fsa_1.fsa_system_id
-          GROUP BY fdc_1.subarea_system_id, fdc_1.network_status
-        ), s1 AS (
-         SELECT s1_1.subarea_system_id,
-            count(*) AS s1_count
-           FROM att_details_splitter s1_1,
-            fsa fsa_1
-          WHERE s1_1.subarea_system_id = fsa_1.fsa_system_id AND s1_1.splitter_ratio::text = '2:8'::text
-          GROUP BY s1_1.subarea_system_id
-        ), s1_status AS (
-         SELECT s1_1.subarea_system_id,
-            count(
-                CASE
-                    WHEN s1_1.network_status::text = 'P'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "S1_PLANNED_COUNT",
-            count(
-                CASE
-                    WHEN s1_1.network_status::text = 'A'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "S1_ASBUILT_COUNT"
-           FROM att_details_splitter s1_1,
-            fsa fsa_1
-          WHERE s1_1.subarea_system_id = fsa_1.fsa_system_id AND s1_1.splitter_ratio::text = '2:8'::text
-          GROUP BY s1_1.subarea_system_id, s1_1.network_status
-        ), s2 AS (
-         SELECT s1_1.subarea_system_id,
-            count(*) AS s2_count
-           FROM att_details_splitter s1_1,
-            fsa fsa_1
-          WHERE s1_1.subarea_system_id = fsa_1.fsa_system_id AND s1_1.splitter_ratio::text = '1:8'::text
-          GROUP BY s1_1.subarea_system_id
-        ), s2_status AS (
-         SELECT s1_1.subarea_system_id,
-            count(
-                CASE
-                    WHEN s1_1.network_status::text = 'P'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "S2_PLANNED_COUNT",
-            count(
-                CASE
-                    WHEN s1_1.network_status::text = 'A'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "S2_ASBUILT_COUNT"
-           FROM att_details_splitter s1_1,
-            fsa fsa_1
-          WHERE s1_1.subarea_system_id = fsa_1.fsa_system_id AND s1_1.splitter_ratio::text = '1:8'::text
-          GROUP BY s1_1.subarea_system_id, s1_1.network_status
-        ), splice AS (
-         SELECT s1_1.subarea_system_id,
-            count(1) AS splice_count,
-            count(
-                CASE
-                    WHEN s1_1.network_status::text = 'P'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "SPLICE_PLANNED_COUNT",
-            count(
-                CASE
-                    WHEN s1_1.network_status::text = 'A'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "SPLICE_ASBUILT_COUNT"
-           FROM att_details_spliceclosure s1_1,
-            fsa fsa_1
-          WHERE s1_1.subarea_system_id = fsa_1.fsa_system_id
-          GROUP BY s1_1.subarea_system_id
-        ), feeder AS (
-         SELECT c.subarea_id,
-            c.cable_category AS feeder,
-            sum(
-                CASE
-                    WHEN c.total_core = 48 THEN c.cable_measured_length
-                    ELSE NULL::numeric
-                END) AS "FEEDER_48_MEASURED_LENGTH",
-            sum(
-                CASE
-                    WHEN c.total_core = 48 AND c.network_status::text = 'P'::text THEN c.cable_measured_length
-                    ELSE NULL::numeric
-                END) AS "FEEDER_48_MEASURED_PLANNED_LENGTH",
-            sum(
-                CASE
-                    WHEN c.total_core = 48 AND c.network_status::text = 'A'::text THEN c.cable_measured_length
-                    ELSE NULL::numeric
-                END) AS "FEEDER_48_MEASURED_ASBUILT_LENGTH",
-            sum(
-                CASE
-                    WHEN c.total_core = 48 THEN c.cable_calculated_length
-                    ELSE NULL::numeric
-                END) AS "FEEDER_48_CALCULATED_LENGTH",
-            sum(
-                CASE
-                    WHEN c.total_core = 48 AND c.network_status::text = 'P'::text THEN c.cable_calculated_length
-                    ELSE NULL::numeric
-                END) AS "FEEDER_48_CALCULATED_PLANNED_LENGTH",
-            sum(
-                CASE
-                    WHEN c.total_core = 48 AND c.network_status::text = 'A'::text THEN c.cable_calculated_length
-                    ELSE NULL::numeric
-                END) AS "FEEDER_48_CALCULATED_ASBUILT_LENGTH"
-           FROM vw_att_details_cable c
-          WHERE c.cable_category::text = 'Feeder'::text
-          GROUP BY c.subarea_id, c.cable_category
-        ), distribution AS (
-         SELECT c.subarea_id,
-            c.cable_category AS distribution,
-            sum(
-                CASE
-                    WHEN c.total_core = 12 THEN c.cable_measured_length
-                    ELSE NULL::numeric
-                END) AS "DISTRIBUTION_12_MEASURED_LENGTH",
-            sum(
-                CASE
-                    WHEN c.total_core = 12 AND c.network_status::text = 'P'::text THEN c.cable_measured_length
-                    ELSE NULL::numeric
-                END) AS "DISTRIBUTION_12_MEASURED_PLANNED_LENGTH",
-            sum(
-                CASE
-                    WHEN c.total_core = 12 AND c.network_status::text = 'A'::text THEN c.cable_measured_length
-                    ELSE NULL::numeric
-                END) AS "DISTRIBUTION_12_MEASURED_ASBUILT_LENGTH",
-            sum(
-                CASE
-                    WHEN c.total_core = 12 THEN c.cable_calculated_length
-                    ELSE NULL::numeric
-                END) AS "DISTRIBUTION_12_CALCULATED_LENGTH",
-            sum(
-                CASE
-                    WHEN c.total_core = 12 AND c.network_status::text = 'P'::text THEN c.cable_calculated_length
-                    ELSE NULL::numeric
-                END) AS "DISTRIBUTION_12_CALCULATED_PLANNED_LENGTH",
-            sum(
-                CASE
-                    WHEN c.total_core = 12 AND c.network_status::text = 'A'::text THEN c.cable_calculated_length
-                    ELSE NULL::numeric
-                END) AS "DISTRIBUTION_12_CALCULATED_ASBUILT_LENGTH"
-           FROM vw_att_details_cable c
-          WHERE c.cable_category::text = 'Distribution'::text
-          GROUP BY c.subarea_id, c.cable_category
-        ), poles AS (
-         SELECT att_details_pole.subarea_id,
-            sum(
-                CASE
-                    WHEN upper(att_details_pole.bom_sub_category::text) = 'EXISTING'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "EXISTING_POLE_COUNT",
-            sum(
-                CASE
-                    WHEN upper(att_details_pole.bom_sub_category::text) = 'PROPOSED'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "PROPOSED_POLE_COUNT",
-            sum(
-                CASE
-                    WHEN upper(att_details_pole.bom_sub_category::text) = 'PROPOSED'::text AND att_details_pole.network_status::text = 'A'::text THEN 1
-                    ELSE NULL::integer
-                END) AS "ASBUILT_POLE_COUNT"
-           FROM att_details_pole
-          GROUP BY att_details_pole.subarea_id, att_details_pole.bom_sub_category
-        )
- SELECT DISTINCT fsa.zonename,
-    fsa.jiostatecode,
-    fsa.jiostatename,
-    fsa.maintenancezonecode,
-    fsa.maintenancezonename,
-    fsa.jc_sap_id,
-    fsa.jiocentername,
-    fsa.fsa_system_id,
-    fsa.fsa_code,
-    fsa.fsa_network_id,
-    fsa.vendor_id,
-    fsa.prms_id,
-    fsa.fsa_no_of_home_pass,
-    dsa.dsa_count,
-    dsa.dsa_no_of_home_pass,
-    csa.csa_count,
-    csa.csa_no_of_home_pass,
-    fat.fat_count,
-    fat_status."FAT_PLANNED_COUNT",
-    fat_status."FAT_ASBUILT_COUNT",
-    fdc.fdc_count,
-    fdc_status."FDC_PLANNED_COUNT",
-    fdc_status."FDC_ASBUILT_COUNT",
-    s1.s1_count,
-    s1_status."S1_PLANNED_COUNT",
-    s1_status."S1_ASBUILT_COUNT",
-    s2.s2_count,
-    s2_status."S2_PLANNED_COUNT",
-    s2_status."S2_ASBUILT_COUNT",
-    splice.splice_count,
-    splice."SPLICE_PLANNED_COUNT",
-    splice."SPLICE_ASBUILT_COUNT",
-    feeder."FEEDER_48_MEASURED_LENGTH",
-    feeder."FEEDER_48_MEASURED_PLANNED_LENGTH",
-    feeder."FEEDER_48_MEASURED_ASBUILT_LENGTH",
-    feeder."FEEDER_48_CALCULATED_LENGTH",
-    feeder."FEEDER_48_CALCULATED_PLANNED_LENGTH",
-    feeder."FEEDER_48_CALCULATED_ASBUILT_LENGTH",
-    distribution."DISTRIBUTION_12_MEASURED_LENGTH",
-    distribution."DISTRIBUTION_12_MEASURED_PLANNED_LENGTH",
-    distribution."DISTRIBUTION_12_MEASURED_ASBUILT_LENGTH",
-    distribution."DISTRIBUTION_12_CALCULATED_LENGTH",
-    distribution."DISTRIBUTION_12_CALCULATED_PLANNED_LENGTH",
-    distribution."DISTRIBUTION_12_CALCULATED_ASBUILT_LENGTH",
-    poles."EXISTING_POLE_COUNT",
-    poles."PROPOSED_POLE_COUNT",
-    poles."ASBUILT_POLE_COUNT"
-   FROM fsa
-     LEFT JOIN dsa ON fsa.fsa_system_id = dsa.fsa_system_id
-     LEFT JOIN csa ON fsa.fsa_system_id = csa.fsa_system_id
-     LEFT JOIN fat ON fsa.fsa_system_id = fat.subarea_system_id
-     LEFT JOIN fat_status ON fsa.fsa_system_id = fat_status.subarea_system_id
-     LEFT JOIN fdc ON fsa.fsa_system_id = fdc.subarea_system_id
-     LEFT JOIN fdc_status ON fsa.fsa_system_id = fdc_status.subarea_system_id
-     LEFT JOIN s1 ON fsa.fsa_system_id = s1.subarea_system_id
-     LEFT JOIN s2 ON fsa.fsa_system_id = s2.subarea_system_id
-     LEFT JOIN s1_status ON fsa.fsa_system_id = s1_status.subarea_system_id
-     LEFT JOIN s2_status ON fsa.fsa_system_id = s2_status.subarea_system_id
-     LEFT JOIN splice ON fsa.fsa_system_id = splice.subarea_system_id
-     LEFT JOIN feeder ON fsa.fsa_network_id::text = feeder.subarea_id::text
-     LEFT JOIN distribution ON fsa.fsa_network_id::text = distribution.subarea_id::text
-     LEFT JOIN poles ON fsa.fsa_network_id::text = poles.subarea_id::text
-WITH NO DATA;
-
-ALTER TABLE IF EXISTS "APP_LCO"."LCO_REPORT"
-    OWNER TO postgres;
+alter table att_details_cable add column section_name character varying(1000); 
+alter table att_details_cable add column aerial_location character varying(1000); 
+alter table att_details_cable add column cable_remark character varying(1000); 
 
 
-CREATE INDEX lco_report_jc_sap_id_idx
-    ON "APP_LCO"."LCO_REPORT" USING btree
-    (jc_sap_id COLLATE pg_catalog."default")
-    TABLESPACE pg_default;
-CREATE INDEX lco_report_jiostatecode_idx
-    ON "APP_LCO"."LCO_REPORT" USING btree
-    (jiostatecode COLLATE pg_catalog."default")
-    TABLESPACE pg_default;
-	
-	
-	
+alter table att_details_manhole add column hierarchy_type character varying(1000);
+alter table att_details_manhole add column section_name character varying(1000);
+alter table att_details_manhole add column aerial_location character varying(1000);
+alter table att_details_manhole add column chamber_remark character varying(1000);
+
+
+
+DROP MATERIALIZED VIEW IF EXISTS "APP_LCO"."LCO_REPORT";
 DROP VIEW public.vw_att_details_cable;
 CREATE OR REPLACE VIEW public.vw_att_details_cable
              AS
@@ -716,3 +407,320 @@ CREATE OR REPLACE VIEW public.vw_att_details_bdb_report
                  LEFT JOIN att_details_pod secondarypod ON bdb.secondary_pod_system_id = secondarypod.system_id
                  LEFT JOIN entity_status_master es ON es.status::text = bdb.status::text;
 
+
+
+                 CREATE MATERIALIZED VIEW IF NOT EXISTS "APP_LCO"."LCO_REPORT"
+TABLESPACE pg_default
+AS
+ WITH fsa AS (
+         SELECT jc.zonename,
+            jc.jiostatecode,
+            jc.jiostatename,
+            jc.maintenancezonecode,
+            jc.maintenancezonename,
+            jc.sap_id AS jc_sap_id,
+            jc.jiocentername,
+            fsa_1.system_id AS fsa_system_id,
+            fsa_1.subarea_name AS fsa_code,
+            fsa_1.network_id AS fsa_network_id,
+            fsa_1.vendor_id,
+            fsa_1.prms_id,
+            fsa_1.no_of_home_pass AS fsa_no_of_home_pass
+           FROM att_details_subarea fsa_1,
+            province_boundary pb,
+            rjio_jc_boundary jc
+          WHERE fsa_1.province_id = pb.id AND pb.province_abbreviation::text = jc.sapplantcode::text
+        ), dsa AS (
+         SELECT fsa_1.fsa_system_id,
+            count(*) AS dsa_count,
+            sum(dsa_1.no_of_home_pass) AS dsa_no_of_home_pass
+           FROM att_details_dsa dsa_1,
+            fsa fsa_1
+          WHERE dsa_1.parent_system_id = fsa_1.fsa_system_id
+          GROUP BY fsa_1.fsa_system_id
+        ), csa AS (
+         SELECT fsa_1.fsa_system_id,
+            count(*) AS csa_count,
+            sum(csa_1.no_of_home_pass) AS csa_no_of_home_pass
+           FROM att_details_csa csa_1,
+            att_details_dsa dsa_1,
+            fsa fsa_1
+          WHERE csa_1.parent_system_id = dsa_1.system_id AND dsa_1.parent_system_id = fsa_1.fsa_system_id
+          GROUP BY fsa_1.fsa_system_id
+        ), fat AS (
+         SELECT fat_1.subarea_system_id,
+            count(*) AS fat_count
+           FROM isp_fdb_info fat_1,
+            fsa fsa_1
+          WHERE fat_1.subarea_system_id = fsa_1.fsa_system_id
+          GROUP BY fat_1.subarea_system_id
+        ), fat_status AS (
+         SELECT fat_1.subarea_system_id,
+            count(
+                CASE
+                    WHEN fat_1.network_status::text = 'P'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "FAT_PLANNED_COUNT",
+            count(
+                CASE
+                    WHEN fat_1.network_status::text = 'A'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "FAT_ASBUILT_COUNT"
+           FROM isp_fdb_info fat_1,
+            fsa fsa_1
+          WHERE fat_1.subarea_system_id = fsa_1.fsa_system_id
+          GROUP BY fat_1.subarea_system_id, fat_1.network_status
+        ), fdc AS (
+         SELECT fdc_1.subarea_system_id,
+            count(*) AS fdc_count
+           FROM att_details_bdb fdc_1,
+            fsa fsa_1
+          WHERE fdc_1.subarea_system_id = fsa_1.fsa_system_id
+          GROUP BY fdc_1.subarea_system_id
+        ), fdc_status AS (
+         SELECT fdc_1.subarea_system_id,
+            count(
+                CASE
+                    WHEN fdc_1.network_status::text = 'P'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "FDC_PLANNED_COUNT",
+            count(
+                CASE
+                    WHEN fdc_1.network_status::text = 'A'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "FDC_ASBUILT_COUNT"
+           FROM att_details_bdb fdc_1,
+            fsa fsa_1
+          WHERE fdc_1.subarea_system_id = fsa_1.fsa_system_id
+          GROUP BY fdc_1.subarea_system_id, fdc_1.network_status
+        ), s1 AS (
+         SELECT s1_1.subarea_system_id,
+            count(*) AS s1_count
+           FROM att_details_splitter s1_1,
+            fsa fsa_1
+          WHERE s1_1.subarea_system_id = fsa_1.fsa_system_id AND s1_1.splitter_ratio::text = '2:8'::text
+          GROUP BY s1_1.subarea_system_id
+        ), s1_status AS (
+         SELECT s1_1.subarea_system_id,
+            count(
+                CASE
+                    WHEN s1_1.network_status::text = 'P'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "S1_PLANNED_COUNT",
+            count(
+                CASE
+                    WHEN s1_1.network_status::text = 'A'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "S1_ASBUILT_COUNT"
+           FROM att_details_splitter s1_1,
+            fsa fsa_1
+          WHERE s1_1.subarea_system_id = fsa_1.fsa_system_id AND s1_1.splitter_ratio::text = '2:8'::text
+          GROUP BY s1_1.subarea_system_id, s1_1.network_status
+        ), s2 AS (
+         SELECT s1_1.subarea_system_id,
+            count(*) AS s2_count
+           FROM att_details_splitter s1_1,
+            fsa fsa_1
+          WHERE s1_1.subarea_system_id = fsa_1.fsa_system_id AND s1_1.splitter_ratio::text = '1:8'::text
+          GROUP BY s1_1.subarea_system_id
+        ), s2_status AS (
+         SELECT s1_1.subarea_system_id,
+            count(
+                CASE
+                    WHEN s1_1.network_status::text = 'P'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "S2_PLANNED_COUNT",
+            count(
+                CASE
+                    WHEN s1_1.network_status::text = 'A'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "S2_ASBUILT_COUNT"
+           FROM att_details_splitter s1_1,
+            fsa fsa_1
+          WHERE s1_1.subarea_system_id = fsa_1.fsa_system_id AND s1_1.splitter_ratio::text = '1:8'::text
+          GROUP BY s1_1.subarea_system_id, s1_1.network_status
+        ), splice AS (
+         SELECT s1_1.subarea_system_id,
+            count(1) AS splice_count,
+            count(
+                CASE
+                    WHEN s1_1.network_status::text = 'P'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "SPLICE_PLANNED_COUNT",
+            count(
+                CASE
+                    WHEN s1_1.network_status::text = 'A'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "SPLICE_ASBUILT_COUNT"
+           FROM att_details_spliceclosure s1_1,
+            fsa fsa_1
+          WHERE s1_1.subarea_system_id = fsa_1.fsa_system_id
+          GROUP BY s1_1.subarea_system_id
+        ), feeder AS (
+         SELECT c.subarea_id,
+            c.cable_category AS feeder,
+            sum(
+                CASE
+                    WHEN c.total_core = 48 THEN c.cable_measured_length
+                    ELSE NULL::numeric
+                END) AS "FEEDER_48_MEASURED_LENGTH",
+            sum(
+                CASE
+                    WHEN c.total_core = 48 AND c.network_status::text = 'P'::text THEN c.cable_measured_length
+                    ELSE NULL::numeric
+                END) AS "FEEDER_48_MEASURED_PLANNED_LENGTH",
+            sum(
+                CASE
+                    WHEN c.total_core = 48 AND c.network_status::text = 'A'::text THEN c.cable_measured_length
+                    ELSE NULL::numeric
+                END) AS "FEEDER_48_MEASURED_ASBUILT_LENGTH",
+            sum(
+                CASE
+                    WHEN c.total_core = 48 THEN c.cable_calculated_length
+                    ELSE NULL::numeric
+                END) AS "FEEDER_48_CALCULATED_LENGTH",
+            sum(
+                CASE
+                    WHEN c.total_core = 48 AND c.network_status::text = 'P'::text THEN c.cable_calculated_length
+                    ELSE NULL::numeric
+                END) AS "FEEDER_48_CALCULATED_PLANNED_LENGTH",
+            sum(
+                CASE
+                    WHEN c.total_core = 48 AND c.network_status::text = 'A'::text THEN c.cable_calculated_length
+                    ELSE NULL::numeric
+                END) AS "FEEDER_48_CALCULATED_ASBUILT_LENGTH"
+           FROM vw_att_details_cable c
+          WHERE c.cable_category::text = 'Feeder'::text
+          GROUP BY c.subarea_id, c.cable_category
+        ), distribution AS (
+         SELECT c.subarea_id,
+            c.cable_category AS distribution,
+            sum(
+                CASE
+                    WHEN c.total_core = 12 THEN c.cable_measured_length
+                    ELSE NULL::numeric
+                END) AS "DISTRIBUTION_12_MEASURED_LENGTH",
+            sum(
+                CASE
+                    WHEN c.total_core = 12 AND c.network_status::text = 'P'::text THEN c.cable_measured_length
+                    ELSE NULL::numeric
+                END) AS "DISTRIBUTION_12_MEASURED_PLANNED_LENGTH",
+            sum(
+                CASE
+                    WHEN c.total_core = 12 AND c.network_status::text = 'A'::text THEN c.cable_measured_length
+                    ELSE NULL::numeric
+                END) AS "DISTRIBUTION_12_MEASURED_ASBUILT_LENGTH",
+            sum(
+                CASE
+                    WHEN c.total_core = 12 THEN c.cable_calculated_length
+                    ELSE NULL::numeric
+                END) AS "DISTRIBUTION_12_CALCULATED_LENGTH",
+            sum(
+                CASE
+                    WHEN c.total_core = 12 AND c.network_status::text = 'P'::text THEN c.cable_calculated_length
+                    ELSE NULL::numeric
+                END) AS "DISTRIBUTION_12_CALCULATED_PLANNED_LENGTH",
+            sum(
+                CASE
+                    WHEN c.total_core = 12 AND c.network_status::text = 'A'::text THEN c.cable_calculated_length
+                    ELSE NULL::numeric
+                END) AS "DISTRIBUTION_12_CALCULATED_ASBUILT_LENGTH"
+           FROM vw_att_details_cable c
+          WHERE c.cable_category::text = 'Distribution'::text
+          GROUP BY c.subarea_id, c.cable_category
+        ), poles AS (
+         SELECT att_details_pole.subarea_id,
+            sum(
+                CASE
+                    WHEN upper(att_details_pole.bom_sub_category::text) = 'EXISTING'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "EXISTING_POLE_COUNT",
+            sum(
+                CASE
+                    WHEN upper(att_details_pole.bom_sub_category::text) = 'PROPOSED'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "PROPOSED_POLE_COUNT",
+            sum(
+                CASE
+                    WHEN upper(att_details_pole.bom_sub_category::text) = 'PROPOSED'::text AND att_details_pole.network_status::text = 'A'::text THEN 1
+                    ELSE NULL::integer
+                END) AS "ASBUILT_POLE_COUNT"
+           FROM att_details_pole
+          GROUP BY att_details_pole.subarea_id, att_details_pole.bom_sub_category
+        )
+ SELECT DISTINCT fsa.zonename,
+    fsa.jiostatecode,
+    fsa.jiostatename,
+    fsa.maintenancezonecode,
+    fsa.maintenancezonename,
+    fsa.jc_sap_id,
+    fsa.jiocentername,
+    fsa.fsa_system_id,
+    fsa.fsa_code,
+    fsa.fsa_network_id,
+    fsa.vendor_id,
+    fsa.prms_id,
+    fsa.fsa_no_of_home_pass,
+    dsa.dsa_count,
+    dsa.dsa_no_of_home_pass,
+    csa.csa_count,
+    csa.csa_no_of_home_pass,
+    fat.fat_count,
+    fat_status."FAT_PLANNED_COUNT",
+    fat_status."FAT_ASBUILT_COUNT",
+    fdc.fdc_count,
+    fdc_status."FDC_PLANNED_COUNT",
+    fdc_status."FDC_ASBUILT_COUNT",
+    s1.s1_count,
+    s1_status."S1_PLANNED_COUNT",
+    s1_status."S1_ASBUILT_COUNT",
+    s2.s2_count,
+    s2_status."S2_PLANNED_COUNT",
+    s2_status."S2_ASBUILT_COUNT",
+    splice.splice_count,
+    splice."SPLICE_PLANNED_COUNT",
+    splice."SPLICE_ASBUILT_COUNT",
+    feeder."FEEDER_48_MEASURED_LENGTH",
+    feeder."FEEDER_48_MEASURED_PLANNED_LENGTH",
+    feeder."FEEDER_48_MEASURED_ASBUILT_LENGTH",
+    feeder."FEEDER_48_CALCULATED_LENGTH",
+    feeder."FEEDER_48_CALCULATED_PLANNED_LENGTH",
+    feeder."FEEDER_48_CALCULATED_ASBUILT_LENGTH",
+    distribution."DISTRIBUTION_12_MEASURED_LENGTH",
+    distribution."DISTRIBUTION_12_MEASURED_PLANNED_LENGTH",
+    distribution."DISTRIBUTION_12_MEASURED_ASBUILT_LENGTH",
+    distribution."DISTRIBUTION_12_CALCULATED_LENGTH",
+    distribution."DISTRIBUTION_12_CALCULATED_PLANNED_LENGTH",
+    distribution."DISTRIBUTION_12_CALCULATED_ASBUILT_LENGTH",
+    poles."EXISTING_POLE_COUNT",
+    poles."PROPOSED_POLE_COUNT",
+    poles."ASBUILT_POLE_COUNT"
+   FROM fsa
+     LEFT JOIN dsa ON fsa.fsa_system_id = dsa.fsa_system_id
+     LEFT JOIN csa ON fsa.fsa_system_id = csa.fsa_system_id
+     LEFT JOIN fat ON fsa.fsa_system_id = fat.subarea_system_id
+     LEFT JOIN fat_status ON fsa.fsa_system_id = fat_status.subarea_system_id
+     LEFT JOIN fdc ON fsa.fsa_system_id = fdc.subarea_system_id
+     LEFT JOIN fdc_status ON fsa.fsa_system_id = fdc_status.subarea_system_id
+     LEFT JOIN s1 ON fsa.fsa_system_id = s1.subarea_system_id
+     LEFT JOIN s2 ON fsa.fsa_system_id = s2.subarea_system_id
+     LEFT JOIN s1_status ON fsa.fsa_system_id = s1_status.subarea_system_id
+     LEFT JOIN s2_status ON fsa.fsa_system_id = s2_status.subarea_system_id
+     LEFT JOIN splice ON fsa.fsa_system_id = splice.subarea_system_id
+     LEFT JOIN feeder ON fsa.fsa_network_id::text = feeder.subarea_id::text
+     LEFT JOIN distribution ON fsa.fsa_network_id::text = distribution.subarea_id::text
+     LEFT JOIN poles ON fsa.fsa_network_id::text = poles.subarea_id::text
+WITH NO DATA;
+
+ALTER TABLE IF EXISTS "APP_LCO"."LCO_REPORT"
+    OWNER TO postgres;
+
+
+CREATE INDEX lco_report_jc_sap_id_idx
+    ON "APP_LCO"."LCO_REPORT" USING btree
+    (jc_sap_id COLLATE pg_catalog."default")
+    TABLESPACE pg_default;
+CREATE INDEX lco_report_jiostatecode_idx
+    ON "APP_LCO"."LCO_REPORT" USING btree
+    (jiostatecode COLLATE pg_catalog."default")
+    TABLESPACE pg_default;
