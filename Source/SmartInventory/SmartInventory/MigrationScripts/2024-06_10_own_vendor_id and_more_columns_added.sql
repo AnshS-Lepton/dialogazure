@@ -133,11 +133,13 @@ VALUES('hi', 'SI_OSP_CAB_NET_FRM_075', '????? ?????', false, true, 'Hindi', 'Sma
 alter table att_details_cable add column generic_section_name character varying(1000);
 
 alter table att_details_manhole add column generic_section_name character varying(1000);
+alter table att_details_manhole add column route_id character varying(1000);
 
 alter table att_details_spliceclosure add column generic_section_name character varying(1000);
 alter table att_details_spliceclosure add column section_name character varying(1000);
 alter table att_details_spliceclosure add column aerial_location character varying(1000);
 alter table att_details_spliceclosure add column hierarchy_type character varying(1000);
+alter table att_details_spliceclosure add column route_id character varying(1000);
 
 
  INSERT INTO public.dropdown_master(
@@ -7036,6 +7038,8 @@ alter table temp_du_spliceclosure add column section_name character varying(1000
 alter table temp_du_spliceclosure add column aerial_location character varying(1000);
 alter table temp_du_spliceclosure add column hierarchy_type character varying(1000);
 alter table temp_du_spliceclosure add column route_id character varying(1000);
+
+
 
 
 
