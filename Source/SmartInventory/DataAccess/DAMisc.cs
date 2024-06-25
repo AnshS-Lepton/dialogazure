@@ -164,11 +164,17 @@ namespace DataAccess
         //    }
         //    catch { throw; }
         //}
-        public List<EntityDetail> getNearByEntities(double latitude, double longitude, int bufferInMtr, int user_id)
+        public List<EntityDetail> getNearByEntities(double latitude, double longitude, int bufferInMtr, string source_ref_id, string source_ref_type, int user_id)
         {
             try
             {
-                return repo.ExecuteProcedure<EntityDetail>("fn_getnearbyentities", new { lat = latitude, lng = longitude, mtrBuffer = bufferInMtr, p_user_id = user_id });
+                return repo.ExecuteProcedure<EntityDetail>("fn_getnearbyentities", new { lat = latitude, lng = longitude,
+                    mtrBuffer = bufferInMtr,
+                    p_user_id = user_id,
+                    p_source_ref_id = source_ref_id,
+                    p_source_ref_type = source_ref_type
+
+                });
             }
             catch { throw; }
         }

@@ -9235,7 +9235,7 @@ var Main = function () {
     this.SetfilterNetworkTicketFilters = function (_isNetworkTicketRequest, _ticketId) {
         app.filterNetworkTicketValue = "1 = 1";
         if (_isNetworkTicketRequest) {
-            if (app.ticketStatus == 'InProgress' || app.ticketStatus == 'Rejected' || 'Completed') {
+            if (app.ticketStatus == 'InProgress' || app.ticketStatus == 'Rejected' || app.ticketStatus == 'Completed') {
                 app.fSource_ref_id = _ticketId;
                 app.fSource_ref_type = 'Network_Ticket';
                 app.fIs_new_entity = true;

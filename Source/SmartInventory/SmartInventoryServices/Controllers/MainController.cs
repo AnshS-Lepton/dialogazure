@@ -394,7 +394,7 @@ namespace SmartInventoryServices.Controllers
                 }
                 //Models.User objUser = new BLUser().GetUserDetailByID(objEntityTemplateIn.user_id);
                 response.status = StatusCodes.OK.ToString();
-                response.results = new BLMisc().getNearByEntities(objEntityTemplateIn.latitude, objEntityTemplateIn.longitude, objEntityTemplateIn.bufferInMtrs, objEntityTemplateIn.userId);
+                response.results = new BLMisc().getNearByEntities(objEntityTemplateIn.latitude, objEntityTemplateIn.longitude, objEntityTemplateIn.bufferInMtrs, objEntityTemplateIn.source_ref_id, objEntityTemplateIn.source_ref_type, objEntityTemplateIn.userId);
             }
             catch (Exception ex)
             {
