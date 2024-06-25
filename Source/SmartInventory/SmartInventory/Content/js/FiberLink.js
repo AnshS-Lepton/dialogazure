@@ -71,6 +71,7 @@
         'ddlredundantlinktype': '#ddlredundantlinktype_chosen a',
         'txtredundantlinkid': '#txtredundantlinkid',
         '': '#',
+        'btnExportPDFLinks': '#btnExportPDFLinks',
     }
     this.InitApp = function () {       
        // app.setDateTimeCalendar_viewLink("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
@@ -130,6 +131,10 @@
             else {
                 return true;
             }
+        });
+        $(app.DE.btnExportPDFLinks).on("click", function () {
+            window.location = appRoot + 'FiberLink/ExportFiberLinkInPDF';
+            $(".dropbox_BulkExport").slideToggle();
         });
           
     }
@@ -801,27 +806,34 @@
 
 
     this.createUpdateLink = function (IsNewLink) {
-        
+
         if ($('#ddlLinkType').val() == "") {
-            alert("Please select Link Type!");
+            $('#ddlLinkType').css('border-color', 'red');
+            $(app.DE.ddlLinkType).css('border-color', 'red');
             return false;
         } else {
 
             $(app.DE.ddlLinkType).css('border-color', '');
+            $('#ddlLinkType').css('border-color', '');
         }
         if ($('#txtLinkName').val() == "") {
-            alert("Please select Link Name!");
+            $('#txtLinkName').css('border-color', 'red');
             return false;
         }
+        else {
+            $('#txtLinkName').css('border-color', '');
+        }
         if (($('#ddlLinkType').val() == "Redundant Link") && ($('#ddlMainlinktype').val() == "")) {
-            alert("Please select Main Link Type!");
+            $('#ddlMainlinktype').css('border-color', 'red');
+            $('#ddlMainlinktype_chosen a').css('border-color', 'red');
             return false;
         } else {
 
+            $('#ddlMainlinktype').css('border-color', '');
             $('#ddlMainlinktype_chosen a').css('border-color', '');
         }
         if (($('#ddlLinkType').val() == "Redundant Link") && ($('#txtmainlinkid').val() == "")) {
-            alert("Please select Main Link Id!");
+            $('#txtmainlinkid').css('border-color', 'red');
             return false;
         } else {
 
@@ -830,14 +842,16 @@
 
 
         if (($('#ddlLinkType').val() == "Main Link") && ($('#ddlredundantlinktype').val() == "")) {
-            alert("Please select Redundant Link Type!");
+            $('#ddlredundantlinktype').css('border-color', 'red');
+            $('#ddlredundantlinktype_chosen a').css('border-color', 'red');
             return false;
         } else {
 
+            $('#ddlredundantlinktype').css('border-color', '');
             $('#ddlredundantlinktype_chosen a').css('border-color', '');
         }
         if (($('#ddlLinkType').val() == "Main Link") && ($('#txtredundantlinkid').val() == "")) {
-            alert("Please select Redundant Link Id!");
+            $('#txtredundantlinkid').css('border-color', 'red');
             return false;
         } else {
             $('#txtredundantlinkid').css('border-color', '');
@@ -1077,8 +1091,12 @@
                     $(app.DE.dvAssociateLink).hide();
                     app.CableFiberButton = false;
                 }
-                else {
+                else if (resp.message == "Fiber Link created but not associated as ODF to ODF connectivity not found!") {
                     alert("Fiber Link is not associated as ODF to ODF connectivity not found!");
+                    $(app.DE.dvAssociateLink).hide();
+                }
+                else {
+                    alert(resp.message);
                     $(app.DE.dvAssociateLink).hide();
                 }
             } 

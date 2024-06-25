@@ -1,5 +1,8 @@
 ﻿
 using BusinessLogics;
+using iTextSharp.text.html.simpleparser;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
 using Models;
 using NPOI.SS.UserModel;
 using SmartInventory.Filters;
@@ -12,6 +15,7 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Utility;
@@ -972,5 +976,209 @@ namespace SmartInventory.Controllers
             BindFiberLinkDropDown(objFiberLink);
             return PartialView("_CreateFiberLink", objFiberLink);
         }
+        public void ExportFiberLinkInPDF()
+        {
+
+            if (Session["viewFiberLinkDashboard"] != null)
+            {
+                FiberLinkFilter objFiberLinkFilter = (FiberLinkFilter)Session["viewFiberLinkDashboard"];
+                objFiberLinkFilter.currentPage = 0;
+                objFiberLinkFilter.pageSize = 0;
+                objFiberLinkFilter.system_id = 0;
+                List<Dictionary<string, string>> lstFiberLinkDetails = new BLFiberLink().getFiberLinkDetails(Convert.ToInt32(Session["user_id"]), objFiberLinkFilter);
+
+                lstFiberLinkDetails = BLConvertMLanguage.ExportMultilingualConvert(lstFiberLinkDetails);
+                DataTable dtReport = new DataTable();
+                dtReport = MiscHelper.GetDataTableFromDictionaries(lstFiberLinkDetails);
+                if (dtReport.Columns.Contains("s_no")) { dtReport.Columns.Remove("s_no"); }
+                if (dtReport.Columns.Contains("system_id")) { dtReport.Columns.Remove("system_id"); }
+                if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+                if (dtReport.Columns.Contains("Start Point Type")) { dtReport.Columns.Remove("Start Point Type"); }
+                if (dtReport.Columns.Contains("Start Point Network ID")) { dtReport.Columns.Remove("Start Point Network ID"); }
+                if (dtReport.Columns.Contains("End Point Type")) { dtReport.Columns.Remove("End Point Type"); }
+                if (dtReport.Columns.Contains("End Point Network ID")) { dtReport.Columns.Remove("End Point Network ID"); }
+                if (dtReport.Columns.Contains("No. Of LMC")) { dtReport.Columns.Remove("No. Of LMC"); }
+                if (dtReport.Columns.Contains("Each LMC Length(meter)")) { dtReport.Columns.Remove("Each LMC Length(meter)"); }
+                if (dtReport.Columns.Contains("OTDR Distance(meter)")) { dtReport.Columns.Remove("OTDR Distance(meter)"); }
+                if (dtReport.Columns.Contains("No. Of Pairs")) { dtReport.Columns.Remove("No. Of Pairs"); }
+                if (dtReport.Columns.Contains("Tube And Core Details")) { dtReport.Columns.Remove("Tube And Core Details"); }
+                if (dtReport.Columns.Contains("Existing Route Length(OTDR)")) { dtReport.Columns.Remove("Existing Route Length(OTDR)"); }
+                if (dtReport.Columns.Contains("New Build Route Length(meter)")) { dtReport.Columns.Remove("New Build Route Length(meter)"); }
+                if (dtReport.Columns.Contains("OTL Length(meter)")) { dtReport.Columns.Remove("OTL Length(meter)"); }
+                if (dtReport.Columns.Contains("OTM Length(meter)")) { dtReport.Columns.Remove("OTM Length(meter)"); }
+                if (dtReport.Columns.Contains("Any Row Portion")) { dtReport.Columns.Remove("Any Row Portion"); }
+                if (dtReport.Columns.Contains("ROW Authority")) { dtReport.Columns.Remove("ROW Authority"); }
+                if (dtReport.Columns.Contains("Total ROW Segments")) { dtReport.Columns.Remove("Total ROW Segments"); }
+                if (dtReport.Columns.Contains("Total ROW Length(meter)")) { dtReport.Columns.Remove("Total ROW Length(meter)"); }
+                if (dtReport.Columns.Contains("Total ROW Recurring Charges/Annum(Rs.)")) { dtReport.Columns.Remove("Total ROW Recurring Charges/Annum(Rs.)"); }
+                if (dtReport.Columns.Contains("Handover Date")) { dtReport.Columns.Remove("Handover Date"); }
+                if (dtReport.Columns.Contains("Hoto Signoff Date")) { dtReport.Columns.Remove("Hoto Signoff Date"); }
+                if (dtReport.Columns.Contains("Modified By")) { dtReport.Columns.Remove("Modified By"); }
+                if (dtReport.Columns.Contains("Modified On\t")) { dtReport.Columns.Remove("Modified On\t"); }
+                if (dtReport.Columns.Contains("Service ID")) { dtReport.Columns.Remove("Service ID"); }
+
+                DataSet ds = new DataSet();
+                ds.Tables.Add(dtReport);
+                ds.Tables[0].TableName = "Fiber Link";
+
+
+                //-------------Export Cable Info--------------
+                var lstFiberLinkIds = objFiberLinkFilter.lstFiberLinkDetails.Select(x => x.system_id.ToString()).ToList();
+                var strFiberLinkIds = String.Join(",", lstFiberLinkIds);
+                List<Dictionary<string, string>> info = new BLFiberLink().getExportCableInfoByLinkSystemIds(strFiberLinkIds);
+                if (objFiberLinkFilter.system_id == 0)
+                {
+                    DataTable dtReport2 = new DataTable();
+                    dtReport2 = MiscHelper.GetDataTableFromDictionaries(info);
+                    if (dtReport2 != null && dtReport2.Rows.Count > 0)
+                    {
+                        if (dtReport2.Columns.Contains("cable_network_id")) { dtReport2.Columns["cable_network_id"].ColumnName = "Cable Network Id"; }
+                        if (dtReport2.Columns.Contains("cable_name")) { dtReport2.Columns["cable_name"].ColumnName = "Cable Name"; }
+                        if (dtReport2.Columns.Contains("total_core")) { dtReport2.Columns["total_core"].ColumnName = "Total Core"; }
+                        if (dtReport2.Columns.Contains("no_of_tube")) { dtReport2.Columns["no_of_tube"].ColumnName = "No. Of Tube"; }
+                        if (dtReport2.Columns.Contains("a_location")) { dtReport2.Columns["a_location"].ColumnName = "A Location"; }
+                        if (dtReport2.Columns.Contains("b_location")) { dtReport2.Columns["b_location"].ColumnName = "B Location"; }
+                        if (dtReport2.Columns.Contains("fiber_number")) { dtReport2.Columns["fiber_number"].ColumnName = "Associated Fiber Number"; }
+                        if (dtReport2.Columns.Contains("link_network_id")) { dtReport2.Columns["link_network_id"].ColumnName = "Link Network Id"; }
+                        if (dtReport2.Columns.Contains("Link_id")) { dtReport2.Columns["Link_id"].ColumnName = "Link/Route Id"; }
+                    }
+                    ds.Tables.Add(dtReport2);
+                    ds.Tables[1].TableName = "Cable Information";
+                }
+                //------------------END;
+                if (objFiberLinkFilter.system_id > 0)
+                {
+                    DataTable dtReport1 = new DataTable();
+
+                    List<Dictionary<string, string>> data = new BLFiberLink().getExportCableInfoByLinkId(objFiberLinkFilter.system_id);
+                    if (data.Count > 0)
+                    {
+                        foreach (Dictionary<string, string> dic in data)
+                        {
+                            var obj = (IDictionary<string, object>)new ExpandoObject();
+                            foreach (var col in dic)
+                            {
+                                obj.Add(col.Key, col.Value);
+                            }
+                        }
+
+                        dtReport1 = MiscHelper.GetDataTableFromDictionaries(data);
+
+                        if (dtReport1 != null && dtReport1.Rows.Count > 0)
+                        {
+                            if (dtReport1.Columns.Contains("network_id")) { dtReport1.Columns["network_id"].ColumnName = "Network Id"; }
+                            if (dtReport1.Columns.Contains("cable_name")) { dtReport1.Columns["cable_name"].ColumnName = "Cable Name"; }
+                            if (dtReport1.Columns.Contains("total_core")) { dtReport1.Columns["total_core"].ColumnName = "Total Core"; }
+                            if (dtReport1.Columns.Contains("no_of_tube")) { dtReport1.Columns["no_of_tube"].ColumnName = "No. Of Tube"; }
+                            if (dtReport1.Columns.Contains("a_location")) { dtReport1.Columns["a_location"].ColumnName = "A Location"; }
+                            if (dtReport1.Columns.Contains("b_location")) { dtReport1.Columns["b_location"].ColumnName = "B Location"; }
+                            if (dtReport1.Columns.Contains("fiber_number")) { dtReport1.Columns["fiber_number"].ColumnName = "Associated Fiber Number"; }
+                        }
+                        ds.Tables.Add(dtReport1);
+                        ds.Tables[1].TableName = "Cable Information";
+                    }
+                }
+
+                GenerateToPDF(ds, "FiberLink_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"), Resources.Resources.SI_OSP_GBL_NET_RPT_127);
+
+            }
+
+        }
+        private void GenerateToPDF(DataSet ds, string Name, string title)
+        {
+            iTextSharp.text.Font _font = new iTextSharp.text.Font(PDFHelper.GetFont(), 10, iTextSharp.text.Font.BOLD);
+            iTextSharp.text.Font font = new iTextSharp.text.Font(PDFHelper.GetFont(), 6, iTextSharp.text.Font.NORMAL);
+            Paragraph EntityHeading1 = new Paragraph(new Chunk("Fiber Link", _font));
+            EntityHeading1.Alignment = Element.ALIGN_CENTER;
+            EntityHeading1.SpacingAfter = 20;
+
+            PdfPTable table = new PdfPTable(ds.Tables[0].Columns.Count);
+            table.WidthPercentage = 100f;
+            PdfPCell cell = new PdfPCell();
+            foreach (DataColumn column in ds.Tables[0].Columns)
+            {
+                cell = new PdfPCell(new Phrase("" + column.ColumnName + "", font));
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.BackgroundColor = new BaseColor(0, 186, 138);
+                cell.FixedHeight = 70f;
+                table.AddCell(cell);
+            }
+            foreach (DataRow row in ds.Tables[0].Rows)
+            {
+                int cnt = 0;
+                foreach (DataColumn column in ds.Tables[0].Columns)
+                {
+                    if (row[0] == Resources.Resources.SI_OSP_GBL_GBL_GBL_041)
+                    {
+                        cell = new PdfPCell(new Phrase("" + row[column] + "", font));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.BackgroundColor = new BaseColor(0, 186, 138);
+                        cell.FixedHeight = 70f;
+                        table.AddCell(cell);
+                    }
+                    else
+                    {
+                        cell = new PdfPCell(new Phrase("" + row[column] + "", font));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.FixedHeight = 70f;
+                        table.AddCell(cell);
+                    }
+                    cnt++;
+                }
+            }
+            //Table 1
+            PdfPTable table1 = new PdfPTable(ds.Tables[1].Columns.Count);
+            table1.WidthPercentage = 100f;//90f;
+            Paragraph EntityHeading = new Paragraph(new Chunk("Cable Information", _font));
+            EntityHeading.Alignment = Element.ALIGN_CENTER;
+            EntityHeading.SpacingAfter = 20;
+            PdfPCell cell1 = new PdfPCell();
+            foreach (DataColumn column in ds.Tables[1].Columns)
+            {
+                    cell1 = new PdfPCell(new Phrase("" + column.ColumnName + "", font));
+                    cell1.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cell1.BackgroundColor = new BaseColor(0, 186, 138);
+                    cell1.FixedHeight = 45f;
+                    table1.AddCell(cell1);
+            }
+            foreach (DataRow row in ds.Tables[1].Rows)
+            {
+                int cnt = 0;
+                foreach (DataColumn column in ds.Tables[1].Columns)
+                {
+                        if (row[0] == Resources.Resources.SI_OSP_GBL_GBL_GBL_041)
+                        {
+                            cell1 = new PdfPCell(new Phrase("" + row[column] + "", font));
+                            cell1.HorizontalAlignment = Element.ALIGN_CENTER;
+                            cell1.BackgroundColor = new BaseColor(0, 186, 138);
+                            cell1.FixedHeight = 25f;
+                            table1.AddCell(cell1);
+                        }
+                        else
+                        {
+                            cell1 = new PdfPCell(new Phrase("" + row[column] + "", font));
+                            cell1.HorizontalAlignment = Element.ALIGN_CENTER;
+                            cell1.FixedHeight = 35f;
+                            table1.AddCell(cell1);
+                        }
+                        cnt++;
+                }
+            }
+            Document pdfDoc = new Document(PageSize.A4, 0f, 0f, 25f, 30f);
+            PdfWriter writer = PdfWriter.GetInstance(pdfDoc, Response.OutputStream);
+            writer.PageEvent = new PDFHelper.AllPdfPageEvents();
+            pdfDoc.Open();
+            pdfDoc.Add(EntityHeading1);
+            pdfDoc.Add(table);
+            pdfDoc.Add(EntityHeading);
+            pdfDoc.Add(table1);
+            pdfDoc.Close();
+            Response.ContentType = "application/pdf";
+            Response.AddHeader("content-disposition", "attachment;filename=" + Name + ".pdf");
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            Response.Write(pdfDoc);
+            Response.End();
+        }
+
     }
 }
