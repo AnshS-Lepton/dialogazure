@@ -9235,19 +9235,12 @@ var Main = function () {
     this.SetfilterNetworkTicketFilters = function (_isNetworkTicketRequest, _ticketId) {
         app.filterNetworkTicketValue = "1 = 1";
         if (_isNetworkTicketRequest) {
-            if (app.ticketStatus == 'InProgress' || app.ticketStatus == 'Rejected') {
+            if (app.ticketStatus == 'InProgress' || app.ticketStatus == 'Rejected' || app.ticketStatus == 'Completed') {
                 app.fSource_ref_id = _ticketId;
                 app.fSource_ref_type = 'Network_Ticket';
                 app.fIs_new_entity = true;
                 app.fStatus = '';
                 app.filterNetworkTicketValue = " ([source_ref_id] ='" + _ticketId + "') and [source_ref_type]='Network_Ticket' and [is_new_entity]=true";
-            }
-            if (app.ticketStatus == 'Completed') {
-                app.fSource_ref_id = _ticketId;
-                app.fSource_ref_type = 'Network_Ticket';
-                app.fIs_new_entity = true;
-                app.fStatus = 'A';
-                app.filterNetworkTicketValue = " [status]='A' and ([source_ref_id] ='" + _ticketId + "') and [source_ref_type]='Network_Ticket' and [is_new_entity]=true";
             }
             if (app.ticketStatus == 'Approved') {
                 app.fSource_ref_id = _ticketId;
