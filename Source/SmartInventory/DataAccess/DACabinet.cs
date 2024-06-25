@@ -91,7 +91,8 @@ namespace DataAccess
                     objCabinet.origin_from = objCabinetMaster.origin_from;
                     objCabinet.origin_ref_code = objCabinetMaster.origin_ref_code;
                     objCabinet.bom_sub_category=objCabinetMaster.bom_sub_category;
-                    objCabinet.hierarchy_type = objCabinetMaster.hierarchy_type;                    
+                    objCabinet.hierarchy_type = objCabinetMaster.hierarchy_type; 
+                    objCabinet.own_vendor_id = objCabinetMaster.own_vendor_id;
                     //// objCabinet.served_by_ring = objCabinetMaster.served_by_ring;
                     var result = repo.Update(objCabinet);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.Cabinet.ToString(), result.province_id, 1);
