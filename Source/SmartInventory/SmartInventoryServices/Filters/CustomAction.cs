@@ -90,7 +90,7 @@ namespace SmartInventoryServices.Filters
                 }
                 obj.user_name = "admin";
                 obj.source = "WEB";
-                var contentDisposition = actionExecutedContext.ActionContext.Response.Content.Headers.ContentDisposition;
+                //var contentDisposition = actionExecutedContext.ActionContext.Response.Content.Headers.ContentDisposition;
                 if (actionExecutedContext.ActionContext.Response != null)
                 {
 
@@ -103,10 +103,10 @@ namespace SmartInventoryServices.Filters
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(contentDisposition.FileName))
-                    {
-                        obj.response = "";
-                    }
+                    //if (!string.IsNullOrEmpty(contentDisposition.FileName))
+                    //{
+                    //    obj.response = "";
+                    //}
                     new BLAPIRequestLog().SaveApiRequestLog(obj);
                 }
             }
