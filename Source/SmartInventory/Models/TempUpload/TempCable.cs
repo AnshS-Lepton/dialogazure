@@ -55,6 +55,10 @@ namespace Models.TempUpload
         public string requested_by { get; set; }
         public string request_approved_by { get; set; }
         public string network_status { get; set; }
+        public string section_name { get; set; }
+        public string generic_section_name { get; set; }
+        public string hierarchy_type { get; set; }
+        public string aerial_location { get; set; }
     }
 
 }

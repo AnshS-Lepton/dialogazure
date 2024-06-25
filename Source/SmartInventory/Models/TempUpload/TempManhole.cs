@@ -40,5 +40,10 @@ namespace Models.TempUpload
         public string authority {get; set; }
         public string area {get; set; }
         public string route_name {get; set; }
+        public string section_name { get; set; }
+        public string generic_section_name { get; set; }
+        public string hierarchy_type { get; set; }
+        public string aerial_location { get; set; }
+        public string route_id { get; set; }
     }
 }
