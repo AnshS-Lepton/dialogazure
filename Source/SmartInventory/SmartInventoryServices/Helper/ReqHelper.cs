@@ -163,7 +163,7 @@ namespace SmartInventoryServices.Helper
             catch { throw; }
         }
 
-        public static string UploadfileOnFTP(string sEntityType, string sEntityId, HttpPostedFile postedFile, string sUploadType, string newfilename, string featureType = null)
+        public static string UploadfileOnFTP(string sEntityType, string sEntityId, HttpPostedFile postedFile, string sUploadType, string newfilename, string featureType = null, string uploaddocType = null)
         {
             try
             {
@@ -175,7 +175,7 @@ namespace SmartInventoryServices.Helper
                 if (isValidFTPConnection(strFTPPath, strFTPUserName, strFTPPassWord))
                 {
                     // Create Directory if not exists and get Final FTP path to save file..
-                    strFTPFilePath = CreateNestedDirectoryOnFTP(strFTPPath, strFTPUserName, strFTPPassWord, featureType, sEntityType, sEntityId, sUploadType);
+                    strFTPFilePath = CreateNestedDirectoryOnFTP(strFTPPath, strFTPUserName, strFTPPassWord, featureType, sEntityType, sEntityId, sUploadType, uploaddocType);
 
                     //Prepare FTP Request..
                     if (sUploadType.ToUpper() == "IMAGE")

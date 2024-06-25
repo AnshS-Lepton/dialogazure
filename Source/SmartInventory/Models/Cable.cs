@@ -95,10 +95,13 @@ namespace Models
         public int? purpose_id { get; set; }
         public string ownership_type { get; set; }
         public string third_party_vendor_id { get; set; }
+        public string own_vendor_id { get; set; }
         public string circuit_id { get; set; }
         public string thirdparty_circuit_id { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+        [NotMapped]
+        public List<KeyValueDropDown> listOwnVendorId { get; set; }
         [NotMapped]
         public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
         [NotMapped]
@@ -216,8 +219,17 @@ namespace Models
         [NotMapped]
         public List<string> lstUserModule { get; set; }        
         public string route_name { get; set; }
+        public string section_name { get; set; }
+        public string generic_section_name { get; set; }
         [NotMapped]
         public CDBAttribute LstCDBAttribute { get; set; }
+        public string parent_cable_netwok_id { get; set; }
+        public string parent_cable_system_id { get; set; }
+        public string splited_by { get; set; }
+        public string splitted_on { get; set; }
+        public string splitting_system_id { get; set; }
+        public string splitting_netwok_id { get; set; }
+        public string splitting_entitytype { get; set; }
         public CableMaster()
         {
             objPM = new PageMessage();

@@ -2669,6 +2669,32 @@ namespace SmartInventory.Controllers
                                         dtReportCdb.TableName = layer.layer_title;
                                         dtReportAdditional.TableName = layer.layer_title;
 
+                                        if (dtReport != null && dtReport.Rows.Count > 0)
+                                        {
+                                            if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+                                            if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+                                            if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+                                            if (dtReport.Columns.Contains("Fn Get Date")) { dtReport.Columns.Remove("Fn Get Date"); }
+                                        }
+
+                                        if (dtReportCdb != null && dtReportCdb.Rows.Count > 0)
+                                        {
+                                            if (dtReportCdb.Columns.Contains("S_NO")) { dtReportCdb.Columns.Remove("S_NO"); }
+                                            if (dtReportCdb.Columns.Contains("totalrecords")) { dtReportCdb.Columns.Remove("totalrecords"); }
+                                            if (dtReportCdb.Columns.Contains("Barcode")) { dtReportCdb.Columns.Remove("Barcode"); }
+                                            if (dtReportCdb.Columns.Contains("Fn Get Date")) { dtReportCdb.Columns.Remove("Fn Get Date"); }
+                                        }
+
+                                        if (dtReportAdditional != null && dtReportAdditional.Rows.Count > 0)
+                                        {
+                                            if (dtReportAdditional.Columns.Contains("S_NO")) { dtReportAdditional.Columns.Remove("S_NO"); }
+                                            if (dtReportAdditional.Columns.Contains("totalrecords")) { dtReportAdditional.Columns.Remove("totalrecords"); }
+                                            if (dtReportAdditional.Columns.Contains("Barcode")) { dtReportAdditional.Columns.Remove("Barcode"); }
+                                            if (dtReportAdditional.Columns.Contains("Fn Get Date")) { dtReportAdditional.Columns.Remove("Fn Get Date"); }
+                                        }
+
+
+
                                         if (dtReport.Rows.Count > 0 || dtReportCdb.Rows.Count > 0 || dtReportAdditional.Rows.Count > 0)
                                         {
                                             objExportEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
@@ -5881,6 +5907,8 @@ namespace SmartInventory.Controllers
             }
             else
             {
+                objAssociationEntitiesReport.lstReportData = new BLLayer().GetAssociationReportSummary(objAssociationEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
+                Session["EntityAssociationSummaryData"] = objAssociationEntitiesReport;
                 DownloadAssociationEntityReport(objAssociationEntitiesReport.objReportFilters.purpose, objAssociationEntitiesReport.objReportFilters.SelectedLayerIds, 0, 0, 0);
                 objAssociationEntitiesReport.popupmessage = "Request is processing in background.Please check the export report log page.";
                 return PartialView("_EntityAssociationReport", objAssociationEntitiesReport);
@@ -6602,8 +6630,7 @@ namespace SmartInventory.Controllers
                 try
                 {
                     AssociationEntitiesReport entityAssociationSummaryData = new AssociationEntitiesReport();
-
-                    entityAssociationSummaryData = (AssociationEntitiesReport)Session["EntityAssociationSummaryData"];
+                                        entityAssociationSummaryData = (AssociationEntitiesReport)Session["EntityAssociationSummaryData"];
                     AssociationEntitiesSummaryView objAssociationEntitiesReport = new AssociationEntitiesSummaryView();
 
                     AssociationReportFilter objAssociationReportFilter = new AssociationReportFilter();
@@ -6696,15 +6723,15 @@ namespace SmartInventory.Controllers
                                         if (recordCount != null)
                                             total_entity_count = recordCount.planned_count + recordCount.as_built_count + recordCount.dormant_count;
                                         List<Dictionary<string, string>> lstExportEntitiesDetail = null;
-                                        //if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
-                                        //{
-                                        ////	lstExportEntitiesDetail = new BLLayer().GetAssociationReportSummaryViewCSV(objAssociationEntitiesReport.objReportFilters, layer.layer_name);
+                                        if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
+                                        {
+                                            	lstExportEntitiesDetail = new BLLayer().GetAssociationReportSummaryViewCSV(objAssociationEntitiesReport.objReportFilters, layer.layer_name);
 
-                                        //}
-                                        //else
-                                        //{
-                                        lstExportEntitiesDetail = new BLLayer().GetAssociationReportSummaryView(objAssociationEntitiesReport.objReportFilters, layer.layer_name);
-                                        //}
+                                        }
+                                        else
+                                        {
+                                            lstExportEntitiesDetail = new BLLayer().GetAssociationReportSummaryView(objAssociationEntitiesReport.objReportFilters, layer.layer_name);
+                                        }
                                         // lstExportEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstExportEntitiesDetail);
                                         DataTable dtReport = new DataTable();
                                         dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail, true, ApplicationSettings.numberFormatType, new string[] { "Latitude", "Longitude", "Item Code", "Region ID", "Province ID", "Created By ID", "Source Ref ID", "Status Updated By", "Modified By", "created_by" });

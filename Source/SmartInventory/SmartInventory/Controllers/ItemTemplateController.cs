@@ -953,6 +953,7 @@ namespace SmartInventory.Controllers
             objCableItemMaster.listcableCategory = objDDL.Where(x => x.dropdown_type == DropDownType.Cable_Category.ToString()).ToList();
             objCableItemMaster.listcableSubCategory = objDDL.Where(x => x.dropdown_type == DropDownType.Cable_Subcategory.ToString()).ToList();
             objCableItemMaster.listcableType = objDDL.Where(x => x.dropdown_type == DropDownType.Cable_Type.ToString()).ToList();
+            objCableItemMaster.listaerialLocation = objDDL.Where(x => x.dropdown_type == DropDownType.Aerial_Location.ToString()).ToList();
         }
 
         public ActionResult SaveCableTemplate(CableItemMaster objCableItem)

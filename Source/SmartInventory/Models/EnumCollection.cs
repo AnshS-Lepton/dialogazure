@@ -141,6 +141,7 @@ namespace Models
         Accessibility,
         Brand,
         Model,
+        Hierarchy_type,
         Tenancy,
         Category,
         RFS_Status,
@@ -183,6 +184,7 @@ namespace Models
         Reference_Direction,
         Coupler,
         Cable_Type,
+        Aerial_Location,
         Ownership,
         POD_Type,
         MPOD_Type,
@@ -392,7 +394,8 @@ namespace Models
         model,
         construction,
         activation,
-        accessibility
+        accessibility,
+        hierarchy_type
     }
     public enum formFeatureType
     {

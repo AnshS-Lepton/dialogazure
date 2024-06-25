@@ -91,6 +91,8 @@ namespace DataAccess
                     objMPOD.origin_ref_code = objMPODMaster.origin_ref_code;
                     objMPOD.bom_sub_category = objMPODMaster.bom_sub_category;
                     objMPOD.gis_design_id = objMPODMaster.gis_design_id;
+                    objMPOD.own_vendor_id = objMPODMaster.own_vendor_id;
+                    objMPOD.hierarchy_type = objMPODMaster.hierarchy_type;
                     //objMPOD.served_by_ring=objMPODMaster.served_by_ring;
                     var result = repo.Update(objMPOD);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.MPOD.ToString(), result.province_id, 1);

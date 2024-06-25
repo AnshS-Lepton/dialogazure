@@ -299,6 +299,7 @@ namespace DataAccess
                     ObjUser.is_active = userDetail.is_active;
                     ObjUser.user_img = userDetail.user_img;
                     ObjUser.application_access = userDetail.application_access;
+                    ObjUser.user_type = userDetail.user_type;
                     return ObjUser;
                 }
                 return null;

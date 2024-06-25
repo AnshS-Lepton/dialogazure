@@ -1,0 +1,3 @@
+INSERT INTO public.dropdown_master (layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES((select layer_id from layer_details where upper(layer_name)='MANHOLE'), 'Manhole_types', 'Open Chamber', true, 1, '2024-01-18 20:54:21.125', NULL, NULL, 'Open Chamber', NULL, 'Manhole_types', true, true,0),
+((select layer_id from layer_details where upper(layer_name)='MANHOLE'), 'Manhole_types', 'Aerial Chamber', true, 1, '2024-01-18 20:54:21.125', NULL, NULL, 'Aerial Chamber', NULL, 'Manhole_types', true, true,0);
