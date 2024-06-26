@@ -163,3 +163,21 @@ END IF;
 END
 $function$
 ;
+
+CREATE OR REPLACE FUNCTION public.fn_get_export_cable_info_bylinkid(p_linkid integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$ 
+BEGIN
+
+return query
+select row_to_json(row) from(
+select distinct cable.network_id,cable.cable_name,cable.total_core,cable.no_of_tube,fn_get_display_name(cable.a_system_id, cable.a_entity_type) AS a_location,
+fn_get_display_name(cable.b_system_id, cable.b_entity_type) AS b_location,cableinfo.fiber_number from att_details_cable_info as cableinfo 
+inner join att_details_cable as cable on  cableinfo.cable_id= cable.system_id  where cableinfo.link_system_id=p_LinkId
+)row;
+
+
+END ;
+$function$
+;
