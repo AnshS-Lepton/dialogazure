@@ -992,7 +992,7 @@ namespace DataAccess
                 if (!string.IsNullOrEmpty(objReportFilter.connectionString))
                     connetionString = objReportFilter.connectionString;
                 var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
-                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_split_report_summary_view",
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_split_report_summary_view_allexcel",
                     new
                     {
                         p_regionids = objReportFilter.SelectedRegionIds,
@@ -1115,7 +1115,7 @@ namespace DataAccess
                 if (!string.IsNullOrEmpty(objReportFilter.connectionString))
                     connetionString = objReportFilter.connectionString;
                 var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
-                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_export_report_summary_view_test",
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_Split_report_summary_view",
                     new
                     {
                         p_regionids = objReportFilter.SelectedRegionIds,

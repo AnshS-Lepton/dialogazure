@@ -6758,6 +6758,13 @@ namespace SmartInventory.Controllers
 				ductobjduct1.b_system_id = SplitductsEntity.duct_one_b_system_id ?? 0;
 				ductobjduct1.b_entity_type = SplitductsEntity.duct_one_b_entity_type;
 				ductobjduct1.b_location = SplitductsEntity.duct_one_b_location;
+                ductobjduct1.parent_duct_system_id = model.split_duct_system_id.ToString();
+                ductobjduct1.parent_duct_netwok_id = model.duct_one_name;
+                ductobjduct1.splited_by = model.userId.ToString();
+                ductobjduct1.splitted_on = DateTime.Now.ToString();
+                ductobjduct1.splitting_system_id = model.split_entity_system_id.ToString();
+                ductobjduct1.splitting_netwok_id = model.split_entity_networkId;
+                ductobjduct1.splitting_entitytype = model.split_entity_type;
                 SaveDuct(ductobjduct1, false);
 
 				var ductobjduct2 = getDuctObject(2, model, ductDetail, model.duct_two_a_location, model.duct_two_b_location, model.duct_two_measured_length, model.duct_two_calculated_length, model.duct_two_name, model.duct_two_network_id, SplitductsEntity.geom_duct2);
@@ -6768,6 +6775,13 @@ namespace SmartInventory.Controllers
 				ductobjduct2.b_system_id = SplitductsEntity.duct_two_b_system_id ?? 0;
 				ductobjduct2.b_entity_type = SplitductsEntity.duct_two_b_entity_type;
 				ductobjduct2.b_location = SplitductsEntity.duct_two_b_location;
+                ductobjduct2.parent_duct_system_id = model.split_duct_system_id.ToString();
+                ductobjduct2.parent_duct_netwok_id = model.duct_one_name;
+                ductobjduct2.splited_by = model.userId.ToString();
+                ductobjduct2.splitted_on = DateTime.Now.ToString();
+                ductobjduct2.splitting_system_id = model.split_entity_system_id.ToString();
+                ductobjduct2.splitting_netwok_id = model.split_entity_networkId;
+                ductobjduct2.splitting_entitytype = model.split_entity_type;
                 SaveDuct(ductobjduct2, false);
 				// accociate split ducts
 				new BLMisc().AssociateSplitEntities(ductobjduct1.system_id, ductobjduct2.system_id, model.duct_one_network_id, model.duct_two_network_id, EntityType.Duct.ToString(), model.split_duct_system_id);
@@ -7032,7 +7046,14 @@ namespace SmartInventory.Controllers
 				trenchobjtrench1.b_system_id = SplittrenchsEntity.trench_one_b_system_id ?? 0;
 				trenchobjtrench1.b_entity_type = SplittrenchsEntity.trench_one_b_entity_type;
 				trenchobjtrench1.b_location = SplittrenchsEntity.trench_one_b_location;
-				SaveTrench(trenchobjtrench1, false);
+                trenchobjtrench1.parent_trench_system_id = model.split_trench_system_id.ToString();
+                trenchobjtrench1.parent_trench_netwok_id = model.trench_one_name;
+                trenchobjtrench1.splited_by = model.userId.ToString();
+                trenchobjtrench1.splitted_on = DateTime.Now.ToString();
+                trenchobjtrench1.splitting_system_id = model.split_entity_system_id.ToString();
+                trenchobjtrench1.splitting_netwok_id = model.split_entity_networkId;
+                trenchobjtrench1.splitting_entitytype = model.split_entity_type;
+                SaveTrench(trenchobjtrench1, false);
 
 				var trenchobjtrench2 = getTrenchObject(2, model, trenchDetail, model.trench_two_a_location, model.trench_two_b_location, model.trench_two_measured_length, model.trench_two_calculated_length, model.trench_two_name, model.trench_two_network_id, SplittrenchsEntity.geom_trench2);
 				trenchobjtrench2.a_system_id = SplittrenchsEntity.trench_two_a_system_id ?? 0;
@@ -7042,7 +7063,14 @@ namespace SmartInventory.Controllers
 				trenchobjtrench2.b_system_id = SplittrenchsEntity.trench_two_b_system_id ?? 0;
 				trenchobjtrench2.b_entity_type = SplittrenchsEntity.trench_two_b_entity_type;
 				trenchobjtrench2.b_location = SplittrenchsEntity.trench_two_b_location;
-				SaveTrench(trenchobjtrench2, false);
+                trenchobjtrench2.parent_trench_system_id = model.split_trench_system_id.ToString();
+                trenchobjtrench2.parent_trench_netwok_id = model.trench_one_name;
+                trenchobjtrench2.splited_by = model.userId.ToString();
+                trenchobjtrench2.splitted_on = DateTime.Now.ToString();
+                trenchobjtrench2.splitting_system_id = model.split_entity_system_id.ToString();
+                trenchobjtrench2.splitting_netwok_id = model.split_entity_networkId;
+                trenchobjtrench2.splitting_entitytype = model.split_entity_type;
+                SaveTrench(trenchobjtrench2, false);
 
 				new BLMisc().AssociateSplitEntities(trenchobjtrench1.system_id, trenchobjtrench2.system_id, model.trench_one_network_id, model.trench_two_network_id, EntityType.Duct.ToString(), model.split_trench_system_id);
 				new BLMisc().deleteParentSplitEntity(model.split_trench_system_id, EntityType.Trench.ToString());
