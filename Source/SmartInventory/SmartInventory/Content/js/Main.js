@@ -31746,21 +31746,20 @@ var Main = function () {
                     else {
                         popup.LoadModalDialog('PARENT', 'Report/SplitExportReport', {
                             'objReportFilters.geom': geom, 'objReportFilters.geomType': modeType, 'objReportFilters.radius': radius, 'objReportFilters.layerName': '', 'objReportFilters.issplitreport': isSplitReport
-                        }, "Export Report", 'modal-md-new');
+                        }, "Split Report", 'modal-md-new');
                     }
                 }, true, true, true);
             }
             else {
                 popup.LoadModalDialog('PARENT', 'Report/SplitExportReport', {
                     eType: '', 'objReportFilters.issplitreport': isSplitReport
-                }, MultilingualKey.SI_OSP_GBL_GBL_GBL_043, 'modal-md-new');
+                }, 'Split Report', 'modal-md-new');
             }
         },
         SplitExportReportLog: function (geom, modeType, radius, obj, isSplitReport) {
-            debugger;
             popup.LoadModalDialog('PARENT', 'Report/EntityExportReportLog', {
                 eType: ''
-            }, "Export Report Log", 'modal-lg');
+            }, "Split Report Log", 'modal-lg');
         },
         initiateDrawingsSplitReport: function (obj, shapeFlag, isSplitReport) {
             if (si.PointentityOBJ.length > 0) {

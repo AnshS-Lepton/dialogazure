@@ -95,12 +95,12 @@
 <input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
 <div class="exportReportHeader">
     <ul id="ulRptTabs" class="tab">
-        <li id="liFilter" class="tablinks activerpt" onclick="SwitchReportTabs(this.id, 'divFilter')"><i>1</i>@Resources.Resources.SI_OSP_GBL_NET_FRM_063</li>
-        <li id="liSummary" class="tablinks" onclick="SwitchReportTabs(this.id, 'divSummary')"><i>2</i>@Resources.Resources.SI_OSP_GBL_NET_FRM_064</li>
+        <li id="liFilter" class="tablinks activerpt" onclick="SwitchSplitReportTabs(this.id, 'divFilter')"><i>1</i>@Resources.Resources.SI_OSP_GBL_NET_FRM_063</li>
+        <li id="liSummary" class="tablinks" onclick="SwitchSplitReportTabs(this.id, 'divSummary')"><i>2</i>@Resources.Resources.SI_OSP_GBL_NET_FRM_064</li>
     </ul>
 </div>
 <div class="ExportReportbody">
-    @using (Ajax.BeginForm("SplitExportReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress", OnSuccess = "switchToResultTab()" }, new { id = "frmExportEntitiesSummaryData", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    @using (Ajax.BeginForm("SplitExportReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress", OnSuccess = "switchToResultTab()" }, new { id = "frmSplitEntitiesSummaryData", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
     {
         @Html.HiddenFor(m => m.objReportFilters.geom)
         @Html.HiddenFor(m => m.objReportFilters.geomType)
@@ -365,8 +365,7 @@
                                     {
                                         var Nwitem = (item.dropdown_value.ToString() == "DORMANT" ? "Dormant" : item.dropdown_value.ToString());
                                         <th align="center" scope="col">@CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Nwitem.ToLower().Contains("built") ? Nwitem.ToLower().Replace(" ", "-") : Nwitem.ToLower())</th>
-                                    }
-                                    <th style="width: 54px;" scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
+                                    }                                   
                                 </tr>
                             </thead>
                             <tbody>
@@ -403,21 +402,6 @@
                                                 }
                                             }
                                         }
-                                        <td>
-                                            <a href="#" onclick="si.ExportEntitySummaryView('@item.entity_name');" class="dropdown-toggle @(recordCounts == 0 ? "btnNotAllowed" : "")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_042">
-                                                @*@item.entity_name.Replace(" ", "")*@
-                                                <i class="glyphicon glyphicon-eye-open"></i>
-                                            </a>
-                                            @if (ApplicationSettings.CdbEnabled == true && @item.entity_name == "Cable")
-                                            {
-                                                <a href="#" onclick="ExportSummaryDetail('ALLEXCEL', true)">
-                                                    <i class="glyphicon glyphicon-download"></i>
-                                                </a>
-                                            }
-
-
-
-                                        </td>
                                     </tr>
                                 }
 
@@ -428,8 +412,6 @@
 
                                     @foreach (var item in Model.lstNetworkStatus)
                                     {
-                                        //var count = 0;
-                                        //count = item.ToLower() == "planned" ? planned_count : item.ToLower() == "as built" ? asbuilt_count : item.ToLower() == "dormant" ? dormant_count : 0;
                                         if (item.dropdown_value.ToLower() == "planned")
                                         {
                                             <th align="center" id="thplannedtotal">@planned_count</th>
@@ -449,7 +431,6 @@
                                         else { total_count = planned_count + asbuilt_count; }
 
                                     }
-                                    <th align="center" id="thalltotal">@total_count</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -470,7 +451,6 @@
 <script type="text/javascript">
 
     function onChangeOwnershipType() {
-
         if ($("#ddlFilterOwnershipType").val() == 'Own' || $("#ddlFilterOwnershipType").val() == null || $("#ddlFilterOwnershipType").val() == undefined) {
             $('#ddl3rdPartyVendor').val('');
             $('#ddl3rdPartyVendor').prop('disabled', true).trigger("chosen:updated");
@@ -479,37 +459,17 @@
             $('#ddl3rdPartyVendor').prop('disabled', false).trigger("chosen:updated");
         }
     }
-
       $('.chosen-select').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
-
-
     $(document).ready(function () {
         var list = ["GIS"];
         $("#reportType").val(list).trigger('chosen:updated');
         $("#reportTypes").val(list);
-
-        //$("#dropfiles").on("click", function () {
-        //    $(".dropbox").slideToggle();
-        //});
-        //$("#ddl3rdPartyVendor").attr('data-placeholder', "--All--").trigger("chosen:updated");
         $("#ddlFilterOwnershipType").attr('data-placeholder', "-All-").trigger("chosen:updated");
-        //if (si.thirdpartyvendor != undefined && si.thirdpartyvendor != '') {
-        //    $("#ddl3rdpartyvendor").val(si.thirdpartyvendor).trigger("chosen:updated");
-        //}
-        //if (si.ownership != undefined) {
-        //    $("#ddlFilterOwnershipType").val(si.ownership).trigger("chosen:updated");
-        //}
-
-        //if ($("#ddlFilterOwnershipType").val() == "" || $("#ddlFilterOwnershipType").val() == undefined) {
-        //    $("#ddlFilterOwnershipType").val("").trigger("chosen:updated");
-        //}
         if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9) {
             $("#customedate").val(5).trigger("chosen:updated");
             onChangeCustomDate();
         }
-
         if ($("#customedate_chosen").children('a').text().trim() != "Custom") {
-
             $('#imgFromDate').hide();
             $('#imgToDate').hide();
         }
@@ -525,8 +485,6 @@
         var SelectedParentUsers = '@Model.objReportFilters.SelectedParentUsers';
         $("#ddlParentUsers").val(SelectedParentUsers.split(',')).trigger("chosen:updated");
 
-        //alert(SelectedUserIds);
-        debugger;
         var selectedLayerIds = '@Model.objReportFilters.SelectedLayerIds';
         $("#ddlLayers").val(selectedLayerIds.split(',')).trigger("chosen:updated");
 
@@ -566,37 +524,23 @@
             var SelectedUserIds = '@Model.objReportFilters.SelectedUserIds';
             $("#ddlUsers").val(SelectedUserIds.split(',')).trigger("chosen:updated");
         }
-        //$('.chosen-select').trigger("chosen:updated");
 
         $("#reportType").on('change', function () {
             var selectedValues = $(this).val();
             $("#reportTypes").val(selectedValues);
         });
-
-
-
         UpdateFormattedNumbers();
     });
-
     $('#btnEntityExportClear').on("click", function () {
         ResetExportEntitesFilterValues();
     });
-
     function switchToResultTab() {
-        //SHOW SUMMARY TAB
         $("#divFilter").hide();
         $("#divSummary").show();
         $("#liFilter").removeClass("activerpt");
         $("#liSummary").addClass("activerpt");
-
     }
-
     function isValidReportFilter() {
-
-        //if ($("#ddlLayers").val() == "" || $("#ddlLayers").val() == null) {
-        //    $('#ddlLayers_chosen').css({ "border": "1px solid red", "border-radius": "0.25rem" });
-        //    return false;
-        //}
         if ($('#customedate option:selected').val() == 9) {
             return true;
         }
@@ -611,30 +555,15 @@
             }
             else {
                 return true;
-                //var startDate = new Date($('#txtDateFrom').val());
-                //var endDate = new Date($('#txtDateTo').val());
-                //var configuredDay = 365 * 5;
-                //var diffInDays = Math.round(Math.abs((startDate.getTime() - endDate.getTime()) / (24 * 60 * 60 * 1000)));
-                //if (diffInDays > configuredDay) {
-                //    alert('Difference between From date and To date should not be more than ' + parseInt(configuredDay / 365) + ' years !')
-                //    return false;
-                //}
-                //else {
-                //    return true;
-                //}
             }
         }
     }
-
     $("#btnShowReportData").on("click", function () {
-
         if (isValidReportFilter()) {
-            //SHOW SUMMARY TAB
             $("#divFilter").hide();
             $("#divSummary").show();
             $("#liFilter").removeClass("activerpt");
             $("#liSummary").addClass("activerpt");
-            //UpdateFormattedNumbers();
             return true;
         }
         else {
@@ -648,7 +577,6 @@
         $('#ddlRegions').val(0).trigger("chosen:updated");
         $('#ddlProvinces').empty().trigger("chosen:updated");
         $('#ddlProvinces').val(0).trigger("chosen:updated");
-        //$('#ddlParentUsers').val(0).trigger("chosen:updated");
         $('#ddlUsers').val(0).trigger("chosen:updated");
         $('#ddlProjectCode').val('').trigger("chosen:updated");
         $('#ddlPlanningCode').empty().trigger("chosen:updated");;
@@ -671,16 +599,15 @@
             $('#ddlParentUsers').attr("disabled", true).trigger("chosen:updated");
 
             var SelectedUserIds = '@Model.objReportFilters.SelectedUserIds';
-           // $("#ddlUsers").val(SelectedUserIds.split(',')).trigger("chosen:updated");
         }
         else {
             $('#ddlParentUsers').val(0).trigger("chosen:updated");
         }
     }
-    function SwitchReportTabs(tabLinkId, tabDivId) {
+    function SwitchSplitReportTabs(tabLinkId, tabDivId) {
         if (tabDivId == "divSummary") {
             if (isValidReportFilter()) {
-                $("#frmExportEntitiesSummaryData").submit();
+                $("#frmSplitEntitiesSummaryData").submit();
             }
             else {
                 return;
@@ -716,7 +643,6 @@
             $("#checkallentity").prop("checked", false);
         }
 
-        //for sum of footer
         var plannedTotal = parseInt(0);
         var asBuildTotal = parseInt(0);
         var dormantTotal = parseInt(0);
@@ -778,23 +704,18 @@
 
         }
         else {
-            //Fetch all rows of the Table.
-            var rows = $("#tblSummaryAll input[type=checkbox]:not('#checkallentity'):checked"); //document.getElementById("tblSummaryAll").rows;
-            //Execute loop on all rows excluding the Header row.
+            var rows = $("#tblSummaryAll input[type=checkbox]:not('#checkallentity'):checked");
             for (var i = 0; i < rows.length; i++) {
-                //if (rows[i].getElementsByTagName("INPUT")[0].checked) {
                 entityids += entityids != "" ? ("," + rows[i].id) : rows[i].id;
-                //}
             }
             }
-
         }
 
         if (chkAll.checked == false && entityids == "") {
-            alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_109);//"Please select at least 1 record!"
+            alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_109);
         }
         else {
-            if (purpose == "ALLEXCEL" || purpose == "KML" || purpose == "ALLCSV" || purpose == "DXF" || purpose == "ALLTXT" || purpose == "XML" || purpose == "ALLSHAPE") {
+            if (purpose == "ALLEXCEL" || purpose == "ALLCSV" ||  purpose == "ALLTXT" || purpose == "XML" || purpose == "ALLSHAPE") {
                 var SummaryTotal = parseInt(0);
                 $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").each(function () {
                     var row = $(this).closest('tr');
@@ -823,23 +744,19 @@
                     }
                 })
 
-                //SummaryTotal = 110000;
                 var MaxRecord = $("#hdnExportReportMaxRecord").val();
                 if (SummaryTotal > parseInt(MaxRecord)) {
                     alert($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_067, MaxRecord));
-                    //alert(MultilingualKey.SI_OSP_STR_JQ_FRM_002+" " + MaxRecord + " " + MultilingualKey.SI_OSP_GBL_JQ_FRM_067);
                     $("#divSummary .dropfiles").trigger("click");
                     return false;
                 }
             }
             $("#dvReportProgress1").show();
             $('#dvReportProgress1').css('display', 'block');
-            setCookie('downloadStarted', 0, 3600); //Expiration could be anything... As long as we reset the value
-            setTimeout(checkDownloadCookie, 1000); //Initiate the loop to check the cookie.
-            //si.ExportEntityReportNew(purpose, entityids);
+            setCookie('downloadStarted', 0, 3600);
+            setTimeout(checkDownloadCookie, 1000);
             var reportType = $("#reportTypes").val();
             si.SplitReportEntityReportNewEnhancement(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount, reportType, issplitreport);
-            //$("#dvReportProgress").hide();
             if (entityCheck == false) {
                 $("#divSummary .dropfiles").trigger("click");
             }
@@ -850,13 +767,11 @@
 
     var downloadTimeout;
     var checkDownloadCookie = function () {
-        //console.log(getCookie("downloadStarted"));
         if (getCookie("downloadStarted") == 1) {
-            //console.log(getCookie("downloadStarted") + "RT");
-            setCookie("downloadStarted", false, 100); //Expiration could be anything... As long as we reset the value
+            setCookie("downloadStarted", false, 100); 
             $('#dvReportProgress1').hide();
         } else {
-            downloadTimeout = setTimeout(checkDownloadCookie, 1000); //Re-run this function in 1 second.
+            downloadTimeout = setTimeout(checkDownloadCookie, 1000); 
         }
     }
     var setCookie = function (name, value, expiracy) {

@@ -892,9 +892,7 @@ namespace SmartInventory.Controllers
             string selectedLayers = commondatabind(objExportEntitiesReport, userdetails);
             if (!string.IsNullOrEmpty(IsRequestFromInfo) && Convert.ToBoolean(IsRequestFromInfo))
             {
-                objExportEntitiesReport.lstReportData = new BLLayer().GetExportReportSummary(objExportEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
-                objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
-                       .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
+                objExportEntitiesReport.lstReportData = new BLLayer().GetSplitReportSummary(objExportEntitiesReport.objReportFilters).Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.entity_name)).OrderBy(m => m.entity_name).ToList();
             }
             objExportEntitiesReport.objReportFilters.SelectedLayerIds = selectedLayers;
             Session["SplitReportFilterNew"] = objExportEntitiesReport.objReportFilters;
@@ -1307,6 +1305,7 @@ namespace SmartInventory.Controllers
                     commondata(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
 
                     var userdetails = (User)Session["userDetail"];
+                    //objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY").Where(layer => layer.layer_name == "Cable" || layer.layer_name == "Trench" || layer.layer_name == "Duct").ToList();
                     objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
                        .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
                     var selectedlayerids = objExportEntitiesReport.objReportFilters.SelectedLayerId;

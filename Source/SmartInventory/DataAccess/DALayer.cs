@@ -660,6 +660,43 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+        public List<EntitySummaryReport> GetSplitReportSummary(ExportReportFilterNew objReportFilter)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(objReportFilter.connectionString))
+                    connetionString = objReportFilter.connectionString;
+                var lst = repo.ExecuteProcedure<EntitySummaryReport>("fn_get_Split_report_summary",
+                    new
+                    {
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_parentusers = objReportFilter.SelectedParentUsers,
+                        p_userids = objReportFilter.SelectedUserIds,
+                        p_layerids = objReportFilter.SelectedLayerIds,
+                        p_projectcodes = objReportFilter.SelectedProjectIds,
+                        p_planningcodes = objReportFilter.SelectedPlanningIds,
+                        p_workordercodes = objReportFilter.SelectedWorkOrderIds,
+                        p_purposecodes = objReportFilter.SelectedPurposeIds,
+                        p_durationbasedon = objReportFilter.durationbasedon,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_userid = objReportFilter.userId,
+                        p_roleid = objReportFilter.roleId,
+                        p_is_all_provience_assigned = objReportFilter.is_all_provience_assigned,
+                        p_ownership_type = objReportFilter.SelectedOwnerShipType,
+                        p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
+                        p_radious = objReportFilter.radius,
+                        p_route = objReportFilter.selected_route_ids,
+                    }, false);
+                return lst;
+
+            }
+            catch { throw; }
+        }
         public List<Dictionary<string, string>> GetExportReportSummaryViewNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
             try

@@ -238,7 +238,10 @@ namespace BusinessLogics
         {
             return new DALayer().GetExportReportSummary(objReportFilter);
         }
-
+        public List<EntitySummaryReport> GetSplitReportSummary(ExportReportFilterNew objReportFilter)
+        {
+            return new DALayer().GetSplitReportSummary(objReportFilter);
+        }
 
         public List<Dictionary<string, string>> GetExportReportSummaryView(ExportEntitiesSummaryViewFilter objReportFilter)
         {
