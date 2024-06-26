@@ -893,7 +893,8 @@ namespace SmartInventory.Controllers
             if (!string.IsNullOrEmpty(IsRequestFromInfo) && Convert.ToBoolean(IsRequestFromInfo))
             {
                 objExportEntitiesReport.lstReportData = new BLLayer().GetExportReportSummary(objExportEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
-                objExportEntitiesReport.lstReportData = objExportEntitiesReport.lstReportData.Where(layer => layer.entity_name == "Cable" || layer.entity_name == "Trench" || layer.entity_name == "Duct").ToList();
+                objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
+                       .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
             }
             objExportEntitiesReport.objReportFilters.SelectedLayerIds = selectedLayers;
             Session["SplitReportFilterNew"] = objExportEntitiesReport.objReportFilters;
@@ -910,8 +911,8 @@ namespace SmartInventory.Controllers
             var moduleAbbr = "EXRPT";
             if (issplitreport)
                 objExportEntitiesReport.lstfiletypes = blExportData.getfiletype_withcablesplit(moduleAbbr, issplitreport);
-            objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY");
-            objExportEntitiesReport.lstLayers = objExportEntitiesReport.lstLayers.Where(layer => layer.layer_name == "Cable" || layer.layer_name == "Trench" || layer.layer_name == "Duct").ToList();
+            objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
+                       .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
 
             objExportEntitiesReport.lstRouteInfo = new BLLayer().getRouteInfo("0");
             objExportEntitiesReport.lstRegion = new BLLayer().GetAllRegion(new RegionIn() { userId = Convert.ToInt32(Session["user_id"]) });
@@ -1306,7 +1307,6 @@ namespace SmartInventory.Controllers
                     commondata(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
 
                     var userdetails = (User)Session["userDetail"];
-                    //objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY").Where(layer => layer.layer_name == "Cable" || layer.layer_name == "Trench" || layer.layer_name == "Duct").ToList();
                     objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
                        .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
                     var selectedlayerids = objExportEntitiesReport.objReportFilters.SelectedLayerId;
