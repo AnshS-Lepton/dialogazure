@@ -47,9 +47,6 @@ INSERT INTO public.data_uploader_template(
             false, false);
 			
 			
-			
-			
-
 
 		CREATE OR REPLACE FUNCTION public.fn_uploader_insert_cable(
 			p_upload_id integer,
