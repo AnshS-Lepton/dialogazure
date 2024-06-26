@@ -21,7 +21,7 @@
     <div class="col-sm-45">
         @Html.DropDownListFor(m => m.type, new SelectList(Model.listType.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlType" })
     </div>
-    <label class="control-label col-sm-2" for="ddlBrand">@Resources.Resources.SI_OSP_GBL_GBL_GBL_024 @if (formInput_type.is_required)
+    <label class="control-label col-sm-2" for="ddlBrand">@Resources.Resources.SI_OSP_GBL_GBL_GBL_024 @if (formInput_brand.is_required)
     {<i class="clsMandatory">*</i>}
     else { }:</label>
     <div class="col-sm-45">
@@ -31,7 +31,7 @@
 </div>
 <div class="form-group">
 
-    <label class="control-label col-sm-2" for="ddlmodel">@Resources.Resources.SI_OSP_GBL_GBL_GBL_025 @if (formInput_type.is_required)
+    <label class="control-label col-sm-2" for="ddlmodel">@Resources.Resources.SI_OSP_GBL_GBL_GBL_025 @if (formInput_model.is_required)
     {<i class="clsMandatory">*</i>}
     else { }:</label>
 
@@ -41,7 +41,7 @@
     </div>
 
 
-    <label class="control-label col-sm-2" for="ddlClosureConstruction">@Resources.Resources.SI_OSP_CAB_NET_FRM_024 @if (formInput_type.is_required)
+    <label class="control-label col-sm-2" for="ddlClosureConstruction">@Resources.Resources.SI_OSP_CAB_NET_FRM_024 @if (formInput_construction.is_required)
     {<i class="clsMandatory">*</i>}
     else { }:</label>
     <div class="col-sm-45">
@@ -52,14 +52,14 @@
 
 </div>
 <div class="form-group">
-    <label class="control-label col-sm-2" for="ddlClosureActivation">@Resources.Resources.SI_OSP_CAB_NET_FRM_025 @if (formInput_type.is_required)
+    <label class="control-label col-sm-2" for="ddlClosureActivation">@Resources.Resources.SI_OSP_CAB_NET_FRM_025 @if (formInput_activation.is_required)
     {<i class="clsMandatory">*</i>}
     else { }:</label>
     <div class="col-sm-45">
         @Html.DropDownListFor(m => m.activation, new SelectList(Model.lstActivation.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Activation", new { @class = "chosen-select col-sm-45", @style = "padding:0;", @id = "ddlClosureActivation" })
     </div>
 
-    <label class="control-label col-sm-2" for="ddlClosureAccessibility">@Resources.Resources.SI_OSP_CAB_NET_FRM_026 @if (formInput_type.is_required)
+    <label class="control-label col-sm-2" for="ddlClosureAccessibility">@Resources.Resources.SI_OSP_CAB_NET_FRM_026 @if (formInput_accessibility.is_required)
     {<i class="clsMandatory">*</i>}
     else { }:</label>
     <div class="col-sm-45">
@@ -68,7 +68,7 @@
 </div>
 <div class="form-group">
     <label class="control-label col-sm-2" for="ddlHeirarchyType">
-        @Resources.Resources.SI_OSP_GBL_NET_GBL_280 @if (formInput_type.is_required)
+                                     @Resources.Resources.SI_OSP_GBL_NET_GBL_280 @if (formInput_hierarchy_type.is_required)
     {<i class="clsMandatory">*</i>}
     else { }:
     </label>
@@ -84,18 +84,37 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function () {
-        if ('@formInput_type.is_required' == 'True' && '@formInput_brand.is_required' == 'True' && '@formInput_model.is_required' == 'True'
-            && '@formInput_construction.is_required' == 'True' && '@formInput_activation.is_required' == 'True' && '@formInput_accessibility.is_required' == 'True'  && '@formInput_hierarchy_type.is_required' == 'True') {
+        if ('@formInput_type.is_required' == 'True' && '@formInput_brand.is_required' == 'True' && '@formInput_model.is_required' == 'True' ) {
             $('#ddlType').attr('onchange', "ddlChangeRemoveCss(this.id, 'Type');");
             $('#ddlBrand').attr('onchange', "ddlChangeRemoveCss(this.id, 'Brand');");
-            $('#ddlmodel').attr('onchange', "ddlChangeRemoveCss(this.id, 'Model');");
-            $('#ddlClosureConstruction').attr('onchange', "ddlChangeRemoveCss(this.id, 'Construction Stage');");
-            $('#ddlClosureActivation').attr('onchange', "ddlChangeRemoveCss(this.id, 'Activation Stage');");
-            $('#ddlClosureAccessibility').attr('onchange', "ddlChangeRemoveCss(this.id, 'Accessibility');");
-            $('#ddlHeirarchyType').attr('onchange', "ddlChangeRemoveCss(this.id, 'Heirarchy Type');");
+            $('#ddlmodel').attr('onchange', "ddlChangeRemoveCss(this.id, 'Model');");         
         }
         else {
-            $("#ddlType, #ddlBrand, #ddlmodel, #ddlClosureConstruction, #ddlClosureActivation, #ddlClosureAccessibility, #ddlHeirarchyType").addClass('ignore');
+            $("#ddlType, #ddlBrand, #ddlmodel").addClass('ignore');
         }
+        if ('@formInput_hierarchy_type.is_required' == 'True') {
+            $('#ddlHeirarchyType').attr('onchange', "ddlChangeRemoveCss(this.id, 'Heirarchytype');");
+        }
+        else {
+            $("#ddlHeirarchyType").addClass('ignore');
+        }
+        if ('@formInput_construction.is_required' == 'True') {
+            $('#ddlClosureConstruction').attr('onchange', "ddlChangeRemoveCss(this.id, 'Construction Stage');");        }
+        else {
+            $("#ddlClosureConstruction").addClass('ignore');
+        }
+        if ('@formInput_activation.is_required' == 'True') {
+            $('#ddlClosureActivation').attr('onchange', "ddlChangeRemoveCss(this.id, 'Activation Stage');");
+        }
+        else {
+            $("#ddlClosureActivation").addClass('ignore');
+        }
+        if ('@formInput_accessibility.is_required' == 'True') {
+            $('#ddlClosureAccessibility').attr('onchange', "ddlChangeRemoveCss(this.id, 'Accessibility');");
+        }
+        else {
+            $("#ddlClosureAccessibility").addClass('ignore');
+        }
+
     });
 </script>
