@@ -50,10 +50,10 @@
                     </div>
                     <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_GBL_155 <i class="clsMandatory">*</i> :</label>
                     <div class="col-md-4">
-                        @Html.DropDownListFor(m => m.link_type, new SelectList(Model.lstLinkType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlLinkType" })
-                    </div>
-                </div>
-                <div class="form-group row">
+                        @Html.DropDownListFor(m => m.link_type, new SelectList(Model.lstLinkType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlLinkType" ,@style = "height: 28px;!important"})
+                        </div>                   
+                     </div>                    
+                     <div class="form-group row">
 
                     <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_206:</label>
 
@@ -65,10 +65,10 @@
                             new SelectListItem{ Text="Optical", Value = "Optical"},
                             new SelectListItem{ Text="MW", Value = "MW"  }
                          }, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
-                         {
-                             @class = "chosen-select form-control",
-                             @style = "padding:0;",
-                         }, new { @id = "ddlMainlinktype", @tabindex = "2", @title = "Status" }))
+{
+    @class = "chosen-select form-control",
+    @style = "padding:0;",
+}, new { @id = "ddlMainlinktype", @tabindex = "2", @title = "Status" }))
                     </div>
 
                     <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_GBL_190:</label>
@@ -114,7 +114,7 @@
                         <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_128:</label>
                         <div class="col-md-4">
 
-                            @Html.DropDownListFor(x => x.start_point_type, new SelectList(Model.lstStartPointType.Select(x => new { Value = x.layer_title, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlStartPointtype", @onchange = "fiberLink.GetStartPoint();" })
+                            @Html.DropDownListFor(x => x.start_point_type, new SelectList(Model.lstStartPointType.Select(x => new { Value = x.layer_title, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlStartPointtype", @onchange = "fiberLink.GetStartPoint();" ,@style = "height: 28px;!important" })
                         </div>
                     }
                 </div>
@@ -146,7 +146,7 @@
                     {
                         <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_GBL_GBL_NET_FRM_131:</label>
                         <div class="col-md-4">
-                            @Html.DropDownListFor(x => x.end_point_type, new SelectList(Model.lstEndPointType.Select(x => new { Value = x.layer_title, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlEndPointtype", @onchange = "fiberLink.GetEndPoint();" })
+                            @Html.DropDownListFor(x => x.end_point_type, new SelectList(Model.lstEndPointType.Select(x => new { Value = x.layer_title, Text = x.layer_title }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlEndPointtype", @onchange = "fiberLink.GetEndPoint();", @style = "height: 28px;!important" })
                         </div>
                     }
                     @if (Model.lstFiberLinkColumnsMapping.Contains("end_point_network_id"))
@@ -300,10 +300,10 @@
                         <div class="col-md-4 mrgn_btm ui-widget">
                             @if (Model.any_row_portion)
                             {
-                                @Html.TextBoxFor(m => m.row_authority, new { @class = "form-control ui-autocomplete-input", @maxlength = "10", @id = "txtROWAuthority", @onkeyup = "si.GetAutoROWAuthority();" })
+                            @Html.TextBoxFor(m => m.row_authority, new { @class = "form-control ui-autocomplete-input", @maxlength = "10", @id = "txtROWAuthority", @onkeyup = "si.GetAutoROWAuthority();" })
                             }
                             else
-                            { @Html.TextBoxFor(m => m.row_authority, new { @class = "form-control", @readonly = true, @maxlength = "10", @id = "txtROWAuthority", @onkeyup = "si.GetAutoROWAuthority();" })}
+                        { @Html.TextBoxFor(m => m.row_authority, new { @class = "form-control", @readonly = true, @maxlength = "10", @id = "txtROWAuthority", @onkeyup = "si.GetAutoROWAuthority();" })}
 
                         </div>
                     </div>
@@ -313,20 +313,20 @@
                         <div class="col-md-4">
                             @if (Model.any_row_portion)
                             {
-                                @Html.TextBoxFor(m => m.total_row_segments, new { @class = "form-control", @maxlength = "4", @id = "txtROWSegments", @onkeypress = "return allowNumberOnly(event,this);" })
+                            @Html.TextBoxFor(m => m.total_row_segments, new { @class = "form-control", @maxlength = "4", @id = "txtROWSegments", @onkeypress = "return allowNumberOnly(event,this);" })
                             }
                             else
-                            { @Html.TextBoxFor(m => m.total_row_segments, new { @class = "form-control", @readonly = true, @maxlength = "4", @id = "txtROWSegments", @onkeypress = "return allowNumberOnly(event,this);" })}
+                        { @Html.TextBoxFor(m => m.total_row_segments, new { @class = "form-control", @readonly = true, @maxlength = "4", @id = "txtROWSegments", @onkeypress = "return allowNumberOnly(event,this);" })}
                         </div>
                         <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_150:</label>
                         <div class="col-md-4">
                             @if (Model.any_row_portion)
                             {
-                                @Html.TextBoxFor(m => m.total_row_length, new { @class = "form-control", @maxlength = "4", @id = "txtROWLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtROWLength');" })
+                            @Html.TextBoxFor(m => m.total_row_length, new { @class = "form-control", @maxlength = "4", @id = "txtROWLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtROWLength');" })
                             }
                             else
-                            {
-                                @Html.TextBoxFor(m => m.total_row_length, new { @class = "form-control", @maxlength = "4", @readonly = true, @id = "txtROWLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtROWLength');" })
+                        {
+                            @Html.TextBoxFor(m => m.total_row_length, new { @class = "form-control", @maxlength = "4", @readonly = true, @id = "txtROWLength", @onkeypress = "return si.allowNumberwithOneDot(event,'txtROWLength');" })
                             }
 
                         </div>
