@@ -887,9 +887,8 @@ namespace SmartInventory.Controllers
         [System.Web.Services.WebMethod(true)]
         public ActionResult SplitExportReport(ExportEntitiesReportNew objExportEntitiesReport, string IsRequestFromInfo)
         {
-            //DateTime startTime = DateTime.Now;
             var userdetails = (User)Session["userDetail"];
-            string selectedLayers = commondatabind(objExportEntitiesReport, userdetails);
+            string selectedLayers = splitdatabind(objExportEntitiesReport, userdetails);
             if (!string.IsNullOrEmpty(IsRequestFromInfo) && Convert.ToBoolean(IsRequestFromInfo))
             {
                 objExportEntitiesReport.lstReportData = new BLLayer().GetSplitReportSummary(objExportEntitiesReport.objReportFilters).Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.entity_name)).OrderBy(m => m.entity_name).ToList();
@@ -899,7 +898,6 @@ namespace SmartInventory.Controllers
 
             BindSplitReportDropdownNew(ref objExportEntitiesReport);
             Session["SplitEntitySummaryData"] = objExportEntitiesReport;
-            //DateTime endTime = DateTime.Now;
             return PartialView("_CableSplitExportReport", objExportEntitiesReport);
         }
         public void BindSplitReportDropdownNew(ref ExportEntitiesReportNew objExportEntitiesReport)
@@ -1161,7 +1159,7 @@ namespace SmartInventory.Controllers
                     ExportReportFilterNew objExportReportFilterNew;
                     List<int> SelectedLayerId, SelectedLayerIdSummary;
                     DataTable dtFilter;
-                    commondata(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
+                    splitdata(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
 
                     var userdetails = (User)Session["userDetail"];
                     //objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY").Where(layer => layer.layer_name == "Cable" || layer.layer_name == "Trench" || layer.layer_name == "Duct").ToList();
@@ -1302,7 +1300,7 @@ namespace SmartInventory.Controllers
                     ExportReportFilterNew objExportReportFilterNew;
                     List<int> SelectedLayerId, SelectedLayerIdSummary;
                     DataTable dtFilter;
-                    commondata(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
+                    splitdata(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
 
                     var userdetails = (User)Session["userDetail"];
                     //objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY").Where(layer => layer.layer_name == "Cable" || layer.layer_name == "Trench" || layer.layer_name == "Duct").ToList();
@@ -1682,7 +1680,7 @@ namespace SmartInventory.Controllers
             objExportEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objExportEntitiesReport.objReportFilters.SelectedLayerId;
             objExportReportFilterNew.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objExportReportFilterNew.SelectedLayerId;
         }
-        private void commondata(string entityids, out ExportEntitiesReportNew entityExportSummaryData, out ExportEntitiesSummaryView objExportEntitiesReport, out ExportReportFilterNew objExportReportFilterNew, out List<int> SelectedLayerId, out List<int> SelectedLayerIdSummary, out DataTable dtFilter)
+        private void splitdata(string entityids, out ExportEntitiesReportNew entityExportSummaryData, out ExportEntitiesSummaryView objExportEntitiesReport, out ExportReportFilterNew objExportReportFilterNew, out List<int> SelectedLayerId, out List<int> SelectedLayerIdSummary, out DataTable dtFilter)
         {
             entityExportSummaryData = new ExportEntitiesReportNew();
             entityExportSummaryData = (ExportEntitiesReportNew)Session["SplitEntitySummaryData"];
@@ -1759,7 +1757,7 @@ namespace SmartInventory.Controllers
 
             }
         }
-        private static string commondatabind(ExportEntitiesReportNew objExportEntitiesReport, User userdetails)
+        private static string splitdatabind(ExportEntitiesReportNew objExportEntitiesReport, User userdetails)
         {
             var moduleAbbr = "EXRPT";
             ConnectionMaster con = new BLLayer().GetConnectionString(moduleAbbr);
