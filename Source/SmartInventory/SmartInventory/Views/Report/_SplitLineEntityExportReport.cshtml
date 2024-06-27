@@ -100,7 +100,7 @@
     </ul>
 </div>
 <div class="ExportReportbody">
-    @using (Ajax.BeginForm("SplitExportReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress", OnSuccess = "switchToResultTab()" }, new { id = "frmSplitEntitiesSummaryData", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    @using (Ajax.BeginForm("SplitEntityExportReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress", OnSuccess = "switchToResultTab()" }, new { id = "frmSplitEntitiesSummaryData", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
     {
         @Html.HiddenFor(m => m.objReportFilters.geom)
         @Html.HiddenFor(m => m.objReportFilters.geomType)

@@ -199,7 +199,10 @@ namespace BusinessLogics
         {
             return objDALayer.GetReportLayers(roleId, purpose);
         }
-
+        public List<layerReportDetail> GetSplitReportLayers(int roleId, string purpose)
+        {
+            return objDALayer.GetSplitReportLayers(roleId, purpose);
+        }
         public List<layerDetail> GetLayerDetailsForHistory()
         {
             return objDALayer.GetLayerDetailsForHistory();
@@ -279,9 +282,9 @@ namespace BusinessLogics
         {
             return new DALayer().GetSplitReportSummaryViewAllExcel(objReportFilter, layerName);
         }
-        public List<Dictionary<string, string>> GetSplitReportSummaryViewCSV(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        public List<Dictionary<string, string>> GetSplitReportSummaryViewAllCSV(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
-            return new DALayer().GetSplitReportSummaryViewCSV(objReportFilter, layerName);
+            return new DALayer().GetSplitReportSummaryViewAllCSV(objReportFilter, layerName);
         }
         public List<Dictionary<string, string>> GetSplitReportSummaryViewAllShape(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {

@@ -883,33 +883,45 @@ namespace SmartInventory.Controllers
             }
             return dt;
         }
-
-        [System.Web.Services.WebMethod(true)]
+                       
         public ActionResult SplitExportReport(ExportEntitiesReportNew objExportEntitiesReport, string IsRequestFromInfo)
         {
             var userdetails = (User)Session["userDetail"];
-            string selectedLayers = splitdatabind(objExportEntitiesReport, userdetails);
+            string selectedLayers = GetSplitReportdata(objExportEntitiesReport, userdetails);
             if (!string.IsNullOrEmpty(IsRequestFromInfo) && Convert.ToBoolean(IsRequestFromInfo))
             {
-                objExportEntitiesReport.lstReportData = new BLLayer().GetSplitReportSummary(objExportEntitiesReport.objReportFilters).Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.entity_name)).OrderBy(m => m.entity_name).ToList();
+                objExportEntitiesReport.lstReportData = new BLLayer().GetSplitReportSummary(objExportEntitiesReport.objReportFilters).ToList();
             }
             objExportEntitiesReport.objReportFilters.SelectedLayerIds = selectedLayers;
-            Session["SplitReportFilterNew"] = objExportEntitiesReport.objReportFilters;
-
-            BindSplitReportDropdownNew(ref objExportEntitiesReport);
-            Session["SplitEntitySummaryData"] = objExportEntitiesReport;
-            return PartialView("_CableSplitExportReport", objExportEntitiesReport);
+            BindSplitReportDropdown(ref objExportEntitiesReport);
+            return PartialView("_SplitLineEntityExportReport", objExportEntitiesReport);
         }
-        public void BindSplitReportDropdownNew(ref ExportEntitiesReportNew objExportEntitiesReport)
-        {
-            var issplitreport = true;
-            var userdetails = (User)Session["userDetail"];
-            var moduleAbbr = "EXRPT";
-            if (issplitreport)
-                objExportEntitiesReport.lstfiletypes = blExportData.getfiletype_withcablesplit(moduleAbbr, issplitreport);
-            objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
-                       .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
 
+        [HttpPost]
+        public ActionResult SplitEntityExportReport(ExportEntitiesReportNew objExportEntitiesReport, string IsRequestFromInfo)
+        {
+            var userdetails = (User)Session["userDetail"];
+            string selectedLayers = GetSplitReportdata(objExportEntitiesReport, userdetails);
+            objExportEntitiesReport.objReportFilters.SelectedLayerIds = selectedLayers;
+
+            if (!string.IsNullOrEmpty(IsRequestFromInfo) && Convert.ToBoolean(IsRequestFromInfo))
+            {
+                objExportEntitiesReport.lstReportData = new BLLayer().GetSplitReportSummary(objExportEntitiesReport.objReportFilters).ToList();
+            }            
+            Session["SplitExportReportFilter"] = objExportEntitiesReport.objReportFilters;
+            BindSplitReportDropdown(ref objExportEntitiesReport);
+            Session["SplitEntitySummaryData"] = objExportEntitiesReport;
+            return PartialView("_SplitLineEntityExportReport", objExportEntitiesReport);
+        }
+        public void BindSplitReportDropdown(ref ExportEntitiesReportNew objExportEntitiesReport)
+        {
+            var userdetails = (User)Session["userDetail"];
+            var moduleAbbr = "SPLIT_EXRPT";
+            //objExportEntitiesReport.lstfiletypes = blExportData.getfiletype_withcablesplit(moduleAbbr, issplitreport);
+            objExportEntitiesReport.lstfiletypes = blExportData.getfiletype(moduleAbbr);
+            //objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
+            //           .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
+            objExportEntitiesReport.lstLayers = new BLLayer().GetSplitReportLayers(userdetails.role_id, "ENTITY").ToList();
             objExportEntitiesReport.lstRouteInfo = new BLLayer().getRouteInfo("0");
             objExportEntitiesReport.lstRegion = new BLLayer().GetAllRegion(new RegionIn() { userId = Convert.ToInt32(Session["user_id"]) });
             if (!string.IsNullOrWhiteSpace(objExportEntitiesReport.objReportFilters.SelectedRegionIds))
@@ -950,7 +962,7 @@ namespace SmartInventory.Controllers
             objExportEntitiesReport.lstUserModule = new BLLayer().GetUserModuleAbbrList(userdetails.user_id, UserType.Web.ToString());
         }
         [HttpPost]
-        public JsonResult DownloadSpliReportNew(string fileType, string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount, List<string> reportType)
+        public JsonResult DownloadSpliReport(string fileType, string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount, List<string> reportType)
         {
             PageMessage objMsg = new PageMessage();
             if (!string.IsNullOrWhiteSpace(fileType))
@@ -969,26 +981,26 @@ namespace SmartInventory.Controllers
 
                 if (fileType.ToUpper() == "EXCEL")
                 {
-                    DownloadEntitySplitReportNewIntoExcelNew(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount);
+                    DownloadEntitySplitReportIntoExcel(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount);
                 }
                 else if (fileType.ToUpper() == "ALLEXCEL")
                 {
                     DownloadSplitReportIntoExcelAll(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType);
                 }
-                else if (fileType.ToUpper() == "ALLSHAPE")
-                {
-                    DownloadSplitReportIntoShapeAllNew(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType);
-                }
                 else if (fileType.ToUpper() == "ALLCSV")
                 {
                     DownloadSplitReportIntoCSVAll(entityids, fileType.ToUpper(), totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType);
+                }
+                else if (fileType.ToUpper() == "ALLSHAPE")
+                {
+                    DownloadSplitReportIntoShapeAll(entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType);
                 }
             }
             objMsg.status = ResponseStatus.OK.ToString();
             objMsg.message = "Request is processing in background.Please check the export report log page.";
             return Json(objMsg, JsonRequestBehavior.AllowGet);
         }
-        public void DownloadEntitySplitReportNewIntoExcelNew(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
+        public void DownloadEntitySplitReportIntoExcel(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount)
         {
             if (Session["SplitEntitySummaryData"] != null)
             {
@@ -996,7 +1008,7 @@ namespace SmartInventory.Controllers
                 {
                     var userdetails = (User)Session["userDetail"];
                     ExportEntitiesReportNew objExportEntitiesReport = new ExportEntitiesReportNew();
-                    objExportEntitiesReport.objReportFilters = (ExportReportFilterNew)Session["SplitReportFilterNew"];
+                    objExportEntitiesReport.objReportFilters = (ExportReportFilterNew)Session["SplitExportReportFilter"];
                     List<int> SelectedLayerId = objExportEntitiesReport.objReportFilters.SelectedLayerId;
                     objExportEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objExportEntitiesReport.objReportFilters.SelectedLayerId;
                     if (!objExportEntitiesReport.objReportFilters.SelectedNetworkStatues.Contains("Planned"))
@@ -1008,7 +1020,6 @@ namespace SmartInventory.Controllers
                     DataTable dtFilter = GetExportReportFilter(objExportEntitiesReport.objReportFilters);
 
                     string fileName = "SplitSummary_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
-
 
                     objExportEntitiesReport = (ExportEntitiesReportNew)Session["SplitEntitySummaryData"];
                     System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
@@ -1024,7 +1035,6 @@ namespace SmartInventory.Controllers
                         DataSet ds = new DataSet();
                         ds.Tables.Add(dtFilter);
 
-
                         int TotalEntityReport = 0;
                         ExportReportLog exportReportLog = new ExportReportLog();
                         exportReportLog.user_id = userdetails.user_id;
@@ -1039,10 +1049,8 @@ namespace SmartInventory.Controllers
                         exportReportLog.dormant = totalDormantCount;
                         exportReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
                         exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
-
                         try
                         {
-
                             if (dtReport != null && dtReport.Rows.Count > 0)
                             {
                                 if (!ApplicationSettings.IsDormantEnabled)
@@ -1134,23 +1142,19 @@ namespace SmartInventory.Controllers
                             exportReportLog.export_ended_on = DateTime.Now;
                             exportReportLog.status = "Error occurred while processing request";
                             exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
-                            ErrorLogHelper.WriteErrorLog("DownloadEntityReportNewIntoExcelNew()", "Report", ex);
+                            ErrorLogHelper.WriteErrorLog("DownloadEntitySplitReportIntoExcel()", "Report", ex);
                         }
                     });
-
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
             }
-
-        }
-        [System.Web.Services.WebMethod(true)]
+        }        
         public void DownloadSplitReportIntoExcelAll(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount, List<string> reportType)
         {
-
-            if (Session["SplitReportFilterNew"] != null)
+            if (Session["SplitExportReportFilter"] != null)
             {
                 try
                 {
@@ -1159,12 +1163,12 @@ namespace SmartInventory.Controllers
                     ExportReportFilterNew objExportReportFilterNew;
                     List<int> SelectedLayerId, SelectedLayerIdSummary;
                     DataTable dtFilter;
-                    splitdata(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
+                    CommonDataForExcelAllandCSVAll(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
 
                     var userdetails = (User)Session["userDetail"];
-                    //objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY").Where(layer => layer.layer_name == "Cable" || layer.layer_name == "Trench" || layer.layer_name == "Duct").ToList();
-                    objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
-                       .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
+                    //objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
+                    //   .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
+                    objExportEntitiesReport.lstLayers = new BLLayer().GetSplitReportLayers(userdetails.role_id, "ENTITY").ToList();
                     var selectedlayerids = objExportEntitiesReport.objReportFilters.SelectedLayerId;
                     if (selectedlayerids != null)
                     {
@@ -1274,7 +1278,7 @@ namespace SmartInventory.Controllers
                             exportReportLog.export_ended_on = DateTime.Now;
                             exportReportLog.status = "Error occurred while processing request";
                             exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
-                            ErrorLogHelper.WriteErrorLog("DownloadEntityReportIntoExcelAll()", "Report", ex);
+                            ErrorLogHelper.WriteErrorLog("DownloadSplitReportIntoExcelAll()", "Report", ex);
                             if (Directory.Exists(directoryPath).Equals(true))
                                 Directory.Delete(directoryPath, true);
                         }
@@ -1289,7 +1293,7 @@ namespace SmartInventory.Controllers
         }
         public void DownloadSplitReportIntoCSVAll(string entityids, string fileType, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount, List<string> reportType)
         {
-            if (Session["SplitReportFilterNew"] != null)
+            if (Session["SplitExportReportFilter"] != null)
             {
                 try
                 {
@@ -1300,12 +1304,12 @@ namespace SmartInventory.Controllers
                     ExportReportFilterNew objExportReportFilterNew;
                     List<int> SelectedLayerId, SelectedLayerIdSummary;
                     DataTable dtFilter;
-                    splitdata(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
+                    CommonDataForExcelAllandCSVAll(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
 
                     var userdetails = (User)Session["userDetail"];
-                    //objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY").Where(layer => layer.layer_name == "Cable" || layer.layer_name == "Trench" || layer.layer_name == "Duct").ToList();
-                    objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
-                       .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
+                    //objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
+                    //   .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
+                    objExportEntitiesReport.lstLayers = new BLLayer().GetSplitReportLayers(userdetails.role_id, "ENTITY").ToList();
                     var selectedlayerids = objExportEntitiesReport.objReportFilters.SelectedLayerId;
                     if (selectedlayerids != null)
                     {
@@ -1428,7 +1432,7 @@ namespace SmartInventory.Controllers
                                         }
                                         List<Dictionary<string, string>> lstExportEntitiesDetail = null;
                                         List<string> reportTypeString = reportType;
-                                        lstExportEntitiesDetail = new BLLayer().GetSplitReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);                                        
+                                        lstExportEntitiesDetail = new BLLayer().GetSplitReportSummaryViewAllCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);                                        
                                         DataTable dtReport = new DataTable();
                                         if (lstExportEntitiesDetail != null && lstExportEntitiesDetail.Count > 0)
                                         {
@@ -1484,7 +1488,7 @@ namespace SmartInventory.Controllers
                             exportReportLog.export_ended_on = DateTime.Now;
                             exportReportLog.status = "Error occurred while processing request";
                             exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
-                            ErrorLogHelper.WriteErrorLog("DownloadEntityReportIntoCSVAll()", "Report", ex);
+                            ErrorLogHelper.WriteErrorLog("DownloadSplitReportIntoCSVAll()", "Report", ex);
                             if (Directory.Exists(directoryPath).Equals(true))
                                 Directory.Delete(directoryPath, true);
                         }
@@ -1494,9 +1498,9 @@ namespace SmartInventory.Controllers
                 { throw ex; }
             }
         }        
-        public void DownloadSplitReportIntoShapeAllNew(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount, List<string> reportType)
+        public void DownloadSplitReportIntoShapeAll(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount, List<string> reportType)
         {
-            if (Session["SplitReportFilterNew"] != null)
+            if (Session["SplitExportReportFilter"] != null)
             {
                 try
                 {
@@ -1504,7 +1508,7 @@ namespace SmartInventory.Controllers
                     ExportReportFilterNew objExportReportFilterNew;
                     ExportEntitiesReportNew entityExportSummaryData;
                     List<int> SelectedLayerId, SelectedLayerIdSummary;
-                    CommaondataForShape(entityids, out objExportEntitiesReport, out objExportReportFilterNew, out entityExportSummaryData, out SelectedLayerId, out SelectedLayerIdSummary);
+                    GetCommaondataForShape(entityids, out objExportEntitiesReport, out objExportReportFilterNew, out entityExportSummaryData, out SelectedLayerId, out SelectedLayerIdSummary);
                     var userdetails = (User)Session["userDetail"];                    
                     objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
                        .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
@@ -1631,7 +1635,7 @@ namespace SmartInventory.Controllers
                             exportReportLog.export_ended_on = DateTime.Now;
                             exportReportLog.status = "Error occurred while processing request";
                             exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
-                            ErrorLogHelper.WriteErrorLog("DownloadEntityReportIntoShapeAllNew()", "Report", ex);
+                            ErrorLogHelper.WriteErrorLog("DownloadSplitReportIntoShapeAll()", "Report", ex);
                             if (Directory.Exists(shapeFilePath).Equals(true))
                                 Directory.Delete(shapeFilePath, true);
                         }
@@ -1643,11 +1647,11 @@ namespace SmartInventory.Controllers
                 }
             }
         }
-        private void CommaondataForShape(string entityids, out ExportEntitiesSummaryView objExportEntitiesReport, out ExportReportFilterNew objExportReportFilterNew, out ExportEntitiesReportNew entityExportSummaryData, out List<int> SelectedLayerId, out List<int> SelectedLayerIdSummary)
+        private void GetCommaondataForShape(string entityids, out ExportEntitiesSummaryView objExportEntitiesReport, out ExportReportFilterNew objExportReportFilterNew, out ExportEntitiesReportNew entityExportSummaryData, out List<int> SelectedLayerId, out List<int> SelectedLayerIdSummary)
         {
             objExportEntitiesReport = new ExportEntitiesSummaryView();
             objExportReportFilterNew = new ExportReportFilterNew();
-            objExportReportFilterNew = (ExportReportFilterNew)Session["SplitReportFilterNew"];
+            objExportReportFilterNew = (ExportReportFilterNew)Session["SplitExportReportFilter"];
 
             entityExportSummaryData = new ExportEntitiesReportNew();
             entityExportSummaryData = (ExportEntitiesReportNew)Session["SplitEntitySummaryData"];
@@ -1680,13 +1684,13 @@ namespace SmartInventory.Controllers
             objExportEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objExportEntitiesReport.objReportFilters.SelectedLayerId;
             objExportReportFilterNew.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objExportReportFilterNew.SelectedLayerId;
         }
-        private void splitdata(string entityids, out ExportEntitiesReportNew entityExportSummaryData, out ExportEntitiesSummaryView objExportEntitiesReport, out ExportReportFilterNew objExportReportFilterNew, out List<int> SelectedLayerId, out List<int> SelectedLayerIdSummary, out DataTable dtFilter)
+        private void CommonDataForExcelAllandCSVAll(string entityids, out ExportEntitiesReportNew entityExportSummaryData, out ExportEntitiesSummaryView objExportEntitiesReport, out ExportReportFilterNew objExportReportFilterNew, out List<int> SelectedLayerId, out List<int> SelectedLayerIdSummary, out DataTable dtFilter)
         {
             entityExportSummaryData = new ExportEntitiesReportNew();
             entityExportSummaryData = (ExportEntitiesReportNew)Session["SplitEntitySummaryData"];
             objExportEntitiesReport = new ExportEntitiesSummaryView();
             objExportReportFilterNew = new ExportReportFilterNew();
-            objExportReportFilterNew = (ExportReportFilterNew)Session["SplitReportFilterNew"];
+            objExportReportFilterNew = (ExportReportFilterNew)Session["SplitExportReportFilter"];
 
             objExportEntitiesReport.objReportFilters.connectionString = objExportReportFilterNew.connectionString;
             objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportReportFilterNew.SelectedRegionIds;
@@ -1757,9 +1761,9 @@ namespace SmartInventory.Controllers
 
             }
         }
-        private static string splitdatabind(ExportEntitiesReportNew objExportEntitiesReport, User userdetails)
+        private static string GetSplitReportdata(ExportEntitiesReportNew objExportEntitiesReport, User userdetails)
         {
-            var moduleAbbr = "EXRPT";
+            var moduleAbbr = "SPLIT_EXRPT";
             ConnectionMaster con = new BLLayer().GetConnectionString(moduleAbbr);
             if (con != null)
             {
@@ -1784,6 +1788,7 @@ namespace SmartInventory.Controllers
             var selectedLayers = objExportEntitiesReport.objReportFilters.SelectedLayerIds;
             return selectedLayers;
         }
+
         public void DownloadEntityReportNewIntoExcel(string entityids)
         {
             if (Session["EntityExportSummaryData"] != null)//ExportReportFilterNew

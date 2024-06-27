@@ -233,280 +233,280 @@
                 @if (Model.lstUserModule.Contains("BMQ-FUD"))
                 {
 
-                <li>
-                    <a href="#" class="iconBaricomoon" title="FSA Unlock" onclick="si.BOMBOQReport.FSAUnlockDashboard();">
-                        <span class="icon-FSA_unlock"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>
+                    <li>
+                        <a href="#" class="iconBaricomoon" title="FSA Unlock" onclick="si.BOMBOQReport.FSAUnlockDashboard();">
+                            <span class="icon-FSA_unlock"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
                 @if (Model.lstUserModule.Contains("P-XML"))
                 {
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar" onclick="si.xmlbuilderdashboard.xmlbuilderdashboardList()" id="dvxmlbuilderdashboard" title="XML Dashboard">
-                        <span class="icon-xmlDashboard"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar" onclick="si.xmlbuilderdashboard.xmlbuilderdashboardList()" id="dvxmlbuilderdashboard" title="XML Dashboard">
+                            <span class="icon-xmlDashboard"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
                 @if (Model.lstUserModule.Contains("GTI-W"))
                 {
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar" onclick="si.GeoTaggedImage.showReportMenu('ManualReport', this);" id="dvGeoTaggingImages" title="GeoTagged Images">
-                        <span class="icon-geoImgLocation"></span>
-                    </a>
-                    <ul>
-                        <li>
-                            <a href="#" class="iconBaricomoon" title="GeoTagged Images Report" onclick="si.GeoTaggedImage.showGeoTaggingImagesDetails();">
-                                <span class="icon-export_report"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <label class="switch" style="margin-top: 5px">
-                                <input id="ShowAllGeoTaggedImagesOnMap" onclick="si.GeoTaggedImage.showAllGeoTaggedImagesOnMap();" type="checkbox">
-                                <span class="slider round" title="Show All GeoTaggedImage On Map"></span>
-                            </label>
-                        </li>
-                    </ul>
-                </li>
-                <li class="techSep"></li>
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar" onclick="si.GeoTaggedImage.showReportMenu('ManualReport', this);" id="dvGeoTaggingImages" title="GeoTagged Images">
+                            <span class="icon-geoImgLocation"></span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href="#" class="iconBaricomoon" title="GeoTagged Images Report" onclick="si.GeoTaggedImage.showGeoTaggingImagesDetails();">
+                                    <span class="icon-export_report"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <label class="switch" style="margin-top: 5px">
+                                    <input id="ShowAllGeoTaggedImagesOnMap" onclick="si.GeoTaggedImage.showAllGeoTaggedImagesOnMap();" type="checkbox">
+                                    <span class="slider round" title="Show All GeoTaggedImage On Map"></span>
+                                </label>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
                 @if (Model.lstUserModule.Contains("VSAT"))
                 {
 
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar" onclick="si.VSATReport.showReportMenu('ManualReport', this);" id="dvVSatReport" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_131">
-                        <span class="icon-vsatReport"></span>
-                    </a>
-                    <ul>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_RPT_131" onclick="si.VSATReport.VSATSiteReport(null,null,null,this);">
-                                <span class="icon-export_report"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.VSATReport.initiateDrawingsExportReport(this, 'Polygon')">
-                                <span class="icon-Draw_Polygon"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.VSATReport.initiateDrawingsExportReport(this, 'Rectangle')">
-                                <span class="icon-DrawRectangle"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.VSATReport.initiateDrawingsExportReport(this, 'Circle')">
-                                <span class="icon-DrawCircle"></span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar" onclick="si.VSATReport.showReportMenu('ManualReport', this);" id="dvVSatReport" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_131">
+                            <span class="icon-vsatReport"></span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_RPT_131" onclick="si.VSATReport.VSATSiteReport(null,null,null,this);">
+                                    <span class="icon-export_report"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.VSATReport.initiateDrawingsExportReport(this, 'Polygon')">
+                                    <span class="icon-Draw_Polygon"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.VSATReport.initiateDrawingsExportReport(this, 'Rectangle')">
+                                    <span class="icon-DrawRectangle"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.VSATReport.initiateDrawingsExportReport(this, 'Circle')">
+                                    <span class="icon-DrawCircle"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
 
-                <li class="techSep"></li>
+                    <li class="techSep"></li>
                 }
                 @if (Model.lstUserModule.Contains("MSC_Tools"))
                 {
-                int count = 0;
+                    int count = 0;
 
-                @*
-                <div class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="Miscellaneous Tools">
-                    <span class="icon-plus-Icon"></span>
-                </div>*@
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_165">
-                        <span class="icon-miscellaneousTools"></span>
-                    </a>
-                    @*@if (Model.lstUserModule.Contains("MSC_Tools"))
-                    {*@
-                    @if (Model.lstUserModule.Contains("MRG-CABLE") == true || Model.lstUserModule.Contains("MAP-LAYOUT") == true || Model.lstUserModule.Contains("EAD") == true)
-                    {
-                    count++;
-                    }
-                    @if (count > 0)
-                    {
-                    <ul class="layout-map">
-                        @if (Model.lstUserModule.Contains("MRG-CABLE"))
+                    @*
+                        <div class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="Miscellaneous Tools">
+                <span class="icon-plus-Icon"></span>
+            </div>*@
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_165">
+                            <span class="icon-miscellaneousTools"></span>
+                        </a>
+                        @*@if (Model.lstUserModule.Contains("MSC_Tools"))
+                {*@
+                        @if (Model.lstUserModule.Contains("MRG-CABLE") == true || Model.lstUserModule.Contains("MAP-LAYOUT") == true || Model.lstUserModule.Contains("EAD") == true)
                         {
-                        <li>
-                            <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_167" onclick="si.showMergeCablesPopup(); si.MiscellaneousTools.MergeTool();">
-                                <span class="icon-merge"></span>
-                            </a>
-                        </li>
-
+                            count++;
                         }
-                        @if (Model.lstUserModule.Contains("MAP-LAYOUT"))
+                        @if (count > 0)
                         {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon" title="Layout">
-                                <span class="icon-layout_New"></span>
-                            </a>
-                            <ul class="map-layout childtoolbar">
-                                <li>
-                                    <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.toggleLayout(this,'Polygon')">
-                                        <span class="icon-Draw_Polygon"></span>
-                                    </a>
-                                </li>
-                                <li class="techSep"></li>
-                                <li>
-                                    <a href="#" class="iconBaricomoon" onclick="si.toggleLayout(this, 'Square')" title="@Resources.Resources.SI_OSP_PM_NET_FRM_002">
-                                        <span class="icon-Draw_square"></span>
-                                    </a>
-                                </li>
-                                <li style="display:none;" class="techSep"></li>
-                                <li style="display:none;">
-                                    <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.toggleLayout(this, 'Rectangle')">
-                                        <span class="icon-DrawRectangle"></span>
-                                    </a>
-                                </li>
+                            <ul class="layout-map">
+                                @if (Model.lstUserModule.Contains("MRG-CABLE"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_167" onclick="si.showMergeCablesPopup(); si.MiscellaneousTools.MergeTool();">
+                                            <span class="icon-merge"></span>
+                                        </a>
+                                    </li>
+
+                                }
+                                @if (Model.lstUserModule.Contains("MAP-LAYOUT"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon" title="Layout">
+                                            <span class="icon-layout_New"></span>
+                                        </a>
+                                        <ul class="map-layout childtoolbar">
+                                            <li>
+                                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.toggleLayout(this,'Polygon')">
+                                                    <span class="icon-Draw_Polygon"></span>
+                                                </a>
+                                            </li>
+                                            <li class="techSep"></li>
+                                            <li>
+                                                <a href="#" class="iconBaricomoon" onclick="si.toggleLayout(this, 'Square')" title="@Resources.Resources.SI_OSP_PM_NET_FRM_002">
+                                                    <span class="icon-Draw_square"></span>
+                                                </a>
+                                            </li>
+                                            <li style="display:none;" class="techSep"></li>
+                                            <li style="display:none;">
+                                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.toggleLayout(this, 'Rectangle')">
+                                                    <span class="icon-DrawRectangle"></span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                }
+                                @if (Model.lstUserModule.Contains("EAD"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+
+                                        <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_505" onclick="return si.entityAlongDirection('start');">
+
+                                            <span class="icon-entityDirection"></span>
+                                            <input type="hidden" id="directionGeometry" value="" />
+                                        </a>
+                                    </li>
+                                }
+
                             </ul>
-                        </li>
                         }
-                        @if (Model.lstUserModule.Contains("EAD"))
+                        else
                         {
-                        <li class="techSep"></li>
-                        <li>
-
-                            <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_505" onclick="return si.entityAlongDirection('start');">
-
-                                <span class="icon-entityDirection"></span>
-                                <input type="hidden" id="directionGeometry" value="" />
-                            </a>
-                        </li>
+                            <ul style="opacity:0; visibility:hidden;"></ul>
                         }
-
-                    </ul>
-                    }
-                    else
-                    {
-                    <ul style="opacity:0; visibility:hidden;"></ul>
-                    }
-                    @*}*@
-                </li>
-                <li class="techSep"></li>
+                        @*}*@
+                    </li>
+                    <li class="techSep"></li>
 
                 }
 
                 @if (Model.lstUserModule.Contains("WFM"))
                 {
-                int count = 0;
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar " onclick="si.WorkForceManagement.showMenu(this);"
-                       id="WorkForceManagement" title="Workforce Management">
-                        <span class="icon-workForceManagment"></span>
-                    </a>
-                    @if (Model.lstUserModule.Contains("WFM-AJO") == true || Model.lstUserModule.Contains("WFM-VAJO") == true || Model.lstUserModule.Contains("WFM-TTAJO") == true || Model.lstUserModule.Contains("WFM-TTVAJO") == true
-                    || Model.lstUserModule.Contains("WFM-JOReport") == true || Model.lstUserModule.Contains("WFM-TTJOReport") == true || Model.lstUserModule.Contains("WFM-SR") == true || Model.lstUserModule.Contains("WFM-VR") == true || Model.lstUserModule.Contains("WFM-TTJOReport") == true || Model.lstUserModule.Contains("WFM-SR") == true)
+                    int count = 0;
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar " onclick="si.WorkForceManagement.showMenu(this);"
+                           id="WorkForceManagement" title="Workforce Management">
+                            <span class="icon-workForceManagment"></span>
+                        </a>
+                        @if (Model.lstUserModule.Contains("WFM-AJO") == true || Model.lstUserModule.Contains("WFM-VAJO") == true || Model.lstUserModule.Contains("WFM-TTAJO") == true || Model.lstUserModule.Contains("WFM-TTVAJO") == true
+                            || Model.lstUserModule.Contains("WFM-JOReport") == true || Model.lstUserModule.Contains("WFM-TTJOReport") == true || Model.lstUserModule.Contains("WFM-SR") == true || Model.lstUserModule.Contains("WFM-VR") == true || Model.lstUserModule.Contains("WFM-TTJOReport") == true || Model.lstUserModule.Contains("WFM-SR") == true)
 
-                    {
-                    count++;
-                    }
-                    @if (count > 0)
-                    {
-                    <ul>
-                        @if (Model.lstUserModule.Contains("WFM-AJO"))
                         {
-
-                        <li>
-                            <a href="#" class="iconBaricomoon" title="Assign Job Order" onclick="si.WorkForceManagement.toggleAssignJobOrder();">
-                                <span class="icon-assignJobOrder"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
+                            count++;
                         }
-                        @if (Model.lstUserModule.Contains("WFM-VAJO"))
+                        @if (count > 0)
                         {
-                        <li>
+                            <ul>
+                                @if (Model.lstUserModule.Contains("WFM-AJO"))
+                                {
 
-                            <a href="#" class="iconBaricomoon" onclick="si.WorkForceManagement.toggleViewAssignJobOrder();"
-                               title="View Assigned Job Order">
-                                <span class="icon-viewJobOrder"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        }
-                        @if (Model.lstUserModule.Contains("WFM-TTAJO"))
-                        {
-                        <li>
-                            <a href="#" class="iconBaricomoon" title="Assign Trouble Ticket" onclick="si.WorkForceManagement.toggleTTAssignJobOrder();">
-                                <span class="icon-assignJobOrder"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        }
-                        @if (Model.lstUserModule.Contains("WFM-TTVAJO"))
-                        {
-                        <li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon" title="Assign Job Order" onclick="si.WorkForceManagement.toggleAssignJobOrder();">
+                                            <span class="icon-assignJobOrder"></span>
+                                        </a>
+                                    </li>
+                                    <li class="techSep"></li>
+                                }
+                                @if (Model.lstUserModule.Contains("WFM-VAJO"))
+                                {
+                                    <li>
 
-                            <a href="#" class="iconBaricomoon" onclick="si.WorkForceManagement.toggleTTViewAssignJobOrder();"
-                               title="View Assigned Trouble Ticket">
-                                <span class="icon-viewJobOrder"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        }
-                        @if (Model.lstUserModule.Contains("WFM-JOReport"))
-                        {
-                        <li>
-                            <a href="#" class="iconBaricomoon" title="View UnAssigned Job Order" onclick="si.WorkForceManagement.toggleAssignJobOrderRM();">
-                                <span class="icon-assignJobOrder"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
+                                        <a href="#" class="iconBaricomoon" onclick="si.WorkForceManagement.toggleViewAssignJobOrder();"
+                                           title="View Assigned Job Order">
+                                            <span class="icon-viewJobOrder"></span>
+                                        </a>
+                                    </li>
+                                    <li class="techSep"></li>
+                                }
+                                @if (Model.lstUserModule.Contains("WFM-TTAJO"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon" title="Assign Trouble Ticket" onclick="si.WorkForceManagement.toggleTTAssignJobOrder();">
+                                            <span class="icon-assignJobOrder"></span>
+                                        </a>
+                                    </li>
+                                    <li class="techSep"></li>
+                                }
+                                @if (Model.lstUserModule.Contains("WFM-TTVAJO"))
+                                {
+                                    <li>
 
-                            <a href="#" class="iconBaricomoon" onclick="si.WorkForceManagement.toggleViewAssignJobOrderRM();"
-                               title="View Assigned Job Order">
-                                <span class="icon-viewJobOrder"></span>
-                            </a>
-                        </li>
+                                        <a href="#" class="iconBaricomoon" onclick="si.WorkForceManagement.toggleTTViewAssignJobOrder();"
+                                           title="View Assigned Trouble Ticket">
+                                            <span class="icon-viewJobOrder"></span>
+                                        </a>
+                                    </li>
+                                    <li class="techSep"></li>
+                                }
+                                @if (Model.lstUserModule.Contains("WFM-JOReport"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon" title="View UnAssigned Job Order" onclick="si.WorkForceManagement.toggleAssignJobOrderRM();">
+                                            <span class="icon-assignJobOrder"></span>
+                                        </a>
+                                    </li>
+                                    <li class="techSep"></li>
+                                    <li>
 
-                        }
-                        @if (Model.lstUserModule.Contains("WFM-TTJOReport"))
-                        {
-                        <li>
-                            <a href="#" class="iconBaricomoon" title="View UnAssigned Trouble Ticket Job Order" onclick="si.WorkForceManagement.toggleTTAssignJobOrderRM();">
-                                <span class="icon-assignJobOrder"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
+                                        <a href="#" class="iconBaricomoon" onclick="si.WorkForceManagement.toggleViewAssignJobOrderRM();"
+                                           title="View Assigned Job Order">
+                                            <span class="icon-viewJobOrder"></span>
+                                        </a>
+                                    </li>
 
-                            <a href="#" class="iconBaricomoon" onclick="si.WorkForceManagement.toggleViewAssignttJobOrderRM();"
-                               title="View Assigned Trouble Ticket Job Order">
-                                <span class="icon-viewJobOrder"></span>
-                            </a>
-                        </li>
-                        }
-                        @if (Model.lstUserModule.Contains("WFM-SR"))
-                        {
-                        <li>
-                            <a href="#" class="iconBaricomoon" onclick="si.SaveRoster()" title="SaveRoster">
-                                <span class="icon-assignRoaster"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        }
-                        @if (Model.lstUserModule.Contains("WFM-VR"))
-                        {
-                        <li>
-                            <a href="#" class="iconBaricomoon" onclick="si.ViewRoster()" title="ViewRoster">
-                                <span class="icon-viewRoaster"></span>
-                            </a>
-                        </li>
+                                }
+                                @if (Model.lstUserModule.Contains("WFM-TTJOReport"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon" title="View UnAssigned Trouble Ticket Job Order" onclick="si.WorkForceManagement.toggleTTAssignJobOrderRM();">
+                                            <span class="icon-assignJobOrder"></span>
+                                        </a>
+                                    </li>
+                                    <li class="techSep"></li>
+                                    <li>
 
-                        }
+                                        <a href="#" class="iconBaricomoon" onclick="si.WorkForceManagement.toggleViewAssignttJobOrderRM();"
+                                           title="View Assigned Trouble Ticket Job Order">
+                                            <span class="icon-viewJobOrder"></span>
+                                        </a>
+                                    </li>
+                                }
+                                @if (Model.lstUserModule.Contains("WFM-SR"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon" onclick="si.SaveRoster()" title="SaveRoster">
+                                            <span class="icon-assignRoaster"></span>
+                                        </a>
+                                    </li>
+                                    <li class="techSep"></li>
+                                }
+                                @if (Model.lstUserModule.Contains("WFM-VR"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon" onclick="si.ViewRoster()" title="ViewRoster">
+                                            <span class="icon-viewRoaster"></span>
+                                        </a>
+                                    </li>
+
+                                }
 
 
-                        @*
-                        <li>
+                                @*
+                                    <li>
                             <a href="#" class="iconBaricomoon Plantool" id="Plantool" onclick="si.ViewPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_284">
                                 <span class="icon-Navigator"></span>
                             </a>
@@ -516,49 +516,49 @@
                                 <span class="icon-draw_survey_area"></span>
                             </a>
                         </li>*@
-                        @if (Model.lstUserModule.Contains("WFM-AJO") || Model.lstUserModule.Contains("WFM-TTAJO"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="javascript:void(0);" class="iconBaricomoon maintoolbar " onclick="si.viewWfmDashboard();"
-                               id="DashBoard" title="Workforce Management DashBoard">
-                                <span class="icon-Dashboard"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon" onclick="si.WorkForceManagement.toggleViewUserPermissionArea();"
-                               title="View User Permission Area">
-                                <span class="icon-external_data_view fs-22"></span>
-                            </a>
-                        </li>
-                        }
+                                @if (Model.lstUserModule.Contains("WFM-AJO") || Model.lstUserModule.Contains("WFM-TTAJO"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="javascript:void(0);" class="iconBaricomoon maintoolbar " onclick="si.viewWfmDashboard();"
+                                           id="DashBoard" title="Workforce Management DashBoard">
+                                            <span class="icon-Dashboard"></span>
+                                        </a>
+                                    </li>
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon" onclick="si.WorkForceManagement.toggleViewUserPermissionArea();"
+                                           title="View User Permission Area">
+                                            <span class="icon-external_data_view fs-22"></span>
+                                        </a>
+                                    </li>
+                                }
 
-                        @if (Model.lstUserModule.Contains("WFM-JOReport") || Model.lstUserModule.Contains("WFM-TTJOReport"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="javascript:void(0);" class="iconBaricomoon maintoolbar " onclick="si.viewWfmDashboardRM();"
-                               id="DashBoard" title="Workforce Management DashBoard RM">
-                                <span class="icon-Dashboard"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon" onclick="si.WorkForceManagement.toggleViewUserPermissionArea();"
-                               title="View User Permission Area">
-                                <span class="icon-external_data_view fs-22"></span>
-                            </a>
-                        </li>
+                                @if (Model.lstUserModule.Contains("WFM-JOReport") || Model.lstUserModule.Contains("WFM-TTJOReport"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="javascript:void(0);" class="iconBaricomoon maintoolbar " onclick="si.viewWfmDashboardRM();"
+                                           id="DashBoard" title="Workforce Management DashBoard RM">
+                                            <span class="icon-Dashboard"></span>
+                                        </a>
+                                    </li>
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon" onclick="si.WorkForceManagement.toggleViewUserPermissionArea();"
+                                           title="View User Permission Area">
+                                            <span class="icon-external_data_view fs-22"></span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
                         }
-                    </ul>
-                    }
-                    else
-                    {
-                    <ul style="opacity:0; visibility:hidden;"></ul>
-                    }
-                </li>
-                <li class="techSep"></li>
+                        else
+                        {
+                            <ul style="opacity:0; visibility:hidden;"></ul>
+                        }
+                    </li>
+                    <li class="techSep"></li>
 
                 }
 
@@ -569,117 +569,114 @@
 
                 @if (Model.lstUserModule.Contains("RDL"))
                 {
-                <li class="has-children">
-                    <a href="#" class="iconBaricomoon maintoolbar " onclick="si.Redline.showRedlineMenu(this)" id="dvRedline" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_168">
-                        <span class="icon-ENTITYSELECTION"></span>
-                    </a>
-                    <ul>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_FRM_127" onclick="si.Redline.RedlineList(this)">
-                                <span class="icon-dashboard"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="Point" onclick="si.Redline.initiateDrawingsRedline(this, 'Point')">
-                                <span class="icon-LocationEdit"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="PolyLine" onclick="si.Redline.initiateDrawingsRedline(this, 'PolyLine')">
-                                <span class="icon-polyline"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040">
-                            <a href="#" class="iconBaricomoon " onclick="si.Redline.initiateDrawingsRedline(this, 'Polygon')">
-                                <span class="icon-draw_survey_area"></span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="techSep"></li>
+                    <li class="has-children">
+                        <a href="#" class="iconBaricomoon maintoolbar " onclick="si.Redline.showRedlineMenu(this)" id="dvRedline" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_168">
+                            <span class="icon-ENTITYSELECTION"></span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_FRM_127" onclick="si.Redline.RedlineList(this)">
+                                    <span class="icon-dashboard"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="Point" onclick="si.Redline.initiateDrawingsRedline(this, 'Point')">
+                                    <span class="icon-LocationEdit"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="PolyLine" onclick="si.Redline.initiateDrawingsRedline(this, 'PolyLine')">
+                                    <span class="icon-polyline"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040">
+                                <a href="#" class="iconBaricomoon " onclick="si.Redline.initiateDrawingsRedline(this, 'Polygon')">
+                                    <span class="icon-draw_survey_area"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
                 @if (Model.lstUserModule.Contains("FBC"))
                 {
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar" id="dvFiberCut" onclick="si.showWLTB('FiberCut', this)" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_277">
-                        <span class="icon-FIBERCUTTRACING"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar" id="dvFiberCut" onclick="si.showWLTB('FiberCut', this)" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_277">
+                            <span class="icon-FIBERCUTTRACING"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
                 @if (Model.lstUserModule.Contains("NWT"))
                 {
-                int count = 0; var flagView = false; var flagCreate = false; var flagCreateByDrawing = false;
+                    int count = 0; var flagView = false; var flagCreate = false; var flagCreateByDrawing = false;
 
-                <li class="has-children">
-                    <a href="#" class="iconBaricomoon maintoolbar " onclick="si.Networkticket.showMenu(this)" id="Networkticket" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_216">
-                        <span class="icon-network_tickets"></span>
-                    </a>
-                    @if (Model.lstUserModule.Contains("NWT-DSHBRD") == true || Model.lstUserModule.Contains("NWT-ADD") == true || Model.lstUserModule.Contains("NWT-DRARA") == true)
-                    {
-                    count++;
-                    }
-                    @if (count > 0)
-                    {
-                    <ul>
-
-                        @if (Model.lstUserModule.Contains("NWT-DSHBRD"))
+                    <li class="has-children">
+                        <a href="#" class="iconBaricomoon maintoolbar " onclick="si.Networkticket.showMenu(this)" id="Networkticket" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_216">
+                            <span class="icon-network_tickets"></span>
+                        </a>
+                        @if (Model.lstUserModule.Contains("NWT-DSHBRD") == true || Model.lstUserModule.Contains("NWT-ADD") == true || Model.lstUserModule.Contains("NWT-DRARA") == true)
                         {
-                        <li>
-                            <button class="iconBaricomoon " onclick="si.Networkticket.NetworkTicketList(this)"
-                                    @if (Model.objRoleMaster.lstTemplateTicketTypePermission.Count>
-                                0) { flagView = Model.objRoleMaster.lstTemplateTicketTypePermission.Where(x => x.is_view == true).Select(x => x.is_view).FirstOrDefault(); if (flagView != true) { { @: disabled title="Unauthorized Access"
-                                } } else { { @: title="@Resources.Resources.SI_OSP_GBL_NET_FRM_467"
-                                } } } else { { @: disabled; title="Unauthorized Access"
-                                } }>
-                                <span class="icon-ticketDashboard"></span>
-                            </button>
-                        </li>
-
+                            count++;
                         }
-                        @if (Model.lstUserModule.Contains("NWT-ADD"))
+                        @if (count > 0)
                         {
-                        <li class="techSep"></li>
-                        <li>
-                            <button class="iconBaricomoon " onclick="si.Networkticket.AddNetworkTicket(null, null, null, this)"
-                                    @if (Model.objRoleMaster.lstTemplateTicketTypePermission.Count>
-                                0) { flagCreate = Model.objRoleMaster.lstTemplateTicketTypePermission.Where(x => x.is_create == true).Select(x => x.is_create).FirstOrDefault(); if (flagCreate != true) { { @: disabled title="Unauthorized Access"
-                                } } else { { @: title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_032"
-                                } } } else { { @: disabled title="Unauthorized Access"
-                                } }>
-                                <span class="icon-create_ticket"></span>
-                            </button>
-                        </li>
+                            <ul>
+
+                                @if (Model.lstUserModule.Contains("NWT-DSHBRD"))
+                                {
+                                    <li>
+                                        <button class="iconBaricomoon " onclick="si.Networkticket.NetworkTicketList(this)"
+                                                @if (Model.objRoleMaster.lstTemplateTicketTypePermission.Count>0) { flagView = Model.objRoleMaster.lstTemplateTicketTypePermission.Where(x => x.is_view == true).Select(x => x.is_view).FirstOrDefault(); if (flagView != true) { { @: disabled title="Unauthorized Access"
+                                                } } else { { @: title="@Resources.Resources.SI_OSP_GBL_NET_FRM_467"
+                                                } } } else { { @: disabled; title="Unauthorized Access"
+                                                } }>
+                                            <span class="icon-ticketDashboard"></span>
+                                        </button>
+                                    </li>
+
+                                }
+                                @if (Model.lstUserModule.Contains("NWT-ADD"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <button class="iconBaricomoon " onclick="si.Networkticket.AddNetworkTicket(null, null, null, this)"
+                                                @if (Model.objRoleMaster.lstTemplateTicketTypePermission.Count > 0) { flagCreate = Model.objRoleMaster.lstTemplateTicketTypePermission.Where(x => x.is_create == true).Select(x => x.is_create).FirstOrDefault(); if (flagCreate != true) { { @: disabled title="Unauthorized Access"
+                                                } } else { { @: title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_032"
+                                                } } } else { { @: disabled title="Unauthorized Access"
+                                                } }>
+                                            <span class="icon-create_ticket"></span>
+                                        </button>
+                                    </li>
+                                }
+                                @if (Model.lstUserModule.Contains("NWT-DRARA"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <button class="iconBaricomoon" onclick="si.Networkticket.initiateDrawingsNetworkTicket(this, 'Polygon')"
+                                                @if (Model.objRoleMaster.lstTemplateTicketTypePermission.Count > 0) { if (flagCreate != true) { { @: disabled title="Unauthorized Access"
+                                                } } else { { @: title="@Resources.Resources.SI_OSP_GBL_NET_FRM_469"
+                                                } } } else { { @: disabled title="Unauthorized Access"
+                                                } }>
+                                            <span class="icon-draw_survey_area"></span>
+                                        </button>
+                                    </li>
+                                }
+
+
+                            </ul>
                         }
-                        @if (Model.lstUserModule.Contains("NWT-DRARA"))
+                        else
                         {
-                        <li class="techSep"></li>
-                        <li>
-                            <button class="iconBaricomoon" onclick="si.Networkticket.initiateDrawingsNetworkTicket(this, 'Polygon')"
-                                    @if (Model.objRoleMaster.lstTemplateTicketTypePermission.Count>
-                                0) { if (flagCreate != true) { { @: disabled title="Unauthorized Access"
-                                } } else { { @: title="@Resources.Resources.SI_OSP_GBL_NET_FRM_469"
-                                } } } else { { @: disabled title="Unauthorized Access"
-                                } }>
-                                <span class="icon-draw_survey_area"></span>
-                            </button>
-                        </li>
+                            <ul style="opacity:0; visibility:hidden;"></ul>
                         }
-
-
-                    </ul>
-                    }
-                    else
-                    {
-                    <ul style="opacity:0; visibility:hidden;"></ul>
-                    }
-                </li>
-                <li class="techSep"></li>
+                    </li>
+                    <li class="techSep"></li>
 
                 }
 
@@ -688,201 +685,201 @@
                 @if (Model.lstUserModule.Contains("FLK"))
                 {
 
-                <li>
-                    <a href="#" class="iconBaricomoon" onclick="si.showFiberLinkDetails()" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_038">
-                        <span class="icon-link"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>
+                    <li>
+                        <a href="#" class="iconBaricomoon" onclick="si.showFiberLinkDetails()" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_038">
+                            <span class="icon-link"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
                 @if (Model.lstUserModule.Contains("WFM"))
                 {
-                @*
-                <li>
-                    <a href="#" class="fa fa-clock-o" onclick="si.SaveRoster()" title="SaveRoster">
-                        <span class="fa fa-clock-o"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>*@
+                    @*<li>
+                <a href="#" class="fa fa-clock-o" onclick="si.SaveRoster()" title="SaveRoster">
+                    <span class="fa fa-clock-o"></span>
+                </a>
+            </li>
+            <li class="techSep"></li>*@
 
-                @*
-                <li id="liUserTimeSheet">
-                    <a id="lnkUserTimeSheet" title="Roster Management"
-                       data-title="Roster Management" data-href="FiberLink/ViewUserTimeSheetDetails">
-                        <i class="fa fa-clock-o" aria-hidden="true"></i>
-                    </a>
-                </li>*@
+                    @*<li id="liUserTimeSheet">
+                <a id="lnkUserTimeSheet" title="Roster Management"
+                   data-title="Roster Management" data-href="FiberLink/ViewUserTimeSheetDetails">
+                <i class="fa fa-clock-o" aria-hidden="true"></i></a>
+            </li>*@
 
 
-                <!--<li>
-    <a href="#" class="fa fa-list" onclick="si.ViewRoster()" title="ViewRoster">-->
-                @*
-                <span class="fa fa-clock-o"></span>*@
-                <!--</a>
-    </li>
-    <li class="techSep"></li>-->
+                    <!--<li>
+        <a href="#" class="fa fa-list" onclick="si.ViewRoster()" title="ViewRoster">-->
+                    @*<span class="fa fa-clock-o"></span>*@
+                    <!--</a>
+        </li>
+        <li class="techSep"></li>-->
+
+
+
+
                 }
 
                 @if (Model.lstUserModule.Contains("LTK"))
                 {
 
-                <li>
-                    <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_036" onclick="OpenPathTracker();">
-                        <span class="icon-Survey_Path_Tracker"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>
+                    <li>
+                        <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_036" onclick="OpenPathTracker();">
+                            <span class="icon-Survey_Path_Tracker"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
                 @if (Model.lstUserModule.Contains("WDBRD"))
                 {
 
-                <li>
-                    <a class="iconBaricomoon" title="Dashboard" onclick="window.open('/Dashboard/Index', '_blank')">
-                        <span class="icon-icon-park_dashboard"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>
+                    <li>
+                        <a class="iconBaricomoon" title="Dashboard" onclick="window.open('/Dashboard/Index', '_blank')">
+                            <span class="icon-icon-park_dashboard"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
                 @if (Model.lstUserModule.Contains("PMP"))
                 {
-                int count = 0;
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar clsExportReport" onclick="si.PrintMapMenu.showMenu(this);" id="dvMainReport" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_034">
-                        <span class="icon-print_map"></span>
-                    </a>
-                    @if (Model.lstUserModule.Contains("PMM-EXLOG") == true || Model.lstUserModule.Contains("PMM-DRPOLY") == true || Model.lstUserModule.Contains("PMM-SQR") == true || Model.lstUserModule.Contains("PMM-RECT") == true || Model.lstUserModule.Contains("PMM-CIR") == true)
-                    {
-                    count++;
-                    }
-                    @if (count > 0)
-                    {
-                    <ul>
-                        @if (Model.lstUserModule.Contains("PMM-EXLOG"))
+                    int count = 0;
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar clsExportReport" onclick="si.PrintMapMenu.showMenu(this);" id="dvMainReport" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_034">
+                            <span class="icon-print_map"></span>
+                        </a>
+                        @if (Model.lstUserModule.Contains("PMM-EXLOG") == true || Model.lstUserModule.Contains("PMM-DRPOLY") == true || Model.lstUserModule.Contains("PMM-SQR") == true || Model.lstUserModule.Contains("PMM-RECT") == true || Model.lstUserModule.Contains("PMM-CIR") == true)
                         {
-                        <li>
-                            <a href="#" class="iconBaricomoon " title=@Resources.Resources.SI_OSP_PM_NET_FRM_001 onclick="si.printExportLog();">
-                                <span class="icon-exportreport"></span>
-                            </a>
-                        </li>
+                            count++;
+                        }
+                        @if (count > 0)
+                        {
+                            <ul>
+                                @if (Model.lstUserModule.Contains("PMM-EXLOG"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title=@Resources.Resources.SI_OSP_PM_NET_FRM_001 onclick="si.printExportLog();">
+                                            <span class="icon-exportreport"></span>
+                                        </a>
+                                    </li>
+
+                                }
+
+                                @if (Model.lstUserModule.Contains("PMM-DRPOLY"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.togglePrint(this,'Polygon')">
+                                            <span class="icon-Draw_Polygon"></span>
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (Model.lstUserModule.Contains("PMM-SQR"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " onclick="si.togglePrint(this,'Square')" title="@Resources.Resources.SI_OSP_PM_NET_FRM_002">
+                                            <span class="icon-Draw_square"></span>
+                                        </a>
+                                    </li>
+
+                                }
+
+                                @if (Model.lstUserModule.Contains("PMM-RECT"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041"
+                                           onclick="si.togglePrint(this,'Rectangle')">
+                                            <span class="icon-DrawRectangle"></span>
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (Model.lstUserModule.Contains("PMM-CIR"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042"
+                                           onclick="si.togglePrint(this,'Circle')">
+                                            <span class="icon-DrawCircle"></span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
 
                         }
-
-                        @if (Model.lstUserModule.Contains("PMM-DRPOLY"))
+                        else
                         {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.togglePrint(this,'Polygon')">
-                                <span class="icon-Draw_Polygon"></span>
-                            </a>
-                        </li>
+                            <ul style="opacity:0; visibility:hidden;"></ul>
                         }
+                    </li>
 
-                        @if (Model.lstUserModule.Contains("PMM-SQR"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " onclick="si.togglePrint(this,'Square')" title="@Resources.Resources.SI_OSP_PM_NET_FRM_002">
-                                <span class="icon-Draw_square"></span>
-                            </a>
-                        </li>
-
-                        }
-
-                        @if (Model.lstUserModule.Contains("PMM-RECT"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041"
-                               onclick="si.togglePrint(this,'Rectangle')">
-                                <span class="icon-DrawRectangle"></span>
-                            </a>
-                        </li>
-                        }
-
-                        @if (Model.lstUserModule.Contains("PMM-CIR"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042"
-                               onclick="si.togglePrint(this,'Circle')">
-                                <span class="icon-DrawCircle"></span>
-                            </a>
-                        </li>
-                        }
-                    </ul>
-
-                    }
-                    else
-                    {
-                    <ul style="opacity:0; visibility:hidden;"></ul>
-                    }
-                </li>
-
-                <li class="techSep"></li>
+                    <li class="techSep"></li>
                 }
 
                 @if (Model.lstUserModule.Contains("LMC") && ApplicationSettings.IsLMCReportEnabled)
                 {
 
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar" onclick="si.LMCReport.showReportMenu('ManualReport', this);" id="dvLMCReport" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_072">
-                        <span class="icon-LMC_report"></span>
-                    </a>
-                    <ul>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_RPT_072" onclick="si.LMCReport.LmcSiteReport(null,null,null,this);">
-                                <span class="icon-export_report"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.LMCReport.initiateDrawingsExportReport(this, 'Polygon')">
-                                <span class="icon-Draw_Polygon"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.LMCReport.initiateDrawingsExportReport(this, 'Rectangle')">
-                                <span class="icon-DrawRectangle"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.LMCReport.initiateDrawingsExportReport(this, 'Circle')">
-                                <span class="icon-DrawCircle"></span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar" onclick="si.LMCReport.showReportMenu('ManualReport', this);" id="dvLMCReport" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_072">
+                            <span class="icon-LMC_report"></span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_RPT_072" onclick="si.LMCReport.LmcSiteReport(null,null,null,this);">
+                                    <span class="icon-export_report"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.LMCReport.initiateDrawingsExportReport(this, 'Polygon')">
+                                    <span class="icon-Draw_Polygon"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.LMCReport.initiateDrawingsExportReport(this, 'Rectangle')">
+                                    <span class="icon-DrawRectangle"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.LMCReport.initiateDrawingsExportReport(this, 'Circle')">
+                                    <span class="icon-DrawCircle"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
 
-                <li class="techSep"></li>
+                    <li class="techSep"></li>
                 }
 
 
                 @if (Model.lstUserModule.Contains("PTL"))
                 {
 
-                <li>
-                    <a href="#" class="iconBaricomoon Plantool" id="Plantool" onclick="si.ViewPlanTool()" title="Network Planning">
-                        <span class="icon-Navigator"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>
+                    <li>
+                        <a href="#" class="iconBaricomoon Plantool" id="Plantool" onclick="si.ViewPlanTool()" title="Network Planning">
+                            <span class="icon-Navigator"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
 
                 @if (Model.lstUserModule.Contains("BPTL"))
                 {
 
-                <li>
-                    <a href="#" class="iconBaricomoon" id="BulkPlantool" onclick="si.showBulkPlanTool()" title="Sprout Plan Tool">
-                        <span class="icon-draw_survey_area"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>
+                    <li>
+                        <a href="#" class="iconBaricomoon" id="BulkPlantool" onclick="si.showBulkPlanTool()" title="Sprout Plan Tool">
+                            <span class="icon-draw_survey_area"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
 
@@ -891,116 +888,114 @@
                 {
 
 
-                <a href="@Url.Action(" feasibility", "Main" )" target="_blank" class="iconBaricomoon" id="Cpfinder" title="@Resources.Resources.SI_GBL_GBL_NET_GBL_001">
+                    <a href="@Url.Action("feasibility", "Main")" target="_blank" class="iconBaricomoon" id="Cpfinder" title="@Resources.Resources.SI_GBL_GBL_NET_GBL_001">
 
-                    <span class="icon-Connection-Path-finder"></span>
+                        <span class="icon-Connection-Path-finder"></span>
 
-                </a>
+                    </a>
 
 
 
-                <li class="techSep"></li>
+                    <li class="techSep"></li>
                 }
 
 
                 @*@if (Model.lstUserModule.Contains("SPI") && ApplicationSettings.isSmartPlannerEnabled)
-                {
+        {
 
-                <li>
-                    <a href="#" class="iconBaricomoon" onclick="si.showPlannerIntegration()" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_039">
-                        <span class="icon-Shift"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>
-                }*@
+            <li>
+                <a href="#" class="iconBaricomoon" onclick="si.showPlannerIntegration()" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_039">
+                    <span class="icon-Shift"></span>
+                </a>
+            </li>
+            <li class="techSep"></li>
+        }*@
 
                 @if (Model.lstUserModule.Contains("TKM") && ApplicationSettings.isTicketManagerEnabled)
                 {
 
-                <li>
-                    <a href="#" class="iconBaricomoon" onclick="si.showTicketManager()" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_209">
-                        <span class="icon-ticket_new"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>
+                    <li>
+                        <a href="#" class="iconBaricomoon" onclick="si.showTicketManager()" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_209">
+                            <span class="icon-ticket_new"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
 
                 @if (Model.lstUserModule.Contains("ROW"))
                 {
 
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar clsROWReport" onclick="si.report.showReportMenu('ManualReport',this);" id="dvROWReport" title="@Resources.Resources.SI_OSP_ROW_NET_RPT_001">
-                        <span class="icon-export_report_ROW"></span>
-                    </a>
-                    <ul>
-                        <li>
-                            <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_JQ_RPT_005" onclick="si.report.ROWReport(null,null,null,this);">
-                                <span class="icon-export_report"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.report.initiateDrawingsExportReport(this, 'Polygon')">
-                                <span class="icon-Draw_Polygon"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.report.initiateDrawingsExportReport(this, 'Rectangle')">
-                                <span class="icon-DrawRectangle"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.report.initiateDrawingsExportReport(this, 'Circle')">
-                                <span class="icon-DrawCircle"></span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="techSep"></li>
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar clsROWReport" onclick="si.report.showReportMenu('ManualReport',this);" id="dvROWReport" title="@Resources.Resources.SI_OSP_ROW_NET_RPT_001">
+                            <span class="icon-export_report_ROW"></span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_JQ_RPT_005" onclick="si.report.ROWReport(null,null,null,this);">
+                                    <span class="icon-export_report"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.report.initiateDrawingsExportReport(this, 'Polygon')">
+                                    <span class="icon-Draw_Polygon"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.report.initiateDrawingsExportReport(this, 'Rectangle')">
+                                    <span class="icon-DrawRectangle"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.report.initiateDrawingsExportReport(this, 'Circle')">
+                                    <span class="icon-DrawCircle"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
 
                 @if (Model.lstUserModule.Contains("BMQ"))
                 {
-                int count = 0;
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar" onclick="si.BOMBOQReport.showMenu(this);" id="dvBOMBOQReport" title="@Resources.Resources.SI_OSP_GBL_JQ_RPT_004">
-                        <span class="icon-BOM-BOQ-Report"></span>
-                    </a>
-                    @if (Model.lstUserModule.Contains("BMQ-RPRT") == true || Model.lstUserModule.Contains("CON-BOM") == true || Model.lstUserModule.Contains("BMQ-POLY") == true || Model.lstUserModule.Contains("BMQ-RECT") == true || Model.lstUserModule.Contains("BMQ-CIR") == true)
-                    {
-                    count++;
-                    }
-                    @if (count > 0)
-                    {
-                    <ul>
-
-
-                        @if (Model.lstUserModule.Contains("BMQ-RPRT"))
+                    int count = 0;
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar" onclick="si.BOMBOQReport.showMenu(this);" id="dvBOMBOQReport" title="@Resources.Resources.SI_OSP_GBL_JQ_RPT_004">
+                            <span class="icon-BOM-BOQ-Report"></span>
+                        </a>
+                        @if (Model.lstUserModule.Contains("BMQ-RPRT") == true || Model.lstUserModule.Contains("CON-BOM") == true || Model.lstUserModule.Contains("BMQ-POLY") == true || Model.lstUserModule.Contains("BMQ-RECT") == true || Model.lstUserModule.Contains("BMQ-CIR") == true)
                         {
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_035" onclick="si.BOMBOQReport.BOMBOQShowModel(this);">
-                                <span class="icon-BOM-BOQ-Report"></span>
-                            </a>
-                        </li>
+                            count++;
                         }
-                        @*
-                        <li class="techSep"></li>*@
-                        @if (Model.lstUserModule.Contains("CON-BOM"))
+                        @if (count > 0)
                         {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="FSA wise overhead logics" onclick="si.BOMBOQReport.BOMBOQShowModelforBOMDetail();">
-                                <span class="icon-constrBom"></span>
-                            </a>
-                        </li>
-                        }
+                            <ul>
 
-                        @*
-                        <li>
+
+                                @if (Model.lstUserModule.Contains("BMQ-RPRT"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_035" onclick="si.BOMBOQReport.BOMBOQShowModel(this);">
+                                            <span class="icon-BOM-BOQ-Report"></span>
+                                        </a>
+                                    </li>
+                                }
+                                @*<li class="techSep"></li>*@
+                                @if (Model.lstUserModule.Contains("CON-BOM"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="FSA wise overhead logics" onclick="si.BOMBOQReport.BOMBOQShowModelforBOMDetail();">
+                                            <span class="icon-constrBom"></span>
+                                        </a>
+                                    </li>
+                                }
+
+                                @*<li>
                             <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'create');">
                                 <span class="icon-BOM-BOQ-Report New"></span>
                             </a>
@@ -1010,59 +1005,59 @@
                                 <span class="icon-BOM-BOQ-Report New"></span>
                             </a>
                         </li>*@
-                        <li class="techSep"></li>
-                        @if (Model.lstUserModule.Contains("BMQ-POLY"))
-                        {
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="initiateDrawingsPotential(this, 'Polygon')">
-                                <span class="icon-Draw_Polygon"></span>
-                            </a>
-                        </li>
+                                <li class="techSep"></li>
+                                @if (Model.lstUserModule.Contains("BMQ-POLY"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="initiateDrawingsPotential(this, 'Polygon')">
+                                            <span class="icon-Draw_Polygon"></span>
+                                        </a>
+                                    </li>
+                                }
+                                <li class="techSep"></li>
+                                @if (Model.lstUserModule.Contains("BMQ-RECT"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="initiateDrawingsPotential(this, 'Rectangle')">
+                                            <span class="icon-DrawRectangle"></span>
+                                        </a>
+                                    </li>
+                                }
+
+
+                                @if (Model.lstUserModule.Contains("BMQ-CIR"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="initiateDrawingsPotential(this, 'Circle')">
+                                            <span class="icon-DrawCircle"></span>
+                                        </a>
+                                    </li>
+                                }
+
+
+                            </ul>
                         }
-                        <li class="techSep"></li>
-                        @if (Model.lstUserModule.Contains("BMQ-RECT"))
+                        else
                         {
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="initiateDrawingsPotential(this, 'Rectangle')">
-                                <span class="icon-DrawRectangle"></span>
-                            </a>
-                        </li>
+                            <ul style="opacity:0; visibility:hidden;"></ul>
                         }
-
-
-                        @if (Model.lstUserModule.Contains("BMQ-CIR"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="initiateDrawingsPotential(this, 'Circle')">
-                                <span class="icon-DrawCircle"></span>
-                            </a>
-                        </li>
-                        }
-
-
-                    </ul>
-                    }
-                    else
-                    {
-                    <ul style="opacity:0; visibility:hidden;"></ul>
-                    }
-                </li>
-                <li class="techSep"></li>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
 
                 @if (Model.lstUserModule.Contains("EDV"))
                 {
-                //if (Model.lstUserModule.Contains("EDV-UPLD"))
-                //{
-                <li>
-                    <a class="iconBaricomoon externalDataView" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_048" onclick="si.ViewExternalData();">
-                        <span class="icon-external_data_view fs-22"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>
-                //}
+                    //if (Model.lstUserModule.Contains("EDV-UPLD"))
+                    //{
+                    <li>
+                        <a class="iconBaricomoon externalDataView" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_048" onclick="si.ViewExternalData();">
+                            <span class="icon-external_data_view fs-22"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
+                    //}
 
                 }
 
@@ -1073,12 +1068,12 @@
 
                 @if (Model.lstUserModule.Contains("DUP"))
                 {
-                <li>
-                    <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_033" onclick="si.toggleUpload()">
-                        <span class="icon-upload"></span>
-                    </a>
-                </li>
-                <li class="techSep"></li>
+                    <li>
+                        <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_033" onclick="si.toggleUpload()">
+                            <span class="icon-upload"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
 
                 }
 
@@ -1087,80 +1082,65 @@
 
                 @if (Model.lstUserModule.Contains("SVM"))
                 {
-                int count = 0;
+                    int count = 0;
 
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar clsSurvey" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_032" onclick="si.showWLTB('Survey',this)">
-                        <span class="icon-building_survey"></span>
-                    </a>
-                    @if (Model.lstUserModule.Contains("SVA") == true || Model.lstUserModule.Contains("SVB") == true || Model.lstUserModule.Contains("EXPRT-POLY") == true || Model.lstUserModule.Contains("UPB") == true)
-                    {
-                    count++;
-                    }
-                    @if (count > 0)
-                    {
-                    <ul>
-                        @if (Model.lstUserModule.Contains("SVA"))
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar clsSurvey" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_032" onclick="si.showWLTB('Survey',this)">
+                            <span class="icon-building_survey"></span>
+                        </a>
+                        @if (Model.lstUserModule.Contains("SVA") == true || Model.lstUserModule.Contains("SVB") == true || Model.lstUserModule.Contains("EXPRT-POLY") == true || Model.lstUserModule.Contains("UPB") == true)
                         {
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_JQ_FRM_022" onclick="Opensurveyassignment();">
-                                <span class="icon-Survey-Assignment"></span>
-                            </a>
-
-                        </li>
-
+                            count++;
                         }
-                        @if (Model.lstUserModule.Contains("SVB"))
+                        @if (count > 0)
                         {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_FRM_200" onclick="OpenSurveyBuilding();">
-                                <span class="icon-Survey_Building"></span>
-                            </a>
+                            <ul>
+                                @if (Model.lstUserModule.Contains("SVA"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_JQ_FRM_022" onclick="Opensurveyassignment();">
+                                            <span class="icon-Survey-Assignment"></span>
+                                        </a>
 
-                        </li>
+                                    </li>
+
+                                }
+                                @if (Model.lstUserModule.Contains("SVB"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_FRM_200" onclick="OpenSurveyBuilding();">
+                                            <span class="icon-Survey_Building"></span>
+                                        </a>
+
+                                    </li>
+                                }
+                                @if (Model.lstUserModule.Contains("UPB"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_JQ_FRM_002" onclick="si.toggleBuildingUpload();">
+                                            <span class="icon-Upload_Buildings"></span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
                         }
-                        @if (Model.lstUserModule.Contains("UPB"))
+                        else
                         {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_JQ_FRM_002" onclick="si.toggleBuildingUpload();">
-                                <span class="icon-Upload_Buildings"></span>
-                            </a>
-                        </li>
+                            <ul style="opacity:0; visibility:hidden;"></ul>
                         }
-                    </ul>
-                    }
-                    else
-                    {
-                    <ul style="opacity:0; visibility:hidden;"></ul>
-                    }
-                </li>
-                <li class="techSep"></li>
+                    </li>
+                    <li class="techSep"></li>
                 }
 
 
                 @if (Model.lstUserModule.Contains("UTL"))
                 {
 
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar clsUtilizationReport" onclick="si.UtilizationReport.showMenu(this);" id="dvUtilizationReport" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_106">
-                        <span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4.2 7C4.08954 7 4 7.08954 4 7.2V12.8C4 12.9105 4.08954 13 4.2 13H4.8C4.91046 13 5 12.9105 5 12.8V7.2C5 7.08954 4.91046 7 4.8 7H4.2Z" fill="black"></path>
-                                <path d="M9 9.2C9 9.08954 9.08954 9 9.2 9H9.8C9.91046 9 10 9.08954 10 9.2V12.8C10 12.9105 9.91046 13 9.8 13H9.2C9.08954 13 9 12.9105 9 12.8V9.2Z" fill="black"></path>
-                                <path d="M11.2 7C11.0895 7 11 7.08954 11 7.2V12.8C11 12.9105 11.0895 13 11.2 13H11.8C11.9105 13 12 12.9105 12 12.8V7.2C12 7.08954 11.9105 7 11.8 7H11.2Z" fill="black"></path>
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M10.625 0.00130912C10.6454 0.000647618 10.6658 0.000975592 10.6861 0.00226969C10.7188 0.00234349 10.7516 0.00547693 10.784 0.0117138C10.8679 0.0278654 10.9463 0.0642381 11.0126 0.117352C11.0314 0.130615 11.0495 0.144945 11.067 0.16031C11.2107 0.293587 11.3533 0.429882 11.4963 0.566646L11.4976 0.56786C11.5871 0.65337 11.6767 0.739061 11.767 0.824309L14.844 3.72731C14.8918 3.7722 14.9299 3.82642 14.956 3.88661C14.982 3.94681 14.9955 4.01171 14.9955 4.07731C14.9955 4.08476 14.9953 4.0922 14.995 4.09962V4.1538C15.0114 4.20511 15.0198 4.25874 15.0198 4.31281C15.0198 4.36687 15.0114 4.42051 14.995 4.47182V14.5143C15.0259 14.8273 14.9577 15.1422 14.8 15.4143C14.6749 15.5942 14.5082 15.741 14.314 15.8424C14.1198 15.9438 13.904 15.9966 13.685 15.9963H2.31996C2.09922 15.9974 1.88154 15.9446 1.68584 15.8425C1.49013 15.7404 1.32232 15.592 1.19697 15.4103C1.06609 15.2091 0.998196 14.9733 1.00197 14.7333V1.43331C0.975331 1.13047 1.04798 0.827195 1.20896 0.569308C1.33598 0.392266 1.50363 0.248284 1.69781 0.149449C1.892 0.0506141 2.10708 -0.000187806 2.32497 0.00130912H10.625ZM10.1609 3.38931V0.993358L9.98126 0.992085C9.86737 0.991197 9.75355 0.990309 9.63996 0.990309H2.50896C2.47563 0.990309 2.4423 0.989198 2.40896 0.988087C2.36314 0.98656 2.31732 0.985032 2.27149 0.986391C2.25205 0.990798 2.23275 0.995812 2.21362 1.00143C2.19303 1.0116 2.17278 1.02244 2.15289 1.03392L2.14159 1.04321C2.13411 1.04932 2.1278 1.05447 2.12496 1.05731C2.12296 1.05931 2.11785 1.06491 2.11153 1.07184L2.09355 1.09142C2.08348 1.10672 2.07397 1.12238 2.06504 1.13836C2.05868 1.15741 2.05304 1.17668 2.04813 1.19615C2.04735 1.21354 2.04697 1.23092 2.04697 1.24831V14.4223C2.04156 14.549 2.04216 14.6758 2.04878 14.8024C2.05324 14.8198 2.05827 14.8371 2.06387 14.8543C2.07575 14.8755 2.08842 14.8963 2.10187 14.9167L2.10714 14.9224C2.11362 14.9295 2.11913 14.9355 2.12196 14.9383C2.12473 14.9411 2.13468 14.9493 2.14565 14.9584L2.15589 14.9669C2.17373 14.9775 2.19195 14.9875 2.21052 14.9967C2.22467 15.0009 2.23891 15.0048 2.25323 15.0083H13.404C13.5128 15.0139 13.6218 15.0147 13.7307 15.0108C13.748 15.0067 13.7652 15.0022 13.7823 14.9972C13.8029 14.987 13.8232 14.9762 13.843 14.9647L13.8543 14.9554C13.8618 14.9493 13.8681 14.9442 13.871 14.9413C13.873 14.9393 13.8781 14.9337 13.8844 14.9268L13.9024 14.9072C13.9125 14.8919 13.922 14.8762 13.9309 14.8603C13.9374 14.8409 13.9431 14.8212 13.9481 14.8014C13.9487 14.787 13.949 14.7727 13.949 14.7583V4.83653C13.7988 4.83647 13.6487 4.83595 13.4986 4.83542L13.4975 4.83542C13.3391 4.83486 13.1806 4.83431 13.022 4.83431H11.5159C11.2914 4.83824 11.0695 4.78606 10.8702 4.68251C10.671 4.57896 10.5007 4.42731 10.3749 4.24131C10.2173 3.98622 10.1426 3.68859 10.1609 3.38931ZM11.2059 1.78227V3.26931C11.2022 3.36946 11.2028 3.46972 11.2076 3.5698C11.212 3.58787 11.2169 3.60581 11.2224 3.62358C11.2339 3.64541 11.2462 3.66684 11.2593 3.68781L11.2661 3.69568C11.2726 3.70317 11.2781 3.70947 11.2809 3.71231C11.2834 3.71477 11.2916 3.72196 11.3011 3.73032L11.3133 3.74108C11.331 3.75223 11.3492 3.76268 11.3677 3.77242C11.389 3.77917 11.4105 3.78511 11.4323 3.79023C11.5133 3.7946 11.5953 3.79316 11.677 3.79173C11.7174 3.79102 11.7578 3.79031 11.798 3.79031H13.2139L11.2059 1.78227Z" fill="black"></path>
-                                <path d="M6 11.2C6 11.0895 6.08954 11 6.2 11H6.8C6.91046 11 7 11.0895 7 11.2V12.8C7 12.9105 6.91046 13 6.8 13H6.2C6.08954 13 6 12.9105 6 12.8V11.2Z" fill="black"></path>
-                            </svg>
-                        </span>
-                    </a>
-
-
-
-                    <ul>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_116" onclick="si.UtilizationReport.UtilizationExportReport(null, null, null, this);">
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar clsUtilizationReport" onclick="si.UtilizationReport.showMenu(this);" id="dvUtilizationReport" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_106">
+                            <span>
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M4.2 7C4.08954 7 4 7.08954 4 7.2V12.8C4 12.9105 4.08954 13 4.2 13H4.8C4.91046 13 5 12.9105 5 12.8V7.2C5 7.08954 4.91046 7 4.8 7H4.2Z" fill="black"></path>
                                     <path d="M9 9.2C9 9.08954 9.08954 9 9.2 9H9.8C9.91046 9 10 9.08954 10 9.2V12.8C10 12.9105 9.91046 13 9.8 13H9.2C9.08954 13 9 12.9105 9 12.8V9.2Z" fill="black"></path>
@@ -1168,269 +1148,284 @@
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M10.625 0.00130912C10.6454 0.000647618 10.6658 0.000975592 10.6861 0.00226969C10.7188 0.00234349 10.7516 0.00547693 10.784 0.0117138C10.8679 0.0278654 10.9463 0.0642381 11.0126 0.117352C11.0314 0.130615 11.0495 0.144945 11.067 0.16031C11.2107 0.293587 11.3533 0.429882 11.4963 0.566646L11.4976 0.56786C11.5871 0.65337 11.6767 0.739061 11.767 0.824309L14.844 3.72731C14.8918 3.7722 14.9299 3.82642 14.956 3.88661C14.982 3.94681 14.9955 4.01171 14.9955 4.07731C14.9955 4.08476 14.9953 4.0922 14.995 4.09962V4.1538C15.0114 4.20511 15.0198 4.25874 15.0198 4.31281C15.0198 4.36687 15.0114 4.42051 14.995 4.47182V14.5143C15.0259 14.8273 14.9577 15.1422 14.8 15.4143C14.6749 15.5942 14.5082 15.741 14.314 15.8424C14.1198 15.9438 13.904 15.9966 13.685 15.9963H2.31996C2.09922 15.9974 1.88154 15.9446 1.68584 15.8425C1.49013 15.7404 1.32232 15.592 1.19697 15.4103C1.06609 15.2091 0.998196 14.9733 1.00197 14.7333V1.43331C0.975331 1.13047 1.04798 0.827195 1.20896 0.569308C1.33598 0.392266 1.50363 0.248284 1.69781 0.149449C1.892 0.0506141 2.10708 -0.000187806 2.32497 0.00130912H10.625ZM10.1609 3.38931V0.993358L9.98126 0.992085C9.86737 0.991197 9.75355 0.990309 9.63996 0.990309H2.50896C2.47563 0.990309 2.4423 0.989198 2.40896 0.988087C2.36314 0.98656 2.31732 0.985032 2.27149 0.986391C2.25205 0.990798 2.23275 0.995812 2.21362 1.00143C2.19303 1.0116 2.17278 1.02244 2.15289 1.03392L2.14159 1.04321C2.13411 1.04932 2.1278 1.05447 2.12496 1.05731C2.12296 1.05931 2.11785 1.06491 2.11153 1.07184L2.09355 1.09142C2.08348 1.10672 2.07397 1.12238 2.06504 1.13836C2.05868 1.15741 2.05304 1.17668 2.04813 1.19615C2.04735 1.21354 2.04697 1.23092 2.04697 1.24831V14.4223C2.04156 14.549 2.04216 14.6758 2.04878 14.8024C2.05324 14.8198 2.05827 14.8371 2.06387 14.8543C2.07575 14.8755 2.08842 14.8963 2.10187 14.9167L2.10714 14.9224C2.11362 14.9295 2.11913 14.9355 2.12196 14.9383C2.12473 14.9411 2.13468 14.9493 2.14565 14.9584L2.15589 14.9669C2.17373 14.9775 2.19195 14.9875 2.21052 14.9967C2.22467 15.0009 2.23891 15.0048 2.25323 15.0083H13.404C13.5128 15.0139 13.6218 15.0147 13.7307 15.0108C13.748 15.0067 13.7652 15.0022 13.7823 14.9972C13.8029 14.987 13.8232 14.9762 13.843 14.9647L13.8543 14.9554C13.8618 14.9493 13.8681 14.9442 13.871 14.9413C13.873 14.9393 13.8781 14.9337 13.8844 14.9268L13.9024 14.9072C13.9125 14.8919 13.922 14.8762 13.9309 14.8603C13.9374 14.8409 13.9431 14.8212 13.9481 14.8014C13.9487 14.787 13.949 14.7727 13.949 14.7583V4.83653C13.7988 4.83647 13.6487 4.83595 13.4986 4.83542L13.4975 4.83542C13.3391 4.83486 13.1806 4.83431 13.022 4.83431H11.5159C11.2914 4.83824 11.0695 4.78606 10.8702 4.68251C10.671 4.57896 10.5007 4.42731 10.3749 4.24131C10.2173 3.98622 10.1426 3.68859 10.1609 3.38931ZM11.2059 1.78227V3.26931C11.2022 3.36946 11.2028 3.46972 11.2076 3.5698C11.212 3.58787 11.2169 3.60581 11.2224 3.62358C11.2339 3.64541 11.2462 3.66684 11.2593 3.68781L11.2661 3.69568C11.2726 3.70317 11.2781 3.70947 11.2809 3.71231C11.2834 3.71477 11.2916 3.72196 11.3011 3.73032L11.3133 3.74108C11.331 3.75223 11.3492 3.76268 11.3677 3.77242C11.389 3.77917 11.4105 3.78511 11.4323 3.79023C11.5133 3.7946 11.5953 3.79316 11.677 3.79173C11.7174 3.79102 11.7578 3.79031 11.798 3.79031H13.2139L11.2059 1.78227Z" fill="black"></path>
                                     <path d="M6 11.2C6 11.0895 6.08954 11 6.2 11H6.8C6.91046 11 7 11.0895 7 11.2V12.8C7 12.9105 6.91046 13 6.8 13H6.2C6.08954 13 6 12.9105 6 12.8V11.2Z" fill="black"></path>
                                 </svg>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.UtilizationReport.initiateDrawingsUtilizationReport(this, 'Polygon')">
-                                <span class="icon-Draw_Polygon"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.UtilizationReport.initiateDrawingsUtilizationReport(this, 'Rectangle')">
-                                <span class="icon-DrawRectangle"></span>
-                            </a>
-                        </li>
+                            </span>
+                        </a>
 
-                    </ul>
-                </li>
 
-                <li class="techSep"></li>
+
+                        <ul>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_116" onclick="si.UtilizationReport.UtilizationExportReport(null, null, null, this);">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4.2 7C4.08954 7 4 7.08954 4 7.2V12.8C4 12.9105 4.08954 13 4.2 13H4.8C4.91046 13 5 12.9105 5 12.8V7.2C5 7.08954 4.91046 7 4.8 7H4.2Z" fill="black"></path>
+                                        <path d="M9 9.2C9 9.08954 9.08954 9 9.2 9H9.8C9.91046 9 10 9.08954 10 9.2V12.8C10 12.9105 9.91046 13 9.8 13H9.2C9.08954 13 9 12.9105 9 12.8V9.2Z" fill="black"></path>
+                                        <path d="M11.2 7C11.0895 7 11 7.08954 11 7.2V12.8C11 12.9105 11.0895 13 11.2 13H11.8C11.9105 13 12 12.9105 12 12.8V7.2C12 7.08954 11.9105 7 11.8 7H11.2Z" fill="black"></path>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M10.625 0.00130912C10.6454 0.000647618 10.6658 0.000975592 10.6861 0.00226969C10.7188 0.00234349 10.7516 0.00547693 10.784 0.0117138C10.8679 0.0278654 10.9463 0.0642381 11.0126 0.117352C11.0314 0.130615 11.0495 0.144945 11.067 0.16031C11.2107 0.293587 11.3533 0.429882 11.4963 0.566646L11.4976 0.56786C11.5871 0.65337 11.6767 0.739061 11.767 0.824309L14.844 3.72731C14.8918 3.7722 14.9299 3.82642 14.956 3.88661C14.982 3.94681 14.9955 4.01171 14.9955 4.07731C14.9955 4.08476 14.9953 4.0922 14.995 4.09962V4.1538C15.0114 4.20511 15.0198 4.25874 15.0198 4.31281C15.0198 4.36687 15.0114 4.42051 14.995 4.47182V14.5143C15.0259 14.8273 14.9577 15.1422 14.8 15.4143C14.6749 15.5942 14.5082 15.741 14.314 15.8424C14.1198 15.9438 13.904 15.9966 13.685 15.9963H2.31996C2.09922 15.9974 1.88154 15.9446 1.68584 15.8425C1.49013 15.7404 1.32232 15.592 1.19697 15.4103C1.06609 15.2091 0.998196 14.9733 1.00197 14.7333V1.43331C0.975331 1.13047 1.04798 0.827195 1.20896 0.569308C1.33598 0.392266 1.50363 0.248284 1.69781 0.149449C1.892 0.0506141 2.10708 -0.000187806 2.32497 0.00130912H10.625ZM10.1609 3.38931V0.993358L9.98126 0.992085C9.86737 0.991197 9.75355 0.990309 9.63996 0.990309H2.50896C2.47563 0.990309 2.4423 0.989198 2.40896 0.988087C2.36314 0.98656 2.31732 0.985032 2.27149 0.986391C2.25205 0.990798 2.23275 0.995812 2.21362 1.00143C2.19303 1.0116 2.17278 1.02244 2.15289 1.03392L2.14159 1.04321C2.13411 1.04932 2.1278 1.05447 2.12496 1.05731C2.12296 1.05931 2.11785 1.06491 2.11153 1.07184L2.09355 1.09142C2.08348 1.10672 2.07397 1.12238 2.06504 1.13836C2.05868 1.15741 2.05304 1.17668 2.04813 1.19615C2.04735 1.21354 2.04697 1.23092 2.04697 1.24831V14.4223C2.04156 14.549 2.04216 14.6758 2.04878 14.8024C2.05324 14.8198 2.05827 14.8371 2.06387 14.8543C2.07575 14.8755 2.08842 14.8963 2.10187 14.9167L2.10714 14.9224C2.11362 14.9295 2.11913 14.9355 2.12196 14.9383C2.12473 14.9411 2.13468 14.9493 2.14565 14.9584L2.15589 14.9669C2.17373 14.9775 2.19195 14.9875 2.21052 14.9967C2.22467 15.0009 2.23891 15.0048 2.25323 15.0083H13.404C13.5128 15.0139 13.6218 15.0147 13.7307 15.0108C13.748 15.0067 13.7652 15.0022 13.7823 14.9972C13.8029 14.987 13.8232 14.9762 13.843 14.9647L13.8543 14.9554C13.8618 14.9493 13.8681 14.9442 13.871 14.9413C13.873 14.9393 13.8781 14.9337 13.8844 14.9268L13.9024 14.9072C13.9125 14.8919 13.922 14.8762 13.9309 14.8603C13.9374 14.8409 13.9431 14.8212 13.9481 14.8014C13.9487 14.787 13.949 14.7727 13.949 14.7583V4.83653C13.7988 4.83647 13.6487 4.83595 13.4986 4.83542L13.4975 4.83542C13.3391 4.83486 13.1806 4.83431 13.022 4.83431H11.5159C11.2914 4.83824 11.0695 4.78606 10.8702 4.68251C10.671 4.57896 10.5007 4.42731 10.3749 4.24131C10.2173 3.98622 10.1426 3.68859 10.1609 3.38931ZM11.2059 1.78227V3.26931C11.2022 3.36946 11.2028 3.46972 11.2076 3.5698C11.212 3.58787 11.2169 3.60581 11.2224 3.62358C11.2339 3.64541 11.2462 3.66684 11.2593 3.68781L11.2661 3.69568C11.2726 3.70317 11.2781 3.70947 11.2809 3.71231C11.2834 3.71477 11.2916 3.72196 11.3011 3.73032L11.3133 3.74108C11.331 3.75223 11.3492 3.76268 11.3677 3.77242C11.389 3.77917 11.4105 3.78511 11.4323 3.79023C11.5133 3.7946 11.5953 3.79316 11.677 3.79173C11.7174 3.79102 11.7578 3.79031 11.798 3.79031H13.2139L11.2059 1.78227Z" fill="black"></path>
+                                        <path d="M6 11.2C6 11.0895 6.08954 11 6.2 11H6.8C6.91046 11 7 11.0895 7 11.2V12.8C7 12.9105 6.91046 13 6.8 13H6.2C6.08954 13 6 12.9105 6 12.8V11.2Z" fill="black"></path>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.UtilizationReport.initiateDrawingsUtilizationReport(this, 'Polygon')">
+                                    <span class="icon-Draw_Polygon"></span>
+                                </a>
+                            </li>
+                            <li class="techSep"></li>
+                            <li>
+                                <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.UtilizationReport.initiateDrawingsUtilizationReport(this, 'Rectangle')">
+                                    <span class="icon-DrawRectangle"></span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <li class="techSep"></li>
+                }
+
+                @if (Model.lstUserModule.Contains("SPLIT_EXRPT"))
+                {
+                    int count = 0;
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar clsExportReport" onclick="si.MenuReport.showMenu(this);" id="dvMainReport" title="Split Report">
+                            <span class="icon-ExportReport"></span>
+                        </a>
+                        @if (Model.lstUserModule.Contains("SPLIT_EXRPT") == true || Model.lstUserModule.Contains("SPLIT-LOG") == true || Model.lstUserModule.Contains("SPLIT-POLY") == true || Model.lstUserModule.Contains("SPLIT-RECT") == true || Model.lstUserModule.Contains("SPLIT-CIR") == true || Model.lstUserModule.Contains("RT-IF") == true)
+                        {
+                            count++;
+                        }
+                        @if (count > 0)
+                        {
+                            <ul>
+                                <li>
+                                    <a href="#" class="iconBaricomoon" title="Split Report" onclick="si.splitReport.SplitExportReport(null, null, null, this, true);">
+                                        <span class="icon-ExportReport"></span>
+                                    </a>
+                                </li>
+                                @if (Model.lstUserModule.Contains("RT-IF"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon infoGetRoute" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
+                                            <span class="icon-info"></span>
+                                        </a>
+                                    </li>
+                                }
+                                @if (Model.lstUserModule.Contains("SPLIT-LOG"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="Split Report Log" onclick="si.splitReport.SplitExportReportLog(null, null, null, this, true)">
+                                            <span class="icon-exportReportLog"></span>
+                                        </a>
+                                    </li>
+
+                                }
+
+                                @if (Model.lstUserModule.Contains("SPLIT-POLY"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.splitReport.initiateDrawingsSplitReport(this, 'Polygon', true)">
+                                            <span class="icon-Draw_Polygon"></span>
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (Model.lstUserModule.Contains("SPLIT-RECT"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.splitReport.initiateDrawingsSplitReport(this, 'Rectangle', true)">
+                                            <span class="icon-DrawRectangle"></span>
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (Model.lstUserModule.Contains("SPLIT-CIR"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.splitReport.initiateDrawingsSplitReport(this, 'Circle', true)">
+                                            <span class="icon-DrawCircle"></span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <ul style="opacity:0; visibility:hidden;"></ul>
+                        }
+                    </li>
+                    <li class="techSep"></li>
+
                 }
 
                 @if (Model.lstUserModule.Contains("EXRPT"))
                 {
-                int count = 0;
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar clsExportReport" onclick="si.MenuReport.showMenu(this);" id="dvMainReport" title="Split Report">
-                        <span class="icon-ExportReport"></span>
-                    </a>
-                    @if (Model.lstUserModule.Contains("EXRPT") == true || Model.lstUserModule.Contains("EXPRT-LOG") == true || Model.lstUserModule.Contains("EXRPT-POLY") == true || Model.lstUserModule.Contains("EXRPT-RECT") == true || Model.lstUserModule.Contains("EXRPT-CIR") == true || Model.lstUserModule.Contains("RT-IF") == true)
-                    {
-                    count++;
-                    }
-                    @if (count > 0)
-                    {
-                    <ul>
-                        <li>
-                            <a href="#" class="iconBaricomoon" title="Split Report" onclick="si.splitReport.SplitExportReport(null, null, null, this, true);">
-                                <span class="icon-ExportReport"></span>
-                            </a>
-                        </li>
-                        @if (Model.lstUserModule.Contains("RT-IF"))
+                    int count = 0;
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar clsExportReport" onclick="si.MenuReport.showMenu(this);" id="dvMainReport" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_043">
+                            <span class="icon-ExportReport"></span>
+                        </a>
+                        @if (Model.lstUserModule.Contains("EXRPT") == true || Model.lstUserModule.Contains("EXPRT-LOG") == true || Model.lstUserModule.Contains("EXRPT-POLY") == true || Model.lstUserModule.Contains("EXRPT-RECT") == true || Model.lstUserModule.Contains("EXRPT-CIR") == true || Model.lstUserModule.Contains("RT-IF") == true)
                         {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon infoGetRoute" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
-                                <span class="icon-info"></span>
-                            </a>
-                        </li>
+                            count++;
                         }
-                        @if (Model.lstUserModule.Contains("EXPRT-LOG"))
+                        @if (count > 0)
                         {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="Split Report Log" onclick="si.splitReport.SplitExportReportLog(null, null, null, this, true)">
-                                <span class="icon-exportReportLog"></span>
-                            </a>
-                        </li>
+                            <ul>
+                                <li>
+                                    <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_043" onclick="si.Entityreport.EntityExportReport(null, null, null, this);">
+                                        <span class="icon-ExportReport"></span>
+                                    </a>
+                                </li>
+                                @if (Model.lstUserModule.Contains("RT-IF"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon infoGetRoute" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
+                                            <span class="icon-info"></span>
+                                        </a>
+                                    </li>
+                                }
+                                @if (Model.lstUserModule.Contains("EXPRT-LOG"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="Export Report Log" onclick="si.Entityreport.EntityExportReportLog(null, null, null, this)">
+                                            <span class="icon-exportReportLog"></span>
+                                        </a>
+                                    </li>
 
-                        }
+                                }
 
-                        @if (Model.lstUserModule.Contains("EXRPT-POLY"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.splitReport.initiateDrawingsSplitReport(this, 'Polygon', true)">
-                                <span class="icon-Draw_Polygon"></span>
-                            </a>
-                        </li>
-                        }
+                                @if (Model.lstUserModule.Contains("EXRPT-POLY"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Polygon')">
+                                            <span class="icon-Draw_Polygon"></span>
+                                        </a>
+                                    </li>
 
-                        @if (Model.lstUserModule.Contains("EXRPT-RECT"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.splitReport.initiateDrawingsSplitReport(this, 'Rectangle', true)">
-                                <span class="icon-DrawRectangle"></span>
-                            </a>
-                        </li>
-                        }
+                                }
 
-                        @if (Model.lstUserModule.Contains("EXRPT-CIR"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.splitReport.initiateDrawingsSplitReport(this, 'Circle', true)">
-                                <span class="icon-DrawCircle"></span>
-                            </a>
-                        </li>
-                        }
-                    </ul>
-                    }
-                    else
-                    {
-                    <ul style="opacity:0; visibility:hidden;"></ul>
-                    }
-                </li>
-                <li class="techSep"></li>
-
-                }
-                @if (Model.lstUserModule.Contains("EXRPT"))
-                {
-                int count = 0;
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar clsExportReport" onclick="si.MenuReport.showMenu(this);" id="dvMainReport" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_043">
-                        <span class="icon-ExportReport"></span>
-                    </a>
-                    @if (Model.lstUserModule.Contains("EXRPT") == true || Model.lstUserModule.Contains("EXPRT-LOG") == true || Model.lstUserModule.Contains("EXRPT-POLY") == true || Model.lstUserModule.Contains("EXRPT-RECT") == true || Model.lstUserModule.Contains("EXRPT-CIR") == true || Model.lstUserModule.Contains("RT-IF") == true)
-                    {
-                    count++;
-                    }
-                    @if (count > 0)
-                    {
-                    <ul>
-                        <li>
-                            <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_043" onclick="si.Entityreport.EntityExportReport(null, null, null, this);">
-                                <span class="icon-ExportReport"></span>
-                            </a>
-                        </li>
-                        @if (Model.lstUserModule.Contains("RT-IF"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon infoGetRoute" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
-                                <span class="icon-info"></span>
-                            </a>
-                        </li>
-                        }
-                        @if (Model.lstUserModule.Contains("EXPRT-LOG"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="Export Report Log" onclick="si.Entityreport.EntityExportReportLog(null, null, null, this)">
-                                <span class="icon-exportReportLog"></span>
-                            </a>
-                        </li>
-
-                        }
-
-                        @if (Model.lstUserModule.Contains("EXRPT-POLY"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Polygon')">
-                                <span class="icon-Draw_Polygon"></span>
-                            </a>
-                        </li>
-
-                        }
-
-                        @*
-                        <li>
+                                @*<li>
                             <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Rectangle')">
                                 <span class="icon-DrawRectangle"></span>
                             </a>
                         </li>*@
 
-                        @if (Model.lstUserModule.Contains("EXRPT-RECT"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Rectangle')">
-                                <span class="icon-DrawRectangle"></span>
-                            </a>
-                        </li>
-                        }
+                                @if (Model.lstUserModule.Contains("EXRPT-RECT"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Rectangle')">
+                                            <span class="icon-DrawRectangle"></span>
+                                        </a>
+                                    </li>
+                                }
 
-                        @if (Model.lstUserModule.Contains("EXRPT-CIR"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Circle')">
-                                <span class="icon-DrawCircle"></span>
-                            </a>
-                        </li>
+                                @if (Model.lstUserModule.Contains("EXRPT-CIR"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Circle')">
+                                            <span class="icon-DrawCircle"></span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
                         }
-                    </ul>
-                    }
-                    else
-                    {
-                    <ul style="opacity:0; visibility:hidden;"></ul>
-                    }
-                </li>
-                <li class="techSep"></li>
+                        else
+                        {
+                            <ul style="opacity:0; visibility:hidden;"></ul>
+                        }
+                    </li>
+                    <li class="techSep"></li>
 
                 }
 
                 @if (Model.lstUserModule.Contains("EXASSRPT"))
                 {
-                int count = 0;
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar clsExportReport" onclick="si.MenuReport.showMenu(this);" id="dvAssReport" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_279">
-                        <span class="icon-associate_report"></span>
-                    </a>
-                    @if (Model.lstUserModule.Contains("EXASSRPT") == true || Model.lstUserModule.Contains("EXPRT-LOG") == true || Model.lstUserModule.Contains("EXRPT-POLY") == true || Model.lstUserModule.Contains("EXRPT-RECT") == true || Model.lstUserModule.Contains("EXRPT-CIR") == true || Model.lstUserModule.Contains("RT-IF") == true)
-                    {
-                    count++;
-                    }
-                    @if (count > 0)
-                    {
-                    <ul>
-                        <li>
-                            <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_279" onclick="si.EntityAssreport.EntityAssociationReport(null, null, null, this);">
-                                <span class="icon-associate_report"></span>
-                            </a>
-                        </li>
-                        @if (Model.lstUserModule.Contains("RT-IF"))
+                    int count = 0;
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar clsExportReport" onclick="si.MenuReport.showMenu(this);" id="dvAssReport" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_279">
+                            <span class="icon-associate_report"></span>
+                        </a>
+                        @if (Model.lstUserModule.Contains("EXASSRPT") == true || Model.lstUserModule.Contains("EXPRT-LOG") == true || Model.lstUserModule.Contains("EXRPT-POLY") == true || Model.lstUserModule.Contains("EXRPT-RECT") == true || Model.lstUserModule.Contains("EXRPT-CIR") == true || Model.lstUserModule.Contains("RT-IF") == true)
                         {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon infoGetRoute" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
-                                <span class="icon-info"></span>
-                            </a>
-                        </li>
+                            count++;
                         }
-                        @if (Model.lstUserModule.Contains("EXPRT-LOG"))
+                        @if (count > 0)
                         {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="Association Report Log" onclick="si.EntityAssreport.EntityAssociationReportLog(null, null, null, this)">
-                                <span class="icon-exportReportLog"></span>
-                            </a>
-                        </li>
+                            <ul>
+                                <li>
+                                    <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_279" onclick="si.EntityAssreport.EntityAssociationReport(null, null, null, this);">
+                                        <span class="icon-associate_report"></span>
+                                    </a>
+                                </li>
+                                @if (Model.lstUserModule.Contains("RT-IF"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon infoGetRoute" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
+                                            <span class="icon-info"></span>
+                                        </a>
+                                    </li>
+                                }
+                                @if (Model.lstUserModule.Contains("EXPRT-LOG"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="Association Report Log" onclick="si.EntityAssreport.EntityAssociationReportLog(null, null, null, this)">
+                                            <span class="icon-exportReportLog"></span>
+                                        </a>
+                                    </li>
 
+                                }
+
+                                @if (Model.lstUserModule.Contains("EXRPT-POLY"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.EntityAssreport.initiateDrawingsAssociationReport(this, 'Polygon')">
+                                            <span class="icon-Draw_Polygon"></span>
+                                        </a>
+                                    </li>
+
+                                }
+
+                                @if (Model.lstUserModule.Contains("EXRPT-RECT"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.EntityAssreport.initiateDrawingsAssociationReport(this, 'Rectangle')">
+                                            <span class="icon-DrawRectangle"></span>
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (Model.lstUserModule.Contains("EXRPT-CIR"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.Entityreport.initiateDrawingsAssociationReport(this, 'Circle')">
+                                            <span class="icon-DrawCircle"></span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
                         }
-
-                        @if (Model.lstUserModule.Contains("EXRPT-POLY"))
+                        else
                         {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.EntityAssreport.initiateDrawingsAssociationReport(this, 'Polygon')">
-                                <span class="icon-Draw_Polygon"></span>
-                            </a>
-                        </li>
-
+                            <ul style="opacity:0; visibility:hidden;"></ul>
                         }
-
-                        @if (Model.lstUserModule.Contains("EXRPT-RECT"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.EntityAssreport.initiateDrawingsAssociationReport(this, 'Rectangle')">
-                                <span class="icon-DrawRectangle"></span>
-                            </a>
-                        </li>
-                        }
-
-                        @if (Model.lstUserModule.Contains("EXRPT-CIR"))
-                        {
-                        <li class="techSep"></li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.Entityreport.initiateDrawingsAssociationReport(this, 'Circle')">
-                                <span class="icon-DrawCircle"></span>
-                            </a>
-                        </li>
-                        }
-                    </ul>
-                    }
-                    else
-                    {
-                    <ul style="opacity:0; visibility:hidden;"></ul>
-                    }
-                </li>
-                <li class="techSep"></li>
+                    </li>
+                    <li class="techSep"></li>
 
                 }
 
@@ -1438,51 +1433,51 @@
 
                 @if (Model.lstUserModule.Contains("WRT"))
                 {
-                int count = 0;
-                <li>
-                    <a href="#" class="iconBaricomoon maintoolbar clsWireLine" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_031" onclick="si.showWLTB('WireLine', this)">
-                        <span class="icon-wireline_tool"></span>
-                    </a>
-                    @if (Model.lstUserModule.Contains("MNS") == true || Model.lstUserModule.Contains("CPF") == true || Model.lstUserModule.Contains("BLK-SDU") == true)
-                    {
-                    count++;
-                    }
-                    @if (count > 0)
-                    {
-                    <ul>
-                        @if (Model.lstUserModule.Contains("MNS"))
+                    int count = 0;
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar clsWireLine" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_031" onclick="si.showWLTB('WireLine', this)">
+                            <span class="icon-wireline_tool"></span>
+                        </a>
+                        @if (Model.lstUserModule.Contains("MNS") == true || Model.lstUserModule.Contains("CPF") == true || Model.lstUserModule.Contains("BLK-SDU") == true)
                         {
-                        <li>
-                            <a href="#" class="iconBaricomoon " onclick="splicing.spliceHere(this)" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_043">
-                                <span class="icon-Manual_Splicing"></span>
-                            </a>
-                        </li>
-                        <li class="techSep"></li>
+                            count++;
                         }
-                        @if (Model.lstUserModule.Contains("BLK-SDU"))
+                        @if (count > 0)
                         {
-                        <li>
-                            <a href="#" class="iconBaricomoon bulkSplicing" onclick="splicing.toggleConnectionUpload()" title="Bulk Splicing"><span class="icon-Bulk_Splicing"></span></a>
-                        </li>
-                        <li class="techSep"></li>
-                        }
-                        @if (Model.lstUserModule.Contains("CPF"))
-                        {
-                        <li>
-                            <a href="#" class="iconBaricomoon " onclick="splicing.SinglePathFind(this.value)" title="@Resources.Resources.SI_OSP_CAB_NET_FRM_059">
-                                <span class="icon-Connection_Path_Finder"></span>
-                            </a>
-                        </li>
-                        }
+                            <ul>
+                                @if (Model.lstUserModule.Contains("MNS"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " onclick="splicing.spliceHere(this)" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_043">
+                                            <span class="icon-Manual_Splicing"></span>
+                                        </a>
+                                    </li>
+                                    <li class="techSep"></li>
+                                }
+                                @if (Model.lstUserModule.Contains("BLK-SDU"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon bulkSplicing" onclick="splicing.toggleConnectionUpload()" title="Bulk Splicing"><span class="icon-Bulk_Splicing"></span></a>
+                                    </li>
+                                    <li class="techSep"></li>
+                                }
+                                @if (Model.lstUserModule.Contains("CPF"))
+                                {
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " onclick="splicing.SinglePathFind(this.value)" title="@Resources.Resources.SI_OSP_CAB_NET_FRM_059">
+                                            <span class="icon-Connection_Path_Finder"></span>
+                                        </a>
+                                    </li>
+                                }
 
-                    </ul>
-                    }
-                    else
-                    {
-                    <ul style="opacity:0; visibility:hidden;"></ul>
-                    }
-                </li>
-                <li class="techSep"></li>
+                            </ul>
+                        }
+                        else
+                        {
+                            <ul style="opacity:0; visibility:hidden;"></ul>
+                        }
+                    </li>
+                    <li class="techSep"></li>
                 }
 
 
@@ -1510,29 +1505,28 @@
                 @if (Model.lstUserModule.Contains("NE-LIBRY"))
                 {
 
-                <div class="iconBaricomoon" id="divLibSwitch" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_028">
-                    <span class="icon-NE_Library"></span>
-                </div>
-                <li class="techSep"></li>
+                    <div class="iconBaricomoon" id="divLibSwitch" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_028">
+                        <span class="icon-NE_Library"></span>
+                    </div>
+                    <li class="techSep"></li>
 
                 }
 
-                @*
-                <li>
-                    <a href="#" class="iconBaricomoon" id="dvSrch" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046">
-                        <span class="icon-search"></span>
-                    </a>
+                @*<li>
+            <a href="#" class="iconBaricomoon" id="dvSrch" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046">
+                <span class="icon-search"></span>
+            </a>
 
 
-                </li>*@
+        </li>*@
                 @if (Model.lstUserModule.Contains("WFM"))
                 {
-                <li id="liViewNotification">
-                    <a id="lnkViewNotification" href="javascript:void(0);" title="View Notification" data-title="View Notification" onclick="si.notification('A')">
-                        <i class="fa fa-bell-o fs-16"></i>
-                        <lable id="notifiCount"></lable>
-                    </a>
-                </li>
+                    <li id="liViewNotification">
+                        <a id="lnkViewNotification" href="javascript:void(0);" title="View Notification" data-title="View Notification" onclick="si.notification('A')">
+                            <i class="fa fa-bell-o fs-16"></i>
+                            <lable id="notifiCount"></lable>
+                        </a>
+                    </li>
                 }
             </ul>
         </div>
@@ -1921,7 +1915,7 @@
             <b>Zoom	: </b><span>5</span>
         </div>
         @*<div class="bottom_line_right">
-        </div>*@
+            </div>*@
         <div id="lengthAreaDiv" class="mr-01">
         </div>
         <div class="bottom_txt legendDiv" title="Legend">
