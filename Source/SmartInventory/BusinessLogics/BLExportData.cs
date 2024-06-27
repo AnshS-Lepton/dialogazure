@@ -19,6 +19,6 @@ namespace BusinessLogics
         public List<fileTypes> getfiletype(string moduleAbbr)
         {
             return new DAfiletype().getFileType(moduleAbbr);
-        }        
+        }
     }
 }
