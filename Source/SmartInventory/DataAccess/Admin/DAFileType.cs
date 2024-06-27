@@ -21,6 +21,6 @@ namespace DataAccess
 
                 throw ;
             }
-        }        
+        }
     }
 }
