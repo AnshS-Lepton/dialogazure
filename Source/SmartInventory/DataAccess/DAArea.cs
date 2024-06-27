@@ -196,6 +196,7 @@ namespace DataAccess
                     objSubArea.created_by = userId;
                     objSubArea.created_on = DateTimeHelper.Now;
                     objSubArea.building_code = objSubArea.building_code;
+                    objSubArea.status = (string.IsNullOrEmpty(objSubArea.status) ? "A" : objSubArea.status);
                     var resultItem = repo.Insert(objSubArea);
                     
                     //TRANSACTION NEED TO IMPLEMENT THERE...
