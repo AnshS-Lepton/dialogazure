@@ -15163,7 +15163,9 @@ namespace SmartInventoryServices.Controllers
 					objproberties.type = item.geometry.type;
 					objproberties.geom = item.geometry.coordinates[0].ToString();
 					objproberties.feature_type = item.type;
-					lstProperties.Add(objproberties);
+                    objproberties.source_ref_id = item.properties.source_ref_id;
+                    objproberties.source_ref_type = item.properties.source_ref_type;
+                    lstProperties.Add(objproberties);
 				}
 
 				List<GroupLibrary> lstGroupLibrary = new BLMisc().SaveGroupLibraryEntity(lstProperties);
