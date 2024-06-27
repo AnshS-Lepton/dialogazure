@@ -122,6 +122,13 @@ namespace DataAccess
             objItem.lstActivation = lstDropDownValues.Where(x => x.ddtype == DropDownType.Activation.ToString()).ToList();
             objItem.lstConstruction = lstDropDownValues.Where(x => x.ddtype == DropDownType.Construction.ToString()).ToList();
             objItem.lstAccessibility = lstDropDownValues.Where(x => x.ddtype == DropDownType.Accessibility.ToString()).ToList();
+            if (!string.IsNullOrEmpty(entityType))
+            {
+                if (entityType == "Manhole" || entityType == "SpliceClosure")
+                {
+                    objItem.accessibility = objItem.is_buried == true ? Convert.ToInt16(objItem.lstAccessibility[0].value) : objItem.accessibility;
+                }
+            }
             objItem.lstBrand = lstDropDownValues.Where(x => x.ddtype == DropDownType.Brand.ToString()).ToList();
             objItem.lstModel = lstDropDownValues.Where(x => x.ddtype == DropDownType.Model.ToString()).ToList();
             objItem.lsthierarchytype = lstDropDownValues.Where(x => x.ddtype == DropDownType.Hierarchy_type.ToString()).ToList();

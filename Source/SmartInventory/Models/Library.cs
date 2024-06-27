@@ -1689,7 +1689,10 @@ namespace Models
 		public string partner_name { get; set; }
 		[NotMapped]
 		public List<string> lstUserModule { get; set; }
-		public SCMaster()
+		public string spliceclosure_type { get; set; }
+        [NotMapped]
+        public IList<DropDownMaster> listSCType { get; set; }
+        public SCMaster()
 		{
 			objPM = new PageMessage();
 			objIspEntityMap = new IspEntityMapping();
