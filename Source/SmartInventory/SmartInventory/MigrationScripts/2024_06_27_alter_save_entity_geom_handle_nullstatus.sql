@@ -270,6 +270,10 @@ AS $BODY$
 		
 $BODY$;
 
-ALTER FUNCTION public.fn_uploader_insert_spliceclosure(integer, integer)
-    OWNER TO postgres;
-
+insert into LAYER_MAPPING(layer_id,parent_layer_id,parent_sequence,
+	 is_enable_inside_parent_info,
+	is_used_for_network_id,network_code_format,is_default_code_format,is_default_parent)
+values
+(20, 13, 7, false, true, 'MHxxxx', true, false),
+(36, 10, 7, false, true, 'PODxxxx', true, false),
+(20, 14, 7, false, true, 'POLxxxx', true, false);
