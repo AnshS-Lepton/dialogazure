@@ -2701,10 +2701,11 @@ namespace SmartInventoryServices.Controllers
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objSCMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			objSCMaster.listaerialLocation = objDDL.Where(x => x.dropdown_type == DropDownType.Aerial_Location.ToString()).ToList();
-			          
+            objSCMaster.listSCType = objDDL.Where(x => x.dropdown_type == DropDownType.Spliceclosure_type.ToString()).ToList();
+
             // objSCMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
         }
-		private void BindSpilceClosureRoute(SCMaster objSCMaster)
+        private void BindSpilceClosureRoute(SCMaster objSCMaster)
 		{
             if (objSCMaster.system_id == 0)
                 objSCMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSCMaster.geom);
