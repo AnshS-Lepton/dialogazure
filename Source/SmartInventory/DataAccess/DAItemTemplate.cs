@@ -126,7 +126,11 @@ namespace DataAccess
             {
                 if (entityType == "Manhole" || entityType == "SpliceClosure")
                 {
-                    objItem.accessibility = objItem.is_buried == true ? Convert.ToInt16(objItem.lstAccessibility[0].value) : objItem.accessibility;
+                    for (int i = 0; i<objItem.lstAccessibility.Count; i++)
+                    {
+                        if (objItem.lstAccessibility[i].key == "No")
+                        objItem.accessibility = objItem.is_buried == true ? Convert.ToInt16(objItem.lstAccessibility[i].value) : objItem.accessibility;
+                    }
                 }
             }
             objItem.lstBrand = lstDropDownValues.Where(x => x.ddtype == DropDownType.Brand.ToString()).ToList();
