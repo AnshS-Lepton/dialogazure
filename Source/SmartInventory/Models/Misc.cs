@@ -2413,9 +2413,9 @@ namespace Models
 		public string type { get; set; }
 		public string geom { get; set; }
 		public string feature_type { get; set; }
-
-
-	}
+        public string source_ref_type { get; set; }
+        public string source_ref_id { get; set; }
+    }
 
 	public class Root
 	{
