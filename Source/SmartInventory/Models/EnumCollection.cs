@@ -274,7 +274,8 @@ namespace Models
         Fiber_Type_LOV,
         Route_Type,
         type,
-        execution_Method
+        execution_Method,
+        Spliceclosure_type
     }
     public enum VendorType
     {

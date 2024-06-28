@@ -1463,7 +1463,13 @@ namespace SmartInventoryServices.Controllers
 				{
 					objManholeMaster.manhole_name = objManholeMaster.network_id;
 				}
-				this.Validate(objManholeMaster);
+                BLItemTemplate.Instance.BindItemDropdowns(objManholeMaster, EntityType.Manhole.ToString());
+                for (int i = 0; i < objManholeMaster.lstAccessibility.Count; i++)
+                {
+                    if (objManholeMaster.lstAccessibility[i].key == "No")
+                        objManholeMaster.accessibility = objManholeMaster.is_buried == true ? Convert.ToInt16(objManholeMaster.lstAccessibility[i].value) : objManholeMaster.accessibility;
+                }
+                this.Validate(objManholeMaster);
 				if (ModelState.IsValid)
 				{
 					var isNew = objManholeMaster.system_id > 0 ? false : true;
@@ -1556,7 +1562,7 @@ namespace SmartInventoryServices.Controllers
 				else
 				{
 					BLItemTemplate.Instance.BindItemDropdowns(objManholeMaster, EntityType.Manhole.ToString());
-					fillProjectSpecifications(objManholeMaster);
+                    fillProjectSpecifications(objManholeMaster);
 					BindManholeDropDown(objManholeMaster);
 					objManholeMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.Manhole.ToString()).ToList();
 					//Get the layer details to bind additional attributes Manhole
@@ -1594,7 +1600,7 @@ namespace SmartInventoryServices.Controllers
             objManholeMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var obj_DDL = new BLMisc().GetDropDownList("");
 			objManholeMaster.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
-			objManholeMaster.listaerialLocation = obj_DDL.Where(x => x.dropdown_type == DropDownType.Aerial_Location.ToString()).ToList();
+			objManholeMaster.listaerialLocation = objDDL.Where(x => x.dropdown_type == DropDownType.Aerial_Location.ToString()).ToList();
           
             //objManholeMaster.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
         }
@@ -2700,11 +2706,12 @@ namespace SmartInventoryServices.Controllers
 			objSCMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objSCMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
-			objSCMaster.listaerialLocation = _objDDL.Where(x => x.dropdown_type == DropDownType.Aerial_Location.ToString()).ToList();
-			          
+			objSCMaster.listaerialLocation = objDDL.Where(x => x.dropdown_type == DropDownType.Aerial_Location.ToString()).ToList();
+            objSCMaster.listSCType = objDDL.Where(x => x.dropdown_type == DropDownType.Spliceclosure_type.ToString()).ToList();
+
             // objSCMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
         }
-		private void BindSpilceClosureRoute(SCMaster objSCMaster)
+        private void BindSpilceClosureRoute(SCMaster objSCMaster)
 		{
             if (objSCMaster.system_id == 0)
                 objSCMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objSCMaster.geom);
@@ -2808,7 +2815,13 @@ namespace SmartInventoryServices.Controllers
 				{
 					objSCMaster.spliceclosure_name = objSCMaster.network_id;
 				}
-				this.Validate(objSCMaster);
+                BLItemTemplate.Instance.BindItemDropdowns(objSCMaster, EntityType.SpliceClosure.ToString());
+                for (int i = 0; i < objSCMaster.lstAccessibility.Count; i++)
+                {
+                    if (objSCMaster.lstAccessibility[i].key == "No")
+                        objSCMaster.accessibility = objSCMaster.is_buried == true ? Convert.ToInt16(objSCMaster.lstAccessibility[i].value) : objSCMaster.accessibility;
+                }
+                this.Validate(objSCMaster);
 				if (objSCMaster.pSystemId > 0 && !String.IsNullOrEmpty(objSCMaster.pNetworkId))
 				{
 					objSCMaster.parent_system_id = objSCMaster.pSystemId;
@@ -2958,7 +2971,7 @@ namespace SmartInventoryServices.Controllers
 				else
 				{
 					BLItemTemplate.Instance.BindItemDropdowns(objSCMaster, EntityType.SpliceClosure.ToString());
-					BindSpilceClosureDropdown(objSCMaster);
+                    BindSpilceClosureDropdown(objSCMaster);
                     BindSpilceClosureRoute(objSCMaster);
                     // RETURN PARTIAL VIEW WITH MODEL DATA
                     fillProjectSpecifications(objSCMaster);
@@ -15163,7 +15176,9 @@ namespace SmartInventoryServices.Controllers
 					objproberties.type = item.geometry.type;
 					objproberties.geom = item.geometry.coordinates[0].ToString();
 					objproberties.feature_type = item.type;
-					lstProperties.Add(objproberties);
+                    objproberties.source_ref_id = item.properties.source_ref_id;
+                    objproberties.source_ref_type = item.properties.source_ref_type;
+                    lstProperties.Add(objproberties);
 				}
 
 				List<GroupLibrary> lstGroupLibrary = new BLMisc().SaveGroupLibraryEntity(lstProperties);
