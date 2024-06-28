@@ -31912,7 +31912,7 @@ var Main = function () {
     }
 
     this.SplitReportEntityReportNewEnhancement = function (_fileType, entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType, issplitreport) {
-        ajaxReq('Report/DownloadSpliReportNew', {
+        ajaxReq('Report/DownloadSpliReport', {
             fileType: _fileType,
             entityids: entityids,
             totalPlannedCount: totalPlannedCount,
