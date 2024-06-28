@@ -988,7 +988,7 @@ namespace DataUploader
 
                                 dbColName = Convert.ToString(mandatoryField.DbColName);
 
-                                if (dt.Columns.Contains(mandatoryField.TemplateColName))
+                                if (dt.Columns.Contains(mandatoryField.TemplateColName) && !string.IsNullOrEmpty(recordvalue))
                                 {
                                     switch (dbColName)
                                     {
