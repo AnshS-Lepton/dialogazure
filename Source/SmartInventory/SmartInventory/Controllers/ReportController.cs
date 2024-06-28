@@ -1163,7 +1163,7 @@ namespace SmartInventory.Controllers
                     ExportReportFilterNew objExportReportFilterNew;
                     List<int> SelectedLayerId, SelectedLayerIdSummary;
                     DataTable dtFilter;
-                    CommonDataForExcelAllandCSVAll(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
+                    GetDataExcelAllandCSVAll(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
 
                     var userdetails = (User)Session["userDetail"];
                     //objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
@@ -1304,7 +1304,7 @@ namespace SmartInventory.Controllers
                     ExportReportFilterNew objExportReportFilterNew;
                     List<int> SelectedLayerId, SelectedLayerIdSummary;
                     DataTable dtFilter;
-                    CommonDataForExcelAllandCSVAll(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
+                    GetDataExcelAllandCSVAll(entityids, out entityExportSummaryData, out objExportEntitiesReport, out objExportReportFilterNew, out SelectedLayerId, out SelectedLayerIdSummary, out dtFilter);
 
                     var userdetails = (User)Session["userDetail"];
                     //objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
@@ -1508,7 +1508,7 @@ namespace SmartInventory.Controllers
                     ExportReportFilterNew objExportReportFilterNew;
                     ExportEntitiesReportNew entityExportSummaryData;
                     List<int> SelectedLayerId, SelectedLayerIdSummary;
-                    GetCommaondataForShape(entityids, out objExportEntitiesReport, out objExportReportFilterNew, out entityExportSummaryData, out SelectedLayerId, out SelectedLayerIdSummary);
+                    Getdata(entityids, out objExportEntitiesReport, out objExportReportFilterNew, out entityExportSummaryData, out SelectedLayerId, out SelectedLayerIdSummary);
                     var userdetails = (User)Session["userDetail"];                    
                     objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(userdetails.role_id, "ENTITY")
                        .Where(layer => new List<string> { "Cable", "Trench", "Duct" }.Contains(layer.layer_name)).ToList();
@@ -1647,7 +1647,7 @@ namespace SmartInventory.Controllers
                 }
             }
         }
-        private void GetCommaondataForShape(string entityids, out ExportEntitiesSummaryView objExportEntitiesReport, out ExportReportFilterNew objExportReportFilterNew, out ExportEntitiesReportNew entityExportSummaryData, out List<int> SelectedLayerId, out List<int> SelectedLayerIdSummary)
+        private void Getdata(string entityids, out ExportEntitiesSummaryView objExportEntitiesReport, out ExportReportFilterNew objExportReportFilterNew, out ExportEntitiesReportNew entityExportSummaryData, out List<int> SelectedLayerId, out List<int> SelectedLayerIdSummary)
         {
             objExportEntitiesReport = new ExportEntitiesSummaryView();
             objExportReportFilterNew = new ExportReportFilterNew();
@@ -1684,7 +1684,7 @@ namespace SmartInventory.Controllers
             objExportEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objExportEntitiesReport.objReportFilters.SelectedLayerId;
             objExportReportFilterNew.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objExportReportFilterNew.SelectedLayerId;
         }
-        private void CommonDataForExcelAllandCSVAll(string entityids, out ExportEntitiesReportNew entityExportSummaryData, out ExportEntitiesSummaryView objExportEntitiesReport, out ExportReportFilterNew objExportReportFilterNew, out List<int> SelectedLayerId, out List<int> SelectedLayerIdSummary, out DataTable dtFilter)
+        private void GetDataExcelAllandCSVAll(string entityids, out ExportEntitiesReportNew entityExportSummaryData, out ExportEntitiesSummaryView objExportEntitiesReport, out ExportReportFilterNew objExportReportFilterNew, out List<int> SelectedLayerId, out List<int> SelectedLayerIdSummary, out DataTable dtFilter)
         {
             entityExportSummaryData = new ExportEntitiesReportNew();
             entityExportSummaryData = (ExportEntitiesReportNew)Session["SplitEntitySummaryData"];
