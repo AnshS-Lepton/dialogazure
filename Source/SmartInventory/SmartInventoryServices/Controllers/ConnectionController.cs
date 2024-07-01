@@ -574,7 +574,7 @@ namespace SmartInventoryServices.Controllers
             }
         }
 
-        [System.Web.Http.HttpGet]
+        [System.Web.Http.HttpPost]
         public HttpResponseMessage GetSplicingReports(ReqInput data)
         {
             HttpResponseMessage result = new HttpResponseMessage();
