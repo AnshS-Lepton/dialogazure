@@ -198,6 +198,13 @@ namespace Models
         public string ispLineGeom { get; set; }
         [NotMapped]
         public string cable_type { get; set; }
+        public string parent_duct_netwok_id { get; set; }
+        public string parent_duct_system_id { get; set; }
+        public string splited_by { get; set; }
+        public string splitted_on { get; set; }
+        public string splitting_system_id { get; set; }
+        public string splitting_netwok_id { get; set; }
+        public string splitting_entitytype { get; set; }
         public DuctMaster()
         {
             objPM = new PageMessage();

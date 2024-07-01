@@ -199,7 +199,10 @@ namespace BusinessLogics
         {
             return objDALayer.GetReportLayers(roleId, purpose);
         }
-
+        public List<layerReportDetail> GetSplitReportLayers(int roleId, string purpose)
+        {
+            return objDALayer.GetSplitReportLayers(roleId, purpose);
+        }
         public List<layerDetail> GetLayerDetailsForHistory()
         {
             return objDALayer.GetLayerDetailsForHistory();
@@ -238,7 +241,10 @@ namespace BusinessLogics
         {
             return new DALayer().GetExportReportSummary(objReportFilter);
         }
-
+        public List<EntitySummaryReport> GetSplitReportSummary(ExportReportFilterNew objReportFilter)
+        {
+            return new DALayer().GetSplitReportSummary(objReportFilter);
+        }
 
         public List<Dictionary<string, string>> GetExportReportSummaryView(ExportEntitiesSummaryViewFilter objReportFilter)
         {
@@ -257,7 +263,7 @@ namespace BusinessLogics
         public List<Dictionary<string, string>> GetExportReportSummaryViewNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
 		{
 			return new DALayer().GetExportReportSummaryViewNew(objReportFilter, layerName);
-		}
+		}        
 
         public List<Dictionary<string, string>> GetExportReportSummaryViewNewCdb(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
@@ -272,6 +278,18 @@ namespace BusinessLogics
 		{
 			return new DALayer().GetExportReportSummaryViewCSV(objReportFilter, layerName);
 		}
+        public List<Dictionary<string, string>> GetSplitReportSummaryViewAllExcel(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetSplitReportSummaryViewAllExcel(objReportFilter, layerName);
+        }
+        public List<Dictionary<string, string>> GetSplitReportSummaryViewAllCSV(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetSplitReportSummaryViewAllCSV(objReportFilter, layerName);
+        }
+        public List<Dictionary<string, string>> GetSplitReportSummaryViewAllShape(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetSplitReportSummaryViewAllShape(objReportFilter, layerName);
+        }
 
         public List<Dictionary<string, string>> GetExportReportSummaryViewCSVCdb(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {

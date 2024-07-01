@@ -177,7 +177,13 @@ namespace Models
         public string entity_type { get; set; }
         [NotMapped]
         public trenchExecutionList ExecutionMethod { get; set; }
-
+        public string parent_trench_netwok_id { get; set; }
+        public string parent_trench_system_id { get; set; }
+        public string splited_by { get; set; }
+        public string splitted_on { get; set; }
+        public string splitting_system_id { get; set; }
+        public string splitting_netwok_id { get; set; }
+        public string splitting_entitytype { get; set; }
         public TrenchMaster()
         {
             objPM = new PageMessage();
