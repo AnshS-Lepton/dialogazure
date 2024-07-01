@@ -605,77 +605,90 @@
 
 <script type="text/javascript">
     $("#btnSaveCable").on("click", function() {
+        var gis_design_id = $('#gisDesignId').val();
+        ajaxReq('Library/checkOverlappingDesignId', { design_id: gis_design_id,system_id:'@Model.system_id' }, false, function (resp) {
+            ;
+            if (resp.data.status == '1') {
+                showConfirm(resp.data.message, function () {
+                    saveCableContinue();
+                });
 
-        var ddlFiberCount = $("#ddlIOP_chosen").children('a').text().trim();
-        var tubeCount = parseInt($('#no_of_tube').val());
-        var corePerTubeCount = parseInt($('#no_of_core_per_tube').val());
-        $("#hdn_no_of_core_per_tube").val(corePerTubeCount);
-        $("#hdn_no_of_tube").val(tubeCount);
-
-        if (ddlFiberCount == "Select Fiber Count") {
-            alert(MultilingualKey.SI_OSP_CAB_JQ_FRM_002);//Please select fiber count!!
-            return false;
-        }
-        else {
-            var totalCount = tubeCount * corePerTubeCount;
-            ddlFiberCount = ddlFiberCount.split(' ');
-            if (totalCount != ddlFiberCount[0]) {
-                alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_012);
-                return false;
             }
-        }
-        if (($(si.DE.startReading).length == 0 && $(si.DE.endReading).length == 0) || ($(si.DE.startReading).val() == 0 && $($(si.DE.endReading).val() == 0)) || (parseFloat($('#cable_calculated_length').val()) != 0)) {
-            var cableStatus = ValidateCableLenght('#cable_measured_length', '#cable_calculated_length', 'Cable');
-            if (cableStatus == false) {
-                return false;
+            else {
+                saveCableContinue();
             }
-        }
-
-        if ((parseFloat($(si.DE.endReading).val()) != 0 || parseFloat($(si.DE.startReading).val()) != 0) && (parseFloat($(si.DE.endReading).val()) <= parseFloat($(si.DE.startReading).val()))) {
-            alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_052);
-            return false;
-        }
-        if ((($("#start_reading").val()) == 0 && $("#end_reading").val() == 0) && ("@Model.network_status" == "A")) {
-            alert("Cable Calculated Length can't be 0 !");
-            return false;
-        }
-
-        $('#hdnCableTab').val('CableInfoTab');
-        $("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
-        var selected_ownership = $("input[name='rdbOwnershipType']:checked").val();
-        if (selected_ownership == 'Third Party' && $('#txt3rdPartyVendor').val() == "") {
-            $('#txt3rdPartyVendor').next().addClass('input-validation-error');
-            return false;
-        }
-        if (selected_ownership == 'Own' && $('#txtOwnVendor').val() == "") {
-            $('#txtOwnVendor').next().addClass('input-validation-error');
-            return false;
-        }
-
-        else if (selected_ownership == 'Third Party' && $('#thirdparty_circuit_id').val() == "") {
-            $('#thirdparty_circuit_id').addClass('input-validation-error');
-            return false;
-        }
-
-        si.upperCaseNetWorkId();
-        if (!entityReferencevalidation() && !entityMaintainence()) {
-            return false;
-        }
-        if ((@ApplicationSettings.IsCableExtraValidationRequired) && (parseFloat($('#cable_calculated_length').val()) > (((@ApplicationSettings.CableExtraLengthPercentage) * parseFloat($('#cable_measured_length').val()) / 100) + parseFloat($('#cable_measured_length').val()))) && $('#hdncblCalLen').val() != $('#cable_calculated_length').val())
-        {
-            $('#hdncblCalLen').val($('#cable_calculated_length').val());
-            si.openCableRemarksCommentbox();
-        }
-
-
-
-        else {
-
-            $('#hdncblCalLen').val($('#cable_calculated_length').val());
-            $("#frmAddCable").submit();
-        }
-
+        });
     });
+    function saveCableContinue() {
+         var ddlFiberCount = $("#ddlIOP_chosen").children('a').text().trim();
+         var tubeCount = parseInt($('#no_of_tube').val());
+         var corePerTubeCount = parseInt($('#no_of_core_per_tube').val());
+         $("#hdn_no_of_core_per_tube").val(corePerTubeCount);
+         $("#hdn_no_of_tube").val(tubeCount);
+
+         if (ddlFiberCount == "Select Fiber Count") {
+             alert(MultilingualKey.SI_OSP_CAB_JQ_FRM_002);//Please select fiber count!!
+             return false;
+         }
+         else {
+             var totalCount = tubeCount * corePerTubeCount;
+             ddlFiberCount = ddlFiberCount.split(' ');
+             if (totalCount != ddlFiberCount[0]) {
+                 alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_012);
+                 return false;
+             }
+         }
+         if (($(si.DE.startReading).length == 0 && $(si.DE.endReading).length == 0) || ($(si.DE.startReading).val() == 0 && $($(si.DE.endReading).val() == 0)) || (parseFloat($('#cable_calculated_length').val()) != 0)) {
+             var cableStatus = ValidateCableLenght('#cable_measured_length', '#cable_calculated_length', 'Cable');
+             if (cableStatus == false) {
+                 return false;
+             }
+         }
+
+         if ((parseFloat($(si.DE.endReading).val()) != 0 || parseFloat($(si.DE.startReading).val()) != 0) && (parseFloat($(si.DE.endReading).val()) <= parseFloat($(si.DE.startReading).val()))) {
+             alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_052);
+             return false;
+         }
+         if ((($("#start_reading").val()) == 0 && $("#end_reading").val() == 0) && ("@Model.network_status" == "A")) {
+             alert("Cable Calculated Length can't be 0 !");
+             return false;
+         }
+
+         $('#hdnCableTab').val('CableInfoTab');
+         $("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
+         var selected_ownership = $("input[name='rdbOwnershipType']:checked").val();
+         if (selected_ownership == 'Third Party' && $('#txt3rdPartyVendor').val() == "") {
+             $('#txt3rdPartyVendor').next().addClass('input-validation-error');
+             return false;
+         }
+         if (selected_ownership == 'Own' && $('#txtOwnVendor').val() == "") {
+             $('#txtOwnVendor').next().addClass('input-validation-error');
+             return false;
+         }
+
+         else if (selected_ownership == 'Third Party' && $('#thirdparty_circuit_id').val() == "") {
+             $('#thirdparty_circuit_id').addClass('input-validation-error');
+             return false;
+         }
+
+         si.upperCaseNetWorkId();
+         if (!entityReferencevalidation() && !entityMaintainence()) {
+             return false;
+         }
+         if ((@ApplicationSettings.IsCableExtraValidationRequired) && (parseFloat($('#cable_calculated_length').val()) > (((@ApplicationSettings.CableExtraLengthPercentage) * parseFloat($('#cable_measured_length').val()) / 100) + parseFloat($('#cable_measured_length').val()))) && $('#hdncblCalLen').val() != $('#cable_calculated_length').val())
+         {
+             $('#hdncblCalLen').val($('#cable_calculated_length').val());
+             si.openCableRemarksCommentbox();
+         }
+
+
+
+         else {
+
+             $('#hdncblCalLen').val($('#cable_calculated_length').val());
+             $("#frmAddCable").submit();
+         }
+    }
 </script>
 
 

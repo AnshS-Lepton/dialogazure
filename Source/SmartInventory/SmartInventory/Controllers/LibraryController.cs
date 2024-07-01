@@ -28,6 +28,7 @@ using Lepton.Utility;
 using Lepton.Entities;
 using System.Web.Script.Serialization;
 using System.Collections;
+using System.Runtime.Remoting;
 
 
 
@@ -5724,12 +5725,20 @@ namespace SmartInventory.Controllers
 			}
 		}
 
-		//private bool fillReferenceentity(EntityReference entityReference)
-		//{
-		//    var listPointAReference=  entityReference.listPointAReference.Where(x=>) 
-		//}
+        //private bool fillReferenceentity(EntityReference entityReference)
+        //{
+        //    var listPointAReference=  entityReference.listPointAReference.Where(x=>) 
+        //}
+        public JsonResult checkOverlappingDesignId(string design_id,int system_id)
+		{
+            JsonResponse<dbresponse> objResp = new JsonResponse<dbresponse>();
+            int res = BLCable.Instance.checkDuplicateDesignId(design_id, system_id);
+			objResp.status = res.ToString();
+			objResp.message = Resources.Resources.SI_OSP_CAB_NET_FRM_076;
 
-		public PartialViewResult GetCableTubeCoreDetail(int? cableId)
+            return Json(new { data = objResp, JsonRequestBehavior.AllowGet });
+		}
+        public PartialViewResult GetCableTubeCoreDetail(int? cableId)
 		{
 			List<TubeCoreInfo> objPortInfo = new List<TubeCoreInfo>();
 			TubeCoreLstIn objRes = new TubeCoreLstIn();

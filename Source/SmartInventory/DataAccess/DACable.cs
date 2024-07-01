@@ -498,7 +498,17 @@ namespace DataAccess
             }
             return result;
         }
+        public int checkDuplicateDesignId(string design_id, int system_id)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<int>("fn_get_checkDuplicateDesignId", new { p_design_id = design_id,p_system_id= system_id }).FirstOrDefault();
+                return lst;
 
+
+            }
+            catch { throw; }
+        }
         public DbMessage SetConnectionWithSplitCable(string cable_one_network_id, string cable_two_network_id, int old_cable_system_id, int splitentitysystemid, string splitentity_network_id, string splitentitytype, int user_id, string splicing_source)
         {
             try
