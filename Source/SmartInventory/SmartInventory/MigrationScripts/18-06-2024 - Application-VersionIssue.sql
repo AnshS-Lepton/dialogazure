@@ -1,0 +1,1 @@
+update global_settings set is_web_key=true where key ='ApplicationVersion'
