@@ -57,6 +57,10 @@ namespace BusinessLogics
         {
             return DACable.Instance.DeleteCableById(cable_Id);
         }
+        public int checkDuplicateDesignId(string design_id,int system_id)
+        {
+            return DACable.Instance.checkDuplicateDesignId(design_id, system_id);
+        }
         public List<TubeCoreInfo> GetTubeCoreInfo(int cableId)
         {
             return DACable.Instance.GetTubeCoreInfo(cableId);

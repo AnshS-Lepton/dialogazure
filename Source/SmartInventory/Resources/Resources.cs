@@ -10394,6 +10394,13 @@ namespace Resources {
                 return resourceProvider.GetResource("SI_OSP_CAB_NET_FRM_075", CultureInfo.CurrentUICulture.Name) as string;
             }
         }
+        public static string SI_OSP_CAB_NET_FRM_076
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_CAB_NET_FRM_076", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
 
         /// <summary>Select two cables by clicking them on map: (For Merging of cables)</summary>
         public static string SI_OSP_GBL_GBL_FRM_153 {
