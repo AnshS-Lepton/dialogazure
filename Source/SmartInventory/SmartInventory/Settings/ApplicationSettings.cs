@@ -258,7 +258,7 @@ namespace SmartInventory.Settings
         public static int IsGeometryUpdateOnAssociationAllowed = 0;
         public static bool CdbEnabled = false;
         public static int isLDAPEnabled = 0;
-
+        public static string ApplicationVersion = "";
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -902,6 +902,10 @@ namespace SmartInventory.Settings
                 if (objSetting.key == "isLDAPEnabled")
                 {
                     isLDAPEnabled = Convert.ToInt32(objSetting.value);
+                }
+                if (objSetting.key == "ApplicationVersion")
+                {
+                    ApplicationVersion = objSetting.value;
                 }
             }
         }
