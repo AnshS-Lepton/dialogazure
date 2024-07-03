@@ -85,6 +85,9 @@ namespace DataAccess
                     objManholeItem.gis_design_id = objManholeMaster.gis_design_id;
                     objManholeItem.own_vendor_id = objManholeMaster.own_vendor_id;
                     objManholeItem.hierarchy_type = objManholeMaster.hierarchy_type;
+                    objManholeItem.aerial_location = objManholeMaster.aerial_location;
+                    objManholeItem.section_name = objManholeMaster.section_name;
+                    objManholeItem.generic_section_name = objManholeMaster.generic_section_name;
                     var ManholeResp = repo.Update(objManholeItem);
                     DbMessage entityObj =new DAMisc(). updateGeojsonEntityAttribute(ManholeResp.system_id, Models.EntityType.Manhole.ToString(), ManholeResp.province_id, 1);
                     //DbMessage geojsonObj = updateGeojsonMetadata(Models.EntityType.Manhole.ToString(), ManholeResp.province_id);
