@@ -258,6 +258,7 @@ namespace DataAccess
                 {
                     objsurveyArea.created_by = userId;
                     objsurveyArea.created_on = DateTimeHelper.Now;
+                    objsurveyArea.status = (string.IsNullOrEmpty(objsurveyArea.status) ? "A" : objsurveyArea.status);
                     var resultItem = repo.Insert(objsurveyArea);
                     //Save geometry
                     InputGeom geom = new InputGeom();
