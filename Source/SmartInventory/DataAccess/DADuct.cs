@@ -59,7 +59,7 @@ namespace DataAccess
                     objDuct.construction = DuctInfo.construction;
                     objDuct.activation = DuctInfo.activation;
                     objDuct.accessibility = DuctInfo.accessibility;
-                    objDuct.duct_type = DuctInfo.cable_type;
+                    objDuct.duct_type = DuctInfo.duct_type;
                     objDuct.color_code = DuctInfo.color_code;
                     objDuct.inner_dimension = DuctInfo.inner_dimension;
                     objDuct.outer_dimension = DuctInfo.outer_dimension;
