@@ -44,6 +44,7 @@ namespace SmartInventory.Controllers
 
             BLItemTemplate.Instance.BindItemDropdowns(objEntityMaster, EntityType.Antenna.ToString());
             BindAntennaDropDown(objEntityMaster);
+            objEntityMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
             objBLCommon.fillProjectSpecifications(objEntityMaster);
             //objEntityMaster.unitValue = objEntityMaster.Antenna_ratio;
             BLLayer objBLLayer = new BLLayer();
@@ -184,6 +185,8 @@ namespace SmartInventory.Controllers
                 BindAntennaDropDown(objEntityMaster);
                 // RETURN PARTIAL VIEW WITH MODEL DATA
                 objBLCommon.fillProjectSpecifications(objEntityMaster);
+                objEntityMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+
                 return PartialView("_AddAntenna", objEntityMaster);
             }
         }
