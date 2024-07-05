@@ -2356,6 +2356,7 @@
     <Content Include="Views\Report\_EntityAssociationSummaryView.cshtml" />
     <Content Include="Views\Library\_trenchExecution.cshtml" />
     <Content Include="Views\Report\_SplitLineEntityExportReport.cshtml" />
+    <Content Include="Views\Report\_AuditLogExportReport.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
