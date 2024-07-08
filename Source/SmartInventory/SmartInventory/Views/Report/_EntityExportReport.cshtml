@@ -784,7 +784,15 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
         else {
 
         if (chkAll.checked == true) {
-            entityids = '@Model.objReportFilters.SelectedLayerIds';
+            @*entityids = '@Model.objReportFilters.SelectedLayerIds';*@
+
+            var rows = $("#tblSummaryAll input[type=checkbox]:not('#checkallentity'):checked"); //document.getElementById("tblSummaryAll").rows;
+            //Execute loop on all rows excluding the Header row.
+            for (var i = 0; i < rows.length; i++) {
+                //if (rows[i].getElementsByTagName("INPUT")[0].checked) {
+                entityids += entityids != "" ? ("," + rows[i].id) : rows[i].id;
+                //}
+            }
 
         }
         else {
