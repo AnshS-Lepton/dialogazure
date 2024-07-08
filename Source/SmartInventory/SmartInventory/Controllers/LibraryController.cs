@@ -6769,8 +6769,8 @@ namespace SmartInventory.Controllers
 				ductobjduct1.b_entity_type = SplitductsEntity.duct_one_b_entity_type;
 				ductobjduct1.b_location = SplitductsEntity.duct_one_b_location;
                 ductobjduct1.parent_duct_system_id = model.split_duct_system_id.ToString();
-                ductobjduct1.parent_duct_netwok_id = model.duct_one_name;
-                ductobjduct1.splited_by = model.userId.ToString();
+                ductobjduct1.parent_duct_netwok_id = SplitductsEntity.common_name;
+				ductobjduct1.splited_by = model.userId.ToString();
                 ductobjduct1.splitted_on = DateTime.Now.ToString();
                 ductobjduct1.splitting_system_id = model.split_entity_system_id.ToString();
                 ductobjduct1.splitting_netwok_id = model.split_entity_networkId;
@@ -6786,8 +6786,8 @@ namespace SmartInventory.Controllers
 				ductobjduct2.b_entity_type = SplitductsEntity.duct_two_b_entity_type;
 				ductobjduct2.b_location = SplitductsEntity.duct_two_b_location;
                 ductobjduct2.parent_duct_system_id = model.split_duct_system_id.ToString();
-                ductobjduct2.parent_duct_netwok_id = model.duct_one_name;
-                ductobjduct2.splited_by = model.userId.ToString();
+                ductobjduct2.parent_duct_netwok_id = SplitductsEntity.common_name;
+				ductobjduct2.splited_by = model.userId.ToString();
                 ductobjduct2.splitted_on = DateTime.Now.ToString();
                 ductobjduct2.splitting_system_id = model.split_entity_system_id.ToString();
                 ductobjduct2.splitting_netwok_id = model.split_entity_networkId;
@@ -7057,7 +7057,7 @@ namespace SmartInventory.Controllers
 				trenchobjtrench1.b_entity_type = SplittrenchsEntity.trench_one_b_entity_type;
 				trenchobjtrench1.b_location = SplittrenchsEntity.trench_one_b_location;
                 trenchobjtrench1.parent_trench_system_id = model.split_trench_system_id.ToString();
-                trenchobjtrench1.parent_trench_netwok_id = model.trench_one_name;
+				trenchobjtrench1.parent_trench_netwok_id = SplittrenchsEntity.common_name;
                 trenchobjtrench1.splited_by = model.userId.ToString();
                 trenchobjtrench1.splitted_on = DateTime.Now.ToString();
                 trenchobjtrench1.splitting_system_id = model.split_entity_system_id.ToString();
@@ -7074,7 +7074,7 @@ namespace SmartInventory.Controllers
 				trenchobjtrench2.b_entity_type = SplittrenchsEntity.trench_two_b_entity_type;
 				trenchobjtrench2.b_location = SplittrenchsEntity.trench_two_b_location;
                 trenchobjtrench2.parent_trench_system_id = model.split_trench_system_id.ToString();
-                trenchobjtrench2.parent_trench_netwok_id = model.trench_one_name;
+                trenchobjtrench2.parent_trench_netwok_id = SplittrenchsEntity.common_name;
                 trenchobjtrench2.splited_by = model.userId.ToString();
                 trenchobjtrench2.splitted_on = DateTime.Now.ToString();
                 trenchobjtrench2.splitting_system_id = model.split_entity_system_id.ToString();
