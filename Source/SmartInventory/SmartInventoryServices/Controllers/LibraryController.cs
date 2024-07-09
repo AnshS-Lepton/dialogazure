@@ -14351,6 +14351,10 @@ namespace SmartInventoryServices.Controllers
 					objTowerMaster.network_id = objNetworkCodeDetail.network_code;
 					objTowerMaster.sequence_id = objNetworkCodeDetail.sequence_id;
 				}
+				if (string.IsNullOrEmpty(objTowerMaster.network_name))
+				{
+					objTowerMaster.network_name = objTowerMaster.network_id;
+				}
 
 				this.Validate(objTowerMaster);
 				var isNew = objTowerMaster.system_id > 0 ? false : true;

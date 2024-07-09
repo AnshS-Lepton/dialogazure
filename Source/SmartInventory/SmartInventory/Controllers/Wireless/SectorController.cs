@@ -96,8 +96,7 @@ namespace SmartInventory.Controllers
             objEntityMaster.lstSectorType = objDDL.Where(x => x.dropdown_type == DropDownType.SectorType.ToString()).ToList();
             objEntityMaster.lstFrequencyType = objDDL.Where(x => x.dropdown_type == DropDownType.Frequency.ToString()).ToList();
 
-
-        }
+		}
 
         public ActionResult SaveSector(SectorMaster objEntityMaster, bool isDirectSave = false)
         {
@@ -125,10 +124,14 @@ namespace SmartInventory.Controllers
                 objEntityMaster.network_id = objNetworkCodeDetail.network_code;
                 objEntityMaster.sequence_id = objNetworkCodeDetail.sequence_id;
             }
+			if (string.IsNullOrEmpty(objEntityMaster.network_name))
+			{
+				objEntityMaster.network_name = objEntityMaster.network_id;
+			}
 
 
 
-            if (TryValidateModel(objEntityMaster))
+			if (TryValidateModel(objEntityMaster))
             {
                 var isNew = objEntityMaster.system_id > 0 ? false : true;
 
