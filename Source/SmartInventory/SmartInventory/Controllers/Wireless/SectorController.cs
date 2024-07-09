@@ -41,6 +41,7 @@ namespace SmartInventory.Controllers
             BLItemTemplate.Instance.BindItemDropdowns(objEntityMaster, EntityType.Sector.ToString());
             BindSectorDropDown(objEntityMaster);
             objBLCommon.fillProjectSpecifications(objEntityMaster);
+            objEntityMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
             //objEntityMaster.unitValue = objEntityMaster.splitter_ratio;
             var usrDetail = (User)Session["userDetail"];
             var usrId = usrDetail.user_id;
@@ -189,6 +190,7 @@ namespace SmartInventory.Controllers
                 var usrId = usrDetail.user_id;
                 BLLayer objBLLayer = new BLLayer();
                 objEntityMaster.lstUserModule = objBLLayer.GetUserModuleAbbrList(usrId, UserType.Web.ToString());
+                objEntityMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
                 return PartialView("_AddSector", objEntityMaster);
             }
         }
