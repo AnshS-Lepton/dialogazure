@@ -383,7 +383,7 @@
                             {
                                 <label class="control-label col-md-2 col-sm-2 ">@layerDetail.layer_title Count:</label>
                                 <div class="col-md-4 col-sm-4  mrgn_btm">
-                                    @Html.DropDownListFor(m => m.duct_count, new SelectList(Model.DuctCount.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
+                                    @Html.DropDownListFor(m => m.duct_count, new SelectList(Model.DuctCount.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
 
                                 </div>
                             }
