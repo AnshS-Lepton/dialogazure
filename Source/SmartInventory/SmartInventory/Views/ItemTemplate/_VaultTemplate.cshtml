@@ -51,18 +51,19 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex ModalFooter" id="dvBtnAction">
-            <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancelAssignRoute">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
-            @*<input type="button" class="btn btn-primary" id="btnTestItemTemplate" onclick="si.TestPopupCall();" value="Test">*@
-            @if (Model.id > 0)
-            {
-                <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
-            }
-            else
-            {
-                <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
-            }
-        </div>
+        
+    }
+</div>
+<div class="d-flex ModalFooter" id="dvBtnAction">
+    <a href="javascript:void(0);" class="btn btn-default ml-auto mr-01" data-dismiss="modal" id="btnCancelAssignRoute">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+    @*<input type="button" class="btn btn-primary" id="btnTestItemTemplate" onclick="si.TestPopupCall();" value="Test">*@
+    @if (Model.id > 0)
+    {
+        <button type="submit" class="btn btn-primary" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-primary" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
     }
 </div>
 <script>
