@@ -6682,7 +6682,8 @@ namespace SmartInventory.Controllers
 			try
 			{
 				DuctMaster ductDetail = new BLMisc().GetEntityDetailById<DuctMaster>(split_duct_system_id, EntityType.Duct);
-				objResp.result = new BLMisc().getSplitDuctEntity(split_entity_system_id, split_entity_type, splitEnityNetworkId, split_duct_system_id, EntityType.Microduct.ToString());
+				objResp.result = new BLMisc().getSplitDuctEntity(split_entity_system_id, split_entity_type, splitEnityNetworkId, split_duct_system_id, EntityType.Duct.ToString());
+				
 				//objResp.result.a_location = ductDetail.a_location;
 				//objResp.result.b_location = ductDetail.b_location;
 				objResp.result.parentDuctNetworkId = ductDetail.network_id;
