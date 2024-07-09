@@ -2593,7 +2593,7 @@ namespace SmartInventory.Controllers
                                         List<Dictionary<string, string>> lstExportEntitiesDetail = null;
                                         List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
                                         List<Dictionary<string, string>> lstExportEntitiesDetailCdb = null;
-                                        if (layerDetail.is_dynamic_control_enable != true)
+                                        if (layerDetail != null && layerDetail.is_dynamic_control_enable != true)
                                         {
                                             layerDetail.is_dynamic_control_enable = false;
                                         }
@@ -2609,7 +2609,7 @@ namespace SmartInventory.Controllers
                                             {
                                                 lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewCSVCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail != null && layerDetail.is_dynamic_control_enable)
                                             {
                                                 lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
@@ -2637,7 +2637,7 @@ namespace SmartInventory.Controllers
                                             {
                                                 lstExportEntitiesDetailCdb = new BLLayer().GetExportReportSummaryViewNewCdb(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
-                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail != null && layerDetail.is_dynamic_control_enable)
                                             {
                                                 lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                             }
