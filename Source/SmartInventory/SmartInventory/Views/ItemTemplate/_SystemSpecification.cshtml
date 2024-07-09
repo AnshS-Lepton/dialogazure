@@ -56,7 +56,7 @@
     {<i class="clsMandatory">*</i>}
     else { }:</label>
     <div class="col-sm-4">
-        @Html.DropDownListFor(m => m.activation, new SelectList(Model.lstActivation.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Activation", new { @class = "chosen-select col-sm-45", @style = "padding:0;", @id = "ddlClosureActivation" })
+        @Html.DropDownListFor(m => m.activation, new SelectList(Model.lstActivation.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Activation", new { @class = "chosen-select col-sm-45", @style = "padding:0;", @id = "ddlClosureActivation"})
     </div>
 
     <label class="control-label col-sm-2" for="ddlClosureAccessibility">@Resources.Resources.SI_OSP_CAB_NET_FRM_026 @if (formInput_accessibility.is_required)
@@ -83,11 +83,16 @@
     }
 </script>
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function () {     
+        $('#ddlClosureConstruction').prop('disabled', true).trigger("chosen:updated");
+        $('#ddlClosureActivation').prop('disabled', true).trigger("chosen:updated");
+        $('#ddlClosureAccessibility').prop('disabled', true).trigger("chosen:updated");
+        $('#ddlHeirarchyType').prop('disabled', true).trigger("chosen:updated");         
+
         if ('@formInput_type.is_required' == 'True' && '@formInput_brand.is_required' == 'True' && '@formInput_model.is_required' == 'True' ) {
             $('#ddlType').attr('onchange', "ddlChangeRemoveCss(this.id, 'Type');");
             $('#ddlBrand').attr('onchange', "ddlChangeRemoveCss(this.id, 'Brand');");
-            $('#ddlmodel').attr('onchange', "ddlChangeRemoveCss(this.id, 'Model');");         
+            $('#ddlmodel').attr('onchange', "ddlChangeRemoveCss(this.id, 'Model');");
         }
         else {
             $("#ddlType, #ddlBrand, #ddlmodel").addClass('ignore');
@@ -115,6 +120,27 @@
         else {
             $("#ddlClosureAccessibility").addClass('ignore');
         }
+
+
+        $("#ddlmodel").change(function () {
+            if (this.value.trim() == "Completed") {              
+                $('#ddlClosureConstruction').prop('disabled', false).trigger("chosen:updated");
+            } else {
+                $('#ddlClosureConstruction').prop('disabled', true).trigger("chosen:updated");              
+            }
+        });
+
+        $("#ddlClosureConstruction").change(function () {
+            if (this.options[this.selectedIndex].innerText.trim() == "Completed") {
+                $('#ddlClosureActivation').prop('disabled', false).trigger("chosen:updated");
+                $('#ddlClosureAccessibility').prop('disabled', false).trigger("chosen:updated");
+                $('#ddlHeirarchyType').prop('disabled', false).trigger("chosen:updated"); 
+            } else {
+                $('#ddlClosureActivation').prop('disabled', true).trigger("chosen:updated");
+                $('#ddlClosureAccessibility').prop('disabled', true).trigger("chosen:updated");
+                $('#ddlHeirarchyType').prop('disabled', true).trigger("chosen:updated"); 
+            }
+        });
 
     });
 </script>

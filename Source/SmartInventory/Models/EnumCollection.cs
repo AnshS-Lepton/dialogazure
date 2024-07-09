@@ -396,7 +396,8 @@ namespace Models
         construction,
         activation,
         accessibility,
-        hierarchy_type
+        hierarchy_type,
+        trench_type
     }
     public enum formFeatureType
     {
