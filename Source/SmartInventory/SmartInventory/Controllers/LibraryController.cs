@@ -4800,7 +4800,7 @@ namespace SmartInventory.Controllers
 				{
 					objCustomer.objIspEntityMap.shaft_id = 0; objCustomer.objIspEntityMap.floor_id = 0;
 				}
-				if (objCustomer.objIspEntityMap.structure_id == 0)
+				if (objCustomer.objIspEntityMap.structure_id == 0 && objCustomer.system_id > 0 )
 				{
 
 					var parentDetails = new BLMisc().getParentInfo(new NetworkCodeIn() { eType = EntityType.Customer.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCustomer.longitude + " " + objCustomer.latitude, parent_eType = "", parent_sysId = 0 });
