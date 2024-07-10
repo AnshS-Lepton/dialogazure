@@ -716,7 +716,7 @@ namespace DataAccess
                 if (!string.IsNullOrEmpty(objReportFilter.connectionString))
                     connetionString = objReportFilter.connectionString;
                 var currentLang = System.Globalization.CultureInfo.CurrentUICulture;
-                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_audit_log_report_summary_view_allexcel",
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_audit_log_report_allexcel",
                     new
                     {
                         p_regionids = objReportFilter.SelectedRegionIds,
@@ -748,8 +748,13 @@ namespace DataAccess
                     }, true); ; ;
                 return lst;
             }
-            catch { throw; }
+            catch(Exception ex)
+            {
+
+                throw;
+            }
         }
+        
         public List<Dictionary<string, string>> GetExportReportSummaryViewNewAdditional(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
             try

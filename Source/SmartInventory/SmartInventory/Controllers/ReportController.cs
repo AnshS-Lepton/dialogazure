@@ -12667,28 +12667,10 @@ namespace SmartInventory.Controllers
                                         }
 
                                         List<string> reportTypeString = reportType;
-                                        if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
+                                        if (reportTypeString[0].Contains("GIS"))
                                         {
-                                            if (reportTypeString[0].Contains("GIS"))
-                                            {
-                                                lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                            }
-                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
-                                            {
-                                                lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (reportTypeString[0].Contains("GIS"))
-                                            {
-                                                lstExportEntitiesDetail = new BLLayer().GetAuditLogReportSummaryView(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                            }
-                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
-                                            {
-                                                lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                            }
-                                        }
+                                            lstExportEntitiesDetail = new BLLayer().GetAuditLogReportSummaryView(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                        }  
 
                                         DataTable dtReport = new DataTable();                                        
                                         DataTable dtReportAdditional = new DataTable();
