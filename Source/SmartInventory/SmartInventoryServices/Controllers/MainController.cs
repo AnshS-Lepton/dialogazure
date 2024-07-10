@@ -4680,7 +4680,7 @@ namespace SmartInventoryServices.Controllers
             try
             {
                 AssociateLineEntity objLineEntity = ReqHelper.GetRequestData<AssociateLineEntity>(data);
-                var res = new BLMisc().saveLineEntityAssocition(JsonConvert.SerializeObject(objLineEntity.listLineEntityInfo), objLineEntity.parent_system_id, objLineEntity.parent_entity_type, objLineEntity.userId);
+                var res = new BLMisc().saveLineEntityAssocition(JsonConvert.SerializeObject(objLineEntity.listLineEntityInfo), objLineEntity.parent_system_id, objLineEntity.parent_entity_type, objLineEntity.userId, objLineEntity.manhole_count);
                 objLineEntity.pageMsg.status = ResponseStatus.OK.ToString();
                 objLineEntity.pageMsg.message = Resources.Resources.SI_OSP_GBL_NET_FRM_169;
                 response.status = ResponseStatus.OK.ToString();

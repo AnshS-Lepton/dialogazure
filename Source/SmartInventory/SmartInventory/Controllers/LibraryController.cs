@@ -5503,25 +5503,25 @@ namespace SmartInventory.Controllers
 		public PartialViewResult AddCable(LineEntityIn objIn, int pSystemId = 0, string pEntityType = "", string pNetworkId = "")
 		{
 			//CableMaster objCbl = new CableMaster();
-			//objCbl = GetCableDetail(objIn);
-			//if (objIn.systemId == 0)
-			//{
-			//    //Fill Location detail...    
-			//    GetLineNetworkDetail(objCbl, objIn, EntityType.Cable.ToString(), false);
+            //objCbl = GetCableDetail(objIn);
+            //if (objIn.systemId == 0)
+            //{
+            //    //Fill Location detail...    
+            //    GetLineNetworkDetail(objCbl, objIn, EntityType.Cable.ToString(), false);
 
-			//}
+            //}
 
-			//BLItemTemplate.Instance.BindItemDropdowns(objCbl, EntityType.Cable.ToString());
-			//BindCableDropDown(objCbl);
-			//objCbl.fiberCountIn = objCbl.total_core.ToString();
-			//fillProjectSpecifications(objCbl);
-			//new MiscHelper().BindPortDetails(objCbl, EntityType.Cable.ToString(), DropDownType.Fiber_Count.ToString());
-			//objCbl.unitValue = Convert.ToString(objCbl.total_core);
-			//objCbl.pSystemId = pSystemId;
-			//objCbl.pNetworkId = pNetworkId;
-			//objCbl.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Cable.ToString()).ToList();
-			//return PartialView("_AddCable", objCbl);
-			objIn.pEntityType = pEntityType;
+            //BLItemTemplate.Instance.BindItemDropdowns(objCbl, EntityType.Cable.ToString());
+            //BindCableDropDown(objCbl);
+            //objCbl.fiberCountIn = objCbl.total_core.ToString();
+            //fillProjectSpecifications(objCbl);
+            //new MiscHelper().BindPortDetails(objCbl, EntityType.Cable.ToString(), DropDownType.Fiber_Count.ToString());
+            //objCbl.unitValue = Convert.ToString(objCbl.total_core);
+            //objCbl.pSystemId = pSystemId;
+            //objCbl.pNetworkId = pNetworkId;
+            //objCbl.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Cable.ToString()).ToList();
+            //return PartialView("_AddCable", objCbl);
+            objIn.pEntityType = pEntityType;
 			objIn.pNetworkId = pNetworkId;
 			objIn.pSystemId = pSystemId;
 			objIn.system_id = objIn.systemId;
@@ -5529,9 +5529,10 @@ namespace SmartInventory.Controllers
 			string url = "api/Library/EntityOperations";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<CableMaster>(url, objIn, EntityType.Cable.ToString(), EntityAction.Get.ToString());
 			CableMaster _obj = new CableMaster();
-			BLLayer objBLLayer = new BLLayer();
-			_obj.lstUserModule = objBLLayer.GetUserModuleAbbrList(objIn.user_id, UserType.Web.ToString());
-			return PartialView("_AddCable", response.results);
+          
+            BLLayer objBLLayer = new BLLayer();
+			_obj.lstUserModule = objBLLayer.GetUserModuleAbbrList(objIn.user_id, UserType.Web.ToString());            
+            return PartialView("_AddCable", response.results);
 		}
 
 		public ActionResult SaveCable(CableMaster objCbl, string actionTab, bool isDirectSave = false)
@@ -8901,13 +8902,24 @@ namespace SmartInventory.Controllers
 		}
 		public PartialViewResult SaveLineEntityAssociate(AssociateLineEntity objLineEntity)
 		{
-			//PageMessage objPM = new PageMessage();
-			//var response = new BLMisc().saveLineEntityAssocition(JsonConvert.SerializeObject(objLineEntity.listLineEntityInfo), objLineEntity.parent_system_id, objLineEntity.parent_entity_type, Convert.ToInt32(Session["user_id"]));
-			//objPM.status = ResponseStatus.OK.ToString();
-			//objPM.message = Resources.Resources.SI_OSP_GBL_NET_FRM_169;
-			//objLineEntity.pageMsg = objPM;
-			//return PartialView("_LineEntityAssociation", objLineEntity);
-			objLineEntity.userId = Convert.ToInt32(Session["user_id"]);
+            List<int> manholecount = new List<int>();
+			int totalCount = 0;
+            foreach (var lineEntity in objLineEntity.listLineEntityInfo)
+            {
+				if (lineEntity.entity_type == "Manhole" && lineEntity.is_associated)
+				{
+                    manholecount.Add(lineEntity.system_id);
+                     totalCount = manholecount.Count;
+                }               
+            }
+			objLineEntity.manhole_count = totalCount;
+            //PageMessage objPM = new PageMessage();
+            //var response = new BLMisc().saveLineEntityAssocition(JsonConvert.SerializeObject(objLineEntity.listLineEntityInfo), objLineEntity.parent_system_id, objLineEntity.parent_entity_type, Convert.ToInt32(Session["user_id"]));
+            //objPM.status = ResponseStatus.OK.ToString();
+            //objPM.message = Resources.Resources.SI_OSP_GBL_NET_FRM_169;
+            //objLineEntity.pageMsg = objPM;
+            //return PartialView("_LineEntityAssociation", objLineEntity);
+            objLineEntity.userId = Convert.ToInt32(Session["user_id"]);
 			string url = "api/main/SaveEntityAssociate";
 			var response = WebAPIRequest.PostIntegrationAPIRequest<AssociateLineEntity>(url, objLineEntity, "", "");
 			return PartialView("_LineEntityAssociation", response.results);
