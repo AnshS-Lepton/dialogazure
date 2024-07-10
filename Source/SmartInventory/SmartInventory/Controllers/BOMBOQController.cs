@@ -1527,7 +1527,7 @@ namespace SmartInventory.Controllers
             }
             else
             {
-                pg.message = "Design BOM has been submitted successfully.";
+                pg.message = "BOM has been submitted successfully.";
             }
             pg.status = "OK";
             string actaualStatus = bomBoqInfoSummary.status;
