@@ -1184,6 +1184,85 @@
                     <li class="techSep"></li>
                 }
 
+                @if (Model.lstUserModule.Contains("AUDIT_HISTORY_EXRPT"))
+                {
+                    int count = 0;
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar clsExportReport" onclick="si.MenuReport.showMenu(this);" id="dvMainReport" title="Audit Log Report">
+                            <span class="icon-ExportReport"></span>
+                        </a>
+                        @if (Model.lstUserModule.Contains("AUDIT_HISTORY_EXRPT") == true || Model.lstUserModule.Contains("AUDIT-HISTORY-LOG") == true || Model.lstUserModule.Contains("AUDIT-HISTORY-POLY") == true || Model.lstUserModule.Contains("AUDIT-HISTORY-RECT") == true || Model.lstUserModule.Contains("AUDIT-HISTORY-CIR") == true || Model.lstUserModule.Contains("RT-IF") == true)
+                        {
+                            count++;
+                        }
+                        @if (count > 0)
+                        {
+                            <ul>
+                                <li>
+                                    <a href="#" class="iconBaricomoon" title="Audit Log Report" onclick="si.AuditLogReport.AuditLogExportReport(null, null, null, this, true);">
+                                        <span class="icon-ExportReport"></span>
+                                    </a>
+                                </li>
+                                @if (Model.lstUserModule.Contains("RT-IF"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon infoGetRoute" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
+                                            <span class="icon-info"></span>
+                                        </a>
+                                    </li>
+                                }
+                                @if (Model.lstUserModule.Contains("AUDIT-HISTORY-LOG"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="Audit Log Report" onclick="si.AuditLogReport.AuditLogExportReportLog(null, null, null, this, true)">
+                                            <span class="icon-exportReportLog"></span>
+                                        </a>
+                                    </li>
+
+                                }
+
+                                @if (Model.lstUserModule.Contains("AUDIT-HISTORY-POLY"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_040" onclick="si.AuditLogReport.initiateDrawingsAuditLogReport(this, 'Polygon', true)">
+                                            <span class="icon-Draw_Polygon"></span>
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (Model.lstUserModule.Contains("AUDIT-HISTORY-RECT"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.AuditLogReport.initiateDrawingsAuditLogReport(this, 'Rectangle', true)">
+                                            <span class="icon-DrawRectangle"></span>
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (Model.lstUserModule.Contains("AUDIT-HISTORY-CIR"))
+                                {
+                                    <li class="techSep"></li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_042" onclick="si.AuditLogReport.initiateDrawingsAuditLogReport(this, 'Circle', true)">
+                                            <span class="icon-DrawCircle"></span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <ul style="opacity:0; visibility:hidden;"></ul>
+                        }
+                    </li>
+                    <li class="techSep"></li>
+
+                }
+
                 @if (Model.lstUserModule.Contains("SPLIT_EXRPT"))
                 {
                     int count = 0;
