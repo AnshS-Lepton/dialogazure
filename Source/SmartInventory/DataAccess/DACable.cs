@@ -90,6 +90,7 @@ namespace DataAccess
                     objCable.purpose_id = cableInfo.purpose_id ?? 0;
                     objCable.cable_category = cableInfo.cable_category;
                     objCable.cable_sub_category = cableInfo.cable_sub_category;
+                    objCable.manhole_count = cableInfo.manhole_count;
                     objCable.remarks = cableInfo.remarks;
                     objCable.route_id = cableInfo.route_id;
                     objCable.start_reading = cableInfo.start_reading;
