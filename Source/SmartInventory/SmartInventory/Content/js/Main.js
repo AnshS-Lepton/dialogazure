@@ -20906,6 +20906,7 @@ var Main = function () {
                         app.getElementImages();
                         console.log("MSG true:" + resp.message);
                         alert(resp.message);
+                        $('#docEntityinfo li.active').find('a').trigger('click');
                     } else {
                         console.log("MSG false:" + resp.message);
                         alert(resp.message);
