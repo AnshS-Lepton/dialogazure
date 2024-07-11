@@ -526,9 +526,9 @@ namespace BusinessLogics
         {
             return new DAMisc().viewEntityAssociation(pSystemId, pEntityType);
         }
-        public DbMessage saveLineEntityAssocition(string lineEnAssociteInfo, int pSystemId, string pEntityType, int userId)
+        public DbMessage saveLineEntityAssocition(string lineEnAssociteInfo, int pSystemId, string pEntityType, int userId,int pManholeCount)
         {
-            return new DAMisc().saveLineEntityAssocition(lineEnAssociteInfo, pSystemId, pEntityType, userId);
+            return new DAMisc().saveLineEntityAssocition(lineEnAssociteInfo, pSystemId, pEntityType, userId, pManholeCount);
         }
         public DbMessage saveRouteAssocition(string routeAssociteInfo, int pSystemId, string pEntityType, int userId)
         {

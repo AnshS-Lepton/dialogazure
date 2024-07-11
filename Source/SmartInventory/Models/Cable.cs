@@ -230,6 +230,8 @@ namespace Models
         public string splitting_system_id { get; set; }
         public string splitting_netwok_id { get; set; }
         public string splitting_entitytype { get; set; }
+        [NotMapped]
+        public int manhole_count { get; set; }
         public CableMaster()
         {
             objPM = new PageMessage();

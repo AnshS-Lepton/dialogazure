@@ -113,7 +113,7 @@
                 }
             </select>
         </div>
-        <label class="control-label col-md-2 col-sm-2" for="txtExLength">Execution Length:</label>
+        <label class="control-label col-md-3 col-sm-2" for="txtExLength">Execution Length (km):</label>
         <div class="col-md-4">
             @Html.TextBoxFor(m => m.listExecutionRecords[i].execution_length, new { Name = string.Format("ExecutionMethod.listExecutionRecords[{0}].execution_length", i), @class = "form-control", @maxlength = "15" })
         </div>
