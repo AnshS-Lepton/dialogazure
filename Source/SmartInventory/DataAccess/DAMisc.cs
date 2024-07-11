@@ -1072,11 +1072,11 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public DbMessage saveLineEntityAssocition(string objLineEnAssocite, int pSystemId, string pEntityType, int userId)
+        public DbMessage saveLineEntityAssocition(string objLineEnAssocite, int pSystemId, string pEntityType, int userId, int pManholeCount)
         {
             try
             {
-                return repo.ExecuteProcedure<DbMessage>("fn_save_Entity_Assocition", new { p_line_associate_info = objLineEnAssocite, p_parent_system_id = pSystemId, p_parent_entity_type = pEntityType, p_user_id = userId }, true).FirstOrDefault();
+                return repo.ExecuteProcedure<DbMessage>("fn_save_Entity_Assocition", new { p_line_associate_info = objLineEnAssocite, p_parent_system_id = pSystemId, p_parent_entity_type = pEntityType, p_user_id = userId , p_manhole_count = pManholeCount }, true).FirstOrDefault();
             }
             catch { throw; }
         }
