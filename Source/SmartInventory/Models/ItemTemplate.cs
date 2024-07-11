@@ -695,8 +695,7 @@ namespace Models
         public double trench_width { get; set; }
         [Required(ErrorMessage = "Trench height can't be blank")]
         //[Range(1, int.MaxValue, ErrorMessage = "Trench height greater than 0")]
-        public double trench_height { get; set; }
-        [Required]
+        public double trench_height { get; set; }       
         public string trench_type { get; set; }
         [NotMapped]
         public IList<DropDownMaster> trenchTypeIn { get; set; }

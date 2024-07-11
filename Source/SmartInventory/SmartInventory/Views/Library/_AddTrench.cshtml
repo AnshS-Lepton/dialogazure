@@ -46,9 +46,10 @@
 }
 @{
     var strataType = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.strata_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var trenchType = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.trench_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var surfaceType = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.surface_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var mcgWard = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.mcgm_ward.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
-    var manuFactureYear = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.manufacture_year.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;    
+    var manuFactureYear = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.manufacture_year.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
 }
 <!DOCTYPE html>
 <div>
@@ -275,10 +276,14 @@
                                 @Html.TextBoxFor(m => m.pin_code, new { @class = "form-control", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "6", @minlength = "6", autocomplete = "new-password" })
                                 @Html.ValidationMessageFor(model => model.pin_code)
                             </div>
-                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023<i class="clsMandatory">*</i>:</label>
-                            <div class="col-md-4 col-sm-4 ">
-                                @Html.DropDownListFor(m => m.trench_type, new SelectList(Model.trenchTypeIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "Select Trench Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
-                            </div>
+                            @if (trenchType != null)
+                            {
+                                <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023:</label>
+                                <div class="col-md-4 col-sm-4 ">
+                                    @Html.DropDownListFor(m => m.trench_type, new SelectList(Model.trenchTypeIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "Select Trench Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                </div>
+
+                            }
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_120:</label>
