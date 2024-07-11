@@ -4765,43 +4765,43 @@ namespace SmartInventory.Controllers
                 objCustomer.geom = GetPointTypeParentGeom(objCustomer.pSystemId, objCustomer.pEntityType);
             }
 
-            if (objCustomer.networkIdType == NetworkIdType.A.ToString() && objCustomer.system_id == 0)
-            {
-                //GET AUTO NETWORK CODE...Temporary Solution:== Pass the parent_sysId=0 and parent_eType=""  to sove the customer network id duplicacy.
-                var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Customer.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCustomer.geom, parent_eType = "", parent_sysId = 0 });
-                if (isDirectSave == true)
-                {
-                    //GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
-                    objCustomer = GetCustomerDetail(objCustomer.pSystemId, objCustomer.pEntityType, objCustomer.networkIdType, objCustomer.system_id, objCustomer.geom);
-                    // INITIALIZE DEFAULT VALUE FOR REQUIRED FIELDS
-                    objCustomer.customer_name = objNetworkCodeDetail.network_code;
-                    objCustomer.parent_system_id = pSystemId;
-                    objCustomer.parent_entity_type = pEntitytype;
-                    objCustomer.parent_network_id = pNetworkId;
-                }
-                //SET NETWORK CODE
-                objCustomer.network_id = objNetworkCodeDetail.network_code;
-                objCustomer.sequence_id = objNetworkCodeDetail.sequence_id;
-            }
-            if (string.IsNullOrEmpty(objCustomer.customer_name))
-            {
-                objCustomer.customer_name = objCustomer.network_id;
-            }
-            if (TryValidateModel(objCustomer))
-            {
-                //if (objCustomer.objIspEntityMap.AssociateStructure != 0)
-                //{
-                //    objCustomer.objIspEntityMap.structure_id = Convert.ToInt32(objCustomer.objIspEntityMap.AssociateStructure);
-                //}
-                objCustomer.objIspEntityMap.structure_id = Convert.ToInt32(objCustomer.objIspEntityMap.AssociateStructure);
-                //objCustomer.objIspEntityMap.structure_id = objCustomer.AssociateStructure != 0 ? objCustomer.AssociateStructure : objCustomer.objIspEntityMap.structure_id;
-                objCustomer.objIspEntityMap.shaft_id = objCustomer.objIspEntityMap.AssoType == "Floor" ? 0 : objCustomer.objIspEntityMap.shaft_id;
-                if (string.IsNullOrEmpty(objCustomer.objIspEntityMap.AssoType))
-                {
-                    objCustomer.objIspEntityMap.shaft_id = 0; objCustomer.objIspEntityMap.floor_id = 0;
-                }
-                if (objCustomer.objIspEntityMap.structure_id == 0)
-                {
+			if (objCustomer.networkIdType == NetworkIdType.A.ToString() && objCustomer.system_id == 0)
+			{
+				//GET AUTO NETWORK CODE...Temporary Solution:== Pass the parent_sysId=0 and parent_eType=""  to sove the customer network id duplicacy.
+				var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Customer.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCustomer.geom, parent_eType = "", parent_sysId = 0 });
+				if (isDirectSave == true)
+				{
+					//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
+					objCustomer = GetCustomerDetail(objCustomer.pSystemId, objCustomer.pEntityType, objCustomer.networkIdType, objCustomer.system_id, objCustomer.geom);
+					// INITIALIZE DEFAULT VALUE FOR REQUIRED FIELDS
+					objCustomer.customer_name = objNetworkCodeDetail.network_code;
+					objCustomer.parent_system_id = pSystemId;
+					objCustomer.parent_entity_type = pEntitytype;
+					objCustomer.parent_network_id = pNetworkId;
+				}
+				//SET NETWORK CODE
+				objCustomer.network_id = objNetworkCodeDetail.network_code;
+				objCustomer.sequence_id = objNetworkCodeDetail.sequence_id;
+			}
+			if (string.IsNullOrEmpty(objCustomer.customer_name))
+			{
+				objCustomer.customer_name = objCustomer.network_id;
+			}
+			if (TryValidateModel(objCustomer))
+			{
+				//if (objCustomer.objIspEntityMap.AssociateStructure != 0)
+				//{
+				//    objCustomer.objIspEntityMap.structure_id = Convert.ToInt32(objCustomer.objIspEntityMap.AssociateStructure);
+				//}
+				objCustomer.objIspEntityMap.structure_id = Convert.ToInt32(objCustomer.objIspEntityMap.AssociateStructure);
+				//objCustomer.objIspEntityMap.structure_id = objCustomer.AssociateStructure != 0 ? objCustomer.AssociateStructure : objCustomer.objIspEntityMap.structure_id;
+				objCustomer.objIspEntityMap.shaft_id = objCustomer.objIspEntityMap.AssoType == "Floor" ? 0 : objCustomer.objIspEntityMap.shaft_id;
+				if (string.IsNullOrEmpty(objCustomer.objIspEntityMap.AssoType))
+				{
+					objCustomer.objIspEntityMap.shaft_id = 0; objCustomer.objIspEntityMap.floor_id = 0;
+				}
+				if (objCustomer.objIspEntityMap.structure_id == 0 && objCustomer.system_id > 0 )
+				{
 
                     var parentDetails = new BLMisc().getParentInfo(new NetworkCodeIn() { eType = EntityType.Customer.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCustomer.longitude + " " + objCustomer.latitude, parent_eType = "", parent_sysId = 0 });
                     if (parentDetails != null)
