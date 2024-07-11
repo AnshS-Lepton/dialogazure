@@ -43,10 +43,6 @@ CREATE TABLE IF NOT EXISTS public.temp_connection_info
 
 
 
-
-
-
-
 CREATE OR REPLACE FUNCTION public.fn_validate_splicing(
 	vuserid integer,
 	p_splicing_type character varying)
