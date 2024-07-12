@@ -144,6 +144,7 @@
     <Compile Include="BLExportData.cs" />
     <Compile Include="BLExportReportLog.cs" />
     <Compile Include="BLKPIMaster.cs" />
+    <Compile Include="BLLocationDelta.cs" />
     <Compile Include="BLSlack.cs" />
     <Compile Include="BLTemp\BLTempCDBAttributes.cs" />
     <Compile Include="BLTemp\BLTempRow.cs" />
