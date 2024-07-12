@@ -572,8 +572,6 @@ $BODY$;
 
 
 
-
-
 INSERT INTO public.module_master(
 module_name, module_description, created_by, created_on,  type, is_active, module_abbr, parent_module_id, module_sequence, is_offline_enabled)
 VALUES ('Bulk Splicing DataUploader', 'Bulk Splicing DataUploader', 1,now(),'Web',true,'BLK-SDU',(select id from module_master where module_name='Wireline Tools'),2,false);
