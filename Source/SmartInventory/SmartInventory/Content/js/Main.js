@@ -31956,7 +31956,7 @@ var Main = function () {
             }
         },
         AuditLogExportReportLog: function (geom, modeType, radius, obj, isAuditlogReport) {
-            popup.LoadModalDialog('PARENT', 'Report/EntityExportReportLog', {
+            popup.LoadModalDialog('PARENT', 'Report/AuditlogExportReportLog', {
                 eType: ''
             }, "Audit Report Log", 'modal-lg');
         },
