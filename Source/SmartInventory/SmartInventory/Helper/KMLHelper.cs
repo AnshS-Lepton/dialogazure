@@ -321,11 +321,16 @@ namespace SmartInventory.Helper
                             // string t = Convert.ToString(row["geom"]).Substring(11, Convert.ToString(row["geom"]).Length - 13);
 
                             //string t = Convert.ToString(row["geom"]).Replace("LINESTRING", "").Replace("(", "").Replace(")", "").Trim();
-                            string[] x = (Convert.ToString(row["geom"]).Replace("LINESTRING", "").Replace("(", "").Replace(")", "").Trim()).Split(',');
-                            foreach (string y in x)
-                            {
-                                sbLine.Append(y.Split(' ')[0] + "," + y.Split(' ')[1] + "," + 0 + " ");
-                            }
+                            //string[] x = (Convert.ToString(row["geom"]).Replace("LINESTRING", "").Replace("(", "").Replace(")", "").Trim()).Split(',');
+                            //foreach (string y in x)
+                            //{
+                            //    sbLine.Append(y.Split(' ')[0] + "," + y.Split(' ')[1] + "," + 0 + " ");
+                            //}
+
+
+                            string x = Convert.ToString(row["geom"]).Replace("LINESTRING", "").Replace("(", "").Replace(")", "").Trim();
+                            x = x.Replace(",", "#").Replace(" ", ",").Replace("#",",0 ");
+                            sbLine.Append(x);
                         }
                         sbLine.Append("</coordinates></LineString></Placemark>");
                     }

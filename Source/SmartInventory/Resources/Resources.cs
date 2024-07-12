@@ -10385,7 +10385,13 @@ namespace Resources {
                 return resourceProvider.GetResource("SI_OSP_CAB_NET_FRM_074", CultureInfo.CurrentUICulture.Name) as string;
             }
         }
-
+        public static string SI_OSP_CAB_NET_FRM_077
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_CAB_NET_FRM_077", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
         /// <summary>Cable Arial Location.</summary>
         public static string SI_OSP_CAB_NET_FRM_075
         {

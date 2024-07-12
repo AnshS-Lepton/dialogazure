@@ -633,7 +633,9 @@ namespace Models
 		public string parent_geom { get; set; }
 		[NotMapped]
 		public string parent_geom_type { get; set; }
-		public AssociateLineEntity()
+        [NotMapped]
+        public int manhole_count { get; set; }
+        public AssociateLineEntity()
 		{
 			listLineEntityInfo = new List<LineEntityInfo>();
 			pageMsg = new PageMessage();

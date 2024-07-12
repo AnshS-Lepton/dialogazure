@@ -339,13 +339,13 @@
                             <div class="col-md-4 col-sm-4  mrgn_btm">
                                 @Html.TextBoxFor(m => m.calculated_length, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
                             </div>
-                            @if (Model.system_id == 0)
+                            @*@if (Model.system_id == 0)
                             {
                                 <label class="control-label col-md-2 col-sm-2 ">No of Ducts Created:</label>
                                 <div class="col-md-4 col-sm-4  mrgn_btm">
                                     @Html.DropDownListFor(m => m.no_of_ducts_created, new SelectList(Model.NoofDuctsCreated.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
                                 </div>
-                            }
+                            }*@
                             <label class="control-label col-md-2 col-sm-2 " for="txtSubAreaName">Slack Count:</label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
                                 @Html.TextBoxFor(m => m.total_slack_count, new { @class = "form-control clsReadOnly", @onkeypress = "return si.allowNumberwithOneDot(event,'calculated_length');", @readonly = true, @maxlength = "10" })
