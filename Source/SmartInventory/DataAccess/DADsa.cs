@@ -47,6 +47,8 @@ namespace DataAccess
                 {
                     objDsa.created_by = userId;
                     objDsa.created_on = DateTimeHelper.Now;
+                    objDsa.status = (string.IsNullOrEmpty(objDsa.status) ? "A" : objDsa.status);
+
                     var resultItem = repo.Insert(objDsa);
                     // Save geometry
                     InputGeom geom = new InputGeom();
@@ -133,6 +135,8 @@ namespace DataAccess
                 {
                     objCsa.created_by = userId;
                     objCsa.created_on = DateTimeHelper.Now;
+                    objCsa.status = (string.IsNullOrEmpty(objCsa.status) ? "A" : objCsa.status);
+
                     //objCsa.building_code = objCsa.building_code;
                     var resultItem = repo.Insert(objCsa);
                     //TRANSACTION NEED TO IMPLEMENT THERE...
