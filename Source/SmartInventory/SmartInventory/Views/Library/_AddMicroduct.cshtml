@@ -381,6 +381,9 @@
     });
     function formPost() {
         debugger;
+
+              
+
         $('#no_of_ways').val($("#ddlNoOfWays").val());
         if ($('#txtbomsubcategory').val() == '') {
             $('#txtbomsubcategory').next().addClass('input-validation-error');
@@ -388,11 +391,13 @@
         }
         if ($('#ddlNoOfWays').val() == '') {
             $('#ddlNoOfWays').next().addClass('input-validation-error');
+            $('a[href="#ItemSpecf"]').tab('show');
             return false;
-        }
+        }       
         else {
             $("#frmAddMicroduct").submit();
         }
+        
     }
 
 </script>
