@@ -18,7 +18,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # Self hosted runner
-    runs-on: [Product_SIT] #[windows-2019]
+    runs-on: [self-hosted] #[windows-2019]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
