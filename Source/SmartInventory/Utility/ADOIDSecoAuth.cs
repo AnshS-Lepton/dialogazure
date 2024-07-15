@@ -367,78 +367,8 @@ namespace Utility
             }
         }
 
-        public bool GenerateLdapToken(string userName, string password, bool isAgent, string source, out SecoApiResponse secoApiResponce, out LDAPAuthentication aLDAPAuthentication)
-        {
-            secoApiResponce = new SecoApiResponse();
-            bool ldap = false;
-            
-            try
-            {
-                XmlDocument xmlDocumentSoapResponse = new XmlDocument();
-                ldap = GetLDAPResponseObject(xmlDocumentSoapResponse, out aLDAPAuthentication, isAgent, userName, password);
-            }
-            catch (Exception ex)
-            {
-                WriteDebugLog("Soap Exception " + ex.Message + ex.StackTrace.ToString());
-                aLDAPAuthentication = null;
-                secoApiResponce = null;
-                ldap = false;
-            }
-            return ldap;
-        }
-        private bool GetLDAPResponseObject(XmlDocument xmlDocument, out LDAPAuthentication aLDAPAuthentication, bool isAgent, string userName,string password)
-        {
-            bool isldapEnable = false;
-            try
-            {
-                aLDAPAuthentication = new LDAPAuthentication();
-                aLDAPAuthentication.user_id = 0;
-                aLDAPAuthentication.user_name = userName;
-                Dictionary<string, string> dic = new Dictionary<string, string>();
-                isldapEnable = isAuthenticated(userName, password);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return isldapEnable;
-
-        }
-
-        private bool isAuthenticated(string username, string password)
-        {
-            string LDAPIP = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["LDAP_IP"]).Trim();
-            string errMsg = "";
-            if (String.IsNullOrWhiteSpace(LDAPIP) || String.IsNullOrEmpty(LDAPIP))
-            {
-
-                return true;
-            }
-            else
-            {
-                try
-                {
-                    System.DirectoryServices.DirectoryEntry entry = default(System.DirectoryServices.DirectoryEntry);
-                    DirectorySearcher searcher = default(DirectorySearcher);
-                    entry = new System.DirectoryServices.DirectoryEntry(LDAPIP);
-                    entry.Username = username;// +"@" + domain;
-                    entry.Password = password;
-                    entry.AuthenticationType = AuthenticationTypes.Secure;
-                    searcher = new DirectorySearcher(entry);
-                    //searcher.PropertiesToLoad.Add("cn");
-                    System.DirectoryServices.SearchResult result = searcher.FindOne();
-                    if (null == result)
-                        return false;
-                }
-                catch (Exception ex)
-                {
-                    errMsg = ex.Message;
-                    return false;
-
-                }
-                return true;
-            }
-        }
+        
+       
     }
     public class SecoApiResponse
     {
