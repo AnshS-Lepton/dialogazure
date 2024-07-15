@@ -17,6 +17,7 @@ using SmartInventory.Settings;
 using System.Net;
 using System.IO;
 using Utility;
+using System.DirectoryServices;
 
 
 namespace SmartInventoryServices.Providers
@@ -449,15 +450,32 @@ namespace SmartInventoryServices.Providers
                             }
                             else if (ApplicationSettings.isLDAPEnabled && user.user_type.ToLower() == "own")
                             {
-                                SecoApiResponse secoApiResponse = null;
-                                LDAPAuthentication aLDAPAuthentication = null;
-                                ADOIDSecoAuth aDOIDSecoAuth = new ADOIDSecoAuth();
-                                bool ldap = false;
-                                ldap = aDOIDSecoAuth.GenerateLdapToken(userName, MiscHelper.DecodeTo64(password), false, Source, out secoApiResponse, out aLDAPAuthentication);
-                                if (!ldap)
+                               
+                                string LDAPIP = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["LDAP_IP"]).Trim();
+                               
+                                if (!String.IsNullOrWhiteSpace(LDAPIP) || !String.IsNullOrEmpty(LDAPIP))
                                 {
-                                    user = null;
+                                   
+                                    try
+                                    {
+                                        System.DirectoryServices.DirectoryEntry entry = default(System.DirectoryServices.DirectoryEntry);
+                                        DirectorySearcher searcher = default(DirectorySearcher);
+                                        entry = new System.DirectoryServices.DirectoryEntry(LDAPIP);
+                                        entry.Username = userName;
+                                        entry.Password = MiscHelper.DecodeTo64(password); 
+                                        entry.AuthenticationType = AuthenticationTypes.Secure;
+                                        searcher = new DirectorySearcher(entry);
+                                        System.DirectoryServices.SearchResult result = searcher.FindOne();
+                                    }
+                                    catch(Exception ex)
+                                    {
+                                        ErrorLogHelper logHelper = new ErrorLogHelper();
+                                        logHelper.ApiLogWriter("GrantResourceOwnerCredentials()", "OAuthProvider", LDAPIP, ex);
+                                        user = null;
+                                    }
+                                   
                                 }
+                                else { user = null; }
                             }
                             else
                             {
