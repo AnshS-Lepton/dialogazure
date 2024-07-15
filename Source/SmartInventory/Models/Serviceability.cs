@@ -119,4 +119,64 @@ namespace Models
     {
         public List<UpdateDesignIDInputs> InputDetails { get; set; }
     }
+    public class EntityLocationDetails
+    {
+        public string entity_id { get; set; }
+        public string entity_type { get; set; }
+        public string province { get; set; }
+        public string region { get; set; }
+
+        public location location { get; set; }
+
+    }
+    public class location
+    {
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+    }
+    public class IntermediateEntitiesDetails
+    {
+        public SourceEntity SourceEntity { get; set; }
+        public DestinationEntity DestinationEntity { get; set; }
+        public List<IntermediateEntities> IntermediateEntities { get; set; }
+        public double distance_meters { get; set; }
+        public IntermediateEntitiesDetails()
+        {
+            
+            SourceEntity=new SourceEntity();
+            DestinationEntity=new DestinationEntity();
+            IntermediateEntities = new List<IntermediateEntities>();
+
+        }
+    }
+    public class SourceEntity
+    {
+        public string entity_type { get; set; }
+        public string entity_id { get; set; }
+    }
+    public class DestinationEntity
+    {
+        public string entity_type { get; set; }
+        public string entity_id { get; set; }
+    }
+    public class IntermediateEntities
+    {
+        public string entity_type { get; set; }
+        public string entity_id { get; set; }
+    }
+    public class UpdateAlarmStatusetails
+    {
+        public string reference_id { get; set; }
+        public string alarm_reason { get; set; }
+        public List<impacted_entities> Impacted_entities { get; set; }
+    }
+    public class impacted_entities
+    {
+        public string entity_type { get; set; }
+        public string entity_id { get; set; }
+        public string port_number { get; set; }
+        public string alarm_status { get; set; }
+        public string comments { get; set; }
+    }
+
 }
