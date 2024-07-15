@@ -6678,6 +6678,10 @@ namespace SmartInventory.Controllers
                         if (selectedlayerids.Count > 0)
                             objAssociationEntitiesReport.lstLayers = objAssociationEntitiesReport.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).ToList();
                     }
+                    else
+                    {
+                        objAssociationEntitiesReport.lstLayers = objAssociationEntitiesReport.lstLayers;
+                    }
 
                     string parentFolder = $"AssociationReport_{DateTimeHelper.Now.ToString("ddMMyyyy")}-{DateTimeHelper.Now.ToString("HHmmssfff")}_{userdetails.user_id}";
                     string attachmentLocalPath = Path.Combine(ApplicationSettings.AttachmentLocalPath, ftpFolder);
