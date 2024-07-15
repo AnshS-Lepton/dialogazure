@@ -12462,6 +12462,7 @@ namespace SmartInventory.Controllers
                         exportReportLog.asbuilt = totalAsBuiltCount;
                         exportReportLog.dormant = totalDormantCount;
                         exportReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+                        exportReportLog.log_type = "audit";
                         exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
                         try
                         {
@@ -12643,6 +12644,7 @@ namespace SmartInventory.Controllers
                         exportReportLog.asbuilt = totalAsBuiltCount;
                         exportReportLog.dormant = totalDormantCount;
                         exportReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+                        exportReportLog.log_type = "audit";
                         exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
                         dtFilter = null;
                         try
@@ -12814,6 +12816,23 @@ namespace SmartInventory.Controllers
                 workbook.Write(xfile);
                 xfile.Close();
             }
+        }
+        public ActionResult AuditlogExportReportLog(ExportReportLogVM ObjExportReportLogVM, int page = 0, string sort = "", string sortdir = "")
+        {
+            var usrDetail = (User)Session["userDetail"];
+            if (sort != "" || page != 0)
+            {
+                ObjExportReportLogVM.objGridAttributes = new CommonGridAttributes();
+            }
+            var timeInteval = ApplicationSettings.PrintLogTimeInterval;
+            ObjExportReportLogVM.objGridAttributes.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
+            ObjExportReportLogVM.objGridAttributes.currentPage = page == 0 ? 1 : page;
+            ObjExportReportLogVM.objGridAttributes.sort = sort;
+            ObjExportReportLogVM.objGridAttributes.orderBy = sortdir;
+            ObjExportReportLogVM.ExportLog = new BLExportReportLog().GetAuditlogExportExportLogList(ObjExportReportLogVM.objGridAttributes, usrDetail.user_id, timeInteval);
+            ObjExportReportLogVM.objGridAttributes.totalRecord = ObjExportReportLogVM.ExportLog != null && ObjExportReportLogVM.ExportLog.Count > 0 ? ObjExportReportLogVM.ExportLog[0].totalRecords : 0;
+            Session["EntityExportLog"] = ObjExportReportLogVM.objGridAttributes;
+            return PartialView("_AuditLogEntityExportReportLog", ObjExportReportLogVM);
         }
     }
 }
