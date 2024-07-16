@@ -3208,7 +3208,9 @@ namespace SmartInventoryServices.Controllers
             objCableIn.LstCDBAttribute.lstFiber = objDDL.Where(x => x.dropdown_type == DropDownType.Fiber_Type_LOV.ToString()).ToList();
             objCableIn.LstCDBAttribute.lstOperator = objDDL.Where(x => x.dropdown_type == DropDownType.Operator_Type_LOV.ToString()).ToList();
             objCableIn.listaerialLocation= objDDL.Where(x => x.dropdown_type == DropDownType.Aerial_Location.ToString()).ToList();
-            var _objDDL = new BLMisc().GetDropDownList("");
+			objCableIn.listALocation = objDDL.Where(x => x.dropdown_type == DropDownType.A_location.ToString()).ToList();
+			objCableIn.listBLocation = objDDL.Where(x => x.dropdown_type == DropDownType.A_location.ToString()).ToList();
+			var _objDDL = new BLMisc().GetDropDownList("");
 			objCableIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objCableIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
 		}

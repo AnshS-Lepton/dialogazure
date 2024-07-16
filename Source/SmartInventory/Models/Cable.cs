@@ -110,8 +110,12 @@ namespace Models
         public List<WorkorderCodeMaster> lstBindWorkorderCode { get; set; }
         [NotMapped]
         public List<PurposeCodeMaster> lstBindPurposeCode { get; set; }
+		[NotMapped]
+		public List<DropDownMaster> listALocation { get; set; }
+		[NotMapped]
+		public List<DropDownMaster> listBLocation { get; set; }
 
-        [NotMapped]
+		[NotMapped]
         public string ispLineGeom { get; set; }
         public int structure_id { get; set; }
         [NotMapped]
@@ -232,7 +236,11 @@ namespace Models
         public string splitting_entitytype { get; set; }
         [NotMapped]
         public int? manhole_count { get; set; }
-        public CableMaster()
+		[Required]
+		public string a_location_code { get; set; }
+		[Required]
+		public string b_location_code { get; set; }
+		public CableMaster()
         {
             objPM = new PageMessage();
             lstTP = new List<NetworkDtl>();
@@ -245,7 +253,7 @@ namespace Models
             lstBindPlanningCode = new List<PlanningCodeMaster>();
             lstBindWorkorderCode = new List<WorkorderCodeMaster>();
             lstBindPurposeCode = new List<PurposeCodeMaster>();
-            EntityReference = new EntityReference();
+			EntityReference = new EntityReference();
             LstCDBAttribute = new CDBAttribute();
             purpose_id = 0;
             planning_id = 0;

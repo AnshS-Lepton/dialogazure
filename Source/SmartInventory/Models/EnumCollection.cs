@@ -275,8 +275,10 @@ namespace Models
         Route_Type,
         type,
         execution_Method,
-        Spliceclosure_type
-    }
+        Spliceclosure_type,
+		A_location
+
+	}
     public enum VendorType
     {
         Own,
