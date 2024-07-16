@@ -10,6 +10,7 @@ using BusinessLogics;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.OAuth;
 using Models;
+using Models.API;
 using Newtonsoft.Json;
 using Utility;
 
@@ -75,7 +76,17 @@ namespace IntegrationServices.Filters
                 transaction_id = obj.transaction_id;
                 in_date_time = obj.in_date_time;
                 if (filterContext.ActionArguments.Count > 0)
-                    obj.request = JsonConvert.SerializeObject(filterContext.ActionArguments["data"]);
+                {
+                    if (filterContext.ActionArguments.ContainsKey("data"))
+                    {
+                        obj.request = JsonConvert.SerializeObject(filterContext.ActionArguments["data"]);
+                    }
+                    else
+                    {
+                        obj.request = JsonConvert.SerializeObject(filterContext.ActionArguments);
+                    }
+                }
+                //obj.request = JsonConvert.SerializeObject(filterContext.ActionArguments["data"]);
                 //obj.os_version = ticket.Properties.Dictionary.FirstOrDefault(x => x.Key == "IOS_Version").Value;
                 //additionally putted 
                 System.Web.HttpContext.Current.Items["filterobj"] = obj;
@@ -115,6 +126,7 @@ namespace IntegrationServices.Filters
                 obj.response = actionExecutedContext.ActionContext.Response.Content.ReadAsStringAsync().Result.ToString();
                 //temporary fix
                 //new BLAPIRequestLog().SavePartnerApiRequestLog(obj);
+                
 
                 ApiLogHelper.GetInstance.WriteApiLog(obj);
 
@@ -126,6 +138,8 @@ namespace IntegrationServices.Filters
             }
         }
     }
+
+    
 
     /// <summary>
     /// Helper method to decrypt the OWIN ticket

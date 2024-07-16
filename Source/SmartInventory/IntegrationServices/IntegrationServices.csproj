@@ -211,6 +211,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DistanceController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OSSIntegrationController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Controllers\TicketController.cs" />
@@ -276,6 +277,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery-3.7.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\CustomAction\" />
+    <Folder Include="Views\OSSIntegration\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccess.DBHelpers;
 using Models;
+using Newtonsoft.Json;
+using NPOI.POIFS.Properties;
 
 namespace DataAccess
 {
@@ -53,5 +56,57 @@ namespace DataAccess
             catch { throw; }
         }
 
+        public EntityLocationDetails GetEntityLocation(string entity_type, string entity_network_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<EntityLocationDetails>("fn_api_get_entitylocation", new { p_entity_type = entity_type, p_entity_network_id = entity_network_id }, true).FirstOrDefault();
+
+            }
+            catch (Exception )
+            {
+                throw ;
+            }
+        }
+        public IntermediateEntitiesDetails GetIntermediateEntities(string source_entity_type, string source_id, string destination_entity_type, string destination_id, string port)
+        {
+            try
+            {
+
+                return repo.ExecuteProcedure<IntermediateEntitiesDetails>("fn_api_get_intermediateentities", new
+                {
+                    p_source_entity_type = source_entity_type,
+                    p_source_id = source_id,
+                    p_destination_entity_type = destination_entity_type,
+                    p_destination_id = destination_id,
+                    p_port = Convert.ToInt32(port)
+                }, true).FirstOrDefault();
+
+
+            }
+
+            catch (Exception )
+            {
+                throw ;
+            }
+        }
+        public apiresponse UpdateAlarmStatusetails(impacted_entities obj)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<apiresponse>("fn_api_Update_AlarmStatusdetails", new
+                {
+
+                    p_network_id = obj.entity_id,
+                    p_entity_type = obj.entity_type,
+                    p_port_number=Convert.ToInt32( obj.port_number),
+                    p_alarm_status=obj.alarm_status,
+                    p_comments=obj.comments
+
+
+                }).FirstOrDefault();
+            }
+            catch { throw; }
+        }
     }
 }
