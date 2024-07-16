@@ -36,8 +36,8 @@ namespace IntegrationServices.Controllers
 					}
 					else
 					{
-						//return this.Request.CreateResponse(HttpStatusCode.NoContent, new { status = 204, message = "No Delta Found!" });
-						return Request.CreateResponse(HttpStatusCode.NoContent);
+						return this.Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "No Delta Found!" });
+						//return Request.CreateResponse(HttpStatusCode.NoContent);
 						//var noContentResponse = Request.CreateResponse(HttpStatusCode.NoContent, response);
 						//noContentResponse.Headers.Add("X-Message", "No Delta Found!"); // Adding the message in headers
 						//return noContentResponse;
