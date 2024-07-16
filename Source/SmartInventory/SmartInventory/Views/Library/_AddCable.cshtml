@@ -317,7 +317,6 @@
                             </div>
                             <label class="control-label col-md-2 col-sm-2">B Location:<i class="clsMandatory">*</i></label>.
                             <div class="col-md-4 col-sm-4 mrgn_btm">
-
                                 @Html.DropDownListFor(m => m.b_location_code, new SelectList(Model.listBLocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Text", "Value"), "-Select-", new { @class = "chosen-select form-control " })
                             </div>
                             <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@Resources.Resources.SI_OSP_GBL_GBL_GBL_009:</label>
