@@ -17,7 +17,7 @@ namespace IntegrationServices.Controllers
 {
     [Authorize]
     [RoutePrefix("OSSIntegration/v2.0")]
-    [Filters.CustomAction]
+    [Filters.CustomActionForXml]
 
     public class OSSIntegrationController : ApiController
     {
