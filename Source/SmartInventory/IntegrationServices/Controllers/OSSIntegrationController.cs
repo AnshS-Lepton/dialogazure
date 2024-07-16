@@ -62,58 +62,6 @@ namespace IntegrationServices.Controllers
         }
 
         [HttpGet]
-        [Route("GetIntermediateEntities_OLD")]
-        public ApiResponse<dynamic> GetIntermediateEntities_OLD(string source_entity_type, string source_id, string destination_entity_type, string destination_id, string port)
-        {
-            var response = new ApiResponse<dynamic>();
-            connectionInfoPath objConnectionPath = new connectionInfoPath();
-            List<ConnectionInfo> listConnections = new List<ConnectionInfo>();
-            IntermediateEntities objIntermediateEntities = new IntermediateEntities();
-            IntermediateEntitiesDetails objIntermediateEntitiesDetails = new IntermediateEntitiesDetails();
-            try
-            {
-                var SystemID = new BLServiceability().GetSystemID(source_entity_type, source_id);
-
-                objConnectionPath = new BLServiceability().GetIntermediateEntities_OLD(source_entity_type, source_id, Convert.ToInt32(SystemID), port);
-                if (objConnectionPath.lstConnectionInfo != null)
-                {
-                    listConnections = objConnectionPath.lstConnectionInfo;
-                    listConnections = listConnections.Where(x => (x.source_entity_type.ToUpper() + x.source_system_id.ToString()) != (x.destination_entity_type.ToUpper() + x.destination_system_id.ToString())).ToList();
-                    listConnections = listConnections.Where(x => (x.source_network_id.ToUpper()) != (x.destination_network_id.ToUpper())).ToList();
-                    foreach (var connectionInfo in listConnections)
-                    {
-                        if (connectionInfo.source_entity_title != "Cable")
-                        {
-                            objIntermediateEntities.entity_id = connectionInfo.source_network_id;
-                            objIntermediateEntities.entity_type = connectionInfo.source_entity_type;
-                            objIntermediateEntitiesDetails.IntermediateEntities.Add(objIntermediateEntities);
-                            objIntermediateEntities = new IntermediateEntities();
-                        }
-                    }
-                    objIntermediateEntitiesDetails.SourceEntity.entity_id = source_id;
-                    objIntermediateEntitiesDetails.SourceEntity.entity_type = source_entity_type;
-                    objIntermediateEntitiesDetails.DestinationEntity.entity_id = destination_id;
-                    objIntermediateEntitiesDetails.DestinationEntity.entity_type = destination_entity_type;
-                    response.results = objIntermediateEntitiesDetails;
-                    response.status = StatusCodes.OK.ToString();
-
-                }
-                else
-                {
-                    response.status = StatusCodes.INVALID_INPUTS.ToString();
-                    response.error_message = "Error While Processing  Request.";
-                }
-            }
-            catch (Exception)
-            {
-
-                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                response.error_message = "Error While Processing  Request.";
-            }
-            return response;
-        }
-
-        [HttpGet]
         [Route("GetIntermediateEntities")]
         public ApiResponse<dynamic> GetIntermediateEntities(string requestID, string source_entity_type, string source_id, string destination_entity_type, string destination_id, string port)
         {
@@ -151,8 +99,6 @@ namespace IntegrationServices.Controllers
             return response;
         }
 
-
-
         [HttpPost]
         [Route("updateAlarmStatus")]
         
@@ -188,7 +134,7 @@ namespace IntegrationServices.Controllers
                             ErrorLogHelper logHelper = new ErrorLogHelper();
                             logHelper.ApiLogWriter("UpdateAlarmStatusetails()", "OSSIntegrationController", "", ex);
                             response.status = ((int)HttpStatusCode.InternalServerError).ToString();
-                            response.error_message = "Error While Processing  Request.";
+                            response.error_message = "Error While Processing  Request.";  
                         }
                     }
                 }

@@ -60,71 +60,18 @@ namespace DataAccess
         {
             try
             {
-
-                
-
                 return repo.ExecuteProcedure<EntityLocationDetails>("fn_api_get_entitylocation", new { p_entity_type = entity_type, p_entity_network_id = entity_network_id }, true).FirstOrDefault();
 
-
-
             }
-            catch (Exception e)
+            catch (Exception )
             {
-                throw e;
+                throw ;
             }
         }
-
-        public dynamic GetIntermediateEntities_OLD(string source_entity_type, string source_id, int systemID, string port)
-        {
-            systemID = 277464;
-            port = "1";
-            source_entity_type = "Cable";
-
-            try
-            {
-
-                return repo.ExecuteProcedure<connectionInfoPath>("fn_get_connection_info_path", new
-                {
-                    p_searchby = string.Empty,
-                    p_searchtext = string.Empty,
-                    P_PAGENO = 0,
-                    P_PAGERECORD = 0,
-                    P_SORTCOLNAME = string.Empty,
-                    P_SORTTYPE = string.Empty,
-                    p_entity_system_id = systemID,
-                    p_entity_port_no = Convert.ToInt32(port),
-                    p_entity_type = source_entity_type
-                }, true).FirstOrDefault();
-
-
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public dynamic GetSystemID(string source_entity_type, string source_id)
-        {
-            try
-            {
-
-                
-                return repo.ExecuteProcedure<dynamic>("fn_api_GetSystemID", new { p_entity_type = source_entity_type, p_entity_network_id = source_id, }, false).FirstOrDefault();
-
-
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
         public IntermediateEntitiesDetails GetIntermediateEntities(string source_entity_type, string source_id, string destination_entity_type, string destination_id, string port)
         {
             try
             {
-                
 
                 return repo.ExecuteProcedure<IntermediateEntitiesDetails>("fn_api_get_intermediateentities", new
                 {
@@ -138,14 +85,11 @@ namespace DataAccess
 
             }
 
-            catch (Exception e)
+            catch (Exception )
             {
-                throw e;
+                throw ;
             }
         }
-
-       
-
         public apiresponse UpdateAlarmStatusetails(impacted_entities obj)
         {
             try
@@ -158,8 +102,6 @@ namespace DataAccess
                     p_port_number=Convert.ToInt32( obj.port_number),
                     p_alarm_status=obj.alarm_status,
                     p_comments=obj.comments
-
-
 
 
                 }).FirstOrDefault();
