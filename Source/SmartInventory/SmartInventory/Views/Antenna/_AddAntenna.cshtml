@@ -164,7 +164,15 @@
                                 }:
                             </label>
                             <div class="col-md-9">
-                                @Html.TextBoxFor(m => m.network_name, new { @class = "form-control", @id = "txtNetworkName", @maxlength = "50" })
+                                @*@Html.TextBoxFor(m => m.network_name, new { @class = "form-control", @id = "txtNetworkName", @maxlength = "50" })*@
+                                @Html.TextBoxFor(m => m.network_name,
+                           SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(
+                             new
+                             {
+                                 @id = "txtNetworkName",
+                                 @class = "form-control",
+                                 @maxlength = "50"
+                             }, (Model.networkIdType == "M" ? new { @required = true } : null)))
                             </div>
                         </div>
                         <div class="form-group">
