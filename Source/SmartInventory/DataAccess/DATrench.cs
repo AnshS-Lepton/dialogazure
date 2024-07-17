@@ -97,7 +97,9 @@ namespace DataAccess
                     objTrench.gis_design_id = TrenchInfo.gis_design_id;
                     objTrench.own_vendor_id = TrenchInfo.own_vendor_id;
                     objTrench.hierarchy_type = TrenchInfo.hierarchy_type;
-                    var TrenchResp = repo.Update(objTrench);
+					objTrench.a_location_code = TrenchInfo.a_location_code;
+					objTrench.b_location_code = TrenchInfo.b_location_code;
+					var TrenchResp = repo.Update(objTrench);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(TrenchResp.system_id, Models.EntityType.Trench.ToString(), TrenchResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Trench.ToString(), TrenchResp.province_id);
                     return TrenchResp;

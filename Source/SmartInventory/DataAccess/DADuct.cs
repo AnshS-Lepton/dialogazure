@@ -92,8 +92,10 @@ namespace DataAccess
                     objDuct.gis_design_id = DuctInfo.gis_design_id;
                     objDuct.hierarchy_type = DuctInfo.hierarchy_type;
                     objDuct.own_vendor_id = DuctInfo.own_vendor_id;
-                    //DuctInfo.served_by_ring = DuctInfo.served_by_ring;
-                    var DuctResp =  repo.Update(objDuct);
+					objDuct.a_location_code = DuctInfo.a_location_code;
+					objDuct.b_location_code = DuctInfo.b_location_code;
+					//DuctInfo.served_by_ring = DuctInfo.served_by_ring;
+					var DuctResp =  repo.Update(objDuct);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctResp.system_id, Models.EntityType.Duct.ToString(), DuctResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Duct.ToString(), DuctResp.province_id);
                     return DuctResp;

@@ -315,11 +315,18 @@
                                 @Html.TextBoxFor(m => m.a_city, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtProvinceName", autocomplete = "do-not-show-ac" })
                             </div>
 
-                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">B city Name:</label>
+                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">B City Name:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
                                 @Html.TextBoxFor(m => m.b_city, new { @class = "form-control clsReadOnly", @readonly = true, autocomplete = "do-not-show-ac" })
                             </div>
-
+                            <label class="control-label col-md-2 col-sm-2">A Location:<i class="clsMandatory">*</i></label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.a_location_code, new SelectList(Model.listALocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Text", "Value"), "-Select-", new { @class = "chosen-select form-control " })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2">B Location:<i class="clsMandatory">*</i></label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.b_location_code, new SelectList(Model.listBLocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Text", "Value"), "-Select-", new { @class = "chosen-select form-control " })
+                            </div>
                             <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_GBL_GBL_GBL_009:</label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
                                 @Html.TextBoxFor(m => m.pin_code, new { @class = "form-control", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "6", @minlength = "6", autocomplete = "new-password" })
@@ -340,12 +347,12 @@
                                 @Html.TextBoxFor(m => m.calculated_length, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
                             </div>
                             @*@if (Model.system_id == 0)
-                            {
-                                <label class="control-label col-md-2 col-sm-2 ">No of Ducts Created:</label>
-                                <div class="col-md-4 col-sm-4  mrgn_btm">
-                                    @Html.DropDownListFor(m => m.no_of_ducts_created, new SelectList(Model.NoofDuctsCreated.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
-                                </div>
-                            }*@
+        {
+            <label class="control-label col-md-2 col-sm-2 ">No of Ducts Created:</label>
+            <div class="col-md-4 col-sm-4  mrgn_btm">
+                @Html.DropDownListFor(m => m.no_of_ducts_created, new SelectList(Model.NoofDuctsCreated.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
+            </div>
+        }*@
                             <label class="control-label col-md-2 col-sm-2 " for="txtSubAreaName">Slack Count:</label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
                                 @Html.TextBoxFor(m => m.total_slack_count, new { @class = "form-control clsReadOnly", @onkeypress = "return si.allowNumberwithOneDot(event,'calculated_length');", @readonly = true, @maxlength = "10" })
