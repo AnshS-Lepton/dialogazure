@@ -96,7 +96,11 @@ namespace Models
         public List<WorkorderCodeMaster> lstBindWorkorderCode { get; set; }
         [NotMapped]
         public List<PurposeCodeMaster> lstBindPurposeCode { get; set; }
-        [NotMapped]
+		[NotMapped]
+		public List<DropDownMaster> listALocation { get; set; }
+		[NotMapped]
+		public List<DropDownMaster> listBLocation { get; set; }
+		[NotMapped]
         public IList<DropDownMaster> MCGMWardIn { get; set; }
         [NotMapped]
         public IList<DropDownMaster> StrataTypeIn { get; set; }
@@ -184,7 +188,11 @@ namespace Models
         public string splitting_system_id { get; set; }
         public string splitting_netwok_id { get; set; }
         public string splitting_entitytype { get; set; }
-        public TrenchMaster()
+		[Required]
+		public string a_location_code { get; set; }
+		[Required]
+		public string b_location_code { get; set; }
+		public TrenchMaster()
         {
             objPM = new PageMessage();
             lstTP = new List<NetworkDtl>();
