@@ -1189,7 +1189,7 @@
                     int count = 0;
                     <li>
                         <a href="#" class="iconBaricomoon maintoolbar clsExportReport" onclick="si.MenuReport.showMenu(this);" id="dvMainReport" title="Audit Log Report">
-                            <span class="icon-ExportReport"></span>
+                            <span class="icon-auditReport"></span>
                         </a>
                         @if (Model.lstUserModule.Contains("AUDIT_HISTORY_EXRPT") == true || Model.lstUserModule.Contains("AUDIT-HISTORY-LOG") == true || Model.lstUserModule.Contains("AUDIT-HISTORY-POLY") == true || Model.lstUserModule.Contains("AUDIT-HISTORY-RECT") == true || Model.lstUserModule.Contains("AUDIT-HISTORY-CIR") == true || Model.lstUserModule.Contains("RT-IF") == true)
                         {
@@ -1200,7 +1200,7 @@
                             <ul>
                                 <li>
                                     <a href="#" class="iconBaricomoon" title="Audit Log Report" onclick="si.AuditLogReport.AuditLogExportReport(null, null, null, this, true);">
-                                        <span class="icon-ExportReport"></span>
+                                        <span class="icon-auditReport"></span>
                                     </a>
                                 </li>
                                 @if (Model.lstUserModule.Contains("RT-IF"))
@@ -1268,7 +1268,7 @@
                     int count = 0;
                     <li>
                         <a href="#" class="iconBaricomoon maintoolbar clsExportReport" onclick="si.MenuReport.showMenu(this);" id="dvMainReport" title="Split Report">
-                            <span class="icon-ExportReport"></span>
+                            <span class="icon-splitReport"></span>
                         </a>
                         @if (Model.lstUserModule.Contains("SPLIT_EXRPT") == true || Model.lstUserModule.Contains("SPLIT-LOG") == true || Model.lstUserModule.Contains("SPLIT-POLY") == true || Model.lstUserModule.Contains("SPLIT-RECT") == true || Model.lstUserModule.Contains("SPLIT-CIR") == true || Model.lstUserModule.Contains("RT-IF") == true)
                         {
@@ -1279,7 +1279,7 @@
                             <ul>
                                 <li>
                                     <a href="#" class="iconBaricomoon" title="Split Report" onclick="si.splitReport.SplitExportReport(null, null, null, this, true);">
-                                        <span class="icon-ExportReport"></span>
+                                        <span class="icon-splitReport"></span>
                                     </a>
                                 </li>
                                 @if (Model.lstUserModule.Contains("RT-IF"))
