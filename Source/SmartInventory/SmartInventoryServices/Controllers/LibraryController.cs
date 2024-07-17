@@ -7452,6 +7452,8 @@ namespace SmartInventoryServices.Controllers
 			var objDDL = new BLMisc().GetDropDownList("");
 			objFMSMaster.lstBOMSubCategory = objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objFMSMaster.lstServedByRing = objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+			objFMSMaster.listILocationCode = objDDL.Where(x => x.dropdown_type == DropDownType.A_location.ToString()).ToList();
+			objFMSMaster.listFMSType = objDDL.Where(x => x.dropdown_type == DropDownType.FMS_Type.ToString()).ToList();
 		}
         private void BindFMSRoute(FMSMaster objFMSMaster)
         {
