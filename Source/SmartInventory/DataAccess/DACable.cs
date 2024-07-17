@@ -109,7 +109,9 @@ namespace DataAccess
                     objCable.outer_dimension = cableInfo.outer_dimension;
                     objCable.calculated_length_remark = cableInfo.calculated_length_remark;
                     objCable.is_acquire_from = cableInfo.is_acquire_from;
-                    if (objCable.total_core != cableInfo.total_core)
+                    objCable.a_location_code = cableInfo.a_location_code;
+					objCable.b_location_code = cableInfo.b_location_code;
+					if (objCable.total_core != cableInfo.total_core)
                     {
                         var checkConnection = new DAMisc().isPortConnected(objCable.system_id, EntityType.Cable.ToString(), objCable.specification, objCable.vendor_id, objCable.item_code);
                         if (checkConnection.status)
