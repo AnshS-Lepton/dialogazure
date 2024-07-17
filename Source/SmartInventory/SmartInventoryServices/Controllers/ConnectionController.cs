@@ -485,12 +485,52 @@ namespace SmartInventoryServices.Controllers
             {
                 List<bulkSplicingInput> objInput = ReqHelper.GetRequestData<List<bulkSplicingInput>>(data);
                 List<ConnectionInfoMaster> lstConnection = new List<ConnectionInfoMaster>();
-                List<ConnectionInfoMaster> lstValidateConnection = new List<ConnectionInfoMaster>();
                 bulkSplicingInput objSource = objInput.Where(m => m.connectionType == "Source").FirstOrDefault();
                 bulkSplicingInput objDestination = objInput.Where(m => m.connectionType == "Destination").FirstOrDefault();
+                if(objSource.from == 0 || objSource.to == 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Source start range can not be zero!";
+                }
+                else if (objSource.from > objSource.to)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Source start range can not be greater than end range!";
+                }
+                else if (objDestination.from == 0 || objDestination.to == 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Destination start range can not be zero!";
+                }
+                else if (objDestination.from > objDestination.to)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Destination start range can not be greater than end range!";
+                }
                 bulkSplicingInput objConnector = objInput.Where(m => m.connectionType == "Connector").FirstOrDefault();
+                var resp = new BLOSPSplicing().ValidateConnections(objSource.entityType, objSource.systemId, objSource.from, objSource.to);
+                var _resp = new BLOSPSplicing().ValidateConnections(objDestination.entityType, objDestination.systemId, objDestination.from, objDestination.to);
+                if (resp != null)
+                {
+                    if (resp.status == false)
+                    {
+                        response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                        response.error_message = resp.message;
+                    }
+                }
+                else if (_resp != null)
+                {
+                    if (_resp.status == false)
+                    {
+                        response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                        response.error_message = _resp.message;
+                    }
+                }
+                else
+                {
                     for (int i = objSource.from; i <= objSource.to; i++)
                     {
+                        List<ConnectionInfoMaster> lstValidateConnection = new List<ConnectionInfoMaster>();
                         ConnectionInfoMaster objConnection = new ConnectionInfoMaster();
                         objConnection.source_system_id = objSource.systemId;
                         objConnection.source_entity_type = objSource.entityType;
@@ -504,28 +544,29 @@ namespace SmartInventoryServices.Controllers
                         objConnection.destination_port_no = objDestination.from;
                         objConnection.is_destination_cable_a_end = objDestination.isCableAend;
 
-                    if (objConnector != null)
-                    {
-                        objConnection.equipment_system_id = objConnector.systemId;
-                        objConnection.equipment_network_id = objConnector.networkId;
-                        objConnection.equipment_entity_type = objConnector.entityType;
-                    }
-                    objConnection.splicing_source = "Mobile Splicing";
+                        if (objConnector != null)
+                        {
+                            objConnection.equipment_system_id = objConnector.systemId;
+                            objConnection.equipment_network_id = objConnector.networkId;
+                            objConnection.equipment_entity_type = objConnector.entityType;
+                        }
+                        objConnection.splicing_source = "Mobile Splicing";
 
                         objConnection.is_through_connection = false;
 
 
                         lstValidateConnection.Add(objConnection);
-                        var resp = new BLOSPSplicing().ValidtaeConnections(JsonConvert.SerializeObject(lstValidateConnection));
-                        if (resp.status) { lstConnection.Add(objConnection); }
+                        var resp_ = new BLOSPSplicing().ValidtaeConnections(JsonConvert.SerializeObject(lstValidateConnection));
+                        if (resp_.status) { lstConnection.Add(objConnection); }
 
                         if (objDestination.from == objDestination.to) { break; }
                         objDestination.from++;
                     }
-                SaveConnectionInfo(lstConnection);
+                    SaveConnectionInfo(lstConnection);
 
-                response.status = StatusCodes.OK.ToString();
-                response.error_message = "";
+                    response.status = StatusCodes.OK.ToString();
+                    response.error_message = "";
+                }
             }
             catch (Exception ex)
             {
