@@ -12574,6 +12574,7 @@ namespace SmartInventory.Controllers
         [System.Web.Services.WebMethod(true)]
         public void DownloadAuditLogReportIntoExcelAll(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount, List<string> reportType)
         {
+
             if (Session["AuditLogExportReportFilter"] != null)
             {
                 try
@@ -12656,10 +12657,11 @@ namespace SmartInventory.Controllers
                                 {
                                     try
                                     {
+                                        
                                         objExportEntitiesReport.objReportFilters.layerName = layer.layer_name;
                                         var layer_name = layer.layer_name;
                                         var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
-
+                                      
                                         EntitySummaryReport recordCount = entityExportSummaryData.lstReportData.Where(x => x.entity_name.ToUpper() == layer.layer_name.ToUpper()).FirstOrDefault();
                                         int total_entity_count = 0;
                                         if (recordCount != null)
@@ -12667,7 +12669,7 @@ namespace SmartInventory.Controllers
 
                                         List<Dictionary<string, string>> lstExportEntitiesDetail = null;
                                         List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
-                                        if (layerDetail.is_dynamic_control_enable != true)
+                                        if (layerDetail.is_dynamic_control_enable != true && layerDetail != null)
                                         {
                                             layerDetail.is_dynamic_control_enable = false;
                                         }
@@ -12712,7 +12714,11 @@ namespace SmartInventory.Controllers
                                                     dtReport.TableName = dtReport.TableName + "_GisAttribute";
                                                     fileName = $"{dtReport.TableName}";
                                                     tempFileName = $"{parentFolder}/{dtReport.TableName}.csv";
-                                                    StreamNewCSVInFolder(dtReport, tempFileName);
+                                                    //StreamNewCSVInFolder(dtReport, tempFileName);
+                                                    StreamCSVInFolder(dtReport, tempFileName);
+                                                   
+
+
                                                 }
                                                 else
                                                 {
@@ -12746,8 +12752,10 @@ namespace SmartInventory.Controllers
                                             dtReportAdditional = null;
                                         }
                                     }
-                                    catch (Exception)
+                                    catch (Exception ex)
                                     {
+                                        
+                                        string error = ex.Message.ToString();
                                         throw;
                                     }
                                 }));
@@ -12789,6 +12797,7 @@ namespace SmartInventory.Controllers
                 }
                 catch (Exception ex)
                 {
+
                     throw ex;
                 }
             }
