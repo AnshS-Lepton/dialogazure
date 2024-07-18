@@ -149,6 +149,10 @@ namespace BusinessLogics
         {
             return new DAConnectionInfo().ValidtaeConnections(connections);
         }
+        public DbMessage ValidateConnections(string entitytype, int systemId , int from , int to)
+        {
+            return new DAConnectionInfo().ValidateConnections(entitytype, systemId, from,to);
+        }
         public List<LogicalViewPortDetail> getEntityLogicalView(int systemid, string entitytype)
         {
             return new DAOSPSplicing().getEntityLogicalView(systemid, entitytype);

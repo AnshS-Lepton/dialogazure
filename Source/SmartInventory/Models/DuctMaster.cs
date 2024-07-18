@@ -112,8 +112,12 @@ namespace Models
         public List<WorkorderCodeMaster> lstBindWorkorderCode { get; set; }
         [NotMapped]
         public List<PurposeCodeMaster> lstBindPurposeCode { get; set; }
+		[NotMapped]
+		public List<DropDownMaster> listALocation { get; set; }
+		[NotMapped]
+		public List<DropDownMaster> listBLocation { get; set; }
 
-        [NotMapped]
+		[NotMapped]
         public IList<DropDownMaster> NoofDuctsCreated { get; set; }
 
         [NotMapped]
@@ -205,7 +209,11 @@ namespace Models
         public string splitting_system_id { get; set; }
         public string splitting_netwok_id { get; set; }
         public string splitting_entitytype { get; set; }
-        public DuctMaster()
+		[Required]
+		public string a_location_code { get; set; }
+		[Required]
+		public string b_location_code { get; set; }
+		public DuctMaster()
         {
             objPM = new PageMessage();
             lstTP = new List<NetworkDtl>();

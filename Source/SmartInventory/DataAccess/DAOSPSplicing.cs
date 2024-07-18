@@ -529,6 +529,14 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public DbMessage ValidateConnections(string entitytype, int systemId, int from, int to)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DbMessage>("fn_splicing_validate_connection_mobile", new { p_entitytype=entitytype, p_systemId= systemId, p_from=from, p_to=to }).FirstOrDefault();
+            }
+            catch { throw; }
+        }
         public DbMessage UpdateCorePortStatus(UpdateCorePortStatus obj)
         {
             try

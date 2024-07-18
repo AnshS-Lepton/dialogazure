@@ -3208,11 +3208,11 @@ namespace SmartInventoryServices.Controllers
             objCableIn.LstCDBAttribute.lstFiber = objDDL.Where(x => x.dropdown_type == DropDownType.Fiber_Type_LOV.ToString()).ToList();
             objCableIn.LstCDBAttribute.lstOperator = objDDL.Where(x => x.dropdown_type == DropDownType.Operator_Type_LOV.ToString()).ToList();
             objCableIn.listaerialLocation= objDDL.Where(x => x.dropdown_type == DropDownType.Aerial_Location.ToString()).ToList();
-			objCableIn.listALocation = objDDL.Where(x => x.dropdown_type == DropDownType.A_location.ToString()).ToList();
-			objCableIn.listBLocation = objDDL.Where(x => x.dropdown_type == DropDownType.A_location.ToString()).ToList();
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objCableIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objCableIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+			objCableIn.listALocation = _objDDL.Where(x => x.dropdown_type == DropDownType.A_location.ToString()).ToList();
+			objCableIn.listBLocation = _objDDL.Where(x => x.dropdown_type == DropDownType.A_location.ToString()).ToList();
 		}
 
 		#endregion
@@ -6651,7 +6651,10 @@ namespace SmartInventoryServices.Controllers
 			var _objDDL = new BLMisc().GetDropDownList("");
 			objDuctIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objDuctIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
-		
+			objDuctIn.listALocation = _objDDL.Where(x => x.dropdown_type == DropDownType.A_location.ToString()).ToList();
+			objDuctIn.listBLocation = _objDDL.Where(x => x.dropdown_type == DropDownType.A_location.ToString()).ToList();
+
+
 		}
         private void BindMicroductDropDown(MicroductMaster objMicroductIn)
         {
@@ -7161,9 +7164,11 @@ namespace SmartInventoryServices.Controllers
 			objTrenchIn.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
 			// objTrenchIn.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
 			objTrenchIn.lstTrenchServingType = objDDL.Where(x => x.dropdown_type == DropDownType.trench_serving_type.ToString()).ToList();
-            //objTrenchIn.ExecutionMethodsIn = objDDL.Where(x => x.dropdown_type == DropDownType.execution_method.ToString()).ToList();
+			//objTrenchIn.ExecutionMethodsIn = objDDL.Where(x => x.dropdown_type == DropDownType.execution_method.ToString()).ToList();
+			objTrenchIn.listALocation = _objDDL.Where(x => x.dropdown_type == DropDownType.A_location.ToString()).ToList();
+			objTrenchIn.listBLocation = _objDDL.Where(x => x.dropdown_type == DropDownType.A_location.ToString()).ToList();
 
-        }
+		}
         #endregion
 
         #endregion
