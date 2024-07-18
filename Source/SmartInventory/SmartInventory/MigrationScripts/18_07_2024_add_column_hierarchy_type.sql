@@ -1,0 +1,2 @@
+ALTER TABLE audit_att_details_cable
+ADD COLUMN hierarchy_type VARCHAR;
