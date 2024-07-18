@@ -89,6 +89,14 @@
     .modal-md-new {
         width: 600px;
     }
+    .logtype .chosen-container-single .chosen-drop {
+        margin-top: -1px;
+        border-radius: 0 0 4px 4px;
+        background-clip: padding-box;
+        border-bottom: 0;
+        border-top: 1px solid #aaa;
+        top: auto;
+    }
 </style>
 
 <!DOCTYPE html>
@@ -113,8 +121,8 @@
                 {
                     <div class="row form-group">
                         <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_020:</div>
-                        <div class="col-md-9">
-                            @Html.DropDownListFor(m => m.objReportFilters.SelectedLayerId, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlLayers" })
+                        <div class="col-md-9 logtype">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedLayerId, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), new {@class = "chosen-select col-sm-12", @id = "ddlLayers" })
                         </div>
                     </div>
                     <div class="row form-group">
@@ -140,8 +148,8 @@
                 {
                     <div class="row form-group">
                         <div class="col-md-3">@Resources.Resources.SI_OSP_GBL_NET_FRM_020:</div>
-                        <div class="col-md-9">
-                            @Html.DropDownListFor(m => m.objReportFilters.SelectedLayerId, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddlLayers" })
+                        <div class="col-md-9 logtype">
+                            @Html.DropDownListFor(m => m.objReportFilters.SelectedLayerId, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_id.ToString(), Text = x.layer_title.ToString() }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @id = "ddlLayers" })
                         </div>
                     </div>
                     <div class="row form-group">
