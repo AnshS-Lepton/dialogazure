@@ -16,5 +16,10 @@ namespace BusinessLogics
 			return objDAMisc.getLocationDelta(entity_type, delta_date);
 
 		}
+		public List<GetSiteLocationList> getSiteLocations(string entity_type, int? page, int? page_size)
+		{
+			return objDAMisc.getSiteLocations(entity_type, page, page_size);
+
+		}
 	}
 }

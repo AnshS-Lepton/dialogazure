@@ -19,5 +19,15 @@ namespace DataAccess
 			}
 			catch { throw; }
 		}
+
+		public List<GetSiteLocationList> getSiteLocations(string entity_type, int? page, int? page_size)
+		{
+			try
+			{
+				return repo.ExecuteProcedure<GetSiteLocationList>("fn_get_site_location",
+															  new { p_page = page, p_page_size = page_size, p_entity_name = entity_type }, true);
+			}
+			catch { throw; }
+		}
 	}
 }

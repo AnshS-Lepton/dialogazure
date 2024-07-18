@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,5 +34,41 @@ namespace Models
 		public string region_code { get; set; }
 		public string region_name { get; set; }
 		public string address { get; set; }
+	}
+
+	public class GetSiteLocationList
+	{
+		public string entity_type { get; set; }
+		public string system_id { get; set; }
+		public string network_id { get; set; }
+		public string site_code { get; set; }
+		public string network_status { get; set; }
+		public site_location site_location { get; set; }
+		public PaginationMetaData pagination_metadata { get; set; }
+	}
+
+	public class GetSiteLocationDetails
+	{
+		public string entity_type { get; set; }
+		public string system_id { get; set; }
+		public string network_id { get; set; }
+		public string site_code { get; set; }
+		public string network_status { get; set; }
+		public site_location site_location { get; set; }
+	}
+
+	public class PaginationMetaData
+	{
+		public int total_records { get; set; }
+		public int page { get; set; }
+		public int page_size { get; set; }
+		public int total_pages { get; set; }
+		public string next_page { get;set;}
+		public string previous_page { get; set; }
+	}
+	public class GetSiteLocation
+	{
+		public List<GetSiteLocationDetails> data { get; set; }
+		public PaginationMetaData pagination_metadata { get; set; }
 	}
 }
