@@ -794,4 +794,9 @@ namespace Models
 		public string region_abbreviation { get; set; }
 		public string province_abbreviation { get; set; }
 	}
+    public class Customer_Response
+    {
+        public string reference_id { get; set; }
+        public string ticketid { get; set; }
+    }
 }

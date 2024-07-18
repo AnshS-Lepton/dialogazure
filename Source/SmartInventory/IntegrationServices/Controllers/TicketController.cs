@@ -19,7 +19,7 @@ using Utility;
 namespace IntegrationServices.Controllers
 {
     [Authorize]
-    [RoutePrefix("wfm/v1.0")]
+    [RoutePrefix("api/v1")]
     public class TicketController : ApiController
     {
         [HttpPost]
@@ -3334,6 +3334,93 @@ namespace IntegrationServices.Controllers
             }
 
             return response;
+        }
+
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Http.Route("CreateCustomerTicket")]
+        [Filters.CustomActionForXml]
+        public IHttpActionResult CreateCustomerTicket(CustomerTicketMaster objTicketMaster)
+        {
+            var response = new ApiResponse<Customer_Response>();
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = new BLTicketManager().SaveCustomerTicket(objTicketMaster);
+                    if (result != null)
+                    {
+                        response.status = ((int)HttpStatusCode.OK).ToString();
+                        response.results = result;
+                    }
+                    else
+                    {
+                        response.status = ((int)HttpStatusCode.InternalServerError).ToString();
+                        response.error_message = "Data not saved successfully";
+                    }
+                }
+                else
+                {
+                    response.status = ((int)HttpStatusCode.BadRequest).ToString();
+                    var errorMessages = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                    response.error_message = string.Join("; ", errorMessages);
+
+                }
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                // Log exception details
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("CreateCustomerTicket", "TicketManager", objTicketMaster?.ToString(), ex);
+
+                response.status = ((int)HttpStatusCode.InternalServerError).ToString();
+                response.error_message = "Error while processing request.";
+                return Json(response);
+            }
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("customerTicketStatus")]
+        [Filters.CustomActionForXml]
+        public IHttpActionResult customerTicketStatus(string ticket_id)
+        {
+            var response = new ApiResponse<customerTicketStatus>();
+            customerTicketStatus customerTicketStatus = new customerTicketStatus();
+            try
+            {
+                if ((!string.IsNullOrEmpty(ticket_id)))
+                {
+                    customerTicketStatus = new BLTicketManager().GetcustomerTicketStatus(Convert.ToInt32(ticket_id));
+
+                    if (customerTicketStatus != null && !string.IsNullOrEmpty(customerTicketStatus.ticket_id))
+                    {
+                        response.status = ((int)HttpStatusCode.OK).ToString();
+                        response.results = customerTicketStatus;
+                    }
+                    else
+                    {
+                        response.status = ((int)HttpStatusCode.NotFound).ToString();
+                        response.error_message = "Data not found";
+                    }
+                }
+                else
+                {
+                    response.status = ((int)HttpStatusCode.BadRequest).ToString();
+                    response.error_message = "Data input not valid";
+
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("customerTicketStatus()", "TicketManager", Convert.ToString(customerTicketStatus), ex);
+                response.status = ((int)HttpStatusCode.InternalServerError).ToString();
+                response.error_message = "Error while processing request.";
+                return Json(response);
+            }
+            return Json(response);
         }
 
     }
