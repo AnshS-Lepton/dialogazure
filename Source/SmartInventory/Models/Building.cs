@@ -429,7 +429,11 @@ namespace Models
 		public string message { get; set; }
 		public string result { get; set; }
 	}
-
+    public class RouteCreation
+    {
+        public bool STATUS { get; set; }
+        public string ROUTEID { get; set; }
+    }
     public class DbMessageForPlan
     {
         public bool status { get; set; }
