@@ -12667,16 +12667,7 @@ namespace SmartInventory.Controllers
 
                                         List<Dictionary<string, string>> lstExportEntitiesDetail = null;
                                         List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
-                                        if (layerDetail.is_dynamic_control_enable != true)
-                                        {
-                                            layerDetail.is_dynamic_control_enable = false;
-                                        }
-
-                                        List<string> reportTypeString = reportType;
-                                        if (reportTypeString[0].Contains("GIS"))
-                                        {
-                                            lstExportEntitiesDetail = new BLLayer().GetAuditLogReportSummaryView(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                        }  
+                                        lstExportEntitiesDetail = new BLLayer().GetAuditLogReportSummaryView(objExportEntitiesReport.objReportFilters, layer.layer_name);
 
                                         DataTable dtReport = new DataTable();                                        
                                         DataTable dtReportAdditional = new DataTable();
