@@ -25,7 +25,7 @@ namespace IntegrationServices.Controllers
 
         [HttpGet]
         [Route("entityLocation")]
-        public ApiResponse<dynamic> GetEntityLocation(string requestID, string entity_type, string entity_network_id)
+        public ApiResponse<dynamic> GetEntityLocation(string entity_type, string entity_network_id)
         {
             var response = new ApiResponse<dynamic>();
             try
@@ -63,7 +63,7 @@ namespace IntegrationServices.Controllers
 
         [HttpGet]
         [Route("intermediateEntities")]
-        public ApiResponse<dynamic> GetIntermediateEntities(string requestID, string source_entity_type, string source_id, string destination_entity_type, string destination_id, string port)
+        public ApiResponse<dynamic> GetIntermediateEntities(string source_entity_type, string source_id, string destination_entity_type, string destination_id, string port)
         {
             var response = new ApiResponse<dynamic>();
             try
