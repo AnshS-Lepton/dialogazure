@@ -188,6 +188,7 @@ namespace DataAccess
                         objTrench.b_entity_type = objTPDetail.tpDetail[1].entity_type ?? "";
                     objTrench.a_location_code = "A";
                     objTrench.b_location_code = "B";
+
                     //}
                     //var networkCodeDetail = new DAMisc().GetLineNetworkCode(objTrench.a_location, objTrench.b_location, objTPDetail.entity_type, objTPDetail.entityGeom,"OSP");
                     //if (!string.IsNullOrEmpty(networkCodeDetail.network_code))
