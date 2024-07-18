@@ -3342,8 +3342,7 @@ namespace IntegrationServices.Controllers
         [Filters.CustomActionForXml]
         public IHttpActionResult CreateCustomerTicket(CustomerTicketMaster objTicketMaster)
         {
-            var response = new ApiResponse<Customer_Response>();
-
+           
             try
             {
                 if (ModelState.IsValid)
@@ -3351,23 +3350,35 @@ namespace IntegrationServices.Controllers
                     var result = new BLTicketManager().SaveCustomerTicket(objTicketMaster);
                     if (result != null)
                     {
-                        response.status = ((int)HttpStatusCode.OK).ToString();
-                        response.results = result;
+                        var responses = new Customer_Response
+                        {
+                            reference_id = result.reference_id, // Assuming you generate a new reference_id
+                            ticketid = result.ticketid
+                        };
+
+                        return Json(responses);
                     }
                     else
                     {
-                        response.status = ((int)HttpStatusCode.InternalServerError).ToString();
-                        response.error_message = "Data not saved successfully";
+                        var errorResponse = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.InternalServerError,
+                            message = "Data not saved successfully"
+                        };
+                        return Content(HttpStatusCode.BadRequest, errorResponse);
                     }
                 }
                 else
                 {
-                    response.status = ((int)HttpStatusCode.BadRequest).ToString();
                     var errorMessages = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                    response.error_message = string.Join("; ", errorMessages);
-
+                    var errorMessageString = string.Join("; ", errorMessages);
+                    var errorResponse = new ErrorResponse
+                    {
+                        code = (int)HttpStatusCode.BadRequest,
+                        message = errorMessageString
+                    };
+                    return Content(HttpStatusCode.BadRequest, errorResponse);
                 }
-                return Json(response);
             }
             catch (Exception ex)
             {
@@ -3375,9 +3386,13 @@ namespace IntegrationServices.Controllers
                 ErrorLogHelper logHelper = new ErrorLogHelper();
                 logHelper.ApiLogWriter("CreateCustomerTicket", "TicketManager", objTicketMaster?.ToString(), ex);
 
-                response.status = ((int)HttpStatusCode.InternalServerError).ToString();
-                response.error_message = "Error while processing request.";
-                return Json(response);
+                var errorResponse = new ErrorResponse
+                {
+                    code = (int)HttpStatusCode.InternalServerError,
+                    message = "Error while processing request."
+                };
+                return Content(HttpStatusCode.BadRequest, errorResponse);
+
             }
         }
 
@@ -3396,31 +3411,51 @@ namespace IntegrationServices.Controllers
 
                     if (customerTicketStatus != null && !string.IsNullOrEmpty(customerTicketStatus.ticket_id))
                     {
-                        response.status = ((int)HttpStatusCode.OK).ToString();
-                        response.results = customerTicketStatus;
+                        var responseData = new
+                        {
+                            ticket_id = customerTicketStatus.ticket_id,
+                            status = customerTicketStatus.ticket_status,
+                            can_id = customerTicketStatus.can_id,
+                            created_on = customerTicketStatus.created_on,
+                            assigned_to = customerTicketStatus.assigned_to,
+                            assigned_on = customerTicketStatus.assigned_date,
+                            completed_on = customerTicketStatus.target_date,
+                            remarks = customerTicketStatus.remarks
+                        };
+                        return Json(responseData);
                     }
                     else
                     {
-                        response.status = ((int)HttpStatusCode.NotFound).ToString();
-                        response.error_message = "Data not found";
+                        var errorResponse = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.NotFound,
+                            message = "Data not found"
+                        };
+                        return Content(HttpStatusCode.NotFound, errorResponse);
                     }
                 }
                 else
                 {
-                    response.status = ((int)HttpStatusCode.BadRequest).ToString();
-                    response.error_message = "Data input not valid";
+                    var errorResponse = new ErrorResponse
+                    {
+                        code = (int)HttpStatusCode.BadRequest,
+                        message = "Data Input are not valid"
+                    };
+                    return Content(HttpStatusCode.BadRequest, errorResponse);
 
                 }
             }
             catch (Exception ex)
             {
                 ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.ApiLogWriter("customerTicketStatus()", "TicketManager", Convert.ToString(customerTicketStatus), ex);
-                response.status = ((int)HttpStatusCode.InternalServerError).ToString();
-                response.error_message = "Error while processing request.";
-                return Json(response);
+                logHelper.ApiLogWriter("customerTicketStatus", "TicketManager", customerTicketStatus?.ToString(), ex);
+                var errorResponse = new ErrorResponse
+                {
+                    code = (int)HttpStatusCode.InternalServerError,
+                    message = "Error while processing request."
+                };
+                return Content(HttpStatusCode.BadRequest, errorResponse);
             }
-            return Json(response);
         }
 
     }
