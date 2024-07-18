@@ -96,6 +96,7 @@ namespace DataAccess
 					objDuct.b_location_code = DuctInfo.b_location_code;
 					//DuctInfo.served_by_ring = DuctInfo.served_by_ring;
 					var DuctResp =  repo.Update(objDuct);
+                    RouteCreation routeObj = new DAMisc().createRouteId(DuctResp.system_id, Models.EntityType.Duct.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctResp.system_id, Models.EntityType.Duct.ToString(), DuctResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Duct.ToString(), DuctResp.province_id);
                     return DuctResp;
@@ -125,6 +126,7 @@ namespace DataAccess
                         string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
                         DAIspLine.Instance.CreateOSPCable(DuctInfo.system_id);
                         new DADuct().setEndPoint(DuctInfo.system_id);
+                        RouteCreation routeObj = new DAMisc().createRouteId(DuctInfo.system_id, Models.EntityType.Duct.ToString());
                         DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctInfo.system_id, Models.EntityType.Duct.ToString(), DuctInfo.province_id, 0);
                     }
                     else

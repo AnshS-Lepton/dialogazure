@@ -1,0 +1,1 @@
+update module_master set is_active =false where module_abbr in ('AUDIT-HISTORY-RECT','AUDIT-HISTORY-POLY','AUDIT-HISTORY-CIR')
