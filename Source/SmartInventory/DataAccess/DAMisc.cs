@@ -1749,7 +1749,15 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public RouteCreation createRouteId(int system_id, string entityType)
+        {
+            try
+            {
 
+                return repo.ExecuteProcedure<RouteCreation>("FN_CREATE_ROUTE_ID", new { P_SYSTEM_ID = system_id, P_ENTITY_TYPE = entityType, P_ASSOCIATE_SYSTEM_ID = 0, P_ASSOCIATE_ENTITY_TYPE = "Cable", }, false).FirstOrDefault();
+            }
+            catch { throw; }
+        }
         public UserRegionProvince GetRegionProvinceBasedOnLocation(string geom, int userId)
         {
             UserRegionProvince objUserRegionProvince = new UserRegionProvince();

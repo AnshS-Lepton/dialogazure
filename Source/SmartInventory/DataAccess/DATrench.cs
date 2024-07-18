@@ -100,6 +100,7 @@ namespace DataAccess
 					objTrench.a_location_code = TrenchInfo.a_location_code;
 					objTrench.b_location_code = TrenchInfo.b_location_code;
 					var TrenchResp = repo.Update(objTrench);
+                    RouteCreation routeObj = new DAMisc().createRouteId(TrenchResp.system_id, Models.EntityType.Trench.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(TrenchResp.system_id, Models.EntityType.Trench.ToString(), TrenchResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Trench.ToString(), TrenchResp.province_id);
                     return TrenchResp;
@@ -125,6 +126,7 @@ namespace DataAccess
                     geom.geomType = GeometryType.Line.ToString();
                     geom.project_id = TrenchInfo.project_id;
                     string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
+                    RouteCreation routeObj = new DAMisc().createRouteId(TrenchInfo.system_id, Models.EntityType.Trench.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(TrenchInfo.system_id, Models.EntityType.Trench.ToString(), TrenchInfo.province_id, 0);
                    // DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Trench.ToString(), TrenchInfo.province_id);
                     if (TrenchInfo.a_system_id > 0)
