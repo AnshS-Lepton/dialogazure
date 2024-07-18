@@ -465,7 +465,8 @@ namespace DataAccess
                     //var networkCodeDetail = new DAMisc().GetLineNetworkCode(objCable.a_location, objCable.b_location, EntityType.Cable.ToString(), objTPDetail.entityGeom, "OSP");
                     //if (!string.IsNullOrEmpty(networkCodeDetail.network_code))
                     //objCable.network_id = networkCodeDetail.network_code;
-
+                    objCable.a_location_code = "A";
+                    objCable.b_location_code = "B";
                     objCable.modified_on = DateTimeHelper.Now;
                     objCable.modified_by = userId;
                     objCable.bom_sub_category = objCable.bom_sub_category;

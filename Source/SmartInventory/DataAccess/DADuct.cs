@@ -240,6 +240,8 @@ namespace DataAccess
                     objDuct.b_location = objTPDetail.tpDetail[1].network_id ?? "";
                     objDuct.b_system_id = objTPDetail.tpDetail[1].system_id;
                     objDuct.b_entity_type = objTPDetail.tpDetail[1].entity_type ?? "";
+                    objDuct.a_location_code = "A";
+                    objDuct.b_location_code = "B";
                     //}
                     //var networkCodeDetail = new DAMisc().GetLineNetworkCode(objDuct.a_location, objDuct.b_location, EntityType.Cable.ToString(), objTPDetail.entityGeom,"OSP");
                     //if (!string.IsNullOrEmpty(networkCodeDetail.network_code))
