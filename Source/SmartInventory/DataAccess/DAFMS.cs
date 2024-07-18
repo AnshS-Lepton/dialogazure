@@ -120,6 +120,7 @@ namespace DataAccess
                     objFMSItem.installation_location_code = objFMSMaster.installation_location_code;
                     objFMSItem.fms_type = objFMSMaster.fms_type;
 					var FMSResp = repo.Update(objFMSItem);
+                    RouteCreation routeObj = new DAMisc().createRouteId(FMSResp.system_id, Models.EntityType.FMS.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(FMSResp.system_id, Models.EntityType.FMS.ToString(), FMSResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.FMS.ToString(), FMSResp.province_id);
                     return FMSResp;
@@ -172,6 +173,7 @@ namespace DataAccess
                     else if (objFMSMaster.no_of_port != 0) { geom.ports = objFMSMaster.no_of_port.ToString(); }
                     //string chkGeomInsert = BASaveEntityGeometry.Instance.SaveEntityGeometry(geom);
                     DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
+                    RouteCreation routeObj = new DAMisc().createRouteId(response.system_id, Models.EntityType.FMS.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(response.system_id, Models.EntityType.FMS.ToString(), response.province_id, 0);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.FMS.ToString(), response.province_id);
                     DAIspEntityMapping.Instance.associateEntityInStructure(objFMSMaster.objIspEntityMap.shaft_id, objFMSMaster.objIspEntityMap.floor_id, objFMSMaster.system_id, EntityType.FMS.ToString(), objFMSMaster.pSystemId, objFMSMaster.pEntityType, objFMSMaster.longitude + " " + objFMSMaster.latitude);
