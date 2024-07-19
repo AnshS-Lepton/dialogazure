@@ -18,7 +18,7 @@
     <div class="form-group">
         <label class="control-label col-sm-2" for="ddlManholeType">@layerDetail.layer_title Type:</label>
         <div class="col-sm-45">
-            @Html.DropDownListFor(m => m.manhole_types, new SelectList(Model.lstManholeType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key }), "Value", "Text"), "Select "+ @layerDetail.layer_title + " Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlManholeType", @is_specification_allowed = Model.is_specification_allowed })
+            @Html.DropDownListFor(m => m.manhole_types, new SelectList(Model.lstManholeType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key  }), "Value", "Text"), "Select "+ @layerDetail.layer_title + " Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlManholeType", @is_specification_allowed = Model.is_specification_allowed })
         </div>
     </div>
 </fieldset>
