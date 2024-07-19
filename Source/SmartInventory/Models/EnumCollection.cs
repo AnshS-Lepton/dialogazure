@@ -276,7 +276,8 @@ namespace Models
         type,
         execution_Method,
         Spliceclosure_type,
-		A_location
+		A_location,
+        FMS_Type
 
 	}
     public enum VendorType
