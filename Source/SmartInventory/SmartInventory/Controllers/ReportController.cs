@@ -1564,16 +1564,8 @@ namespace SmartInventory.Controllers
                                         int total_entity_count = 0;
                                         if (recordCount != null)
                                             total_entity_count = recordCount.planned_count + recordCount.as_built_count + recordCount.dormant_count;
-                                        List<Dictionary<string, string>> lstExportEntitiesDetailShape = null;
                                         List<Dictionary<string, string>> lstExportEntitiesDetail = null;
-                                        lstExportEntitiesDetailShape = new BLLayer().GetExportSummaryViewKMLNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
-
                                         var layerdetails = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
-
-                                        if (layerdetails.is_dynamic_control_enable == null)
-                                        {
-                                            layerdetails.is_dynamic_control_enable = false;
-                                        }
                                         List<string> reportTypeString = reportType;
                                         lstExportEntitiesDetail = new BLLayer().GetSplitReportSummaryViewAllShape(objExportEntitiesReport.objReportFilters, layer.layer_name);
                                         DataTable dtReport = new DataTable();

@@ -700,8 +700,11 @@
         else {
 
         if (chkAll.checked == true) {
-            entityids = '@Model.objReportFilters.SelectedLayerIds';
-
+            @*entityids = '@Model.objReportFilters.SelectedLayerIds';*@
+            var rows = $("#tblSummaryAll input[type=checkbox]:not('#checkallentity'):checked");
+            for (var i = 0; i < rows.length; i++) {
+                entityids += entityids != "" ? ("," + rows[i].id) : rows[i].id;
+            }
         }
         else {
             var rows = $("#tblSummaryAll input[type=checkbox]:not('#checkallentity'):checked");
