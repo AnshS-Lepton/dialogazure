@@ -186,10 +186,13 @@ namespace DataAccess
                         objTrench.b_location = objTPDetail.tpDetail[1].network_id ?? "";
                         objTrench.b_system_id = objTPDetail.tpDetail[1].system_id;
                         objTrench.b_entity_type = objTPDetail.tpDetail[1].entity_type ?? "";
+                    objTrench.a_location_code = "A";
+                    objTrench.b_location_code = "B";
+
                     //}
                     //var networkCodeDetail = new DAMisc().GetLineNetworkCode(objTrench.a_location, objTrench.b_location, objTPDetail.entity_type, objTPDetail.entityGeom,"OSP");
                     //if (!string.IsNullOrEmpty(networkCodeDetail.network_code))
-                        //objTrench.network_id = networkCodeDetail.network_code;
+                    //objTrench.network_id = networkCodeDetail.network_code;
 
                     objTrench.modified_on = DateTimeHelper.Now;
                     objTrench.modified_by = userId;

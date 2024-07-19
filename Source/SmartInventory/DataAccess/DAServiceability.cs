@@ -90,11 +90,11 @@ namespace DataAccess
                 throw ;
             }
         }
-        public apiresponse UpdateAlarmStatusetails(impacted_entities obj)
+        public APIResponse UpdateAlarmStatusetails(impacted_entities obj)
         {
             try
             {
-                return repo.ExecuteProcedure<apiresponse>("fn_api_Update_AlarmStatusdetails", new
+                return repo.ExecuteProcedure<APIResponse>("fn_api_Update_AlarmStatusdetails", new
                 {
 
                     p_network_id = obj.entity_id,
@@ -108,5 +108,14 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+        //public List<EntityDetail> Serviceability(double latitude, double longitude)
+        //{
+        //    try
+        //    {
+        //        return repo.ExecuteProcedure<EntityDetail>("fn_api_get_ossserviceability", new {  p_lng = longitude, p_lat = latitude });
+        //    }
+        //    catch { throw; }
+        //}
     }
 }
