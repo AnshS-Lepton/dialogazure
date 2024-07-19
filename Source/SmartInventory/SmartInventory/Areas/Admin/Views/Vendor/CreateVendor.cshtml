@@ -34,6 +34,20 @@
         </div>
         <div class="form-group">
             <div class="row">
+                <div class=" col-md-4">
+                    <label class=" control-label">
+                        Vendor Abbr<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class=" col-md-8">
+                    @Html.TextBoxFor(model => model.abbr, new { @class = "form-control", @maxlength = "10", @placeholder = "Enter Abbr", @id = "txtvendorabbr" })
+
+                </div>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="row">
                 <div class="col-md-4">
                     <label class="control-label">
                         Vendor Type<i class="clsMandatory">*</i>:

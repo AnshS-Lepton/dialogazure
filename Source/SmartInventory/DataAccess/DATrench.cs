@@ -97,7 +97,10 @@ namespace DataAccess
                     objTrench.gis_design_id = TrenchInfo.gis_design_id;
                     objTrench.own_vendor_id = TrenchInfo.own_vendor_id;
                     objTrench.hierarchy_type = TrenchInfo.hierarchy_type;
-                    var TrenchResp = repo.Update(objTrench);
+					objTrench.a_location_code = TrenchInfo.a_location_code;
+					objTrench.b_location_code = TrenchInfo.b_location_code;
+					var TrenchResp = repo.Update(objTrench);
+                    RouteCreation routeObj = new DAMisc().createRouteId(TrenchResp.system_id, Models.EntityType.Trench.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(TrenchResp.system_id, Models.EntityType.Trench.ToString(), TrenchResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Trench.ToString(), TrenchResp.province_id);
                     return TrenchResp;
@@ -123,6 +126,7 @@ namespace DataAccess
                     geom.geomType = GeometryType.Line.ToString();
                     geom.project_id = TrenchInfo.project_id;
                     string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
+                    RouteCreation routeObj = new DAMisc().createRouteId(TrenchInfo.system_id, Models.EntityType.Trench.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(TrenchInfo.system_id, Models.EntityType.Trench.ToString(), TrenchInfo.province_id, 0);
                    // DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Trench.ToString(), TrenchInfo.province_id);
                     if (TrenchInfo.a_system_id > 0)
@@ -182,10 +186,13 @@ namespace DataAccess
                         objTrench.b_location = objTPDetail.tpDetail[1].network_id ?? "";
                         objTrench.b_system_id = objTPDetail.tpDetail[1].system_id;
                         objTrench.b_entity_type = objTPDetail.tpDetail[1].entity_type ?? "";
+                    objTrench.a_location_code = "A";
+                    objTrench.b_location_code = "B";
+
                     //}
                     //var networkCodeDetail = new DAMisc().GetLineNetworkCode(objTrench.a_location, objTrench.b_location, objTPDetail.entity_type, objTPDetail.entityGeom,"OSP");
                     //if (!string.IsNullOrEmpty(networkCodeDetail.network_code))
-                        //objTrench.network_id = networkCodeDetail.network_code;
+                    //objTrench.network_id = networkCodeDetail.network_code;
 
                     objTrench.modified_on = DateTimeHelper.Now;
                     objTrench.modified_by = userId;

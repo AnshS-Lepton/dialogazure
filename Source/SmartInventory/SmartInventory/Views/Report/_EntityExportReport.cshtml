@@ -707,7 +707,8 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
 
     function selectallentity(chkAll) {
         if (!$(chkAll).is(":checked")) {
-            $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").removeAttr("checked");
+            $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").prop("checked", false);
+        //    $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").removeAttr("checked");
         }
         else {
             $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").prop("checked", true);

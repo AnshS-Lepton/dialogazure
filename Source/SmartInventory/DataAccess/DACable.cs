@@ -109,7 +109,9 @@ namespace DataAccess
                     objCable.outer_dimension = cableInfo.outer_dimension;
                     objCable.calculated_length_remark = cableInfo.calculated_length_remark;
                     objCable.is_acquire_from = cableInfo.is_acquire_from;
-                    if (objCable.total_core != cableInfo.total_core)
+                    objCable.a_location_code = cableInfo.a_location_code;
+					objCable.b_location_code = cableInfo.b_location_code;
+					if (objCable.total_core != cableInfo.total_core)
                     {
                         var checkConnection = new DAMisc().isPortConnected(objCable.system_id, EntityType.Cable.ToString(), objCable.specification, objCable.vendor_id, objCable.item_code);
                         if (checkConnection.status)
@@ -175,6 +177,7 @@ namespace DataAccess
                     objCable.hierarchy_type = cableInfo.hierarchy_type;
                     ////objCable.served_by_ring= cableInfo.served_by_ring;
                     var response = repo.Update(objCable);
+                    RouteCreation routeObj = new DAMisc().createRouteId(response.system_id, Models.EntityType.Cable.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(response.system_id, Models.EntityType.Cable.ToString(), response.province_id, 1);
                     //DbMessage geojsonObj = updateGeojsonMetadata(Models.EntityType.Cable.ToString(), response.province_id);
                     if (cableInfo.no_of_tube != oldNoOfTube || cableInfo.no_of_core_per_tube != oldCorePerTube)
@@ -251,6 +254,7 @@ namespace DataAccess
                         geom.networkStatus = String.IsNullOrEmpty(cableInfo.network_status) ? "P" : cableInfo.network_status;
 
                         string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
+                        RouteCreation routeObj = new DAMisc().createRouteId(CableResp.system_id, Models.EntityType.Cable.ToString());
                         DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(CableResp.system_id, Models.EntityType.Cable.ToString(), CableResp.province_id, 0);
                         //DbMessage geojsonObj = updateGeojsonMetadata(Models.EntityType.Cable.ToString(), CableResp.province_id);
                         DAIspLine.Instance.CreateOSPCable(cableInfo.system_id);
@@ -463,7 +467,8 @@ namespace DataAccess
                     //var networkCodeDetail = new DAMisc().GetLineNetworkCode(objCable.a_location, objCable.b_location, EntityType.Cable.ToString(), objTPDetail.entityGeom, "OSP");
                     //if (!string.IsNullOrEmpty(networkCodeDetail.network_code))
                     //objCable.network_id = networkCodeDetail.network_code;
-
+                    objCable.a_location_code = "A";
+                    objCable.b_location_code = "B";
                     objCable.modified_on = DateTimeHelper.Now;
                     objCable.modified_by = userId;
                     objCable.bom_sub_category = objCable.bom_sub_category;

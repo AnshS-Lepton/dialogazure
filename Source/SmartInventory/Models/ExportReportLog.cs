@@ -29,7 +29,7 @@ namespace Models
         public string status { get; set; }
         public string file_location { get; set; }
         public string file_extension { get; set; }
-        
+        public string log_type { get; set; }
     }
     public class ExportReportLogVM
     {
@@ -70,6 +70,6 @@ namespace Models
         public int S_No { get; set; }
         public int page_count { get; set; }
         public string file_extension { get; set; }
-
+        public string log_type { get; set; }
     }
 }

@@ -6678,6 +6678,10 @@ namespace SmartInventory.Controllers
                         if (selectedlayerids.Count > 0)
                             objAssociationEntitiesReport.lstLayers = objAssociationEntitiesReport.lstLayers.Where(m => selectedlayerids.Contains(m.layer_id)).ToList();
                     }
+                    else
+                    {
+                        objAssociationEntitiesReport.lstLayers = objAssociationEntitiesReport.lstLayers;
+                    }
 
                     string parentFolder = $"AssociationReport_{DateTimeHelper.Now.ToString("ddMMyyyy")}-{DateTimeHelper.Now.ToString("HHmmssfff")}_{userdetails.user_id}";
                     string attachmentLocalPath = Path.Combine(ApplicationSettings.AttachmentLocalPath, ftpFolder);
@@ -12458,6 +12462,7 @@ namespace SmartInventory.Controllers
                         exportReportLog.asbuilt = totalAsBuiltCount;
                         exportReportLog.dormant = totalDormantCount;
                         exportReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+                        exportReportLog.log_type = "audit";
                         exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
                         try
                         {
@@ -12569,6 +12574,7 @@ namespace SmartInventory.Controllers
         [System.Web.Services.WebMethod(true)]
         public void DownloadAuditLogReportIntoExcelAll(string entityids, int totalPlannedCount, int totalAsBuiltCount, int totalDormantCount, List<string> reportType)
         {
+
             if (Session["AuditLogExportReportFilter"] != null)
             {
                 try
@@ -12639,6 +12645,7 @@ namespace SmartInventory.Controllers
                         exportReportLog.asbuilt = totalAsBuiltCount;
                         exportReportLog.dormant = totalDormantCount;
                         exportReportLog.total_entity = totalPlannedCount + totalAsBuiltCount + totalDormantCount;
+                        exportReportLog.log_type = "audit";
                         exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
                         dtFilter = null;
                         try
@@ -12650,10 +12657,11 @@ namespace SmartInventory.Controllers
                                 {
                                     try
                                     {
+                                        
                                         objExportEntitiesReport.objReportFilters.layerName = layer.layer_name;
                                         var layer_name = layer.layer_name;
                                         var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
-
+                                      
                                         EntitySummaryReport recordCount = entityExportSummaryData.lstReportData.Where(x => x.entity_name.ToUpper() == layer.layer_name.ToUpper()).FirstOrDefault();
                                         int total_entity_count = 0;
                                         if (recordCount != null)
@@ -12661,16 +12669,7 @@ namespace SmartInventory.Controllers
 
                                         List<Dictionary<string, string>> lstExportEntitiesDetail = null;
                                         List<Dictionary<string, string>> lstExportEntitiesDetailAdditional = null;
-                                        if (layerDetail.is_dynamic_control_enable != true)
-                                        {
-                                            layerDetail.is_dynamic_control_enable = false;
-                                        }
-
-                                        List<string> reportTypeString = reportType;
-                                        if (reportTypeString[0].Contains("GIS"))
-                                        {
-                                            lstExportEntitiesDetail = new BLLayer().GetAuditLogReportSummaryView(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                        }  
+                                        lstExportEntitiesDetail = new BLLayer().GetAuditLogReportSummaryView(objExportEntitiesReport.objReportFilters, layer.layer_name);
 
                                         DataTable dtReport = new DataTable();                                        
                                         DataTable dtReportAdditional = new DataTable();
@@ -12706,7 +12705,11 @@ namespace SmartInventory.Controllers
                                                     dtReport.TableName = dtReport.TableName + "_GisAttribute";
                                                     fileName = $"{dtReport.TableName}";
                                                     tempFileName = $"{parentFolder}/{dtReport.TableName}.csv";
-                                                    StreamNewCSVInFolder(dtReport, tempFileName);
+                                                    //StreamNewCSVInFolder(dtReport, tempFileName);
+                                                    StreamCSVInFolder(dtReport, tempFileName);
+                                                   
+
+
                                                 }
                                                 else
                                                 {
@@ -12740,7 +12743,7 @@ namespace SmartInventory.Controllers
                                             dtReportAdditional = null;
                                         }
                                     }
-                                    catch (Exception)
+                                    catch (Exception ex)
                                     {
                                         throw;
                                     }
@@ -12810,6 +12813,23 @@ namespace SmartInventory.Controllers
                 workbook.Write(xfile);
                 xfile.Close();
             }
+        }
+        public ActionResult AuditlogExportReportLog(ExportReportLogVM ObjExportReportLogVM, int page = 0, string sort = "", string sortdir = "")
+        {
+            var usrDetail = (User)Session["userDetail"];
+            if (sort != "" || page != 0)
+            {
+                ObjExportReportLogVM.objGridAttributes = new CommonGridAttributes();
+            }
+            var timeInteval = ApplicationSettings.PrintLogTimeInterval;
+            ObjExportReportLogVM.objGridAttributes.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
+            ObjExportReportLogVM.objGridAttributes.currentPage = page == 0 ? 1 : page;
+            ObjExportReportLogVM.objGridAttributes.sort = sort;
+            ObjExportReportLogVM.objGridAttributes.orderBy = sortdir;
+            ObjExportReportLogVM.ExportLog = new BLExportReportLog().GetAuditlogExportExportLogList(ObjExportReportLogVM.objGridAttributes, usrDetail.user_id, timeInteval);
+            ObjExportReportLogVM.objGridAttributes.totalRecord = ObjExportReportLogVM.ExportLog != null && ObjExportReportLogVM.ExportLog.Count > 0 ? ObjExportReportLogVM.ExportLog[0].totalRecords : 0;
+            Session["EntityExportLog"] = ObjExportReportLogVM.objGridAttributes;
+            return PartialView("_AuditLogEntityExportReportLog", ObjExportReportLogVM);
         }
     }
 }

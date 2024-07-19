@@ -1603,6 +1603,10 @@
     <Content Include="DLL\System.DirectoryServices.dll" />
     <Content Include="MigrationScripts\01-07-2024.sql" />
     <Content Include="MigrationScripts\09-07-2024.sql" />
+    <Content Include="MigrationScripts\12-07-2024.sql" />
+    <Content Include="MigrationScripts\17-07-2024.sql" />
+    <Content Include="MigrationScripts\18-07-2024.sql" />
+    <Content Include="MigrationScripts\18-07-2024_2.sql" />
     <Content Include="MigrationScripts\19-06-2024 - LDAP-Enable.sql" />
     <Content Include="MigrationScripts\18-06-2024 - LDAP-Enable.sql" />
     <Content Include="MigrationScripts\03-05-2024.sql" />
@@ -2358,6 +2362,7 @@
     <Content Include="Views\Library\_trenchExecution.cshtml" />
     <Content Include="Views\Report\_SplitLineEntityExportReport.cshtml" />
     <Content Include="Views\Report\_AuditLogExportReport.cshtml" />
+    <Content Include="Views\Report\_AuditLogEntityExportReportLog.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

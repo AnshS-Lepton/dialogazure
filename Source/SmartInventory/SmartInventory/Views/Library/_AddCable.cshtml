@@ -270,7 +270,7 @@
                             </div>
 
                             @*@if (ApplicationSettings.isterminationpointenable)
-            {*@
+        {*@
                             <label class="control-label col-md-2 col-sm-2" for="txtProvinceName">@Resources.Resources.SI_OSP_ROW_NET_FRM_009:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
                                 @Html.TextBoxFor(m => m.a_location, new { @class = "form-control clsReadOnly", @readonly = true })
@@ -307,9 +307,17 @@
                                 @Html.TextBoxFor(m => m.a_city, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtProvinceName", autocomplete = "do-not-show-ac" })
                             </div>
 
-                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">B city Name:</label>
+                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">B City Name:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
                                 @Html.TextBoxFor(m => m.b_city, new { @class = "form-control clsReadOnly", @readonly = true, autocomplete = "do-not-show-ac" })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2">A Location:<i class="clsMandatory">*</i></label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.a_location_code, new SelectList(Model.listALocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Text", "Value"), "-Select-", new { @class = "chosen-select form-control "  })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2">B Location:<i class="clsMandatory">*</i></label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.b_location_code, new SelectList(Model.listBLocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Text", "Value"), "-Select-", new { @class = "chosen-select form-control " })
                             </div>
                             <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@Resources.Resources.SI_OSP_GBL_GBL_GBL_009:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
@@ -321,9 +329,9 @@
                                 @Html.DropDownListFor(m => m.cable_type, new SelectList(Model.listcableType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
                             </div>
                             @*<label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">Cable Type<i class="clsMandatory">*</i>:</label>
-            <div class="col-md-4 col-sm-4 mrgn_btm ">
-                @Html.TextBoxFor(m => m.cable_type, new { @class = "form-control", @readonly = true })
-            </div>*@
+        <div class="col-md-4 col-sm-4 mrgn_btm ">
+            @Html.TextBoxFor(m => m.cable_type, new { @class = "form-control", @readonly = true })
+        </div>*@
 
 
                             @if (startEndReading != null)
@@ -416,13 +424,13 @@
 
 
                             @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-            <div class="col-md-4 col-sm-4 mrgn_btm">
-                @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
-            </div>*@
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+        </div>*@
                             @*<label class="control-label col-md-2 col-sm-2" for="txtAcquireFrom">@Resources.Resources.SI_GBL_GBL_GBL_GBL_010:</label>
-            <div class="col-md-4 col-sm-4 mrgn_btm">
-                @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
-            </div>*@
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
+        </div>*@
 
                         </div>
                         <div id="dvOwnerShip">

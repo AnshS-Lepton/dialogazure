@@ -1,0 +1,1 @@
+update res_resources set value='Associated Manhole count' where key='SI_OSP_CAB_NET_FRM_077';

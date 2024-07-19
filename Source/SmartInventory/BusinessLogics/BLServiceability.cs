@@ -36,5 +36,25 @@ namespace BusinessLogics
             return objDAMisc.ResetXml(System_id);
 
         }
+        public EntityLocationDetails GetEntityLocation(string entity_type, string entity_network_id)
+        {
+            return objDAMisc.GetEntityLocation(entity_type, entity_network_id);
+
+        }
+
+        public IntermediateEntitiesDetails GetIntermediateEntities(string source_entity_type, string source_id, string destination_entity_type, string destination_id, string port)
+        {
+            return objDAMisc.GetIntermediateEntities(source_entity_type, source_id, destination_entity_type, destination_id, port);
+        }
+
+        public APIResponse UpdateAlarmStatusetails(impacted_entities obj)
+        {
+            return objDAMisc.UpdateAlarmStatusetails(obj);
+        }
+
+        //public List<EntityDetail> Serviceability(double latitude, double longitude)
+        //{
+        //    return objDAMisc.Serviceability(latitude, longitude);
+        //}
     }
 }

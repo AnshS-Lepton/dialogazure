@@ -63,7 +63,7 @@ namespace Models
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int system_id { get; set; }
 		public string network_id { get; set; }
-		[Required]
+		//[Required]
 		public string network_name { get; set; }
 		public int parent_system_id { get; set; }
 		public string parent_network_id { get; set; }

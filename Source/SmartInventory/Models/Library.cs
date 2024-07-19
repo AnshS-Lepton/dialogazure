@@ -1787,6 +1787,10 @@ namespace Models
 		[NotMapped]
 		public List<PurposeCodeMaster> lstBindPurposeCode { get; set; }
 		[NotMapped]
+		public List<DropDownMaster> listILocationCode { get; set; }
+		[NotMapped]
+		public List<DropDownMaster> listFMSType { get; set; }
+		[NotMapped]
 		public int templateId { get; set; }
 		[NotMapped]
 		public IspEntityMapping objIspEntityMap { get; set; }
@@ -1834,6 +1838,10 @@ namespace Models
 		public string area_id { get; set; }
 		public string dsa_id { get; set; }
 		public string csa_id { get; set; }
+		[Required]
+		public string installation_location_code { get; set; }
+		[Required]
+		public string fms_type { get; set; }
 		public string gis_design_id { get; set; }
 		[NotMapped]
 		public string geographic_id { get; set; }

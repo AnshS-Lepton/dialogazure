@@ -69,6 +69,7 @@ new { id = "frmNotofication", enctype = "multipart/form-data", autocomplete = "o
             $('#lblNotificationStatus').text(MultilingualKey.SI_GBL_GBL_JQ_FRM_049);
         } else { $('#lblNotificationStatus').text(MultilingualKey.SI_GBL_GBL_JQ_FRM_050); }
         resetReasons();
+        resetOtherText();
     }
     function resetReasons() {
         $('.notificationReasons').hide();
@@ -86,6 +87,7 @@ new { id = "frmNotofication", enctype = "multipart/form-data", autocomplete = "o
             $('#txtOtherRemarks').attr('readonly', true);
             $('#txtOtherRemarks').css('border-color', '');
         }
+        resetOtherText();
     }
     function removecss() {
         $('#txtOtherRemarks').css('border-color', '');
@@ -125,6 +127,9 @@ new { id = "frmNotofication", enctype = "multipart/form-data", autocomplete = "o
             }
         }
         return _comment;
+    }
+    function resetOtherText() {
+        $('#txtOtherRemarks').val('');
     }
 </script>
 

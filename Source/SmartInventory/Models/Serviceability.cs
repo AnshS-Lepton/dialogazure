@@ -119,4 +119,95 @@ namespace Models
     {
         public List<UpdateDesignIDInputs> InputDetails { get; set; }
     }
+    public class EntityLocationDetails
+    {
+
+        public string entity_id { get; set; }
+        public string entity_type { get; set; }
+        public string province { get; set; }
+        public string region { get; set; }
+
+        public location location { get; set; }
+
+
+    }
+    public class location
+    {
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+    }
+    public class IntermediateEntitiesDetails
+    {
+        public Entity source_entity { get; set; }
+        public Entity destination_entity { get; set; }
+        public List<Entity> intermediate_entities { get; set; }
+        public double distance_meters { get; set; }
+        public IntermediateEntitiesDetails()
+        {
+
+            source_entity = new Entity();
+            destination_entity = new Entity();
+            intermediate_entities = new List<Entity>();
+
+        }
+    }
+    public class Entity
+    {
+        public string entity_type { get; set; }
+        public string entity_id { get; set; }
+    }
+    public class DestinationEntity
+    {
+        public string entity_type { get; set; }
+        public string entity_id { get; set; }
+    }
+    public class IntermediateEntities
+    {
+        public string entity_type { get; set; }
+        public string entity_id { get; set; }
+    }
+    public class UpdateAlarmStatusetails
+    {
+        public string reference_id { get; set; }
+        public string alarm_reason { get; set; }
+        public List<impacted_entities> Impacted_entities { get; set; }
+    }
+    public class impacted_entities
+    {
+        public string entity_type { get; set; }
+        public string entity_id { get; set; }
+        public string port_number { get; set; }
+        public string alarm_status { get; set; }
+        public string comments { get; set; }
+    }
+
+    public class Serviceability
+    {
+        public string reference_id { get; set; }
+        public string status { get; set; }
+        public List<Devices> devices { get; set; }
+        public Serviceability()
+        {
+            devices = new List<Devices>();
+        }
+
+    }
+    public class Devices
+    {
+        public string entity_type { get; set; }
+        public string entity_id { get; set; }
+        public decimal distance { get; set; }
+
+
+    }
+    public class  ErrorResponse
+    {
+        public int code { get; set; }
+        public string message { get; set; }
+    }
+    public class APIResponse
+    {
+        public string status { get; set; }
+        public string message { get; set; }
+    }
 }

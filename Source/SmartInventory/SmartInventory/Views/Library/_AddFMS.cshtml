@@ -228,31 +228,41 @@ new { id = "frmAddFMS", enctype = "multipart/form-data", autocomplete = "off", @
                             </div>
 
                         </div>
-                        <div>
-                            @OwnershipInfo()
-                        </div>
                         <div class="form-group row">
-                            @AcquireFrom()
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-2 col-sm-2" for="txtRouteName">Route ID:</label>
-                            <div class="col-md-4 col-sm-4">
-                                @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id + " - (" + x.entity_network_id + ")" }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
+                            <label class="control-label col-md-2 col-sm-2">Ins. Location Code:<i class="clsMandatory">*</i></label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.installation_location_code, new SelectList(Model.listILocationCode.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Text", "Value"), "-Select-", new { @class = "chosen-select form-control " })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2">FMS Type:<i class="clsMandatory">*</i></label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.fms_type, new SelectList(Model.listFMSType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Text", "Value"), "-Select-", new { @class = "chosen-select form-control " })
                             </div>
                         </div>
-                        <div>@AdditionalFields()</div>
-                        <div class="form-group row">
-                            <label class="control-label col-sm-2" for="txtAddress">@Resources.Resources.SI_OSP_GBL_GBL_GBL_008:</label>
-                            <div class="col-sm-10">
-                                @Html.TextBoxFor(m => m.address, new { @class = "form-control", @id = "txtAddress", @maxlength = "100", autocomplete = "do-not-show-ac" })
+                            <div>
+                                @OwnershipInfo()
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
-                            <div class="col-sm-10">
-                                @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @id = "txtRemarks", @maxlength = "1000" })
+                            <div class="form-group row">
+                                @AcquireFrom()
                             </div>
-                        </div>
+                            <div class="form-group row">
+                                <label class="col-md-2 col-sm-2" for="txtRouteName">Route ID:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id + " - (" + x.entity_network_id + ")" }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
+                                </div>
+                            </div>
+                            <div>@AdditionalFields()</div>
+                            <div class="form-group row">
+                                <label class="control-label col-sm-2" for="txtAddress">@Resources.Resources.SI_OSP_GBL_GBL_GBL_008:</label>
+                                <div class="col-sm-10">
+                                    @Html.TextBoxFor(m => m.address, new { @class = "form-control", @id = "txtAddress", @maxlength = "100", autocomplete = "do-not-show-ac" })
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                                <div class="col-sm-10">
+                                    @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @id = "txtRemarks", @maxlength = "1000" })
+                                </div>
+                            </div>
                     </fieldset>
                     @if (Model.lstUserModule.Contains("PROJ"))
                     {
