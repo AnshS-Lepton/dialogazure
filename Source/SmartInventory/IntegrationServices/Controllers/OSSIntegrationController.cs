@@ -1,7 +1,10 @@
 ﻿using BusinessLogics;
 using Lepton.Entities;
 using Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
 using System.Net;
 using System.Web.Http;
 using Utility;
@@ -14,24 +17,42 @@ namespace IntegrationServices.Controllers
 
     public class OSSIntegrationController : ApiController
     {
-        
+
         #region GIS_OSS Integration
 
         [HttpGet]
         [Route("entityLocation")]
-        public IHttpActionResult GetEntityLocation(string entity_type, string entity_network_id)
+        public IHttpActionResult GetEntityLocation([FromUri] EntityLocationRequest request)
         {
             try
             {
-                if (!string.IsNullOrEmpty(entity_type) && !string.IsNullOrEmpty(entity_network_id))
+                if (ModelState.IsValid)
                 {
-                    var res = new BLServiceability().GetEntityLocation(entity_type, entity_network_id);
-                    if (res != null)
-                    {
+                    var res = new BLServiceability().GetEntityLocation(request.entity_type, request.entity_network_id);
 
-                        var responses = new EntityLocationDetails();
-                        responses = res;
+                    if (res != null && res.error == null)
+                    {
+                        var jsonObject = JObject.Parse(JsonConvert.SerializeObject(res));
+                        jsonObject.Remove("error");
+                        var responses = new JObject
+                        {
+                            ["entity_id"] = jsonObject["entity_id"]?.ToString(),
+                            ["entity_type"] = jsonObject["entity_type"]?.ToString(),
+                            ["province"] = jsonObject["province"]?.ToString(),
+                            ["region"] = jsonObject["region"]?.ToString(),
+                            ["location"] = jsonObject["location"]
+                        };
+
                         return Json(responses);
+                    }
+                    else if (res != null && res.error != null)
+                    {
+                        var errorResponse = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.BadRequest,
+                            message = res.error
+                        };
+                        return Content(HttpStatusCode.BadRequest, errorResponse);
                     }
                     else
                     {
@@ -46,10 +67,12 @@ namespace IntegrationServices.Controllers
                 }
                 else
                 {
+                    var errorMessages = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                    var errorMessageString = string.Join("; ", errorMessages);
                     var errorResponse = new ErrorResponse
                     {
                         code = (int)HttpStatusCode.BadRequest,
-                        message = "Data Inputs Are Not Valid."
+                        message = errorMessageString
                     };
                     return Content(HttpStatusCode.BadRequest, errorResponse);
                 }
@@ -67,25 +90,47 @@ namespace IntegrationServices.Controllers
                 return Content(HttpStatusCode.InternalServerError, errorResponse);
 
             }
-            
+
         }
 
         [HttpGet]
         [Route("intermediateEntities")]
-        public IHttpActionResult GetIntermediateEntities(string source_entity_type, string source_id, string destination_entity_type, string destination_id, string port)
+        public IHttpActionResult GetIntermediateEntities([FromUri] IntermediateEntitiesRequest request)
         {
             var response = new ApiResponse<dynamic>();
             try
             {
-                if (!string.IsNullOrEmpty(source_entity_type) && !string.IsNullOrEmpty(source_id) && !string.IsNullOrEmpty(destination_entity_type) && !string.IsNullOrEmpty(destination_id) && !string.IsNullOrEmpty(port))
+                if (ModelState.IsValid)
                 {
-                    var res = new BLServiceability().GetIntermediateEntities(source_entity_type, source_id, destination_entity_type, destination_id, port);
-                    if (res != null && res.intermediate_entities != null && res.intermediate_entities.Count >0)
+
+                    var res = new BLServiceability().GetIntermediateEntities(request.source_entity_type, request.source_id, request.destination_entity_type, request.destination_id, request.port);
+                    if (res != null && res.error == null && res.intermediate_entities != null && res.intermediate_entities.Count > 0)
                     {
-                        var responses = new IntermediateEntitiesDetails();
-                        responses = res;
+                        var jsonObject = JObject.Parse(JsonConvert.SerializeObject(res));
+                        jsonObject.Remove("error");
+                        var responses = new JObject
+                        {
+                            ["source_entity"] = jsonObject["source_entity"],
+                            ["destination_entity"] = jsonObject["destination_entity"],
+                            ["intermediate_entities"] = jsonObject["intermediate_entities"],
+                            ["distance_meters"] = jsonObject["distance_meters"]?.ToString()
+                        };
                         return Json(responses);
+
+                        //var responses = new IntermediateEntitiesDetails();
+                        //responses = res;
+                        //return Json(responses);
                     }
+                    else if (res != null && res.error != null)
+                    {
+                        var errorResponse = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.BadRequest,
+                            message = res.error
+                        };
+                        return Content(HttpStatusCode.BadRequest, errorResponse);
+                    }
+
                     else
                     {
                         var errorResponse = new ErrorResponse
@@ -98,10 +143,12 @@ namespace IntegrationServices.Controllers
                 }
                 else
                 {
+                    var errorMessages = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                    var errorMessageString = string.Join("; ", errorMessages);
                     var errorResponse = new ErrorResponse
                     {
                         code = (int)HttpStatusCode.BadRequest,
-                        message = "Data Inputs Are Not Valid."
+                        message = errorMessageString
                     };
                     return Content(HttpStatusCode.BadRequest, errorResponse);
                 }
@@ -116,7 +163,7 @@ namespace IntegrationServices.Controllers
                     message = "Error While Processing  Request."
                 };
                 return Content(HttpStatusCode.InternalServerError, errorResponse);
-            } 
+            }
         }
 
         [HttpPost]
@@ -125,7 +172,7 @@ namespace IntegrationServices.Controllers
         public IHttpActionResult UpdateAlarmStatusetails(UpdateAlarmStatusetails objUpdateAlarmStatusetails)
         {
             var responses = new APIResponse();
-           
+
             try
             {
                 if (!string.IsNullOrEmpty(objUpdateAlarmStatusetails.reference_id))
@@ -153,7 +200,7 @@ namespace IntegrationServices.Controllers
                                 isValid = false;
                                 return Content(HttpStatusCode.NotFound, errorresponse);
                             }
-                            
+
 
                         }
                         else
@@ -179,7 +226,7 @@ namespace IntegrationServices.Controllers
                 var errorResponse = new ErrorResponse
                 {
                     code = (int)HttpStatusCode.BadRequest,
-                    message = "Data Inputs Are Not Valid."
+                    message = "The reference_id field is required."
                 };
                 return Content(HttpStatusCode.BadRequest, errorResponse);
 

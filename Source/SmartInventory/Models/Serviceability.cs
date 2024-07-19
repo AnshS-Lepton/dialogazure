@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Dynamic;
 using System.Linq;
@@ -126,6 +127,7 @@ namespace Models
         public string entity_type { get; set; }
         public string province { get; set; }
         public string region { get; set; }
+        public string error { get; set; }
 
         public location location { get; set; }
 
@@ -142,6 +144,7 @@ namespace Models
         public Entity destination_entity { get; set; }
         public List<Entity> intermediate_entities { get; set; }
         public double distance_meters { get; set; }
+        public string error { get; set; }
         public IntermediateEntitiesDetails()
         {
 
@@ -150,6 +153,27 @@ namespace Models
             intermediate_entities = new List<Entity>();
 
         }
+    }
+    public class IntermediateEntitiesRequest
+    {
+        [Required]
+        public string source_entity_type { get; set; }
+        [Required]
+        public string source_id { get; set; }
+        [Required]
+        public string destination_entity_type { get; set; }
+        [Required]
+        public string destination_id { get; set; }
+        public string port { get; set; }
+        public IntermediateEntitiesRequest()
+        {
+            port = "1";
+        }
+    }
+    public class EntityLocationRequest
+    {
+        public string entity_type { get; set; }
+        public string entity_network_id { get; set; }
     }
     public class Entity
     {
