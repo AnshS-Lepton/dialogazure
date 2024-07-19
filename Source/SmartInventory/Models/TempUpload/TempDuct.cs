@@ -47,5 +47,7 @@ namespace Models.TempUpload
         public string requested_by { get; set; }
         public string request_approved_by { get; set; }
         public string network_status { get; set; }
+        public string a_location_code { get; set; }
+        public string b_location_code { get; set; }
     }
 }
