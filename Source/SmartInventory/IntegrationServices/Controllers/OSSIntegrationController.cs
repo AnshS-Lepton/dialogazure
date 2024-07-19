@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Core.Metadata.Edm;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using System.Web.Script.Serialization;
-using BusinessLogics;
-using IntegrationServices.Settings;
+﻿using BusinessLogics;
 using Lepton.Entities;
 using Models;
-
+using System;
+using System.Net;
+using System.Web.Http;
 using Utility;
 
 namespace IntegrationServices.Controllers
@@ -21,13 +14,13 @@ namespace IntegrationServices.Controllers
 
     public class OSSIntegrationController : ApiController
     {
+        
         #region GIS_OSS Integration
 
         [HttpGet]
         [Route("entityLocation")]
-        public ApiResponse<dynamic> GetEntityLocation(string entity_type, string entity_network_id)
+        public IHttpActionResult GetEntityLocation(string entity_type, string entity_network_id)
         {
-            var response = new ApiResponse<dynamic>();
             try
             {
                 if (!string.IsNullOrEmpty(entity_type) && !string.IsNullOrEmpty(entity_network_id))
@@ -35,121 +28,204 @@ namespace IntegrationServices.Controllers
                     var res = new BLServiceability().GetEntityLocation(entity_type, entity_network_id);
                     if (res != null)
                     {
-                        response.results = res;
-                        response.status = ((int)HttpStatusCode.OK).ToString();
+
+                        var responses = new EntityLocationDetails();
+                        responses = res;
+                        return Json(responses);
                     }
                     else
                     {
-                        response.status = ((int)HttpStatusCode.NotFound).ToString();
-                        response.error_message = "Record not found.";
+                        var errorResponse = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.NotFound,
+                            message = "Data not found"
+                        };
+
+                        return Content(HttpStatusCode.NotFound, errorResponse);
                     }
                 }
                 else
                 {
-                    response.status = ((int)HttpStatusCode.BadRequest).ToString();
-                    response.error_message = "Data Inputs Are Not Valid.";
+                    var errorResponse = new ErrorResponse
+                    {
+                        code = (int)HttpStatusCode.BadRequest,
+                        message = "Data Inputs Are Not Valid."
+                    };
+                    return Content(HttpStatusCode.BadRequest, errorResponse);
                 }
-               
+
             }
             catch (Exception ex)
             {
                 ErrorLogHelper logHelper = new ErrorLogHelper();
                 logHelper.ApiLogWriter("GetEntityLocation()", "OSSIntegrationController", "", ex);
-                response.status = ((int)HttpStatusCode.InternalServerError).ToString(); 
-                response.error_message = "Error While Processing  Request.";
+                var errorResponse = new ErrorResponse
+                {
+                    code = (int)HttpStatusCode.InternalServerError,
+                    message = "Error While Processing  Request."
+                };
+                return Content(HttpStatusCode.InternalServerError, errorResponse);
+
             }
-            return response;
+            
         }
 
         [HttpGet]
         [Route("intermediateEntities")]
-        public ApiResponse<dynamic> GetIntermediateEntities(string source_entity_type, string source_id, string destination_entity_type, string destination_id, string port)
+        public IHttpActionResult GetIntermediateEntities(string source_entity_type, string source_id, string destination_entity_type, string destination_id, string port)
         {
             var response = new ApiResponse<dynamic>();
             try
             {
-                if (!string.IsNullOrEmpty(source_entity_type)&& !string.IsNullOrEmpty(source_id) && !string.IsNullOrEmpty(destination_entity_type) && !string.IsNullOrEmpty(destination_id) && !string.IsNullOrEmpty(port))
+                if (!string.IsNullOrEmpty(source_entity_type) && !string.IsNullOrEmpty(source_id) && !string.IsNullOrEmpty(destination_entity_type) && !string.IsNullOrEmpty(destination_id) && !string.IsNullOrEmpty(port))
                 {
                     var res = new BLServiceability().GetIntermediateEntities(source_entity_type, source_id, destination_entity_type, destination_id, port);
-                    if (res != null && res.IntermediateEntities!=null)
+                    if (res != null && res.intermediate_entities != null && res.intermediate_entities.Count >0)
                     {
-                        response.results = res;
-                        response.status = ((int)HttpStatusCode.OK).ToString();
+                        var responses = new IntermediateEntitiesDetails();
+                        responses = res;
+                        return Json(responses);
                     }
                     else
                     {
-                        response.status = ((int)HttpStatusCode.NotFound).ToString();
-                        response.error_message = "Record not found.";
+                        var errorResponse = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.NotFound,
+                            message = "Data not found"
+                        };
+                        return Content(HttpStatusCode.NotFound, errorResponse);
                     }
                 }
                 else
                 {
-                    response.status = ((int)HttpStatusCode.BadRequest).ToString();
-                    response.error_message = "Data Inputs Are Not Valid.";
+                    var errorResponse = new ErrorResponse
+                    {
+                        code = (int)HttpStatusCode.BadRequest,
+                        message = "Data Inputs Are Not Valid."
+                    };
+                    return Content(HttpStatusCode.BadRequest, errorResponse);
                 }
-                
             }
             catch (Exception ex)
             {
                 ErrorLogHelper logHelper = new ErrorLogHelper();
                 logHelper.ApiLogWriter("GetIntermediateEntities()", "OSSIntegrationController", "", ex);
-                response.status = ((int)HttpStatusCode.InternalServerError).ToString();
-                response.error_message = "Error While Processing  Request.";
-            }
-            return response;
+                var errorResponse = new ErrorResponse
+                {
+                    code = (int)HttpStatusCode.InternalServerError,
+                    message = "Error While Processing  Request."
+                };
+                return Content(HttpStatusCode.InternalServerError, errorResponse);
+            } 
         }
 
         [HttpPost]
         [Route("updateAlarmStatus")]
-        
-        public ApiResponse<dynamic> UpdateAlarmStatusetails(UpdateAlarmStatusetails objUpdateAlarmStatusetails)
+
+        public IHttpActionResult UpdateAlarmStatusetails(UpdateAlarmStatusetails objUpdateAlarmStatusetails)
         {
-            var response = new ApiResponse<dynamic>();
-            if (!string.IsNullOrEmpty(objUpdateAlarmStatusetails.reference_id))
+            var responses = new APIResponse();
+           
+            try
             {
-                foreach (var obj in objUpdateAlarmStatusetails.Impacted_entities)
+                if (!string.IsNullOrEmpty(objUpdateAlarmStatusetails.reference_id))
                 {
-                    if (!string.IsNullOrEmpty(obj.entity_id) && !string.IsNullOrEmpty(obj.entity_type)&& !string.IsNullOrEmpty(obj.port_number))
+                    bool isValid = false;
+
+                    foreach (var obj in objUpdateAlarmStatusetails.Impacted_entities)
                     {
-                        try
+                        if (!string.IsNullOrEmpty(obj.entity_id) && !string.IsNullOrEmpty(obj.entity_type) && !string.IsNullOrEmpty(obj.port_number))
                         {
                             var res = new BLServiceability().UpdateAlarmStatusetails(obj);
-                            if (res!=null)
+                            if (res != null && res.status.Equals("true"))
                             {
-                                
-                                response.status = ((int)HttpStatusCode.OK).ToString();
-                                response.error_message = res.error_message;
-                                response.results = res.results;
+                                responses.status = "OK";
+                                responses.message = res.message;
+                                isValid = true;
                             }
                             else
                             {
-                                response.status = ((int)HttpStatusCode.BadRequest).ToString();
-                                response.error_message = "Data Inputs Are Not Valid.";
+                                var errorresponse = new ErrorResponse
+                                {
+                                    code = (int)HttpStatusCode.NotFound,
+                                    message = "Data not found"
+                                };
+                                isValid = false;
+                                return Content(HttpStatusCode.NotFound, errorresponse);
                             }
                             
 
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            ErrorLogHelper logHelper = new ErrorLogHelper();
-                            logHelper.ApiLogWriter("UpdateAlarmStatusetails()", "OSSIntegrationController", "", ex);
-                            response.status = ((int)HttpStatusCode.InternalServerError).ToString();
-                            response.error_message = "Error While Processing  Request.";  
+                            var errorresponse = new ErrorResponse
+                            {
+                                code = (int)HttpStatusCode.BadRequest,
+                                message = "Data Inputs Are Not Valid."
+
+                            };
+                            isValid = false;
+                            return Content(HttpStatusCode.BadRequest, errorresponse);
                         }
                     }
+
+                    if (isValid)
+                    {
+                        return Json(responses);
+                    }
+
+
                 }
-                
-
+                var errorResponse = new ErrorResponse
+                {
+                    code = (int)HttpStatusCode.BadRequest,
+                    message = "Data Inputs Are Not Valid."
+                };
+                return Content(HttpStatusCode.BadRequest, errorResponse);
 
 
             }
-            else
+            catch (Exception ex)
             {
-                response.status = ((int)HttpStatusCode.BadRequest).ToString();
-                response.error_message = "Data Inputs Are Not Valid.";
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("UpdateAlarmStatusetails()", "OSSIntegrationController", "", ex);
+                var errorResponse = new ErrorResponse
+                {
+                    code = (int)HttpStatusCode.InternalServerError,
+                    message = "Error While Processing Request."
+                };
+                return Content(HttpStatusCode.InternalServerError, errorResponse);
             }
-            return response;
         }
+
+
+        //[HttpGet]
+        //[Route("serviceability")]
+
+        //public ApiResponse<Serviceability> Serviceability(string reference_id, string latitude, string longitude)
+        //{
+        //    var response = new ApiResponse<Serviceability>();
+        //    string logUrl = "";
+        //    string responseFromServer = "";
+        //    var lstEntities = new BLServiceability().Serviceability(Convert.ToDouble(latitude), Convert.ToDouble(longitude));
+        //    var lstonlySplit = lstEntities.Where(x => x.entity_title == "Splitter").Take(ApplicationSettings.Serviceability_Entity_Limit).ToList();
+        //    string origin = latitude.ToString() + "," + longitude.ToString();
+        //    string destination = "";
+        //    Serviceability root = new Serviceability();
+        //    List<Devices> gp = new List<Devices>();
+        //    root.reference_id = reference_id;
+        //    if (lstEntities != null && lstEntities.Count > 0)
+        //    {
+        //        foreach (var item in lstEntities)
+        //        {
+
+        //        }
+
+        //    }
+
+        //    return response;
+        //}
+
 
 
         #endregion

@@ -47,9 +47,14 @@ namespace BusinessLogics
             return objDAMisc.GetIntermediateEntities(source_entity_type, source_id, destination_entity_type, destination_id, port);
         }
 
-        public apiresponse UpdateAlarmStatusetails(impacted_entities obj)
+        public APIResponse UpdateAlarmStatusetails(impacted_entities obj)
         {
             return objDAMisc.UpdateAlarmStatusetails(obj);
         }
+
+        //public List<EntityDetail> Serviceability(double latitude, double longitude)
+        //{
+        //    return objDAMisc.Serviceability(latitude, longitude);
+        //}
     }
 }
