@@ -59,6 +59,8 @@ namespace Models.TempUpload
         public string generic_section_name { get; set; }
         public string hierarchy_type { get; set; }
         public string aerial_location { get; set; }
+        public string a_location_code { get; set; }
+        public string b_location_code { get; set; }
     }
 
 }
