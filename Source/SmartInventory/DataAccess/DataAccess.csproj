@@ -171,6 +171,7 @@
     <Compile Include="DAHandhole.cs" />
     <Compile Include="DAKPIMaster.cs" />
     <Compile Include="DALandBaseLayer.cs" />
+    <Compile Include="DALocationDelta.cs" />
     <Compile Include="DALoop.cs" />
     <Compile Include="DAOtpAuthentication.cs" />
     <Compile Include="DAPatchPanel.cs" />
