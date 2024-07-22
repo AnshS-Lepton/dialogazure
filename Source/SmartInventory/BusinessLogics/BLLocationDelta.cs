@@ -21,5 +21,6 @@ namespace BusinessLogics
 			return objDAMisc.getSiteLocations(entity_type, page, page_size);
 
 		}
+
 	}
 }
