@@ -165,6 +165,10 @@ ALTER FUNCTION public.fn_api_get_intermediateentities(character varying, charact
 
 
 
+
+
+
+
 -- FUNCTION: public.fn_api_get_entitylocation(character varying, character varying)
 
 -- DROP FUNCTION IF EXISTS public.fn_api_get_entitylocation(character varying, character varying);
@@ -242,4 +246,128 @@ END;
 $BODY$;
 
 ALTER FUNCTION public.fn_api_get_entitylocation(character varying, character varying)
+    OWNER TO postgres;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    -- FUNCTION: public.fn_api_update_alarmstatusdetails(character varying, character varying, integer, character varying, character varying)
+
+-- DROP FUNCTION IF EXISTS public.fn_api_update_alarmstatusdetails(character varying, character varying, integer, character varying, character varying);
+-- select fn_api_Update_AlarmStatusdetails('FDP','WAI-POD047-FMS01',9,'Faulty','DOWN')
+
+
+CREATE OR REPLACE FUNCTION public.fn_api_update_alarmstatusdetails(
+	p_entity_type character varying,
+	p_network_id character varying,
+	p_port_number integer,
+	p_alarm_status character varying,
+	p_comments character varying)
+    RETURNS TABLE(status text, message text) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+
+DECLARE 
+    v_source_system_id integer;
+    v_port_id integer;
+	v_sql_query text;
+	v_layer_table_name text;
+	v_layer_name character varying;
+
+BEGIN
+    
+    SELECT layer_table, layer_name INTO v_layer_table_name, v_layer_name
+    FROM layer_details
+    WHERE layer_title = p_entity_type; -- search by title and use layer name
+	
+	IF v_layer_table_name IS NULL OR v_layer_name IS NULL THEN
+         RETURN QUERY
+        SELECT 'false' AS status,CONCAT('Details not found for Entity type:',p_entity_type)::text AS message
+               ;
+        
+        RETURN;
+    END IF;
+	
+	 v_sql_query := 'SELECT (row_to_json(t) ->> ''system_id'')::integer
+                  FROM (
+                      SELECT lt.system_id
+                      FROM ' || quote_ident(v_layer_table_name) || ' lt
+                      JOIN point_master pm ON lt.network_id = pm.common_name
+                      WHERE lt.network_id = ''' || p_network_id || '''
+                      LIMIT 1
+                  ) t';
+	
+		
+   EXECUTE v_sql_query INTO v_source_system_id;
+    
+	IF v_source_system_id IS NULL THEN
+         RETURN QUERY
+        SELECT 'false' AS status,CONCAT('Details not found for Network ID:',p_network_id)::text AS message
+               ;
+        
+        RETURN;
+    END IF;
+   
+    SELECT system_id INTO v_port_id FROM port_status_master port
+    WHERE port.status = p_alarm_status
+    LIMIT 1;
+    
+	IF v_port_id IS NULL THEN
+         RETURN QUERY
+        SELECT 'false' AS status,CONCAT('Details not found for alarm_status:',p_alarm_status)::text AS message
+               ;
+        
+        RETURN;
+    END IF;
+   
+    UPDATE isp_port_info
+    SET 
+        port_status_id = v_port_id,
+        port_status = p_alarm_status,
+        port_comment = p_comments
+    WHERE 
+        parent_system_id = v_source_system_id
+        AND Upper(parent_network_id) = Upper(p_network_id)
+        AND Upper(parent_entity_type) = Upper(v_layer_name)
+        AND port_number = p_port_number
+        AND input_output = 'O';
+    
+   
+    RETURN QUERY
+    SELECT 
+           'true' AS status, 
+           CONCAT('','Alarm status updated successfully.')::text AS message;
+
+EXCEPTION
+     WHEN OTHERS THEN
+        -- Return error message in case of an exception
+        RETURN QUERY
+        SELECT 'false' AS status,CONCAT(v_layer_name, ': ', SQLERRM)::text AS message
+               ;
+               
+
+END
+$BODY$;
+
+ALTER FUNCTION public.fn_api_update_alarmstatusdetails(character varying, character varying, integer, character varying, character varying)
     OWNER TO postgres;

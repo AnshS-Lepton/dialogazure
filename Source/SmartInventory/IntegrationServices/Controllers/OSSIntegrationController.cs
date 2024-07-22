@@ -175,13 +175,13 @@ namespace IntegrationServices.Controllers
 
             try
             {
-                if (!string.IsNullOrEmpty(objUpdateAlarmStatusetails.reference_id))
+                if (ModelState.IsValid)
                 {
                     bool isValid = false;
 
                     foreach (var obj in objUpdateAlarmStatusetails.Impacted_entities)
                     {
-                        if (!string.IsNullOrEmpty(obj.entity_id) && !string.IsNullOrEmpty(obj.entity_type) && !string.IsNullOrEmpty(obj.port_number))
+                        if (ModelState.IsValid)
                         {
                             var res = new BLServiceability().UpdateAlarmStatusetails(obj);
                             if (res != null && res.status.Equals("true"))
@@ -189,6 +189,15 @@ namespace IntegrationServices.Controllers
                                 responses.status = "OK";
                                 responses.message = res.message;
                                 isValid = true;
+                            }
+                            else if (res != null && res.status.Equals("false"))
+                            {
+                                var errorResponses = new ErrorResponse
+                                {
+                                    code = (int)HttpStatusCode.BadRequest,
+                                    message = res.message
+                                };
+                                return Content(HttpStatusCode.BadRequest, errorResponses);
                             }
                             else
                             {
@@ -205,14 +214,14 @@ namespace IntegrationServices.Controllers
                         }
                         else
                         {
-                            var errorresponse = new ErrorResponse
+                            var errorMessages_ = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                            var errorMessageString_ = string.Join("; ", errorMessages_);
+                            var errorResponses = new ErrorResponse
                             {
                                 code = (int)HttpStatusCode.BadRequest,
-                                message = "Data Inputs Are Not Valid."
-
+                                message = errorMessageString_
                             };
-                            isValid = false;
-                            return Content(HttpStatusCode.BadRequest, errorresponse);
+                            return Content(HttpStatusCode.BadRequest, errorResponses);
                         }
                     }
 
@@ -223,10 +232,12 @@ namespace IntegrationServices.Controllers
 
 
                 }
+                var errorMessages = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                var errorMessageString = string.Join("; ", errorMessages);
                 var errorResponse = new ErrorResponse
                 {
                     code = (int)HttpStatusCode.BadRequest,
-                    message = "The reference_id field is required."
+                    message = errorMessageString
                 };
                 return Content(HttpStatusCode.BadRequest, errorResponse);
 

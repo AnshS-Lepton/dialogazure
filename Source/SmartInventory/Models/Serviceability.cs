@@ -192,15 +192,21 @@ namespace Models
     }
     public class UpdateAlarmStatusetails
     {
+        [Required]
         public string reference_id { get; set; }
+        [Required]
         public string alarm_reason { get; set; }
         public List<impacted_entities> Impacted_entities { get; set; }
     }
     public class impacted_entities
     {
+        [Required]
         public string entity_type { get; set; }
+        [Required]
         public string entity_id { get; set; }
+        
         public string port_number { get; set; }
+        [Required]
         public string alarm_status { get; set; }
         public string comments { get; set; }
     }
