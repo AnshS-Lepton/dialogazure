@@ -82,7 +82,6 @@ namespace DataAccess
                     p_port = Convert.ToInt32(port)
                 }, true).FirstOrDefault();
 
-
             }
 
             catch (Exception )
@@ -96,10 +95,9 @@ namespace DataAccess
             {
                 return repo.ExecuteProcedure<APIResponse>("fn_api_Update_AlarmStatusdetails", new
                 {
-
-                    p_network_id = obj.entity_id,
                     p_entity_type = obj.entity_type,
-                    p_port_number=Convert.ToInt32( obj.port_number),
+                    p_network_id = obj.entity_id,
+                    p_port_number=!string.IsNullOrEmpty(obj.port_number)?Convert.ToInt32( obj.port_number):0,
                     p_alarm_status=obj.alarm_status,
                     p_comments=obj.comments
 
