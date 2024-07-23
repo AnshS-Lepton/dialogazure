@@ -74,37 +74,52 @@ namespace Models
 
 
 
-	public class GetFaultLocationList
+	public class GETFAULTLOCATIONLIST
 	{ 
-		public affected_cable_segment affected_Cable_Segment { get; set; }
-		public associated_fiber_links associated_Fiber_Links { get; set; }
-		public double latitude { get; set; }
-		public double longitude { get; set; }
-		public string block_code { get; set; }
-		public string block_name { get; set; }
-		public string province_code { get; set; }
-		public string province_name { get; set; }
-		public string region_code { get; set; }
-		public string region_name { get; set; }
+	    public FAULT_LOCATION fault_Location { get; set; }
+		public AFFECTED_CABLE_SEGMENT affected_Cable_Segment { get; set; }
+		public string fiber_link_network_id { get; set; }
+		public string fiber_link_name { get; set; }
+		public string status { get; set; }
+		public string error_message { get; set; }
 	}
-	  public class affected_cable_segment
+	 
+
+	public class FAULT_LOCATION
 	{
-		public int cable_system_id { get; set; }
+	public double? latitude { get; set; }
+	public double? longitude { get; set; }
+	public string block_code { get; set; }
+	public string block_name { get; set; }
+	public string province_code { get; set; }
+	public string province_name { get; set; }
+	public string region_code { get; set; }
+	public string region_name { get; set; }
+
+    }
+
+	public class AFFECTED_CABLE_SEGMENT
+	{
+		public int? cable_system_id { get; set; }
 		public string cable_network_id { get; set; }
 		public double cable_length { get; set; }
 		public string a_end_entity_type { get; set; }
 		public string a_end_entity_id { get; set; }
-		public double a_end_distance { get; set; }
+		public double? a_end_distance { get; set; }
 		public string z_end_entity_type { get; set; }
 		public string z_end_entity_id { get; set; }
-		public double z_end_distance { get; set; }
-
+		public double? z_end_distance { get; set; }
 	}
-	public class associated_fiber_links
+	public class ASSOCIATED_FIBER_LINKS
 	{
-        public string fiber_link_network_id { get; set; }
+		public string fiber_link_network_id { get; set; }
 		public string fiber_link_name { get; set; }
 	}
-
+	public class GETFAULTLOCATION
+	{
+		public FAULT_LOCATION fault_location { get; set; }
+		public AFFECTED_CABLE_SEGMENT affected_cable_segment { get; set; }
+		public List<ASSOCIATED_FIBER_LINKS> associated_fiber_link { get; set; }
+	}
 
 }
