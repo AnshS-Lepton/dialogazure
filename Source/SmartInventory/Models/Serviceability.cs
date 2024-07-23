@@ -222,6 +222,15 @@ namespace Models
         }
 
     }
+    public class ServiceabilityRequest
+    {
+        [Required]
+        public string reference_id { get; set; }
+        [Required]
+        public string latitude { get; set; }
+        [Required]
+        public string longitude { get; set; }
+    }
     public class Devices
     {
         public string entity_type { get; set; }

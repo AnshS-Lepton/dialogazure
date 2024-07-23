@@ -107,13 +107,13 @@ namespace DataAccess
             catch { throw; }
         }
 
-        //public List<EntityDetail> Serviceability(double latitude, double longitude)
-        //{
-        //    try
-        //    {
-        //        return repo.ExecuteProcedure<EntityDetail>("fn_api_get_ossserviceability", new {  p_lng = longitude, p_lat = latitude });
-        //    }
-        //    catch { throw; }
-        //}
+        public List<EntityDetail> Serviceability(double latitude, double longitude)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<EntityDetail>("fn_api_get_ossserviceability", new { p_lng = longitude, p_lat = latitude });
+            }
+            catch { throw; }
+        }
     }
 }

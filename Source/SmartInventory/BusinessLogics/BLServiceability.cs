@@ -52,9 +52,9 @@ namespace BusinessLogics
             return objDAMisc.UpdateAlarmStatusetails(obj);
         }
 
-        //public List<EntityDetail> Serviceability(double latitude, double longitude)
-        //{
-        //    return objDAMisc.Serviceability(latitude, longitude);
-        //}
+        public List<EntityDetail> Serviceability(double latitude, double longitude)
+        {
+            return objDAMisc.Serviceability(latitude, longitude);
+        }
     }
 }
