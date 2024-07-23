@@ -712,7 +712,6 @@
     <Folder Include="Content\Images\icons\map\Tower\D\" />
     <Folder Include="Uploads\Temp\" />
     <Folder Include="Views\CustomAuthorization\" />
-    <Folder Include="Views\GoogleMapAPI\" />
     <Folder Include="Views\ISP\" />
     <Folder Include="Views\NetworkPlanning\" />
     <Folder Include="Views\Report\" />
