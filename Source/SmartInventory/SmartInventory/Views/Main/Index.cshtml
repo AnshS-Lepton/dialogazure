@@ -21,7 +21,8 @@
 @*@Html.Hidden("hdnlstuserModules", string.Join(",", Model.lstUserModule.ToArray()))*@
 
 <script type="text/javascript">
-    var applicationUrl = window.location.origin;
+    //var applicationUrl = window.location.origin;
+    var applicationUrl = '@string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"))';
     function isdigitOnlywithOnedot(e, event) {
         var mxlen = $(e).attr('maxlength');
         if (event.which == 46 && $(this).val().indexOf('.') != -1) {
