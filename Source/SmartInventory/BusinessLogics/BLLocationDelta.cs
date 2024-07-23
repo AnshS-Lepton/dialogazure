@@ -21,6 +21,11 @@ namespace BusinessLogics
 			return objDAMisc.getSiteLocations(entity_type, page, page_size);
 
 		}
+		public List<GETFAULTLOCATIONLIST> getFaultLocations(string fiber_link_id, string equipment_id, string site_code, string port_id, int? optical_distance)
+		{
+			return objDAMisc.getFaultLocations(fiber_link_id, equipment_id, site_code, port_id, optical_distance);
+
+		}
 
 	}
 }
