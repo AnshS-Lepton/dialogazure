@@ -4,10 +4,12 @@ using Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
 using Utility;
+using IntegrationServices.Settings;
 
 namespace IntegrationServices.Controllers
 {
@@ -257,32 +259,185 @@ namespace IntegrationServices.Controllers
         }
 
 
-        //[HttpGet]
-        //[Route("serviceability")]
+        [HttpGet]
+        [Route("serviceability")]
 
-        //public ApiResponse<Serviceability> Serviceability(string reference_id, string latitude, string longitude)
-        //{
-        //    var response = new ApiResponse<Serviceability>();
-        //    string logUrl = "";
-        //    string responseFromServer = "";
-        //    var lstEntities = new BLServiceability().Serviceability(Convert.ToDouble(latitude), Convert.ToDouble(longitude));
-        //    var lstonlySplit = lstEntities.Where(x => x.entity_title == "Splitter").Take(ApplicationSettings.Serviceability_Entity_Limit).ToList();
-        //    string origin = latitude.ToString() + "," + longitude.ToString();
-        //    string destination = "";
-        //    Serviceability root = new Serviceability();
-        //    List<Devices> gp = new List<Devices>();
-        //    root.reference_id = reference_id;
-        //    if (lstEntities != null && lstEntities.Count > 0)
-        //    {
-        //        foreach (var item in lstEntities)
-        //        {
+        public IHttpActionResult Serviceability([FromUri] ServiceabilityRequest ServiceabilityRequest)
+        {
+            var response = new ApiResponse<dynamic>();
+            string logUrl = "";
+            string responseFromServer = "";
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    double latitude;
+                    double longitude;
+                   
+                    if (!double.TryParse(ServiceabilityRequest.latitude.Trim(), out latitude) || ServiceabilityRequest.latitude != ServiceabilityRequest.latitude.Trim())
+                    {
+                        var errorResponse = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.BadRequest,
+                            message = "Invalid input for latitude"
+                        };
+                        return Content(HttpStatusCode.BadRequest, errorResponse);
+                    }
+                    if (!double.TryParse(ServiceabilityRequest.longitude.Trim(), out longitude) || ServiceabilityRequest.longitude != ServiceabilityRequest.longitude.Trim())
+                    {
+                        var errorResponse = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.BadRequest,
+                            message = "Invalid input for longitude"
+                        };
+                        return Content(HttpStatusCode.BadRequest, errorResponse);
+                    }
 
-        //        }
+                    var lstEntities = new BLServiceability().Serviceability(latitude, longitude);
+                    var lstonlySplit = lstEntities.ToList();
+                    string origin = ServiceabilityRequest.latitude.ToString() + "," + ServiceabilityRequest.longitude.ToString();
+                    string destination = "";
+                    Serviceability root = new Serviceability();
+                    List<Devices> gp = new List<Devices>();
+                    if (lstonlySplit.Count > 0)
+                    {
+                        var breakSplitter = ListExtensions.SplitList(lstonlySplit, 5);
+                        foreach (var lstSplitter in breakSplitter)
+                        {
+                            string waypoints = "";
+                            var i = 0;
+                            foreach (var item in lstSplitter)
+                            {
+                                var latlong = item.geom.Replace("POINT(", "").Replace(")", "").Split(' ');
+                                if (lstSplitter.Count() == 1)
+                                {
+                                    destination = latlong[1] + "," + latlong[0];
+                                }
+                                else
+                                {
 
-        //    }
+                                    i++;
+                                    waypoints += origin + "|";
+                                    waypoints += latlong[1] + "," + latlong[0] + "|";
 
-        //    return response;
-        //}
+                                    if (i == lstSplitter.Count())
+                                    {
+                                        destination = latlong[1] + "," + latlong[0];
+                                    }
+
+                                }
+
+                            }
+                            string url = @"https://maps.googleapis.com/maps/api/directions/json?";
+                            if (lstSplitter.Count() == 1)
+                            {
+                                url += "origin=" + origin + "" + "&destination=" + destination + "&mode=walking&key=" + ApplicationSettings.Map_Key + "";
+                            }
+                            else
+                            {
+                                url += "origin=" + origin + "" + "&destination=" + destination + "" + "&waypoints=" + waypoints.Remove(waypoints.Length - 1, 1) + "&mode=walking&key=" + ApplicationSettings.Map_Key + "";
+                            }
+                            logUrl = url;
+                            WebRequest request = WebRequest.Create(url);
+                            WebResponse respons = request.GetResponse();
+                            System.IO.Stream data = respons.GetResponseStream();
+                            System.IO.StreamReader reader = new System.IO.StreamReader(data);
+                            // json-formatted string from maps api
+                            responseFromServer = reader.ReadToEnd();
+                            url = string.Empty;
+                            var json = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(responseFromServer);
+                            respons.Close();
+                            List<decimal> dis = new List<decimal>();
+                            var legs = new List<Newtonsoft.Json.Linq.JToken>();
+                            for (int x = 0; x < json["routes"][0]["legs"].Count(); x++)
+                            {
+                                if (lstSplitter.Count() == 1)
+                                {
+                                    legs.Add(json["routes"][0]["legs"][x]);
+                                }
+                                else
+                                {
+                                    if (x != 0)
+                                    {
+                                        if (x != json["routes"][0]["legs"].Count() - 1)
+                                        {
+                                            legs.Add(json["routes"][0]["legs"][x]);
+                                        }
+                                    }
+                                }
+
+                            }
+                            for (int r = 0; r < legs.Count(); r++)
+                            {
+                                if (r % 2 == 0)
+                                {
+                                    var distance = legs[r]["distance"]["value"].ToString();
+                                    dis.Add(Convert.ToDecimal(distance));
+                                }
+
+                            }
+                            for (int d = 0; d < dis.Count(); d++)
+                            {
+                                if (dis[d] < ApplicationSettings.Serviceability_Buffer)
+                                {
+                                    var coordinates = lstSplitter.ToList()[d].geom.Replace("POINT(", "").Replace(")", "").Split(' ');
+                                    Devices objDevices = new Devices();
+                                    objDevices.entity_id = lstSplitter.ToList()[d].display_name;
+                                    objDevices.entity_type = lstSplitter.ToList()[d].entity_type;
+
+                                    objDevices.distance = dis[d];
+
+                                    gp.Add(objDevices);
+                                }
+                            }
+                            
+
+                        }
+                        root.devices = gp.OrderBy(x => x.distance).ToList();
+                        root.status = "FEASIBLE";
+                        root.reference_id = ServiceabilityRequest.reference_id;
+                    }
+                    else
+                    {
+                        var errorResponse = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.NotFound,
+                            message = "Data not found"
+                        };
+                        return Content(HttpStatusCode.NotFound, errorResponse);
+                    }
+                    return Json(root);
+
+                }
+                else
+                {
+                    var errorMessages = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                    var errorMessageString = string.Join("; ", errorMessages);
+                    var errorResponse = new ErrorResponse
+                    {
+                        code = (int)HttpStatusCode.BadRequest,
+                        message = errorMessageString
+                    };
+                    return Content(HttpStatusCode.BadRequest, errorResponse);
+                }
+
+
+               
+            }
+            catch (Exception ex)
+            {
+
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("Serviceability()", "OSSIntegrationController", "", ex);
+                var errorResponse = new ErrorResponse
+                {
+                    code = (int)HttpStatusCode.InternalServerError,
+                    message = "Error While Processing Request."
+                };
+                return Content(HttpStatusCode.InternalServerError, errorResponse);
+            }
+            
+        }
 
 
 
