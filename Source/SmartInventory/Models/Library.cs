@@ -1838,9 +1838,9 @@ namespace Models
 		public string area_id { get; set; }
 		public string dsa_id { get; set; }
 		public string csa_id { get; set; }
-		[Required]
+		//[Required]
 		public string installation_location_code { get; set; }
-		[Required]
+		//[Required]
 		public string fms_type { get; set; }
 		public string gis_design_id { get; set; }
 		[NotMapped]

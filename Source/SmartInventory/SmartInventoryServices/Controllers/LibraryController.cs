@@ -7205,6 +7205,7 @@ namespace SmartInventoryServices.Controllers
                 fillProjectSpecifications(objFMSMaster);
 				new BLMisc().BindPortDetails(objFMSMaster, EntityType.FMS.ToString(), DropDownType.FMS_Port_Ratio.ToString());
 				objFMSMaster.pNetworkId = objFMS.pNetworkId;
+				objFMSMaster.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.FMS.ToString()).ToList();
 				//Get the layer details to bind additional attributes FMS
 				var layerdetails = new BLLayer().getLayer(EntityType.FMS.ToString());
 				objFMSMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
@@ -7312,6 +7313,7 @@ namespace SmartInventoryServices.Controllers
 				{
 					objFMSMaster.fms_name = objFMSMaster.network_id;
 				}
+				objFMSMaster.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.FMS.ToString()).ToList();
 				this.Validate(objFMSMaster);
 				if (ModelState.IsValid)
 				{
