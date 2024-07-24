@@ -49,6 +49,14 @@ namespace BusinessLogics
         {
             return new DATicketMaster().ValidateRfsType(rfs_type);
         }
+        public Customer_Response SaveCustomerTicket(CustomerTicketMaster objTicketMaster)
+        {
+            return new DATicketMaster().SaveCustomerTicket(objTicketMaster);
+        }
+        public customerTicketStatus GetcustomerTicketStatus(int id)
+        {
+            return new DATicketMaster().GetcustomerTicketStatus(id);
+        }
     }
 
     public class BLTempTicketMaster

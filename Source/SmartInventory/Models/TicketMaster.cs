@@ -185,8 +185,8 @@ namespace Models
         public string assigned_to { get; set; }
         public string completed_by { get; set; }
         public DateTime? completed_on { get; set; }
-        public DateTime target_date { get; set; }
-        public DateTime assigned_date { get; set; }  
+        public DateTime? target_date { get; set; }
+        public DateTime? assigned_date { get; set; }  
         [NotMapped]
         public int totalrecords { get; set; } 
         public string assigned_by { get; set; }
@@ -309,5 +309,47 @@ namespace Models
         public int uploaded_by { get; set; }
         public DateTime? uploaded_on { get; set; }
         public int file_size { get; set; }
+    }
+    public class customerTicketStatus
+    {
+        public string ticket_id { get; set; }
+        public string ticket_status { get; set; }
+        public string can_id { get; set; }
+        public string created_on { get; set; }
+        public string assigned_to { get; set; }
+        public string assigned_date { get; set; }
+        public string target_date { get; set; }
+        public string remarks { get; set; }
+    }
+
+
+    public class Customers
+    {
+        [Required]
+        public string can_id { get; set; }
+        [Required]
+        public double latitude { get; set; }
+        [Required]
+        public double longitude { get; set; }
+        [Required]
+        public string name { get; set; }
+        [Required]
+        public string address { get; set; }
+    }
+    public class CustomerTicketMaster
+    {
+        [NotMapped]
+        [Required]
+        public string connection_entity_type { get; set; }
+        [Required]
+        [NotMapped]
+        public int connection_entity_id { get; set; }
+        [Required]
+        [NotMapped]
+        public string reference_id { get; set; }
+        [Required]
+        [NotMapped]
+        public string ticket_source { get; set; }
+        public Customers customer { get; set; }
     }
 }

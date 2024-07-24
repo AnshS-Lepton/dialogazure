@@ -45,4 +45,9 @@ namespace Models.API
         public string statusType { get; set; }
         public string statusCode { get; set; }
     }
+    public class ErrorResponse
+    {
+        public int code { get; set; }
+        public string message { get; set; }
+    }
 }
