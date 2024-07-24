@@ -209,9 +209,9 @@ namespace Models
         public string splitting_system_id { get; set; }
         public string splitting_netwok_id { get; set; }
         public string splitting_entitytype { get; set; }
-		[Required]
+		//[Required]
 		public string a_location_code { get; set; }
-		[Required]
+		//[Required]
 		public string b_location_code { get; set; }
 		public DuctMaster()
         {

@@ -236,9 +236,9 @@ namespace Models
         public string splitting_entitytype { get; set; }
         [NotMapped]
         public int? manhole_count { get; set; }
-		[Required]
+		//[Required]
 		public string a_location_code { get; set; }
-		[Required]
+		//[Required]
 		public string b_location_code { get; set; }
 		public CableMaster()
         {
