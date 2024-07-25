@@ -10,10 +10,12 @@ using System.Web;
 using System.Web.Http;
 using static Models.GoogleMapAPI;
 using Utility;
+using SmartInventoryServices.Filters;
 
 namespace SmartInventoryServices.Controllers
 {
     [RoutePrefix("api/mapsapi")]
+    [APIExceptionFilter]
     public class GoogleMapAPIController : ApiController
     {
         public readonly GoogleMapService googleApiService;
@@ -33,21 +35,12 @@ namespace SmartInventoryServices.Controllers
             {
                 response.Status = ResponseStatus.ERROR.ToString();
                 response.Results = null;
+                return response;
             }
 
-            try
-            {
-                GeoCodeResult geocodeResult = await googleApiService.Geocode(request);
-                response.Status = geocodeResult.Status;
-                response.Results = geocodeResult.Results;
-            }
-            catch (HttpRequestException ex)
-            {
-                ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.ApiLogWriter("Geocode()", "MapsAPIController ", "", ex);
-                response.Status = StatusCodes.UNKNOWN_ERROR.ToString();
-                response.Results = null;
-            }
+            GeoCodeResult geocodeResult = await googleApiService.Geocode(request);
+            response.Status = geocodeResult.Status;
+            response.Results = geocodeResult.Results;
             return response;
         }
 
@@ -60,22 +53,14 @@ namespace SmartInventoryServices.Controllers
             {
                 response.Status = ResponseStatus.ERROR.ToString();
                 response.Results = null;
+                return response;
             }
 
-            try
-            {
-                ReverseGeoCodeResult geocodeResult = await googleApiService.ReverseGeocode(request);
-                response.Status = geocodeResult.Status;
-                response.Results = geocodeResult.Results;
-                response.PlusCode = geocodeResult.PlusCode;
-            }
-            catch (HttpRequestException ex)
-            {
-                ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.ApiLogWriter("ReverseGeocode()", "MapsAPIController ", "", ex);
-                response.Status = StatusCodes.UNKNOWN_ERROR.ToString();
-                response.Results = null;
-            }
+
+            ReverseGeoCodeResult geocodeResult = await googleApiService.ReverseGeocode(request);
+            response.Status = geocodeResult.Status;
+            response.Results = geocodeResult.Results;
+            response.PlusCode = geocodeResult.PlusCode;
             return response;
         }
 
@@ -88,20 +73,13 @@ namespace SmartInventoryServices.Controllers
             {
                 response.Status = ResponseStatus.ERROR.ToString();
                 return response;
+
             }
-            try
-            {
-                DirectionResult directionsResult = await googleApiService.GetDirections(request);
-                response.Status = directionsResult.Status;
-                response.GeocodedWaypoints = directionsResult.GeocodedWaypoints;
-                response.Routes = directionsResult.Routes;
-            }
-            catch (HttpRequestException ex)
-            {
-                ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.ApiLogWriter("Directions()", "MapsAPIController ", "", ex);
-                response.Status = StatusCodes.UNKNOWN_ERROR.ToString();
-            }
+
+            DirectionResult directionsResult = await googleApiService.GetDirections(request);
+            response.Status = directionsResult.Status;
+            response.GeocodedWaypoints = directionsResult.GeocodedWaypoints;
+            response.Routes = directionsResult.Routes;
             return response;
         }
 
@@ -115,21 +93,11 @@ namespace SmartInventoryServices.Controllers
                 response.Status = ResponseStatus.ERROR.ToString();
                 return response;
             }
-
-            try
-            {
-                DistanceMatrixResult distanceMatrixResult = await googleApiService.GetDistanceMatrix(request);
-                response.Status = distanceMatrixResult.Status;
-                response.DestinationAddresses = distanceMatrixResult.DestinationAddresses;
-                response.Rows = distanceMatrixResult.Rows;
-                response.OriginAddresses = distanceMatrixResult.OriginAddresses;
-            }
-            catch (HttpRequestException ex)
-            {
-                ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.ApiLogWriter("DistanceMatrix()", "MapsAPIController ", "", ex);
-                response.Status = StatusCodes.UNKNOWN_ERROR.ToString();
-            }
+            DistanceMatrixResult distanceMatrixResult = await googleApiService.GetDistanceMatrix(request);
+            response.Status = distanceMatrixResult.Status;
+            response.DestinationAddresses = distanceMatrixResult.DestinationAddresses;
+            response.Rows = distanceMatrixResult.Rows;
+            response.OriginAddresses = distanceMatrixResult.OriginAddresses;
 
             return response;
         }
@@ -145,20 +113,13 @@ namespace SmartInventoryServices.Controllers
                 return response;
             }
 
-            try
-            {
-                PlaceSearchResult placeResult = await googleApiService.PlaceSearchDetails(request);
-                response.Status = placeResult.Status;
-                response.Results = placeResult.Results;
-                response.NextPageToken = placeResult.NextPageToken;
-                response.HtmlAttributions = placeResult.HtmlAttributions;
-            }
-            catch (HttpRequestException ex)
-            {
-                ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.ApiLogWriter("PlaceSearch()", "MapsAPIController ", "", ex);
-                response.Status = StatusCodes.UNKNOWN_ERROR.ToString();
-            }
+
+            PlaceSearchResult placeResult = await googleApiService.PlaceSearchDetails(request);
+            response.Status = placeResult.Status;
+            response.Results = placeResult.Results;
+            response.NextPageToken = placeResult.NextPageToken;
+            response.HtmlAttributions = placeResult.HtmlAttributions;
+
             return response;
         }
 
@@ -172,19 +133,12 @@ namespace SmartInventoryServices.Controllers
                 response.Status = ResponseStatus.ERROR.ToString();
                 return response;
             }
-            try
-            {
-                PlaceDetailsResult placeResult = await googleApiService.GetPlaceDetails(request);
-                response.Status = placeResult.Status;
-                response.Result = placeResult.Result;
-                response.HtmlAttributions = placeResult.HtmlAttributions;
-            }
-            catch (HttpRequestException ex)
-            {
-                ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.ApiLogWriter("PlaceDetails()", "MapsAPIController ", "", ex);
-                response.Status = StatusCodes.UNKNOWN_ERROR.ToString();
-            }
+
+            PlaceDetailsResult placeResult = await googleApiService.GetPlaceDetails(request);
+            response.Status = placeResult.Status;
+            response.Result = placeResult.Result;
+            response.HtmlAttributions = placeResult.HtmlAttributions;
+
             return response;
         }
 
@@ -198,18 +152,11 @@ namespace SmartInventoryServices.Controllers
                 response.Status = ResponseStatus.ERROR.ToString();
                 return response;
             }
-            try
-            {
-                PlaceAutocompleteResult placeResult = await googleApiService.GetPlaceAutocomplete(request);
-                response.Status = placeResult.Status;
-                response.Predictions = placeResult.Predictions;
-            }
-            catch (HttpRequestException ex)
-            {
-                ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.ApiLogWriter("PlaceAutocomplete()", "MapsAPIController ", "", ex);
-                response.Status = StatusCodes.UNKNOWN_ERROR.ToString();
-            }
+
+            PlaceAutocompleteResult placeResult = await googleApiService.GetPlaceAutocomplete(request);
+            response.Status = placeResult.Status;
+            response.Predictions = placeResult.Predictions;
+
             return response;
         }
 
