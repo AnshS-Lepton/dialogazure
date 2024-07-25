@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -30,6 +31,16 @@ namespace IntegrationServices.Controllers
 				if (string.IsNullOrEmpty(entity_type))
 				{
 					return this.Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "entity_type can not be blank!" });
+				}
+				if (!string.IsNullOrEmpty(delta_date))
+				{
+					DateTime dateValue;
+					bool isValid = DateTime.TryParseExact(delta_date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateValue);
+					if (!isValid)
+					{
+						return this.Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "delta_date string is invalid format!" });
+
+					}
 				}
 				var layerDetails = new BLLayer().GetLayerDetails().Where(x => x.layer_title.ToUpper() == entity_type.ToUpper()).FirstOrDefault();
 				if (layerDetails == null)
