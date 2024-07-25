@@ -27,9 +27,17 @@ namespace IntegrationServices.Controllers
 			List<GetLocationDelta> getLocationDeltaList = new List<GetLocationDelta>();
 			try
 			{
-				if (!string.IsNullOrEmpty(entity_type))
+				if (string.IsNullOrEmpty(entity_type))
 				{
-					getLocationDeltaList = new BLLocationDelta().getLocationDelta(entity_type, delta_date);
+					return this.Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "entity_type can not be blank!" });
+				}
+				var layerDetails = new BLLayer().GetLayerDetails().Where(x => x.layer_title.ToUpper() == entity_type.ToUpper()).FirstOrDefault();
+				if (layerDetails == null)
+				{
+					return this.Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "entity_type not found!" });
+				}
+
+				getLocationDeltaList = new BLLocationDelta().getLocationDelta(entity_type, delta_date);
 					if (getLocationDeltaList.Count > 0)
 					{
 						response.results = getLocationDeltaList;
@@ -41,11 +49,7 @@ namespace IntegrationServices.Controllers
 					{
 						return this.Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "No Delta Found!" });
 					}
-				}
-				else
-				{
-					return this.Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "entity_type can not be blank!" });
-				}
+				
 
 			}
 			catch (Exception ex)
@@ -69,9 +73,24 @@ namespace IntegrationServices.Controllers
 			{
 				Uri uri = HttpContext.Current.Request.Url;
 				string requestURL = uri.GetLeftPart(UriPartial.Path);
-				if (!string.IsNullOrEmpty(entity_type))
+
+				if (page_size > 100 || page_size < 0)
 				{
-					getSiteLocationList = new BLLocationDelta().getSiteLocations(entity_type, page, page_size);
+				 return this.Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "page_size cannot be greater than 100 and negative value!" });
+					
+				}
+				if (string.IsNullOrEmpty(entity_type))
+				{
+					return this.Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "entity_type can not be blank!" });
+				}
+
+				var layerDetails = new BLLayer().GetLayerDetails().Where(x => x.layer_title.ToUpper() == entity_type.ToUpper()).FirstOrDefault();
+				if (layerDetails == null)
+				{
+					return this.Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "entity_type not found!" });
+				}
+
+				getSiteLocationList = new BLLocationDelta().getSiteLocations(entity_type, page, page_size);
 					if (getSiteLocationList.Count > 0)
 					{
 						List<GetSiteLocationDetails> getLocationList = new List<GetSiteLocationDetails>();
@@ -105,11 +124,7 @@ namespace IntegrationServices.Controllers
 					{
 						return this.Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "No Delta Found!" });
 					}
-				}
-				else
-				{
-					return this.Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "entity_type can not be blank!" });
-				}
+				
 
 			}
 			catch (Exception ex)
@@ -143,9 +158,9 @@ namespace IntegrationServices.Controllers
 				{
 					return this.Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "port_id can not be blank!" });
 				}
-				if (optical_distance == null || optical_distance == 0)
+				if (optical_distance == null || optical_distance <= 0)
 				{
-					return this.Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "optical_distance can not be blank and zero!" });
+					return this.Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "optical_distance can not be blank,negative and zero!" });
 				}
 
 					getFaultLocationList = new BLLocationDelta().getFaultLocations(fiber_link_id, equipment_id, site_code, port_id, optical_distance);
