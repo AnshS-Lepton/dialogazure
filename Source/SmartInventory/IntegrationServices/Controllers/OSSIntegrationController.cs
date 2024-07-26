@@ -183,19 +183,19 @@ namespace IntegrationServices.Controllers
 
                     foreach (var obj in objUpdateAlarmStatusetails.Impacted_entities)
                     {
-                        if (!string.IsNullOrEmpty(obj.port_number))
-                        {
-                            if (!int.TryParse(obj.port_number.ToString(), out int portNumber))
-                            {
+                        //if (!string.IsNullOrEmpty(obj.port_number))
+                        //{
+                        //    if (!int.TryParse(obj.port_number, out int portNumber))
+                        //    {
                                 
-                                var errorResponses = new ErrorResponse
-                                {
-                                    code = (int)HttpStatusCode.BadRequest,
-                                    message = "Port Number is Not Valid"
-                                };
-                                return Content(HttpStatusCode.BadRequest, errorResponses);
-                            }
-                        }
+                        //        var errorResponses = new ErrorResponse
+                        //        {
+                        //            code = (int)HttpStatusCode.BadRequest,
+                        //            message = "Port Number is Not Valid"
+                        //        };
+                        //        return Content(HttpStatusCode.BadRequest, errorResponses);
+                        //    }
+                        //}
                         if (ModelState.IsValid)
                         {
                             var res = new BLServiceability().UpdateAlarmStatusetails(obj);
