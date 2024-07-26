@@ -153,8 +153,40 @@ namespace DataAccess
             catch { throw; }
 
         }
+        public Customer_Response SaveCustomerTicket(CustomerTicketMaster objTicketMaster)
+        {
+            try
+            {
+                Customer_Response response = repo.ExecuteProcedure<Customer_Response>("fn_save_customer_ticket",
+                new
+                {
+                    p_can_id = Convert.ToInt32(objTicketMaster.customer.can_id),
+                    p_name = objTicketMaster.customer.name,
+                    p_address = objTicketMaster.customer.address,
+                    p_latitude = objTicketMaster.customer.latitude,
+                    p_longitude = objTicketMaster.customer.longitude,
+                    p_connection_entity_id = objTicketMaster.connection_entity_id,
+                    p_ticket_source = objTicketMaster.ticket_source,
+                    p_reference_id = objTicketMaster.reference_id,
+                    p_connection_entity_type = objTicketMaster.connection_entity_type
+                }).FirstOrDefault();
+                return response;
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-        
+        public customerTicketStatus GetcustomerTicketStatus(int id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<customerTicketStatus>("fn_get_customer_ticket_status", new { p_ticket_id = id }, false).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+
     }
     //public int DeleteTicketById(int ticket_id, int userId)
     //{

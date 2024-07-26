@@ -45,4 +45,5 @@ namespace Models.API
         public string statusType { get; set; }
         public string statusCode { get; set; }
     }
+   
 }
