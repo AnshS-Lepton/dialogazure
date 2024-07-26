@@ -56,5 +56,10 @@ namespace BusinessLogics
         {
             return objDAMisc.Serviceability(latitude, longitude);
         }
+
+        public APIResponse UpdateDiscoveredEntityDetails(UpdateDiscoveredEntityDetails obj)
+        {
+            return objDAMisc.UpdateDiscoveredEntityDetails(obj);
+        }
     }
 }

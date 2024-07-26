@@ -204,7 +204,7 @@ namespace Models
         public string entity_type { get; set; }
         [Required]
         public string entity_id { get; set; }
-        
+
         public string port_number { get; set; }
         [Required]
         public string alarm_status { get; set; }
@@ -239,7 +239,7 @@ namespace Models
 
 
     }
-    public class  ErrorResponse
+    public class ErrorResponse
     {
         public int code { get; set; }
         public string message { get; set; }
@@ -248,5 +248,23 @@ namespace Models
     {
         public string status { get; set; }
         public string message { get; set; }
+    }
+    public class UpdateDiscoveredEntityDetails
+    {
+        [Required]
+        public string reference_id { get; set; }
+        [Required]
+        public string entity_id { get; set; }
+        [Required]
+        public string entity_type { get; set; }
+        public string serial_no {  get; set; }
+        public string ip_address { get; set; }
+        [Required]
+        public List<Ports> ports { get; set; }
+    }
+    public class Ports
+    {
+        [Required]
+        public string port_name { get; set;}
     }
 }

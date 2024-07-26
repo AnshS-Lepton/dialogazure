@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using DataAccess.DBHelpers;
 using Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NPOI.POIFS.Properties;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace DataAccess
 {
@@ -112,6 +114,31 @@ namespace DataAccess
             try
             {
                 return repo.ExecuteProcedure<EntityDetail>("fn_api_get_ossserviceability", new { p_lng = longitude, p_lat = latitude });
+            }
+            catch { throw; }
+        }
+
+        public APIResponse UpdateDiscoveredEntityDetails(UpdateDiscoveredEntityDetails obj)
+        {
+           
+            try
+            {
+                
+                    
+                
+                
+
+                return repo.ExecuteProcedure<APIResponse>("fn_api_Update_DiscoveredEntity", new
+                    {
+                        p_entity_type = obj.entity_type,
+                        p_network_id = obj.entity_id,
+                        p_serial_no = obj.serial_no,
+                        p_ip_address = obj.ip_address,
+                        p_ports = JsonConvert.SerializeObject(obj.ports)
+
+
+                }).FirstOrDefault();
+                
             }
             catch { throw; }
         }

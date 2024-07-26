@@ -1,4 +1,5 @@
 ﻿using BusinessLogics;
+using IntegrationServices.Settings;
 using Lepton.Entities;
 using Models;
 using Newtonsoft.Json;
@@ -9,7 +10,6 @@ using System.Linq;
 using System.Net;
 using System.Web.Http;
 using Utility;
-using IntegrationServices.Settings;
 
 namespace IntegrationServices.Controllers
 {
@@ -269,11 +269,20 @@ namespace IntegrationServices.Controllers
             string responseFromServer = "";
             try
             {
+                if (ServiceabilityRequest == null)
+                {
+                    var errorResponse = new ErrorResponse
+                    {
+                        code = (int)HttpStatusCode.BadRequest,
+                        message = "Request object is null"
+                    };
+                    return Content(HttpStatusCode.BadRequest, errorResponse);
+                }
                 if (ModelState.IsValid)
                 {
                     double latitude;
                     double longitude;
-                   
+
                     if (!double.TryParse(ServiceabilityRequest.latitude.Trim(), out latitude) || ServiceabilityRequest.latitude != ServiceabilityRequest.latitude.Trim())
                     {
                         var errorResponse = new ErrorResponse
@@ -390,7 +399,7 @@ namespace IntegrationServices.Controllers
                                     gp.Add(objDevices);
                                 }
                             }
-                            
+
 
                         }
                         root.devices = gp.OrderBy(x => x.distance).ToList();
@@ -422,7 +431,7 @@ namespace IntegrationServices.Controllers
                 }
 
 
-               
+
             }
             catch (Exception ex)
             {
@@ -436,7 +445,72 @@ namespace IntegrationServices.Controllers
                 };
                 return Content(HttpStatusCode.InternalServerError, errorResponse);
             }
-            
+
+        }
+
+        [HttpPost]
+        [Route("updateDiscoveredEntity")]
+        public IHttpActionResult UpdateDiscoveredEntity(UpdateDiscoveredEntityDetails obj)
+        {
+
+            var responses = new APIResponse();
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var res = new BLServiceability().UpdateDiscoveredEntityDetails(obj);
+                    if (res != null && res.status.Equals("true"))
+                    {
+                        responses.status = "OK";
+                        responses.message = res.message;
+                        return Json(responses);
+                    }
+                    else if (res != null && res.status.Equals("false"))
+                    {
+                        var errorResponses = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.BadRequest,
+                            message = res.message
+                        };
+                        return Content(HttpStatusCode.BadRequest, errorResponses);
+                    }
+                    else
+                    {
+                        var errorresponse = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.NotFound,
+                            message = "Data not found"
+                        };
+                        return Content(HttpStatusCode.NotFound, errorresponse);
+                    }
+
+
+                }
+                else
+                {
+                    var errorMessages_ = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                    var errorMessageString_ = string.Join("; ", errorMessages_);
+                    var errorResponses = new ErrorResponse
+                    {
+                        code = (int)HttpStatusCode.BadRequest,
+                        message = errorMessageString_
+                    };
+                    return Content(HttpStatusCode.BadRequest, errorResponses);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("UpdateDiscoveredEntity()", "OSSIntegrationController", "", ex);
+                var errorResponse = new ErrorResponse
+                {
+                    code = (int)HttpStatusCode.InternalServerError,
+                    message = "Error While Processing Request."
+                };
+                return Content(HttpStatusCode.InternalServerError, errorResponse);
+            }
         }
 
 
