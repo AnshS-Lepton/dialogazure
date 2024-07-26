@@ -1131,7 +1131,7 @@ function AddExecutionRow(RowIndex, SystemId, CreatedBy, entitytype) {
 
         Row += '<label for="ddl_Execution" class="form-label col-md-2 col-sm-2 white-space">Execution Method</label> <div class="col-md-4 col-sm-4"><select id="ddl_Execution" name="ExecutionMethod.listExecutionRecords[' + RowIndex + '].execution_method" class="chosen-select form-group" onchange="removeBorder(this)"><option value="0">-Select-</option><option value="OT" data-planningname="OT">OT</option><option value="HDD" data-planningname="HDD">HDD</option><option value="PCC" data-planningname="PCC">PCC</option><option value="Clamping" data-planningname="Clamping">Clamping</option><option value="Other" data-planningname="Other">Other</option></select></div>';
 
-        Row += '<label for="ddl_Execution" class="form-label col-md-2 col-sm-2 white-space">Execution Length</label><div class="col-md-4 col-sm-4"><input class="form-control" id="execution_length" name="ExecutionMethod.listExecutionRecords[' + RowIndex + '].execution_length"  maxlength="15" name="execution_length" type="number" value=""></div>';
+        Row += '<label for="ddl_Execution" class="form-label col-md-3 col-sm-2 white-space">Execution Length (km):</label><div class="col-md-4 col-sm-4"><input class="form-control" id="execution_length" name="ExecutionMethod.listExecutionRecords[' + RowIndex + '].execution_length"  maxlength="15" name="execution_length" type="number" value=""></div>';
 
         Row += '<span class="icon-close removeAT" onclick="delRow(' + RowIndex + ')" title="' + MultilingualKey.SI_GBL_GBL_GBL_GBL_002 + '" style=""></span>';
 

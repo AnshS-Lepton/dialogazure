@@ -44,6 +44,7 @@ namespace SmartInventory.Controllers
 
             BLItemTemplate.Instance.BindItemDropdowns(objEntityMaster, EntityType.Antenna.ToString());
             BindAntennaDropDown(objEntityMaster);
+            objEntityMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
             objBLCommon.fillProjectSpecifications(objEntityMaster);
             //objEntityMaster.unitValue = objEntityMaster.Antenna_ratio;
             BLLayer objBLLayer = new BLLayer();
@@ -122,9 +123,12 @@ namespace SmartInventory.Controllers
                 objEntityMaster.sequence_id = objNetworkCodeDetail.sequence_id;
             }
 
+			if (string.IsNullOrEmpty(objEntityMaster.network_name))
+			{
+				objEntityMaster.network_name = objEntityMaster.network_id;
+			}
 
-
-            if (TryValidateModel(objEntityMaster))
+			if (TryValidateModel(objEntityMaster))
             {
                 var isNew = objEntityMaster.system_id > 0 ? false : true;
 
@@ -184,6 +188,8 @@ namespace SmartInventory.Controllers
                 BindAntennaDropDown(objEntityMaster);
                 // RETURN PARTIAL VIEW WITH MODEL DATA
                 objBLCommon.fillProjectSpecifications(objEntityMaster);
+                objEntityMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+
                 return PartialView("_AddAntenna", objEntityMaster);
             }
         }
@@ -197,8 +203,8 @@ namespace SmartInventory.Controllers
             objEntityMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
             var _objDDL = new BLMisc().GetDropDownList("");
             objEntityMaster.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
-           // objEntityMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
-        }
+			// objEntityMaster.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+		}
 
         public PartialViewResult AddVSATAntenna(int SystemId,bool is_vsat_updated=false)
         {

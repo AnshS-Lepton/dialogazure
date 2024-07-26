@@ -98,6 +98,7 @@
                     <div class="row form-group">
                         <div class="col-md-3">Route Id:</div>
                         <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
 
                         </div>
                     </div>

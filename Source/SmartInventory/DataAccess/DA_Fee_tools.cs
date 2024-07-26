@@ -108,11 +108,11 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public List<KeyValueDropDown> GetFEUserDeatils(int roll_id,string active)
+        public List<KeyValueDropDown> GetFEUserDeatils(int user_id, string active)
         {
             try
             {
-                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_user_details", new {ID =roll_id ,Active = active }, true);
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_get_user_details", new {ID = user_id, Active = active }, true);
             }
             catch { throw; }
         }

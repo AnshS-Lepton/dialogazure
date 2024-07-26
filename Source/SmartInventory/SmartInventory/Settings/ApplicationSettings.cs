@@ -81,6 +81,7 @@ namespace SmartInventory.Settings
         public static int DefaultBulkOperationPaging = 0;
         public static int MaxFileUploadSizeLimit = 0; 
         public static int MaxFileCountLimit = 0;
+        public static int MaxAdddocumentRowNumber = 0;
 
         //public static string allowedDocumentAttachmentType ="";
         //public static string allowedImageAttachmentType = "";
@@ -234,6 +235,7 @@ namespace SmartInventory.Settings
         public static int splitterTypeForFat = 0;
         public static int splitterTypeForFdc = 0;
         public static bool IsWMSLayerLoadingEnabled = false;
+        public static bool IsVectorLayerEnabled = false;
         public static int IsSignalRIsEnable = 0;
 		public static bool IsTraceEnabled = false;
 		public static int ExcelReportLimitCount = 0;
@@ -250,11 +252,13 @@ namespace SmartInventory.Settings
         static string smsapi = "";
         public static int MaxLineEntityLength = 0;
         public static int isCDBAttributeEnabled = 0;
+        
         public static bool fetoolsenabled = true;
         public static int CableDefLabelMinZoom = 0;
         public static int IsGeometryUpdateOnAssociationAllowed = 0;
         public static bool CdbEnabled = false;
-
+        public static int isLDAPEnabled = 0;
+        public static string ApplicationVersion = "";
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -851,6 +855,10 @@ namespace SmartInventory.Settings
                 {
                     IsWMSLayerLoadingEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true;
                 }
+                if (objSetting.key == "IsVectorLayerEnabled")
+                {
+                    IsVectorLayerEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true;
+                }
                 if (objSetting.key == "IsSignalRIsEnable")
                 {
                     IsSignalRIsEnable = Convert.ToInt32(objSetting.value);
@@ -880,6 +888,9 @@ namespace SmartInventory.Settings
                 {
                     IsGeometryUpdateOnAssociationAllowed = Convert.ToInt32(objSetting.value);
                 }
+                if (objSetting.key == "AdddocumentRowNumber")
+                    MaxAdddocumentRowNumber = Convert.ToInt32(objSetting.value);
+
                 //if (objSetting.key == "allowedDocumentAttachmentType")
                 //{
                 //    allowedDocumentAttachmentType = objSetting.value;
@@ -888,6 +899,14 @@ namespace SmartInventory.Settings
                 //{
                 //    allowedImageAttachmentType = objSetting.value;
                 //}
+                if (objSetting.key == "isLDAPEnabled")
+                {
+                    isLDAPEnabled = Convert.ToInt32(objSetting.value);
+                }
+                if (objSetting.key == "ApplicationVersion")
+                {
+                    ApplicationVersion = objSetting.value;
+                }
             }
         }
     }

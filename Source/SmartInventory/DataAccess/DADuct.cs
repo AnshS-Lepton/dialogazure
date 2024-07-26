@@ -59,7 +59,7 @@ namespace DataAccess
                     objDuct.construction = DuctInfo.construction;
                     objDuct.activation = DuctInfo.activation;
                     objDuct.accessibility = DuctInfo.accessibility;
-                    objDuct.duct_type = DuctInfo.cable_type;
+                    objDuct.duct_type = DuctInfo.duct_type;
                     objDuct.color_code = DuctInfo.color_code;
                     objDuct.inner_dimension = DuctInfo.inner_dimension;
                     objDuct.outer_dimension = DuctInfo.outer_dimension;
@@ -90,8 +90,13 @@ namespace DataAccess
                     objDuct.bom_sub_category= DuctInfo.bom_sub_category;
                     objDuct.calculated_length = DuctInfo.calculated_length;
                     objDuct.gis_design_id = DuctInfo.gis_design_id;
-                    //DuctInfo.served_by_ring = DuctInfo.served_by_ring;
-                    var DuctResp =  repo.Update(objDuct);
+                    objDuct.hierarchy_type = DuctInfo.hierarchy_type;
+                    objDuct.own_vendor_id = DuctInfo.own_vendor_id;
+					objDuct.a_location_code = DuctInfo.a_location_code;
+					objDuct.b_location_code = DuctInfo.b_location_code;
+					//DuctInfo.served_by_ring = DuctInfo.served_by_ring;
+					var DuctResp =  repo.Update(objDuct);
+                    RouteCreation routeObj = new DAMisc().createRouteId(DuctResp.system_id, Models.EntityType.Duct.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctResp.system_id, Models.EntityType.Duct.ToString(), DuctResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Duct.ToString(), DuctResp.province_id);
                     return DuctResp;
@@ -121,6 +126,7 @@ namespace DataAccess
                         string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
                         DAIspLine.Instance.CreateOSPCable(DuctInfo.system_id);
                         new DADuct().setEndPoint(DuctInfo.system_id);
+                        RouteCreation routeObj = new DAMisc().createRouteId(DuctInfo.system_id, Models.EntityType.Duct.ToString());
                         DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctInfo.system_id, Models.EntityType.Duct.ToString(), DuctInfo.province_id, 0);
                     }
                     else
@@ -236,6 +242,8 @@ namespace DataAccess
                     objDuct.b_location = objTPDetail.tpDetail[1].network_id ?? "";
                     objDuct.b_system_id = objTPDetail.tpDetail[1].system_id;
                     objDuct.b_entity_type = objTPDetail.tpDetail[1].entity_type ?? "";
+                    objDuct.a_location_code = "A";
+                    objDuct.b_location_code = "B";
                     //}
                     //var networkCodeDetail = new DAMisc().GetLineNetworkCode(objDuct.a_location, objDuct.b_location, EntityType.Cable.ToString(), objTPDetail.entityGeom,"OSP");
                     //if (!string.IsNullOrEmpty(networkCodeDetail.network_code))

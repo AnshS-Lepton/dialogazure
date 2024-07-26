@@ -74,7 +74,7 @@ namespace SmartInventory.Controllers
                 {
                     objTicketMaster.user_role_id = objUser.role_id;
                 }
-                if (objBuilding.network_id!=null)
+                if (objBuilding != null && objBuilding.network_id!=null)
                 {
                     objTicketMaster.IsBuildingExist = true;  
                 }

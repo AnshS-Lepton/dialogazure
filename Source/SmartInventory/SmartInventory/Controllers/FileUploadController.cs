@@ -293,6 +293,7 @@ namespace SmartInventory.Controllers
         {
             var userdetails = (User)Session["userDetail"];
             fdtl.lstUserModule= new BLLayer().GetUserModuleAbbrList(userdetails.user_id, UserType.Web.ToString());
+            fdtl.doctypeddllist = new BLLayer().GetDropDownList("ddldocumenttype");  //"LinkType" ddldocumenttype
             return PartialView("_UploadFile", fdtl);
         }
 

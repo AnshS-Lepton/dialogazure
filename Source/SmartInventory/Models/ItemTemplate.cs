@@ -30,17 +30,19 @@ namespace Models
         [Required]
         public int vendor_id { get; set; }
         [Required]
-     
+
         public string item_code { get; set; }
         [NotMapped]
         public string unitValue { get; set; }
         //MODEL MAPPING      
-        public int type { get; set; }       
-        public int brand { get; set; }       
-        public int model { get; set; }       
-        public int construction { get; set; }      
-        public int activation { get; set; }       
+        public int type { get; set; }
+        public int brand { get; set; }
+        public int model { get; set; }
+        public int construction { get; set; }
+        public int activation { get; set; }
         public int accessibility { get; set; }
+        public string hierarchy_type {get; set;}
+
         [NotMapped]
         public List<KeyValueDropDown> lstSpecification { get; set; }
         [NotMapped]
@@ -57,6 +59,8 @@ namespace Models
         public List<KeyValueDropDown> lstActivation { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> lstConstruction { get; set; }
+        [NotMapped]
+        public List<KeyValueDropDown> lsthierarchytype { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> lstVendor { get; set; }
         [NotMapped]
@@ -594,6 +598,7 @@ namespace Models
         public int no_of_core_per_tube { get; set; }
         [Required]
         public string cable_type { get; set; }
+        public string aerial_location { get; set; }
         public string cable_category { get; set; }
         public string cable_sub_category { get; set; }
         [NotMapped]
@@ -612,6 +617,8 @@ namespace Models
         public override string other { get; set; }
         [NotMapped]
         public IList<DropDownMaster> listcableType { get; set; }
+        [NotMapped]
+        public IList<DropDownMaster> listaerialLocation { get; set; }
         [NotMapped]
         public IList<DropDownMaster> listcableCategory { get; set; }
         [NotMapped]
@@ -688,8 +695,7 @@ namespace Models
         public double trench_width { get; set; }
         [Required(ErrorMessage = "Trench height can't be blank")]
         //[Range(1, int.MaxValue, ErrorMessage = "Trench height greater than 0")]
-        public double trench_height { get; set; }
-        [Required]
+        public double trench_height { get; set; }       
         public string trench_type { get; set; }
         [NotMapped]
         public IList<DropDownMaster> trenchTypeIn { get; set; }

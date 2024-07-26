@@ -2069,12 +2069,19 @@ body {
     background: #EEEEEE url(../images/split_img.png) no-repeat -457px -4px;
 }
 
+.spnLandbase {
+    background: #EEEEEE url(../images/split_img.png) no-repeat -503px -34px;
+}
+
 .spnGoogleNot {
     background: url(../images/split_img.png) no-repeat -342px -476px;
 }
 
 .spnEntityNot {
     background: url(../images/split_img.png) no-repeat -370px -476px;
+}
+.spnLandbaseNot {
+    background: url(../images/split_img.png) no-repeat -503px -4px;
 }
 
 .spnAdvSrch {
@@ -10261,4 +10268,14 @@ tfoot tr td a:hover {
 
 .dropBottomPos{
     bottom:40px;
+}
+.uploadDropDown{
+    width:120px;
+}
+.uploadfileWidth{
+    width:167px;
+}
+.fileUploaderfs {
+    font-size: 10px;
+    word-break: break-all;
 }

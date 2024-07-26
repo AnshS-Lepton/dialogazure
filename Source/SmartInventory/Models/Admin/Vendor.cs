@@ -17,7 +17,9 @@ namespace Models.Admin
         public int id { get; set; }
         [Required]
         public string name { get; set; }
-        [Required]
+		[Required]
+		public string abbr { get; set; }
+		[Required]
         public string type { get; set; }
         [Required]
         public string address { get; set; }

@@ -63,7 +63,7 @@ namespace Models
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int system_id { get; set; }
 		public string network_id { get; set; }
-		[Required]
+		//[Required]
 		public string network_name { get; set; }
 		public int parent_system_id { get; set; }
 		public string parent_network_id { get; set; }
@@ -145,12 +145,16 @@ namespace Models
 		public string pNetworkId { get; set; }
 
 		public string third_party_vendor_id { get; set; }
+		public string own_vendor_id { get; set; }
+
 		[NotMapped]
 		public string circuit_id { get; set; }
 		[NotMapped]
 		public string thirdparty_circuit_id { get; set; }
 		[NotMapped]
 		public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+		[NotMapped]
+		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
 		public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
 		[NotMapped]

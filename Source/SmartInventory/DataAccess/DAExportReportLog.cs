@@ -60,5 +60,24 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<ExportReportLogInfo> GetAuditlogExportExportLogList(CommonGridAttributes objGridAttributes, int user_id, string timeInterval)
+        {
+            try
+            {
+
+                return repo.ExecuteProcedure<ExportReportLogInfo>("fn_get_auditlog_entity_export_log", new
+                {
+                    p_searchby = objGridAttributes.searchBy,
+                    p_searchtext = objGridAttributes.searchText,
+                    P_PAGENO = objGridAttributes.currentPage,
+                    P_PAGERECORD = objGridAttributes.pageSize,
+                    P_SORTCOLNAME = objGridAttributes.sort,
+                    P_SORTTYPE = objGridAttributes.orderBy,
+                    p_user_id = user_id,
+                    p_timeInterval = timeInterval
+                }, true);
+            }
+            catch { throw; }
+        }
     }
 }

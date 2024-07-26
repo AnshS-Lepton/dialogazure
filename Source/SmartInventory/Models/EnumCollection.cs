@@ -141,6 +141,7 @@ namespace Models
         Accessibility,
         Brand,
         Model,
+        Hierarchy_type,
         Tenancy,
         Category,
         RFS_Status,
@@ -183,6 +184,7 @@ namespace Models
         Reference_Direction,
         Coupler,
         Cable_Type,
+        Aerial_Location,
         Ownership,
         POD_Type,
         MPOD_Type,
@@ -272,8 +274,12 @@ namespace Models
         Fiber_Type_LOV,
         Route_Type,
         type,
-        execution_Method
-    }
+        execution_Method,
+        Spliceclosure_type,
+		A_location,
+        FMS_Type
+
+	}
     public enum VendorType
     {
         Own,
@@ -392,8 +398,14 @@ namespace Models
         model,
         construction,
         activation,
-        accessibility
-    }
+        accessibility,
+        hierarchy_type,
+        trench_type,
+        a_location_code,
+        b_location_code,
+		installation_location_code,
+		fms_type
+	}
     public enum formFeatureType
     {
         feature,

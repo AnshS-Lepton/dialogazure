@@ -124,6 +124,7 @@ namespace DataAccess
             objItem.lstAccessibility = lstDropDownValues.Where(x => x.ddtype == DropDownType.Accessibility.ToString()).ToList();
             objItem.lstBrand = lstDropDownValues.Where(x => x.ddtype == DropDownType.Brand.ToString()).ToList();
             objItem.lstModel = lstDropDownValues.Where(x => x.ddtype == DropDownType.Model.ToString()).ToList();
+            objItem.lsthierarchytype = lstDropDownValues.Where(x => x.ddtype == DropDownType.Hierarchy_type.ToString()).ToList();
             objItem.entityType = entityType;
             //objItem.lstSplitterRatio = objDDL.Where(x => x.dropdown_type == DropDownType.Splitter_Ratio.ToString()).ToList();
         }

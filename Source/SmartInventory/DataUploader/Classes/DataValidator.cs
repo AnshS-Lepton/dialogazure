@@ -988,7 +988,7 @@ namespace DataUploader
 
                                 dbColName = Convert.ToString(mandatoryField.DbColName);
 
-                                if (dt.Columns.Contains(mandatoryField.TemplateColName))
+                                if (dt.Columns.Contains(mandatoryField.TemplateColName) && !string.IsNullOrEmpty(recordvalue))
                                 {
                                     switch (dbColName)
                                     {
@@ -1057,6 +1057,20 @@ namespace DataUploader
                                             break;
                                         case "unit_type":
                                             if (lstentity_dropdown.Count(x => x.dropdown_type.Equals("Unit_Type", StringComparison.OrdinalIgnoreCase) && x.dropdown_value.Equals(recordvalue, StringComparison.OrdinalIgnoreCase)) == 0)
+                                            {
+                                                isInValid = true;
+                                                dbDropdownColName += mandatoryField.TemplateColName + ",";
+                                            }
+                                            break;
+                                        case "hierarchy_type":
+                                            if (lstentity_dropdown.Count(x => x.dropdown_type.Equals(dbColName, StringComparison.OrdinalIgnoreCase) && x.dropdown_value.Equals(recordvalue, StringComparison.OrdinalIgnoreCase)) == 0)
+                                            {
+                                                isInValid = true;
+                                                dbDropdownColName += mandatoryField.TemplateColName + ",";
+                                            }
+                                            break;
+                                        case "aerial_location":
+                                            if (lstentity_dropdown.Count(x => x.dropdown_type.Equals(dbColName, StringComparison.OrdinalIgnoreCase) && x.dropdown_value.Equals(recordvalue, StringComparison.OrdinalIgnoreCase)) == 0)
                                             {
                                                 isInValid = true;
                                                 dbDropdownColName += mandatoryField.TemplateColName + ",";

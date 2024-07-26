@@ -166,6 +166,11 @@
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.DirectoryServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLL\System.DirectoryServices.dll</HintPath>
+    </Reference>
+    <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
@@ -408,6 +413,7 @@
     <Content Include="bin\SharpKml.Core.dll" />
     <Content Include="bin\SmartInventory.dll" />
     <Content Include="bin\SmartInventory.pdb" />
+    <Content Include="bin\System.DirectoryServices.dll" />
     <Content Include="bin\System.IdentityModel.Tokens.Jwt.dll" />
     <Content Include="bin\System.IdentityModel.Tokens.Jwt.xml" />
     <Content Include="bin\System.Net.Http.Extensions.dll" />
@@ -1594,13 +1600,24 @@
     <Content Include="Content\js\vis_4_18_1.min.js" />
     <Content Include="Content\sort_asc.png" />
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
+    <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\01-07-2024.sql" />
+    <Content Include="MigrationScripts\09-07-2024.sql" />
+    <Content Include="MigrationScripts\12-07-2024.sql" />
+    <Content Include="MigrationScripts\17-07-2024.sql" />
+    <Content Include="MigrationScripts\18-07-2024.sql" />
+    <Content Include="MigrationScripts\18-07-2024_2.sql" />
+    <Content Include="MigrationScripts\19-06-2024 - LDAP-Enable.sql" />
+    <Content Include="MigrationScripts\18-06-2024 - LDAP-Enable.sql" />
     <Content Include="MigrationScripts\03-05-2024.sql" />
     <Content Include="MigrationScripts\05-04-2024.sql" />
     <Content Include="MigrationScripts\06-05-2024.sql" />
     <Content Include="MigrationScripts\06-05-2024_2.sql" />
     <Content Include="MigrationScripts\07-06-2024.sql" />
     <Content Include="MigrationScripts\12-06-2024.sql" />
+    <Content Include="MigrationScripts\13-06-2024.sql" />
     <Content Include="MigrationScripts\14-05-2024.sql" />
+    <Content Include="MigrationScripts\14-06-2024.sql" />
     <Content Include="MigrationScripts\16-04-2024.sql" />
     <Content Include="MigrationScripts\18-05-2024.sql" />
     <Content Include="MigrationScripts\20-05-2024.sql" />
@@ -1608,6 +1625,14 @@
     <Content Include="MigrationScripts\2024_02_27_vodafone_issues.sql" />
     <Content Include="MigrationScripts\2024_02_25_vodafone_issues.sql" />
     <Content Include="MigrationScripts\23-05-2024.sql" />
+    <Content Include="MigrationScripts\23-07-2024.sql" />
+    <Content Include="MigrationScripts\24-06-2024.sql" />
+    <Content Include="MigrationScripts\25-06-2024.sql" />
+    <Content Include="MigrationScripts\25-06-2024_2.sql" />
+    <Content Include="MigrationScripts\26-06-2024.sql" />
+    <Content Include="MigrationScripts\26-07-2024.sql" />
+    <Content Include="MigrationScripts\27-06-2024.sql" />
+    <Content Include="MigrationScripts\27-06-2024_2.sql" />
     <Content Include="MigrationScripts\30-04-2024.sql" />
     <Content Include="MultilingualJunkKeys\Content\Js\Alert.js" />
     <Content Include="Scripts\APIHandler.js" />
@@ -2337,6 +2362,9 @@
     <Content Include="Views\Report\_EntityAssociationReportLog.cshtml" />
     <Content Include="Views\Report\_EntityAssociationSummaryView.cshtml" />
     <Content Include="Views\Library\_trenchExecution.cshtml" />
+    <Content Include="Views\Report\_SplitLineEntityExportReport.cshtml" />
+    <Content Include="Views\Report\_AuditLogExportReport.cshtml" />
+    <Content Include="Views\Report\_AuditLogEntityExportReportLog.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

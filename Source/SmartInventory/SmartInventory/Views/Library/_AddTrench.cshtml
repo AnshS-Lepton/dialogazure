@@ -46,9 +46,13 @@
 }
 @{
     var strataType = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.strata_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var trenchType = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.trench_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var surfaceType = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.surface_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var mcgWard = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.mcgm_ward.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
-    var manuFactureYear = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.manufacture_year.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;    
+    var manuFactureYear = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.manufacture_year.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var a_location_code = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.a_location_code.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var b_location_code = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.b_location_code.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+
 }
 <!DOCTYPE html>
 <div>
@@ -264,102 +268,124 @@
                                 @Html.TextBoxFor(m => m.a_city, new { autocomplete = "off", @class = "form-control clsReadOnly", @readonly = true, @id = "txtProvinceName" })
                             </div>
 
-                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">B city Name:</label>
+                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">B City Name:</label>
                             <div class="col-md-4 col-sm-4">
                                 @Html.TextBoxFor(m => m.b_city, new { autocomplete = "off", @class = "form-control clsReadOnly", @readonly = true })
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@Resources.Resources.SI_OSP_GBL_GBL_GBL_009:</label>
-                            <div class="col-md-4 col-sm-4">
-                                @Html.TextBoxFor(m => m.pin_code, new { @class = "form-control", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "6", @minlength = "6", autocomplete = "new-password" })
-                                @Html.ValidationMessageFor(model => model.pin_code)
+                            <label class="control-label col-md-2 col-sm-2">
+                                A Location @if (a_location_code.is_required)
+                                {<i class="clsMandatory">*</i>}
+                                else { }:
+                            </label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.a_location_code, new SelectList(Model.listALocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Text", "Value"), "-Select-", new { @class = "chosen-select form-control ", @id = "ddlALocationCode" })
                             </div>
-                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023<i class="clsMandatory">*</i>:</label>
-                            <div class="col-md-4 col-sm-4 ">
-                                @Html.DropDownListFor(m => m.trench_type, new SelectList(Model.trenchTypeIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "Select Trench Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_120:</label>
-                            <div class="col-md-4 col-sm-4">
-                                @Html.TextBoxFor(m => m.trench_width, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);", @onkeyup = "return ValidateWidth();", @id = "txtTrenchWidth" })
-                                @Html.ValidationMessageFor(model => model.trench_width)
-                            </div>
-                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_121:</label>
-                            <div class="col-md-4 col-sm-4">
-                                @Html.TextBoxFor(m => m.trench_height, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);", @onkeyup = "return ValidateHeight();", @id = "txtTrenchHeight" })
-                                @Html.ValidationMessageFor(model => model.trench_height)
+                            <label class="control-label col-md-2 col-sm-2">
+                                B Location @if (b_location_code.is_required)
+                                {<i class="clsMandatory">*</i>}
+                                else { }:
+                            </label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.b_location_code, new SelectList(Model.listBLocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Text", "Value"), "-Select-", new { @class = "chosen-select form-control ", @id = "ddlBLocationCode" })
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_NET_FRM_060:</label>
-                            <div class="col-md-4 col-sm-4">
-                                @Html.TextBoxFor(m => m.trench_length, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
-                            </div>
-                            <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_TCH_NET_FRM_009:</label>
-                            <div class="col-md-4 col-sm-4 ">
-                                @Html.TextBoxFor(m => m.no_of_ducts, new { @class = "form-control clsReadOnly", @readonly = true })
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            @if (strataType != null)
-                            {
+                            <div class="form-group row">
+                                <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@Resources.Resources.SI_OSP_GBL_GBL_GBL_009:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    @Html.TextBoxFor(m => m.pin_code, new { @class = "form-control", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "6", @minlength = "6", autocomplete = "new-password" })
+                                    @Html.ValidationMessageFor(model => model.pin_code)
+                                </div>
+                                @if (trenchType != null)
+                                {
+                                    <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023:</label>
+                                    <div class="col-md-4 col-sm-4 ">
+                                        @Html.DropDownListFor(m => m.trench_type, new SelectList(Model.trenchTypeIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "Select Trench Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                    </div>
 
-                                <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_TCH_NET_FRM_010:</label>
+                                }
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_120:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    @Html.TextBoxFor(m => m.trench_width, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);", @onkeyup = "return ValidateWidth();", @id = "txtTrenchWidth" })
+                                    @Html.ValidationMessageFor(model => model.trench_width)
+                                </div>
+                                <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_121:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    @Html.TextBoxFor(m => m.trench_height, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);", @onkeyup = "return ValidateHeight();", @id = "txtTrenchHeight" })
+                                    @Html.ValidationMessageFor(model => model.trench_height)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_NET_FRM_060:</label>
+                                <div class="col-md-4 col-sm-4">
+                                    @Html.TextBoxFor(m => m.trench_length, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
+                                </div>
+                                <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_TCH_NET_FRM_009:</label>
                                 <div class="col-md-4 col-sm-4 ">
-                                    @Html.DropDownListFor(m => m.strata_type, new SelectList(Model.StrataTypeIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                    @Html.TextBoxFor(m => m.no_of_ducts, new { @class = "form-control clsReadOnly", @readonly = true })
                                 </div>
-                            }
-                            @if (mcgWard != null)
-                            {
-                                <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_TCH_NET_FRM_011:</label>
+                            </div>
+                            <div class="form-group row">
+                                @if (strataType != null)
+                                {
+
+                                    <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_TCH_NET_FRM_010:</label>
+                                    <div class="col-md-4 col-sm-4 ">
+                                        @Html.DropDownListFor(m => m.strata_type, new SelectList(Model.StrataTypeIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                    </div>
+                                }
+                                @if (mcgWard != null)
+                                {
+                                    <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_TCH_NET_FRM_011:</label>
+                                    <div class="col-md-4 col-sm-4">
+                                        @Html.DropDownListFor(m => m.mcgm_ward, new SelectList(Model.MCGMWardIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                    </div>
+                                }
+                            </div>
+                            <div class="form-group row">
+                                @AcquireFrom()
+                            </div>
+                            <div>@AdditionalFields()</div>
+                            <div class="form-group row">
+                                <label class="control-label col-md-2 col-sm-2">Trench Serving Type <i class="clsMandatory">*</i>:</label>
                                 <div class="col-md-4 col-sm-4">
-                                    @Html.DropDownListFor(m => m.mcgm_ward, new SelectList(Model.MCGMWardIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                    @Html.DropDownListFor(m => m.trench_serving_type, new SelectList(Model.lstTrenchServingType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
                                 </div>
-                            }
-                        </div>
-                        <div class="form-group row">
-                            @AcquireFrom()
-                        </div>
-                        <div>@AdditionalFields()</div>
-                        <div class="form-group row">
-                            <label class="control-label col-md-2 col-sm-2">Trench Serving Type <i class="clsMandatory">*</i>:</label>
-                            <div class="col-md-4 col-sm-4">
-                                @Html.DropDownListFor(m => m.trench_serving_type, new SelectList(Model.lstTrenchServingType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+
+                                @if (surfaceType != null)
+                                {
+                                    <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_TCH_NET_FRM_012:</label>
+                                    <div class="col-md-4 col-sm-4">
+                                        @Html.DropDownListFor(m => m.surface_type, new SelectList(Model.SurfaceTypeIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                                    </div>
+                                }
+                            </div>
+                            <div>
+                                @OwnershipInfo()
+                            </div>
+                            <div class="form-group row">
+                                @if (manuFactureYear != null)
+                                {
+                                    <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_037:</label>
+                                    <div class="col-md-4 col-sm-4">
+                                        @Html.TextBoxFor(m => m.manufacture_year, "{0:dd-MMM-yyyy}", new { @class = "form-control", @readonly = true, placeholder = "DD-MMM-YYYY" })
+                                        <img id="imgManufactureYear" class="assign-calen" src="~/Content/images/calendar.png" />
+                                    </div>
+                                }
                             </div>
 
-                            @if (surfaceType != null)
-                            {
-                                <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_TCH_NET_FRM_012:</label>
-                                <div class="col-md-4 col-sm-4">
-                                    @Html.DropDownListFor(m => m.surface_type, new SelectList(Model.SurfaceTypeIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                            <div class="form-group row">
+                                <label class="control-label col-md-2 col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                                <div class="col-sm-10">
+                                    @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @maxlength = "1000" })
                                 </div>
-                            }
-                        </div>
-                        <div>
-                            @OwnershipInfo()
-                        </div>
-                        <div class="form-group row">
-                            @if (manuFactureYear != null)
-                            {
-                                <label class="control-label col-md-2 col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_037:</label>
-                                <div class="col-md-4 col-sm-4">
-                                    @Html.TextBoxFor(m => m.manufacture_year, "{0:dd-MMM-yyyy}", new { @class = "form-control", @readonly = true, placeholder = "DD-MMM-YYYY" })
-                                    <img id="imgManufactureYear" class="assign-calen" src="~/Content/images/calendar.png" />
-                                </div>
-                            }
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="control-label col-md-2 col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
-                            <div class="col-sm-10">
-                                @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @maxlength = "1000" })
                             </div>
-                        </div>
-                        <div id="Execution">
-                            <a href="#Execution"></a>
-                        </div>
+                            <div id="Execution">
+                                <a href="#Execution"></a>
+                            </div>
                     </fieldset>
                     @if (Model.lstUserModule.Contains("PROJ"))
                     {
@@ -424,6 +450,12 @@
         if ($('#manufacture_year').length > 0) {
             si.setDateTimeCalendar("manufacture_year", "imgManufactureYear", false, false);
         }
+          if ('@a_location_code.is_required' == 'True') {
+            $('#ddlALocationCode').attr('required', true);
+        }
+         if ('@b_location_code.is_required' == 'True') {
+            $('#ddlBLocationCode').attr('required', true);
+        }
 
         callFormValidator("frmAddTrench");
         $('.chosen-select').chosen({ width: '100%' });
@@ -456,7 +488,7 @@
             $("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
             si.upperCaseNetWorkId();
             //For AdditionalAttributes to set json and saving
-            additionalAttributesUtility.SetJsonValue("#frmOtherInfo", "#hdnOtherInfo");            
+            additionalAttributesUtility.SetJsonValue("#frmOtherInfo", "#hdnOtherInfo");
             //end region Additional-Attributes
             if (!entityReferencevalidation())
                 return false;

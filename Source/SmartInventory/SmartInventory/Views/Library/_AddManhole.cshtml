@@ -272,9 +272,9 @@
 
 
                         @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-                            <div class="col-md-4 col-sm-4 mrgn_btm">
-                                @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
-                            </div>*@
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
+        </div>*@
                         <div id="dvOwnerShip" class="form-group row">
                             @AcquireFrom()
                         </div>
@@ -286,10 +286,10 @@
                         </div>
                         @if (mcgWard != null)
                         {
-                                <label class="col-md-2 col-sm-2">@Resources.Resources.SI_OSP_TCH_NET_FRM_011:</label>
-                                <div class="col-md-4 col-sm-4">
-                                    @Html.DropDownListFor(m => m.mcgm_ward, new SelectList(Model.MCGMWardIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
-                                </div>
+                            <label class="col-md-2 col-sm-2">@Resources.Resources.SI_OSP_TCH_NET_FRM_011:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.DropDownListFor(m => m.mcgm_ward, new SelectList(Model.MCGMWardIn.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_key.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
+                            </div>
                         }
                         <div class="form-group row">
                             @if (constructionType != null)
@@ -314,7 +314,7 @@
                         <div class="form-group row">
                             <label class="col-md-2 col-sm-2" for="txtRouteName">Route ID:</label>
                             <div class="col-md-4 col-sm-4">
-                                @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id+" - ("+ x.entity_network_id+")" }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
+                                @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id + " - (" + x.entity_network_id + ")" }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
                             </div>
                         </div>
                         @*----------------------------------------------------------------------------------------------------------------------------------------------*@
@@ -327,6 +327,25 @@
                                 @Html.TextBoxFor(m => m.address, new { @class = "form-control", @id = "txtAddress", @maxlength = "100", autocomplete = "do-not-show-ac" })
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_CAB_NET_FRM_075:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.aerial_location, new SelectList(Model.listaerialLocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_CAB_NET_FRM_073:</label>
+                            <div class="col-md-4 col-sm-4  mrgn_btm">
+                                @Html.TextBoxFor(m => m.section_name, new { @class = "form-control" })
+                            </div>
+
+                            <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_CAB_NET_FRM_074:</label>
+                            <div class="col-md-4 col-sm-4  mrgn_btm">
+                                @Html.TextBoxFor(m => m.generic_section_name, new { @class = "form-control" })
+                            </div>
+                        </div>
+
                         <div class="form-group row">
                             <label class="col-md-2 col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
                             <div class="col-md-10 col-sm-10">

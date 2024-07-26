@@ -90,8 +90,10 @@ namespace SmartInventoryServices.Filters
                 }
                 obj.user_name = "admin";
                 obj.source = "WEB";
-                if(actionExecutedContext.ActionContext.Response != null)
+                var contentDisposition = actionExecutedContext.ActionContext.Response.Content.Headers.ContentDisposition;
+                if (actionExecutedContext.ActionContext.Response != null)
                 {
+
                     obj.response = actionExecutedContext.ActionContext.Response.Content.ReadAsStringAsync().Result.ToString();
                 }
                 //temporary fix
@@ -101,6 +103,11 @@ namespace SmartInventoryServices.Filters
                 }
                 else
                 {
+
+                    if (contentDisposition != null && !string.IsNullOrEmpty(contentDisposition.FileName))
+                    {
+                        obj.response =Convert.ToString(actionExecutedContext.Response);
+                    }
                     new BLAPIRequestLog().SaveApiRequestLog(obj);
                 }
             }

@@ -90,6 +90,7 @@ namespace DataAccess
                     objCable.purpose_id = cableInfo.purpose_id ?? 0;
                     objCable.cable_category = cableInfo.cable_category;
                     objCable.cable_sub_category = cableInfo.cable_sub_category;
+                    objCable.manhole_count = cableInfo.manhole_count;
                     objCable.remarks = cableInfo.remarks;
                     objCable.route_id = cableInfo.route_id;
                     objCable.start_reading = cableInfo.start_reading;
@@ -108,7 +109,9 @@ namespace DataAccess
                     objCable.outer_dimension = cableInfo.outer_dimension;
                     objCable.calculated_length_remark = cableInfo.calculated_length_remark;
                     objCable.is_acquire_from = cableInfo.is_acquire_from;
-                    if (objCable.total_core != cableInfo.total_core)
+                    objCable.a_location_code = cableInfo.a_location_code;
+					objCable.b_location_code = cableInfo.b_location_code;
+					if (objCable.total_core != cableInfo.total_core)
                     {
                         var checkConnection = new DAMisc().isPortConnected(objCable.system_id, EntityType.Cable.ToString(), objCable.specification, objCable.vendor_id, objCable.item_code);
                         if (checkConnection.status)
@@ -167,8 +170,14 @@ namespace DataAccess
                     objCable.bom_sub_category = cableInfo.bom_sub_category;
                     objCable.route_name = cableInfo.route_name;
                     objCable.gis_design_id = cableInfo.gis_design_id;
+                    objCable.aerial_location = cableInfo.aerial_location;
+                    objCable.own_vendor_id = cableInfo.own_vendor_id;
+                    objCable.generic_section_name = cableInfo.generic_section_name;
+                    objCable.section_name = cableInfo.section_name;
+                    objCable.hierarchy_type = cableInfo.hierarchy_type;
                     ////objCable.served_by_ring= cableInfo.served_by_ring;
                     var response = repo.Update(objCable);
+                    RouteCreation routeObj = new DAMisc().createRouteId(response.system_id, Models.EntityType.Cable.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(response.system_id, Models.EntityType.Cable.ToString(), response.province_id, 1);
                     //DbMessage geojsonObj = updateGeojsonMetadata(Models.EntityType.Cable.ToString(), response.province_id);
                     if (cableInfo.no_of_tube != oldNoOfTube || cableInfo.no_of_core_per_tube != oldCorePerTube)
@@ -245,6 +254,7 @@ namespace DataAccess
                         geom.networkStatus = String.IsNullOrEmpty(cableInfo.network_status) ? "P" : cableInfo.network_status;
 
                         string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
+                        RouteCreation routeObj = new DAMisc().createRouteId(CableResp.system_id, Models.EntityType.Cable.ToString());
                         DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(CableResp.system_id, Models.EntityType.Cable.ToString(), CableResp.province_id, 0);
                         //DbMessage geojsonObj = updateGeojsonMetadata(Models.EntityType.Cable.ToString(), CableResp.province_id);
                         DAIspLine.Instance.CreateOSPCable(cableInfo.system_id);
@@ -457,7 +467,8 @@ namespace DataAccess
                     //var networkCodeDetail = new DAMisc().GetLineNetworkCode(objCable.a_location, objCable.b_location, EntityType.Cable.ToString(), objTPDetail.entityGeom, "OSP");
                     //if (!string.IsNullOrEmpty(networkCodeDetail.network_code))
                     //objCable.network_id = networkCodeDetail.network_code;
-
+                    objCable.a_location_code = "A";
+                    objCable.b_location_code = "B";
                     objCable.modified_on = DateTimeHelper.Now;
                     objCable.modified_by = userId;
                     objCable.bom_sub_category = objCable.bom_sub_category;
@@ -493,7 +504,17 @@ namespace DataAccess
             }
             return result;
         }
+        public int checkDuplicateDesignId(string design_id, int system_id)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<int>("fn_get_checkDuplicateDesignId", new { p_design_id = design_id,p_system_id= system_id }).FirstOrDefault();
+                return lst;
 
+
+            }
+            catch { throw; }
+        }
         public DbMessage SetConnectionWithSplitCable(string cable_one_network_id, string cable_two_network_id, int old_cable_system_id, int splitentitysystemid, string splitentity_network_id, string splitentitytype, int user_id, string splicing_source)
         {
             try

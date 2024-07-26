@@ -9,62 +9,74 @@
     var formInput_construction = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.construction.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var formInput_activation = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.activation.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var formInput_accessibility = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.accessibility.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var formInput_hierarchy_type = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.hierarchy_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
 }
 <!DOCTYPE html>
-<div class="form-group">
+<div class="form-group row">
     <label class="control-label col-sm-2" for="ddlType">
         @Resources.Resources.SI_OSP_GBL_GBL_GBL_023 @if (formInput_type.is_required)
         {<i class="clsMandatory">*</i>}
         else { }:
     </label>
-    <div class="col-sm-45">
+    <div class="col-sm-4">
         @Html.DropDownListFor(m => m.type, new SelectList(Model.listType.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlType" })
     </div>
-    <label class="control-label col-sm-2" for="ddlBrand">@Resources.Resources.SI_OSP_GBL_GBL_GBL_024 @if (formInput_type.is_required)
+    <label class="control-label col-sm-2" for="ddlBrand">@Resources.Resources.SI_OSP_GBL_GBL_GBL_024 @if (formInput_brand.is_required)
     {<i class="clsMandatory">*</i>}
     else { }:</label>
-    <div class="col-sm-45">
+    <div class="col-sm-4">
         @Html.DropDownListFor(m => m.brand, new SelectList(Model.lstBrand.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Brand", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlBrand" })
     </div>
 
 </div>
-<div class="form-group">
+<div class="form-group row">
 
-    <label class="control-label col-sm-2" for="ddlmodel">@Resources.Resources.SI_OSP_GBL_GBL_GBL_025 @if (formInput_type.is_required)
+    <label class="control-label col-sm-2" for="ddlmodel">@Resources.Resources.SI_OSP_GBL_GBL_GBL_025 @if (formInput_model.is_required)
     {<i class="clsMandatory">*</i>}
     else { }:</label>
 
-    <div class="col-sm-45">
+    <div class="col-sm-4">
         @Html.DropDownListFor(m => m.model, new SelectList(Model.lstModel.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Model", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlmodel" })
         @*<i class="fa fa-eye" style="font-size:15px"></i>*@
     </div>
 
 
-    <label class="control-label col-sm-2" for="ddlClosureConstruction">@Resources.Resources.SI_OSP_CAB_NET_FRM_024 @if (formInput_type.is_required)
+    <label class="control-label col-sm-2" for="ddlClosureConstruction">@Resources.Resources.SI_OSP_CAB_NET_FRM_024 @if (formInput_construction.is_required)
     {<i class="clsMandatory">*</i>}
     else { }:</label>
-    <div class="col-sm-45">
+    <div class="col-sm-4">
         @Html.DropDownListFor(m => m.construction, new SelectList(Model.lstConstruction.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Construction", new { @class = "chosen-select col-sm-45", @style = "padding:0;", @id = "ddlClosureConstruction" })
     </div>
 
 
 
 </div>
-<div class="form-group">
-    <label class="control-label col-sm-2" for="ddlClosureActivation">@Resources.Resources.SI_OSP_CAB_NET_FRM_025 @if (formInput_type.is_required)
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="ddlClosureActivation">@Resources.Resources.SI_OSP_CAB_NET_FRM_025 @if (formInput_activation.is_required)
     {<i class="clsMandatory">*</i>}
     else { }:</label>
-    <div class="col-sm-45">
-        @Html.DropDownListFor(m => m.activation, new SelectList(Model.lstActivation.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Activation", new { @class = "chosen-select col-sm-45", @style = "padding:0;", @id = "ddlClosureActivation" })
+    <div class="col-sm-4">
+        @Html.DropDownListFor(m => m.activation, new SelectList(Model.lstActivation.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Activation", new { @class = "chosen-select col-sm-45", @style = "padding:0;", @id = "ddlClosureActivation"})
     </div>
 
-    <label class="control-label col-sm-2" for="ddlClosureAccessibility">@Resources.Resources.SI_OSP_CAB_NET_FRM_026 @if (formInput_type.is_required)
+    <label class="control-label col-sm-2" for="ddlClosureAccessibility">@Resources.Resources.SI_OSP_CAB_NET_FRM_026 @if (formInput_accessibility.is_required)
     {<i class="clsMandatory">*</i>}
     else { }:</label>
-    <div class="col-sm-45">
+    <div class="col-sm-4">
         @Html.DropDownListFor(m => m.accessibility, new SelectList(Model.lstAccessibility.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Accessibility", new { @class = "chosen-select col-sm-45", @style = "padding:0;", @id = "ddlClosureAccessibility" })
     </div>
 </div>
+<div class="form-group row">
+    <label class="control-label col-sm-2" for="ddlHeirarchyType">
+                                     @Resources.Resources.SI_OSP_GBL_NET_GBL_280 @if (formInput_hierarchy_type.is_required)
+    {<i class="clsMandatory">*</i>}
+    else { }:
+    </label>
+    <div class="col-sm-4">
+        @Html.DropDownListFor(m => m.hierarchy_type, new SelectList(Model.lsthierarchytype.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Heirarchy Type", new { @class = "chosen-select col-sm-45", @style = "padding:0;", @id = "ddlHeirarchyType" })
+    </div>
+</div>
+
 <script>
     function fnSetValue() {
         $('#hdnModel').val($('#ddlmodelNew').val());
@@ -72,17 +84,77 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function () {
-        if ('@formInput_type.is_required' == 'True' && '@formInput_brand.is_required' == 'True' && '@formInput_model.is_required' == 'True'
-            && '@formInput_construction.is_required' == 'True' && '@formInput_activation.is_required' == 'True' && '@formInput_accessibility.is_required' == 'True') {
+        debugger;
+        $('#ddlClosureConstruction').prop('disabled', true).trigger("chosen:updated");
+        $('#ddlClosureActivation').prop('disabled', true).trigger("chosen:updated");
+        $('#ddlClosureAccessibility').prop('disabled', true).trigger("chosen:updated");
+        $('#ddlHeirarchyType').prop('disabled', true).trigger("chosen:updated");    
+
+
+        
+        if ($('#ddlmodel :selected').text() == "Completed") {
+            $('#ddlClosureConstruction').prop('disabled', false).trigger("chosen:updated");
+        }
+
+        if ($('#ddlClosureConstruction :selected').text() == "Completed") {
+            $('#ddlClosureActivation').prop('disabled', false).trigger("chosen:updated");
+            $('#ddlClosureAccessibility').prop('disabled', false).trigger("chosen:updated");
+            $('#ddlHeirarchyType').prop('disabled', false).trigger("chosen:updated");
+        }
+
+
+        if ('@formInput_type.is_required' == 'True' && '@formInput_brand.is_required' == 'True' && '@formInput_model.is_required' == 'True' ) {
             $('#ddlType').attr('onchange', "ddlChangeRemoveCss(this.id, 'Type');");
             $('#ddlBrand').attr('onchange', "ddlChangeRemoveCss(this.id, 'Brand');");
             $('#ddlmodel').attr('onchange', "ddlChangeRemoveCss(this.id, 'Model');");
-            $('#ddlClosureConstruction').attr('onchange', "ddlChangeRemoveCss(this.id, 'Construction Stage');");
+        }
+        else {
+            $("#ddlType, #ddlBrand, #ddlmodel").addClass('ignore');
+        }
+        if ('@formInput_hierarchy_type.is_required' == 'True') {
+            $('#ddlHeirarchyType').attr('onchange', "ddlChangeRemoveCss(this.id, 'Heirarchytype');");
+        }
+        else {
+            $("#ddlHeirarchyType").addClass('ignore');
+        }
+        if ('@formInput_construction.is_required' == 'True') {
+            $('#ddlClosureConstruction').attr('onchange', "ddlChangeRemoveCss(this.id, 'Construction Stage');");        }
+        else {
+            $("#ddlClosureConstruction").addClass('ignore');
+        }
+        if ('@formInput_activation.is_required' == 'True') {
             $('#ddlClosureActivation').attr('onchange', "ddlChangeRemoveCss(this.id, 'Activation Stage');");
+        }
+        else {
+            $("#ddlClosureActivation").addClass('ignore');
+        }
+        if ('@formInput_accessibility.is_required' == 'True') {
             $('#ddlClosureAccessibility').attr('onchange', "ddlChangeRemoveCss(this.id, 'Accessibility');");
         }
         else {
-            $("#ddlType, #ddlBrand, #ddlmodel, #ddlClosureConstruction, #ddlClosureActivation, #ddlClosureAccessibility").addClass('ignore');
+            $("#ddlClosureAccessibility").addClass('ignore');
         }
+
+
+        $("#ddlmodel").change(function () {
+            if (this.options[this.selectedIndex].innerText.trim() == "Completed") {              
+                $('#ddlClosureConstruction').prop('disabled', false).trigger("chosen:updated");
+            } else {
+                $('#ddlClosureConstruction').prop('disabled', true).trigger("chosen:updated");              
+            }
+        });
+
+        $("#ddlClosureConstruction").change(function () {
+            if (this.options[this.selectedIndex].innerText.trim() == "Completed") {
+                $('#ddlClosureActivation').prop('disabled', false).trigger("chosen:updated");
+                $('#ddlClosureAccessibility').prop('disabled', false).trigger("chosen:updated");
+                $('#ddlHeirarchyType').prop('disabled', false).trigger("chosen:updated"); 
+            } else {
+                $('#ddlClosureActivation').prop('disabled', true).trigger("chosen:updated");
+                $('#ddlClosureAccessibility').prop('disabled', true).trigger("chosen:updated");
+                $('#ddlHeirarchyType').prop('disabled', true).trigger("chosen:updated"); 
+            }
+        });
+
     });
 </script>

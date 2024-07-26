@@ -90,6 +90,12 @@ namespace DataAccess
                     objSCItem.origin_ref_code = objSCMaster.origin_ref_code;
                     // objSCItem.served_by_ring = objSCMaster.served_by_ring;
                     objSCItem.bom_sub_category = objSCMaster.bom_sub_category;
+                    objSCItem.spliceclosure_type = objSCMaster.spliceclosure_type;
+                    objSCItem.hierarchy_type = objSCMaster.hierarchy_type;
+                    objSCItem.own_vendor_id = objSCMaster.own_vendor_id;
+                    objSCItem.aerial_location = objSCMaster.aerial_location;
+                    objSCItem.section_name = objSCMaster.section_name;
+                    objSCItem.generic_section_name = objSCMaster.generic_section_name;
                     var SCResp = repo.Update(objSCItem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(SCResp.system_id, Models.EntityType.SpliceClosure.ToString(), SCResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.SpliceClosure.ToString(), SCResp.province_id);

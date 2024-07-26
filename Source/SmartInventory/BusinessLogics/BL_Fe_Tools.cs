@@ -37,9 +37,9 @@ namespace BusinessLogics
             return new DA_Fee_tools().GetFEUserDeatils();
 
         }
-        public List<KeyValueDropDown> GetFEUserDeatils(int roll_id,string active)
+        public List<KeyValueDropDown> GetFEUserDeatils(int user_id, string active)
         {
-            return new DA_Fee_tools().GetFEUserDeatils(roll_id, active);
+            return new DA_Fee_tools().GetFEUserDeatils(user_id, active);
 
         }
         public int DeleteFetoolsSpecificationById(int id)

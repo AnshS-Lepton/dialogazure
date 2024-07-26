@@ -57,7 +57,13 @@ namespace Models
         public int userId { get; set; }
 
         public string network_status { get; set; }
-
+        public string parent_trench_netwok_id { get; set; }
+        public string parent_trench_system_id { get; set; }
+        public string splited_by { get; set; }
+        public string splitted_on { get; set; }
+        public string splitting_system_id { get; set; }
+        public string splitting_netwok_id { get; set; }
+        public string splitting_entitytype { get; set; }
         public SplitTrench()
         {
             objPM = new PageMessage();

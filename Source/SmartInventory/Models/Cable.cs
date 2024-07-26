@@ -95,10 +95,13 @@ namespace Models
         public int? purpose_id { get; set; }
         public string ownership_type { get; set; }
         public string third_party_vendor_id { get; set; }
+        public string own_vendor_id { get; set; }
         public string circuit_id { get; set; }
         public string thirdparty_circuit_id { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+        [NotMapped]
+        public List<KeyValueDropDown> listOwnVendorId { get; set; }
         [NotMapped]
         public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
         [NotMapped]
@@ -107,8 +110,12 @@ namespace Models
         public List<WorkorderCodeMaster> lstBindWorkorderCode { get; set; }
         [NotMapped]
         public List<PurposeCodeMaster> lstBindPurposeCode { get; set; }
+		[NotMapped]
+		public List<DropDownMaster> listALocation { get; set; }
+		[NotMapped]
+		public List<DropDownMaster> listBLocation { get; set; }
 
-        [NotMapped]
+		[NotMapped]
         public string ispLineGeom { get; set; }
         public int structure_id { get; set; }
         [NotMapped]
@@ -216,9 +223,24 @@ namespace Models
         [NotMapped]
         public List<string> lstUserModule { get; set; }        
         public string route_name { get; set; }
+        public string section_name { get; set; }
+        public string generic_section_name { get; set; }
         [NotMapped]
         public CDBAttribute LstCDBAttribute { get; set; }
-        public CableMaster()
+        public string parent_cable_netwok_id { get; set; }
+        public string parent_cable_system_id { get; set; }
+        public string splited_by { get; set; }
+        public string splitted_on { get; set; }
+        public string splitting_system_id { get; set; }
+        public string splitting_netwok_id { get; set; }
+        public string splitting_entitytype { get; set; }
+        [NotMapped]
+        public int? manhole_count { get; set; }
+		//[Required]
+		public string a_location_code { get; set; }
+		//[Required]
+		public string b_location_code { get; set; }
+		public CableMaster()
         {
             objPM = new PageMessage();
             lstTP = new List<NetworkDtl>();
@@ -231,7 +253,7 @@ namespace Models
             lstBindPlanningCode = new List<PlanningCodeMaster>();
             lstBindWorkorderCode = new List<WorkorderCodeMaster>();
             lstBindPurposeCode = new List<PurposeCodeMaster>();
-            EntityReference = new EntityReference();
+			EntityReference = new EntityReference();
             LstCDBAttribute = new CDBAttribute();
             purpose_id = 0;
             planning_id = 0;

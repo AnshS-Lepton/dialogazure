@@ -429,7 +429,11 @@ namespace Models
 		public string message { get; set; }
 		public string result { get; set; }
 	}
-
+    public class RouteCreation
+    {
+        public bool STATUS { get; set; }
+        public string ROUTEID { get; set; }
+    }
     public class DbMessageForPlan
     {
         public bool status { get; set; }
@@ -794,4 +798,9 @@ namespace Models
 		public string region_abbreviation { get; set; }
 		public string province_abbreviation { get; set; }
 	}
+    public class Customer_Response
+    {
+        public string reference_id { get; set; }
+        public string ticketid { get; set; }
+    }
 }

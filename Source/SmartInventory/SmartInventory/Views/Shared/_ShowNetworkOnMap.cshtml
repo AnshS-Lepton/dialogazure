@@ -56,6 +56,11 @@
         $('#closeShowNetowkOnMap').on("click", function () {
             si.isNetworkTicketReq = false;
             si.ticketStatus = '';
+            si.ticketStatus = '';
+            si.fSource_ref_id = '';
+            si.fSource_ref_type = '';
+            si.fIs_new_entity = false;
+            si.fStatus = 'A';
             si.Networkticket.cleanNetwork();
         });
     });

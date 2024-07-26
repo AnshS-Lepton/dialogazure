@@ -164,11 +164,17 @@ namespace DataAccess
         //    }
         //    catch { throw; }
         //}
-        public List<EntityDetail> getNearByEntities(double latitude, double longitude, int bufferInMtr, int user_id)
+        public List<EntityDetail> getNearByEntities(double latitude, double longitude, int bufferInMtr, string source_ref_id, string source_ref_type, int user_id)
         {
             try
             {
-                return repo.ExecuteProcedure<EntityDetail>("fn_getnearbyentities", new { lat = latitude, lng = longitude, mtrBuffer = bufferInMtr, p_user_id = user_id });
+                return repo.ExecuteProcedure<EntityDetail>("fn_getnearbyentities", new { lat = latitude, lng = longitude,
+                    mtrBuffer = bufferInMtr,
+                    p_user_id = user_id,
+                    p_source_ref_id = source_ref_id,
+                    p_source_ref_type = source_ref_type
+
+                });
             }
             catch { throw; }
         }
@@ -1066,11 +1072,11 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public DbMessage saveLineEntityAssocition(string objLineEnAssocite, int pSystemId, string pEntityType, int userId)
+        public DbMessage saveLineEntityAssocition(string objLineEnAssocite, int pSystemId, string pEntityType, int userId, int pManholeCount)
         {
             try
             {
-                return repo.ExecuteProcedure<DbMessage>("fn_save_Entity_Assocition", new { p_line_associate_info = objLineEnAssocite, p_parent_system_id = pSystemId, p_parent_entity_type = pEntityType, p_user_id = userId }, true).FirstOrDefault();
+                return repo.ExecuteProcedure<DbMessage>("fn_save_Entity_Assocition", new { p_line_associate_info = objLineEnAssocite, p_parent_system_id = pSystemId, p_parent_entity_type = pEntityType, p_user_id = userId , p_manhole_count = pManholeCount }, true).FirstOrDefault();
             }
             catch { throw; }
         }
@@ -1743,7 +1749,15 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public RouteCreation createRouteId(int system_id, string entityType)
+        {
+            try
+            {
 
+                return repo.ExecuteProcedure<RouteCreation>("FN_CREATE_ROUTE_ID", new { P_SYSTEM_ID = system_id, P_ENTITY_TYPE = entityType, P_ASSOCIATE_SYSTEM_ID = 0, P_ASSOCIATE_ENTITY_TYPE = "Cable", }, false).FirstOrDefault();
+            }
+            catch { throw; }
+        }
         public UserRegionProvince GetRegionProvinceBasedOnLocation(string geom, int userId)
         {
             UserRegionProvince objUserRegionProvince = new UserRegionProvince();

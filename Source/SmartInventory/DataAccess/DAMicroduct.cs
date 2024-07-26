@@ -90,6 +90,8 @@ namespace DataAccess
                     objDuct.bom_sub_category = objMicroductMaster.bom_sub_category;
                     objDuct.calculated_length = objMicroductMaster.calculated_length;
                     objDuct.gis_design_id = objMicroductMaster.gis_design_id;
+                    objDuct.hierarchy_type = objMicroductMaster.hierarchy_type;
+                    objDuct.own_vendor_id = objMicroductMaster.own_vendor_id;
                     //DuctInfo.served_by_ring = DuctInfo.served_by_ring;
                     var DuctResp = repo.Update(objDuct);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctResp.system_id, Models.EntityType.Microduct.ToString(), DuctResp.province_id, 1);

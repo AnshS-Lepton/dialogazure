@@ -260,6 +260,8 @@ namespace Models.ISP
         [Required]
         public string ownership_type { get; set; }
         public string third_party_vendor_id { get; set; }
+        public string own_vendor_id { get; set; }
+
         public int? primary_pod_system_id { get; set; }
         public int? secondary_pod_system_id { get; set; }
         [NotMapped]
@@ -268,6 +270,8 @@ namespace Models.ISP
         public string thirdparty_circuit_id { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+        [NotMapped]
+        public List<KeyValueDropDown> listOwnVendorId { get; set; }
         [NotMapped]
         public IList<DropDownMaster> listOwnership { get; set; }
         [NotMapped]
@@ -412,6 +416,8 @@ namespace Models.ISP
         [Required]
         public string ownership_type { get; set; }
         public string third_party_vendor_id { get; set; }
+        public string own_vendor_id { get; set; }
+
         [NotMapped]
         public string circuit_id { get; set; }
         [NotMapped]
@@ -420,6 +426,9 @@ namespace Models.ISP
         public int? secondary_pod_system_id { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+
+        [NotMapped]
+        public List<KeyValueDropDown> listOwnVendorId { get; set; }
 
         [NotMapped]
         public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
@@ -788,12 +797,16 @@ namespace Models.ISP
         [Required]
         public string ownership_type { get; set; }
         public string third_party_vendor_id { get; set; }
+        public string own_vendor_id { get; set; }
+
         [NotMapped]
         public string circuit_id { get; set; }
         [NotMapped]
         public string thirdparty_circuit_id { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
+        [NotMapped]
+        public List<KeyValueDropDown> listOwnVendorId { get; set; }
         [NotMapped]
         public IList<DropDownMaster> listOwnership { get; set; }
         [NotMapped]

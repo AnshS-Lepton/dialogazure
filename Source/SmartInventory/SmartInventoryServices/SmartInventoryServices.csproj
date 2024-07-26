@@ -139,6 +139,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http" />
@@ -214,6 +215,8 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <Content Include="bin\SmartInventoryServices.dll" />
+    <Content Include="bin\SmartInventoryServices.pdb" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\css\chosen.css" />
@@ -594,6 +597,7 @@
     <Compile Include="Controllers\BulkUserUploadController.cs" />
     <Compile Include="Controllers\CRMController.cs" />
     <Compile Include="Controllers\FEController.cs" />
+    <Compile Include="Controllers\GoogleMapAPIController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IntegrationController.cs" />
     <Compile Include="Controllers\ISPController.cs" />
@@ -723,6 +727,10 @@
     <ProjectReference Include="..\BusinessLogics\BusinessLogics.csproj">
       <Project>{1FD26F85-E70F-4E77-8234-2769F4051C24}</Project>
       <Name>BusinessLogics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GoogleMapServices\GoogleMapServices.csproj">
+      <Project>{74E8D62E-2B0D-4D16-B745-B3F9D769BC3E}</Project>
+      <Name>GoogleMapServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{2e40e756-53a0-4a32-9614-15f0a7e126db}</Project>

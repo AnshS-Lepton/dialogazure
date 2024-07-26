@@ -72,6 +72,8 @@ namespace Models
         [Required]
         public string ownership_type { get; set; }
         public string third_party_vendor_id { get; set; }
+        public string own_vendor_id { get; set; }
+
         [NotMapped]
         public string circuit_id { get; set; }
         [NotMapped]
@@ -85,6 +87,8 @@ namespace Models
         [NotMapped]
         public List<KeyValueDropDown> list3rdPartyVendorId { get; set; }
         [NotMapped]
+        public List<KeyValueDropDown> listOwnVendorId { get; set; }
+        [NotMapped]
         public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
         [NotMapped]
         public List<PlanningCodeMaster> lstBindPlanningCode { get; set; }
@@ -92,7 +96,11 @@ namespace Models
         public List<WorkorderCodeMaster> lstBindWorkorderCode { get; set; }
         [NotMapped]
         public List<PurposeCodeMaster> lstBindPurposeCode { get; set; }
-        [NotMapped]
+		[NotMapped]
+		public List<DropDownMaster> listALocation { get; set; }
+		[NotMapped]
+		public List<DropDownMaster> listBLocation { get; set; }
+		[NotMapped]
         public IList<DropDownMaster> MCGMWardIn { get; set; }
         [NotMapped]
         public IList<DropDownMaster> StrataTypeIn { get; set; }
@@ -173,8 +181,18 @@ namespace Models
         public string entity_type { get; set; }
         [NotMapped]
         public trenchExecutionList ExecutionMethod { get; set; }
-
-        public TrenchMaster()
+        public string parent_trench_netwok_id { get; set; }
+        public string parent_trench_system_id { get; set; }
+        public string splited_by { get; set; }
+        public string splitted_on { get; set; }
+        public string splitting_system_id { get; set; }
+        public string splitting_netwok_id { get; set; }
+        public string splitting_entitytype { get; set; }
+		//[Required]
+		public string a_location_code { get; set; }
+		//[Required]
+		public string b_location_code { get; set; }
+		public TrenchMaster()
         {
             objPM = new PageMessage();
             lstTP = new List<NetworkDtl>();

@@ -9,6 +9,7 @@ using System.Net;
 using System.Collections.Generic;
 using System.Xml;
 using System.IO;
+using System.DirectoryServices;
 
 namespace Utility
 {
@@ -365,6 +366,9 @@ namespace Utility
                 sw.WriteLine("Log Message: {0}", LogMessage);
             }
         }
+
+        
+       
     }
     public class SecoApiResponse
     {

@@ -1,0 +1,1 @@
+update module_master set connection_id = null where module_abbr in('AUDIT_HISTORY_EXRPT','SPLIT_EXRPT');

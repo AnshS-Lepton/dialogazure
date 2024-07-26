@@ -41,6 +41,7 @@ namespace SmartInventory.Controllers
             BLItemTemplate.Instance.BindItemDropdowns(objEntityMaster, EntityType.Sector.ToString());
             BindSectorDropDown(objEntityMaster);
             objBLCommon.fillProjectSpecifications(objEntityMaster);
+            objEntityMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
             //objEntityMaster.unitValue = objEntityMaster.splitter_ratio;
             var usrDetail = (User)Session["userDetail"];
             var usrId = usrDetail.user_id;
@@ -96,8 +97,7 @@ namespace SmartInventory.Controllers
             objEntityMaster.lstSectorType = objDDL.Where(x => x.dropdown_type == DropDownType.SectorType.ToString()).ToList();
             objEntityMaster.lstFrequencyType = objDDL.Where(x => x.dropdown_type == DropDownType.Frequency.ToString()).ToList();
 
-
-        }
+		}
 
         public ActionResult SaveSector(SectorMaster objEntityMaster, bool isDirectSave = false)
         {
@@ -125,10 +125,14 @@ namespace SmartInventory.Controllers
                 objEntityMaster.network_id = objNetworkCodeDetail.network_code;
                 objEntityMaster.sequence_id = objNetworkCodeDetail.sequence_id;
             }
+			if (string.IsNullOrEmpty(objEntityMaster.network_name))
+			{
+				objEntityMaster.network_name = objEntityMaster.network_id;
+			}
 
 
 
-            if (TryValidateModel(objEntityMaster))
+			if (TryValidateModel(objEntityMaster))
             {
                 var isNew = objEntityMaster.system_id > 0 ? false : true;
 
@@ -189,6 +193,7 @@ namespace SmartInventory.Controllers
                 var usrId = usrDetail.user_id;
                 BLLayer objBLLayer = new BLLayer();
                 objEntityMaster.lstUserModule = objBLLayer.GetUserModuleAbbrList(usrId, UserType.Web.ToString());
+                objEntityMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
                 return PartialView("_AddSector", objEntityMaster);
             }
         }

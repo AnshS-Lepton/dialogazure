@@ -4,7 +4,8 @@
 @if (Model.status == "OK" || Model.status == "VALIDATION_FAILED")
 {
 
-    <script>       
+    <script>
+
         if ($("#dvPageMsg").closest('.modal-body').attr('id') == "dvChildModalBody") {
             $(popup.DE.ModalPopUp).find('form').submit();
             $(popup.DE.CloseChildPopup).trigger("click");
@@ -14,8 +15,16 @@
         }
         var type = '@Model.status' == 'VALIDATION_FAILED' ? 'warning' : 'success';
         var header = '@Model.status' == 'VALIDATION_FAILED'? MultilingualKey.SI_GBL_GBL_JQ_FRM_060:MultilingualKey.GBL_GBL_GBL_JQ_GBL_001;
-       
-        alert('@Html.Raw(Model.message)', type,header);
+
+        var status = '@Model.status'.toUpperCase();
+        // Below Line Added for closing the popup after detail save Ticket No #698
+        if (status === "OK") {
+           
+            $('#closeChildPopup').trigger('click');
+        }
+        alert('@Html.Raw(Model.message)', type, header);
+
+
         $(document).ready(function () {
             refreshStructureInfo({
                 structureId: @Model.structureId,

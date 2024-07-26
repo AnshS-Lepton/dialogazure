@@ -69,6 +69,14 @@ namespace Models
         public float? cable_two_end_reading { get; set; }
         public List<FormInputSettings> formInputSettings { get; set; }
         public List<LineEntityInfo> listLineEntityInfo { get; set; }
+        public string parent_cable_netwok_id { get; set; }
+        public string parent_cable_system_id { get; set; }       
+        public string splited_by { get; set; }
+        public string splitted_on { get; set; }
+        public string splitting_system_id { get; set; }
+        public string splitting_netwok_id { get; set; }
+        public string splitting_entitytype { get; set; }
+
         public SplitCable() {
             objPM = new PageMessage();
             cables = new List<EntityDetail>();

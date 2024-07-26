@@ -120,6 +120,7 @@
                     <div class="row form-group">
                         <div class="col-md-3">Route Id:</div>
                         <div class="col-md-9">
+                            @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
 
                         </div>
                     </div>
@@ -706,7 +707,8 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
 
     function selectallentity(chkAll) {
         if (!$(chkAll).is(":checked")) {
-            $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").removeAttr("checked");
+            $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").prop("checked", false);
+        //    $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").removeAttr("checked");
         }
         else {
             $("#tblSummaryAll input[type=checkbox]:not('#checkallentity')").prop("checked", true);
@@ -784,8 +786,15 @@ new SelectListItem { Text = "Additional Attributes", Value = "ADDITIONAL"},
         else {
 
         if (chkAll.checked == true) {
-            entityids = '@Model.objReportFilters.SelectedLayerIds';
+            @*entityids = '@Model.objReportFilters.SelectedLayerIds';*@
 
+            var rows = $("#tblSummaryAll input[type=checkbox]:not('#checkallentity'):checked"); //document.getElementById("tblSummaryAll").rows;
+            //Execute loop on all rows excluding the Header row.
+            for (var i = 0; i < rows.length; i++) {
+                //if (rows[i].getElementsByTagName("INPUT")[0].checked) {
+                entityids += entityids != "" ? ("," + rows[i].id) : rows[i].id;
+                //}
+            }
         }
         else {
             //Fetch all rows of the Table.

@@ -822,3 +822,14 @@
 .icon-associate_report:before {
     content: "\e9c4";
 }
+.icon-allReports:before {
+    content: "\e9c5";
+}
+
+.icon-splitReport:before {
+    content: "\e9c6";
+}
+
+.icon-auditReport:before {
+    content: "\e9c7";
+}

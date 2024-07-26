@@ -88,6 +88,8 @@ namespace DataAccess
                     //objConduit.served_by_ring = ConduitInfo.served_by_ring;
                     objConduit.bom_sub_category = ConduitInfo.bom_sub_category;
                     objConduit.gis_design_id = ConduitInfo.gis_design_id;
+                    objConduit.hierarchy_type = ConduitInfo.hierarchy_type;
+                    objConduit.own_vendor_id = ConduitInfo.own_vendor_id;                
                     var ConduitResp= repo.Update(objConduit);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(ConduitResp.system_id, Models.EntityType.Conduit.ToString(), ConduitResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Conduit.ToString(), ConduitResp.province_id);

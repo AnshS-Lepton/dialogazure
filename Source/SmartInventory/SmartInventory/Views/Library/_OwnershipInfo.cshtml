@@ -2,18 +2,33 @@
 @Html.HiddenFor(m => m.ownership_type, new { id = "hdnOwnershipType" })
 
 <!DOCTYPE html>
-<div class="form-group row">
-    <label class="control-label col-md-2 col-sm-2" for="RdOwnershipType">@Resources.Resources.SI_GBL_GBL_GBL_GBL_147<i class="clsMandatory">*</i>:</label>
-    <div class="col-md-4 col-sm-4">
-        <div class="radio whiteSpace">
-            <label class="col-md-6"><input type="radio" name="rdbOwnershipType" onchange="getThirdPartyType()" id="rdb_Own" value="Own"><span>@Resources.Resources.SI_GBL_GBL_GBL_GBL_150</span></label>
-            <label class="col-md-6"><input type="radio" name="rdbOwnershipType" onchange="getThirdPartyType()" id="rdb_ThirdParty" value="Third Party"><span>@Resources.Resources.SI_GBL_GBL_GBL_GBL_151</span></label>
+<div >
+    <div class="radio whiteSpace row">
+        <label class="control-label col-md-2 col-sm-2" for="RdOwnershipType">@Resources.Resources.SI_GBL_GBL_GBL_GBL_147<i class="clsMandatory">*</i>:</label>
+
+
+        <div class="col-md-4 col-sm-4">
+            <label><input type="radio" name="rdbOwnershipType" onchange="getThirdPartyType()" id="rdb_Own" value="Own"><span>@Resources.Resources.SI_GBL_GBL_GBL_GBL_150</span></label>
+
+        </div>
+        <label class="control-label col-md-2 col-sm-2" for="txt3rdprtyvndr">@Resources.Resources.SI_GBL_GBL_GBL_GBL_166</label>
+
+        <div class="col-md-4 col-sm-4">
+            @Html.DropDownListFor(m => m.own_vendor_id, new SelectList(Model.listOwnVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), new { @class = "chosen-select form-control required", id = "txtOwnVendor", @onchange = "onChangeOwnVendor()" })
         </div>
     </div>
-    <label class="control-label col-md-2 col-sm-2" for="txt3rdprtyvndr">@Resources.Resources.SI_GBL_GBL_GBL_GBL_148</label>
-    <div class="col-md-4 col-sm-4">
-        @Html.DropDownListFor(m => m.third_party_vendor_id, new SelectList(Model.list3rdPartyVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "txt3rdPartyVendor", @onchange = "onChangeThirdParyVendor()" })
+    <div class="radio whiteSpace row">
+        <div class="col-md-4 col-sm-4 col-md-offset-2 col-sm-offset-2">
+            <label><input type="radio" name="rdbOwnershipType" onchange="getThirdPartyType()" id="rdb_ThirdParty" value="Third Party"><span>@Resources.Resources.SI_GBL_GBL_GBL_GBL_151</span></label>
+        </div>
+            <label class="control-label col-md-2 col-sm-2" for="txt3rdprtyvndr">@Resources.Resources.SI_GBL_GBL_GBL_GBL_148</label>
+
+            <div class="col-md-4 col-sm-4">
+                @Html.DropDownListFor(m => m.third_party_vendor_id, new SelectList(Model.list3rdPartyVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "txt3rdPartyVendor", @onchange = "onChangeThirdParyVendor()" })
+            </div>
+        
     </div>
+
 </div>
 @if (!string.IsNullOrWhiteSpace(Model.entityType) && Model.entityType.ToUpper() == "CABLE")
 {
@@ -30,7 +45,7 @@
 }
 <script>
 
-        $(document).ready(function () {
+    $(document).ready(function () {
             if ('@Model.ownership_type.ToUpper()' == 'OWN') {
                 $("input[id='rdb_Own']").prop("checked", true);
                 $('#txt3rdPartyVendor').prop('disabled', true).trigger("chosen:updated");
@@ -40,6 +55,10 @@
             }
             $(document).on('click', 'form button[type=submit]', function (e) {
                 var selected_ownership = $("input[name='rdbOwnershipType']:checked").val();
+                if (selected_ownership == 'OWN' && $('#txtOwnVendor').val() == '' && $('#txtOwnVendor').val() == null) {
+                    $('#txtOwnVendor').next().addClass('input-validation-error');
+                    return false;
+                }
                 if (selected_ownership == 'Third Party' && $('#txt3rdPartyVendor').val() == '' && $('#txt3rdPartyVendor').val() == null) {
                     $('#txt3rdPartyVendor').next().addClass('input-validation-error');
                     return false;
@@ -53,20 +72,27 @@
                     return false;
                 }
             });
+
+        var ownvendorvalue = '@Model.own_vendor_id';
+        if (ownvendorvalue == '' || ownvendorvalue == null) {
+            //$("#txtOwnVendor").prop("selectedIndex", 0).val();
+            $('#txtOwnVendor option:nth-child(1)').val();
+        }
+
         });
         function getThirdPartyType() {
 
             var selectedownership = $("input[name='rdbOwnershipType']:checked").val();
             $('#txt3rdPartyVendor').val('');
+            $('#txtOwnVendor').val('');
             $('#txtCircuitId').val('');
             if (selectedownership == 'Third Party') {
-                //$('#txt3rdPartyVendor').next().addClass('input-validation-error');
-                // $('#txtCircuitId').addClass('input-validation-error');
                 $('#txt3rdPartyVendor').prop('disabled', false).trigger("chosen:updated");
+                $('#txtOwnVendor').prop('disabled', true).trigger("chosen:updated");
             }
             else {
-                // $('#txt3rdPartyVendor').next().removeClass('input-validation-error');
-                //$('#txtCircuitId').removeClass('input-validation-error');
+                $('#txtOwnVendor').prop('disabled', false).trigger("chosen:updated");
+
                 $('#txt3rdPartyVendor').prop('disabled', true).trigger("chosen:updated");
             }
             $("#hdnOwnershipType").val(selectedownership);
@@ -82,5 +108,17 @@
             else {
                 $('#txt3rdPartyVendor').next().addClass('input-validation-error');
             }
+    }
+
+    function onChangeOwnVendor() {
+
+        var selectedVal = $('#txtOwnVendor').val();
+        if (selectedVal != '' && selectedVal != null) {
+            $('#txtOwnVendor').next().removeClass('input-validation-error');
         }
+        else {
+            $('#txtOwnVendor').next().addClass('input-validation-error');
+        }
+    }
+
 </script>

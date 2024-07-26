@@ -539,7 +539,7 @@
                 $('#code').attr('readonly', 'True');
             }
 
-            $("#btnSubmit").on("click", function (e) {
+        $("#btnSubmit").on("click", function (e) {
                 var status = true;
                 if (!validateDropdown('selectCategory')) { status = false; }
                 if (!validateDropdown('vendor_id')) { status = false; }
@@ -552,7 +552,8 @@
                 if (!validateDropdown('NoOfWays')) { status = false; }
 
                 if (!validateDropdown('txtitem_master_code')) { status = false; }
-                if (!validateDropdown('ddlCableCategory')) { status = false; }
+            if (!validateDropdown('ddlCableCategory')) { status = false; }
+            if (!validateDropdown('ddlPortRatio')) { status = false; }
                 if (!status) { e.preventDefault(); }
             });
 

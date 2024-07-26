@@ -1527,7 +1527,7 @@ namespace SmartInventory.Controllers
             }
             else
             {
-                pg.message = "Design BOM has been submitted successfully.";
+                pg.message = "BOM has been submitted successfully.";
             }
             pg.status = "OK";
             string actaualStatus = bomBoqInfoSummary.status;
@@ -1664,7 +1664,7 @@ namespace SmartInventory.Controllers
                     }
                     if (dt.Rows.Count > 0)
                     {
-                        sFSAId = Convert.ToString(dt1.Rows[0]["fsa_id"]);
+                        sFSAId = Convert.ToString(dt1.Rows[0]["fsa_system_id"]);
                         var filename = sFSAId +"_" + (status == "TEMP" ? "Design" : "Construction") + "_BOMBOQ_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "_" + DateTimeHelper.Now.ToString("HHmmss") + ".xlsx";
                         //commented by priyanka
                         //string filepath = System.Web.HttpContext.Current.Server.MapPath("~/uploads/temp/") + filename;

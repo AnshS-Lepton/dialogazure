@@ -86,7 +86,7 @@
                              href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
                         <li><a  class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")"
                              href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_005</a></li>
-                        <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENT-DTL-IASC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_004 @(Model.lstUserModule.Contains("ENT-DTL-ENT-DTL-IASC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENT-DTL-IASC") ? "" : "block;")"
+                        <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-IASC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_004 @(Model.lstUserModule.Contains("ENT-DTL-IASC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-IASC") ? "" : "block;")"
                              href="@(Model.lstUserModule.Contains("ENT-DTL-IASC")?"#ItemAsso":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_004</a></li>
                         @if (layerDetail != null && layerDetail.is_reference_allowed)
                         {
@@ -130,7 +130,7 @@
                              href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
                             <li><a  class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")"
                               href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_005</a></li>
-                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENT-DTL-IASC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_004 @(Model.lstUserModule.Contains("ENT-DTL-ENT-DTL-IASC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENT-DTL-IASC") ? "" : "block;")"
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-IASC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_004 @(Model.lstUserModule.Contains("ENT-DTL-IASC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-IASC") ? "" : "block;")"
                                 href="@(Model.lstUserModule.Contains("ENT-DTL-IASC")?"#ItemAsso":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_004</a></li>
                             @if (layerDetail != null && layerDetail.is_reference_allowed)
                             {

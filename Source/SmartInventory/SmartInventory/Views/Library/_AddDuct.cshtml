@@ -52,6 +52,9 @@
     var ductType = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.duct_type.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var ductColor = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.duct_color.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var innserOuterDimension = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.inner_outer_dimension.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var a_location_code = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.a_location_code.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+    var b_location_code = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.b_location_code.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
+
 }
 <!DOCTYPE html>
 <div>
@@ -315,11 +318,26 @@
                                 @Html.TextBoxFor(m => m.a_city, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtProvinceName", autocomplete = "do-not-show-ac" })
                             </div>
 
-                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">B city Name:</label>
+                            <label class="control-label col-md-2 col-sm-2" for="txtSubAreaName">B City Name:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
                                 @Html.TextBoxFor(m => m.b_city, new { @class = "form-control clsReadOnly", @readonly = true, autocomplete = "do-not-show-ac" })
                             </div>
-
+                            <label class="control-label col-md-2 col-sm-2">
+                                A Location @if (a_location_code.is_required)
+                                {<i class="clsMandatory">*</i>}
+                                else { }:
+                            </label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.a_location_code, new SelectList(Model.listALocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Text", "Value"), "-Select-", new { @class = "chosen-select form-control ", @id = "ddlALocationCode" })
+                            </div>
+                            <label class="control-label col-md-2 col-sm-2">
+                                B Location @if (b_location_code.is_required)
+                                {<i class="clsMandatory">*</i>}
+                                else { }:
+                            </label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.b_location_code, new SelectList(Model.listBLocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Text", "Value"), "-Select-", new { @class = "chosen-select form-control ", @id = "ddlBLocationCode" })
+                            </div>
                             <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_GBL_GBL_GBL_009:</label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
                                 @Html.TextBoxFor(m => m.pin_code, new { @class = "form-control", @onkeypress = "return si.allowOnlyNumber(event);", @maxlength = "6", @minlength = "6", autocomplete = "new-password" })
@@ -339,13 +357,13 @@
                             <div class="col-md-4 col-sm-4  mrgn_btm">
                                 @Html.TextBoxFor(m => m.calculated_length, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
                             </div>
-                            @if (Model.system_id == 0)
-                            {
-                                <label class="control-label col-md-2 col-sm-2 ">No of Ducts Created:</label>
-                                <div class="col-md-4 col-sm-4  mrgn_btm">
-                                    @Html.DropDownListFor(m => m.no_of_ducts_created, new SelectList(Model.NoofDuctsCreated.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
-                                </div>
-                            }
+                            @*@if (Model.system_id == 0)
+        {
+            <label class="control-label col-md-2 col-sm-2 ">No of Ducts Created:</label>
+            <div class="col-md-4 col-sm-4  mrgn_btm">
+                @Html.DropDownListFor(m => m.no_of_ducts_created, new SelectList(Model.NoofDuctsCreated.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
+            </div>
+        }*@
                             <label class="control-label col-md-2 col-sm-2 " for="txtSubAreaName">Slack Count:</label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
                                 @Html.TextBoxFor(m => m.total_slack_count, new { @class = "form-control clsReadOnly", @onkeypress = "return si.allowNumberwithOneDot(event,'calculated_length');", @readonly = true, @maxlength = "10" })
@@ -383,7 +401,7 @@
                             {
                                 <label class="control-label col-md-2 col-sm-2 ">@layerDetail.layer_title Count:</label>
                                 <div class="col-md-4 col-sm-4  mrgn_btm">
-                                    @Html.DropDownListFor(m => m.duct_count, new SelectList(Model.DuctCount.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
+                                    @Html.DropDownListFor(m => m.duct_count, new SelectList(Model.DuctCount.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
 
                                 </div>
                             }
@@ -475,6 +493,12 @@
 <script type="text/javascript">
     var inputs = [];
     $(document).ready(function () {
+          if ('@a_location_code.is_required' == 'True') {
+            $('#ddlALocationCode').attr('required', true);
+        }
+         if ('@b_location_code.is_required' == 'True') {
+            $('#ddlBLocationCode').attr('required', true);
+        }
         callFormValidator("frmAddDuct");
         $('.chosen-select').chosen({ width: '100%' });
         EnableDisableUpdateButton("frmAddDuct", @Model.system_id > 0 ? "btnUpdateSubArea" : "btnSaveDuct");
