@@ -57,9 +57,12 @@ namespace Models
         public int? dbBox_system_id { get; set; }  
         public string DbBox_network_id { get; set; } 
         public string DbBox_entity_type { get; set; }
+        public string DbBox_latitude {  get; set; }
+        public string DbBox_longitude { get; set; }
         public string splitter_type { get; set; } 
         public string floor_name { get; set; }
-        public string Structure_code { get; set; } 
+        public string Structure_code { get; set; }
+        public string route { get; set; }
         public List<WCR_Material> WCR_List { get; set; }
         public CustomerInfo()
         {
