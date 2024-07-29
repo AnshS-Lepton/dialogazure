@@ -83,11 +83,25 @@
     }
 </script>
 <script type="text/javascript">
-    $(document).ready(function () {     
+    $(document).ready(function () {
+        debugger;
         $('#ddlClosureConstruction').prop('disabled', true).trigger("chosen:updated");
         $('#ddlClosureActivation').prop('disabled', true).trigger("chosen:updated");
         $('#ddlClosureAccessibility').prop('disabled', true).trigger("chosen:updated");
-        $('#ddlHeirarchyType').prop('disabled', true).trigger("chosen:updated");         
+        $('#ddlHeirarchyType').prop('disabled', true).trigger("chosen:updated");    
+
+
+        
+        if ($('#ddlmodel :selected').text() == "Completed") {
+            $('#ddlClosureConstruction').prop('disabled', false).trigger("chosen:updated");
+        }
+
+        if ($('#ddlClosureConstruction :selected').text() == "Completed") {
+            $('#ddlClosureActivation').prop('disabled', false).trigger("chosen:updated");
+            $('#ddlClosureAccessibility').prop('disabled', false).trigger("chosen:updated");
+            $('#ddlHeirarchyType').prop('disabled', false).trigger("chosen:updated");
+        }
+
 
         if ('@formInput_type.is_required' == 'True' && '@formInput_brand.is_required' == 'True' && '@formInput_model.is_required' == 'True' ) {
             $('#ddlType').attr('onchange', "ddlChangeRemoveCss(this.id, 'Type');");
@@ -123,7 +137,7 @@
 
 
         $("#ddlmodel").change(function () {
-            if (this.value.trim() == "Completed") {              
+            if (this.options[this.selectedIndex].innerText.trim() == "Completed") {              
                 $('#ddlClosureConstruction').prop('disabled', false).trigger("chosen:updated");
             } else {
                 $('#ddlClosureConstruction').prop('disabled', true).trigger("chosen:updated");              
