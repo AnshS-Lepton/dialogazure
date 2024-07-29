@@ -104,6 +104,20 @@ namespace IntegrationServices.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    if (!string.IsNullOrEmpty(request.port))
+                    {
+                        int portNumber = 0;
+                        if (!int.TryParse(request.port, out portNumber))
+                        {
+
+                            var errorResponses = new ErrorResponse
+                            {
+                                code = (int)HttpStatusCode.BadRequest,
+                                message = "Port Number is Not Valid"
+                            };
+                            return Content(HttpStatusCode.BadRequest, errorResponses);
+                        }
+                    }
 
                     var res = new BLServiceability().GetIntermediateEntities(request.source_entity_type, request.source_id, request.destination_entity_type, request.destination_id, request.port);
                     if (res != null && res.error == null && res.intermediate_entities != null && res.intermediate_entities.Count > 0)
@@ -174,7 +188,7 @@ namespace IntegrationServices.Controllers
         public IHttpActionResult UpdateAlarmStatusetails(UpdateAlarmStatusetails objUpdateAlarmStatusetails)
         {
             var responses = new APIResponse();
-
+            int portNumber = 0;
             try
             {
                 if (ModelState.IsValid)
@@ -183,19 +197,20 @@ namespace IntegrationServices.Controllers
 
                     foreach (var obj in objUpdateAlarmStatusetails.Impacted_entities)
                     {
-                        //if (!string.IsNullOrEmpty(obj.port_number))
-                        //{
-                        //    if (!int.TryParse(obj.port_number, out int portNumber))
-                        //    {
-                                
-                        //        var errorResponses = new ErrorResponse
-                        //        {
-                        //            code = (int)HttpStatusCode.BadRequest,
-                        //            message = "Port Number is Not Valid"
-                        //        };
-                        //        return Content(HttpStatusCode.BadRequest, errorResponses);
-                        //    }
-                        //}
+                        
+                        if (!string.IsNullOrEmpty(obj.port_number))
+                        {
+                            if (!int.TryParse(obj.port_number, out portNumber))
+                            {
+
+                                var errorResponses = new ErrorResponse
+                                {
+                                    code = (int)HttpStatusCode.BadRequest,
+                                    message = "Port Number is Not Valid"
+                                };
+                                return Content(HttpStatusCode.BadRequest, errorResponses);
+                            }
+                        }
                         if (ModelState.IsValid)
                         {
                             var res = new BLServiceability().UpdateAlarmStatusetails(obj);
@@ -405,7 +420,7 @@ namespace IntegrationServices.Controllers
                                     var coordinates = lstSplitter.ToList()[d].geom.Replace("POINT(", "").Replace(")", "").Split(' ');
                                     Devices objDevices = new Devices();
                                     objDevices.entity_id = lstSplitter.ToList()[d].display_name;
-                                    objDevices.entity_type = lstSplitter.ToList()[d].entity_type;
+                                    objDevices.entity_type = lstSplitter.ToList()[d].entity_title;
 
                                     objDevices.distance = dis[d];
 

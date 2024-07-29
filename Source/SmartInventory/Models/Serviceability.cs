@@ -193,6 +193,7 @@ namespace Models
     public class UpdateAlarmStatusetails
     {
         [Required]
+        [RegularExpression(@"^[a-zA-Z0-9]*$", ErrorMessage = "Reference ID must not contain special characters.")]
         public string reference_id { get; set; }
         [Required]
         public string alarm_reason { get; set; }
@@ -225,6 +226,7 @@ namespace Models
     public class ServiceabilityRequest
     {
         [Required]
+        [RegularExpression(@"^[a-zA-Z0-9]*$", ErrorMessage = "Reference ID must not contain special characters.")]
         public string reference_id { get; set; }
         [Required]
         public string latitude { get; set; }
@@ -252,6 +254,7 @@ namespace Models
     public class UpdateDiscoveredEntityDetails
     {
         [Required]
+        [RegularExpression(@"^[a-zA-Z0-9]*$", ErrorMessage = "Reference ID must not contain special characters.")]
         public string reference_id { get; set; }
         [Required]
         public string entity_id { get; set; }
