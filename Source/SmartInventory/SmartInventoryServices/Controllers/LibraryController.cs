@@ -12407,6 +12407,8 @@ namespace SmartInventoryServices.Controllers
 					objFaultStatusViewModel.network_id = objNetworkCodeDetail.network_code;
 					objFaultStatusViewModel.sequence_id = objNetworkCodeDetail.sequence_id;
 					objFaultStatusViewModel.parent_network_id = objNetworkCodeDetail.parent_network_id;
+					if (objFaultStatusViewModel.select_entity == "")
+					  objFaultStatusViewModel.select_entity = "0"; 
 				}
 				this.Validate(objFaultStatusViewModel);
 				if (ModelState.IsValid)
