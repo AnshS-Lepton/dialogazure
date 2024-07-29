@@ -50,6 +50,10 @@ namespace SmartInventory.Controllers
                     string[] defaultColumns = { "uploaded_by", "uploaded_on", "is_valid_record", "message" };
                     selectedColumns = selectedColumns.Concat(defaultColumns).Distinct().ToArray();
                     DataTable dtFilter = new DataView(dt).ToTable(false, selectedColumns);
+                    if (dtFilter != null && dtFilter.Columns.Contains("sp_geometry"))
+                    {
+                        dtFilter.Columns.Remove("sp_geometry");
+                    }
                     foreach (DataColumn dc in dtFilter.Columns)
                     {
                         Mapping mapping = listMapping.Where(m => m.DbColName.ToUpper() == dc.ColumnName.ToUpper()).FirstOrDefault();
@@ -62,20 +66,21 @@ namespace SmartInventory.Controllers
                             dc.ColumnName = mapping.TemplateColName;
                         }
                     }
-                    if (dtFilter.Rows.Count > 0)
-                    {
-                        //UploadLogs_{Layer Title}_DDMMYYYY-HHMMSS.xlsx---Given by Ram
+                       if (dtFilter.Rows.Count > 0)
+                      {
                         var layerDetails = Settings.ApplicationSettings.listLayerDetails.Where(m => m.layer_name.ToUpper() == summary.entity_type.ToUpper()).FirstOrDefault();
+
+                        //UploadLogs_{Layer Title}_DDMMYYYY-HHMMSS.xlsx---Given by Ram
                         var filename = "UploadLogs_" + layerDetails.layer_title.ToUpper() + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss") + ".xlsx";
-                        //Commented by pk
-                        //string filepath = System.Web.HttpContext.Current.Server.MapPath("~/uploads/temp/") + filename;
-                        //Commented end by pk
-                        string filepath = System.Web.HttpContext.Current.Server.MapPath(Settings.ApplicationSettings.DownloadTempPath) + filename;
-                        string file = Helper.NPOIExcelHelper.DatatableToExcelFile("xlsx", dtFilter, filepath);
-                        byte[] fileBytes = System.IO.File.ReadAllBytes(file);
+                            //Commented by pk
+                            //string filepath = System.Web.HttpContext.Current.Server.MapPath("~/uploads/temp/") + filename;
+                            //Commented end by pk
+                             string filepath = System.Web.HttpContext.Current.Server.MapPath(Settings.ApplicationSettings.DownloadTempPath) + filename;
+                            string file = Helper.NPOIExcelHelper.DatatableToExcelFile("xlsx", dtFilter, filepath);
+                            byte[] fileBytes = System.IO.File.ReadAllBytes(file);
 
-                        return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, filename);
-
+                            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, filename);
+                        
                     }
                     else
                     {
