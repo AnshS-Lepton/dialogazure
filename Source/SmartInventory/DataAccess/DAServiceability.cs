@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Core.Metadata.Edm;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccess.DBHelpers;
+﻿using DataAccess.DBHelpers;
 using Models;
 using Newtonsoft.Json;
-using NPOI.POIFS.Properties;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DataAccess
 {
@@ -70,6 +66,7 @@ namespace DataAccess
         }
         public IntermediateEntitiesDetails GetIntermediateEntities(string source_entity_type, string source_id, string destination_entity_type, string destination_id, string port)
         {
+            
             try
             {
 
@@ -112,6 +109,31 @@ namespace DataAccess
             try
             {
                 return repo.ExecuteProcedure<EntityDetail>("fn_api_get_ossserviceability", new { p_lng = longitude, p_lat = latitude });
+            }
+            catch { throw; }
+        }
+
+        public APIResponse UpdateDiscoveredEntityDetails(UpdateDiscoveredEntityDetails obj)
+        {
+           
+            try
+            {
+                
+                    
+                
+                
+
+                return repo.ExecuteProcedure<APIResponse>("fn_api_Update_DiscoveredEntity", new
+                    {
+                        p_entity_type = obj.entity_type,
+                        p_network_id = obj.entity_id,
+                        p_serial_no = obj.serial_no,
+                        p_ip_address = obj.ip_address,
+                        p_ports = JsonConvert.SerializeObject(obj.ports)
+
+
+                }).FirstOrDefault();
+                
             }
             catch { throw; }
         }

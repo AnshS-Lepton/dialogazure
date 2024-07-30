@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccess;
+﻿using DataAccess;
 using Models;
+using System.Collections.Generic;
 
 namespace BusinessLogics
 {
@@ -55,6 +51,11 @@ namespace BusinessLogics
         public List<EntityDetail> Serviceability(double latitude, double longitude)
         {
             return objDAMisc.Serviceability(latitude, longitude);
+        }
+
+        public APIResponse UpdateDiscoveredEntityDetails(UpdateDiscoveredEntityDetails obj)
+        {
+            return objDAMisc.UpdateDiscoveredEntityDetails(obj);
         }
     }
 }

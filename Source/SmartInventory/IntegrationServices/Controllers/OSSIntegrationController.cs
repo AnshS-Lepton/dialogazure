@@ -1,4 +1,5 @@
 ﻿using BusinessLogics;
+using IntegrationServices.Settings;
 using Lepton.Entities;
 using Models;
 using Newtonsoft.Json;
@@ -9,7 +10,6 @@ using System.Linq;
 using System.Net;
 using System.Web.Http;
 using Utility;
-using IntegrationServices.Settings;
 
 namespace IntegrationServices.Controllers
 {
@@ -104,6 +104,20 @@ namespace IntegrationServices.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    if (!string.IsNullOrEmpty(request.port))
+                    {
+                        int portNumber = 0;
+                        if (!int.TryParse(request.port, out portNumber))
+                        {
+
+                            var errorResponses = new ErrorResponse
+                            {
+                                code = (int)HttpStatusCode.BadRequest,
+                                message = "Port Number is Not Valid"
+                            };
+                            return Content(HttpStatusCode.BadRequest, errorResponses);
+                        }
+                    }
 
                     var res = new BLServiceability().GetIntermediateEntities(request.source_entity_type, request.source_id, request.destination_entity_type, request.destination_id, request.port);
                     if (res != null && res.error == null && res.intermediate_entities != null && res.intermediate_entities.Count > 0)
@@ -174,7 +188,7 @@ namespace IntegrationServices.Controllers
         public IHttpActionResult UpdateAlarmStatusetails(UpdateAlarmStatusetails objUpdateAlarmStatusetails)
         {
             var responses = new APIResponse();
-
+            int portNumber = 0;
             try
             {
                 if (ModelState.IsValid)
@@ -183,6 +197,20 @@ namespace IntegrationServices.Controllers
 
                     foreach (var obj in objUpdateAlarmStatusetails.Impacted_entities)
                     {
+                        
+                        if (!string.IsNullOrEmpty(obj.port_number))
+                        {
+                            if (!int.TryParse(obj.port_number, out portNumber))
+                            {
+
+                                var errorResponses = new ErrorResponse
+                                {
+                                    code = (int)HttpStatusCode.BadRequest,
+                                    message = "Port Number is Not Valid"
+                                };
+                                return Content(HttpStatusCode.BadRequest, errorResponses);
+                            }
+                        }
                         if (ModelState.IsValid)
                         {
                             var res = new BLServiceability().UpdateAlarmStatusetails(obj);
@@ -269,11 +297,20 @@ namespace IntegrationServices.Controllers
             string responseFromServer = "";
             try
             {
+                if (ServiceabilityRequest == null)
+                {
+                    var errorResponse = new ErrorResponse
+                    {
+                        code = (int)HttpStatusCode.BadRequest,
+                        message = "Request object is null"
+                    };
+                    return Content(HttpStatusCode.BadRequest, errorResponse);
+                }
                 if (ModelState.IsValid)
                 {
                     double latitude;
                     double longitude;
-                   
+
                     if (!double.TryParse(ServiceabilityRequest.latitude.Trim(), out latitude) || ServiceabilityRequest.latitude != ServiceabilityRequest.latitude.Trim())
                     {
                         var errorResponse = new ErrorResponse
@@ -383,14 +420,14 @@ namespace IntegrationServices.Controllers
                                     var coordinates = lstSplitter.ToList()[d].geom.Replace("POINT(", "").Replace(")", "").Split(' ');
                                     Devices objDevices = new Devices();
                                     objDevices.entity_id = lstSplitter.ToList()[d].display_name;
-                                    objDevices.entity_type = lstSplitter.ToList()[d].entity_type;
+                                    objDevices.entity_type = lstSplitter.ToList()[d].entity_title;
 
                                     objDevices.distance = dis[d];
 
                                     gp.Add(objDevices);
                                 }
                             }
-                            
+
 
                         }
                         root.devices = gp.OrderBy(x => x.distance).ToList();
@@ -422,7 +459,7 @@ namespace IntegrationServices.Controllers
                 }
 
 
-               
+
             }
             catch (Exception ex)
             {
@@ -436,7 +473,72 @@ namespace IntegrationServices.Controllers
                 };
                 return Content(HttpStatusCode.InternalServerError, errorResponse);
             }
-            
+
+        }
+
+        [HttpPost]
+        [Route("updateDiscoveredEntity")]
+        public IHttpActionResult UpdateDiscoveredEntity(UpdateDiscoveredEntityDetails obj)
+        {
+
+            var responses = new APIResponse();
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var res = new BLServiceability().UpdateDiscoveredEntityDetails(obj);
+                    if (res != null && res.status.Equals("true"))
+                    {
+                        responses.status = "OK";
+                        responses.message = res.message;
+                        return Json(responses);
+                    }
+                    else if (res != null && res.status.Equals("false"))
+                    {
+                        var errorResponses = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.BadRequest,
+                            message = res.message
+                        };
+                        return Content(HttpStatusCode.BadRequest, errorResponses);
+                    }
+                    else
+                    {
+                        var errorresponse = new ErrorResponse
+                        {
+                            code = (int)HttpStatusCode.NotFound,
+                            message = "Data not found"
+                        };
+                        return Content(HttpStatusCode.NotFound, errorresponse);
+                    }
+
+
+                }
+                else
+                {
+                    var errorMessages_ = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                    var errorMessageString_ = string.Join("; ", errorMessages_);
+                    var errorResponses = new ErrorResponse
+                    {
+                        code = (int)HttpStatusCode.BadRequest,
+                        message = errorMessageString_
+                    };
+                    return Content(HttpStatusCode.BadRequest, errorResponses);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("UpdateDiscoveredEntity()", "OSSIntegrationController", "", ex);
+                var errorResponse = new ErrorResponse
+                {
+                    code = (int)HttpStatusCode.InternalServerError,
+                    message = "Error While Processing Request."
+                };
+                return Content(HttpStatusCode.InternalServerError, errorResponse);
+            }
         }
 
 
