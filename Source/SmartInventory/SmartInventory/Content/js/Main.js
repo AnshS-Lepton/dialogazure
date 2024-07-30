@@ -22346,7 +22346,6 @@ var Main = function () {
 
 
     this.editTicket = function () {
-        debugger;
         ////;
         //  var totalSelected = $('#VwTicketGrid input:checkbox[name=chkSelect]:checked').length;
         var totalSelected = $("#tblTicketManagerGrid td :checkbox[data-ticketstatus='Assigned']:checked, #tblTicketManagerGrid td :checkbox[data-ticketstatus='Unassigned']:checked").length;
