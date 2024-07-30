@@ -4921,9 +4921,7 @@ namespace Models
 	public class AutoCodification
 	{
 		public bool status { get; set; }
-		public string message { get; set; }
-		public string logs { get; set; }
-		public List<CodificationLog> listLog { get; set; }
+		public string message { get; set; }		
 	}
 	public class CodificationLog
 	{

@@ -73,7 +73,7 @@ namespace DataAccess
             try
             {
                 //return repo.ExecuteProcedure<DbMessage>("fn_updategeographicdetails", new { p_entitytype = entitytype, p_geomtype = geomtype, p_systemid = systemid }).FirstOrDefault();
-                return repo.ExecuteProcedure<AutoCodification>("fn_auto_codification", new { P_SYSTEM_ID = systemid, P_ENTITY_TYPE = entitytype,P_userid= p_user_id }).FirstOrDefault();
+                return repo.ExecuteProcedure<AutoCodification>("FN_CREATE_CABLE_ASSOCIATED_ROUTE_ID", new { P_SYSTEM_ID = systemid, P_ENTITY_TYPE = entitytype}).FirstOrDefault();
             }
             catch { throw; }
         }
