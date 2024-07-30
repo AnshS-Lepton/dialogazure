@@ -22346,10 +22346,11 @@ var Main = function () {
 
 
     this.editTicket = function () {
-
+        debugger;
         ////;
         //  var totalSelected = $('#VwTicketGrid input:checkbox[name=chkSelect]:checked').length;
-        var totalSelected = $("#tblTicketManagerGrid td :checkbox[data-ticketstatus='Assigned']:checked").length;
+        var totalSelected = $("#tblTicketManagerGrid td :checkbox[data-ticketstatus='Assigned']:checked, #tblTicketManagerGrid td :checkbox[data-ticketstatus='Unassigned']:checked").length;
+       
         if (totalSelected == 0) {
             alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_023);
         }
@@ -22358,8 +22359,7 @@ var Main = function () {
         }
         else {
             // var _id = $('#VwTicketGrid input:checkbox[name=chkSelect]:checked').val();
-            var _id = $("#tblTicketManagerGrid td :checkbox[data-ticketstatus='Assigned']:checked").val();
-            showConfirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_025, function () {
+            var _id = $("#tblTicketManagerGrid td :checkbox[data-ticketstatus='Assigned']:checked, #tblTicketManagerGrid td :checkbox[data-ticketstatus='Unassigned']:checked").val();     showConfirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_025, function () {
                 ajaxReq('TicketManager/AddTicket', {
                     ticket_id: _id
                 }, false, function (resp) {
