@@ -5598,16 +5598,16 @@ namespace SmartInventory.Controllers
 
         #region UPDATE GEOGRAPHIC DETAILS FEATURE BY ADITYA
 
-        public ActionResult Auto_Codification(string pEntityType, int pSystemId, string pGeomType)
-        {
-            int p_user_id = Convert.ToInt32(Session["user_id"]);
-            var ProcessData = BLBuilding.Instance.UpdateGeographicDetails(pEntityType, pSystemId, pGeomType, p_user_id);
-            ProcessData.listLog = JsonConvert.DeserializeObject<List<CodificationLog>>(ProcessData.logs);
-            ProcessData.message = BLConvertMLanguage.MultilingualMessageConvert(ProcessData.message);
-            DataTable dtgeo_log = MiscHelper.ListToDataTable(ProcessData.listLog);
-            TempData["codification_dt"] = dtgeo_log;
-            return Json(ProcessData, JsonRequestBehavior.AllowGet);
-        }
+        //public ActionResult Auto_Codification(string pEntityType, int pSystemId, string pGeomType)
+        //{
+        //    int p_user_id = Convert.ToInt32(Session["user_id"]);
+        //    var ProcessData = BLBuilding.Instance.UpdateGeographicDetails(pEntityType, pSystemId, pGeomType, p_user_id);
+        //    ProcessData.listLog = JsonConvert.DeserializeObject<List<CodificationLog>>(ProcessData.logs);
+        //    ProcessData.message = BLConvertMLanguage.MultilingualMessageConvert(ProcessData.message);
+        //    DataTable dtgeo_log = MiscHelper.ListToDataTable(ProcessData.listLog);
+        //    TempData["codification_dt"] = dtgeo_log;
+        //    return Json(ProcessData, JsonRequestBehavior.AllowGet);
+        //}
         public void ExportCodificationLogs()
         {
             string fileName = "Codification_Logs_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");

@@ -12492,15 +12492,8 @@ namespace SmartInventory.Controllers
         public ActionResult AutoCodification(string pEntityType, int pSystemId, string pGeomType)
         {
             int p_user_id = Convert.ToInt32(Session["user_id"]);
-            var ProcessData = BLBuilding.Instance.UpdateGeographicDetails(pEntityType, pSystemId, pGeomType, p_user_id);
-            DataTable dtgeo_log = new DataTable();
-            if (ProcessData.logs != null)
-            {
-                ProcessData.listLog = JsonConvert.DeserializeObject<List<CodificationLog>>(ProcessData.logs);
-                //ProcessData.message = BLConvertMLanguage.MultilingualMessageConvert(ProcessData.message);
-                dtgeo_log = MiscHelper.ListToDataTable(ProcessData.listLog);
-            }
-            TempData["codification_dt"] = dtgeo_log;
+            var ProcessData = BLBuilding.Instance.UpdateGeographicDetails(pEntityType, pSystemId, pGeomType, p_user_id);          
+            
             return Json(ProcessData, JsonRequestBehavior.AllowGet);
         }
         public void ExportCodificationLogs()

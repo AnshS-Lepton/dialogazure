@@ -14683,15 +14683,7 @@ var Main = function () {
                         confirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_191, function () {
 
                             ajaxReq('Library/AutoCodification', { pEntityType: entityType, pSystemId: systemId, pGeomType: geomType }, true, function (resp) {
-
-                                alert(resp.message);
-                                if (resp.listLog != null) {
-                                    var link = document.createElement('a');
-                                    document.body.appendChild(link);
-                                    link.href = "Library/ExportCodificationLogs";
-                                    link.target = "_blank";
-                                    link.click();
-                                }
+                                alert(resp.message);                               
 
                             }, false, true);
                         });
