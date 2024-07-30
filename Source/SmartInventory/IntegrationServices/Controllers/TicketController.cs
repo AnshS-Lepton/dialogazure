@@ -3402,7 +3402,6 @@ namespace IntegrationServices.Controllers
         [Filters.CustomActionForXml]
         public IHttpActionResult customerTicketStatus(string ticket_id)
         {
-            var response = new ApiResponse<customerTicketStatus>();
             customerTicketStatus customerTicketStatus = new customerTicketStatus();
             try
             {
