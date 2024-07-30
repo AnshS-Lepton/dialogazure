@@ -430,9 +430,22 @@ namespace IntegrationServices.Controllers
 
 
                         }
-                        root.devices = gp.OrderBy(x => x.distance).ToList();
-                        root.status = "FEASIBLE";
-                        root.reference_id = ServiceabilityRequest.reference_id;
+                        if (gp!=null && gp.Count>0)
+                        {
+                            root.devices = gp.OrderBy(x => x.distance).ToList();
+                            root.status = "FEASIBLE";
+                            root.reference_id = ServiceabilityRequest.reference_id;
+                        }
+                        else
+                        {
+                            var errorResponse = new ErrorResponse
+                            {
+                                code = (int)HttpStatusCode.NotFound,
+                                message = "Data not found"
+                            };
+                            return Content(HttpStatusCode.NotFound, errorResponse);
+                        }
+                        
                     }
                     else
                     {

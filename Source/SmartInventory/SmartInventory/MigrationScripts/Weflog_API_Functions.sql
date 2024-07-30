@@ -244,3 +244,91 @@ $BODY$;
 
 ALTER FUNCTION public.fn_api_update_discoveredentity(character varying, character varying, character, character varying, text)
     OWNER TO postgres;
+
+
+
+-------------------------------- fn_api_get_entitylocation--------------
+
+CREATE OR REPLACE FUNCTION public.fn_api_get_entitylocation(
+	p_entity_type character varying,
+	p_entity_network_id character varying)
+    RETURNS SETOF json 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+    v_layer_table_name text;
+    v_sql_query text;
+	v_sql_query1 text;
+	v_layer_name character varying;
+	v_source_system_id integer;
+BEGIN
+    
+	IF Upper(p_entity_type) IN('OLT') THEN
+        SELECT ld.layer_name, ld.layer_table INTO v_layer_name,v_layer_table_name
+        FROM isp_model_master a
+        INNER JOIN isp_model_type_master b ON a.id = b.model_id AND b.key = p_entity_type
+        INNER JOIN layer_details ld ON Upper(ld.layer_name) = Upper(a.key);
+		RAISE INFO 'OLT case: layer_table_name: %, layer_name: %', v_layer_table_name, v_layer_name;
+    ELSE
+        SELECT layer_table, layer_name INTO v_layer_table_name, v_layer_name
+        FROM layer_details
+        WHERE layer_title = p_entity_type; -- search by title and use layer name
+    END IF;
+	
+    IF v_layer_table_name IS NULL OR v_layer_name IS NULL OR v_layer_name NOT IN ('ONT', 'Equipment')
+	THEN
+        RETURN QUERY SELECT json_build_object(
+            'error', 'Invalid Entity type:' || p_entity_type
+        )::json;
+
+        RETURN;
+    END IF;
+	
+	v_sql_query1 := 'SELECT (row_to_json(t) ->> ''system_id'')::integer
+                  FROM (
+                      SELECT lt.system_id
+                      FROM ' || quote_ident(v_layer_table_name) || ' lt
+                      JOIN point_master pm ON lt.network_id = pm.common_name
+                      WHERE lt.network_id = ''' || p_entity_network_id || '''
+                      LIMIT 1
+                  ) t';
+		
+   EXECUTE v_sql_query1 INTO v_source_system_id;
+   
+   IF v_source_system_id IS NULL THEN
+        RETURN QUERY SELECT json_build_object(
+            'error', 'Details not found for Network ID ' || p_entity_network_id
+        )::json;
+        
+        RETURN;
+    END IF;
+   
+    v_sql_query := 'SELECT row_to_json(row) 
+                  FROM (
+                      SELECT 
+                          lt.network_id AS entity_id, 
+                          ''' || p_entity_type || ''' AS entity_type, 
+                          pb.province_name  AS province, 
+                          rb.region_name AS region, 
+                          json_build_object(
+                              ''latitude'', pm.latitude, 
+                              ''longitude'', pm.longitude
+                          ) AS location
+                      FROM ' || quote_ident(v_layer_table_name) || ' lt
+                      JOIN point_master pm ON lt.network_id = pm.common_name
+                       JOIN province_boundary pb ON lt.province_id = pb.id
+                       JOIN region_boundary rb ON lt.region_id = rb.id
+                      WHERE lt.network_id = ''' || p_entity_network_id || '''
+                  ) row';
+
+    
+    RETURN QUERY EXECUTE v_sql_query;
+END;
+$BODY$;
+
+ALTER FUNCTION public.fn_api_get_entitylocation(character varying, character varying)
+    OWNER TO postgres;
