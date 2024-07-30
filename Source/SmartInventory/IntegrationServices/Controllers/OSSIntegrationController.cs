@@ -16,7 +16,7 @@ namespace IntegrationServices.Controllers
     [Authorize]
     [RoutePrefix("api/v1")]
     [Filters.CustomActionForXml]
-
+     
     public class OSSIntegrationController : ApiController
     {
 
@@ -214,13 +214,13 @@ namespace IntegrationServices.Controllers
                         if (ModelState.IsValid)
                         {
                             var res = new BLServiceability().UpdateAlarmStatusetails(obj);
-                            if (res != null && res.status.Equals("true"))
+                            if (res != null && res.status.Equals("OK"))
                             {
-                                responses.status = "OK";
+                                responses.status = res.status;
                                 responses.message = res.message;
                                 isValid = true;
                             }
-                            else if (res != null && res.status.Equals("false"))
+                            else if (res != null && res.status.Equals("Failed"))
                             {
                                 var errorResponses = new ErrorResponse
                                 {
@@ -488,13 +488,13 @@ namespace IntegrationServices.Controllers
                 if (ModelState.IsValid)
                 {
                     var res = new BLServiceability().UpdateDiscoveredEntityDetails(obj);
-                    if (res != null && res.status.Equals("true"))
+                    if (res != null && res.status.Equals("OK"))
                     {
-                        responses.status = "OK";
+                        responses.status = res.status;
                         responses.message = res.message;
                         return Json(responses);
                     }
-                    else if (res != null && res.status.Equals("false"))
+                    else if (res != null && res.status.Equals("Failed"))
                     {
                         var errorResponses = new ErrorResponse
                         {

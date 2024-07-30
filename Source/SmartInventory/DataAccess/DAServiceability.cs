@@ -123,7 +123,7 @@ namespace DataAccess
                 
                 
 
-                return repo.ExecuteProcedure<APIResponse>("fn_api_Update_DiscoveredEntity", new
+                return repo.ExecuteProcedure<APIResponse>("fn_api_update_discoveredentity", new
                     {
                         p_entity_type = obj.entity_type,
                         p_network_id = obj.entity_id,
