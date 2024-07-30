@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Core.Metadata.Edm;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccess.DBHelpers;
+﻿using DataAccess.DBHelpers;
 using Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NPOI.POIFS.Properties;
-using Org.BouncyCastle.Asn1.Ocsp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DataAccess
 {
