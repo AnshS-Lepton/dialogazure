@@ -325,29 +325,33 @@ namespace Models
 
     public class Customers
     {
-        [Required]
+        [Required(ErrorMessage = "CAN ID is required.")]
+
         public string can_id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Latitude is required.")]
+        [Range(-90, 90, ErrorMessage = "Latitude must be between -90 and 90.")]
         public double latitude { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Longitude is required.")]
+        [Range(-180, 180, ErrorMessage = "Longitude must be between -180 and 180.")]
         public double longitude { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Name is required.")]
         public string name { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Address is required.")]
         public string address { get; set; }
     }
     public class CustomerTicketMaster
     {
         [NotMapped]
-        [Required]
+        [Required(ErrorMessage = "Connection entity type is required.")]
         public string connection_entity_type { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Connection entity ID is required.")]
+
         [NotMapped]
         public int connection_entity_id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Reference ID is required.")]
         [NotMapped]
         public string reference_id { get; set; }
-        [Required]
+         [Required(ErrorMessage = "Ticket Source is required.")]
         [NotMapped]
         public string ticket_source { get; set; }
         public Customers customer { get; set; }

@@ -12,6 +12,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web.Http;
 using Utility;
@@ -3371,7 +3372,7 @@ namespace IntegrationServices.Controllers
                 else
                 {
                     var errorMessages = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                    var errorMessageString = string.Join("; ", errorMessages);
+                    var errorMessageString = string.Join("", errorMessages);
                     var errorResponse = new ErrorResponse
                     {
                         code = (int)HttpStatusCode.BadRequest,
@@ -3405,41 +3406,43 @@ namespace IntegrationServices.Controllers
             customerTicketStatus customerTicketStatus = new customerTicketStatus();
             try
             {
-                if ((!string.IsNullOrEmpty(ticket_id)))
+                if ((!string.IsNullOrEmpty(ticket_id)) && !ContainsSpecialCharacters(ticket_id))
                 {
-                    customerTicketStatus = new BLTicketManager().GetcustomerTicketStatus(Convert.ToInt32(ticket_id));
 
-                    if (customerTicketStatus != null && !string.IsNullOrEmpty(customerTicketStatus.ticket_id))
-                    {
-                        var responseData = new
+                        customerTicketStatus = new BLTicketManager().GetcustomerTicketStatus(Convert.ToInt32(ticket_id));
+                        if (customerTicketStatus != null && !string.IsNullOrEmpty(customerTicketStatus.ticket_id))
                         {
-                            ticket_id = customerTicketStatus.ticket_id,
-                            status = customerTicketStatus.ticket_status,
-                            can_id = customerTicketStatus.can_id,
-                            created_on = customerTicketStatus.created_on,
-                            assigned_to = customerTicketStatus.assigned_to,
-                            assigned_on = customerTicketStatus.assigned_date,
-                            completed_on = customerTicketStatus.target_date,
-                            remarks = customerTicketStatus.remarks
-                        };
-                        return Json(responseData);
-                    }
-                    else
-                    {
-                        var errorResponse = new ErrorResponse
+                            var responseData = new
+                            {
+                                ticket_id = customerTicketStatus.ticket_id,
+                                status = customerTicketStatus.ticket_status,
+                                can_id = customerTicketStatus.can_id,
+                                created_on = customerTicketStatus.created_on,
+                                assigned_to = customerTicketStatus.assigned_to,
+                                assigned_on = customerTicketStatus.assigned_date,
+                                completed_on = customerTicketStatus.target_date,
+                                remarks = customerTicketStatus.remarks
+                            };
+                            return Json(responseData);
+                        }
+                        else
                         {
-                            code = (int)HttpStatusCode.NotFound,
-                            message = "Data not found"
-                        };
-                        return Content(HttpStatusCode.NotFound, errorResponse);
-                    }
+                            var errorResponse = new ErrorResponse
+                            {
+                                code = (int)HttpStatusCode.NotFound,
+                                message = "Data not found"
+                            };
+                            return Content(HttpStatusCode.NotFound, errorResponse);
+                        }
+
+                    
                 }
                 else
                 {
                     var errorResponse = new ErrorResponse
                     {
                         code = (int)HttpStatusCode.BadRequest,
-                        message = "Data Input are not valid"
+                        message = "Ticket Id are not valid"
                     };
                     return Content(HttpStatusCode.BadRequest, errorResponse);
 
@@ -3457,6 +3460,13 @@ namespace IntegrationServices.Controllers
                 return Content(HttpStatusCode.BadRequest, errorResponse);
             }
         }
-
+       
+        public static bool ContainsSpecialCharacters(string input)
+        {
+            // Define a regex pattern that allows only alphanumeric characters
+            // You can add more allowed characters to the pattern if needed
+            string pattern = "^[a-zA-Z0-9]*$";
+            return !Regex.IsMatch(input, pattern);
+        }
     }
 }
