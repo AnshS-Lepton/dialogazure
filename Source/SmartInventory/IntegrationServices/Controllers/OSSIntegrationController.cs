@@ -16,7 +16,7 @@ namespace IntegrationServices.Controllers
     [Authorize]
     [RoutePrefix("api/v1")]
     [Filters.CustomActionForXml]
-
+     
     public class OSSIntegrationController : ApiController
     {
 
@@ -214,13 +214,13 @@ namespace IntegrationServices.Controllers
                         if (ModelState.IsValid)
                         {
                             var res = new BLServiceability().UpdateAlarmStatusetails(obj);
-                            if (res != null && res.status.Equals("true"))
+                            if (res != null && res.status.Equals("OK"))
                             {
-                                responses.status = "OK";
+                                responses.status = res.status;
                                 responses.message = res.message;
                                 isValid = true;
                             }
-                            else if (res != null && res.status.Equals("false"))
+                            else if (res != null && res.status.Equals("Failed"))
                             {
                                 var errorResponses = new ErrorResponse
                                 {
@@ -430,9 +430,22 @@ namespace IntegrationServices.Controllers
 
 
                         }
-                        root.devices = gp.OrderBy(x => x.distance).ToList();
-                        root.status = "FEASIBLE";
-                        root.reference_id = ServiceabilityRequest.reference_id;
+                        if (gp!=null && gp.Count>0)
+                        {
+                            root.devices = gp.OrderBy(x => x.distance).ToList();
+                            root.status = "FEASIBLE";
+                            root.reference_id = ServiceabilityRequest.reference_id;
+                        }
+                        else
+                        {
+                            var errorResponse = new ErrorResponse
+                            {
+                                code = (int)HttpStatusCode.NotFound,
+                                message = "Data not found"
+                            };
+                            return Content(HttpStatusCode.NotFound, errorResponse);
+                        }
+                        
                     }
                     else
                     {
@@ -488,13 +501,13 @@ namespace IntegrationServices.Controllers
                 if (ModelState.IsValid)
                 {
                     var res = new BLServiceability().UpdateDiscoveredEntityDetails(obj);
-                    if (res != null && res.status.Equals("true"))
+                    if (res != null && res.status.Equals("OK"))
                     {
-                        responses.status = "OK";
+                        responses.status = res.status;
                         responses.message = res.message;
                         return Json(responses);
                     }
-                    else if (res != null && res.status.Equals("false"))
+                    else if (res != null && res.status.Equals("Failed"))
                     {
                         var errorResponses = new ErrorResponse
                         {
