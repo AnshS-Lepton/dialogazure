@@ -3402,11 +3402,10 @@ namespace IntegrationServices.Controllers
         [Filters.CustomActionForXml]
         public IHttpActionResult customerTicketStatus(string ticket_id)
         {
-            var response = new ApiResponse<customerTicketStatus>();
             customerTicketStatus customerTicketStatus = new customerTicketStatus();
             try
             {
-                if ((!string.IsNullOrEmpty(ticket_id)) && !ContainsSpecialCharacters(ticket_id) && !IsNumberOnly(ticket_id))
+                if ((!string.IsNullOrEmpty(ticket_id)) && !ContainsSpecialCharacters(ticket_id) &&  !IsNumbersOnly(ticket_id))
                 {
 
                         customerTicketStatus = new BLTicketManager().GetcustomerTicketStatus(Convert.ToInt32(ticket_id));
@@ -3468,7 +3467,7 @@ namespace IntegrationServices.Controllers
             string pattern = "^[a-zA-Z0-9]*$";
             return !Regex.IsMatch(input, pattern);
         }
-        public static bool IsNumberOnly(string input)
+        public static bool IsNumbersOnly(string input)
         {
             // Define a regex pattern that allows only digits
             string pattern = "^[0-9]+$";
@@ -3476,5 +3475,6 @@ namespace IntegrationServices.Controllers
             // Check if the input matches the pattern
             return !Regex.IsMatch(input, pattern);
         }
+
     }
 }

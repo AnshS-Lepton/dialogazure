@@ -41,7 +41,7 @@ namespace Models
         public int assigned_by { get; set; }
         [Required]
         public string assigned_to { get; set; }
-        public DateTime assigned_date { get; set; }
+        public DateTime? assigned_date { get; set; }
         public string assigned_type { get; set; }
         public string reference_ticket_id { get; set; }
         public int created_by { get; set; }

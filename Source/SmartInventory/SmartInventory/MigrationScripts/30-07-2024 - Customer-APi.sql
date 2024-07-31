@@ -1,7 +1,7 @@
 insert into ticket_status_master(name,created_by,module,is_active,opacity)
-		values('Unassigned',5,'Network_Ticket',true,70)
+		values('Unassigned',5,'Network_Ticket',true,70);
 
--- FUNCTION: public.fn_get_customer_ticket_status(integer)
+		-- FUNCTION: public.fn_get_customer_ticket_status(integer)
 
 -- DROP FUNCTION IF EXISTS public.fn_get_customer_ticket_status(integer);
 
