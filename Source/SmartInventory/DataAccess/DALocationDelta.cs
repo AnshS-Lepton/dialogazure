@@ -34,7 +34,7 @@ namespace DataAccess
 			try
 			{
 				return repo.ExecuteProcedure<GETFAULTLOCATIONLIST>("fn_api_get_fault_location_detail",
-															  new { p_fiber_link_id = fiber_link_id, p_equipment_id = equipment_id, p_site_code = site_code, p_entity_port_no = Convert.ToInt32(port_id), p_distance = Convert.ToDouble(optical_distance) }, true).ToList();
+															  new { p_fiber_link_id = fiber_link_id, p_equipment_id = equipment_id, p_site_code = site_code, p_entity_port_id = port_id, p_distance = Convert.ToDouble(optical_distance) }, true).ToList();
 			}
 			catch { throw; }
 		}
