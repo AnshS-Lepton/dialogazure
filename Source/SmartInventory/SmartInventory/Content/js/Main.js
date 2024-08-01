@@ -32482,7 +32482,11 @@ function fnDeletePrintTemp() {
 
 //## end region
 
-
+function openLinkSearch() {
+    $("#SplicingDiv").hide();
+    $("#InfoDiv").hide();
+    popup.LoadModalDialog('PARENT', 'CommonPathFinder/CommonPathFinder', null, 'Common Path Finder', 'modal-lg');
+}
 
 
 

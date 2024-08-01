@@ -109,6 +109,7 @@
     <Compile Include="RouteAssetDeatils.cs" />
     <Compile Include="SchedulerLog.cs" />
     <Compile Include="Serviceability.cs" />
+    <Compile Include="Site.cs" />
     <Compile Include="SourceIdList.cs" />
     <Compile Include="Accessories.cs" />
     <Compile Include="Admin\AdvancedSettings.cs" />

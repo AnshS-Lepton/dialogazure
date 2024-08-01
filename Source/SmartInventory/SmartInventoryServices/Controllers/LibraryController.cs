@@ -1113,6 +1113,24 @@ namespace SmartInventoryServices.Controllers
                                 return response;
                             }
                         }
+						//Site by Pawan
+                        else if (headerAttribute.entity_type.ToUpper() == EntityType.Site.ToString().ToUpper())
+                        {
+                            if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
+                            {
+                                return AddSite(data);
+                            }
+                            else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
+                            {
+                                return SaveSite(data);
+                            }
+                            else
+                            {
+                                response.status = ResponseStatus.FAILED.ToString();
+                                response.error_message = "Entity_Action not matched";
+                                return response;
+                            }
+                        }
 
                     }
 				}
@@ -15702,7 +15720,184 @@ namespace SmartInventoryServices.Controllers
         }
         #endregion
 
+        #region Site
+        #region Add Site
+        /// <summary> Add Site </summary>
+        /// <returns>Site Details</returns>
+        /// <CreatedBy>Pawan</CreatedBy>
 
+        public ApiResponse<Site> AddSite(ReqInput data)
+        {
+            var response = new ApiResponse<Site>();
+            try
+            {
+                Site obj = ReqHelper.GetRequestData<Site>(data);
+                Site objSite = GetSiteDetail(obj);
+                //BLItemTemplate.Instance.BindItemDropdowns(objSite, EntityType.Site.ToString());
+                //fillProjectSpecifications(objSite);
+                //BindCouplerDropDown(objSite);
+                // objSite.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Site.ToString()).ToList();
+                //Get the layer details to bind additional attributes Coupler
+                var layerdetails = new BLLayer().getLayer(EntityType.Site.ToString());
+                // objSite.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
+                //End for additional attributes Coupler
+                response.status = StatusCodes.OK.ToString();
+                response.results = objSite;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("AddSite()", "Library Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message;
+            }
+            return response;
+        }
+        #endregion
+
+        #region Get Site Details
+        /// <summary> GetSiteDetail</summary>
+        /// <param >Site Object</param>
+        /// <returns>Site Details</returns>
+        /// <CreatedBy>Pawan</CreatedBy>
+        public Site GetSiteDetail(Site objSite)
+        {
+            int user_id = objSite.created_by;
+            if (objSite.system_id == 0)
+            {
+                //NEW ENTITY->Fill Region and Province Detail..
+                fillRegionProvinceDetail(objSite, GeometryType.Point.ToString(), objSite.geom);
+
+                //Fill Parent detail...              
+                fillParentDetail(objSite, new NetworkCodeIn() { eType = EntityType.Site.ToString(), gType = GeometryType.Point.ToString(), eGeom = objSite.geom }, objSite.networkIdType);
+
+                objSite.longitude = Convert.ToDouble(objSite.geom.Split(' ')[0]);
+                objSite.latitude = Convert.ToDouble(objSite.geom.Split(' ')[1]);
+                //objSite.ownership_type = "Own";
+                // Item template binding
+                //var objItem = BLItemTemplate.Instance.GetTemplateDetail<CouplerTemplateMaster>(objSite.created_by, EntityType.Site);
+                //MiscHelper.CopyMatchingProperties(objItem, objSite);
+                //objSite.other_info = null;  //for additional-attributes
+            }
+            else
+            {
+                // Get entity detail by Id...
+                objSite = new BLMisc().GetEntityDetailById<Site>(objSite.system_id, EntityType.Site, objSite.created_by);
+                //for additional-attributes
+                //objSite.other_info = new BLCoupler().GetOtherInfoCoupler(objSite.system_id);
+                fillRegionProvAbbr(objSite);
+            }
+            objSite.lstUserModule = new BLLayer().GetUserModuleAbbrList(user_id, UserType.Web.ToString());
+
+            return objSite;
+        }
+
+        #endregion
+
+        #region Save Site
+        /// <summary> SaveCoupler </summary>
+        /// <param name="data">ReqInput</param>
+        /// <CreatedBy>Pawan Kr</CreatedBy>
+        public ApiResponse<Site> SaveSite(ReqInput data)
+        {
+            var response = new ApiResponse<Site>();
+            Site objSite = ReqHelper.GetRequestData<Site>(data);
+            try
+            {
+                ModelState.Clear();
+
+                if (objSite.networkIdType == NetworkIdType.A.ToString() && objSite.system_id == 0)
+                {
+                    //GET AUTO NETWORK CODE...
+                    var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Site.ToString(), gType = GeometryType.Point.ToString(), eGeom = objSite.geom });
+
+                    //SET NETWORK CODE
+                    objSite.network_id = objNetworkCodeDetail.network_code;
+                    objSite.sequence_id = objNetworkCodeDetail.sequence_id;
+
+                }
+                this.Validate(objSite);
+                if (ModelState.IsValid)
+                {
+                    var isNew = objSite.system_id > 0 ? false : true;
+                    var resultItem = new BLSite().Save(objSite, objSite.created_by);
+                    if (string.IsNullOrEmpty(resultItem.objPM.message))
+                    {
+
+                        string[] LayerName = { EntityType.Site.ToString() };
+                        if (isNew)
+                        {
+                            objSite.objPM.status = ResponseStatus.OK.ToString();
+                            objSite.objPM.isNewEntity = isNew;
+                            objSite.objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);
+                            response.status = ResponseStatus.OK.ToString();
+                            response.error_message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName);
+                        }
+                        else
+                        {
+
+                            objSite.objPM.status = ResponseStatus.OK.ToString();
+                            objSite.objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+                            response.status = ResponseStatus.OK.ToString();
+                            response.error_message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+                        }
+                    }
+                    else
+                    {
+                        objSite.objPM.status = ResponseStatus.FAILED.ToString();
+                        objSite.objPM.message = getFirstErrorFromModelState();
+                        response.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                        response.error_message = getFirstErrorFromModelState();
+                        response.results = objSite;
+                    }
+                }
+                else
+                {
+                    objSite.objPM.status = ResponseStatus.FAILED.ToString();
+                    objSite.objPM.message = getFirstErrorFromModelState();
+                    response.status = ResponseStatus.FAILED.ToString();
+                    response.error_message = getFirstErrorFromModelState();
+                }
+
+                {
+                    //BLItemTemplate.Instance.BindItemDropdowns(objSite, EntityType.Site.ToString());
+                    // RETURN PARTIAL VIEW WITH MODEL DATA
+                    // fillProjectSpecifications(objSite);
+                    //  BindCouplerDropDown(objSite);
+                    //Get the layer details to bind additional attributes Coupler
+                    //var layerdetails = new BLLayer().getLayer(EntityType.Site.ToString());
+                    // objSite.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
+                    //End for additional attributes Coupler
+                    //  objSite.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Site.ToString()).ToList();
+                    response.results = objSite;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("SaveSite()", "Library Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message;
+            }
+            return response;
+        }
+        #endregion
+
+        #region BindSiteDropDown
+        /// <param name="data">objSite</param>
+        /// <CreatedBy>Site</CreatedBy>
+        //public void BindCouplerDropDown(CouplerMaster objSite)
+        //{
+        //	var objDDL = new BLMisc().GetDropDownList(EntityType.Coupler.ToString());
+        //	objSite.listCouplerType = objDDL.Where(x => x.dropdown_type == DropDownType.Coupler.ToString()).ToList();
+        //	objSite.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
+        //	var _objDDL = new BLMisc().GetDropDownList("");
+        //	objSite.lstBOMSubCategory = _objDDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
+        //	objSite.lstServedByRing = _objDDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
+        //}
+        #endregion
+
+        #endregion
     }
 }
 

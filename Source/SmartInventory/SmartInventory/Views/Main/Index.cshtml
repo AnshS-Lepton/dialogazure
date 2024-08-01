@@ -633,7 +633,7 @@
                                 {
                                     <li>
                                         <button class="iconBaricomoon " onclick="si.Networkticket.NetworkTicketList(this)"
-                                                @if (Model.objRoleMaster.lstTemplateTicketTypePermission.Count>0) { flagView = Model.objRoleMaster.lstTemplateTicketTypePermission.Where(x => x.is_view == true).Select(x => x.is_view).FirstOrDefault(); if (flagView != true) { { @: disabled title="Unauthorized Access"
+                                                @if (Model.objRoleMaster.lstTemplateTicketTypePermission.Count > 0) { flagView = Model.objRoleMaster.lstTemplateTicketTypePermission.Where(x => x.is_view == true).Select(x => x.is_view).FirstOrDefault(); if (flagView != true) { { @: disabled title="Unauthorized Access"
                                                 } } else { { @: title="@Resources.Resources.SI_OSP_GBL_NET_FRM_467"
                                                 } } } else { { @: disabled; title="Unauthorized Access"
                                                 } }>
@@ -1571,6 +1571,13 @@
                 <li class="lyrMgr" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_074" style="display:none" onclick="showLayerManager(this)">
 
                 </li>
+
+                <li class="lyrMgr">
+                    <a href="#" onclick="openLinkSearch(this)" class="iconBaricomoon" title="Common Path Finder">
+                        <span class="icon-info"></span>
+                    </a>
+                </li>
+
                 <li class="nomap" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_029" style="display:none" onclick="toggleWhiteMap(this)">
 
                 </li>

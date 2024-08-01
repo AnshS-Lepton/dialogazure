@@ -101,7 +101,8 @@ namespace Models
         FAT,
         ATB,
         FDC,
-        Slack
+        Slack,
+        Site
     }
 
     public enum EntityAction

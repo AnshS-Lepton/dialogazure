@@ -13085,5 +13085,66 @@ namespace SmartInventory.Controllers
 
         #endregion
 
+        #region Site by Pawan
+        public PartialViewResult AddSite(string networkIdType, int systemId = 0, string geom = "")
+        {
+            Site obj = new Site();
+
+            obj.networkIdType = networkIdType;
+            obj.system_id = systemId;
+            obj.geom = geom;
+            obj.created_by = Convert.ToInt32(Session["user_id"]);
+            string url = "api/Library/EntityOperations";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<Site>(url, obj, EntityType.Site.ToString(), EntityAction.Get.ToString());
+            return PartialView("_AddSite", response.results);
+        }
+
+        public Site GetSiteDetail(string networkIdType, int systemId, string geom = "")
+        {
+            Site objSite = new Site();
+            objSite.geom = geom;
+            objSite.networkIdType = networkIdType;
+            var userdetails = (User)Session["userDetail"];
+            if (systemId == 0)
+            {
+                //NEW ENTITY->Fill Region and Province Detail..
+                fillRegionProvinceDetail(objSite, GeometryType.Point.ToString(), geom);
+                //Fill Parent detail...              
+                fillParentDetail(objSite, new NetworkCodeIn() { eType = EntityType.Site.ToString(), gType = GeometryType.Point.ToString(), eGeom = objSite.geom }, networkIdType);
+                objSite.longitude = Convert.ToDouble(geom.Split(' ')[0]);
+                objSite.latitude = Convert.ToDouble(geom.Split(' ')[1]);
+                //objSite.ownership_type = "Own";
+
+                // Item template binding
+               // var objItem = BLItemTemplate.Instance.GetTemplateDetail<CouplerTemplateMaster>(Convert.ToInt32(Session["user_id"]), EntityType.Site);
+               // MiscHelper.CopyMatchingProperties(objItem, objSite);
+            }
+            else
+            {
+                // Get entity detail by Id...
+                objSite = new BLMisc().GetEntityDetailById<Site>(systemId, EntityType.Site);
+            }
+            return objSite;
+        }
+
+        public ActionResult SaveSite(Site objsite, bool isDirectSave = false)
+        {
+            objsite.created_by = Convert.ToInt32(Session["user_id"]);
+            objsite.network_status = "A";
+            string url = "api/Library/EntityOperations";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<Site>(url, objsite, EntityType.Site.ToString(), EntityAction.Save.ToString());
+            if (isDirectSave)
+            {
+                return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
+            }
+
+            return PartialView("_AddSite", response.results);
+
+        }
+
+
+
+
+        #endregion
     }
 }

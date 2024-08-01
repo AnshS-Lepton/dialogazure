@@ -613,6 +613,7 @@
     <Content Include="Content\images\icons\lib\big\PrimarySplitter.png" />
     <Content Include="Content\images\icons\lib\big\ProjectArea.png" />
     <Content Include="Content\images\icons\lib\big\Row.png" />
+    <Content Include="Content\images\icons\lib\big\Site.png" />
     <Content Include="Content\images\icons\lib\big\tower.png" />
     <Content Include="Content\images\icons\lib\big\Vault.png" />
     <Content Include="Content\images\icons\lib\circle\ADB25x25.png" />
@@ -903,6 +904,7 @@
     <Content Include="Content\images\icons\lib\small\PatchCord.png" />
     <Content Include="Content\images\icons\lib\small\ProjectArea.png" />
     <Content Include="Content\images\icons\lib\small\Row.png" />
+    <Content Include="Content\images\icons\lib\small\Site.png" />
     <Content Include="Content\images\icons\lib\small\tower.png" />
     <Content Include="Content\images\icons\lib\small\UGCable.png" />
     <Content Include="Content\images\icons\lib\small\Vault.png" />
@@ -2366,6 +2368,8 @@
     <Content Include="Views\Report\_SplitLineEntityExportReport.cshtml" />
     <Content Include="Views\Report\_AuditLogExportReport.cshtml" />
     <Content Include="Views\Report\_AuditLogEntityExportReportLog.cshtml" />
+    <Content Include="Views\CommonPathFinder\_CommonPathFinder.cshtml" />
+    <Content Include="Views\Library\_AddSite.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2411,6 +2415,7 @@
     <Compile Include="Areas\Admin\Models\WorkSpaceViewModel.cs" />
     <Compile Include="Controllers\AuditController.cs" />
     <Compile Include="Controllers\BOMBOQController.cs" />
+    <Compile Include="Controllers\CommonPathFinderController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\DataUploaderController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />

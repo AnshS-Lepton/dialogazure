@@ -136,6 +136,7 @@
     <Compile Include="BLCable.cs" />
     <Compile Include="Admin\BLConfigurationSetting.cs" />
     <Compile Include="BLCompetitor.cs" />
+    <Compile Include="BLSiteSync.cs" />
     <Compile Include="BLDashboard.cs" />
     <Compile Include="BLAssociationReportLog.cs" />
     <Compile Include="BLFetools_Attachement.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="BLExportReportLog.cs" />
     <Compile Include="BLKPIMaster.cs" />
     <Compile Include="BLLocationDelta.cs" />
+    <Compile Include="BLSite.cs" />
     <Compile Include="BLSlack.cs" />
     <Compile Include="BLTemp\BLTempCDBAttributes.cs" />
     <Compile Include="BLTemp\BLTempRow.cs" />

@@ -1,0 +1,51 @@
+
+Log Entry:==========>
+error on Time: 01-08-2024 14:58:11
+error Logged By: admin
+from Page: VectorLayer Controller
+from Method: GetVectorData()
+Request Data: 
+error Type: System.InvalidOperationException
+error Label: The connection is not open.
+error Message: The connection is not open.
+error Description: execption Message: The connection is not open. | exception type name: System.InvalidOperationException
+error Stack Trace:    at System.Data.Entity.Core.EntityClient.EntityConnection.Open()
+   at System.Data.Entity.Core.Objects.ObjectContext.EnsureConnection()
+   at System.Data.Entity.Core.Objects.ObjectContext.ExecuteInTransaction[T](Func`1 func, IDbExecutionStrategy executionStrategy, Boolean startLocalTransaction, Boolean releaseConnectionOnSuccess)
+   at System.Data.Entity.Core.Objects.ObjectContext.<>c__DisplayClass63`1.<ExecuteStoreQueryReliably>b__61()
+   at System.Data.Entity.Core.Objects.ObjectContext.ExecuteStoreQuery[TElement](String commandText, ExecutionOptions executionOptions, Object[] parameters)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass13`1.<ExecuteSqlQuery>b__12()
+   at System.Lazy`1.CreateValue()
+   at System.Lazy`1.LazyInitValue()
+   at System.Data.Entity.Internal.LazyEnumerator`1.MoveNext()
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at DataAccess.DBHelpers.GenericRepository`1.ExecuteProcedure[TEntity](String ProcName, Object inputParams, Boolean isProcReturnJson) in D:\Pawan_kumar\GIT\SmartInventory_Dailog\Source\SmartInventory\DataAccess\DBHelpers\GenericRepository.cs:line 412
+   at DataAccess.VectorLayers.DAVectorLayers.GetAllLayersVector(VectorDataIn vectorDataIn, DateTime& dbServerDate) in D:\Pawan_kumar\GIT\SmartInventory_Dailog\Source\SmartInventory\DataAccess\VectorLayers\DAVectorLayers.cs:line 74
+   at BusinessLogics.VectorLayers.BLVectorLayers.GetAllLayersVector(VectorDataIn vectorDataIn, DateTime& dbServerDate) in D:\Pawan_kumar\GIT\SmartInventory_Dailog\Source\SmartInventory\BusinessLogics\VectorLayers\BLVectorLayers.cs:line 50
+   at SmartInventoryServices.Controllers.VectorLayerController.GetVectorData(ReqInput data) in D:\Pawan_kumar\GIT\SmartInventory_Dailog\Source\SmartInventory\SmartInventoryServices\Controllers\VectorLayerController.cs:line 49
+===============================================================
+
+Log Entry:==========>
+error on Time: 01-08-2024 14:58:11
+error Logged By: admin
+from Page: VectorLayer Controller
+from Method: GetVectorData()
+Request Data: 
+error Type: System.InvalidOperationException
+error Label: The context cannot be used while the model is being created. This exception may be thrown if the context is used inside the OnModelCreating method or if the same context instance is accessed by multiple threads concurrently. Note that instance members of DbContext and related classes are not guaranteed to be thread safe.
+error Message: The context cannot be used while the model is being created. This exception may be thrown if the context is used inside the OnModelCreating method or if the same context instance is accessed by multiple threads concurrently. Note that instance members of DbContext and related classes are not guaranteed to be thread safe.
+error Description: execption Message: The context cannot be used while the model is being created. This exception may be thrown if the context is used inside the OnModelCreating method or if the same context instance is accessed by multiple threads concurrently. Note that instance members of DbContext and related classes are not guaranteed to be thread safe. | exception type name: System.InvalidOperationException
+error Stack Trace:    at System.Data.Entity.Internal.LazyInternalContext.InitializeContext()
+   at System.Data.Entity.Internal.LazyInternalContext.get_ObjectContext()
+   at System.Data.Entity.Internal.InternalContext.ExecuteSqlQuery[TElement](String sql, Boolean streaming, Object[] parameters)
+   at System.Data.Entity.Internal.InternalContext.ExecuteSqlQuery(Type elementType, String sql, Boolean streaming, Object[] parameters)
+   at System.Data.Entity.Internal.InternalSqlNonSetQuery.GetEnumerator()
+   at System.Data.Entity.Infrastructure.DbRawSqlQuery`1.GetEnumerator()
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at DataAccess.DBHelpers.GenericRepository`1.ExecuteProcedure[TEntity](String ProcName, Object inputParams, Boolean isProcReturnJson) in D:\Pawan_kumar\GIT\SmartInventory_Dailog\Source\SmartInventory\DataAccess\DBHelpers\GenericRepository.cs:line 407
+   at DataAccess.VectorLayers.DAVectorLayers.GetAllLayersVector(VectorDataIn vectorDataIn, DateTime& dbServerDate) in D:\Pawan_kumar\GIT\SmartInventory_Dailog\Source\SmartInventory\DataAccess\VectorLayers\DAVectorLayers.cs:line 74
+   at BusinessLogics.VectorLayers.BLVectorLayers.GetAllLayersVector(VectorDataIn vectorDataIn, DateTime& dbServerDate) in D:\Pawan_kumar\GIT\SmartInventory_Dailog\Source\SmartInventory\BusinessLogics\VectorLayers\BLVectorLayers.cs:line 50
+   at SmartInventoryServices.Controllers.VectorLayerController.GetVectorData(ReqInput data) in D:\Pawan_kumar\GIT\SmartInventory_Dailog\Source\SmartInventory\SmartInventoryServices\Controllers\VectorLayerController.cs:line 49
+===============================================================
