@@ -859,7 +859,7 @@ namespace SmartInventory.Settings
                 if (objSetting.key == "IsVectorLayerEnabled")
                 {
                     IsVectorLayerEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true;
-                   // IsVectorLayerEnabled = false;
+                    //IsVectorLayerEnabled = false;
                 }
                 if (objSetting.key == "IsSignalRIsEnable")
                 {

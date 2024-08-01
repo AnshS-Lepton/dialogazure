@@ -751,7 +751,9 @@ namespace SmartInventory.Controllers
                     case EntityType.Slack:
                         response = new BLMisc().deleteEntity(systemId, EntityType.Slack.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
                         break;
-
+                    case EntityType.Site:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.Site.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
+                        break;
                 }
 
                 if (deleteChk == 1)
