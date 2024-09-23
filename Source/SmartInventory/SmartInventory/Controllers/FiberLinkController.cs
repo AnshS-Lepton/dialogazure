@@ -803,6 +803,8 @@ namespace SmartInventory.Controllers
                         if (dtReport1.Columns.Contains("a_location")) { dtReport1.Columns["a_location"].ColumnName = "A Location"; }
                         if (dtReport1.Columns.Contains("b_location")) { dtReport1.Columns["b_location"].ColumnName = "B Location"; }
                         if (dtReport1.Columns.Contains("fiber_number")) { dtReport1.Columns["fiber_number"].ColumnName = "Associated Fiber Number"; }
+                        if (dtReport1.Columns.Contains("cable_measured_length")) { dtReport1.Columns["cable_measured_length"].ColumnName = "Cable Measured Length"; }
+                        if (dtReport1.Columns.Contains("cable_calculated_length")) { dtReport1.Columns["cable_calculated_length"].ColumnName = "Cable Calculated Length"; }
                     }
                     ds.Tables.Add(dtReport1);
                     ds.Tables[1].TableName = "Cable Information";
