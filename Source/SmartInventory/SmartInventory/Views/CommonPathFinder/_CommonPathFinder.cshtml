@@ -56,10 +56,12 @@
                     let tblbody = $('#tblbodyLinks');
                     tblbody.empty();
                     let linkdata = JSON.parse(resp.data).features;
+                   
                      if (linkdata != null)
-                        linkdata.forEach(function (value, index) {
+                         linkdata.forEach(function (value, index) {
+                             var isChecked = (index === 0) ? "checked" : "";
                             var bodyRow = $(`<tr>`);
-                            bodyRow.append($(`<td>`).html(`<input onchange="linkChange(this);" type="checkbox" class="chklink" geom='${value.geometry.coordinates.map(a => a.join(" ")).join(",")}' />`));
+                             bodyRow.append($(`<td>`).html(`<input ${isChecked} onchange="linkChange(this);" type="checkbox" class="chklink" geom='${value.geometry.coordinates.map(a => a.join(" ")).join(",")}' />`));
                             bodyRow.append($(`<td>`).text(value.properties.cable_name));
                             bodyRow.append($(`<td>`).text(value.properties.network_id));
                             bodyRow.append($(`<td>`).text(value.properties.a_location));
@@ -70,6 +72,7 @@
                         });
                     $('#divLinkIdsSearchResult').show();
                     $('#btnShowOnMapLinkIds').show();
+                    linkShowOnMapDefault(linkdata[0].geometry.coordinates.map(a => a.join(" ")).join(","));
                 }
                 else {
                     alert(resp.error_message);
@@ -78,13 +81,38 @@
         }
     }
 
+    function linkShowOnMapDefault(geom) {
+        clearLinksfromMap();
+        
+            let playroute = new google.maps.Polyline({
+                path: getGoogleLineGeomfromLatLngString(geom),
+                geodesic: true,
+                strokeColor: '#FF0000',// getRandomColor(),//apisource == "GoogleAPI" ? '#000000' : '#FF0000',
+                strokeWeight: 2,
+                draggable: false
+            });
+
+            playroute.setMap(si.map);
+            linksOnMap.push(playroute);
+        let bounds = new google.maps.LatLngBounds();
+        linksOnMap.forEach(function (polyline) {
+            polyline.getPath().forEach(function (point) {
+                bounds.extend(point);
+            });
+        });
+
+        // Fit map to bounds
+        si.map.fitBounds(bounds);
+        $('.minmizeModel').find('.fa-minus').click();
+
+    }
     function linkShowOnMap() {
         clearLinksfromMap();
         if ($('.chklink:checked').length == 0) {
             alert('Please select at least one record to show on map.');
             return;
         }
-
+        
         $('.chklink:checked').each(function (item) {
             let playroute = new google.maps.Polyline({
                 path: getGoogleLineGeomfromLatLngString($(this).attr('geom')),
@@ -109,6 +137,7 @@
         $('.minmizeModel').find('.fa-minus').click();
 
     }
+
     function clearLinksfromMap() {
         if (linksOnMap.length > 0) {
             linksOnMap.forEach(function (polyline) {
@@ -116,6 +145,7 @@
             });
         }
     }
+
     function getGoogleLineGeomfromLatLngString(geomString) {
         let geom = [];
         let arr = geomString.split(',');
