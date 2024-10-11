@@ -1,6 +1,4 @@
-﻿
-using Models;
-using Models.Admin;
+﻿using Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Utility
@@ -48,7 +45,7 @@ namespace Utility
             return result;
         }
 
-        public static DataTable ListToDataTable<T>(IList<T> items,bool numberFormatRequired=false,string numberFormat=null, string[] columnsToExclude=null)
+        public static DataTable ListToDataTable<T>(IList<T> items, bool numberFormatRequired = false, string numberFormat = null, string[] columnsToExclude = null)
         {
             DataTable dataTable = new DataTable(typeof(T).Name);
 
@@ -61,21 +58,21 @@ namespace Utility
                     //Defining type of data column gives proper data table 
                     var type = (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) ? Nullable.GetUnderlyingType(prop.PropertyType) : prop.PropertyType);
                     //Setting column names as Property names
-                    if(numberFormatRequired)
+                    if (numberFormatRequired)
                         dataTable.Columns.Add(prop.Name.ToUpper(), typeof(string));
                     else
-                            dataTable.Columns.Add(prop.Name.ToUpper(), type);
+                        dataTable.Columns.Add(prop.Name.ToUpper(), type);
                 }
                 foreach (T item in items)
                 {
                     var values = new object[Props.Length];
                     for (int i = 0; i < Props.Length; i++)
                     {
-                        if ((numberFormatRequired && columnsToExclude==null) || (numberFormatRequired && !columnsToExclude.Contains(Props[i].Name.ToUpper(), StringComparer.OrdinalIgnoreCase)))
+                        if ((numberFormatRequired && columnsToExclude == null) || (numberFormatRequired && !columnsToExclude.Contains(Props[i].Name.ToUpper(), StringComparer.OrdinalIgnoreCase)))
                         {
-                            if(double.TryParse(Convert.ToString( Props[i].GetValue(item, null)),out double d))
+                            if (double.TryParse(Convert.ToString(Props[i].GetValue(item, null)), out double d))
                             {
-                                values[i] = Utility.CommonUtility.GetFormattedNumber(d,numberFormat);
+                                values[i] = Utility.CommonUtility.GetFormattedNumber(d, numberFormat);
                             }
                             else if (int.TryParse(Convert.ToString(Props[i].GetValue(item, null)), out int number))
                             {
@@ -192,7 +189,7 @@ namespace Utility
                 r =>
                 {
                     var dataRow = dataTable.NewRow();
-                    r.ToList().ForEach(c => dataRow.SetField(c.Key,c.Value));
+                    r.ToList().ForEach(c => dataRow.SetField(c.Key, c.Value));
                     return dataRow;
                 }))
             {
@@ -200,7 +197,7 @@ namespace Utility
                 {
                     foreach (DataColumn column in dataTable.Columns)
                     {
-                        if (  (columnsToExclude == null ||  !columnsToExclude.Contains(column.ColumnName, StringComparer.OrdinalIgnoreCase)))
+                        if ((columnsToExclude == null || !columnsToExclude.Contains(column.ColumnName, StringComparer.OrdinalIgnoreCase)))
                         {
                             if (double.TryParse(Convert.ToString(row[column.ColumnName]), out double d))
                             {
@@ -211,7 +208,7 @@ namespace Utility
                                 row[column.ColumnName] = Utility.CommonUtility.GetFormattedNumber(number, numberFormat);
                             }
                         }
-                            
+
                     }
                     dataTable.Rows.Add(row);
                 }
@@ -526,6 +523,164 @@ namespace Utility
                 }
             }
         }
-    }
+        public static string DecryptData(string licenseKey)
+        {
+            try
+            {
+                string rsaKeysPath = string.Empty;
+                bool isFileExist = GetLKeyPath(out rsaKeysPath);
+                if (!isFileExist)
+                    return string.Empty;
+                byte[] encryptedPrivateKeyBytes = File.ReadAllBytes(rsaKeysPath);
 
+                string encryptionKey = CodeInTheCabin.EncryptionKey; // Ensure this is securely managed
+                                                                     // Decrypt the private key
+                byte[] privateKeyBytes = DecryptPrivateKey(encryptedPrivateKeyBytes, encryptionKey);
+
+                string encryptedBase64 = licenseKey;
+
+                RSAParameters rsaParams = ConvertPrivateKeyToRSAParameters(privateKeyBytes);
+
+                using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
+                {
+                    rsa.ImportParameters(rsaParams);
+
+                    byte[] encryptedData = Convert.FromBase64String(encryptedBase64);
+                    byte[] decryptedData = rsa.Decrypt(encryptedData, RSAEncryptionPadding.OaepSHA1);
+
+                    return Encoding.UTF8.GetString(decryptedData);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("DecryptData", "MiscHelper.cs " + @Resources.Resources.GBL_GBL_GBL_GBL_GBL_032, ex);
+                return null;
+            }
+
+        }
+        public static byte[] DecryptPrivateKey(byte[] encryptedPrivateKey, string encryptionKey)
+        {
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Convert.FromBase64String(encryptionKey);
+                aes.IV = new byte[16]; // Should use the IV that was used during encryption
+                using (ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
+                {
+                    return PerformCryptography(encryptedPrivateKey, decryptor);
+                }
+            }
+        }
+        static byte[] PerformCryptography(byte[] data, ICryptoTransform cryptoTransform)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (CryptoStream cs = new CryptoStream(ms, cryptoTransform, CryptoStreamMode.Write))
+                {
+                    cs.Write(data, 0, data.Length);
+                }
+                return ms.ToArray();
+            }
+        }
+
+        private static RSAParameters ConvertPrivateKeyToRSAParameters(byte[] privateKeyBytes)
+        {
+            using (var ms = new MemoryStream(privateKeyBytes))
+            using (var br = new BinaryReader(ms))
+            {
+                // Read the ASN.1 SEQUENCE tag and length
+                if (br.ReadByte() != 0x30) // SEQUENCE tag
+                    throw new CryptographicException("Expected SEQUENCE tag");
+
+                int sequenceLength = GetAsn1Length(br);
+
+                // Read the version
+                ReadAsn1Integer(br);
+
+                // Read modulus (n)
+                byte[] modulus = ReadAsn1Integer(br);
+
+                // Read public exponent (e)
+                byte[] exponent = ReadAsn1Integer(br);
+
+                // Read private exponent (d)
+                byte[] d = ReadAsn1Integer(br);
+
+                // Read first prime (p)
+                byte[] p = ReadAsn1Integer(br);
+
+                // Read second prime (q)
+                byte[] q = ReadAsn1Integer(br);
+
+                // Read first exponent (d mod (p-1))
+                byte[] dp = ReadAsn1Integer(br);
+
+                // Read second exponent (d mod (q-1))
+                byte[] dq = ReadAsn1Integer(br);
+
+                // Read coefficient (q^(-1) mod p)
+                byte[] inverseQ = ReadAsn1Integer(br);
+
+                return new RSAParameters
+                {
+                    Modulus = modulus,
+                    Exponent = exponent,
+                    D = d,
+                    P = p,
+                    Q = q,
+                    DP = dp,
+                    DQ = dq,
+                    InverseQ = inverseQ
+                };
+            }
+        }
+        private static byte[] ReadAsn1Integer(BinaryReader reader)
+        {
+            int length;
+            byte firstByte = reader.ReadByte();
+            if (firstByte != 0x02) // INTEGER tag
+                throw new CryptographicException("Expected INTEGER tag");
+
+            length = GetAsn1Length(reader);
+
+            // Handle ASN.1 INTEGER value (skip leading zero if present)
+            if (reader.PeekChar() == 0x00)
+            {
+                reader.ReadByte();
+                length--;
+            }
+
+            return reader.ReadBytes(length);
+        }
+        private static int GetAsn1Length(BinaryReader reader)
+        {
+            int length = reader.ReadByte();
+            if ((length & 0x80) == 0x80) // Long form
+            {
+                int numBytes = length & 0x7F;
+                length = 0;
+                for (int i = 0; i < numBytes; i++)
+                {
+                    length = (length << 8) + reader.ReadByte();
+                }
+            }
+            return length;
+        }
+
+        public static bool GetLKeyPath(out string rsaKeysPath)
+        {
+            // Get the base directory of the application
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Define the relative path to your file from the base directory
+            string relativePath = @"Content\rsa\";
+
+            // Combine the base directory with the relative path
+            string fullPath = Path.Combine(baseDirectory, relativePath);
+
+            rsaKeysPath = Path.Combine(fullPath, "_privateKey.enc");
+
+            // Check if the file exists
+            return File.Exists(rsaKeysPath);
+        }
+    }
 }

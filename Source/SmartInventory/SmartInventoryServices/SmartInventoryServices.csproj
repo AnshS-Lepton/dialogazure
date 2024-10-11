@@ -728,6 +728,10 @@
       <Project>{1FD26F85-E70F-4E77-8234-2769F4051C24}</Project>
       <Name>BusinessLogics</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CodeIN\CodeIN.csproj">
+      <Project>{3de45837-4700-45ac-93f1-e2b952df39b0}</Project>
+      <Name>CodeIN</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GoogleMapServices\GoogleMapServices.csproj">
       <Project>{74E8D62E-2B0D-4D16-B745-B3F9D769BC3E}</Project>
       <Name>GoogleMapServices</Name>

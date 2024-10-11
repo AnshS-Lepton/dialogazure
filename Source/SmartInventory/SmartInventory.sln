@@ -44,6 +44,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilizationEmailScheduler",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleMapServices", "GoogleMapServices\GoogleMapServices.csproj", "{74E8D62E-2B0D-4D16-B745-B3F9D769BC3E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeIN", "CodeIN\CodeIN.csproj", "{3DE45837-4700-45AC-93F1-E2B952DF39B0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RSAImplementation", "RSAImplementation\RSAImplementation.csproj", "{8003817F-6418-47E6-8507-D432F4A2CB14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -126,6 +130,14 @@ Global
 		{74E8D62E-2B0D-4D16-B745-B3F9D769BC3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74E8D62E-2B0D-4D16-B745-B3F9D769BC3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74E8D62E-2B0D-4D16-B745-B3F9D769BC3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DE45837-4700-45AC-93F1-E2B952DF39B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DE45837-4700-45AC-93F1-E2B952DF39B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DE45837-4700-45AC-93F1-E2B952DF39B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DE45837-4700-45AC-93F1-E2B952DF39B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8003817F-6418-47E6-8507-D432F4A2CB14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8003817F-6418-47E6-8507-D432F4A2CB14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8003817F-6418-47E6-8507-D432F4A2CB14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8003817F-6418-47E6-8507-D432F4A2CB14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
