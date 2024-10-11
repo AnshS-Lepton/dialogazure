@@ -1,3 +1,6 @@
+INSERT INTO public.global_settings ("key", value, description, "type", is_edit_allowed, data_type, min_value, max_value, created_by, created_on, modified_by, modified_on, is_mobile_key, is_web_key, is_edit_allowed_for_sa, min_value_logic, max_value_logic) 
+							VALUES ('isAADEnabled', true, 'Azure Active Directory Login Enabled for Both', 'Web', false, 'Boolean', 1.0, 1.0, 1, Now(), NULL, NULL, true, true, false, NULL, NULL);
+
 INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, created_by) VALUES('de-DE', 'GBL_GBL_GBL_GBL_GBL_037', 'Anmelden mit Azure', false, true, 'German', 'Global_Global_Global_Global_', 287);
 INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, created_by) VALUES('en', 'GBL_GBL_GBL_GBL_GBL_037', 'Login with Azure', true, true, 'English', 'Global_Global_Global_Global_', 287);
 INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, created_by) VALUES('fr', 'GBL_GBL_GBL_GBL_GBL_037', 'Se connecter avec Azure', false, true, 'French', 'Global_Global_Global_Global_', 287);
