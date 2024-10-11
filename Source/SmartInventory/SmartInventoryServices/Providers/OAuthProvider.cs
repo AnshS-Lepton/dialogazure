@@ -18,6 +18,7 @@ using System.Net;
 using System.IO;
 using Utility;
 using System.DirectoryServices;
+using CodeIN;
 
 
 namespace SmartInventoryServices.Providers
@@ -29,7 +30,7 @@ namespace SmartInventoryServices.Providers
 
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
-    
+
     }
     public class OAuthProvider : OAuthAuthorizationServerProvider
     {
@@ -282,7 +283,7 @@ namespace SmartInventoryServices.Providers
 
         public override Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-          
+
             return Task.Factory.StartNew(() =>
             {
 
@@ -293,26 +294,26 @@ namespace SmartInventoryServices.Providers
                 var userName = "";
                 if (dicRequestParams.ContainsKey("azureToken"))
                 {
-                    string azureToken = Convert.ToString(dicRequestParams["azureToken"]);                 
+                    string azureToken = Convert.ToString(dicRequestParams["azureToken"]);
                     userName = getAzureUserName(azureToken);
-                    if(!string.IsNullOrEmpty(userName))
+                    if (!string.IsNullOrEmpty(userName))
                     {
                         userName = userName.Substring(0, userName.IndexOf("@")).Trim();
-                    }                  
+                    }
                 }
                 else
                 {
-                    userName=MiscHelper.DecodeTo64(context.UserName);
+                    userName = MiscHelper.DecodeTo64(context.UserName);
                 }
-               
-                
+
+
                 var password = context.Password;
                 bool isADOIDEnabled = false;
                 bool isPRMSEnabled = false;
 
                 objBLUser = new BLUser();
                 ADFSEndPoint = ConfigurationManager.AppSettings["ADFSEndPoint"].ToString().Trim();
-                
+
                 string Source = dicRequestParams.ContainsKey("source") ? dicRequestParams["source"] : "Mobile"; // handled for old version upgrade issue.
                 if (Source == "")
                     Source = context.Request.Headers.ContainsKey("Source") ? context.Request.Headers.GetValues("Source").First() : "";
@@ -357,9 +358,9 @@ namespace SmartInventoryServices.Providers
                         {
                             isPRMSEnabled = Convert.ToInt32(globalSettings.FirstOrDefault(x => x.key == "isPRMSEnabled").value) == 0 ? false : true;
                         }
-                         
+
                     }
-                    if (!String.IsNullOrEmpty(ADFSEndPoint) || Convert.ToBoolean(isADOIDEnabled)|| ApplicationSettings.isLDAPEnabled)
+                    if (!String.IsNullOrEmpty(ADFSEndPoint) || Convert.ToBoolean(isADOIDEnabled) || ApplicationSettings.isLDAPEnabled)
                     {
                         //user = objDAUser.ChkUserExist(userName);
                         //Password Validation is not required for ADFS authentication.
@@ -369,7 +370,7 @@ namespace SmartInventoryServices.Providers
                             if (!String.IsNullOrEmpty(ADFSEndPoint))
                             {
                                 password = MiscHelper.DecodeTo64(password);
-                                user.user_email= MiscHelper.Decrypt(user.user_email);
+                                user.user_email = MiscHelper.Decrypt(user.user_email);
 
                                 ADFSInput objADFSInput = new ADFSInput();
                                 objADFSInput.user_name = user.user_name;
@@ -383,7 +384,7 @@ namespace SmartInventoryServices.Providers
                                 ADFSDetail = BusinessLogics.API.AuthenticationADFS.AuthenticateADFS(objADFSInput);
                                 user = !string.IsNullOrEmpty(ADFSDetail.tokenId) ? user : null;
                             }
-                           
+
                             else if (Convert.ToBoolean(isADOIDEnabled))
                             {
                                 ////web api calling for mobile app authorization
@@ -414,7 +415,7 @@ namespace SmartInventoryServices.Providers
                                     }
                                     else if (Convert.ToBoolean(isPRMSEnabled) && user.user_type.ToLower() == "partner")
                                     {
-                                        
+
                                         if (!string.IsNullOrEmpty(user.prms_id))
                                         {
                                             accessToken = aDOIDSecoAuth.GenerateSecoToken(user.prms_id, MiscHelper.DecodeTo64(password), true, Source, out secoApiResponse, out aDOIDAuthentication);
@@ -450,30 +451,30 @@ namespace SmartInventoryServices.Providers
                             }
                             else if (ApplicationSettings.isLDAPEnabled && user.user_type.ToLower() == "own")
                             {
-                               
+
                                 string LDAPIP = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["LDAP_IP"]).Trim();
-                               
+
                                 if (!String.IsNullOrWhiteSpace(LDAPIP) || !String.IsNullOrEmpty(LDAPIP))
                                 {
-                                   
+
                                     try
                                     {
                                         System.DirectoryServices.DirectoryEntry entry = default(System.DirectoryServices.DirectoryEntry);
                                         DirectorySearcher searcher = default(DirectorySearcher);
                                         entry = new System.DirectoryServices.DirectoryEntry(LDAPIP);
                                         entry.Username = userName;
-                                        entry.Password = MiscHelper.DecodeTo64(password); 
+                                        entry.Password = MiscHelper.DecodeTo64(password);
                                         entry.AuthenticationType = AuthenticationTypes.Secure;
                                         searcher = new DirectorySearcher(entry);
                                         System.DirectoryServices.SearchResult result = searcher.FindOne();
                                     }
-                                    catch(Exception ex)
+                                    catch (Exception ex)
                                     {
                                         ErrorLogHelper logHelper = new ErrorLogHelper();
                                         logHelper.ApiLogWriter("GrantResourceOwnerCredentials()", "OAuthProvider", LDAPIP, ex);
                                         user = null;
                                     }
-                                   
+
                                 }
                                 else { user = null; }
                             }
@@ -523,7 +524,7 @@ namespace SmartInventoryServices.Providers
                             HeaderErrorResponse(context, "The user name or password is incorrect!");
                         }
                     }
-                    
+
                     else
                     {
                         user = objBLUser.ValidateUser(userName, password, Source);
@@ -636,6 +637,36 @@ namespace SmartInventoryServices.Providers
                 //lst.Add(new { key = "is2FAuthEnabled", value =Convert.ToBoolean(oTPAuthenticationSettings.is_otp_enabled)==true?"1":"0", description = "" });
                 var json = JsonConvert.SerializeObject(lst);
                 context.AdditionalResponseParameters.Add("GlobalSettings", json);
+            }
+            var pLData = globalSettings.Where(m => m.key == "product_license_mobile")
+                                 .Select(m => new { m.key, m.value, m.max_value, /* other properties */ }).FirstOrDefault();
+
+            bool isPExpAlrtAllowed = @ApplicationSettings.IsLicenseExpAlrtAllowed;
+
+            string encdDtStr = string.Empty;
+            if (pLData != null)
+            {
+                encdDtStr = MiscHelper.DecryptData(pLData.value);
+                if (string.IsNullOrEmpty(encdDtStr))
+                {
+                    context.AdditionalResponseParameters.Add("IsWithinThreshold", true.ToString());
+                    context.AdditionalResponseParameters.Add("PExpTDays", 0);
+                    context.AdditionalResponseParameters.Add("PExpThresholdMsg", Resources.Resources.SI_OSP_GBL_GBL_GBL_321);
+                    context.AdditionalResponseParameters.Add("PExpAlertVisibility", isPExpAlrtAllowed.ToString());
+                }
+                else
+                {
+                    double thresholdDays = pLData is null ? 0 : pLData.max_value;
+                    TimeSpan difference;
+                    bool isWithinThreshold = false;
+                    CodeOperation.ValidateCO(encdDtStr, out difference);
+                    isWithinThreshold = difference.Days <= thresholdDays;
+                    context.AdditionalResponseParameters.Add("IsWithinThreshold", isWithinThreshold);
+                    context.AdditionalResponseParameters.Add("PExpTDays", difference.Days);
+                    context.AdditionalResponseParameters.Add("PExpThresholdPriorMsg", isWithinThreshold ? Resources.Resources.SI_GBL_GBL_NET_FRM_442.Replace("<PExpTDays>", difference.Days.ToString()) : "");
+                    context.AdditionalResponseParameters.Add("PExpThresholdMsg", difference.Days <= 0 ? Resources.Resources.SI_OSP_GBL_GBL_GBL_321 : "");
+                    context.AdditionalResponseParameters.Add("PExpAlertVisibility", isPExpAlrtAllowed.ToString());
+                }
             }
             return Task.FromResult<object>(null);
 
@@ -770,7 +801,7 @@ namespace SmartInventoryServices.Providers
                 var dicRequestParams = getAllBodyParameters(context);
                 bool is2FAuthEnabled = false;
                 OTPAuthenticationSettings oTPAuthenticationSettings = new BLOtpAuthentication().getOtpConfigurationSetting(source);
-              
+
                 if (oTPAuthenticationSettings != null)
                 {
                     is2FAuthEnabled = Convert.ToBoolean(oTPAuthenticationSettings.is_otp_enabled);
@@ -836,11 +867,11 @@ namespace SmartInventoryServices.Providers
                         }
 
                         objUserLogin.source = source;
-                        UserLogin objResult = new BLUserLogin().SaveLoginHistory(objUserLogin,source);
+                        UserLogin objResult = new BLUserLogin().SaveLoginHistory(objUserLogin, source);
                         List<GlobalSetting> globalSettings = new BLGlobalSetting().GetGlobalSettings(source);
-                       
+
                         var appVersion = String.Empty;
-                       
+
 
                         if (globalSettings != null)
                         {
@@ -857,7 +888,7 @@ namespace SmartInventoryServices.Providers
                             //{
                             //    is2FAuthEnabled = Convert.ToInt32(globalSettings.FirstOrDefault(x => x.key == "is2FAuthEnabled").value) == 0 ? false : true;
                             //}
-                            
+
                         }
 
 
@@ -878,7 +909,7 @@ namespace SmartInventoryServices.Providers
                         dicResponseParams.Add("IsMasterLogin", Convert.ToString(isMasterLogin));
                     }
                 }
-                
+
                 ////when is2FAuthEnabled is true in global setting  then first token will always be applicable for otp
                 ////validation
                 if (is2FAuthEnabled && source.ToUpper() == "MOBILE" && user.role_id != 1)
@@ -972,7 +1003,7 @@ namespace SmartInventoryServices.Providers
             return username;
         }
 
-       
+
     }
 
 }

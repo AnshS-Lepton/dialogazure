@@ -1,25 +1,19 @@
 ﻿using BusinessLogics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using CodeIN;
+using Lepton.Utility;
 using Models;
 using Models.Admin;
-using System.Web.Security;
 using SmartInventory.Filters;
-using Utility;
-using System.Configuration;
 using SmartInventory.Settings;
-using System.Net;
-using SmartInventory.Helper;
-using Lepton.Utility;
-using Newtonsoft.Json;
-using Lepton.Entities;
-using System.IO;
-using System.Web.SessionState;
-using NPOI.POIFS.FileSystem;
+using System;
+using System.Configuration;
 using System.DirectoryServices;
+using System.IO;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Security;
+using Utility;
 
 namespace SmartInventory.Controllers
 {
@@ -34,8 +28,19 @@ namespace SmartInventory.Controllers
         // GET: /Login/
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public ActionResult Index()
-
         {
+            int rDays;
+            bool isPExpAlrtAllowed = ApplicationSettings.IsLicenseExpAlrtAllowed;
+            bool isUnderThreshold = CodeOperation.GetDataFromCO(out rDays);
+
+            TempData["PExpTDays"] = rDays;
+            if (isUnderThreshold)
+            {
+                ErrorLogHelper.WriteErrorLog("Index", "Login", null, Resources.Resources.SI_GBL_GBL_NET_FRM_442.Replace("<PExpTDays>", rDays.ToString()));
+                if (isPExpAlrtAllowed)   //flag to handle expired license error visibility
+                    ModelState.AddModelError("Error", Resources.Resources.SI_GBL_GBL_NET_FRM_442.Replace("<PExpTDays>", rDays.ToString()));
+            }
+
             string cookie = "";
             if (Session["Language"] != null)
             {
@@ -50,7 +55,7 @@ namespace SmartInventory.Controllers
             else
             {
                 ViewBag.langlist = new BLResources().GetResourceCultureList();
-                return View();
+                return View(new User());
             }
         }
         private bool isAuthenticated(string username, string password)
@@ -91,33 +96,40 @@ namespace SmartInventory.Controllers
         [HttpPost]
         public ActionResult Index(User usr, string returnUrl)
         {
-            //if (ModelState.IsValid)
+            bool isLoginAllowed = (TempData["PExpTDays"] != null && Convert.ToInt16(TempData.Peek("PExpTDays")) <= 0) ? false : true; //PExpTDays: Product Expiry Total Days
 
-            if (usr.user_name != null && usr.password != null && usr.user_name != "" && usr.password != "")
+            var isPExpAlrtAllowed = ApplicationSettings.IsLicenseExpAlrtAllowed;
+            try
             {
-                var globalSettings = new BLGlobalSetting().GetGlobalSettings("WEB");
+                if (isLoginAllowed)
+                {
+                    bool is2FAuthEnabled = false;
+                    bool isADOIDEnabled = Convert.ToInt32(ApplicationSettings.isADOIDEnabled) == 0 ? false : true;
+                    bool isPRMSEnabled = Convert.ToInt32(ApplicationSettings.isPRMSEnabled) == 0 ? false : true;
+                    bool isAzureLogin = Convert.ToBoolean(ConfigurationManager.AppSettings["isAADEnabled"]);
+                    return ValidateLogin(is2FAuthEnabled, isADOIDEnabled, isPRMSEnabled, isAzureLogin, ref usr);
+                }
+                else
+                {
+                    ErrorLogHelper.WriteErrorLog("Index", "Login", null, Resources.Resources.SI_OSP_GBL_GBL_GBL_321);
+                    if (isPExpAlrtAllowed)   //flag to handle expired license error visibility
+                        ModelState.AddModelError("Error", Resources.Resources.SI_OSP_GBL_GBL_GBL_321);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("Index", "Login", ex);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        private ActionResult ValidateLogin(bool is2FAuthEnabled, bool isADOIDEnabled, bool isPRMSEnabled, bool isAzureLogin, ref User usr)
+        {
+            if (usr.user_name != null && usr.password != null && usr.user_name != "" && (isAzureLogin || usr.password != ""))
+            {
                 OTPAuthenticationSettings oTPAuthenticationSettings = new BLOtpAuthentication().getOtpConfigurationSetting("WEB");
 
-                bool is2FAuthEnabled = false;
-                bool isADOIDEnabled = false;
-                bool isPRMSEnabled = false;
                 string err_msg = string.Empty;
 
-                foreach (var objSetting in globalSettings)
-                {
-                    if (objSetting.key == "isADOIDEnabled")
-                    {
-                        isADOIDEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true;
-                    }
-                    //if (objSetting.key == "is2FAuthEnabled")
-                    //{
-                    //    is2FAuthEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true;
-                    //}
-                    if (objSetting.key == "isPRMSEnabled")
-                    {
-                        isPRMSEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true;
-                    }
-                }
                 if (oTPAuthenticationSettings != null)
                 {
                     is2FAuthEnabled = Convert.ToBoolean(oTPAuthenticationSettings.is_otp_enabled);
@@ -342,7 +354,7 @@ namespace SmartInventory.Controllers
             }
             usr.password = "";
             ViewBag.langlist = new BLResources().GetResourceCultureList();
-            return View(usr);
+            return View(nameof(Index), usr);
         }
         //[HttpPost]
         //public ActionResult Index1(User usr, string returnUrl)
@@ -739,7 +751,7 @@ namespace SmartInventory.Controllers
                         {
                             if (userLoginDetails.logout_time == null)
                             {
-                                objResp.message = "This user is already LogedIn in other device, Do you want to force Login?";
+                                objResp.message = Resources.Resources.SI_OSP_GBL_NET_GBL_237;
                                 objResp.status = ResponseStatus.FAILED.ToString();
                             }
                         }
@@ -913,20 +925,33 @@ namespace SmartInventory.Controllers
             string fullPath = "";
             try
             {
-                string idaClientId = Convert.ToString(ConfigurationManager.AppSettings["ida:ClientId"]);
-                string idaTenant = Convert.ToString(ConfigurationManager.AppSettings["ida:Tenant"]);
-                string idaAADInstance = Convert.ToString(ConfigurationManager.AppSettings["ida:AADInstance"]);
-                string idaRedirectUri = Convert.ToString(ConfigurationManager.AppSettings["ida:RedirectUri"]) + "/login/AzureCode";
-                //string idaPostLogoutRedirectUri = Request.Url.AbsoluteUri.Replace("Azuread", "AzureCode");
-                fullPath = idaAADInstance + idaTenant + "/oauth2/v2.0/authorize?client_id=" + idaClientId
-               //  + "&scope=openid%20offline_access%20profile&redirect_uri=" + idaPostLogoutRedirectUri + "&response_type=code";
-               + "&response_type=code&redirect_uri=" + idaRedirectUri + "&scope=openid%20offline_access%20https%3A%2F%2Fgraph.microsoft.com%2Fuser.read";
+                bool isLoginAllowed = (TempData["PExpTDays"] != null && Convert.ToInt16(TempData.Peek("PExpTDays")) <= 0) ? false : true; //PExpTDays: Product Expiry Total Days
+
+                var isPExpAlrtAllowed = ApplicationSettings.IsLicenseExpAlrtAllowed;
+                if (isLoginAllowed)
+                {
+                    string idaClientId = Convert.ToString(ConfigurationManager.AppSettings["ida:ClientId"]);
+                    string idaTenant = Convert.ToString(ConfigurationManager.AppSettings["ida:Tenant"]);
+                    string idaAADInstance = Convert.ToString(ConfigurationManager.AppSettings["ida:AADInstance"]);
+                    string idaRedirectUri = Convert.ToString(ConfigurationManager.AppSettings["ida:RedirectUri"]) + "/login/AzureCode";
+                    //string idaPostLogoutRedirectUri = Request.Url.AbsoluteUri.Replace("Azuread", "AzureCode");
+                    fullPath = idaAADInstance + idaTenant + "/oauth2/v2.0/authorize?client_id=" + idaClientId
+                   //  + "&scope=openid%20offline_access%20profile&redirect_uri=" + idaPostLogoutRedirectUri + "&response_type=code";
+                   + "&response_type=code&redirect_uri=" + idaRedirectUri + "&scope=openid%20offline_access%20https%3A%2F%2Fgraph.microsoft.com%2Fuser.read";
+                    return Redirect(fullPath);
+                }
+                else
+                {
+                    ErrorLogHelper.WriteErrorLog("Azuread", "Login", null, Resources.Resources.SI_OSP_GBL_GBL_GBL_321);
+                    if (isPExpAlrtAllowed)   //flag to handle expired license error visibility
+                        ModelState.AddModelError("Error", Resources.Resources.SI_OSP_GBL_GBL_GBL_321);
+                }
             }
             catch (Exception ex)
             {
-                ErrorLogHelper.WriteErrorLog("Azuread()", "LoginController", ex, fullPath);
+                ErrorLogHelper.WriteErrorLog("Azuread", "Login", ex, fullPath);
             }
-            return Redirect(fullPath);
+            return RedirectToAction(nameof(Index));
         }
 
         public ActionResult AzureCode(string code)
@@ -943,155 +968,13 @@ namespace SmartInventory.Controllers
                     {
                         // return View();
                         username = apiresponse.results;
-                        if (username != null && username != "")
-                        {
-                            username = username.Substring(0, username.IndexOf("@")).Trim();
-                            var globalSettings = new BLGlobalSetting().GetGlobalSettings("WEB");
-                            OTPAuthenticationSettings oTPAuthenticationSettings = new BLOtpAuthentication().getOtpConfigurationSetting("WEB");
-
-                            bool is2FAuthEnabled = false;
-                            bool isADOIDEnabled = false;
-                            bool isPRMSEnabled = false;
-
-                            foreach (var objSetting in globalSettings)
-                            {
-                                if (objSetting.key == "isADOIDEnabled")
-                                {
-                                    isADOIDEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true;
-                                }
-
-                                if (objSetting.key == "isPRMSEnabled")
-                                {
-                                    isPRMSEnabled = Convert.ToInt32(objSetting.value) == 0 ? false : true;
-                                }
-                            }
-                            if (oTPAuthenticationSettings != null)
-                            {
-                                is2FAuthEnabled = Convert.ToBoolean(oTPAuthenticationSettings.is_otp_enabled);
-                            }
-
-                            bool is_UserAuthenticated = false;
-                            u = new BLUser().ValidateUser(username, "", UserType.Web.ToString());
-                            if (u != null)
-                            {
-                                if (u.is_active)
-                                {
-                                    var ADFSEndPoint = ApplicationSettings.ADFSEndPoint;
-                                    if (!String.IsNullOrEmpty(ADFSEndPoint) && u != null && u.role_id != 1 && u.user_type.ToLower() == "own")
-                                    {
-                                        ADFSInput objADFSInput = new ADFSInput();
-                                        objADFSInput.user_name = u.user_name;
-                                        objADFSInput.user_email = MiscHelper.Decrypt(u.user_email);
-                                        objADFSInput.password = "";
-                                        objADFSInput.ADFSAutheticationBasedOn = ApplicationSettings.ADFSAutheticationBasedOn;
-                                        objADFSInput.ADFSEndPoint = ApplicationSettings.ADFSEndPoint;
-                                        objADFSInput.ADFSRelPartyUri = ApplicationSettings.ADFSRelPartyUri;
-                                        objADFSInput.ADFSUserNamePreFix = ApplicationSettings.ADFSUserNamePreFix;
-                                        ADFSDetail ADFSDetail = BLUser.AuthenticateADFS(objADFSInput);
-                                        if (!string.IsNullOrEmpty(ADFSDetail.tokenId))
-                                        {
-                                            is_UserAuthenticated = true;
-                                            Session["TokenDetail"] = WebAPIRequest.GetAPIToken(MiscHelper.EncodeTo64(username), MiscHelper.EncodeTo64("").ToString());
-                                        }
-                                        else
-                                        {
-                                            if (ADFSDetail.ADFSException != null)
-                                            {
-                                                is_UserAuthenticated = false;
-                                                ErrorLogHelper.WriteErrorLog("Index", "Login", ADFSDetail.ADFSException, objADFSInput);
-                                            }
-                                            ModelState.AddModelError("AzureError", ADFSDetail.errorMsg);
-                                        }
-                                    }
-                                    else
-                                    {
-
-                                        TokenDetail tokenDetail = WebAPIRequest.GetAPIToken(MiscHelper.EncodeTo64(username), MiscHelper.EncodeTo64("").ToString());
-                                        if (tokenDetail != null)
-                                        {
-                                            Session["TokenDetail"] = tokenDetail;
-                                            is_UserAuthenticated = !string.IsNullOrEmpty(tokenDetail.access_token) ? true : false;
-                                        }
-                                        else
-                                        {
-                                            is_UserAuthenticated = false;
-                                        }
-
-                                    }
-
-                                    if (is_UserAuthenticated)
-                                    {
-                                        u = new BLUser().GetUserDetailByUserName(username);
-                                        ////for 2F Authentication
-                                        if (Convert.ToBoolean(is2FAuthEnabled))
-                                        {
-                                            if (u.role_id != 1 || (u.role_id == 1 && Convert.ToBoolean(ApplicationSettings.is_otp_enabled_for_admin_web)))
-                                            {
-                                                SendOPTDeliveryOption sendOPTDeliveryOption = new SendOPTDeliveryOption();
-                                                sendOPTDeliveryOption.user_id = u.user_id;
-                                                sendOPTDeliveryOption.user_name = u.user_name;
-                                                sendOPTDeliveryOption.mobile_number = u.mobile_number;
-                                                sendOPTDeliveryOption.user_email = MiscHelper.Decrypt(u.user_email);
-                                                if (!string.IsNullOrEmpty(sendOPTDeliveryOption.user_email))
-                                                {
-                                                    sendOPTDeliveryOption.mask_user_email = MiscHelper.MaskEmail(sendOPTDeliveryOption.user_email.ToString());
-                                                }
-                                                if (!string.IsNullOrEmpty(Convert.ToString(sendOPTDeliveryOption.mobile_number)))
-                                                {
-                                                    sendOPTDeliveryOption.mask_mobile_number = MiscHelper.MaskMobile(sendOPTDeliveryOption.mobile_number.ToString());
-                                                }
-                                                u.password = "";
-                                                ////for flushingg the otp reset limit
-                                                new BLUserOTPDetails().ResetUserOTPStatus(u.user_id, u.user_name, Convert.ToString(OTPResetType.RESET_RESEND_LIMIT_REACHED));
-                                                string otpToken = GenerateOTPToken(u);
-                                                if (!string.IsNullOrEmpty(otpToken))
-                                                {
-                                                    //sendOPTDeliveryOption.otptype = "mobile";
-                                                    TempData["SendOPTDeliveryOption"] = sendOPTDeliveryOption;
-                                                    return View("SendOtp", sendOPTDeliveryOption);
-                                                }
-                                            }
-                                            else
-                                            {
-                                                LogUserIn(u, "Web");
-                                                //Session["TokenDetail"] = WebAPIRequest.GetAPIToken(MiscHelper.EncodeTo64(usr.user_name), MiscHelper.EncodeTo64(usr.password).ToString());
-                                                TokenDetail td = (TokenDetail)Session["TokenDetail"];
-                                                Session["TokenDetail"] = WebAPIRequest.GetRefreshToken(td.refresh_token, td.access_token);
-                                                ModelState.Clear();
-                                                return RedirectToAction("index", "main");
-
-                                            }
-                                        }
-                                        else
-                                        {
-                                            LogUserIn(u, "Web");
-                                            //Session["TokenDetail"] = WebAPIRequest.GetAPIToken(MiscHelper.EncodeTo64(usr.user_name), MiscHelper.EncodeTo64(usr.password).ToString());
-                                            TokenDetail td = (TokenDetail)Session["TokenDetail"];
-                                            Session["TokenDetail"] = WebAPIRequest.GetRefreshToken(td.refresh_token, td.access_token);
-                                            ModelState.Clear();
-                                            return RedirectToAction("index", "main");
-                                        }
-                                    }
-                                    else
-                                    {
-                                        ModelState.AddModelError("AzureError", Resources.Resources.SI_GBL_GBL_NET_FRM_013);
-                                    }
-                                }
-                                else
-                                    ModelState.AddModelError("AzureError", Resources.Resources.SI_GBL_GBL_NET_FRM_010);
-                            }
-                            else
-                                ModelState.AddModelError("AzureError", username + ": " + Resources.Resources.SI_GBL_GBL_NET_FRM_011);
-                        }
-                        else
-                        {
-                            if (username == null || username == "")
-                                ModelState.AddModelError("AzureError", "Error in fetching User Name");
-                            else if (username == null)
-                                ModelState.AddModelError("AzureError", "Error in fetching User Name");
-                            else
-                                ModelState.AddModelError("AzureError", "Error in fetching User Name");
-                        }
+                        u.user_name = username.Substring(0, username.IndexOf("@")).Trim();
+                        u.password = string.Empty;
+                        bool is2FAuthEnabled = false;
+                        bool isADOIDEnabled = false;
+                        bool isPRMSEnabled = false;
+                        bool isAzureLogin = Convert.ToBoolean(ConfigurationManager.AppSettings["isAADEnabled"]);
+                        return ValidateLogin(is2FAuthEnabled, isADOIDEnabled, isPRMSEnabled, isAzureLogin, ref u);
                     }
                     else
                     {
@@ -1102,14 +985,12 @@ namespace SmartInventory.Controllers
                 {
                     ModelState.AddModelError("AzureError", "Error in fetching Azure Code!!");
                 }
-                ViewBag.langlist = new BLResources().GetResourceCultureList();
             }
             catch (Exception ex)
             {
-                ErrorLogHelper.WriteErrorLog("Azuread()", "LoginController", ex, null);
+                ErrorLogHelper.WriteErrorLog("Azuread", "Login", ex);
             }
-            return View("Index", u);
-
+            return RedirectToAction(nameof(Index));
         }
         public Models.API.ApiResponse<dynamic> CallAzureTokenApi(string code)
         {

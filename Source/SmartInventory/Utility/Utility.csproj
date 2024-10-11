@@ -131,6 +131,7 @@
     <Compile Include="ADOIDSecoAuth.cs" />
     <Compile Include="BLUtility\BLErrorLog.cs" />
     <Compile Include="BrowserHelper.cs" />
+    <Compile Include="CodeInTheCabin.cs" />
     <Compile Include="ConnectToSharedFolder.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="commonUtil.cs" />

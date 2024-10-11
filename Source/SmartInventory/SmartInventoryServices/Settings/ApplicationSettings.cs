@@ -64,6 +64,7 @@ namespace SmartInventory.Settings
         public static string DuctOffset = "";
         public static string MicroductOffset = "";
         public static bool isLDAPEnabled = false;
+        public static bool IsLicenseExpAlrtAllowed = false;
 
         public static void InitializeGlobalSettings()
         {
@@ -240,7 +241,10 @@ namespace SmartInventory.Settings
                     isLDAPEnabled = Convert.ToInt32(objSetting.value) == 1;
                 }
             }
-
+            IsLicenseExpAlrtAllowed = globalSettings
+                    .Where(m => m.key == "isLicenseExpAlrtAllowed")
+                    .Select(m => bool.TryParse(m.value, out bool result) ? result : false)
+                    .FirstOrDefault();
         }
     }
 }

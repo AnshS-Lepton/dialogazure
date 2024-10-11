@@ -259,6 +259,7 @@ namespace SmartInventory.Settings
         public static bool CdbEnabled = false;
         public static int isLDAPEnabled = 0;
         public static string ApplicationVersion = "";
+        public static bool IsLicenseExpAlrtAllowed = false;
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -910,6 +911,10 @@ namespace SmartInventory.Settings
                     ApplicationVersion = objSetting.value;
                 }
             }
+            IsLicenseExpAlrtAllowed = globalSettings
+                    .Where(m => m.key == "isLicenseExpAlrtAllowed")
+                    .Select(m => bool.TryParse(m.value, out bool result) ? result : false)
+                    .FirstOrDefault();
         }
     }
 }
