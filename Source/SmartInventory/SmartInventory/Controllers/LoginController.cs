@@ -106,8 +106,7 @@ namespace SmartInventory.Controllers
                     bool is2FAuthEnabled = false;
                     bool isADOIDEnabled = Convert.ToInt32(ApplicationSettings.isADOIDEnabled) == 0 ? false : true;
                     bool isPRMSEnabled = Convert.ToInt32(ApplicationSettings.isPRMSEnabled) == 0 ? false : true;
-                    bool isAzureLogin = Convert.ToBoolean(ConfigurationManager.AppSettings["isAADEnabled"]);
-                    return ValidateLogin(is2FAuthEnabled, isADOIDEnabled, isPRMSEnabled, isAzureLogin, ref usr);
+                    return ValidateLogin(is2FAuthEnabled, isADOIDEnabled, isPRMSEnabled, false, ref usr);
                 }
                 else
                 {
@@ -973,7 +972,7 @@ namespace SmartInventory.Controllers
                         bool is2FAuthEnabled = false;
                         bool isADOIDEnabled = false;
                         bool isPRMSEnabled = false;
-                        bool isAzureLogin = Convert.ToBoolean(ConfigurationManager.AppSettings["isAADEnabled"]);
+                        bool isAzureLogin = ApplicationSettings.IsAADEnabled;
                         return ValidateLogin(is2FAuthEnabled, isADOIDEnabled, isPRMSEnabled, isAzureLogin, ref u);
                     }
                     else

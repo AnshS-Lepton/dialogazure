@@ -65,6 +65,7 @@ namespace SmartInventory.Settings
         public static string MicroductOffset = "";
         public static bool isLDAPEnabled = false;
         public static bool IsLicenseExpAlrtAllowed = false;
+        public static bool IsAADEnabled = false;
 
         public static void InitializeGlobalSettings()
         {
@@ -243,6 +244,10 @@ namespace SmartInventory.Settings
             }
             IsLicenseExpAlrtAllowed = globalSettings
                     .Where(m => m.key == "isLicenseExpAlrtAllowed")
+                    .Select(m => bool.TryParse(m.value, out bool result) ? result : false)
+                    .FirstOrDefault();
+            IsAADEnabled = globalSettings
+                    .Where(m => m.key == "isAADEnabled")
                     .Select(m => bool.TryParse(m.value, out bool result) ? result : false)
                     .FirstOrDefault();
         }

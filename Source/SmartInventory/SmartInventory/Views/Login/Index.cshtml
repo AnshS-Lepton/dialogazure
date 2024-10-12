@@ -40,7 +40,7 @@
         <div class="loginLeft">
             <img src="~/Content/images/SILoginPageFront.png" />
         </div>
-        @if (Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["isAADEnabled"]))
+        @if (ApplicationSettings.IsAADEnabled)
         {
             <div class="loginRight">
 

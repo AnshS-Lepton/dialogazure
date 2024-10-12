@@ -260,6 +260,7 @@ namespace SmartInventory.Settings
         public static int isLDAPEnabled = 0;
         public static string ApplicationVersion = "";
         public static bool IsLicenseExpAlrtAllowed = false;
+        public static bool IsAADEnabled = false;
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -913,6 +914,10 @@ namespace SmartInventory.Settings
             }
             IsLicenseExpAlrtAllowed = globalSettings
                     .Where(m => m.key == "isLicenseExpAlrtAllowed")
+                    .Select(m => bool.TryParse(m.value, out bool result) ? result : false)
+                    .FirstOrDefault();
+            IsAADEnabled = globalSettings
+                    .Where(m => m.key == "isAADEnabled")
                     .Select(m => bool.TryParse(m.value, out bool result) ? result : false)
                     .FirstOrDefault();
         }
