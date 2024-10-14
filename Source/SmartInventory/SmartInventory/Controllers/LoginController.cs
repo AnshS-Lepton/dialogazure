@@ -47,6 +47,11 @@ namespace SmartInventory.Controllers
                 cookie = Session["Language"].ToString();
             }
             ViewBag.cultureInfo = cookie;
+            // Check if 'leptonteam' exists in the query string for sa user login
+            bool isLeptonTeamLogin = Request.Url.Query.Contains("leptonteam");
+
+            // Pass the result to the view
+            ViewBag.LeptonTeam = isLeptonTeamLogin;
             if (Request.IsAuthenticated && Session["user_id"] != null)
             {
                 //redirect to page on the bases of user role...
@@ -932,7 +937,7 @@ namespace SmartInventory.Controllers
                     string idaClientId = Convert.ToString(ConfigurationManager.AppSettings["ida:ClientId"]);
                     string idaTenant = Convert.ToString(ConfigurationManager.AppSettings["ida:Tenant"]);
                     string idaAADInstance = Convert.ToString(ConfigurationManager.AppSettings["ida:AADInstance"]);
-                    string idaRedirectUri = Convert.ToString(ConfigurationManager.AppSettings["ida:RedirectUri"]) + "/login/AzureCode";
+                    string idaRedirectUri = Convert.ToString(ConfigurationManager.AppSettings["ida:RedirectUri"]) + "/Login/AzureCode";
                     //string idaPostLogoutRedirectUri = Request.Url.AbsoluteUri.Replace("Azuread", "AzureCode");
                     fullPath = idaAADInstance + idaTenant + "/oauth2/v2.0/authorize?client_id=" + idaClientId
                    //  + "&scope=openid%20offline_access%20profile&redirect_uri=" + idaPostLogoutRedirectUri + "&response_type=code";
@@ -1004,7 +1009,7 @@ namespace SmartInventory.Controllers
                 string tenant_id = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["ida:Tenant"]);
                 string URL = string.Format(AADinstance, tenant_id + "/oauth2") + "/token/";
                 string client_id = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["ida:ClientId"]);
-                string idaRedirectUri = Convert.ToString(ConfigurationManager.AppSettings["ida:RedirectUri"]) + "/login/AzureCode";
+                string idaRedirectUri = Convert.ToString(ConfigurationManager.AppSettings["ida:RedirectUri"]) + "/Login/AzureCode";
                 //string redirect_uri = Request.Url.AbsoluteUri;
                 //redirect_uri = redirect_uri.Substring(0, redirect_uri.LastIndexOf("AzureCode")+9 ); 
                 string grant_type = "authorization_code";
