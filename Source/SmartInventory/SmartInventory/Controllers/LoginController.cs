@@ -48,7 +48,7 @@ namespace SmartInventory.Controllers
             }
             ViewBag.cultureInfo = cookie;
             // Check if 'leptonteam' exists in the query string for sa user login
-            bool isLeptonTeamLogin = Request.Url.Query.Contains("leptonteam");
+            bool isLeptonTeamLogin = Request.Url.Query.Contains("SEFWRUZVTkFCQw==");
 
             // Pass the result to the view
             ViewBag.LeptonTeam = isLeptonTeamLogin;
