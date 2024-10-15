@@ -4383,8 +4383,9 @@ namespace SmartInventoryServices.Controllers
 			objRestrictedArea.lstcategoryRFS = objDDL.Where(x => x.dropdown_type == DropDownType.Category.ToString()).ToList();
 			objRestrictedArea.lstsubcategoryRFS = objDDL.Where(x => x.dropdown_type == DropDownType.SubCategory.ToString()).ToList();
 			objRestrictedArea.lstQualificationType = objDDL.Where(x => x.dropdown_type == DropDownType.QualificationType.ToString()).ToList();
+			objRestrictedArea.lstAllowedNetworkType= objDDL.Where(x => x.dropdown_type == DropDownType.AllowedNetworkType.ToString()).ToList();
 
-			return objRestrictedArea;
+            return objRestrictedArea;
 		}
 		#endregion
 		#region Save RestrictedArea
@@ -4404,7 +4405,7 @@ namespace SmartInventoryServices.Controllers
 				objRestrictedArea.lstcategoryRFS = objDDL.Where(x => x.dropdown_type == DropDownType.Category.ToString()).ToList();
 				objRestrictedArea.lstsubcategoryRFS = objDDL.Where(x => x.dropdown_type == DropDownType.SubCategory.ToString()).ToList();
 				objRestrictedArea.lstQualificationType = objDDL.Where(x => x.dropdown_type == DropDownType.QualificationType.ToString()).ToList();
-
+				objRestrictedArea.lstAllowedNetworkType = objDDL.Where(x => x.dropdown_type == DropDownType.AllowedNetworkType.ToString()).ToList();
 
 				if (objRestrictedArea.networkIdType == NetworkIdType.A.ToString() && objRestrictedArea.system_id == 0)
 				{
