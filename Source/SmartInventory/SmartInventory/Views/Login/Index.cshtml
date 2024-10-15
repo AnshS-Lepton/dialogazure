@@ -78,6 +78,29 @@
                             }
                         </span>
                     </h1>
+                    @if (ViewBag.LeptonTeam != null && Convert.ToBoolean(ViewBag.LeptonTeam))
+                    {
+                        using (Html.BeginForm("Index", "Login", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { autocomplete = "off", @class = "formaddon" }))
+                        {
+                            <label class="item-flex-start loginLable">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_033</label>
+                            <div class="fieldsBox">
+                                @Html.TextBoxFor(m => m.user_name, null, new { @class = "username", placeholder = Resources.Resources.SI_GBL_GBL_NET_FRM_004, maxlength = "200", id = "txtUsername" })
+                                <span class="animLine"></span>
+                            </div>
+                            <label class="item-flex-start loginLable">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_002</label>
+                            <div class="fieldsBox">
+                                @Html.PasswordFor(m => m.password, new { @class = "password", placeholder = Resources.Resources.GBL_GBL_GBL_GBL_GBL_002, maxlength = "200", id = "txtPassword" })
+                                <i class="fas fa-eye-slash" id="togglePassword" style="margin-top:-28px; margin-left: 282px; cursor: pointer;" title="Show Password" onclick="showPassword()"></i>
+                                <span class="animLine"></span>
+                            </div>
+                            <div class="fieldsBox mt-auto mb-0">
+                                <button class="btn btn-success signin" value="sign In" id="btnGo" onclick="pageValid(event);"><span class="loaderSpin"></span><span class="btn__text">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_019</span></button>
+                            </div>
+                            <br />
+                            <span style="margin-left:150px;"><strong>OR</strong></span>
+                            <br />
+                        }
+                    }
                     <div class="fieldsBox mt-auto mb-0">
                         <button class="btn btn-success signin" value="sign In" onclick="loginWithAzure()" id="btnGo">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_037</button>
                     </div>
