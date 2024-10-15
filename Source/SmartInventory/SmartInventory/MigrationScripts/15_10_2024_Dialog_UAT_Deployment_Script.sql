@@ -17,10 +17,17 @@ INSERT INTO public.global_settings ("key", value, description, "type", is_edit_a
 VALUES('isLicenseExpAlrtAllowed', 'true', 'License Expiry Alert message', 'Web', false, 'bool', 0.0, 0.0, 5, '2024-09-12 13:05:28.536', 5, '2024-09-12 13:05:28.536', true, true, false, NULL, NULL);
 
 INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
-VALUES('en', 'SI_GBL_GBL_NET_FRM_442', 'Hello, Your license will expire in <PExpTDays> days. Please renew at the earliest to avoid any service disruption.', true, true, 'English', 'Smart Inventory_Global_Global_Dot Net_', NULL, NULL, '2024-09-11 16:38:29.452', 1, false, false);
+VALUES('en', 'SI_GBL_GBL_NET_FRM_442', 'Hello, Your license will expire in <PExpTDays> days. Please renew at the earliest to avoid any service disruption.', false, true, 'English', 'Smart Inventory_Global_Global_Dot Net_', NULL, NULL, '2024-09-11 16:38:29.452', 1, false, false);
 INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
-VALUES('hi', 'SI_GBL_GBL_NET_FRM_442', 'हैलो, आपका लाइसेंस <PExpTDays> दिनों में समाप्त हो जाएगा। कृपया किसी भी सेवा व्यवधान से बचने के लिए जल्द से जल्द नवीनीकरण करें।', true, true, 'Hindi', 'Smart Inventory_Global_Global_Dot Net_', NULL, NULL, '2024-09-11 16:38:29.452', 1, false, false);
-
+VALUES('hi', 'SI_GBL_GBL_NET_FRM_442', 'हैलो, आपका लाइसेंस <PExpTDays> दिनों में समाप्त हो जाएगा। कृपया किसी भी सेवा व्यवधान से बचने के लिए जल्द से जल्द नवीनीकरण करें।', false, true, 'Hindi', 'Smart Inventory_Global_Global_Dot Net_', NULL, NULL, '2024-09-11 16:38:29.452', 1, false, false);
+INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
+VALUES('de-DE', 'SI_GBL_GBL_NET_FRM_442', 'Hello, Your license will expire in <PExpTDays> days. Please renew at the earliest to avoid any service disruption.', false, true, 'German', 'Smart Inventory_Global_Global_Dot Net_', NULL, NULL, '2024-09-19 14:50:19.212', 287, true, false);
+INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
+VALUES('fr', 'SI_GBL_GBL_NET_FRM_442', 'Hello, Your license will expire in <PExpTDays> days. Please renew at the earliest to avoid any service disruption.', false, true, 'French', 'Smart Inventory_Global_Global_Dot Net_', NULL, NULL, '2024-09-19 14:50:19.212', 287, true, false);
+INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
+VALUES('ja-JP', 'SI_GBL_GBL_NET_FRM_442', 'Hello, Your license will expire in <PExpTDays> days. Please renew at the earliest to avoid any service disruption.', false, true, 'Japanese', 'Smart Inventory_Global_Global_Dot Net_', NULL, NULL, '2024-09-19 14:50:19.212', 287, true, false);
+INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
+VALUES('ru-RU', 'GBL_GBL_GBL_GBL_GBL_034', 'Hello, Your license will expire in <PExpTDays> days. Please renew at the earliest to avoid any service disruption.', false, true, 'Russian', 'Smart Inventory_Global_Global_Dot Net_', NULL, NULL, '2024-09-19 14:50:19.212', 287, true, false);
 
 
 INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
@@ -62,3 +69,16 @@ INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_vis
 VALUES('ja-JP', 'GBL_GBL_GBL_GBL_GBL_033', 'ユーザー名', false, true, 'Japanese', 'Global_Global_Global_Global_', NULL, NULL, '2024-09-19 10:51:24.489', 287, true, false);
 INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
 VALUES('ru-RU', 'GBL_GBL_GBL_GBL_GBL_033', 'Имя пользователя', false, true, 'Russian', 'Global_Global_Global_Global_', NULL, NULL, '2024-09-19 10:51:24.489', 287, true, false);
+
+INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
+VALUES('de-DE', 'GBL_GBL_GBL_GBL_GBL_038', 'OR', false, true, 'German', 'Global_Global_Global_Global_', NULL, NULL, '2024-10-15 15:28:56.228', 287, true, false);
+INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
+VALUES('en', 'GBL_GBL_GBL_GBL_GBL_038', 'OR', true, true, 'English', 'Global_Global_Global_Global_', NULL, NULL, '2024-10-15 15:28:56.228', 287, true, false);
+INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
+VALUES('fr', 'GBL_GBL_GBL_GBL_GBL_038', 'OR', false, true, 'French', 'Global_Global_Global_Global_', NULL, NULL, '2024-10-15 15:28:56.228', 287, true, false);
+INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
+VALUES('hi', 'GBL_GBL_GBL_GBL_GBL_038', 'OR', false, true, 'Hindi', 'Global_Global_Global_Global_', NULL, NULL, '2024-10-15 15:28:56.228', 287, true, false);
+INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
+VALUES('ja-JP', 'GBL_GBL_GBL_GBL_GBL_038', 'OR', false, true, 'Japanese', 'Global_Global_Global_Global_', NULL, NULL, '2024-10-15 15:28:56.228', 287, true, false);
+INSERT INTO public.res_resources (culture, "key", value, is_default_lang, is_visible, "language", description, modified_by, modified_on, created_on, created_by, is_jquery_used, is_mobile_key) 
+VALUES('ru-RU', 'GBL_GBL_GBL_GBL_GBL_038', 'OR', false, true, 'Russian', 'Global_Global_Global_Global_', NULL, NULL, '2024-10-15 15:28:56.228', 287, true, false);

@@ -47,11 +47,11 @@ namespace SmartInventory.Controllers
                 cookie = Session["Language"].ToString();
             }
             ViewBag.cultureInfo = cookie;
-            // Check if 'leptonteam' exists in the query string for sa user login
-            bool isLeptonTeamLogin = Request.Url.Query.Contains("SEFWRUZVTkFCQw==");
+            //// Check if 'leptonteam' exists in the query string for sa user login
+            //bool isLeptonTeamLogin = Request.Url.Query.Contains("SEFWRUZVTkFCQw==");
 
-            // Pass the result to the view
-            ViewBag.LeptonTeam = isLeptonTeamLogin;
+            //// Pass the result to the view
+            //ViewBag.LeptonTeam = isLeptonTeamLogin;
             if (Request.IsAuthenticated && Session["user_id"] != null)
             {
                 //redirect to page on the bases of user role...
