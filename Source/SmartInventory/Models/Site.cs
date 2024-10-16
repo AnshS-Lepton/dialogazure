@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Models.Admin;
 
 namespace Models
 {
@@ -33,7 +34,7 @@ namespace Models
         public string message { get; set; }
     }
 
-    public class Site
+    public class Site: IProjectSpecification
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -131,5 +132,37 @@ namespace Models
         public string region_abbreviation { get; set; }
         [NotMapped]
         public string province_abbreviation { get; set; }
+        public int? project_id { get; set; }
+        public int? planning_id { get; set; }
+        public int? purpose_id { get; set; }
+        public int? workorder_id { get; set; }
+        public bool? is_used { get; set; }
+        public string tx_agg { get; set; }
+        public string bh_status { get; set; }
+        public string elevation { get; set; }
+        public string segment { get; set; }
+        public string ring { get; set; }
+        public int? maximum_cost { get; set; }
+        public string project_category { get; set; }
+        public int? priority { get; set; }
+        public int? no_of_cores { get; set; }
+        public string fiber_link_type { get; set; }
+        public string comment { get; set; }
+        public int? plan_cost { get; set; }
+        public int? fiber_distance { get; set; }
+        public string fiber_link_code { get; set; }
+        public string port_type { get; set; }
+        public string destination_site_id { get; set; }
+        public string destination_port_type { get; set; }
+        public decimal? destination_no_of_cores { get; set; }
+        public string project_id_dialog { get; set; }
+        [NotMapped]
+        public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
+        [NotMapped]
+        public List<PlanningCodeMaster> lstBindPlanningCode { get; set; }
+        [NotMapped]
+        public List<WorkorderCodeMaster> lstBindWorkorderCode { get; set; }
+        [NotMapped]
+        public List<PurposeCodeMaster> lstBindPurposeCode { get; set; }
     }
 }

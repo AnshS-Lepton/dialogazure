@@ -6,9 +6,11 @@
     { Html.RenderPartial("_PageMessage", Model.objPM); }
 }
 <!--Reigon Additional Attribute to show the partial view-->
-
 <!--End Reigon Additional Attribute-->
-
+@helper ProjectSpecifications()
+{
+    { Html.RenderPartial("~/Views/Library/_ProjectSpecification.cshtml", (IProjectSpecification)Model); }
+}
 
 @{
     var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Site.ToString().ToUpper()).FirstOrDefault() : null;
@@ -21,307 +23,404 @@
         HttpMethod = "POST",
         UpdateTargetId = "dvModalBody",
         LoadingElementId = "dvProgress",
-       // OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.site_id + "','" + Model.networkIdType + "','" + EntityType.Site.ToString() + "');"
+        // OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.site_id + "','" + Model.networkIdType + "','" + EntityType.Site.ToString() + "');"
         //OnBegin = "return ValidateNetworkId "
     },
       new { id = "frmAddSite", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
     {
 
-    @Html.HiddenFor(m => m.region_id)
-    @Html.HiddenFor(m => m.province_id)
-    @Html.HiddenFor(m => m.system_id)
-    @Html.HiddenFor(m => m.geom)
-    @Html.HiddenFor(m => m.networkIdType)
-    //@Html.HiddenFor(m => m.site_id)
-    @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+        @Html.HiddenFor(m => m.region_id)
+        @Html.HiddenFor(m => m.province_id)
+        @Html.HiddenFor(m => m.system_id)
+        @Html.HiddenFor(m => m.geom)
+        @Html.HiddenFor(m => m.networkIdType)
+        //@Html.HiddenFor(m => m.site_id)
+        @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
         //Add the other_info as hidden field for additional attributes
- <!-- Message Pop-up -->
-    @pageMessage()
-   
-    <div class="libTabs">
-        <div class="scrollmenu">
-            <div><span class="spanSide go-left" id="spnRightMenu" style="display:none;"><i class="fa fa-angle-left" aria-hidden="true"></i></span></div>
-            <div class="scrollerhide overflow-hidden">
-                <ul class="nav nav-tabs tabs-left">
-                    <li class="active"><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
-                    @*<li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_152 @(Model.lstUserModule.Contains("ENT-DTL-ENS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENS") ? "" : "block;")"
-                        href="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"#NwEntityHistory":"")" id="Nw_EntityHistory" onclick="si.GetNetworkEntityHistory('@Model.system_id','@EntityType.Coupler.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_152</a></li>*@
-                    <!--Reigon Additional Attribute to show the partial view-->
-                    @*<li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_222 @(Model.lstUserModule.Contains("ENT-DTL-ADA")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ADA") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>*@
-                    <!--End Reigon Additional Attribute-->
-                </ul>
-            </div>
-            <div id="divRightMenu" style="display:none;">
-                <span class="spanSide go-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
-                <span class="spanSide" id="dropdown" style="border-left: 1px solid #b9b7b7;     margin-left: -4px;"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
-                <div class="arrowDropUp"></div>
-               
+        <!-- Message Pop-up -->
+        @pageMessage()
+
+        <div class="libTabs">
+            <div class="scrollmenu">
+                <div><span class="spanSide go-left" id="spnRightMenu" style="display:none;"><i class="fa fa-angle-left" aria-hidden="true"></i></span></div>
+                <div class="scrollerhide overflow-hidden">
+                    <ul class="nav nav-tabs tabs-left">
+                        <li class="active"><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                        @*<li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_152 @(Model.lstUserModule.Contains("ENT-DTL-ENS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENS") ? "" : "block;")"
+                            href="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"#NwEntityHistory":"")" id="Nw_EntityHistory" onclick="si.GetNetworkEntityHistory('@Model.system_id','@EntityType.Coupler.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_152</a></li>*@
+                        <!--Reigon Additional Attribute to show the partial view-->
+                        @*<li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_222 @(Model.lstUserModule.Contains("ENT-DTL-ADA")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ADA") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>*@
+                        <!--End Reigon Additional Attribute-->
+                    </ul>
+                </div>
+                <div id="divRightMenu" style="display:none;">
+                    <span class="spanSide go-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                    <span class="spanSide" id="dropdown" style="border-left: 1px solid #b9b7b7;     margin-left: -4px;"><i class="fa fa-angle-down" aria-hidden="true"></i></span>
+                    <div class="arrowDropUp"></div>
+
+                </div>
             </div>
         </div>
-    </div>
-    <div class="TabContent--max-over">
-        <!-- Tab panes -->
-        <div class="tab-content">
-            <div class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"tab-pane active":"tab-pane active dvdisabled")" id="GISInfo">
-                <fieldset class="the-fieldset">
-                    <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_052</legend>
+        <div class="TabContent--max-over">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"tab-pane active":"tab-pane active dvdisabled")" id="GISInfo">
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_052</legend>
 
-                    <div class="form-group row">
+                        <div class="form-group row">
 
-                        <label class="col-md-2 col-sm-2" for="txtSiteId">Site Id<i class="clsMandatory">*</i> :</label>
-                        <div class="col-md-4 col-sm-4 mrgn_btm">
-                            @Html.TextBoxFor(m => m.site_id, new { @class = "form-control", @id = "txtSiteId" })
-                        </div>
+                            <label class="col-md-2 col-sm-2" for="txtSiteId">Site Id<i class="clsMandatory">*</i> :</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.site_id, new { @class = "form-control", @id = "txtSiteId" })
+                            </div>
 
-                        <label class="col-md-2 col-sm-2" for="txtSiteId">Site Name<i class="clsMandatory">*</i> :</label>
-                        <div class="col-md-4 col-sm-4 mrgn_btm">
-                            @Html.TextBoxFor(m => m.site_name, new { @class = "form-control", @id = "txtSiteName" })
-                        </div>
-
+                            <label class="col-md-2 col-sm-2" for="txtSiteId">Site Name<i class="clsMandatory">*</i> :</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.site_name, new { @class = "form-control", @id = "txtSiteName" })
+                            </div>
 
 
-                        <label class="col-md-2 col-sm-2" for="txtLatitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_106<i class="clsMandatory">*</i>:</label>
-                        <div class="col-md-4 col-sm-4 mrgn_btm">
-                            @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @id = "txtLatitude", @readonly = true })
-                        </div>
 
-                        <label class="col-md-2 col-sm-2" for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_012<i class="clsMandatory">*</i>:</label>
-                        <div class="col-md-4 col-sm-4 mrgn_btm">
-                            @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @id = "txtLongitude", @readonly = true })
-                        </div>
+                            <label class="col-md-2 col-sm-2" for="txtLatitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_106<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @id = "txtLatitude", @readonly = true })
+                            </div>
 
-
-                        <label class="col-md-2 col-sm-2" for="txtTXType">Tx Type<i class="clsMandatory">*</i> :</label>
-                        <div class="col-md-4 col-sm-4 mrgn_btm">
-                            @Html.TextBoxFor(m => m.tx_type, new { @class = "form-control", @id = "txtTXType" })
-                        </div>
+                            <label class="col-md-2 col-sm-2" for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_012<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @id = "txtLongitude", @readonly = true })
+                            </div>
 
 
-                        <label class="col-md-2 col-sm-2" for="txtTXTechnology">Tx Technology<i class="clsMandatory">*</i>:</label>
-                        <div class="col-md-4 col-sm-4 mrgn_btm">
-                            @Html.TextBoxFor(m => m.tx_technology, new { @class = "form-control", @id = "txtTXTechnology" })
-                        </div>
+                            <label class="col-md-2 col-sm-2" for="txtTXType">Tx Type<i class="clsMandatory">*</i> :</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.tx_type, new { @class = "form-control", @id = "txtTXType" })
+                            </div>
 
-                        
+
+                            <label class="col-md-2 col-sm-2" for="txtTXTechnology">Tx Technology<i class="clsMandatory">*</i>:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.tx_technology, new { @class = "form-control", @id = "txtTXTechnology" })
+                            </div>
+
+
                             <label class="col-md-2 col-sm-2" for="txtTXSegment">Tx Segment<i class="clsMandatory">*</i>:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.tx_segment, new { @class = "form-control", @id = "txtTXSegment" })
                             </div>
-                       
-                       
+
+
                             <label class="col-md-2 col-sm-2" for="txtTXRing">Tx Ring<i class="clsMandatory">*</i>:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.tx_ring, new { @class = "form-control", @id = "txtTXRing", @maxlength = "100" })
                             </div>
-                        
-                        
+
+
                             <label class="col-md-2 col-sm-2" for="txtAddress">Address<i class="clsMandatory">*</i>:</label>
                             <div class="col-md-10 col-sm-10 mrgn_btm">
-                                @Html.TextBoxFor(m => m.address, new { @class = "form-control", @id = "txtAddress",  @maxlength = "100" })
+                                @Html.TextBoxFor(m => m.address, new { @class = "form-control", @id = "txtAddress", @maxlength = "100" })
                             </div>
-                        
-                        
+
+
                             <label class="col-md-2 col-sm-2" for="txtDistrict">District<i class="clsMandatory">*</i>:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.district, new { @class = "form-control", @id = "txtDistrict" })
                             </div>
-                       
-                        
+
+
                             <label class="col-md-2 col-sm-2" for="txtOwnerName">Owner<i class="clsMandatory">*</i>:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.owner_name, new { @class = "form-control", @id = "txtOwnerName" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtLinkId">Link Id<i class="clsMandatory">*</i>:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.link_id, new { @class = "form-control", @id = "txtLinkId" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtOnAirDate">On Air Date:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.on_air_date, new { @class = "form-control", @id = "txtOnAirDate" })
                             </div>
-                       
+
                             <label class="col-md-2 col-sm-2" for="txtRemovedDate">Removed Date:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.removed_date, new { @class = "form-control", @id = "txtRemovedDate" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtProvince">Province:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.province, new { @class = "form-control", @id = "txtProvince" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtRegionAddress">Region Address:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.region_address, new { @class = "form-control", @id = "txtRegionAddress" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtDepot">Depot:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.depot, new { @class = "form-control", @id = "txtDepot" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtDsDivision">Ds Division:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.ds_division, new { @class = "form-control", @id = "txtDsDivision" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtLocalAuthority">Local Authority:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.local_authority, new { @class = "form-control", @id = "txtLocalAuthority" })
                             </div>
-                       
+
                             <label class="col-md-2 col-sm-2" for="txtAccess247">Access 24 X 7:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
                                 @Html.TextBoxFor(m => m.access_24_7, new { @class = "form-control", @id = "txtAccess247" })
                             </div>
-                       
+
                             <label class="col-md-2 col-sm-2" for="txtTowerType">Tower Type:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.tower_type, new { @class = "form-control", @id = "txtTowerType" })
                             </div>
-                       
+
                             <label class="col-md-2 col-sm-2" for="txtTowerHeight">Tower Height:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.tower_height, new { @class = "form-control", @id = "txtTowerHeight" })
                             </div>
-                       
+
                             <label class="col-md-2 col-sm-2" for="txtCabinetType">Cabinet Type:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm ">
                                 @Html.TextBoxFor(m => m.cabinet_type, new { @class = "form-control", @id = "txtCabinetType" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtSolutionType">Solution Type:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.solution_type, new { @class = "form-control", @id = "txtSolutionType" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtSiteRank">Site Rank:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.site_rank, new { @class = "form-control", @id = "txtSiteRank" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtSelfTXTraffic">Self Tx Traffic:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.self_tx_traffic, new { @class = "form-control", @id = "txtSelfTXTraffic" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtAggTXTraffic">Agg Tx Traffic:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.agg_tx_traffic, new { @class = "form-control", @id = "txtAggTXTraffic" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtCSRCount">CSR Count:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.csr_count, new { @class = "form-control", @id = "txtCSRCount", @onkeydown = "return ValidateNumberDecimal(this,event,10,0);" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtDTICircuit">Dti Circuit:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.dti_circuit, new { @class = "form-control", @id = "txtDTICircuit", @onkeydown = "return ValidateNumberDecimal(this,event,10,0);" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtAgg1">Agg1:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.agg_01, new { @class = "form-control", @id = "txtAgg1" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtAgg2">Agg2:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.agg_02, new { @class = "form-control", @id = "txtAgg2" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtRegion">Region:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.region, new { @class = "form-control", @id = "txtRegion" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtBandwidth">Bandwidth:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.bandwidth, new { @class = "form-control", @id = "txtBandwidth", @onkeydown = "return ValidateNumberDecimal(this,event,10,0);" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtRingType">Ring Type:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.ring_type, new { @class = "form-control", @id = "txtRingType" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtAlias">Alias:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.alias_name, new { @class = "form-control", @id = "txtAlias" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2" for="txtMetroRingUtilzation">Metro Ring Utilzation:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
                                 @Html.TextBoxFor(m => m.metro_ring_utilization, new { @class = "form-control", @id = "txtMetroRingUtilzation", @onkeydown = "return ValidateNumberDecimal(this,event,10,2);" })
                             </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtTxAgg">TX Agg:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.tx_agg, new { @class = "form-control", @id = "txtTxAgg" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtBhStatus">BH Status:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.bh_status, new { @class = "form-control", @id = "txtBhStatus" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtElevation">Elevation:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.elevation, new { @class = "form-control", @id = "txtElevation" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtSegment">Segment:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.segment, new { @class = "form-control", @id = "txtSegment" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtRing">Ring:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.ring, new { @class = "form-control", @id = "txtRing" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtMaximumCost">Maximum Cost:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.maximum_cost, new { @class = "form-control", @id = "txtMaximumCost",@onkeydown = "return ValidateNumberDecimal(this,event,10,0);" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtProjectCategory">Project Category:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.project_category, new { @class = "form-control", @id = "txtProjectCategory" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtPriority">Priority:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.priority, new { @class = "form-control", @id = "txtPriority" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtNoOfCores">No Of Cores:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.no_of_cores, new { @class = "form-control", @id = "txtNoOfCores" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtFiberLinkType">Fiber Link Type:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.fiber_link_type, new { @class = "form-control", @id = "txtFiberLinkType" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtComment">Comment:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.comment, new { @class = "form-control", @id = "txtComment" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtPlanCost">Plan Cost:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.plan_cost, new { @class = "form-control", @id = "txtPlanCost" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtFiberDistance">Fiber Distance:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.fiber_distance, new { @class = "form-control", @id = "txtFiberDistance" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtFiberLinkCode">Fiber Link Code:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.fiber_link_code, new { @class = "form-control", @id = "txtFiberLinkCode" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtPortType">Port Type:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.port_type, new { @class = "form-control", @id = "txtPortType" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtDestinationSiteId">Destination Site ID:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.destination_site_id, new { @class = "form-control", @id = "txtDestinationSiteId" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtDestinationPortType">Destination Port Type:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.destination_port_type, new { @class = "form-control", @id = "txtDestinationPortType" })
+                            </div>
+
+                            <label class="col-md-2 col-sm-2" for="txtDestinationNoOfCores">Destination No Of Cores:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.destination_no_of_cores, new { @class = "form-control", @id = "txtDestinationNoOfCores" })
+                            </div>
+                            <label class="col-md-2 col-sm-2" for="txtProjectIDDialog">Project ID:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.TextBoxFor(m => m.project_id_dialog, new { @class = "form-control", @id = "txtProjectIDDialog" })
+                            </div>
                         </div>
-                   
-                </fieldset>
-               
+
+                    </fieldset>
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_GBL_FRM_001</legend>
+                        @ProjectSpecifications()
+                    </fieldset>
+
+                </div>
+
+                <!--Reigon Additional Attribute to show the partial view-->
+                <!--End Reigon Additional Attribute-->
+
             </div>
-
-            <!--Reigon Additional Attribute to show the partial view-->
-           
-            <!--End Reigon Additional Attribute-->
-          
         </div>
-    </div>
 
-    <div class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"d-flex ModalFooter":"d-flex ModalFooter dvdisabled")" id="dvBtnAction">
-        @*<div class="col-sm-8 clsIsVirtual" style="text-align:right">
-                @Html.CheckBoxFor(m => m.is_virtual) <span>@Resources.Resources.SI_OSP_SC_NET_FRM_005</span>
-            </div>*@
-        @if (Model.system_id > 0)
-            {
-        <div class="ModelFooterInfo">
-            <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_014:</label>
-            <label class="model-label-info">@(Model.network_status != null ? Utility.MiscHelper.GetNetworkStatus(Model.network_status.ToUpper()) : string.Empty)</label>
-            <label for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_007:</label>
-            <label class="model-label-info"> title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
-        </div>
-            }
-        <div class="ml-auto">
-            <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCancelAssignRoute">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+        <div class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"d-flex ModalFooter":"d-flex ModalFooter dvdisabled")" id="dvBtnAction">
+            @*<div class="col-sm-8 clsIsVirtual" style="text-align:right">
+                    @Html.CheckBoxFor(m => m.is_virtual) <span>@Resources.Resources.SI_OSP_SC_NET_FRM_005</span>
+                </div>*@
             @if (Model.system_id > 0)
+            {
+                <div class="ModelFooterInfo">
+                    <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_014:</label>
+                    <label class="model-label-info">@(Model.network_status != null ? Utility.MiscHelper.GetNetworkStatus(Model.network_status.ToUpper()) : string.Empty)</label>
+                    <label for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_007:</label>
+                    <label class="model-label-info"> title="@(Model.created_on != null ? Utility.MiscHelper.FormatDateTime(Model.created_on.ToString()) : string.Empty)">@(Model.created_on != null ? Utility.MiscHelper.TimeAgo(Model.created_on.ToString()) : string.Empty)</label>
+                </div>
+            }
+            <div class="ml-auto">
+                <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCancelAssignRoute">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                @if (Model.system_id > 0)
                 {
-            <button type="button" onclick="formPost();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                    <button type="button" onclick="formPost();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnUpdateItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
                 }
                 else
                 {
-            <button type="button" onclick="formPost();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+                    <button type="button" onclick="formPost();" class="btn btn-primary @(editPermission==true?"":"dvdisabled")" id="btnSaveItemTemplate">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
                 }
 
+            </div>
         </div>
-    </div>
-    <div class="clearfix"></div>
+        <div class="clearfix"></div>
     }
 </div>
 <script>
     $(document).ready(function () {
         callFormValidator("frmAddSite");
-       // $('.chosen-select').chosen({ width: '100%' });
+        // $('.chosen-select').chosen({ width: '100%' });
         //APPLY INPUT MASK ON NETWORK ID..
-      
-      //  $("#frmAddSite").on("submit", function () {
-           // $("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
-            //For AdditionalAttributes to set json and saving
-           // additionalAttributesUtility.SetJsonValue("#frmOtherInfo", "#hdnOtherInfo");
-            //end region AdditionalAttributes
-            if (!entityReferencevalidation())
-                return false;
-       // });
+
+        //  $("#frmAddSite").on("submit", function () {
+        // $("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
+        //For AdditionalAttributes to set json and saving
+        // additionalAttributesUtility.SetJsonValue("#frmOtherInfo", "#hdnOtherInfo");
+        //end region AdditionalAttributes
+        if (!entityReferencevalidation())
+            return false;
+        // });
         $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
     });
     function formPost() {
-         
+
         //if ($('#txtbomsubcategory').val() == '') {
         //    $('#txtbomsubcategory').next().addClass('input-validation-error');
         //    return false;
-       // }
-       // else {
-            $("#frmAddSite").submit();
+        // }
+        // else {
+        $("#frmAddSite").submit();
         //}
     }
 </script>

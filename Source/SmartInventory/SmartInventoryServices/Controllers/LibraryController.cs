@@ -15735,7 +15735,7 @@ namespace SmartInventoryServices.Controllers
                 Site obj = ReqHelper.GetRequestData<Site>(data);
                 Site objSite = GetSiteDetail(obj);
                 //BLItemTemplate.Instance.BindItemDropdowns(objSite, EntityType.Site.ToString());
-                //fillProjectSpecifications(objSite);
+                fillProjectSpecifications(objSite);
                 //BindCouplerDropDown(objSite);
                 // objSite.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Site.ToString()).ToList();
                 //Get the layer details to bind additional attributes Coupler
@@ -15863,7 +15863,7 @@ namespace SmartInventoryServices.Controllers
                 {
                     //BLItemTemplate.Instance.BindItemDropdowns(objSite, EntityType.Site.ToString());
                     // RETURN PARTIAL VIEW WITH MODEL DATA
-                    // fillProjectSpecifications(objSite);
+                     fillProjectSpecifications(objSite);
                     //  BindCouplerDropDown(objSite);
                     //Get the layer details to bind additional attributes Coupler
                     //var layerdetails = new BLLayer().getLayer(EntityType.Site.ToString());
