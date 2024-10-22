@@ -13130,7 +13130,7 @@ namespace SmartInventory.Controllers
         public ActionResult SaveSite(Site objsite, bool isDirectSave = false)
         {
             objsite.created_by = Convert.ToInt32(Session["user_id"]);
-            objsite.network_status = "A";
+            //objsite.network_status = "A";
             string url = "api/Library/EntityOperations";
             var response = WebAPIRequest.PostIntegrationAPIRequest<Site>(url, objsite, EntityType.Site.ToString(), EntityAction.Save.ToString());
             if (isDirectSave)

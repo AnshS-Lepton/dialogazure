@@ -34,6 +34,9 @@
         @Html.HiddenFor(m => m.system_id)
         @Html.HiddenFor(m => m.geom)
         @Html.HiddenFor(m => m.networkIdType)
+        @Html.HiddenFor(m => m.parent_system_id)
+        @Html.HiddenFor(m => m.parent_entity_type)
+        @Html.HiddenFor(m => m.parent_network_id)
         //@Html.HiddenFor(m => m.site_id)
         @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
         //Add the other_info as hidden field for additional attributes
@@ -286,7 +289,7 @@
 
                             <label class="col-md-2 col-sm-2" for="txtMaximumCost">Maximum Cost:</label>
                             <div class="col-md-4 col-sm-4 mrgn_btm">
-                                @Html.TextBoxFor(m => m.maximum_cost, new { @class = "form-control", @id = "txtMaximumCost",@onkeydown = "return ValidateNumberDecimal(this,event,10,0);" })
+                                @Html.TextBoxFor(m => m.maximum_cost, new { @class = "form-control", @id = "txtMaximumCost", @onkeydown = "return ValidateNumberDecimal(this,event,10,0);" })
                             </div>
 
                             <label class="col-md-2 col-sm-2" for="txtProjectCategory">Project Category:</label>

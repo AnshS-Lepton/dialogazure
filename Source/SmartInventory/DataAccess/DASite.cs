@@ -98,7 +98,8 @@ namespace DataAccess
                 {
                     site.created_by = userId;
                     site.created_on = DateTimeHelper.Now;
-                   
+                    site.network_status = String.IsNullOrEmpty(site.network_status) ? "P" : site.network_status;
+
                     var resultItem = repo.Insert(site);
                     // Save geometry
                     InputGeom geom = new InputGeom();

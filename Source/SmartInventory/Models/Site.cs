@@ -75,9 +75,9 @@ namespace Models
         public string solution_type { get; set; }
 
         public int site_rank { get; set; }
-        public int self_tx_traffic { get; set; }
-        public int agg_tx_traffic { get; set; }
-        public int metro_ring_utilization { get; set; }
+        public Decimal self_tx_traffic { get; set; }
+        public Decimal agg_tx_traffic { get; set; }
+        public Decimal metro_ring_utilization { get; set; }
         public int csr_count { get; set; }
         public int dti_circuit { get; set; }
         public string agg_01 { get; set; }
@@ -164,5 +164,11 @@ namespace Models
         public List<WorkorderCodeMaster> lstBindWorkorderCode { get; set; }
         [NotMapped]
         public List<PurposeCodeMaster> lstBindPurposeCode { get; set; }
+    }
+    public class ApiResponse
+    {
+        public string Status_Code { get; set; }
+        public string Status_Description { get; set; }
+        public List<Site> Response { get; set; }
     }
 }
