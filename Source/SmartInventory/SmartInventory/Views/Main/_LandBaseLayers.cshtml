@@ -1,7 +1,21 @@
 ﻿@model List<Models.landBaseLayres>
 @using SmartInventory.Settings;
-<link href="~/Content/css/LandBase.css" rel="stylesheet" />
-<script src="~/Content/js/LandBase.js"></script>
+
+@*included in the bundle*@
+
+@Styles.Render("~/LandBase")
+
+
+@Scripts.Render("~/bundles/LandBase")
+
+
+@*<link href="~/Content/css/LandBase.css" rel="stylesheet" />
+<script src="~/Content/js/LandBase.js"></script>*@
+
+@*included in the bundle*@
+
+
+
 @{
     var userModuleList = (List<string>)Session["ApplicableModuleList"];
     var lBaseMaxWidthLimit = ApplicationSettings.lBaseMaxWidthLimit;
@@ -172,9 +186,9 @@
                                 {
                                     <div style="font-size:15px; display: inline-block;color:@objLayer.map_bg_color;"></div>
                                     <img src=@objLayer.icon_path alt="">
-                                    }
-                                    else
-                                    {
+                                }
+                                else
+                                {
                                     <div class="icon-LBPoint" style="font-size:15px; display: inline-block;color:@objLayer.map_bg_color;"></div>
                                 }
                             }
