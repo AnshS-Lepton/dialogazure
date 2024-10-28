@@ -5514,7 +5514,6 @@ namespace SmartInventory.Controllers
 						//objUtilizationEntitiesReport.objReportFilters.SelectedProvinceIds = (Filterobj.Count > 0) ? Filterobj.Where(x => Convert.ToInt32(x.id) == objUtilizationEntitiesReport.lstLayers[i].layer_id).Select(x => x.data.province_id).ToList()[0].ToString() : objUtilizationEntitiesReport.objReportFilters.SelectedProvinceIds;
 						var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objUtilizationEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 						List<Dictionary<string, string>> lstUtilizationEntitiesDetail = new BLLayer().GetUtilizationReportSummaryView(objUtilizationEntitiesReport.objReportFilters);
-						lstUtilizationEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstUtilizationEntitiesDetail);
 
 						DataTable dtReport = new DataTable();
 						dtReport = MiscHelper.GetDataTableFromDictionaries(lstUtilizationEntitiesDetail);
@@ -6036,7 +6035,6 @@ namespace SmartInventory.Controllers
 						//objUtilizationEntitiesReport.objReportFilters.SelectedProvinceIds = (Filterobj.Count > 0) ? Filterobj.Where(x => Convert.ToInt32(x.id) == objUtilizationEntitiesReport.lstLayers[i].layer_id).Select(x => x.data.province_id).ToList()[0].ToString() : objUtilizationEntitiesReport.objReportFilters.SelectedProvinceIds;
 						var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objUtilizationEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 						List<Dictionary<string, string>> lstUtilizationEntitiesDetail = new BLLayer().GetUtilizationReportSummaryView(objUtilizationEntitiesReport.objReportFilters);
-						lstUtilizationEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstUtilizationEntitiesDetail);
 
 						DataTable dtReport = new DataTable();
 						dtReport = MiscHelper.GetDataTableFromDictionaries(lstUtilizationEntitiesDetail);
