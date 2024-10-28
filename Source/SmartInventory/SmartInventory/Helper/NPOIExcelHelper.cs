@@ -22,6 +22,9 @@ using iTextSharp.tool.xml.html.head;
 using Microsoft.SqlServer.Server;
 using Utility;
 using NPOI.SS.Formula.Functions;
+using SmartInventory.Settings;
+using OfficeOpenXml;
+
 
 namespace SmartInventory.Helper
 {
@@ -874,6 +877,61 @@ namespace SmartInventory.Helper
 
 
             return workbook;
+        }
+
+        public static void ExportToExcel(DataSet dataSet, string fileName)
+        {
+            try
+            {
+                // Set the LicenseContext for EPPlus
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+                using (ExcelPackage excelPackage = new ExcelPackage())
+                {
+                    // Iterate through each DataTable in the DataSet
+                    foreach (DataTable table in dataSet.Tables)
+                    {
+                        // Add a new worksheet to the Excel package
+                        ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add(table.TableName);
+
+                        // Load the DataTable into the worksheet, starting from cell A1
+                        worksheet.Cells["A1"].LoadFromDataTable(table, true);
+
+                        // Optional: Set some formatting (for headers)
+                        using (var range = worksheet.Cells["A1:" + worksheet.Dimension.End.Address])
+                        {
+                            range.AutoFitColumns();
+                            using (var headerCells = worksheet.Cells[1, 1, 1, table.Columns.Count])
+                            {
+                                headerCells.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                headerCells.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
+                            }
+                            // range.Style.Border.BorderAround(OfficeOpenXml.BorderStyle.Thin);
+                        }
+                    }
+
+                    // Create a memory stream to save the Excel package
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        excelPackage.SaveAs(memoryStream);
+
+                        // Send the file to the client for download
+                        memoryStream.Position = 0; // Reset the stream position
+                        var response = HttpContext.Current.Response;
+                        response.Clear();
+                        response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        response.AddHeader("content-disposition", "attachment; filename=" + fileName + ".xlsx");
+                        memoryStream.WriteTo(response.OutputStream);
+                        response.Flush();
+                        response.End();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception as necessary (e.g., logging)
+                throw; // You might want to throw the exception to handle it upstream
+            }
         }
 
         public static IWorkbook DatasetToExcel(string extension, DataSet ds, bool isDataContainBarcode = false)

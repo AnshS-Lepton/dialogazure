@@ -11,6 +11,8 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 using System.Globalization;
+using System.IO;
+using System.Configuration;
 
 namespace Utility
 {
@@ -381,6 +383,81 @@ namespace Utility
             return "";
         }
 
+        public static void UpdateFileName(string newFileName, string oldFileName)
+        {
+            try
+            {
+                LogHelper.GetInstance.WriteApplicationEventLog("uploading start " + "| existing file path " + oldFileName);
+
+                if (File.Exists(oldFileName))
+                {
+                    // Rename the file
+                    File.Copy(oldFileName, newFileName);
+                    LogHelper.GetInstance.WriteApplicationEventLog("uploading completed");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.GetInstance.WriteApplicationEventLog("upload file error " + ex.Message);
+
+            }
+        }
+
+        public static void DeleteFile(string directoryPath)
+        {
+            if (Directory.Exists(directoryPath))
+            {
+                // Get all files in the directory
+                string[] files = Directory.GetFiles(directoryPath, $"*Version*");
+
+                foreach (string file in files)
+                {
+                    try
+                    {
+                        LogHelper.GetInstance.WriteApplicationEventLog("upload file Name 1");
+                        if (file.Length > 0)
+                            File.Delete(file);
+                    }
+                    catch { }
+                }
+            }
+        }
+
+        public static string getVersion()
+        {
+            // Option 1: Use a hardcoded version number
+            var version = GetAppSetting("AppVersion");
+
+            // Option 2: Use a timestamp or file modification date for dynamic versioning
+            // var version = DateTime.Now.ToString("yyyyMMddHHmmss");
+
+            return version;
+        }
+
+        // Method to dynamically get a string value from appSettings based on a key
+        public static string GetAppSetting(string key)
+        {
+            string value = ConfigurationManager.AppSettings[key];
+            if (string.IsNullOrEmpty(value))
+            {
+                throw new Exception($"Key '{key}' not found in appSettings.");
+            }
+            return value;
+        }
+
+        public static string getFilePath(bool isProduction, string basePath,string fileName,string extension)
+        {
+            // Default value path for the file
+            string responseData = basePath  + fileName + extension;
+           
+            // Get the version string from the utility
+            var appVersion = getVersion();
+          
+            if(isProduction)
+                responseData = basePath + fileName + "Version." + appVersion + extension;
+
+            return responseData;
+        }
 
 
     }

@@ -283,7 +283,7 @@ namespace DataAccess
 
 
         public User ChkUserExist(string username)
-        {
+       {
             try
             {
                 User ObjUser = new User();
