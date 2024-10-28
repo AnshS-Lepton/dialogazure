@@ -6,7 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1" />
     <link id="favicon" rel="shortcut icon" href="@ApplicationSettings.ClientFavicon" type="image/x-icon" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+   
+
     <link href="~/Content/css/color_stylesheet.css" rel="stylesheet" />
+
+  
+
     @Styles.Render("~/css")
     <script type="text/javascript">
 
@@ -188,14 +193,29 @@
     @*<script src="~/Areas/Admin/Content/js/jquery.min.js"></script>*@
     @if (ApplicationSettings.IsSignalRIsEnable == 1)
     {
-    <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
-    <script src="~/SignalR/hubs"></script>
-    <script src="~/Content/js/NotifySignalR.js"></script>
-    }
-    <script src="~/Content/js/datauploader.js"></script>
-    <script src="~/Content/js/regionprovincedatauploader.js"></script>
-    <script src="~/Content/js/LandBase.js"></script>
+        <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
+        <script src="~/SignalR/hubs"></script>
 
+        @*included in the bundle*@
+        @Scripts.Render("~/bundles/NotifySignalR")
+        @*<script src="~/Content/js/NotifySignalR.js"></script>*@
+
+        @*included in the bundle*@
+    }
+
+
+    @*included in the bundle*@
+
+    @Scripts.Render("~/bundles/datauploader")
+    @Scripts.Render("~/bundles/regionprovincedatauploader")
+
+    @*<script src="~/Content/js/LandBase.js"></script>
+        <script src="~/Content/js/datauploader.js"></script>
+        <script src="~/Content/js/regionprovincedatauploader.js"></script>
+    *@
+
+
+    @*included in the bundle*@
     <script type="text/javascript">
         var PostCount = 0;
         var si = new Main();
@@ -277,7 +297,7 @@
                 $('.logout').slideUp(500); // slide up logout menu
                 $('#dvNELibrary').hide('slide', { direction: 'right' }, 500); // hide library menu while clicking on other link or button
                 getAddressRemoveActiveClass() // remove activeGoogIcon class from get address map icons
-                 //var dropdownList = $(".dropDownMenu li ul");
+                //var dropdownList = $(".dropDownMenu li ul");
                 //var dropdownOffset = $(this).offset();
                 //var offsetLeft = dropdownOffset.left + 120; // adjust dropdown position, when no space left from right side
                 //var dropdownWidth = dropdownList.width();
@@ -320,7 +340,7 @@
                 $('#' + modelId + ' [class*=_content]').toggleClass('minimize', function () {
                     $('#' + modelId + ' .collapseModel>i').toggleClass('fa-plus').toggleClass('fa-clone');
                     if ($('#' + modelId + ' [class*=_content]').hasClass('minimize')) {
-                      //  $('#' + modelId + ' [class*=_content]').css('height', '33px');
+                        //  $('#' + modelId + ' [class*=_content]').css('height', '33px');
                         //$('.modal-backdrop').hide();
                         //$apnData.removeClass('modal');
                         //$apnData.addClass('MinMax');

@@ -1,11 +1,81 @@
-﻿using System.Web.Optimization;
+﻿using System.Configuration;
+using System.Web.Optimization;
+using Utility;
 namespace SmartInventory
 {
     public class BundleConfig
     {
+       
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
+            string environment = CommonUtility.GetAppSetting("Environment").ToUpper();
+            //set environment to local OR production here
+            bool isLocal = environment == "LOCAL";
+           // set js file path here 
+            string baseJsPath = "~/Content/js/";
+            string jsExtension = ".js";
+            // set css file path here
+            string baseCssPath = "~/Content/css/";
+            string cssExtension = ".css";
+            // Enable CDN usage
+            bundles.UseCdn = true;
+            #region Js file path
+
+            // Get the version string from the Webconfig
+              string appVersion = CommonUtility.GetAppSetting("AppVersion");
+
+            
+            #endregion
+
+            #region Css  file path
+
+           // string splicingCssPath = isLocal ? Base_csspath + $"/SplicingVersion.{appVersion}.css" : Base_csspath +"/Splicing.css";
+          
+            #endregion
+           
+            #region datauploader
+            bundles.Add(new ScriptBundle("~/bundles/datauploader").Include(
+                      CommonUtility.getFilePath(isLocal,baseJsPath, "datauploader", jsExtension)
+                      ));
+            #endregion
+            #region regionprovincedatauploader
+            bundles.Add(new ScriptBundle("~/bundles/regionprovincedatauploader").Include(
+                      CommonUtility.getFilePath(isLocal, baseJsPath, "regionprovincedatauploader", jsExtension)
+                      ));
+            #endregion
+            #region jspdf.min
+            bundles.Add(new ScriptBundle("~/bundles/jspdf_min").Include(
+                      CommonUtility.getFilePath(isLocal, baseJsPath, "jspdf.min", jsExtension)
+                      ));
+            #endregion
+            #region canvg.min
+            bundles.Add(new ScriptBundle("~/bundles/canvg_min").Include(
+                      CommonUtility.getFilePath(isLocal, baseJsPath, "canvg.min", jsExtension)
+                      ));
+            #endregion
+            #region html2canvas
+            bundles.Add(new ScriptBundle("~/bundles/html2canvas").Include(
+                     CommonUtility.getFilePath(isLocal, baseJsPath, "html2canvas", jsExtension)
+                      ));
+            #endregion
+            #region NotifySignalR
+            bundles.Add(new ScriptBundle("~/bundles/NotifySignalR").Include(
+                      CommonUtility.getFilePath(isLocal, baseJsPath, "NotifySignalR", jsExtension)
+                      ));
+            #endregion
+            #region Landbase
+
+            bundles.Add(new StyleBundle("~/LandBase")
+
+                        .Include(CommonUtility.getFilePath(isLocal, baseJsPath, "LandBase", cssExtension), new CssRewriteUrlTransformWrapper())
+                       );
+
+            bundles.Add(new ScriptBundle("~/bundles/LandBase").Include(
+                        CommonUtility.getFilePath(isLocal, baseJsPath, "LandBase", jsExtension)
+                        ));
+
+            #endregion
 
             #region Login
 
@@ -34,14 +104,14 @@ namespace SmartInventory
                         "~/Content/js/bootstrap/bootstrap.js",
                         "~/Content/js/bootstrap/bootstrap-slider.js",
                          "~/Content/js/googlewms.min.js",
-                        "~/Content/js/Main.js",
+                        CommonUtility.getFilePath(isLocal, baseJsPath, "Main", jsExtension),
                         "~/Content/js/distanceWidget.js",
                          "~/Content/js/SpliceTray.js",
                         "~/Content/js/jquery.cookie.js",
                         "~/Content/js/jquery.treeview.js",
-                        "~/Content/js/Utility.js",
+                        CommonUtility.getFilePath(isLocal, baseJsPath, "Utility", jsExtension),
                          "~/Scripts/APIHandler.js",
-                        "~/Content/js/ModalPopUp.js",
+                         CommonUtility.getFilePath(isLocal, baseJsPath, "ModalPopUp", jsExtension),
                         "~/Content/js/mapCore.js",
                         "~/Content/js/Alert.js",
                         "~/Content/js/keydragzoom_packed.js",
@@ -54,8 +124,8 @@ namespace SmartInventory
                         //"~/Content/js/InputMask/dx.all.js",
                         "~/Content/js/survey.js",
                         "~/Content/js/oms.min.js",
-                        // "~/Content/js/OSPSplice.js",
-                        "~/Content/js/Splicing.js",
+                       // "~/Content/js/OSPSplice.js",
+                       CommonUtility.getFilePath(isLocal, baseJsPath, "Splicing", jsExtension),
                         "~/Content/js/Splice/Js-Plumb-1.4.1.min.js",
                         "~/Content/js/jquery.orbit-1.2.3.min.js",
                         "~/Content/js/LightBox/js/lightbox.min.js",
@@ -75,9 +145,7 @@ namespace SmartInventory
 
                         ));
 
-            bundles.Add(new StyleBundle("~/css")
-                        .Include("~/Content/css/color_stylesheet.css", new CssRewriteUrlTransformWrapper())
-                        .Include("~/Content/css/jquery-ui.css", new CssRewriteUrlTransformWrapper())
+            bundles.Add(new StyleBundle("~/css").Include("~/Content/css/jquery-ui.css", new CssRewriteUrlTransformWrapper())
                         .Include("~/Content/css/bootstrap.css", new CssRewriteUrlTransformWrapper())
                         .Include("~/Content/css/main.css", new CssRewriteUrlTransformWrapper())
                         .Include("~/Content/css/tab-scroll.css", new CssRewriteUrlTransformWrapper())
@@ -97,7 +165,7 @@ namespace SmartInventory
                         .Include("~/Content/js/ColorPicker/spectrum.css", new CssRewriteUrlTransformWrapper())
                         .Include("~/Content/css/Splicing.css", new CssRewriteUrlTransformWrapper())
                         .Include("~/Content/css/animate.min.css", new CssRewriteUrlTransformWrapper())
-                    //.Include("~/Content/css/Equipment/equipment.css", new CssRewriteUrlTransformWrapper())
+                       
                     );
 
 

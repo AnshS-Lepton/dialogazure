@@ -47,7 +47,7 @@
         sessionStorage.setItem("hdnNEBuffer", $("#txtNEBuffer").val());
         $("#hdnNEBuffer").val($("#txtNEBuffer").val());
         var className = $('#LigroupLibarary').attr('class');
-        if (className =='btn-success active')
+        if (className == 'btn-success active')
             si.initDistanceWidget_GroupLibrary($("#hdnNEBuffer").val(), si.LatLngGlobelLibBuffer, si.mapListners["TempLibItm"], true);
         else {
             var marker = ((si.mapListners["TempLibItm"] == undefined || si.mapListners["TempLibItm"] == null || si.mapListners["TempLibItm"] == '') ? si.gMapObj.infoEntity : si.mapListners["TempLibItm"]);
@@ -785,7 +785,7 @@
 
 
 
-                    
+
                 }
 
                 @if (Model.lstUserModule.Contains("LTK"))
@@ -952,19 +952,19 @@
 
 
                 @if (Model.lstUserModule.Contains("SFS") && ApplicationSettings.isFeasibilityEnabled)
-                    {
+                {
 
 
-                        <a href="@Url.Action("feasibility", "Main")" target="_blank" class="iconBaricomoon" id="Cpfinder" title="@Resources.Resources.SI_GBL_GBL_NET_GBL_001">
+                    <a href="@Url.Action("feasibility", "Main")" target="_blank" class="iconBaricomoon" id="Cpfinder" title="@Resources.Resources.SI_GBL_GBL_NET_GBL_001">
 
-                            <span class="icon-Connection-Path-finder"></span>
+                        <span class="icon-Connection-Path-finder"></span>
 
-                        </a>
+                    </a>
 
 
 
-                        <li class="techSep"></li>
-                    }
+                    <li class="techSep"></li>
+                }
 
 
                 @*@if (Model.lstUserModule.Contains("SPI") && ApplicationSettings.isSmartPlannerEnabled)
@@ -1949,9 +1949,21 @@
         font-weight: bold;
     }
 </style>
-<script src="~/Content/js/jspdf.min.js"></script>
-<script src="~/Content/js/canvg.min.js"></script>
-<script src="~/Content/js/html2canvas.js"></script>
+@*included in the bundle*@
+
+@Scripts.Render("~/bundles/jspdf_min")
+@Scripts.Render("~/bundles/canvg_min")
+@Scripts.Render("~/bundles/html2canvas")
+
+@*<script src="~/Content/js/jspdf.min.js"></script>
+    <script src="~/Content/js/canvg.min.js"></script>
+    <script src="~/Content/js/html2canvas.js"></script>*@
+
+@*included in the bundle*@
+
+
+
+
 <script>
 
 

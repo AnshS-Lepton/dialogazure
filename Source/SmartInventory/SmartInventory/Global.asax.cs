@@ -4,6 +4,7 @@ using SmartInventory.Filters;
 using SmartInventory.Settings;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -18,6 +19,7 @@ namespace SmartInventory
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+            createPublishFile();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             GlobalFilters.Filters.Add(new HandleErrorAttribute());
@@ -38,6 +40,50 @@ namespace SmartInventory
         /// Set language globle in coockis .
         /// 
         /// </summary>
+        /// 
+
+        public void createPublishFile()
+        {
+            if (CommonUtility.GetAppSetting("Environment").ToUpper().ToString() == "LOCAL")
+            {
+                LogHelper.GetInstance.WriteApplicationEventLog("start createPublishFilee start");
+                string directoryjsName = HttpContext.Current.Server.MapPath($"~/Content/js");
+                string directorycssName = HttpContext.Current.Server.MapPath($"~/Content/css");
+                CommonUtility.DeleteFile(directoryjsName);
+                CommonUtility.DeleteFile(directorycssName);
+                LogHelper.GetInstance.WriteApplicationEventLog("start createPublishFile 1");
+                // js file rename
+                string[] jsFileNames = { "Main", "ModalPopUp", "Utility", "Splicing", "NotifySignalR", "regionprovincedatauploader", "LandBase", "datauploader", "jspdf.min", "canvg.min", "html2canvas", };
+               
+              
+                foreach (string fName in jsFileNames)
+                {
+                    string oldFileName = directoryjsName + $"/{fName}.js";
+                    string updatedFileName = directoryjsName+$"/{fName}Version.{CommonUtility.getVersion()}.js";
+                    CommonUtility.UpdateFileName(updatedFileName, oldFileName);
+                }
+                LogHelper.GetInstance.WriteApplicationEventLog("start createPublishFile 2");
+                #region CSSS file rename
+
+              
+                string[] cssFileNames = { "main", "Splicing", "LandBase" };
+                foreach (string fName in cssFileNames)
+                {
+                    string oldFileName = directorycssName +$"/{fName}.css";
+                    // Get app version from wen config file
+                   // string updatedFileName = HttpContext.Current.Server.MapPath($"~/Content/js/PublishFile/css/{fName}.{ConfigurationManager.AppSettings["AppVersion"]}.css");
+
+                    // get app version automatically 
+                   string updatedFileName = directorycssName + $"/{fName}Version.{CommonUtility.getVersion()}.css";
+
+                    CommonUtility.UpdateFileName(updatedFileName, oldFileName);
+                }
+                #endregion
+                LogHelper.GetInstance.WriteApplicationEventLog("start createPublishFile end");
+
+            }
+        }
+
 
         protected void Application_AcquireRequestState(object sender, EventArgs e)
         {
