@@ -11,7 +11,7 @@ namespace SmartInventory
         {
             string environment = CommonUtility.GetAppSetting("Environment").ToUpper();
             //set environment to local OR production here
-            bool isLocal = environment == "LOCAL";
+            bool isProduction = environment == "PRODUCTION";
            // set js file path here 
             string baseJsPath = "~/Content/js/";
             string jsExtension = ".js";
@@ -36,43 +36,43 @@ namespace SmartInventory
            
             #region datauploader
             bundles.Add(new ScriptBundle("~/bundles/datauploader").Include(
-                      CommonUtility.getFilePath(isLocal,baseJsPath, "datauploader", jsExtension)
+                      CommonUtility.getFilePath(isProduction,baseJsPath, "datauploader", jsExtension)
                       ));
             #endregion
             #region regionprovincedatauploader
             bundles.Add(new ScriptBundle("~/bundles/regionprovincedatauploader").Include(
-                      CommonUtility.getFilePath(isLocal, baseJsPath, "regionprovincedatauploader", jsExtension)
+                      CommonUtility.getFilePath(isProduction, baseJsPath, "regionprovincedatauploader", jsExtension)
                       ));
             #endregion
             #region jspdf.min
             bundles.Add(new ScriptBundle("~/bundles/jspdf_min").Include(
-                      CommonUtility.getFilePath(isLocal, baseJsPath, "jspdf.min", jsExtension)
+                      CommonUtility.getFilePath(isProduction, baseJsPath, "jspdf.min", jsExtension)
                       ));
             #endregion
             #region canvg.min
             bundles.Add(new ScriptBundle("~/bundles/canvg_min").Include(
-                      CommonUtility.getFilePath(isLocal, baseJsPath, "canvg.min", jsExtension)
+                      CommonUtility.getFilePath(isProduction, baseJsPath, "canvg.min", jsExtension)
                       ));
             #endregion
             #region html2canvas
             bundles.Add(new ScriptBundle("~/bundles/html2canvas").Include(
-                     CommonUtility.getFilePath(isLocal, baseJsPath, "html2canvas", jsExtension)
+                     CommonUtility.getFilePath(isProduction, baseJsPath, "html2canvas", jsExtension)
                       ));
             #endregion
             #region NotifySignalR
             bundles.Add(new ScriptBundle("~/bundles/NotifySignalR").Include(
-                      CommonUtility.getFilePath(isLocal, baseJsPath, "NotifySignalR", jsExtension)
+                      CommonUtility.getFilePath(isProduction, baseJsPath, "NotifySignalR", jsExtension)
                       ));
             #endregion
             #region Landbase
 
             bundles.Add(new StyleBundle("~/LandBase")
 
-                        .Include(CommonUtility.getFilePath(isLocal, baseJsPath, "LandBase", cssExtension), new CssRewriteUrlTransformWrapper())
+                        .Include(CommonUtility.getFilePath(isProduction, baseJsPath, "LandBase", cssExtension), new CssRewriteUrlTransformWrapper())
                        );
 
             bundles.Add(new ScriptBundle("~/bundles/LandBase").Include(
-                        CommonUtility.getFilePath(isLocal, baseJsPath, "LandBase", jsExtension)
+                        CommonUtility.getFilePath(isProduction, baseJsPath, "LandBase", jsExtension)
                         ));
 
             #endregion
@@ -104,14 +104,14 @@ namespace SmartInventory
                         "~/Content/js/bootstrap/bootstrap.js",
                         "~/Content/js/bootstrap/bootstrap-slider.js",
                          "~/Content/js/googlewms.min.js",
-                        CommonUtility.getFilePath(isLocal, baseJsPath, "Main", jsExtension),
+                        CommonUtility.getFilePath(isProduction, baseJsPath, "Main", jsExtension),
                         "~/Content/js/distanceWidget.js",
                          "~/Content/js/SpliceTray.js",
                         "~/Content/js/jquery.cookie.js",
                         "~/Content/js/jquery.treeview.js",
-                        CommonUtility.getFilePath(isLocal, baseJsPath, "Utility", jsExtension),
+                        CommonUtility.getFilePath(isProduction, baseJsPath, "Utility", jsExtension),
                          "~/Scripts/APIHandler.js",
-                         CommonUtility.getFilePath(isLocal, baseJsPath, "ModalPopUp", jsExtension),
+                         CommonUtility.getFilePath(isProduction, baseJsPath, "ModalPopUp", jsExtension),
                         "~/Content/js/mapCore.js",
                         "~/Content/js/Alert.js",
                         "~/Content/js/keydragzoom_packed.js",
@@ -125,7 +125,7 @@ namespace SmartInventory
                         "~/Content/js/survey.js",
                         "~/Content/js/oms.min.js",
                        // "~/Content/js/OSPSplice.js",
-                       CommonUtility.getFilePath(isLocal, baseJsPath, "Splicing", jsExtension),
+                       CommonUtility.getFilePath(isProduction, baseJsPath, "Splicing", jsExtension),
                         "~/Content/js/Splice/Js-Plumb-1.4.1.min.js",
                         "~/Content/js/jquery.orbit-1.2.3.min.js",
                         "~/Content/js/LightBox/js/lightbox.min.js",

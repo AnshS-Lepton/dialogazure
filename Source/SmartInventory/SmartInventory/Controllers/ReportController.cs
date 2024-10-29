@@ -5514,7 +5514,9 @@ namespace SmartInventory.Controllers
 						//objUtilizationEntitiesReport.objReportFilters.SelectedProvinceIds = (Filterobj.Count > 0) ? Filterobj.Where(x => Convert.ToInt32(x.id) == objUtilizationEntitiesReport.lstLayers[i].layer_id).Select(x => x.data.province_id).ToList()[0].ToString() : objUtilizationEntitiesReport.objReportFilters.SelectedProvinceIds;
 						var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objUtilizationEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 						List<Dictionary<string, string>> lstUtilizationEntitiesDetail = new BLLayer().GetUtilizationReportSummaryView(objUtilizationEntitiesReport.objReportFilters);
-						lstUtilizationEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstUtilizationEntitiesDetail);
+						
+						
+						//lstUtilizationEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstUtilizationEntitiesDetail);
 
 						DataTable dtReport = new DataTable();
 						dtReport = MiscHelper.GetDataTableFromDictionaries(lstUtilizationEntitiesDetail);
@@ -5531,8 +5533,17 @@ namespace SmartInventory.Controllers
 					objUtilizationEntitiesReport.objReportFilters.SelectedLayerId = SelectedLayerId;
 					objUtilizationFilter.SelectedLayerId = SelectedLayerIdSummary;
 					objUtilizationSummary.lstReportData = LstReportDataOld;
-					ExportData(ds, "UtilizationReport_" + DateTimeHelper.Now.ToString("ddMMyyyy") + " - " + DateTimeHelper.Now.ToString("HHmmss"));
-				}
+
+                    if (ds.Tables.Cast<DataTable>().Any(table => table.Rows.Count > 500000))
+                    {
+                        ExportReportCSV(ds, "UtilizationReport_" + DateTimeHelper.Now.ToString("ddMMyyyy") + " - " + DateTimeHelper.Now.ToString("HHmmss"), ApplicationSettings.CsvDelimiter, "ALLCSV");
+
+                    }
+                    else
+                    {
+                        NPOIExcelHelper.ExportToExcel(ds, "ExportedData");
+                    }
+                }
 				catch (Exception ex)
 				{
 					throw ex;
