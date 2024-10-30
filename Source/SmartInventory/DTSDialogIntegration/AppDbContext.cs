@@ -1,71 +1,107 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using Models.Admin;
+using Models;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Models.Admin;
+using Newtonsoft.Json;
 
-namespace Models
+namespace DialogDTSIntegration
 {
-
-    public class SiteList
+    public class AppDbContext : DbContext
     {
-        public string Status_Code { get; set; }
-        public string Status_Description { get; set; }
-        public SiteDetails[] Response { get; set; }
+        // Constructor that accepts DbContextOptions and passes it to the base class
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+        // DbSet representing the ProcessSite table in your database
+        public DbSet<ProcessSite> ProcessSites { get; set; }
+        public DbSet<ProcessSiteList> ProcessSiteLists { get; set; }
+        public DbSet<NetworkCodeDetail> NetworkCodeDetails { get; set; }
+
+        public DbSet<ProcessSiteOutput> processSiteOutputs { get; set; }
+
+        public DbSet<InRegionProvince> inRegionProvinces { get; set; }
+
+        public DbSet<SiteAttributes> SiteDetils { get; set; } // table to store data for DTS
+
+        public DbSet<Site> SiteDetilsMain { get; set; } //main table att_details_site
+        // Configuring the model
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ProcessSite>()
+                .ToTable("site_process_summary")
+                .HasKey(ps => ps.process_id); // Set the primary key
+            modelBuilder.Entity<ProcessSiteList>()
+                .ToTable("process_site_list")
+                .HasKey(ps => ps.id);
+            modelBuilder.Entity<SiteAttributes>()
+                .ToTable("process_site_details")
+                .HasKey(ps => ps.id);
+            modelBuilder.Entity<Site>()
+                .ToTable("att_details_site")
+                .HasKey(ps => ps.system_id);
+            modelBuilder.Entity<NetworkCodeDetail>().HasNoKey();
+            modelBuilder.Entity<InRegionProvince>().HasNoKey();
+            modelBuilder.Entity<ProcessSiteOutput>().HasNoKey();
+            // Additional configurations can be added here if needed
+        }
     }
 
-    public class SiteDetails
+    public class ProcessSiteOutput
     {
-        public string Site_Id { get; set; }
-        public string Site_Name { get; set; }
-        public string Status { get; set; }
+        public int updated_count { get; set; }
+        public int inserted_count { get; set; }
     }
 
-    public class SiteSync
+    // Define the ProcessSite entity
+    public class ProcessSite
+    {
+        public int process_id { get; set; } // Primary Key
+        public DateTime process_start_time { get; set; }
+        public DateTime process_end_time { get; set; }
+        public string stataus { get; set; } // Make sure to fix the typo to 'status' if needed
+        public int created_by { get; set; }
+        public DateTime created_on { get; set; }
+        public string remarks { get; set; }
+        public string entity_type { get; set; }
+    }
+
+    public class ProcessSiteList
+    {
+        public int id { get; set; } // Primary key
+        public int process_id { get; set; } // Foreign key or identifier from Site
+        public string site_id { get; set; }
+        public string site_name { get; set; }
+        public string status { get; set; }
+        public string error_message { get; set; }
+        public bool is_valid { get; set; } // Optional, to track when the site was added
+    }
+    
+    public class SiteAttributes
     {
         public int id { get; set; }
-        public DateTime start_datetime { get; set; }
-        public DateTime end_datetime { get; set; }
-        public DateTime lastsuccess_sync { get; set; }
-        public string status { get; set; }
-        public string message { get; set; }
-    }
-
-    public class Site: IProjectSpecification
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int system_id { get; set; }
-        [Required]
+        public int process_id { get; set; }
         public string site_id { get; set; }
-        [Required]
         public string site_name { get; set; }
         public DateTime on_air_date { get; set; }
         public DateTime removed_date { get; set; }
-        [Required]
         public string tx_type { get; set; }
-        [Required]
         public string tx_technology { get; set; }
-        [Required]
         public string tx_segment { get; set; }
-        [Required]
         public string tx_ring { get; set; }
-        [Required]
         public string address { get; set; }
         public string region { get; set; }
         public string province { get; set; }
-        [Required]
         public string district { get; set; }
         public string region_address { get; set; }
         public string depot { get; set; }
         public string ds_division { get; set; }
         public string local_authority { get; set; }
+        //[JsonProperty("Lat")]
         public double latitude { get; set; }
+        //[JsonProperty("Lng")]
         public double longitude { get; set; }
-        [Required]
+        //[JsonProperty("Owner")]
         public string owner_name { get; set; }
         public string access_24_7 { get; set; }
 
@@ -75,7 +111,9 @@ namespace Models
         public string solution_type { get; set; }
 
         public int site_rank { get; set; }
+       // [JsonProperty("TX_Self_Traffic")]
         public Decimal self_tx_traffic { get; set; }
+       // [JsonProperty("TX_Agg_Traffic")]
         public Decimal agg_tx_traffic { get; set; }
         public Decimal metro_ring_utilization { get; set; }
         public int csr_count { get; set; }
@@ -84,25 +122,25 @@ namespace Models
         public string agg_02 { get; set; }
         public int bandwidth { get; set; }
         public string ring_type { get; set; }
-        [Required]
         public string link_id { get; set; }
         public string alias_name { get; set; }
         public DateTime created_on { get; set; }
         public int created_by { get; set; }
         public DateTime? modified_on { get; set; }
         public int? modified_by { get; set; }
-        public int? province_id { get; set; }
-        public int? region_id { get; set; }
+        public int province_id { get; set; }
+        public int region_id { get; set; }
         public string network_status { get; set; }
-
+        public string status { get; set; }
+        public bool is_new_entity { get; set; }
         public string network_id { get; set; }
         public string parent_entity_type { get; set; }
         public string parent_network_id { get; set; }
         public int? parent_system_id { get; set; }
         public int? sequence_id { get; set; }
-        public bool is_visible_on_map {  get; set; }    
-        public DateTime? status_updated_on {  get; set; } 
-        public int? status_updated_by { get;}
+        public bool is_visible_on_map { get; set; }
+        public DateTime? status_updated_on { get; set; }
+        public int? status_updated_by { get; }
         public string source_ref_id { get; set; }
         public string source_ref_type { get; set; }
         public string target_ref_id { get; set; }
@@ -110,28 +148,6 @@ namespace Models
         public string target_ref_description { get; set; }
         public string gis_design_id { get; set; }
 
-        [NotMapped]
-        public string region_name { get; set; }
-
-        [NotMapped]
-        public string province_name { get; set; }
-
-        [NotMapped]
-        public string geom { get; set; }
-
-        [NotMapped]
-        public string networkIdType { get; set; }
-
-        [NotMapped]
-        public PageMessage objPM { get; set; } = new PageMessage();
-
-        [NotMapped]
-        public List<string> lstUserModule { get; set; } = new List<string>();
-
-        [NotMapped]
-        public string region_abbreviation { get; set; }
-        [NotMapped]
-        public string province_abbreviation { get; set; }
         public int? project_id { get; set; }
         public int? planning_id { get; set; }
         public int? purpose_id { get; set; }
@@ -156,19 +172,21 @@ namespace Models
         public string destination_port_type { get; set; }
         public decimal? destination_no_of_cores { get; set; }
         public string project_id_dialog { get; set; }
-        [NotMapped]
-        public List<ProjectCodeMaster> lstBindProjectCode { get; set; }
-        [NotMapped]
-        public List<PlanningCodeMaster> lstBindPlanningCode { get; set; }
-        [NotMapped]
-        public List<WorkorderCodeMaster> lstBindWorkorderCode { get; set; }
-        [NotMapped]
-        public List<PurposeCodeMaster> lstBindPurposeCode { get; set; }
+        public bool is_valid { get; set; }
     }
+
     public class ApiResponse
     {
         public string Status_Code { get; set; }
         public string Status_Description { get; set; }
-        public List<Site> Response { get; set; }
+        public List<SiteAttributes> Response { get; set; }
     }
+    public class AccessTokenResponse
+    {
+        public string access_token { get; set; }
+        public string scope { get; set; }
+        public string token_type { get; set; }
+        public int expires_in { get; set; }
+    }
+
 }
