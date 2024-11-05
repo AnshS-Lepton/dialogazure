@@ -1,0 +1,169 @@
+﻿@model Models.ISite
+@using Models;
+@using SmartInventory.Settings;
+
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Site.ToString().ToUpper()).FirstOrDefault() : null;
+}
+<!DOCTYPE html>
+<fieldset class="the-fieldset">
+    <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_052</legend>
+
+    <div class="form-group row">
+
+        <label class="col-md-2 col-sm-2" for="txtSiteId">Site Id<i class="clsMandatory">*</i> :</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.site_id, new { @class = "form-control", @id = "txtSiteId", @required = "required" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtSiteId">Site Name<i class="clsMandatory">*</i> :</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.site_name, new { @class = "form-control", @id = "txtSiteName", @required = "required" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtTXType">Tx Type :</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.tx_type, new { @class = "form-control", @id = "txtTXType" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtTXTechnology">Tx Technology:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.tx_technology, new { @class = "form-control", @id = "txtTXTechnology" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtTXSegment">Tx Segment:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.tx_segment, new { @class = "form-control", @id = "txtTXSegment" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtTXRing">Tx Ring:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.tx_ring, new { @class = "form-control", @id = "txtTXRing", @maxlength = "100" })
+        </div>
+
+        @*<label class="col-md-2 col-sm-2" for="txtAddress">Address:</label>
+        <div class="col-md-10 col-sm-10 mrgn_btm">
+            @Html.TextBoxFor(m => m.address, new { @class = "form-control", @id = "txtAddress", @maxlength = "100" })
+        </div>*@
+
+        <label class="col-md-2 col-sm-2" for="txtDistrict">District:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.district, new { @class = "form-control", @id = "txtDistrict" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtOwnerName">Owner:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.owner_name, new { @class = "form-control", @id = "txtOwnerName" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtLinkId">Link Id:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control", @id = "txtLinkId" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtOnAirDate">On Air Date:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.on_air_date, new { @class = "form-control", @id = "txtOnAirDate" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtRemovedDate">Removed Date:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.removed_date, new { @class = "form-control", @id = "txtRemovedDate" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtProvince">Province:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.province, new { @class = "form-control", @id = "txtProvince" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtDepot">Depot:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.depot, new { @class = "form-control", @id = "txtDepot" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtDsDivision">Ds Division:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.ds_division, new { @class = "form-control", @id = "txtDsDivision" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtLocalAuthority">Local Authority:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.local_authority, new { @class = "form-control", @id = "txtLocalAuthority" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtAccess247">Access 24 X 7:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm ">
+            @Html.TextBoxFor(m => m.access_24_7, new { @class = "form-control", @id = "txtAccess247" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtTowerType">Tower Type:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.tower_type, new { @class = "form-control", @id = "txtTowerType" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtTowerHeight">Tower Height:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.tower_height, new { @class = "form-control", @id = "txtTowerHeight" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtCabinetType">Cabinet Type:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm ">
+            @Html.TextBoxFor(m => m.cabinet_type, new { @class = "form-control", @id = "txtCabinetType" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtSolutionType">Solution Type:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.solution_type, new { @class = "form-control", @id = "txtSolutionType" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtSiteRank">Site Rank:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.site_rank, new { @class = "form-control", @id = "txtSiteRank" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtSelfTXTraffic">Self Tx Traffic:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.self_tx_traffic, new { @class = "form-control", @id = "txtSelfTXTraffic" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtAggTXTraffic">Agg Tx Traffic:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.agg_tx_traffic, new { @class = "form-control", @id = "txtAggTXTraffic" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtCSRCount">CSR Count:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.csr_count, new { @class = "form-control", @id = "txtCSRCount", @onkeydown = "return ValidateNumberDecimal(this,event,10,0);" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtDTICircuit">Dti Circuit:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.dti_circuit, new { @class = "form-control", @id = "txtDTICircuit", @onkeydown = "return ValidateNumberDecimal(this,event,10,0);" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtAgg1">Agg1:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.agg_01, new { @class = "form-control", @id = "txtAgg1" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtAgg2">Agg2:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.agg_02, new { @class = "form-control", @id = "txtAgg2" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtBandwidth">Bandwidth:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.bandwidth, new { @class = "form-control", @id = "txtBandwidth", @onkeydown = "return ValidateNumberDecimal(this,event,10,0);" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtRingType">Ring Type:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.ring_type, new { @class = "form-control", @id = "txtRingType" })
+        </div>
+
+        <label class="col-md-2 col-sm-2" for="txtAlias">Alias:</label>
+        <div class="col-md-4 col-sm-4 mrgn_btm">
+            @Html.TextBoxFor(m => m.alias_name, new { @class = "form-control", @id = "txtAlias" })
+        </div>
+    </div>
+</fieldset>
