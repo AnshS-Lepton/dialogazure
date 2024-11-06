@@ -84,7 +84,7 @@ namespace DTSDialogIntegration
             {
                 foreach (var site in siteList)
                 {
-                    var processSiteList = new ProcessSiteList
+                    var processSiteList = new DialogDTSIntegration.ProcessSiteList
                     {
                         process_id = processID,
                         site_id = site.Site_Id,

@@ -86,6 +86,7 @@ namespace Models
 	}
 	public class NetworkCodeDetail
 	{
+		[Key]
 		public int parent_system_id { get; set; }
 		public string parent_network_id { get; set; }
 		public string parent_entity_type { get; set; }
