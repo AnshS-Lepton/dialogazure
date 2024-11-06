@@ -1,5 +1,5 @@
 insert into module_master(module_name,module_description,type,is_active,module_abbr,parent_module_id,module_sequence)
-	  values('Site Details','Site Details','Web',true,'SD',0,0)
+	  values('Site Details','Site Details','Web',true,'SD',0,0);
 
 insert into role_module_mapping(role_id,module_id)
 	 values(2,(select id from module_master where module_name='Site Details'));
@@ -69,9 +69,9 @@ ADD
 ADD 
   COLUMN link_id VARCHAR NULL, 
 ADD 
-  COLUMN alias_name VARCHAR NULL
+  COLUMN alias_name VARCHAR NULL;
 
 ------------------------------------------------------
-update layer_details set isvisible =false,is_visible_in_ne_library=false  where layer_title ilike '%SITE%'
-update layer_details set isvisible =false,is_visible_in_ne_library=false  where layer_title ilike '%TOWER%'
-update layer_details set layer_title='Site' where layer_name = 'POD'
+update layer_details set isvisible =false,is_visible_in_ne_library=false  where layer_title ilike '%SITE%';
+update layer_details set isvisible =false,is_visible_in_ne_library=false  where layer_title ilike '%TOWER%';
+update layer_details set layer_title='Site' where layer_name = 'POD';
