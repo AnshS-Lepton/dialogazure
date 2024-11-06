@@ -29524,6 +29524,454 @@ namespace Resources {
                }
             }
             
+        /// <summary>Site Report</summary>
+        public static string SI_OSP_GBL_NET_RPT_354 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_354", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Use the above filers to export Site report!</summary>
+        public static string SI_OSP_GBL_NET_RPT_355 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_355", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Province Id</summary>
+        public static string SI_OSP_GBL_NET_RPT_356 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_356", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Site Id</summary>
+        public static string SI_OSP_GBL_NET_RPT_357 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_357", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>On Air Date</summary>
+        public static string SI_OSP_GBL_NET_RPT_358 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_358", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Removed Date</summary>
+        public static string SI_OSP_GBL_NET_RPT_359 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_359", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Tx Type</summary>
+        public static string SI_OSP_GBL_NET_RPT_360 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_360", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Tx Technology</summary>
+        public static string SI_OSP_GBL_NET_RPT_361 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_361", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Tx Segment</summary>
+        public static string SI_OSP_GBL_NET_RPT_362 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_362", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Tx Ring</summary>
+        public static string SI_OSP_GBL_NET_RPT_363 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_363", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Province</summary>
+        public static string SI_OSP_GBL_NET_RPT_364 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_364", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Region Address</summary>
+        public static string SI_OSP_GBL_NET_RPT_365 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_365", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Depot</summary>
+        public static string SI_OSP_GBL_NET_RPT_366 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_366", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Ds Division</summary>
+        public static string SI_OSP_GBL_NET_RPT_367 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_367", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Local Authority</summary>
+        public static string SI_OSP_GBL_NET_RPT_368 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_368", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Owner</summary>
+        public static string SI_OSP_GBL_NET_RPT_369 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_369", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Access 24 7</summary>
+        public static string SI_OSP_GBL_NET_RPT_370 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_370", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Tower Type</summary>
+        public static string SI_OSP_GBL_NET_RPT_371 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_371", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Solution Type</summary>
+        public static string SI_OSP_GBL_NET_RPT_372 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_372", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Site Rank</summary>
+        public static string SI_OSP_GBL_NET_RPT_373 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_373", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Self Tx Traffic</summary>
+        public static string SI_OSP_GBL_NET_RPT_374 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_374", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Agg Tx Traffic</summary>
+        public static string SI_OSP_GBL_NET_RPT_375 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_375", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Metro Ring Utilization</summary>
+        public static string SI_OSP_GBL_NET_RPT_376 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_376", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Csr Count</summary>
+        public static string SI_OSP_GBL_NET_RPT_377 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_377", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Dti Circuit</summary>
+        public static string SI_OSP_GBL_NET_RPT_378 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_378", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Bandwidth</summary>
+        public static string SI_OSP_GBL_NET_RPT_379 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_379", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Ring Type</summary>
+        public static string SI_OSP_GBL_NET_RPT_380 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_380", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Alias</summary>
+        public static string SI_OSP_GBL_NET_RPT_381 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_381", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Region Name</summary>
+        public static string SI_OSP_GBL_NET_RPT_382 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_382", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Bh Status</summary>
+        public static string SI_OSP_GBL_NET_RPT_383 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_383", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Segment</summary>
+        public static string SI_OSP_GBL_NET_RPT_384 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_384", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Ring</summary>
+        public static string SI_OSP_GBL_NET_RPT_385 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_385", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Maximum Cost</summary>
+        public static string SI_OSP_GBL_NET_RPT_386 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_386", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Project Category</summary>
+        public static string SI_OSP_GBL_NET_RPT_387 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_387", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Priority</summary>
+        public static string SI_OSP_GBL_NET_RPT_388 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_388", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>No Of Cores</summary>
+        public static string SI_OSP_GBL_NET_RPT_389 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_389", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Fiber Link Type</summary>
+        public static string SI_OSP_GBL_NET_RPT_390 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_390", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Plan Cost</summary>
+        public static string SI_OSP_GBL_NET_RPT_391 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_391", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Fiber Link Code</summary>
+        public static string SI_OSP_GBL_NET_RPT_392 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_392", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Destination Site Id</summary>
+        public static string SI_OSP_GBL_NET_RPT_393 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_393", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Destination Port Type</summary>
+        public static string SI_OSP_GBL_NET_RPT_394 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_394", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Destination No Of Cores</summary>
+        public static string SI_OSP_GBL_NET_RPT_395 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_395", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Project Id Dialog</summary>
+        public static string SI_OSP_GBL_NET_RPT_396 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_396", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Site Id cannot be blank!</summary>
+        public static string SI_OSP_GBL_NET_RPT_397 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_397", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Site Name cannot be blank!</summary>
+        public static string SI_OSP_GBL_NET_RPT_398 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_398", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Owner Name cannot be blank!</summary>
+        public static string SI_OSP_GBL_NET_RPT_399 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_399", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Tx Type cannot be blank!</summary>
+        public static string SI_OSP_GBL_NET_RPT_400 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_400", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Tx Technology	cannot be blank!</summary>
+        public static string SI_OSP_GBL_NET_RPT_401 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_401", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Tx Segment cannot be blank!</summary>
+        public static string SI_OSP_GBL_NET_RPT_402 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_402", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Tx Ring cannot be blank!</summary>
+        public static string SI_OSP_GBL_NET_RPT_403 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_403", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>District cannot be blank!</summary>
+        public static string SI_OSP_GBL_NET_RPT_404 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_404", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Link Id cannot be blank!</summary>
+        public static string SI_OSP_GBL_NET_RPT_405 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_405", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>On Air Date cannot be blank!</summary>
+        public static string SI_OSP_GBL_NET_RPT_406 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_406", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Removed Date cannot be blank!</summary>
+        public static string SI_OSP_GBL_NET_RPT_407 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_407", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Site Id does not exist to delete</summary>
+        public static string SI_OSP_GBL_NET_RPT_408 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_408", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Site Id already exist in the system</summary>
+        public static string SI_OSP_GBL_NET_RPT_409 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_409", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Site Id does not exist in the system to update</summary>
+        public static string SI_OSP_GBL_NET_RPT_410 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_410", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Error in uploading Sites from excel</summary>
+        public static string SI_OSP_GBL_NET_RPT_411 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_411", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Maximum {0} sites can be uploaded at a time!</summary>
+        public static string SI_OSP_GBL_NET_RPT_412 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_412", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Site bulk upload process successfully. Record Count: Success {0} and Failed {1}</summary>
+        public static string SI_OSP_GBL_NET_RPT_413 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_413", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Bulk Site Upload</summary>
+        public static string SI_OSP_GBL_NET_RPT_414 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_414", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Agg1</summary>
+        public static string SI_OSP_GBL_NET_RPT_415 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_415", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>District/Division</summary>
+        public static string GBL_GBL_GBL_GBL_GBL_039 {
+               get {
+                   return resourceProvider.GetResource("GBL_GBL_GBL_GBL_GBL_039", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Agg2</summary>
+        public static string SI_OSP_GBL_NET_RPT_416 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_416", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>POP Category:</summary>
         public static string SI_OSP_GBL_NET_RPT_115 {
                get {
