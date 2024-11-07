@@ -9240,14 +9240,14 @@ var Main = function () {
                 app.fSource_ref_type = 'Network_Ticket';
                 app.fIs_new_entity = true;
                 app.fStatus = '';
-                app.filterNetworkTicketValue = " ([source_ref_id] ='" + _ticketId + "') and [source_ref_type]='Network_Ticket' and [is_new_entity]=true";
+                app.filterNetworkTicketValue = " ([source_ref_id] ='" + _ticketId + "') and [source_ref_type]='Network_Ticket' ";
             }
             if (app.ticketStatus == 'Approved') {
                 app.fSource_ref_id = _ticketId;
                 app.fSource_ref_type = 'Network_Ticket';
                 app.fIs_new_entity = false;
                 app.fStatus = '';
-                app.filterNetworkTicketValue = " ([source_ref_id] ='" + _ticketId + "') and [source_ref_type]='Network_Ticket' and [is_new_entity]=false";
+                app.filterNetworkTicketValue = " ([source_ref_id] ='" + _ticketId + "') and [source_ref_type]='Network_Ticket' ";
             }
         }
         else {
@@ -9255,7 +9255,7 @@ var Main = function () {
             app.fSource_ref_type = '';
             app.fIs_new_entity = false;
             app.fStatus = 'A';
-            app.filterNetworkTicketValue = " [status]='A' and [is_new_entity]=false";
+            app.filterNetworkTicketValue = " [status]='A'";
         }
 
     } 
@@ -14921,28 +14921,28 @@ var Main = function () {
     }
     this.handleEntitySpecificEvents = function (systemId, entityType, geomType, networkId) {
 
-        if (entityType == "Duct") {
-            //;
-            si.DuctType = "";
-            ajaxReq('Library/getDuctDetails', { systemId: systemId }, false, function (resp) {
+        //if (entityType == "Duct") {
+        //    //;
+        //    si.DuctType = "";
+        //    ajaxReq('Library/getDuctDetails', { systemId: systemId }, false, function (resp) {
 
-                if (resp.duct_category == "Microduct") {
-                    $('#EntityAddMicroduct').hide();
-                }
-            });
-        }
+        //        if (resp.duct_category == "Microduct") {
+        //            $('#EntityAddMicroduct').hide();
+        //        }
+        //    });
+        //}
 
 
-        if (entityType == "Trench") {
-            //;
-            si.TrenchType = "";
-            ajaxReq('Library/getTrenchDetails', { systemId: systemId }, false, function (resp) {
+        //if (entityType == "Trench") {
+        //    //;
+        //    si.TrenchType = "";
+        //    ajaxReq('Library/getTrenchDetails', { systemId: systemId }, false, function (resp) {
 
-                if (resp.trench_category == "Conduit") {
-                    $('#EntityAddConduit').hide();
-                }
-            });
-        }
+        //        if (resp.trench_category == "Conduit") {
+        //            $('#EntityAddConduit').hide();
+        //        }
+        //    });
+        //}
         //app.showhideIcon('#EntityPITTemplate', false);
         //PENDING
         if (entityType == "Building") {
