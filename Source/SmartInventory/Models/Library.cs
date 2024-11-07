@@ -250,8 +250,8 @@ namespace Models
         string site_id { get; set; }
         [Required]
         string site_name { get; set; }
-        DateTime on_air_date { get; set; }
-        DateTime removed_date { get; set; }
+        DateTime? on_air_date { get; set; }
+        DateTime? removed_date { get; set; }
         string tx_type { get; set; }
         string tx_technology { get; set; }
         string tx_segment { get; set; }
@@ -264,17 +264,17 @@ namespace Models
         string owner_name { get; set; }
         string access_24_7 { get; set; }
         string tower_type { get; set; }
-        int tower_height { get; set; }
+        int? tower_height { get; set; }
         string cabinet_type { get; set; }
         string solution_type { get; set; }
-        int site_rank { get; set; }
-        int self_tx_traffic { get; set; }
-        int agg_tx_traffic { get; set; }
-        int csr_count { get; set; }
-        int dti_circuit { get; set; }
+        int? site_rank { get; set; }
+        int? self_tx_traffic { get; set; }
+        int? agg_tx_traffic { get; set; }
+        int? csr_count { get; set; }
+        int? dti_circuit { get; set; }
         string agg_01 { get; set; }
         string agg_02 { get; set; }
-        int bandwidth { get; set; }
+        int? bandwidth { get; set; }
         string ring_type { get; set; }
         string link_id { get; set; }
         string alias_name { get; set; }
@@ -425,8 +425,8 @@ namespace Models
         /// Site Details 30 Properties
         public string site_id { get; set; }
         public string site_name { get; set; }
-        public DateTime on_air_date { get; set; }
-        public DateTime removed_date { get; set; }
+        public DateTime? on_air_date { get; set; }
+        public DateTime? removed_date { get; set; }
         public string tx_type { get; set; }
         public string tx_technology { get; set; }
         public string tx_segment { get; set; }
@@ -439,17 +439,17 @@ namespace Models
         public string owner_name { get; set; }
         public string access_24_7 { get; set; }
         public string tower_type { get; set; }
-        public int tower_height { get; set; }
+        public int? tower_height { get; set; }
         public string cabinet_type { get; set; }
         public string solution_type { get; set; }
-        public int site_rank { get; set; }
-        public int self_tx_traffic { get; set; }
-        public int agg_tx_traffic { get; set; }
-        public int csr_count { get; set; }
-        public int dti_circuit { get; set; }
+        public int? site_rank { get; set; }
+        public int? self_tx_traffic { get; set; }
+        public int? agg_tx_traffic { get; set; }
+        public int? csr_count { get; set; }
+        public int? dti_circuit { get; set; }
         public string agg_01 { get; set; }
         public string agg_02 { get; set; }
-        public int bandwidth { get; set; }
+        public int? bandwidth { get; set; }
         public string ring_type { get; set; }
         public string link_id { get; set; }
         public string alias_name { get; set; }
