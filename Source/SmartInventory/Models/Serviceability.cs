@@ -93,6 +93,16 @@ namespace Models
         public string data { get; set; }
 
     }
+    public class DTSApiSettings
+    {
+        public string GetSiteListURL { get; set; }
+        public string GetSiteDetailsURL { get; set; }
+        public string bearerToken { get; set; }
+        public string AccessTokenEndpoint { get; set; }
+        public string AccessKey { get; set; }
+        public string AccessValue { get; set; }
+    }
+
     public class ReqHelpers
     {
         public static T GetRequestData<T>(ReqInputs userData)

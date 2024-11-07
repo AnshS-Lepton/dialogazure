@@ -1,0 +1,182 @@
+ALTER TABLE att_details_restricted_area ADD COLUMN allowed_network varchar null;
+--ALTER TABLE temp_du_coverage_area ADD COLUMN allowed_network varchar null;
+
+ALTER TABLE audit_att_details_restricted_area ADD COLUMN allowed_network varchar null;
+
+-------------------
+INSERT INTO dropdown_master (layer_id,dropdown_type,dropdown_value,dropdown_status,created_by,created_on,dropdown_key,db_column_name,is_action_allowed,is_active,parent_id) VALUES
+	 ((select layer_id from layer_details where layer_name='Restricted_Area'),'AllowedNetworkType','OverHead',true,1,now(),'OverHead','allowed_network',false,true,0)
+	 
+
+
+INSERT INTO dropdown_master (layer_id,dropdown_type,dropdown_value,dropdown_status,created_by,created_on,dropdown_key,db_column_name,is_action_allowed,is_active,parent_id) VALUES
+	 ((select layer_id from layer_details where layer_name='Restricted_Area'),'AllowedNetworkType','Underground',true,1,now(),'Underground','allowed_network',false,true,0)
+	 
+INSERT INTO dropdown_master (layer_id,dropdown_type,dropdown_value,dropdown_status,created_by,created_on,dropdown_key,db_column_name,is_action_allowed,is_active,parent_id) VALUES
+	 ((select layer_id from layer_details where layer_name='Restricted_Area'),'AllowedNetworkType','Both',true,1,now(),'Both','allowed_network',false,true,0)
+	 
+INSERT INTO dropdown_master (layer_id,dropdown_type,dropdown_value,dropdown_status,created_by,created_on,dropdown_key,db_column_name,is_action_allowed,is_active,parent_id) VALUES
+	 ((select layer_id from layer_details where layer_name='Restricted_Area'),'AllowedNetworkType','None',true,1,now(),'None','allowed_network',false,true,0)
+	 
+	 
+----------------------------------------------------
+-- public.vw_att_details_restricted_area source
+
+CREATE OR REPLACE VIEW public.vw_att_details_restricted_area
+as
+SELECT adra.system_id,
+    adra.qualification_type,
+    adra.network_id,
+    adra.restricted_area_name,
+    adra.category,
+    adra.sub_category,
+    adra.is_network_creation_allowed,
+    adra.is_feasibility_allowed,
+    adra.province_id,
+    adra.region_id,
+    adra.status,
+    adra.remarks,
+    adra.created_by,
+    adra.created_on,
+    adra.modified_by,
+    adra.modified_on,
+    adra.parent_system_id,
+    adra.parent_network_id,
+    adra.parent_entity_type,
+    adra.sequence_id,
+    adra.network_status,
+    adra.is_visible_on_map,
+    adra.is_new_entity,
+    adra.source_ref_type,
+    adra.source_ref_id,
+    adra.source_ref_description,
+    adra.origin_from,
+    adra.origin_ref_id,
+    adra.origin_ref_code,
+    adra.origin_ref_description,
+    adra.request_ref_id,
+    adra.requested_by,
+    adra.request_approved_by,
+    adra.area_id,
+    adra.dsa_id,
+    adra.csa_id,
+    adra.gis_design_id,
+    prov.province_name,
+    reg.region_name,
+    um.user_name,
+    fn_get_date(adra.created_on) AS created_date,
+    fn_get_date(adra.modified_on) AS modified_date,
+    um2.user_name AS modified_by_user,
+    um.user_name AS created_by_user,
+    adra.ne_id,
+    adra.prms_id,
+    adra.jc_id,
+    adra.mzone_id,
+    adra.allowed_network
+   FROM att_details_restricted_area adra
+     JOIN province_boundary prov ON adra.province_id = prov.id
+     JOIN region_boundary reg ON adra.region_id = reg.id
+     JOIN user_master um ON adra.created_by = um.user_id
+     LEFT JOIN user_master um2 ON adra.modified_by = um2.user_id;
+	 
+	--------------------------------------------------
+	-- public.vw_att_details_restricted_area_report source
+
+CREATE OR REPLACE VIEW public.vw_att_details_restricted_area_report
+AS SELECT area.system_id,
+    area.network_id,
+    area.restricted_area_name,
+    reg.region_name,
+    prov.province_name,
+    area.parent_network_id AS parent_code,
+    area.parent_entity_type AS parent_type,
+    fn_get_network_status(area.network_status) AS network_status,
+    COALESCE(fn_get_entity_status(area.status), area.status) AS status,
+    area.qualification_type,
+    area.remarks,
+    um.user_name,
+    fn_get_date(area.created_on) AS created_on,
+    fn_get_date(area.modified_on) AS modified_on,
+    um.user_name AS created_by,
+    um2.user_name AS modified_by,
+    area.region_id,
+    area.province_id,
+    um.user_id AS created_by_id,
+    area.is_visible_on_map,
+    reg.country_name,
+    area.origin_from,
+    area.origin_ref_id,
+    area.origin_ref_code,
+    area.origin_ref_description,
+    area.request_ref_id,
+    area.requested_by,
+    area.request_approved_by,
+    area.area_id,
+    area.dsa_id,
+    area.csa_id,
+    area.category,
+    area.sub_category,
+    area.is_network_creation_allowed,
+    area.is_feasibility_allowed,
+    area.gis_design_id AS design_id,
+    area.ne_id,
+    area.prms_id,
+    area.jc_id,
+    area.mzone_id,
+    area.served_by_ring,
+    area.allowed_network
+   FROM att_details_restricted_area area
+     JOIN province_boundary prov ON area.province_id = prov.id
+     JOIN region_boundary reg ON area.region_id = reg.id
+     JOIN user_master um ON area.created_by = um.user_id
+     LEFT JOIN user_master um2 ON area.modified_by = um2.user_id;
+	 ------------------------------------------
+	 -- public.vw_att_details_restricted_area_audit source
+
+CREATE OR REPLACE VIEW public.vw_att_details_restricted_area_audit
+AS SELECT area.audit_id,
+    area.system_id,
+    area.network_id,
+    area.restricted_area_name,
+    reg.region_name,
+    prov.province_name,
+    area.parent_system_id,
+    area.parent_network_id AS parent_code,
+    area.parent_entity_type AS parent_type,
+    area.remarks,
+    fn_get_date(area.created_on) AS created_on,
+    um.user_name AS created_by,
+    fn_get_date(area.modified_on) AS modified_on,
+    ums.user_name AS modified_by,
+    fn_get_status(area.status) AS status,
+    fn_get_action(area.action) AS action,
+    area.is_visible_on_map,
+    area.source_ref_type,
+    area.source_ref_id,
+    area.source_ref_description,
+    area.origin_from,
+    area.origin_ref_id,
+    area.origin_ref_code,
+    area.origin_ref_description,
+    area.request_ref_id,
+    area.requested_by,
+    area.request_approved_by,
+    area.area_id,
+    area.dsa_id,
+    area.csa_id,
+    area.category,
+    area.sub_category,
+    area.is_network_creation_allowed,
+    area.is_feasibility_allowed,
+    area.gis_design_id,
+    area.ne_id,
+    area.prms_id,
+    area.jc_id,
+    area.mzone_id,
+    area.allowed_network
+   FROM audit_att_details_restricted_area area
+     JOIN province_boundary prov ON area.province_id = prov.id
+     JOIN region_boundary reg ON area.region_id = reg.id
+     JOIN user_master um ON area.created_by = um.user_id
+     LEFT JOIN user_master ums ON area.modified_by = ums.user_id;
+

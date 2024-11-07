@@ -278,9 +278,10 @@ namespace Models
         execution_Method,
         Spliceclosure_type,
 		A_location,
-        FMS_Type
+        FMS_Type,
+        AllowedNetworkType
 
-	}
+    }
     public enum VendorType
     {
         Own,

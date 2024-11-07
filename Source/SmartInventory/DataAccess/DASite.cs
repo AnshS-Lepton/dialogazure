@@ -63,7 +63,30 @@ namespace DataAccess
                     objSite.ring_type = site.ring_type;    //for additional-attributes
                     objSite.link_id = site.link_id;
                     objSite.alias_name = site.alias_name;
-                   
+                    objSite.project_id = site.project_id;
+                    objSite.planning_id = site.planning_id;
+                    objSite.purpose_id = site.purpose_id;
+                    objSite.workorder_id = site.workorder_id;
+                    objSite.tx_agg = site.tx_agg;
+                    objSite.bh_status = site.bh_status;
+                    objSite.elevation = site.elevation;
+                    objSite.segment = site.segment;
+                    objSite.ring = site.ring;
+                    objSite.maximum_cost = site.maximum_cost;
+                    objSite.project_category = site.project_category;
+                    objSite.priority = site.priority;
+                    objSite.no_of_cores = site.no_of_cores;
+                    objSite.fiber_link_type = site.fiber_link_type;
+                    objSite.comment = site.comment;
+                    objSite.plan_cost = site.plan_cost;
+                    objSite.fiber_distance = site.fiber_distance;
+                    objSite.fiber_link_code = site.fiber_link_code;
+                    objSite.port_type = site.port_type;
+                    objSite.destination_site_id = site.destination_site_id;
+                    objSite.destination_port_type = site.destination_port_type;
+                    objSite.destination_no_of_cores = site.destination_no_of_cores;
+                    objSite.project_id_dialog= site.project_id_dialog;
+
                     //objSite.served_by_ring=site.served_by_ring;
                     var Resp = repo.Update(objSite);
                    // DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(Resp.system_id, Models.EntityType.Coupler.ToString(), Resp.province_id, 1);
@@ -75,7 +98,8 @@ namespace DataAccess
                 {
                     site.created_by = userId;
                     site.created_on = DateTimeHelper.Now;
-                   
+                    site.network_status = String.IsNullOrEmpty(site.network_status) ? "P" : site.network_status;
+
                     var resultItem = repo.Insert(site);
                     // Save geometry
                     InputGeom geom = new InputGeom();

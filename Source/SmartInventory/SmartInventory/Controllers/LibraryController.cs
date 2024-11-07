@@ -2678,8 +2678,8 @@ namespace SmartInventory.Controllers
                 fillRegionProvinceDetail(objPOD, GeometryType.Point.ToString(), geom);
                 //Fill Parent detail...              
                 fillParentDetail(objPOD, new NetworkCodeIn() { eType = EntityType.POD.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPOD.geom }, networkIdType);
-                objPOD.longitude = Convert.ToDecimal(geom.Split(' ')[0]);
-                objPOD.latitude = Convert.ToDecimal(geom.Split(' ')[1]);
+                objPOD.longitude = Convert.ToDouble(geom.Split(' ')[0]);
+                objPOD.latitude = Convert.ToDouble(geom.Split(' ')[1]);
                 // Item template binding
                 var objItem = BLItemTemplate.Instance.GetTemplateDetail<PODTemplateMaster>(Convert.ToInt32(Session["user_id"]), EntityType.POD);
                 Utility.MiscHelper.CopyMatchingProperties(objItem, objPOD);
@@ -13130,7 +13130,7 @@ namespace SmartInventory.Controllers
         public ActionResult SaveSite(Site objsite, bool isDirectSave = false)
         {
             objsite.created_by = Convert.ToInt32(Session["user_id"]);
-            objsite.network_status = "A";
+            //objsite.network_status = "A";
             string url = "api/Library/EntityOperations";
             var response = WebAPIRequest.PostIntegrationAPIRequest<Site>(url, objsite, EntityType.Site.ToString(), EntityAction.Save.ToString());
             if (isDirectSave)

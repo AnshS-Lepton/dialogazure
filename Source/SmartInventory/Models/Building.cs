@@ -400,6 +400,7 @@ namespace Models
 	}
 	public class InRegionProvince
 	{
+		[Key]
 		public int region_id { get; set; }
 		public string region_name { get; set; }
 		public string region_abbreviation { get; set; }
