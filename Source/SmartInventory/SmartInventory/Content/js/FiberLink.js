@@ -95,7 +95,7 @@
         $(app.DE.btnExportFiberLinkToKML).on("click", function () {
             var FiberLinkBulkKMLExportLimit = $('#hdnFiberLinkBulkKMLExportLimit').val()
             if (parseInt($('#hdnAssociatedCount').val()) > parseInt($('#hdnFiberLinkBulkKMLExportLimit').val())) {
-                 alert("Maximum " + FiberLinkBulkKMLExportLimit + " Associated links can be exported at a time!");
+                alert(MultilingualKey.SI_OSP_STR_JQ_FRM_002 + " " + FiberLinkBulkKMLExportLimit + " " + MultilingualKey.SI_OSP_GBL_NET_RPT_297);
             }
             else { window.location = appRoot + 'FiberLink/DownloadFiberLinkIntoKML'; $(".dropbox_BulkExport").slideToggle(); }
         });
@@ -112,6 +112,7 @@
             $(app.DE.imgToDate).hide();
         }
         $(app.DE.btnLinkData).on("click", function () { 
+            if (($(app.DE.ddlSearchBy).val() == 'Select') && ($(app.DE.txtSearchTxt).val() == "")) {            
             if (($(app.DE.customedate + ' option:selected').text() != "Select") && ($(app.DE.txtDateFrom).val() == "")) {
                 alert(app.StatusMessages.SELECT_FROM_DATE);
                 return false;
@@ -127,6 +128,10 @@
                 var endDate = new Date($(app.DE.txtDateTo).val());
                 var configuredDay = 1825;
                 return app.GetDaysDifference(startDate, endDate, configuredDay);
+            }
+            else {
+                return true;
+                }
             }
             else {
                 return true;
@@ -1080,7 +1085,7 @@
                 }
                 else {
 
-                    $(app.DE.lblGrdLinkId_ + gridFiberNumber).html('Enter Link Id');
+                    $(app.DE.lblGrdLinkId_ + gridFiberNumber).html(MultilingualKey.SI_OSP_GBL_JQ_FRM_194);
                 } 
             }
             else { 
@@ -1092,7 +1097,7 @@
                     app.CableFiberButton = false;
                 }
                 else if (resp.message == "Fiber Link created but not associated as ODF to ODF connectivity not found!") {
-                    alert("Fiber Link is not associated as ODF to ODF connectivity not found!");
+                    alert(MultilingualKey.SI_OSP_GBL_NET_RPT_298);
                     $(app.DE.dvAssociateLink).hide();
                 }
                 else {

@@ -164,3 +164,46 @@ AS SELECT pod.system_id,
      LEFT JOIN isp_room_info ON m2.entity_id = isp_room_info.system_id AND m2.floor_id = isp_room_info.floor_id
      LEFT JOIN isp_shaft_info s ON m2.shaft_id = s.system_id
      LEFT JOIN isp_floor_info f ON m2.floor_id = f.system_id;
+	 
+---------------------------------------------------------------------------Deepak Sir provided CHANGEINSERT INTO dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(19, 'Cable_Category', 'BB', true, 1, '2019-04-18 12:43:52.804', NULL, '2019-04-18 12:43:52.804', 'BB', NULL, 'Cable_Category', true, true, 0);
+
+INSERT INTO dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(19, 'Cable_Category', 'Sprouts', true, 1, '2019-04-18 12:43:52.804', NULL, '2019-04-18 12:43:52.804', 'Sprouts', NULL, 'Cable_Category', true, true, 0);
+
+INSERT INTO dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(19, 'Cable_Category', 'Drop Cable', true, 1, '2019-04-18 12:43:52.804', NULL, '2019-04-18 12:43:52.804', 'Drop Cable', NULL, 'Cable_Category', true, true, 0);
+
+INSERT INTO dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(19, 'Cable_Category', 'Primary Cable', true, 1, '2019-04-18 12:43:52.804', NULL, '2019-04-18 12:43:52.804', 'Primary Cable', NULL, 'Cable_Category', true, true, 0);
+
+INSERT INTO dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(19, 'Cable_Category', 'Secondary Cable', true, 1, '2019-04-18 12:43:52.804', NULL, '2019-04-18 12:43:52.804', 'Secondary Cable', NULL, 'Cable_Category', true, true, 0);
+
+INSERT INTO dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(19, 'Cable_Category', 'Tail Cable', true, 1, '2019-04-18 12:43:52.804', NULL, '2019-04-18 12:43:52.804', 'Tail Cable', NULL, 'Cable_Category', true, true, 0);
+
+
+INSERT INTO dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(14, 'Pole_Type', 'LL', true, 1, '2018-07-12 15:25:57.960', NULL, '2018-07-12 15:25:57.960', 'LL', NULL, 'Pole_Type', true, true, 0);
+
+INSERT INTO dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(14, 'Pole_Type', 'Standard', true, 1, '2018-07-12 15:25:57.960', NULL, '2018-07-12 15:25:57.960', 'Standard', NULL, 'Pole_Type', true, true, 0);
+
+INSERT INTO dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(14, 'Pole_Type', 'GI', true, 1, '2018-07-12 15:25:57.960', NULL, '2018-07-12 15:25:57.960', 'GI', NULL, 'Pole_Type', true, true, 0);
+INSERT INTO dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(14, 'Pole_Type', 'SPUN', true, 1, '2018-07-12 15:25:57.960', NULL, '2018-07-12 15:25:57.960', 'SPUN', NULL, 'Pole_Type', true, true, 0);
+INSERT INTO dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(14, 'Pole_Type', 'Wooden', true, 1, '2018-07-12 15:25:57.960', NULL, '2018-07-12 15:25:57.960', 'Wooden', NULL, 'Pole_Type', true, true, 0);
