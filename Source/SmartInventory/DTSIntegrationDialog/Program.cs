@@ -87,8 +87,8 @@ namespace DTSIntegrationDialog
 
                     WriteLog.WriteLogFile("Calling API: " + GetSiteListURL);
 
-                    //var requestUri = new Uri($"{GetSiteListURL}?Status=live");
-                    var requestUri = new Uri($"{GetSiteListURL}");
+                    var requestUri = new Uri($"{GetSiteListURL}?Status=live");
+                    //var requestUri = new Uri($"{GetSiteListURL}");
                     //string requestUri = $"{apiSettings.GetSiteListEndpoint}?Status=live";
                     WriteLog.WriteLogFile("Request URI: " + requestUri);
                     HttpResponseMessage response = client.GetAsync(requestUri).GetAwaiter().GetResult();

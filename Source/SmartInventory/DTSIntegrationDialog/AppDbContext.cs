@@ -20,7 +20,7 @@ namespace DTSIntegrationDialog
         public DbSet<ProcessSiteOutput> ProcessSiteOutputs { get; set; }
         public DbSet<InRegionProvince> InRegionProvinces { get; set; }
         public DbSet<SiteAttributes> SiteDetails { get; set; }
-        public DbSet<Site> SiteDetailsMain { get; set; }
+        //public DbSet<Site> SiteDetailsMain { get; set; }
         public DbSet<PODMaster> PopDetails { get; set; }
 
         // Configuring the model
@@ -32,7 +32,7 @@ namespace DTSIntegrationDialog
 
             modelBuilder.Entity<SiteAttributes>().ToTable("process_site_details", "public").HasKey(sa => sa.id);
 
-            modelBuilder.Entity<Site>().ToTable("att_details_site", "public").HasKey(s => s.system_id);
+            //modelBuilder.Entity<Site>().ToTable("att_details_site", "public").HasKey(s => s.system_id);
             modelBuilder.Entity<PODMaster>().ToTable("att_details_pod", "public").HasKey(s => s.system_id);
 
         }
