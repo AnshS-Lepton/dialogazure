@@ -81,8 +81,8 @@
 
                         <div class="form-group">
 
-                        <label class="control-label col-sm-4" for="txtAreaCode">
-                        @Resources.Resources.SI_OSP_GBL_GBL_GBL_001
+                            <label class="control-label col-sm-4" for="txtAreaCode">
+                                @Resources.Resources.SI_OSP_GBL_GBL_GBL_001
 
                                 @if (Model.networkIdType == NetworkIdType.M.ToString())
                                 {
@@ -99,19 +99,19 @@
                         <div id="txtMasked"></div>
 
                         @*<div class="form-group">
-                                <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_004<i class="clsMandatory">*</i>:</label>
-                                <div class="col-sm-8">
-                                    @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
-                                </div>
+            <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_004<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
+            </div>
 
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_005<i class="clsMandatory">*</i>:</label>
-                                <div class="col-sm-8">
-                                    @Html.TextBoxFor(m => m.parent_entity_type, new { @class = "form-control clsReadOnly", @readonly = true })
-                                </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_005<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.parent_entity_type, new { @class = "form-control clsReadOnly", @readonly = true })
+            </div>
 
-                            </div>*@
+        </div>*@
                         <div class="form-group" style="display:none;">
                             <label class="control-label col-sm-4" for="txtAreaName"> System ID<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-8">
@@ -123,6 +123,12 @@
                             <label class="control-label col-sm-4" for="ddAreaRFS">Qualification Type<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-8">
                                 @Html.DropDownListFor(m => m.qualification_type, new SelectList(Model.lstQualificationType.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @id = "rfsType", @style = "padding:0;" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Allowed Network:</label>
+                            <div class="col-sm-8">
+                                @Html.DropDownListFor(m => m.allowed_network, new SelectList(Model.lstAllowedNetworkType.Select(x => new { Value = x.dropdown_key.ToString(), Text = x.dropdown_value.ToString() }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", @style = "padding:0;" })
                             </div>
                         </div>
                         <div class="form-group">

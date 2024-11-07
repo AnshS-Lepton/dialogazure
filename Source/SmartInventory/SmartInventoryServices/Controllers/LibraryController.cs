@@ -2060,8 +2060,8 @@ namespace SmartInventoryServices.Controllers
 				fillRegionProvinceDetail(objPOD, GeometryType.Point.ToString(), objPOD.geom);
 				//Fill Parent detail...              
 				fillParentDetail(objPOD, new NetworkCodeIn() { eType = EntityType.POD.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPOD.geom }, objPOD.networkIdType);
-				objPOD.longitude = Convert.ToDecimal(objPOD.geom.Split(' ')[0]);
-				objPOD.latitude = Convert.ToDecimal(objPOD.geom.Split(' ')[1]);
+				objPOD.longitude = Convert.ToDouble(objPOD.geom.Split(' ')[0]);
+				objPOD.latitude = Convert.ToDouble(objPOD.geom.Split(' ')[1]);
 				// Item template binding
 				var objItem = BLItemTemplate.Instance.GetTemplateDetail<PODTemplateMaster>(objPOD.user_id, EntityType.POD);
 				MiscHelper.CopyMatchingProperties(objItem, objPOD);
@@ -2226,8 +2226,8 @@ namespace SmartInventoryServices.Controllers
 						var structureDetails = new BLMisc().GetEntityDetailById<StructureMaster>(objPODMaster.objIspEntityMap.structure_id, EntityType.Structure);
 						if (structureDetails != null)
 						{
-							objPODMaster.latitude = Convert.ToDecimal(structureDetails.latitude);
-							objPODMaster.longitude = Convert.ToDecimal(structureDetails.longitude);
+							objPODMaster.latitude = Convert.ToDouble(structureDetails.latitude);
+							objPODMaster.longitude = Convert.ToDouble(structureDetails.longitude);
 						}
 					}
 					objPODMaster.objIspEntityMap.shaft_id = objPODMaster.objIspEntityMap.AssoType == "Floor" ? 0 : objPODMaster.objIspEntityMap.shaft_id;
@@ -4383,8 +4383,9 @@ namespace SmartInventoryServices.Controllers
 			objRestrictedArea.lstcategoryRFS = objDDL.Where(x => x.dropdown_type == DropDownType.Category.ToString()).ToList();
 			objRestrictedArea.lstsubcategoryRFS = objDDL.Where(x => x.dropdown_type == DropDownType.SubCategory.ToString()).ToList();
 			objRestrictedArea.lstQualificationType = objDDL.Where(x => x.dropdown_type == DropDownType.QualificationType.ToString()).ToList();
+			objRestrictedArea.lstAllowedNetworkType= objDDL.Where(x => x.dropdown_type == DropDownType.AllowedNetworkType.ToString()).ToList();
 
-			return objRestrictedArea;
+            return objRestrictedArea;
 		}
 		#endregion
 		#region Save RestrictedArea
@@ -4404,7 +4405,7 @@ namespace SmartInventoryServices.Controllers
 				objRestrictedArea.lstcategoryRFS = objDDL.Where(x => x.dropdown_type == DropDownType.Category.ToString()).ToList();
 				objRestrictedArea.lstsubcategoryRFS = objDDL.Where(x => x.dropdown_type == DropDownType.SubCategory.ToString()).ToList();
 				objRestrictedArea.lstQualificationType = objDDL.Where(x => x.dropdown_type == DropDownType.QualificationType.ToString()).ToList();
-
+				objRestrictedArea.lstAllowedNetworkType = objDDL.Where(x => x.dropdown_type == DropDownType.AllowedNetworkType.ToString()).ToList();
 
 				if (objRestrictedArea.networkIdType == NetworkIdType.A.ToString() && objRestrictedArea.system_id == 0)
 				{
@@ -15734,7 +15735,7 @@ namespace SmartInventoryServices.Controllers
                 Site obj = ReqHelper.GetRequestData<Site>(data);
                 Site objSite = GetSiteDetail(obj);
                 //BLItemTemplate.Instance.BindItemDropdowns(objSite, EntityType.Site.ToString());
-                //fillProjectSpecifications(objSite);
+                fillProjectSpecifications(objSite);
                 //BindCouplerDropDown(objSite);
                 // objSite.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Site.ToString()).ToList();
                 //Get the layer details to bind additional attributes Coupler
@@ -15862,7 +15863,7 @@ namespace SmartInventoryServices.Controllers
                 {
                     //BLItemTemplate.Instance.BindItemDropdowns(objSite, EntityType.Site.ToString());
                     // RETURN PARTIAL VIEW WITH MODEL DATA
-                    // fillProjectSpecifications(objSite);
+                     fillProjectSpecifications(objSite);
                     //  BindCouplerDropDown(objSite);
                     //Get the layer details to bind additional attributes Coupler
                     //var layerdetails = new BLLayer().getLayer(EntityType.Site.ToString());

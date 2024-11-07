@@ -352,6 +352,7 @@ namespace DataAccess
                     objitem.sub_category = restricted_Area.sub_category;
                     objitem.is_network_creation_allowed = restricted_Area.is_network_creation_allowed;
                     objitem.is_feasibility_allowed = restricted_Area.is_feasibility_allowed;
+                    objitem.allowed_network= restricted_Area.allowed_network;
                     var RAreaResp = repo.Update(objitem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(RAreaResp.system_id, Models.EntityType.Restricted_Area.ToString(), RAreaResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.RestrictedArea.ToString(), RAreaResp.province_id);

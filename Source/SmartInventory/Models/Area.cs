@@ -359,6 +359,8 @@ namespace Models
         [NotMapped]
         public List<DropDownMaster> lstQualificationType { get; set; }
         [NotMapped]
+        public List<DropDownMaster> lstAllowedNetworkType { get; set; }
+        [NotMapped]
         public string province_name { get; set; }
         [NotMapped]
         public string region_name { get; set; }
@@ -370,6 +372,8 @@ namespace Models
         public string province_abbreviation { get; set; }
         [Required]
         public string qualification_type { get; set; }
+
+        public string allowed_network { get; set; }
 
         public RestrictedArea()
         {
