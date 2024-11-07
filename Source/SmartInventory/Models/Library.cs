@@ -252,8 +252,8 @@ namespace Models
 		[Required]
 		public string network_id { get; set; }
 		public string pod_name { get; set; }
-		public decimal latitude { get; set; }
-		public decimal longitude { get; set; }
+		public Double latitude { get; set; }
+		public Double longitude { get; set; }
 		public int province_id { get; set; }
 		public int region_id { get; set; }
 		[StringLength(6, MinimumLength = 6, ErrorMessage = "PinCode length should be 6")]
@@ -386,7 +386,73 @@ namespace Models
 		public string partner_name { get; set; }
 		[NotMapped]
 		public List<string> lstUserModule { get; set; }
-		public PODMaster()
+        // site attridutes added here
+
+        public string site_id { get; set; }
+        public string site_name { get; set; }
+        public DateTime on_air_date { get; set; }
+        public DateTime removed_date { get; set; }
+        public string tx_type { get; set; }
+
+        public string tx_technology { get; set; }
+        public string tx_segment { get; set; }
+        public string tx_ring { get; set; }
+
+        public string region { get; set; }
+        public string province { get; set; }
+        public string district { get; set; }
+        public string region_address { get; set; }
+        public string depot { get; set; }
+        public string ds_division { get; set; }
+        public string local_authority { get; set; }
+        public string owner_name { get; set; }
+        public string access_24_7 { get; set; }
+
+        public string tower_type { get; set; }
+        public int tower_height { get; set; }
+        public string cabinet_type { get; set; }
+        public string solution_type { get; set; }
+
+        public int site_rank { get; set; }
+        public Decimal self_tx_traffic { get; set; }
+        public Decimal agg_tx_traffic { get; set; }
+        public Decimal metro_ring_utilization { get; set; }
+        public int csr_count { get; set; }
+        public int dti_circuit { get; set; }
+        public string agg_01 { get; set; }
+        public string agg_02 { get; set; }
+        public int bandwidth { get; set; }
+        public string ring_type { get; set; }
+        public string link_id { get; set; }
+        public string alias_name { get; set; }
+
+        public bool is_visible_on_map { get; set; }
+        public DateTime? status_updated_on { get; set; }
+        public int? status_updated_by { get; }
+        public string target_ref_id { get; set; }
+        public string target_ref_code { get; set; }
+        public string target_ref_description { get; set; }
+
+        public string tx_agg { get; set; }
+        public string bh_status { get; set; }
+        public string elevation { get; set; }
+        public string segment { get; set; }
+        public string ring { get; set; }
+        public int? maximum_cost { get; set; }
+        public string project_category { get; set; }
+        public int? priority { get; set; }
+        public int? no_of_cores { get; set; }
+        public string fiber_link_type { get; set; }
+        public string comment { get; set; }
+        public int? plan_cost { get; set; }
+        public int? fiber_distance { get; set; }
+        public string fiber_link_code { get; set; }
+        public string port_type { get; set; }
+        public string destination_site_id { get; set; }
+        public string destination_port_type { get; set; }
+        public decimal? destination_no_of_cores { get; set; }
+        public string project_id_dialog { get; set; }
+        public PODMaster()
 		{
 
 			shaft_id = 0;

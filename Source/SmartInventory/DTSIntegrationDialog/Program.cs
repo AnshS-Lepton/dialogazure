@@ -18,10 +18,12 @@ namespace DTSIntegrationDialog
         {
             WriteLog.WriteLogFile("Service Start at: " + DateTime.Now);
             var processId = BLDTS.EntryLogInProcessSummary();
-            var token = "abc";//GetAccessTokenAsync();
+            var token = GetAccessTokenAsync();
             ConsumeSiteListApi(token, processId);
-            CheckandUpdateSite(token,processId);
-            WriteLog.WriteLogFile("Service End");
+            CheckandUpdateSite(token, processId);
+            BLDTS.ExitLogOutProcessSummary(processId);
+            WriteLog.WriteLogFile("Process completed for Process ID :" + processId + "at: " + DateTime.Now.ToString());
+            Console.WriteLine("Process ID: " + processId);
         }
         public static string GetAccessTokenAsync()
         {
@@ -40,44 +42,30 @@ namespace DTSIntegrationDialog
                     client.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken);
                     var requestUri = new Uri($"{accessTokenEndpoint}?{accessKey}={accessValue}");
                     WriteLog.WriteLogFile("requestUri: " + requestUri);
-
                     HttpResponseMessage response = client.PostAsync(requestUri, null).GetAwaiter().GetResult();
-
-                    //HttpResponseMessage response = client.PostAsync(accessTokenEndpoint).GetAwaiter().GetResult();
-                    //WriteLog.WriteLogFile("Calling API: " + accessTokenEndpoint);
-                    //var url = new Uri($"{accessTokenEndpoint}?{accessKey}={accessValue}");
                     WriteLog.WriteLogFile("API Response: " + response);
-
-
-                    //HttpResponseMessage response = client.GetAsync(url).GetAwaiter().GetResult();
                     if (response.IsSuccessStatusCode)
                     {
                         string responseBody = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                         var x = JsonConvert.DeserializeObject<AccessTokenResponse>(responseBody);
                         accessToken = x.access_token;
-
-                        Console.WriteLine(responseBody);
                         WriteLog.WriteLogFile("API Response: " + accessToken);
                         WriteLog.WriteLogFile("API Response: " + responseBody);
-
                         return accessToken; // Return the access token
                     }
                     else
                     {
                         WriteLog.WriteLogFile($"Failed to call the API. Status code: {response.StatusCode}");
-                        Console.WriteLine($"Failed to call the API. Status code: {response.StatusCode}");
                     }
 
                 }
                 catch (HttpRequestException httpEx)
                 {
                     WriteLog.WriteLogFile("HTTP Request Exception: " + httpEx.Message);
-                    Console.WriteLine($"HTTP Request Exception: {httpEx.Message}");
                 }
                 catch (Exception ex)
                 {
                     WriteLog.WriteLogFile("Exception caught at GetAccessTokenAsync: " + ex.Message);
-                    Console.WriteLine($"Exception caught: {ex.Message}");
                 }
                 return accessToken;
             }
@@ -109,7 +97,6 @@ namespace DTSIntegrationDialog
                         string responseBody = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                         var siteList = JsonConvert.DeserializeObject<SiteList>(responseBody);
                         sitelst.Add(siteList);
-                        Console.WriteLine(responseBody);
                         WriteLog.WriteLogFile("API Response: " + responseBody);
                     }
                     else
@@ -138,14 +125,10 @@ namespace DTSIntegrationDialog
                 token = token.Trim();
                 WriteLog.WriteLogFile("token" + token);
                 var sitelist = BLDTS.GetSiteIdsByProcessId(progressID);
-                //var sitelist = new List<string> { "AM0004", "VA0072", "abc" };
                 foreach (var siteID in sitelist)
                 {
-                    //Site site = new Site();
-
                     using (HttpClient client = new HttpClient())
                     {
-
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);

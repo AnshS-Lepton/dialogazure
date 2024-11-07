@@ -21,6 +21,10 @@ namespace DTSIntegrationDialog
                 return dadts.EntryLogInProcessSummary();
             }
         }
+
+        public static void ExitLogOutProcessSummary(int processID) {
+          DADTS.ExitLogOutProcessSummary(processID);
+        }
         public static void SaveSitesList(List<SiteDetails> siteList, int processID)
         {
             DADTS.SaveSitesList(siteList, processID);

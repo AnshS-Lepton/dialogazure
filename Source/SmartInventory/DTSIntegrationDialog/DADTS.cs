@@ -3,6 +3,8 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,6 +51,20 @@ namespace DTSIntegrationDialog
                 throw;
             }
         }
+        public static void ExitLogOutProcessSummary(int processID) {
+            using (var context = new AppDbContext())
+            {
+                var existingRecord = context.ProcessSites.FirstOrDefault(ps => ps.process_id == processID);
+                if (existingRecord != null)
+                {
+                    // Update the fields as necessary
+                    existingRecord.process_end_time = DateTime.Now;
+                    existingRecord.stataus = "Site Data Updated";
+                }
+                context.SaveChanges();
+            }
+        }
+
 
         public static void SaveSitesList(List<SiteDetails> siteList, int processID)
         {
@@ -111,7 +127,7 @@ namespace DTSIntegrationDialog
             using (var context = new AppDbContext())
             {
                 //first check if the site already exists
-                var existingRecord = context.SiteDetailsMain.Select(ps => new
+                var existingRecord = context.PopDetails.Select(ps => new
                 {
                     ps.site_id,
                     province_id = ps.province_id != null ? (int?)ps.province_id : 0,
@@ -227,7 +243,7 @@ namespace DTSIntegrationDialog
                 {
                     var geom = objsite.longitude + " " + objsite.latitude;
                     NetworkCodeIn objIn = new NetworkCodeIn();
-                    objIn.eType = EntityType.Site.ToString();
+                    objIn.eType = EntityType.POD.ToString();
                     objIn.gType = GeometryType.Point.ToString();
                     objIn.eGeom = geom;
                     var regionprovice = GetRegionProvinceDetail(objIn,context);
@@ -282,11 +298,14 @@ namespace DTSIntegrationDialog
 
             try
             {
-                using (var context = new AppDbContext()) { 
-                // Define the SQL query
-                var query = @"
-                SELECT * FROM fn_process_site_details(@process_id_input)";
-                var result = context.Database.SqlQuery<ProcessSiteOutput>(query,new NpgsqlParameter("process_id_input", processID)).ToList();
+                using (var context = new AppDbContext()) {
+                    // Define the SQL query
+                    //var query = @"
+                    //SELECT * FROM fn_process_site_details(@process_id_input)";
+                    var query = @"
+                SELECT * FROM fn_process_save_pod_details(@process_id_input)";
+
+                    var result = context.Database.SqlQuery<ProcessSiteOutput>(query,new NpgsqlParameter("process_id_input", processID)).ToList();
                 records = result.FirstOrDefault();
             }
             }
@@ -348,7 +367,7 @@ namespace DTSIntegrationDialog
             SELECT fn_save_entity_geom(@p_system_id, @p_geom_type, @p_entity_type, @p_userid, @p_longlat, @p_common_name,@p_network_status,@p_ports,@p_entity_category, @p_center_line_geom,@p_buffer_width, @p_project_id)";
 
                 // Execute the query using raw SQL
-                context.Database.SqlQuery<int>(query,
+                context.Database.SqlQuery<object>(query,
                     new NpgsqlParameter("@p_system_id", objgeom.systemId),
                     new NpgsqlParameter("@p_geom_type", objgeom.geomType),
                     new NpgsqlParameter("@p_entity_type", objgeom.entityType),
@@ -360,7 +379,7 @@ namespace DTSIntegrationDialog
                     new NpgsqlParameter("@p_entity_category", ""),
                     new NpgsqlParameter("@p_center_line_geom", ""),
                     new NpgsqlParameter("@p_buffer_width", objgeom.buffer_width),
-                    new NpgsqlParameter("@p_project_id", objgeom.project_id));
+                    new NpgsqlParameter("@p_project_id", objgeom.project_id)).ToList();
             }
             catch (Exception ex)
             {
@@ -368,6 +387,31 @@ namespace DTSIntegrationDialog
             }
 
         }
+
+        public static DbMessage updateGeojsonEntityAttribute(int system_id, string entityType, int? province_id, int action_id)
+        {
+            try
+            {
+                using (var context = new AppDbContext())
+                {
+                    return context.Database.SqlQuery<DbMessage>(
+     "SELECT * FROM fn_geojson_update_entity_attribute(@p_system_id, @p_entity_type, @p_province_id, @p_action_id, @is_location_edit)",
+     new NpgsqlParameter("p_system_id", system_id),
+     new NpgsqlParameter("p_entity_type", entityType),
+     new NpgsqlParameter("p_province_id", province_id),
+     new NpgsqlParameter("p_action_id", action_id),
+     new NpgsqlParameter("is_location_edit", false)
+ ).FirstOrDefault();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLog.WriteLogFile("An error occurred while updating GeoJSON entity attribute: " + ex.Message);
+                return null; // Ensure a value is returned in case of an exception
+            }
+        }
+
 
         public static void EditEntityGeometry(EditGeomIn objgeom, AppDbContext context)
         {
@@ -377,14 +421,14 @@ namespace DTSIntegrationDialog
             SELECT fn_update_entity_geom(@p_system_id, @p_geom_type, @p_entity_type, @p_userid, @p_longlat, @p_network_status, @p_center_line_geom)";
 
                 // Execute the query using raw SQL
-                context.Database.SqlQuery<int>(query,
+                context.Database.SqlQuery<object>(query,
                     new NpgsqlParameter("@p_system_id", objgeom.systemId),
                     new NpgsqlParameter("@p_geom_type", objgeom.geomType),
                     new NpgsqlParameter("@p_entity_type", objgeom.entityType),
                     new NpgsqlParameter("@p_userid", objgeom.userId),
                     new NpgsqlParameter("@p_longlat", objgeom.longLat),
                     new NpgsqlParameter("@p_network_status", objgeom.networkStatus),
-                    new NpgsqlParameter("@p_center_line_geom", objgeom.centerLineGeom));
+                    new NpgsqlParameter("@p_center_line_geom", objgeom.centerLineGeom)).ToList();
             }
             catch (Exception ex)
             {
@@ -410,18 +454,25 @@ namespace DTSIntegrationDialog
                     foreach (var sites in siteIds)
                     {
                         //Update Network Details
-                        var existingRecord = context.SiteDetailsMain
+                        var existingRecord = context.PopDetails
                         .FirstOrDefault(ps => ps.site_id == sites.site_id);
+
                         if (existingRecord != null && sites.is_new_entity)
                         {
-                            var geom = existingRecord.longitude + " " + existingRecord.latitude;
+                            var geom = ((double)existingRecord.longitude) + " " + ((double)existingRecord.latitude);
                             NetworkCodeIn objIn = new NetworkCodeIn();
-                            objIn.eType = EntityType.Site.ToString();
+                            objIn.eType = EntityType.POD.ToString();
                             objIn.gType = GeometryType.Point.ToString();
                             objIn.eGeom = geom;
                             var networkDetils = GetNetworkCodeDetail(objIn,context);
                             existingRecord.network_id = networkDetils.network_code;
+                            if (existingRecord.pod_name == null)
+                            {
+                                existingRecord.pod_name = networkDetils.network_code;
+                            }
                             existingRecord.sequence_id = networkDetils.sequence_id;
+                            existingRecord.specification = "Generic";
+                            existingRecord.category =EntityType.Site.ToString();
                             existingRecord.parent_entity_type = networkDetils.parent_entity_type;
                             existingRecord.parent_network_id = networkDetils.parent_network_id;
                             existingRecord.parent_system_id = networkDetils.parent_system_id;
@@ -435,7 +486,7 @@ namespace DTSIntegrationDialog
                                 InputGeom inputGeom = new InputGeom();
                                 inputGeom.systemId = existingRecord.system_id;
                                 inputGeom.geomType = "Point";
-                                inputGeom.entityType = "Site";
+                                inputGeom.entityType = "POD";
                                 inputGeom.userId = existingRecord.created_by;
                                 inputGeom.longLat = existingRecord.longitude + " " + existingRecord.latitude;
                                 inputGeom.networkStatus = existingRecord.network_status;
@@ -443,20 +494,32 @@ namespace DTSIntegrationDialog
                                 inputGeom.buffer_width = 0;
                                 inputGeom.project_id = existingRecord.project_id;
                                 SaveEntityGeom(inputGeom,context);
-                            }
-                            else
-                            {
-                                EditGeomIn geomObj = new EditGeomIn();
-                                geomObj.systemId = existingRecord.system_id;
-                                geomObj.geomType = "Point";
-                                geomObj.entityType = "Site";
-                                geomObj.userId = existingRecord.created_by;
-                                geomObj.longLat = existingRecord.longitude + " " + existingRecord.latitude;
-                                geomObj.networkStatus = existingRecord.network_status;
-                                geomObj.centerLineGeom = "";
-                                EditEntityGeometry(geomObj,context);
-                            }
+                                updateGeojsonEntityAttribute(existingRecord.system_id, Models.EntityType.POD.ToString(),existingRecord.province_id,0);
                         }
+                        else
+                        {
+                            EditGeomIn geomObj = new EditGeomIn();
+                            geomObj.systemId = existingRecord.system_id;
+                            geomObj.geomType = "Point";
+                            geomObj.entityType = "POD";
+                            geomObj.userId = existingRecord.created_by;
+                            geomObj.longLat = existingRecord.longitude + " " + existingRecord.latitude;
+                            geomObj.networkStatus = existingRecord.network_status;
+                            geomObj.centerLineGeom = "";
+                            EditEntityGeometry(geomObj, context);
+                            updateGeojsonEntityAttribute(existingRecord.system_id, Models.EntityType.POD.ToString(), existingRecord.province_id, 1);
+                            }
+                    }
+                    }
+                }
+            }
+            catch (DbEntityValidationException ex)
+            {
+                foreach (var validationErrors in ex.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        WriteLog.WriteLogFile($"Property: {validationError.PropertyName} Error: {validationError.ErrorMessage}");
                     }
                 }
             }

@@ -2060,8 +2060,8 @@ namespace SmartInventoryServices.Controllers
 				fillRegionProvinceDetail(objPOD, GeometryType.Point.ToString(), objPOD.geom);
 				//Fill Parent detail...              
 				fillParentDetail(objPOD, new NetworkCodeIn() { eType = EntityType.POD.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPOD.geom }, objPOD.networkIdType);
-				objPOD.longitude = Convert.ToDecimal(objPOD.geom.Split(' ')[0]);
-				objPOD.latitude = Convert.ToDecimal(objPOD.geom.Split(' ')[1]);
+				objPOD.longitude = Convert.ToDouble(objPOD.geom.Split(' ')[0]);
+				objPOD.latitude = Convert.ToDouble(objPOD.geom.Split(' ')[1]);
 				// Item template binding
 				var objItem = BLItemTemplate.Instance.GetTemplateDetail<PODTemplateMaster>(objPOD.user_id, EntityType.POD);
 				MiscHelper.CopyMatchingProperties(objItem, objPOD);
@@ -2226,8 +2226,8 @@ namespace SmartInventoryServices.Controllers
 						var structureDetails = new BLMisc().GetEntityDetailById<StructureMaster>(objPODMaster.objIspEntityMap.structure_id, EntityType.Structure);
 						if (structureDetails != null)
 						{
-							objPODMaster.latitude = Convert.ToDecimal(structureDetails.latitude);
-							objPODMaster.longitude = Convert.ToDecimal(structureDetails.longitude);
+							objPODMaster.latitude = Convert.ToDouble(structureDetails.latitude);
+							objPODMaster.longitude = Convert.ToDouble(structureDetails.longitude);
 						}
 					}
 					objPODMaster.objIspEntityMap.shaft_id = objPODMaster.objIspEntityMap.AssoType == "Floor" ? 0 : objPODMaster.objIspEntityMap.shaft_id;

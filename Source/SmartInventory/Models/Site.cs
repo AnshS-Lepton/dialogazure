@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Models.Admin;
+using Newtonsoft.Json;
 
 namespace Models
 {
@@ -223,11 +224,11 @@ namespace Models
         public string depot { get; set; }
         public string ds_division { get; set; }
         public string local_authority { get; set; }
-        //[JsonProperty("Lat")]
+        [JsonProperty("Lat")]
         public double latitude { get; set; }
-        //[JsonProperty("Lng")]
+        [JsonProperty("Lng")]
         public double longitude { get; set; }
-        //[JsonProperty("Owner")]
+        [JsonProperty("Owner")]
         public string owner_name { get; set; }
         public string access_24_7 { get; set; }
 
@@ -237,9 +238,9 @@ namespace Models
         public string solution_type { get; set; }
 
         public int site_rank { get; set; }
-        // [JsonProperty("TX_Self_Traffic")]
+        [JsonProperty("TX_Self_Traffic")]
         public Decimal self_tx_traffic { get; set; }
-        // [JsonProperty("TX_Agg_Traffic")]
+        [JsonProperty("TX_Agg_Traffic")]
         public Decimal agg_tx_traffic { get; set; }
         public Decimal metro_ring_utilization { get; set; }
         public int csr_count { get; set; }
