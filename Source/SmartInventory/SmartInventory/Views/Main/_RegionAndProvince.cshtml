@@ -1,14 +1,15 @@
 ﻿@model List<Models.RegionProvinceLayer>
 
-
 <ul class="mainlyr region pd-right" style="display:block;">
-    @*@foreach (var item in Model.lstRegionProvinceLayers)
-        {*@
 
     @foreach (var Country in Model.OrderBy(x => x.countryname.ToLower()).Select(x => x.countryname.ToLower()).Distinct())
     {
 
-        <div class="checkbox-custom-label countryName countryLabel" data-country-name="@Country"><span>@Country</span></div>
+         <div class="checkbox-custom-label countryName countryLabel">
+               <input type="checkbox" class="checkbox-custom select-all-checkbox" id="checkallregionlayers_@Country" data-country="@Country">
+               <b><label for="checkallregionlayers_@Country" class="checkbox-custom-label fw-bold">@Country</label></b>
+           <span></span>
+       </div>
 
         foreach (var objLayer in Model.Where(x => x.countryname.ToLower() == Country.ToLower()))
         {
@@ -107,3 +108,16 @@
     @*}*@
     <label class="checkbox-custom-label noRecordFound" style="padding-left: 12px;padding-bottom: 7px;font-weight: bold;text-decoration: underline;font-size: 14px; text-transform:capitalize;width:100%;display:none;"><span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span></label>
 </ul>
+<script>
+    document.querySelectorAll('.select-all-checkbox').forEach(function (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function () {
+            const country = selectAllCheckbox.getAttribute('data-country');
+            const isChecked = selectAllCheckbox.checked;
+            
+            document.querySelectorAll(`li[data-country-name="${country}"] input[type="checkbox"]`).forEach(function (regionCheckbox) {
+                regionCheckbox.checked = isChecked;
+            });
+        });
+    });
+
+</script>
