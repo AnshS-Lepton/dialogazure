@@ -268,8 +268,8 @@ namespace Models
         string cabinet_type { get; set; }
         string solution_type { get; set; }
         int? site_rank { get; set; }
-        int? self_tx_traffic { get; set; }
-        int? agg_tx_traffic { get; set; }
+        double? self_tx_traffic { get; set; }
+        double? agg_tx_traffic { get; set; }
         int? csr_count { get; set; }
         int? dti_circuit { get; set; }
         string agg_01 { get; set; }
@@ -443,8 +443,8 @@ namespace Models
         public string cabinet_type { get; set; }
         public string solution_type { get; set; }
         public int? site_rank { get; set; }
-        public int? self_tx_traffic { get; set; }
-        public int? agg_tx_traffic { get; set; }
+        public double? self_tx_traffic { get; set; }
+        public double? agg_tx_traffic { get; set; }
         public int? csr_count { get; set; }
         public int? dti_circuit { get; set; }
         public string agg_01 { get; set; }
