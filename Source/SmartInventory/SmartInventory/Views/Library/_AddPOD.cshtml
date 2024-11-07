@@ -46,6 +46,10 @@
 {
     { Html.RenderPartial("~/Views/Library/_AdditionalFields.cshtml", (IAdditionalFields)Model); }
 }
+@helper SiteDetails()
+{
+    { Html.RenderPartial("~/Views/Library/_SiteDtls.cshtml", (ISite)Model); }
+}
 @{
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.POD.ToString());
     var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
@@ -226,14 +230,15 @@
 
                         <li class="active"><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
                         <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_005</a></li>
+                        <li><a class="@(Model.lstUserModule.Contains("SD")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_103 @(Model.lstUserModule.Contains("SD")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("SD") ? "" : "block;")" href="@(Model.lstUserModule.Contains("SD")?"#SiteDtls":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_GBL_103</a></li>
 
                         @if (Model.system_id > 0 && layerDetail.is_loop_allowed)
                         {
-                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_032 @(Model.lstUserModule.Contains("ENT-DTL-LDTL")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-LDTL") ? "" : "block;")"  href="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"#LoopMangment":"")" id="lnk_LoopMangment" onclick="si.GetLoopMangmentDetail('@Model.latitude', '@Model.longitude', '@Model.system_id','@EntityType.POD.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_032</a></li>
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_032 @(Model.lstUserModule.Contains("ENT-DTL-LDTL")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-LDTL") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"#LoopMangment":"")" id="lnk_LoopMangment" onclick="si.GetLoopMangmentDetail('@Model.latitude', '@Model.longitude', '@Model.system_id','@EntityType.POD.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_032</a></li>
                         }
                         @if (layerDetail != null && layerDetail.is_reference_allowed)
                         {
-                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_006 @(Model.lstUserModule.Contains("ENT-DTL-GRF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GRF") ? "" : "block;")"  href="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"#dvRefrence":"")" onclick="si.getEntityReference('@Model.system_id','@EntityType.POD.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a></li>
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_006 @(Model.lstUserModule.Contains("ENT-DTL-GRF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GRF") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"#dvRefrence":"")" onclick="si.getEntityReference('@Model.system_id','@EntityType.POD.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a></li>
                         }
                         @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_barcode_enabled)
                         {
@@ -267,13 +272,15 @@
                         <ul>
                             <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
                             <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_005</a></li>
+                            <li><a class="@(Model.lstUserModule.Contains("SD")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_103 @(Model.lstUserModule.Contains("SD")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("SD") ? "" : "block;")" href="@(Model.lstUserModule.Contains("SD")?"#SiteDtls":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_GBL_103</a></li>
+
                             @if (Model.system_id > 0 && layerDetail.is_loop_allowed)
                             {
-                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_032 @(Model.lstUserModule.Contains("ENT-DTL-LDTL")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-LDTL") ? "" : "block;")"  href="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"#LoopMangment":"")" id="lnk_LoopMangment" onclick="si.GetLoopMangmentDetail('@Model.latitude', '@Model.longitude', '@Model.system_id','@EntityType.POD.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_032</a></li>
+                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_032 @(Model.lstUserModule.Contains("ENT-DTL-LDTL")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-LDTL") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"#LoopMangment":"")" id="lnk_LoopMangment" onclick="si.GetLoopMangmentDetail('@Model.latitude', '@Model.longitude', '@Model.system_id','@EntityType.POD.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_032</a></li>
 
                                 if (layerDetail != null && layerDetail.is_reference_allowed)
                                 {
-                                    <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_006 @(Model.lstUserModule.Contains("ENT-DTL-GRF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GRF") ? "" : "block;")"  href="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"#dvRefrence":"")" onclick="si.getEntityReference('@Model.system_id','@EntityType.POD.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a></li>
+                                    <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_006 @(Model.lstUserModule.Contains("ENT-DTL-GRF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GRF") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"#dvRefrence":"")" onclick="si.getEntityReference('@Model.system_id','@EntityType.POD.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a></li>
                                 }
                                 if (Model.system_id > 0 && layerDetail != null && layerDetail.is_barcode_enabled)
                                 {
@@ -289,7 +296,7 @@
                                 }
                                 <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_222 @(Model.lstUserModule.Contains("ENT-DTL-ADA")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ADA") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" id="lnkAdditionalAttributes" data-is-loaded="0" onclick="getAdditionAttributes('@Model.system_id','@EntityType.POD.ToString()',this);" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
 
-                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_152 @(Model.lstUserModule.Contains("ENT-DTL-ENS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENS") ? "" : "block;")"  href="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"#NwEntityHistory":"")" id="Nw_EntityHistory" onclick="si.GetNetworkEntityHistory('@Model.system_id','@EntityType.POD.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_152</a></li>
+                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_152 @(Model.lstUserModule.Contains("ENT-DTL-ENS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENS") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"#NwEntityHistory":"")" id="Nw_EntityHistory" onclick="si.GetNetworkEntityHistory('@Model.system_id','@EntityType.POD.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_152</a></li>
                             }
                             <!--Reigon Additional Attribute to show the partial view-->
                             <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_222 @(Model.lstUserModule.Contains("ENT-DTL-ADA")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ADA") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
@@ -310,19 +317,19 @@
                     <fieldset class="the-fieldset">
                         <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SF_GBL_GBL_NET_FRM_051</legend>
                         @*<div class="form-group">
-                <label class="control-label col-sm-2" for="txtPODCode">
-                    POD Code
-                    @if (Model.networkIdType == NetworkIdType.M.ToString())
-                    {
-                        <i class="clsMandatory">*</i>
-                    }
-                    :
-                </label>
-                <div class="col-sm-9" style="width: 81%;">
-                    <div id="txtMaskedNetworkId"></div>
+                                <label class="control-label col-sm-2" for="txtPODCode">
+                                    POD Code
+                                    @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                    {
+                                        <i class="clsMandatory">*</i>
+                                    }
+                                    :
+                                </label>
+                                <div class="col-sm-9" style="width: 81%;">
+                                    <div id="txtMaskedNetworkId"></div>
 
-                </div>
-            </div>*@
+                                </div>
+                            </div>*@
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtPODCode">
                                 @Resources.Resources.SI_OSP_GBL_GBL_GBL_001
@@ -356,13 +363,13 @@
                                 @*@Html.TextBoxFor(m => m.pod_name, new { @class = "form-control", @id = "txtPODName", @maxlength = "50" })*@
 
                                 @*@if (Model.system_id > 0)
-                    {
-                    @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtPODName", @maxlength = "50" })
-                    }
-                    else
-                    {
-                    @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control", @id = "txtPODName", @maxlength = "50" })
-                    }*@
+                                    {
+                                    @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtPODName", @maxlength = "50" })
+                                    }
+                                    else
+                                    {
+                                    @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control", @id = "txtPODName", @maxlength = "50" })
+                                    }*@
                             </div>
                         </div>
                         <div class="form-group row">
@@ -398,9 +405,9 @@
                         <div>@AdditionalFields()</div>
                         <div class="form-group row">
                             @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-                <div class="col-sm-45">
-                    @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
-                </div>*@
+                                <div class="col-sm-45">
+                                    @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+                                </div>*@
                             <label class="control-label col-sm-2">
                                 @layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023 :
                             </label>
@@ -408,9 +415,9 @@
                                 @Html.DropDownListFor(m => m.pod_type, new SelectList(Model.listPODType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
                             </div>
                             @*<label class="control-label col-md-2 col-sm-2" for="txtAcquireFrom">@Resources.Resources.SI_GBL_GBL_GBL_GBL_010:</label>
-                <div class="col-sm-45">
-                    @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
-                </div>*@
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
+                                </div>*@
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtAddress">@Resources.Resources.SI_OSP_GBL_GBL_GBL_008:</label>
@@ -432,12 +439,15 @@
                             @ProjectSpecifications()
                         </fieldset>
                     }
-                        <div>
-                            @GeographicDetails()
-                        </div>
+                    <div>
+                        @GeographicDetails()
                     </div>
+                </div>
                 <div class="tab-pane" id="ItemSpecf">
                     @PODTemplateMaster()
+                </div>
+                <div class="tab-pane" id="SiteDtls">
+                    @SiteDetails()
                 </div>
                 <div class="tab-pane" id="ItemAsso">
                     @Html.Partial("~/Views/ItemTemplate/_ItemAssociation.cshtml", Model.objIspEntityMap)
@@ -534,7 +544,7 @@
 
         setTimeout(function () {
             var OnlyNumber = new RegExp(/^[0-9]{1,10}$/);
-             
+
             if (!OnlyNumber.test(thisvalue.value)) {
                 thisvalue.value = "";
             }

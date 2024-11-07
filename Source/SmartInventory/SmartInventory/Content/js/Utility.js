@@ -754,12 +754,19 @@ function callFormValidator(formId) {
             var isOtherInfoDvError = $("#frmOtherInfo  div").hasClass('input-validation-error');
             var isOtherInfoInError = $("#frmOtherInfo  input").hasClass('input-validation-error');
 
+            var isSiteDtlsDvError = $("#SiteDtls div").hasClass('input-validation-error');
+            var isSiteDtlsInError = $("#SiteDtls input").hasClass('input-validation-error');
+
             if (isGisInfoDvError || isGisInfoInError) {
                 $($(".libTabs ul li a")[0]).trigger("click");
                 isCallErrorTab = true;
             }
             else if (isItemSpecDvError || isItemSpecInError) {
                 $($(".libTabs ul li a")[1]).trigger("click");
+                isCallErrorTab = true;
+            }
+            else if (isSiteDtlsDvError || isSiteDtlsInError) {
+                $($(".libTabs ul li a")[2]).trigger("click");
                 isCallErrorTab = true;
             }
             else if (isOtherInfoDvError || isOtherInfoInError) {

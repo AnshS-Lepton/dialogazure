@@ -2371,6 +2371,7 @@
     <Content Include="Views\Report\_AuditLogEntityExportReportLog.cshtml" />
     <Content Include="Views\CommonPathFinder\_CommonPathFinder.cshtml" />
     <Content Include="Views\Library\_AddSite.cshtml" />
+    <Content Include="Views\Library\_SiteDtls.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
