@@ -69,7 +69,7 @@
                             <span>@Resources.Resources.SI_GBL_GBL_NET_FRM_008 : </span>@Resources.Resources.SI_GBL_GBL_NET_FRM_009
                         </div>*@
 
-                    <h1 class="item-flex-start">
+                    <h1 class="item-flex-start" style="margin-bottom:20px">
                         @Resources.Resources.GBL_GBL_GBL_GBL_GBL_034
                         <span class="d-flex mt-05">
                             @if (!string.IsNullOrEmpty(ApplicationSettings.ClientLogoImageBytesForWeb))
@@ -78,9 +78,9 @@
                             }
                         </span>
                     </h1>
-                    @if (ViewBag.LeptonTeam != null && Convert.ToBoolean(ViewBag.LeptonTeam))
-                    {
-                        using (Html.BeginForm("Index", "Login", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { autocomplete = "off", @class = "formaddon" }))
+                    @*@if (ViewBag.LeptonTeam != null && Convert.ToBoolean(ViewBag.LeptonTeam))
+                    {*@
+                        @using (Html.BeginForm("Index", "Login", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { autocomplete = "off", @class = "formaddon" }))
                         {
                             <label class="item-flex-start loginLable">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_033</label>
                             <div class="fieldsBox">
@@ -94,15 +94,15 @@
                                 <span class="animLine"></span>
                             </div>
                             <div class="fieldsBox mt-auto mb-0">
-                                <button class="btn btn-success signin" value="sign In" id="btnGo" onclick="pageValid(event);"><span class="loaderSpin"></span><span class="btn__text">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_019</span></button>
+                                <button class="btn btn-success signin" value="sign In" id="btnGo" onclick="pageValid(event);" style="margin-bottom:-10px"><span class="loaderSpin"></span><span class="btn__text">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_019</span></button>
                             </div>
                             <br />
-                            <span style="margin-left:150px;"><strong>OR</strong></span>
+                            <span style="margin-left:150px;"><strong>@Resources.Resources.GBL_GBL_GBL_GBL_GBL_038</strong></span>
                             <br />
                         }
-                    }
+                    @* } *@
                     <div class="fieldsBox mt-auto mb-0">
-                        <button class="btn btn-success signin" value="sign In" onclick="loginWithAzure()" id="btnGo">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_037</button>
+                        <button class="btn btn-success signin" value="sign In" onclick="loginWithAzure()" id="btnGo" style="margin-top:2px">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_037</button>
                     </div>
                     <div class="error">
                         @Html.ValidationMessage("Error")
