@@ -54,6 +54,11 @@
     var layer_Detail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.BDB.ToString());
 }
+@{
+
+    var lat_ = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.latitude.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_readonly == false).FirstOrDefault() : null;
+    var lng_ = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.longitude.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_readonly == false).FirstOrDefault() : null;
+}
 
 <!DOCTYPE html>
 <div>
@@ -107,7 +112,7 @@
                         {
                             <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_057 @(Model.lstUserModule.Contains("ENT-DTL-BRC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-BRC") ? "" : "block;")" href="#BarCodeInfo" onclick="si.GetBarCode('@Model.system_id','@EntityType.BDB.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_057</a></li>
                         }
-                        @if (Model.system_id > 0 && layerDetail.is_loop_allowed)  
+                        @if (Model.system_id > 0 && layerDetail.is_loop_allowed)
                         {
                             <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-LDTL")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_032 @(Model.lstUserModule.Contains("ENT-DTL-LDTL")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-LDTL") ? "" : "block;")" href="#LoopMangment" id="lnk_LoopMangment" onclick="si.GetLoopMangmentDetail('@Model.latitude', '@Model.longitude', '@Model.system_id','@EntityType.BDB.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_032</a></li>
                         }
@@ -225,11 +230,27 @@
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtLatitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_011<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @id = "txtLatitude", @readonly = true })
+                                @*@Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @id = "txtLatitude", @readonly = true })*@
+                                @Html.TextBoxFor(m => m.latitude, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                               {
+                                    autocomplete = "do-not-show-ac",
+                                    @class = "form-control",
+                                    @id = "txtLatitude",
+                                    @onkeypress = "return si.allowNumberwithOneDot(event,'outer_dimension') && ValidateNumberDecimal(this,event,8,2);",
+                                    @maxlength = "10"
+                                }, (lat_ == null ? new { @readonly = true } : null)))
                             </div>
                             <label class="control-label col-sm-2" for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_012<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @id = "txtLongitude", @readonly = true })
+                                @Html.TextBoxFor(m => m.longitude, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                            {
+                                autocomplete = "do-not-show-ac",
+                                @class = "form-control",
+                                @id = "txtLongitude",
+                                @onkeypress = "return si.allowNumberwithOneDot(event,'outer_dimension') && ValidateNumberDecimal(this,event,8,2);",
+                                @maxlength = "10"
+                            }, (lng_ == null ? new { @readonly = true } : null)))
+                                @*@Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @id = "txtLongitude", @readonly = true })*@
                             </div>
                         </div>
                         <div class="form-group row">
@@ -237,10 +258,10 @@
                         </div>
                         <div class="form-group row">
                             @*<label class="control-label col-sm-2" for="txtPinCode">Pin Code:</label>
-            <div class="col-sm-45">
-                @Html.TextBoxFor(m => m.pincode, new { @class = "form-control", @id = "txtPinCode", @onkeypress = "return si.allowOnlyNumber(event);", @onpaste = "return false;", @maxlength = "6", @minlength = "6" })
-                @Html.ValidationMessageFor(m => m.pincode)
-            </div>*@
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.pincode, new { @class = "form-control", @id = "txtPinCode", @onkeypress = "return si.allowOnlyNumber(event);", @onpaste = "return false;", @maxlength = "6", @minlength = "6" })
+                                    @Html.ValidationMessageFor(m => m.pincode)
+                                </div>*@
                             <label class="control-label col-sm-2" for="txtParentCode">@Resources.Resources.SI_OSP_GBL_GBL_GBL_004<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control", @id = "txtParentCode", @readonly = true })

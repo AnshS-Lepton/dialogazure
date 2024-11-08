@@ -406,8 +406,10 @@ namespace Models
         a_location_code,
         b_location_code,
 		installation_location_code,
-		fms_type
-	}
+		fms_type,
+        latitude,
+        longitude
+    }
     public enum formFeatureType
     {
         feature,

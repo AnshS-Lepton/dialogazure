@@ -19,6 +19,9 @@ using System.IO;
 using System.Web;
 using System.Data;
 using Utility;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Web.DynamicData;
 
 
 
@@ -338,7 +341,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SavePole(data);
+								return SavePole(data, headerAttribute);
 							}
 							else
 							{
@@ -357,7 +360,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveManhole(data);
+								return SaveManhole(data,headerAttribute);
 							}
 							else
 							{
@@ -376,7 +379,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveTree(data);
+								return SaveTree(data,headerAttribute);
 							}
 							else
 							{
@@ -395,7 +398,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveWallmount(data);
+								return SaveWallmount(data,headerAttribute);
 							}
 							else
 							{
@@ -414,7 +417,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SavePod(data);
+								return SavePod(data,headerAttribute);
 							}
 							else
 							{
@@ -433,7 +436,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveMpod(data);
+								return SaveMpod(data,headerAttribute);
 							}
 							else
 							{
@@ -452,7 +455,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveSpliceClosure(data);
+								return SaveSpliceClosure(data,headerAttribute);
 							}
 							else
 							{
@@ -586,7 +589,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveONT(data);
+								return SaveONT(data,headerAttribute);
 							}
 							else
 							{
@@ -605,7 +608,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveFDB(data);
+								return SaveFDB(data,headerAttribute);
 							}
 							else
 							{
@@ -624,7 +627,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveBdb(data);
+								return SaveBdb(data,headerAttribute);
 							}
 							else
 							{
@@ -643,7 +646,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveCdb(data);
+								return SaveCdb(data,headerAttribute);
 							}
 							else
 							{
@@ -681,7 +684,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveHTB(data);
+								return SaveHTB(data,headerAttribute);
 							}
 							else
 							{
@@ -700,7 +703,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveBuilding(data);
+								return SaveBuilding(data,headerAttribute);
 							}
 							else
 							{
@@ -1004,7 +1007,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveVault(data);
+								return SaveVault(data, headerAttribute);
 							}
 							else
 							{
@@ -1062,7 +1065,7 @@ namespace SmartInventoryServices.Controllers
 							}
 							else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
 							{
-								return SaveHandhole(data);
+								return SaveHandhole(data,headerAttribute);
 							}
 							else
 							{
@@ -1180,7 +1183,8 @@ namespace SmartInventoryServices.Controllers
                 objPoleMaster.selected_route_ids = listI;
                 BLItemTemplate.Instance.BindItemDropdowns(objPoleMaster, EntityType.Pole.ToString());
 				fillProjectSpecifications(objPoleMaster);
-				objPoleMaster.is_specification_allowed = new BLLayer().GetSpecificationAllowed(EntityType.Manhole.ToString()).ToString();
+                objPoleMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.Pole.ToString()).ToList();
+                objPoleMaster.is_specification_allowed = new BLLayer().GetSpecificationAllowed(EntityType.Manhole.ToString()).ToString();
 				//Get the layer details to bind additional attributes Pole
 				var layerdetails = new BLLayer().getLayer(EntityType.Pole.ToString());
 				objPoleMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
@@ -1238,7 +1242,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SavePole </summary>
 		/// <param name="data">ReqInput</param>
 		/// <CreatedBy>Sumit Poonia</CreatedBy>
-		public ApiResponse<PoleMaster> SavePole(ReqInput data)
+		public ApiResponse<PoleMaster> SavePole(ReqInput data, dynamic headerAttribute)
 		{
 			var response = new ApiResponse<PoleMaster>();
 			PoleMaster objPoleMaster = ReqHelper.GetRequestData<PoleMaster>(data);
@@ -1275,6 +1279,15 @@ namespace SmartInventoryServices.Controllers
 
                     BindPoleRoute(objPoleMaster);
                     var resultItem = new BLPole().SaveEntityPole(objPoleMaster, objPoleMaster.user_id);
+                    var lnglat = objPoleMaster.longitude.ToString().Trim() + " " + objPoleMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objPoleMaster.user_id, objPoleMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
+
                     List<RouteInfo> objL = new List<RouteInfo>();
                     foreach (var itm in objPoleMaster.lstRouteInfo)
                     {
@@ -1452,7 +1465,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SaveManhole </summary>
 		/// <param name="data">Json ReqInput</param>
 		/// <CreatedBy>Sumit Poonia</CreatedBy>
-		public ApiResponse<ManholeMaster> SaveManhole(ReqInput data)
+		public ApiResponse<ManholeMaster> SaveManhole(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<ManholeMaster>();
 			ManholeMaster objManholeMaster = ReqHelper.GetRequestData<ManholeMaster>(data);
@@ -1492,7 +1505,15 @@ namespace SmartInventoryServices.Controllers
 				{
 					var isNew = objManholeMaster.system_id > 0 ? false : true;
 					objManholeMaster.is_new_entity = (isNew && objManholeMaster.source_ref_id != "0" && objManholeMaster.source_ref_id != "");
-					var resultItem = new BLManhole().SaveEntityManhole(objManholeMaster, objManholeMaster.user_id);                   
+					var resultItem = new BLManhole().SaveEntityManhole(objManholeMaster, objManholeMaster.user_id);
+                    var lnglat = objManholeMaster.longitude.ToString().Trim() + " " + objManholeMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objManholeMaster.user_id, objManholeMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
                     BindManholeRoute(objManholeMaster);                    
                     List<RouteInfo> objL = new List<RouteInfo>();
                     foreach (var itm in objManholeMaster.lstRouteInfo)
@@ -1689,8 +1710,9 @@ namespace SmartInventoryServices.Controllers
 				//Get the layer details to bind additional attributes Tree
 				var layerdetails = new BLLayer().getLayer(EntityType.Tree.ToString());
 				objTreeMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
-				//End for additional attributes Tree
-				response.status = StatusCodes.OK.ToString();
+                objTreeMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.Tree.ToString()).ToList();
+                //End for additional attributes Tree
+                response.status = StatusCodes.OK.ToString();
 				response.results = objTreeMaster;
 			}
 			catch (Exception ex)
@@ -1742,7 +1764,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SaveTree </summary>
 		/// <param name="data">Json ReqInput</param>
 		/// <CreatedBy>Sumit Poonia</CreatedBy>
-		public ApiResponse<TreeMaster> SaveTree(ReqInput data)
+		public ApiResponse<TreeMaster> SaveTree(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<TreeMaster>();
 			TreeMaster objTreeMaster = ReqHelper.GetRequestData<TreeMaster>(data);
@@ -1773,7 +1795,15 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objTreeMaster.system_id > 0 ? false : true;
 					objTreeMaster.is_new_entity = (isNew && objTreeMaster.source_ref_id != "0" && objTreeMaster.source_ref_id != "");
 					var resultItem = new BLTree().SaveEntityTree(objTreeMaster, objTreeMaster.user_id);
-					string[] LayerName = { EntityType.Tree.ToString() };
+                    var lnglat = objTreeMaster.longitude.ToString().Trim() + " " + objTreeMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objTreeMaster.user_id, objTreeMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
+                    string[] LayerName = { EntityType.Tree.ToString() };
 					if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						//Save Reference
@@ -1864,8 +1894,9 @@ namespace SmartInventoryServices.Controllers
 				//Get the layer details to bind additional attributes WallMount
 				var layerdetails = new BLLayer().getLayer(EntityType.WallMount.ToString());
 				objWallMountMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
-				//End for additional attributes WallMount
-				response.status = StatusCodes.OK.ToString();
+                objWallMountMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.WallMount.ToString()).ToList();
+                //End for additional attributes WallMount
+                response.status = StatusCodes.OK.ToString();
 				response.results = objWallMountMaster;
 			}
 			catch (Exception ex)
@@ -1935,7 +1966,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SaveWallmount </summary>
 		/// <param name="data">Json ReqInput</param>
 		/// <CreatedBy>Sumit Poonia</CreatedBy>
-		public ApiResponse<WallMountMaster> SaveWallmount(ReqInput data)
+		public ApiResponse<WallMountMaster> SaveWallmount(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<WallMountMaster>();
 			WallMountMaster objWallMountMaster = ReqHelper.GetRequestData<WallMountMaster>(data);
@@ -1970,7 +2001,15 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objWallMountMaster.system_id > 0 ? false : true;
 					objWallMountMaster.is_new_entity = (isNew && objWallMountMaster.source_ref_id != "0" && objWallMountMaster.source_ref_id != "");
 					var resultItem = new BLWallMount().SaveEntityWallMount(objWallMountMaster, objWallMountMaster.user_id);
-					if (string.IsNullOrEmpty(resultItem.objPM.message))
+                    var lnglat = objWallMountMaster.longitude.ToString().Trim() + " " + objWallMountMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objWallMountMaster.user_id, objWallMountMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
+                    if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						string[] LayerName = { EntityType.WallMount.ToString() };
 						//Save Reference
@@ -2105,8 +2144,9 @@ namespace SmartInventoryServices.Controllers
 				//Get the layer details to bind additional attributes POD
 				var layerdetails = new BLLayer().getLayer(EntityType.POD.ToString());
 				objPODMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
-				//End for additional attributes POD
-				response.status = StatusCodes.OK.ToString();
+                objPODMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.POD.ToString()).ToList();
+                //End for additional attributes POD
+                response.status = StatusCodes.OK.ToString();
 				response.results = objPODMaster;
 
 			}
@@ -2181,7 +2221,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SavePod </summary>
 		/// <param name="data">Json ReqInput</param>
 		/// <CreatedBy>Sumit Poonia</CreatedBy>
-		public ApiResponse<PODMaster> SavePod(ReqInput data)
+		public ApiResponse<PODMaster> SavePod(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<PODMaster>();
 			PODMaster objPODMaster = ReqHelper.GetRequestData<PODMaster>(data);
@@ -2264,7 +2304,15 @@ namespace SmartInventoryServices.Controllers
 					//objPODMaster.Source_ref_description = headerAttribute.Source_ref_description;
 					//objPODMaster.Source_ref_id = headerAttribute.Source_ref_id;
 					var resultItem = new BLPOD().SaveEntityPOD(objPODMaster, objPODMaster.user_id);
-					if (string.IsNullOrEmpty(resultItem.objPM.message))
+                    var lnglat = objPODMaster.longitude.ToString().Trim() + " " + objPODMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objPODMaster.user_id, objPODMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
+                    if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						//Save Reference
 						if (objPODMaster.EntityReference != null && resultItem.system_id > 0)
@@ -2424,8 +2472,9 @@ namespace SmartInventoryServices.Controllers
 				//Get the layer details to bind additional attributes MPOD
 				var layerdetails = new BLLayer().getLayer(EntityType.MPOD.ToString());
 				objMPODMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
-				//End for additional attributes MPOD
-				response.status = StatusCodes.OK.ToString();
+                objMPODMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.MPOD.ToString()).ToList();
+                //End for additional attributes MPOD
+                response.status = StatusCodes.OK.ToString();
 				response.results = objMPODMaster;
 
 			}
@@ -2497,7 +2546,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SaveMpod</summary>
 		/// <param name="data">Json ReqInput</param>
 		/// <CreatedBy>Sumit Poonia</CreatedBy>
-		public ApiResponse<MPODMaster> SaveMpod(ReqInput data)
+		public ApiResponse<MPODMaster> SaveMpod(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<MPODMaster>();
 			MPODMaster objMPODMaster = ReqHelper.GetRequestData<MPODMaster>(data);
@@ -2577,8 +2626,16 @@ namespace SmartInventoryServices.Controllers
 					//objMPODMaster.Source_ref_id = headerAttribute.Source_ref_id;
 
 					var resultItem = new BLMPOD().SaveEntityMPOD(objMPODMaster, objMPODMaster.user_id);
-					//Save Reference
-					if (string.IsNullOrEmpty(resultItem.objPM.message))
+                    var lnglat = objMPODMaster.longitude.ToString().Trim() + " " + objMPODMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objMPODMaster.user_id, objMPODMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
+                    //Save Reference
+                    if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						if (objMPODMaster.EntityReference != null && resultItem.system_id > 0)
 						{
@@ -2772,8 +2829,9 @@ namespace SmartInventoryServices.Controllers
 				//Get the layer details to bind additional attributes SpliceClosure
 				var layerdetails = new BLLayer().getLayer(EntityType.SpliceClosure.ToString());
 				objSCMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
-				//End for additional attributes SpliceClosure
-				response.status = StatusCodes.OK.ToString();
+                objSCMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.SpliceClosure.ToString()).ToList();
+                //End for additional attributes SpliceClosure
+                response.status = StatusCodes.OK.ToString();
 				response.results = objSCMaster;
 
 			}
@@ -2792,7 +2850,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SaveSpliceClosure</summary>
 		/// <param name="data">Json ReqInput</param>
 		/// <CreatedBy>Sumit Poonia</CreatedBy>
-		public ApiResponse<SCMaster> SaveSpliceClosure(ReqInput data)
+		public ApiResponse<SCMaster> SaveSpliceClosure(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<SCMaster>();
 			SCMaster objSCMaster = ReqHelper.GetRequestData<SCMaster>(data);
@@ -2851,6 +2909,14 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objSCMaster.system_id > 0 ? false : true;
 					objSCMaster.is_new_entity = (isNew && objSCMaster.source_ref_id != "0" && objSCMaster.source_ref_id != "");
 					var resultItem = new BLSC().SaveEntitySC(objSCMaster, objSCMaster.user_id);
+                    var lnglat = objSCMaster.longitude.ToString().Trim() + " " + objSCMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objSCMaster.user_id, objSCMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
                     BindSpilceClosureRoute(objSCMaster);
                     List<RouteInfo> objL = new List<RouteInfo>();
                     foreach (var itm in objSCMaster.lstRouteInfo)
@@ -3994,8 +4060,9 @@ namespace SmartInventoryServices.Controllers
 				//Get the layer details to bind additional attributes ADB
 				var layerdetails = new BLLayer().getLayer(EntityType.ADB.ToString());
 				objADBMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
-				//End for additional attributes ADB
-				response.status = StatusCodes.OK.ToString();
+                objADBMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.ADB.ToString()).ToList();
+                //End for additional attributes ADB
+                response.status = StatusCodes.OK.ToString();
 				response.results = objADBMaster;
 			}
 			catch (Exception ex)
@@ -4539,8 +4606,9 @@ namespace SmartInventoryServices.Controllers
 				//Get the layer details to bind additional attributes ONT
 				var layerdetails = new BLLayer().getLayer(EntityType.ONT.ToString());
 				objONTMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
-				//End for additional attributes ONT
-				response.status = StatusCodes.OK.ToString();
+                objONTMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.ONT.ToString()).ToList();
+                //End for additional attributes ONT
+                response.status = StatusCodes.OK.ToString();
 				response.results = objONTMaster;
 
 			}
@@ -4655,7 +4723,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SaveONT </summary>
 		/// <param name="data">ReqInput</param>
 		/// <CreatedBy>Antra Mathur</CreatedBy>
-		public ApiResponse<ONTMaster> SaveONT(ReqInput data)
+		public ApiResponse<ONTMaster> SaveONT(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<ONTMaster>();
 			ONTMaster objONTMaster = ReqHelper.GetRequestData<ONTMaster>(data);
@@ -4736,7 +4804,15 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objONTMaster.system_id > 0 ? false : true;
 					objONTMaster.is_new_entity = (isNew && objONTMaster.source_ref_id != "0" && objONTMaster.source_ref_id != "");
 					var resultItem = new BLONT().SaveONTEntity(objONTMaster, objONTMaster.user_id);
-					if (string.IsNullOrEmpty(resultItem.objPM.message))
+                    var lnglat = objONTMaster.longitude.ToString().Trim() + " " + objONTMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objONTMaster.user_id, objONTMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
+                    if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 
 
@@ -4864,9 +4940,10 @@ namespace SmartInventoryServices.Controllers
                 //Get the layer details to bind additional attributes FDB
                 var layerdetails = new BLLayer().getLayer(EntityType.FDB.ToString());
 				objFDBMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
-				//End for additional attributes FDB
+                objFDBMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.FDB.ToString()).ToList();
+                //End for additional attributes FDB
 
-				response.status = StatusCodes.OK.ToString();
+                response.status = StatusCodes.OK.ToString();
 				response.results = objFDBMaster;
 
 			}
@@ -4978,7 +5055,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SaveFDB </summary>
 		/// <param name="data">ReqInput</param>
 		/// <CreatedBy>Antra Mathur</CreatedBy>
-		public ApiResponse<FDBInfo> SaveFDB(ReqInput data)
+		public ApiResponse<FDBInfo> SaveFDB(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<FDBInfo>();
 			FDBInfo objFDBMaster = ReqHelper.GetRequestData<FDBInfo>(data);
@@ -5061,6 +5138,14 @@ namespace SmartInventoryServices.Controllers
 					objFDBMaster.barcode = objFDBMaster.barcode;
 
 					var resultItem = BLISP.Instance.SaveFDBDetails(objFDBMaster);
+                    var lnglat = objFDBMaster.longitude.ToString().Trim() + " " + objFDBMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objFDBMaster.user_id, objFDBMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
                     BindFDBRoute(objFDBMaster);
                     List<RouteInfo> objL = new List<RouteInfo>();
                     foreach (var itm in objFDBMaster.lstRouteInfo)
@@ -5229,9 +5314,10 @@ namespace SmartInventoryServices.Controllers
                 //Get the layer details to bind additional attributes BDB
                 var layerdetails = new BLLayer().getLayer(EntityType.BDB.ToString());
 				objBDBMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
-				//End for additional attributes BDB
+                objBDBMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.BDB.ToString()).ToList();
+                //End for additional attributes BDB
 
-				response.status = StatusCodes.OK.ToString();
+                response.status = StatusCodes.OK.ToString();
 				response.results = objBDBMaster;
 			}
 			catch (Exception ex)
@@ -5295,7 +5381,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SaveBdb </summary>
 		/// <param name="data">ReqInput</param>
 		/// <CreatedBy>Sumit Poonia</CreatedBy>
-		public ApiResponse<BDBMaster> SaveBdb(ReqInput data)
+		public ApiResponse<BDBMaster> SaveBdb(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<BDBMaster>();
 			BDBMaster objBDBMaster = ReqHelper.GetRequestData<BDBMaster>(data);
@@ -5365,6 +5451,14 @@ namespace SmartInventoryServices.Controllers
 						}
 					}
 					var resultItem = new BLBDB().SaveEntityBDB(objBDBMaster, objBDBMaster.user_id);
+                    var lnglat = objBDBMaster.longitude.ToString().Trim() + " " + objBDBMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objBDBMaster.user_id, objBDBMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
                     BindBDBRoute(objBDBMaster);
                     List<RouteInfo> objL = new List<RouteInfo>();
                     foreach (var itm in objBDBMaster.lstRouteInfo)
@@ -5674,7 +5768,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SaveCdb </summary>
 		/// <param name="data">ReqInput</param>
 		/// <CreatedBy>Sumit Poonia</CreatedBy>
-		public ApiResponse<CDBMaster> SaveCdb(ReqInput data)
+		public ApiResponse<CDBMaster> SaveCdb(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<CDBMaster>();
 			CDBMaster objCDBMaster = ReqHelper.GetRequestData<CDBMaster>(data);
@@ -5725,7 +5819,15 @@ namespace SmartInventoryServices.Controllers
 						objCDBMaster.no_of_output_port = Convert.ToInt32(objCDBMaster.unitValue.Split(':')[1]);
 					}
 					var resultItem = new BLCDB().SaveEntityCDB(objCDBMaster, objCDBMaster.user_id);
-					if (resultItem.isConvert && string.IsNullOrEmpty(resultItem.objPM.message) && isNew)
+                    var lnglat = objCDBMaster.longitude.ToString().Trim() + " " + objCDBMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objCDBMaster.user_id, objCDBMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
+                    if (resultItem.isConvert && string.IsNullOrEmpty(resultItem.objPM.message) && isNew)
 					{
 						string[] LayerName = { EntityType.SpliceClosure.ToString(), EntityType.CDB.ToString() };
 						SCMaster objSC = new SCMaster();
@@ -7814,8 +7916,9 @@ namespace SmartInventoryServices.Controllers
 				//Get the layer details to bind additional attributes HTB
 				var layerdetails = new BLLayer().getLayer(EntityType.HTB.ToString());
 				model.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
-				//End for additional attributes HTB
-				response.status = StatusCodes.OK.ToString();
+                model.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.HTB.ToString()).ToList();
+                //End for additional attributes HTB
+                response.status = StatusCodes.OK.ToString();
 				response.results = model;
 			}
 			catch (Exception ex)
@@ -7878,7 +7981,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SaveHTB </summary>
 		/// <param name="data">ReqInput</param>
 		/// <CreatedBy>Antra Mathur</CreatedBy>
-		public ApiResponse<HTBInfo> SaveHTB(ReqInput data)
+		public ApiResponse<HTBInfo> SaveHTB(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<HTBInfo>();
 			HTBInfo model = ReqHelper.GetRequestData<HTBInfo>(data);
@@ -7971,7 +8074,15 @@ namespace SmartInventoryServices.Controllers
 						}
 					}
 					var result = new BLISP().SaveHTBDetails(model, model.user_id);
-					if (string.IsNullOrEmpty(result.objPM.message))
+                    var lnglat = model.longitude.ToString().Trim() + " " + model.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(result.system_id, model.user_id, model.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
+                    if (string.IsNullOrEmpty(result.objPM.message))
 					{
 						string[] LayerName = { EntityType.HTB.ToString() };
 						if (model.EntityReference != null && result.system_id > 0)
@@ -8195,7 +8306,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SaveBuilding </summary>
 		/// <param name="data">ReqInput</param>
 		/// <CreatedBy>Antra Mathur</CreatedBy>
-		public ApiResponse<BuildingMaster> SaveBuilding(ReqInput data)
+		public ApiResponse<BuildingMaster> SaveBuilding(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<BuildingMaster>();
 			BuildingMaster objBuilding = ReqHelper.GetRequestData<BuildingMaster>(data);
@@ -13785,7 +13896,8 @@ namespace SmartInventoryServices.Controllers
 				objVaultMaster.pEntityType = objRequestIn.pEntityType;
 				BLItemTemplate.Instance.BindItemDropdowns(objVaultMaster, EntityType.Vault.ToString());
 				fillProjectSpecifications(objVaultMaster);
-				BindVaultDropDown(objVaultMaster);
+                objVaultMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.Vault.ToString()).ToList();
+                BindVaultDropDown(objVaultMaster);
 				response.status = StatusCodes.OK.ToString();
 				response.results = objVaultMaster;
 
@@ -13853,7 +13965,7 @@ namespace SmartInventoryServices.Controllers
 		#endregion
 
 		#region Save Vault
-		public ApiResponse<VaultMaster> SaveVault(ReqInput data)
+		public ApiResponse<VaultMaster> SaveVault(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<VaultMaster>();
 			VaultMaster objVaultMaster = ReqHelper.GetRequestData<VaultMaster>(data);
@@ -13924,8 +14036,16 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objVaultMaster.system_id > 0 ? false : true;
 
 					var resultItem = new BLVault().SaveEntityVault(objVaultMaster, objVaultMaster.user_id);
-					//Save Reference
-					if (string.IsNullOrEmpty(resultItem.objPM.message))
+                    var lnglat = objVaultMaster.longitude.ToString().Trim() + " " + objVaultMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objVaultMaster.user_id, objVaultMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
+                    //Save Reference
+                    if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						if (objVaultMaster.EntityReference != null && resultItem.system_id > 0)
 						{
@@ -14509,7 +14629,7 @@ namespace SmartInventoryServices.Controllers
 		/// <summary> SaveHandhole </summary>
 		/// <param name="data">Json ReqInput</param>
 		/// <CreatedBy>Sumit Poonia</CreatedBy>
-		public ApiResponse<HandholeMaster> SaveHandhole(ReqInput data)
+		public ApiResponse<HandholeMaster> SaveHandhole(ReqInput data,dynamic headerAttribute)
 		{
 			var response = new ApiResponse<HandholeMaster>();
 			HandholeMaster objHandholeMaster = ReqHelper.GetRequestData<HandholeMaster>(data);
@@ -14544,7 +14664,15 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objHandholeMaster.system_id > 0 ? false : true;
 					objHandholeMaster.is_new_entity = (isNew && objHandholeMaster.source_ref_id != "0" && objHandholeMaster.source_ref_id != "");
 					var resultItem = new BLHandhole().SaveEntityHandhole(objHandholeMaster, objHandholeMaster.user_id);
-					if (string.IsNullOrEmpty(resultItem.objPM.message))
+                    var lnglat = objHandholeMaster.longitude.ToString().Trim() + " " + objHandholeMaster.latitude.ToString().Trim();
+                    var apiresp = SaveEditGeometry(resultItem.system_id, objHandholeMaster.user_id, objHandholeMaster.entityType, lnglat, headerAttribute);
+                    if (apiresp.status != "OK")
+                    {
+                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                        response.error_message = apiresp.error_message;
+                        return response;
+                    }
+                    if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						//Save Reference
 						string[] LayerName = { EntityType.Handhole.ToString() };
@@ -15903,6 +16031,38 @@ namespace SmartInventoryServices.Controllers
         #endregion
 
         #endregion
+
+        public Response SaveEditGeometry(int systemId, int userId, string entityType, string geom, dynamic headerAttribute)
+        {
+
+            EditGeomIn geomObj = new EditGeomIn();
+            geomObj.userId = userId;
+            geomObj.entityType = entityType;
+            geomObj.geomType = "Point";
+            geomObj.longLat = geom;
+
+            geomObj.isExisting = true;
+            geomObj.Bld_Buffer = 0;
+            geomObj.systemId = systemId;
+            var authorizationHeader = headerAttribute.authorization?.ToString();
+            if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+            {
+                return new Response
+                {
+                    status = ResponseStatus.FAILED.ToString(),
+                    error_message = "Authorization header is missing or incorrect."
+                };
+            }
+            string token = authorizationHeader.Split(' ')[1];
+            string url = "api/Main/SaveEditGeometry ";
+            var result = Lepton.Utility.WebAPIRequest.PostIntegrationAPIRequest<dynamic>(url, geomObj, "", "", null, new TokenDetail { access_token = token }, false);
+
+            return new Response
+            {
+                status = ResponseStatus.OK.ToString(),
+
+            };
+        }
     }
 }
 
