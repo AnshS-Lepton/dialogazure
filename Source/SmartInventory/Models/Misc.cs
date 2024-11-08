@@ -82,8 +82,10 @@ namespace Models
 		public string node_type { get; set; } // used for ISP/ Vertical cables only..
 		public string actualLatLng { get; set; }
 		public string mode { get; set; }
+        public string entity_name { get; set; }
+        //public string mode { get; set; }
 
-	}
+    }
 	public class NetworkCodeDetail
 	{
 		[Key]

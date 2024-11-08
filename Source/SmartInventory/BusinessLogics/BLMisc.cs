@@ -11,6 +11,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+//using static Models.GoogleMapAPI;
 
 namespace BusinessLogics
 {
@@ -316,6 +317,10 @@ namespace BusinessLogics
             return new DAMisc().GetLineNetworkCode(start_network_id, end_network_id, enName, geometry, CableType, pSystemId, pEntityType);
         }
 
+        public string GetEntityName(string network_name, int system_id)
+        {
+            return new DAMisc().GetEntityName(network_name, system_id);
+        }
         public DbMessage SaveCloneEntity(int refId, string entityName, string geomType, string geom, int userId)
         {
             return new DAMisc().SaveCloneEntity(refId, entityName, geomType, geom, userId);

@@ -287,8 +287,8 @@ namespace Models
         [Required]
         public string network_id { get; set; }
         public string pod_name { get; set; }
-        public Double latitude { get; set; }
-        public Double longitude { get; set; }
+        public double latitude { get; set; }
+        public double longitude { get; set; }
         public int province_id { get; set; }
         public int region_id { get; set; }
         [StringLength(6, MinimumLength = 6, ErrorMessage = "PinCode length should be 6")]
@@ -459,7 +459,7 @@ namespace Models
        
         public string region_address { get; set; }
         
-        public Decimal metro_ring_utilization { get; set; }
+        public decimal? metro_ring_utilization { get; set; }
         
         public bool is_visible_on_map { get; set; }
         public DateTime? status_updated_on { get; set; }

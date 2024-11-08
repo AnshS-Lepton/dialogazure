@@ -8114,15 +8114,19 @@ namespace SmartInventory.Controllers
             var endObj = new NetworkDtl();
             var start_network_id = "";
             var end_network_id = "";
+            var start_entity_name = "";
+            var end_entity_name = "";
             if (objIn.lstTP != null && objIn.lstTP.Count > 0)
             {
                 startObj = objIn.lstTP[0];
                 start_network_id = startObj.network_id;
+                start_entity_name = startObj.entity_name;
             }
             if (objIn.lstTP != null && objIn.lstTP.Count > 1)
             {
                 endObj = objIn.lstTP[objIn.lstTP.Count() - 1];
                 end_network_id = endObj.network_id;
+                end_entity_name = startObj.entity_name;
             }
 
             //fill parent detail....

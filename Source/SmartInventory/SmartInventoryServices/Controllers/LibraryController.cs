@@ -3191,18 +3191,22 @@ namespace SmartInventoryServices.Controllers
 			objLib.parent_system_id = networkCodeDetail.parent_system_id;
 			if (startObj != null)
 			{
+				var entityName = new BLMisc().GetEntityName(startObj.network_name, startObj.system_id);
 				objLib.a_entity_type = startObj.network_name;
 				objLib.a_system_id = startObj.system_id;
-				objLib.a_location = startObj.network_id;
+                objLib.a_location_name = entityName;
+                objLib.a_location = startObj.network_id;
 				objLib.a_node_type = startObj.node_type;
 				objLib.a_long_lat = startObj.actualLatLng;
 				if (!string.IsNullOrEmpty(startObj.actualLatLng)) { objLib.geom = startObj.actualLatLng + "," + objLib.geom; }
 			}
 			if (endObj != null)
 			{
-				objLib.b_entity_type = endObj.network_name;
+                var entityName = new BLMisc().GetEntityName(endObj.network_name, endObj.system_id);
+                objLib.b_entity_type = endObj.network_name;
 				objLib.b_system_id = endObj.system_id;
-				objLib.b_location = endObj.network_id;
+                objLib.b_location_name = entityName;
+                objLib.b_location = endObj.network_id;
 				objLib.b_node_type = endObj.node_type;
 				objLib.b_long_lat = endObj.actualLatLng;
 				if (!string.IsNullOrEmpty(endObj.actualLatLng)) { objLib.geom = objLib.geom + "," + endObj.actualLatLng; }
@@ -3265,8 +3269,8 @@ namespace SmartInventoryServices.Controllers
 				{
 					if (objCbl.isDirectSave == false)
 					{
-						objCbl.lstTP.Add(new NetworkDtl { system_id = objCbl.a_system_id, network_id = objCbl.a_location, network_name = objCbl.a_entity_type, node_type = objCbl.a_node_type, actualLatLng = objCbl.a_long_lat });
-						objCbl.lstTP.Add(new NetworkDtl { system_id = objCbl.b_system_id, network_id = objCbl.b_location, network_name = objCbl.b_entity_type, node_type = objCbl.b_node_type, actualLatLng = objCbl.b_long_lat });
+						objCbl.lstTP.Add(new NetworkDtl { system_id = objCbl.a_system_id, network_id = objCbl.a_location, network_name = objCbl.a_entity_type, node_type = objCbl.a_node_type, actualLatLng = objCbl.a_long_lat, entity_name= objCbl.a_location_name });
+						objCbl.lstTP.Add(new NetworkDtl { system_id = objCbl.b_system_id, network_id = objCbl.b_location, network_name = objCbl.b_entity_type, node_type = objCbl.b_node_type, actualLatLng = objCbl.b_long_lat, entity_name= objCbl.b_location_name });
 					}
 					var objLineEntity = new LineEntityIn() { geom = objCbl.geom, system_id = objCbl.system_id, cableType = objCbl.cable_type, networkIdType = objCbl.networkIdType, lstTP = objCbl.lstTP, user_id = objCbl.user_id, isDirectSave = objCbl.isDirectSave };
 					if (objCbl.isDirectSave == true)

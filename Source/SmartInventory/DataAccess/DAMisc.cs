@@ -13,6 +13,8 @@ using Models.Admin;
 using System.Web.UI;
 using GeometryType = Models.GeometryType;
 using NPOI.SS.Formula.Functions;
+//using System.Data.Entity.Core.Metadata.Edm;
+//using EntityType = Models.EntityType;
 
 
 namespace DataAccess
@@ -727,6 +729,11 @@ namespace DataAccess
             catch { throw; }
         }
 
+        public string GetEntityName(string network_name, int system_id)
+        {
+            var result = repo.ExecuteProcedure<string>("fn_get_network_name", new { p_entity_type = network_name, p_entity_system_id = system_id }, false).FirstOrDefault();
+            return result;
+        }
         public DbMessage SaveCloneEntity(int refId, string entityName, string geomType, string geom, int userId)
         {
             try
