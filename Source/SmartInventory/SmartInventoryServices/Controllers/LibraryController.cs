@@ -4345,7 +4345,7 @@ namespace SmartInventoryServices.Controllers
 			{
 				RestrictedArea objRequestIn = ReqHelper.GetRequestData<RestrictedArea>(data);
 				RestrictedArea objRestrictedArea = GetRestrictedAreaDetail(objRequestIn);
-				response.status = StatusCodes.OK.ToString();
+				response.status = StatusCodes.OK.ToString(); 
 				response.results = objRestrictedArea;
 			}
 			catch (Exception ex)
