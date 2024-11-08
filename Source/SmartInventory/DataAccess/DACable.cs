@@ -216,12 +216,14 @@ namespace DataAccess
                             cableInfo.a_system_id = startPoint.system_id;
                             cableInfo.a_entity_type = startPoint.network_name;
                             cableInfo.a_location = startPoint.network_id;
+                            cableInfo.a_location_name = startPoint.entity_name;
                         }
                         if (endPoint != null && !string.IsNullOrEmpty(endPoint.actualLatLng))
                         {
                             cableInfo.b_system_id = endPoint.system_id;
                             cableInfo.b_entity_type = endPoint.network_name;
                             cableInfo.b_location = endPoint.network_id;
+                            cableInfo.b_location_name = endPoint.entity_name;
                         } 
                         if (startPoint != null && !string.IsNullOrEmpty(startPoint.actualLatLng)) { cableInfo.geom = startPoint.actualLatLng + "," + cableInfo.geom; }
                         if (endPoint != null && !string.IsNullOrEmpty(endPoint.actualLatLng)) { cableInfo.geom = cableInfo.geom + "," + endPoint.actualLatLng; }
