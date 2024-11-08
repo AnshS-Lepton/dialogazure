@@ -79,6 +79,7 @@ namespace DataAccess
                     objPoleItem.gis_design_id = objPoleMaster.gis_design_id;
                     objPoleItem.own_vendor_id = objPoleMaster.own_vendor_id;
                     objPoleItem.hierarchy_type = objPoleMaster.hierarchy_type;
+                    objPoleItem.subarea_id = objPoleMaster.subarea_id;
                     //objPoleItem.served_by_ring = objPoleMaster.served_by_ring;
                     var PoleResp = repo.Update(objPoleItem);
                     DbMessage entityObj = new DAMisc(). updateGeojsonEntityAttribute(PoleResp.system_id, Models.EntityType.Pole.ToString(), PoleResp.province_id, 1);

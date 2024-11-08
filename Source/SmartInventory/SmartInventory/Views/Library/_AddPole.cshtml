@@ -42,6 +42,10 @@
     var layer_Detail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Pole.ToString());
 }
+@{
+    var lat_ = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.latitude.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_readonly == false).FirstOrDefault() : null;
+    var lng_ = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.longitude.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_readonly == false).FirstOrDefault() : null;
+}
 
 
 @helper pageMessage()
@@ -198,11 +202,29 @@ new { id = "frmAddPole", enctype = "multipart/form-data", autocomplete = "off", 
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtLatitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_011<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @id = "txtLatitude", @readonly = true })
+                                @Html.TextBoxFor(m => m.latitude, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                          {
+                              autocomplete = "do-not-show-ac",
+                              @class = "form-control",
+                              @id = "txtLatitude",
+                              @onkeypress = "return si.allowNumberwithOneDot(event,'outer_dimension') && ValidateNumberDecimal(this,event,8,2);",
+
+                              @maxlength = "10"
+                          }, (lat_ == null ? new { @readonly = true } : null)))
+                                @*@Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @id = "txtLatitude", @readonly = true })*@
                             </div>
                             <label class="control-label col-sm-2" for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_012<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @id = "txtLongitude", @readonly = true })
+                                @Html.TextBoxFor(m => m.longitude, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                          {
+                              autocomplete = "do-not-show-ac",
+                              @class = "form-control",
+                              @id = "txtLongitude",
+                              @onkeypress = "return si.allowNumberwithOneDot(event,'outer_dimension') && ValidateNumberDecimal(this,event,8,2);",
+
+                              @maxlength = "10"
+                          }, (lng_ == null ? new { @readonly = true } : null)))
+                                @*@Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @id = "txtLongitude", @readonly = true })*@
                             </div>
                         </div>
                         <div class="form-group row">
@@ -210,9 +232,9 @@ new { id = "frmAddPole", enctype = "multipart/form-data", autocomplete = "off", 
                         </div>
                         <div class="form-group row">
                             @*<label class="control-label col-sm-2" for="ddlPoleType">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023<i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-45">
-                @Html.DropDownListFor(m => m.pole_type, new SelectList(Model.lstPoleType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Pole Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlPoleType" })
-            </div>*@
+                                <div class="col-sm-45">
+                                    @Html.DropDownListFor(m => m.pole_type, new SelectList(Model.lstPoleType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Pole Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlPoleType" })
+                                </div>*@
 
                             <label class="control-label col-sm-2" for="txtPoleNo">@layerDetail.layer_title @Resources.Resources.SI_GBL_GBL_NET_FRM_214:</label>
                             <div class="col-sm-4">
@@ -232,9 +254,9 @@ new { id = "frmAddPole", enctype = "multipart/form-data", autocomplete = "off", 
                         </div>
                         <div>
                             @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-45">
-                @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
-            </div>*@
+                                <div class="col-sm-45">
+                                    @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
+                                </div>*@
                             @OwnershipInfo()
                         </div>
                         <div class="form-group row">

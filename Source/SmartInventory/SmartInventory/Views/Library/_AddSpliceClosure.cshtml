@@ -53,6 +53,10 @@
     var layer_Detail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.SpliceClosure.ToString());
 }
+@{
+    var lat_ = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.latitude.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_readonly == false).FirstOrDefault() : null;
+    var lng_ = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.longitude.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_readonly == false).FirstOrDefault() : null;
+}
 <!DOCTYPE html>
 <div>
     @using (Ajax.BeginForm("SaveSpliceClosure", "Library", new AjaxOptions
@@ -181,19 +185,19 @@
                     <fieldset class="the-fieldset">
                         <legend class="the-legend">@Resources.Resources.SI_OSP_SC_NET_FRM_003</legend>
                         @*<div class="form-group">
-                            <label class="control-label col-sm-2" for="txtSCCode">
-                                SC Code
-                                @if (Model.networkIdType == NetworkIdType.M.ToString())
-                                {
-                                    <i class="clsMandatory">*</i>
-                                }
-                                :
-                            </label>
-                            <div class="col-sm-45" >
-                                <div id="txtMaskedNetworkId"></div>
+                                                <label class="control-label col-sm-2" for="txtSCCode">
+                                                    SC Code
+                                                    @if (Model.networkIdType == NetworkIdType.M.ToString())
+                                                    {
+                                                        <i class="clsMandatory">*</i>
+                                                    }
+                                                    :
+                                                </label>
+                                                <div class="col-sm-45" >
+                                                    <div id="txtMaskedNetworkId"></div>
 
-            </div>
-        </div>*@
+                                </div>
+                            </div>*@
                         <div class="form-group row">
                             <label class="col-md-2 col-sm-2" for="txtManholeName"> @Resources.Resources.SI_OSP_SC_NET_FRM_005</label>
                             <div class="col-md-4 col-sm-4">
@@ -241,11 +245,27 @@
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtLatitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_011<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @id = "txtLatitude", @readonly = true })
+                                @Html.TextBoxFor(m => m.latitude, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                {
+                                     autocomplete = "do-not-show-ac",
+                                     @class = "form-control",
+                                     @id = "txtLatitude",
+                                     @onkeypress = "return si.allowNumberwithOneDot(event,'outer_dimension') && ValidateNumberDecimal(this,event,8,2);",
+                                     @maxlength = "10"
+                                 }, (lat_ == null ? new { @readonly = true } : null)))
+                                @*@Html.TextBoxFor(m => m.latitude, new { @class = "form-control", @id = "txtLatitude", @readonly = true })*@
                             </div>
                             <label class="control-label col-sm-2" for="txtLongitude">@Resources.Resources.SI_OSP_GBL_GBL_GBL_012<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @id = "txtLongitude", @readonly = true })
+                                @Html.TextBoxFor(m => m.longitude, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                               {
+                                   autocomplete = "do-not-show-ac",
+                                   @class = "form-control",
+                                   @id = "txtLongitude",
+                                   @onkeypress = "return si.allowNumberwithOneDot(event,'outer_dimension') && ValidateNumberDecimal(this,event,8,2);",
+                                   @maxlength = "10"
+                               }, (lng_ == null ? new { @readonly = true } : null)))
+                                @*@Html.TextBoxFor(m => m.longitude, new { @class = "form-control", @id = "txtLongitude", @readonly = true })*@
                             </div>
                         </div>
                         <div class="form-group row">
@@ -286,35 +306,35 @@
                                 @Html.TextBoxFor(m => m.address, new { @class = "form-control", @id = "txtAddress", @maxlength = "100", autocomplete = "do-not-show-ac" })
                             </div>
                         </div>
-                            <div class="form-group row">
-                                <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_CAB_NET_FRM_075:</label>
-                                <div class="col-md-4 col-sm-4 mrgn_btm">
-                                    @Html.DropDownListFor(m => m.aerial_location, new SelectList(Model.listaerialLocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
-                                </div>
-                                <label class="control-label col-sm-2">SpliceClosure Type:</label>
-                                <div class="col-md-4 col-sm-4 mrgn_btm">
-                                    @Html.DropDownListFor(m => m.spliceclosure_type, new SelectList(Model.listSCType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
-                                </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_CAB_NET_FRM_075:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.aerial_location, new SelectList(Model.listaerialLocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
                             </div>
-                            <div class="form-group row">
-                                <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_CAB_NET_FRM_073:</label>
-                                <div class="col-md-4 col-sm-4  mrgn_btm">
-                                    @Html.TextBoxFor(m => m.section_name, new { @class = "form-control" })
-                                </div>
-
-                                <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_CAB_NET_FRM_074:</label>
-                                <div class="col-md-4 col-sm-4  mrgn_btm">
-                                    @Html.TextBoxFor(m => m.generic_section_name, new { @class = "form-control" })
-                                </div>
+                            <label class="control-label col-sm-2">SpliceClosure Type:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.spliceclosure_type, new SelectList(Model.listSCType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_CAB_NET_FRM_073:</label>
+                            <div class="col-md-4 col-sm-4  mrgn_btm">
+                                @Html.TextBoxFor(m => m.section_name, new { @class = "form-control" })
                             </div>
 
-                            <div class="form-group row">
-                                <label class="control-label col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
-                                <div class="col-sm-10">
-                                    @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @id = "txtRemarks", @maxlength = "1000" })
-                                </div>
+                            <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_CAB_NET_FRM_074:</label>
+                            <div class="col-md-4 col-sm-4  mrgn_btm">
+                                @Html.TextBoxFor(m => m.generic_section_name, new { @class = "form-control" })
                             </div>
-                    </fieldset>                    
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                            <div class="col-sm-10">
+                                @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @id = "txtRemarks", @maxlength = "1000" })
+                            </div>
+                        </div>
+                    </fieldset>
                     @if (Model.lstUserModule.Contains("PROJ"))
                     {
                         <fieldset class="the-fieldset">
@@ -374,7 +394,7 @@
 </div>
 <script type="text/javascript">
     var inputs = [];
-    $(document).ready(function () {       
+    $(document).ready(function () {
         var selectedRouteIds = '@string.Join(",", Model.selected_route_ids.ToList().Select(n => n.ToString()).ToArray())';
         $("#txtrouteInfo").val(selectedRouteIds.split(',')).trigger("chosen:updated");
         if ('@layerDetail' != null && '@layerDetail.is_trayinfo_enabled')
