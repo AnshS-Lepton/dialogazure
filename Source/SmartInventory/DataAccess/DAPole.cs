@@ -1,5 +1,6 @@
 ﻿using DataAccess.DBHelpers;
 using Models;
+using Models.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +11,13 @@ namespace DataAccess
 {
     public class DAPole : Repository<PoleMaster>
     {
-       
+
         public PoleMaster SaveEntityPole(PoleMaster objPoleMaster, int userId)
         {
             try
             {
                 var objPoleItem = repo.Get(x => x.system_id == objPoleMaster.system_id);
-               if (objPoleItem != null)
+                if (objPoleItem != null)
                 {
                     PageMessage objPageValidate = DAUtility.ValidateModifiedDate(objPoleMaster.modified_on, objPoleItem.modified_on, objPoleMaster.modified_by,objPoleItem.modified_by);
                     if (objPageValidate.message != null)
@@ -24,13 +25,19 @@ namespace DataAccess
                         objPoleMaster.objPM = objPageValidate;
                         return objPoleMaster;
                     }
+                    var geomresp =new DAMisc().GetValidatePointGeometry(objPoleMaster.system_id, objPoleMaster.entityType, objPoleMaster.latitude.ToString(), objPoleMaster.longitude.ToString(), objPoleMaster.region_id, objPoleMaster.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        objPoleMaster.objPM = geomresp;
+                        return objPoleMaster;
+                    }
 
                     objPoleItem.pole_name = objPoleMaster.pole_name;
                     objPoleItem.pole_type = objPoleMaster.pole_type;
                     objPoleItem.pole_no = objPoleMaster.pole_no;
-                    objPoleItem.pole_height = objPoleMaster.pole_height;                   
+                    objPoleItem.pole_height = objPoleMaster.pole_height;
                     objPoleItem.address = objPoleMaster.address;
-                    
+
                     objPoleItem.specification = objPoleMaster.specification;
                     objPoleItem.category = objPoleMaster.category;
                     objPoleItem.subcategory1 = objPoleMaster.subcategory1;
@@ -152,6 +159,6 @@ namespace DataAccess
             catch { throw; }
         }
         #endregion
-       
+
     }
 }

@@ -28,6 +28,12 @@ namespace DataAccess
                         objPODMaster.objPM = objPageValidate;
                         return objPODMaster;
                     }
+                    var geomresp = new DAMisc().GetValidatePointGeometry(objPOD.system_id, objPOD.entityType, objPOD.latitude.ToString(), objPOD.longitude.ToString(), objPOD.region_id, objPOD.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        objPOD.objPM = geomresp;
+                        return objPOD;
+                    }
                     objPOD.network_id = objPODMaster.network_id;
                     objPOD.pod_name = objPODMaster.pod_name;
                     objPOD.pincode = objPODMaster.pincode;

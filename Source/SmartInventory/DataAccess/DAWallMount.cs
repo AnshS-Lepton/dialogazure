@@ -24,6 +24,12 @@ namespace DataAccess
                         objWallMountMaster.objPM = objPageValidate;
                         return objWallMountMaster;
                     }
+                    var geomresp = new DAMisc().GetValidatePointGeometry(objWallMountMaster.system_id, objWallMountMaster.entityType, objWallMountMaster.latitude.ToString(), objWallMountMaster.longitude.ToString(), objWallMountMaster.region_id, objWallMountMaster.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        objWallMountMaster.objPM = geomresp;
+                        return objWallMountMaster;
+                    }
                     objWallMountItem.wallmount_name = objWallMountMaster.wallmount_name;               
                     objWallMountItem.wallmount_no = objWallMountMaster.wallmount_no;
                     objWallMountItem.wallmount_height = objWallMountMaster.wallmount_height;

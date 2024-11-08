@@ -24,6 +24,13 @@ namespace DataAccess
                         objManholeMaster.objPM = objPageValidate;
                         return objManholeMaster;
                     }
+                    var geomresp = new DAMisc().GetValidatePointGeometry(objManholeMaster.system_id, objManholeMaster.entityType, objManholeMaster.latitude.ToString(), objManholeMaster.longitude.ToString(), objManholeMaster.region_id, objManholeMaster.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        objManholeMaster.objPM = geomresp;
+                        return objManholeMaster;
+                    }
+
                     objManholeItem.mcgm_ward = objManholeMaster.mcgm_ward;
                     objManholeItem.manhole_name = objManholeMaster.manhole_name;                 
                     objManholeItem.address = objManholeMaster.address;
