@@ -975,32 +975,41 @@ LAYER
 			'datum=WGS84'
 			'no_defs'
 		END
-		CLASSITEM 'cable_cores' 
+		
+
+	#CLASSITEM 'cable_cores' 
 		#====================Planned======================
-		CLASS 
-			EXPRESSION ('[network_status]'  eq 'P')					
-		     STYLE
-				WIDTH 2
-				COLOR [color_code]				                					
-				PATTERN 10 5  END
-			END		
-			LABEL
-				FONT arial
-				TYPE truetype
-				COLOR 0 0 0				
-				SIZE 8
-				STYLE
-					GEOMTRANSFORM 'labelpoly'
-					COLOR 255 255 255  # background rect.
-				END
-				OFFSET 0 0
-				ANTIALIAS TRUE
-				POSITION CC
-				ANGLE AUTO
-				FORCE FALSE
-				PARTIALS FALSE
-			END
-		END	
+		# CLASS to show cable only (no label) at zoom level 8
+CLASS
+    EXPRESSION ('[network_status]' eq 'P')
+    STYLE
+        WIDTH 2
+        COLOR [color_code]
+        PATTERN 10 5 END
+    END
+ LABEL
+        FONT arial
+        TYPE truetype
+        COLOR 0 0 0
+        SIZE 8
+        STYLE
+            GEOMTRANSFORM 'labelpoly'
+            COLOR 255 255 255  # Background rectangle for label
+        END
+        OFFSET 0 0
+        ANTIALIAS TRUE
+        POSITION CC
+        ANGLE AUTO
+        FORCE FALSE
+        PARTIALS FALSE
+		#TEXT ''
+		#MINSCALEDENOM 1000000
+		MAXSCALEDENOM 
+    END
+END
+
+
+		
 		#====================Dormant======================		
 		CLASS 
 			EXPRESSION ('[network_status]'  eq 'D')						
@@ -1024,6 +1033,7 @@ LAYER
 				ANGLE AUTO
 				FORCE FALSE
 				PARTIALS FALSE
+				MAXSCALEDENOM 1000000
 			END
 		END	
 		#====================As-Built======================
@@ -1048,6 +1058,7 @@ LAYER
 				ANGLE AUTO
 				FORCE FALSE
 				PARTIALS FALSE
+				MAXSCALEDENOM 1000000
 			END
 		END		
 	END
