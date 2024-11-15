@@ -21,7 +21,8 @@
     <IISExpressUseClassicPipelineMode />
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -1624,6 +1625,8 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="DLL\System.DirectoryServices.dll" />
     <Content Include="MigrationScripts\01-07-2024.sql" />
+    <Content Include="MigrationScripts\15-11-2024 rename odf - .sql" />
+    <Content Include="MigrationScripts\02-07-2024 - Application-Version.sql" />
     <Content Include="MigrationScripts\09-07-2024.sql" />
     <Content Include="MigrationScripts\12-07-2024.sql" />
     <Content Include="MigrationScripts\17-07-2024.sql" />
