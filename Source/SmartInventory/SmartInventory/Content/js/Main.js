@@ -10381,20 +10381,26 @@ var Main = function () {
         }, true, true);
     }
 
-
     this.ShowEntityOnMap = function (systemID, eType, gType) {
-        ajaxReq('main/getGeometryDetail', { systemId: systemID, geomType: gType, entityType: eType }, false, function (resp) {
-            ;
-            if (resp.status = 'OK') {
-                //;
-                if (resp.result != null && resp.result != undefined) {
-                    app.HighlightEntityOnMap(gType, resp.result);
-                    //app.printPolygonEntityArea(resp.result);
-                    app.fitElementOnMap(resp.result)
+
+        if (eType.toLowerCase() == "fiberlink") {
+            splicing.showFiberLinkOnMap(systemID);
+        }
+        else {
+            ajaxReq('main/getGeometryDetail', { systemId: systemID, geomType: gType, entityType: eType }, false, function (resp) {
+                ;
+                if (resp.status = 'OK') {
+                    //;
+                    if (resp.result != null && resp.result != undefined) {
+                        app.HighlightEntityOnMap(gType, resp.result);
+                        //app.printPolygonEntityArea(resp.result);
+                        app.fitElementOnMap(resp.result)
+                    }
                 }
-            }
-        }, true, true);
+            }, true, true);
+        }
     }
+
 
     this.ShowEntityOnMapbyGeom = function (audit_id, gType) {
         ajaxReq('main/getGeometryDetailbygeom', { audit_id: audit_id, geomType: gType }, false, function (resp) {
