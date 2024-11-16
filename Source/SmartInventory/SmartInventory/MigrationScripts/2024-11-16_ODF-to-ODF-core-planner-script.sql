@@ -27,7 +27,7 @@ CREATE TABLE public.core_planner_logs (
 
 ----------------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION public.fn_get_core_planner_splicing(required_core integer, p_user_id integer, p_link_system_id integer)
+CREATE OR REPLACE FUNCTION public.fn_get_core_planner_splicing(required_core integer, p_user_id integer, fiber_link_network_id character varying)
  RETURNS SETOF json
  LANGUAGE plpgsql
 AS $function$
@@ -38,10 +38,11 @@ DECLARE
     v_cable_details_left record;
     v_cable_details_right record;
     v_cable_details record;
+   p_link_system_id integer;
 BEGIN
     v_network_id := '';
     v_system_id := 0;
-
+    p_link_system_id =0;
     -- Create a temporary table for connection data
     CREATE TEMP TABLE temp_connection (
         source_system_id integer,
@@ -61,6 +62,7 @@ BEGIN
         splicing_source character varying(100)
     ) ON COMMIT DROP;
        
+   select system_id into p_link_system_id from att_details_fiber_link adfl where network_id = fiber_link_network_id;
         -- Loop through records to populate temp_connection for valid routes
         FOR rec IN select * from (      
          SELECT a_system_id,a_network_id,a_entity_type FROM core_planner_logs  where user_id = p_user_id and is_valid =TRUE
@@ -154,6 +156,7 @@ return query select row_to_json(row) from ( select true as status, 'Success' as 
 END;
 $function$
 ;
+
 
 
 ----------------------------------------------------------------------------------------------------------------
