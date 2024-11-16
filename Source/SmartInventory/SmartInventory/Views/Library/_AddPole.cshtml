@@ -232,9 +232,9 @@ new { id = "frmAddPole", enctype = "multipart/form-data", autocomplete = "off", 
                         </div>
                         <div class="form-group row">
                             @*<label class="control-label col-sm-2" for="ddlPoleType">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023<i class="clsMandatory">*</i>:</label>
-                                <div class="col-sm-45">
-                                    @Html.DropDownListFor(m => m.pole_type, new SelectList(Model.lstPoleType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Pole Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlPoleType" })
-                                </div>*@
+            <div class="col-sm-45">
+                @Html.DropDownListFor(m => m.pole_type, new SelectList(Model.lstPoleType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Pole Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlPoleType" })
+            </div>*@
 
                             <label class="control-label col-sm-2" for="txtPoleNo">@layerDetail.layer_title @Resources.Resources.SI_GBL_GBL_NET_FRM_214:</label>
                             <div class="col-sm-4">
@@ -254,9 +254,9 @@ new { id = "frmAddPole", enctype = "multipart/form-data", autocomplete = "off", 
                         </div>
                         <div>
                             @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-                                <div class="col-sm-45">
-                                    @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
-                                </div>*@
+            <div class="col-sm-45">
+                @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
+            </div>*@
                             @OwnershipInfo()
                         </div>
                         <div class="form-group row">
@@ -281,6 +281,17 @@ new { id = "frmAddPole", enctype = "multipart/form-data", autocomplete = "off", 
                             <label class="control-label col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
                             <div class="col-sm-10">
                                 @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @id = "txtRemarks", @maxlength = "1000" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_164</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control", @maxlength = "35" })
+                            </div>
+                        
+                            <label class="col-md-2 col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_545</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.subarea_id, new { @class = "form-control", @maxlength = "35" })
                             </div>
                         </div>
                     </fieldset>

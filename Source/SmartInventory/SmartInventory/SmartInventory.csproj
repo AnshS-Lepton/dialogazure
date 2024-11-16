@@ -1625,7 +1625,7 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="DLL\System.DirectoryServices.dll" />
     <Content Include="MigrationScripts\01-07-2024.sql" />
-    <Content Include="MigrationScripts\15-11-2024-SIte ID - Site Name.sql" />
+    <Content Include="MigrationScripts\15-11-2024 rename odf - .sql" />
     <Content Include="MigrationScripts\02-07-2024 - Application-Version.sql" />
     <Content Include="MigrationScripts\09-07-2024.sql" />
     <Content Include="MigrationScripts\12-07-2024.sql" />

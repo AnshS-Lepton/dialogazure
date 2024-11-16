@@ -5,11 +5,11 @@
     <div class="form-group row">
         @if (Model.entityType.ToLower() == "cable")
         {
-            <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_164<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2"  style="display:none;">@Resources.Resources.SI_GBL_GBL_GBL_GBL_164<i class="clsMandatory">*</i>:</label>
         }
         else
         {
-        <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_164:</label>
+        <label class="control-label col-sm-2"style="display:none;">@Resources.Resources.SI_GBL_GBL_GBL_GBL_164:</label>
         }
 
         <div class="col-md-10">
@@ -39,18 +39,20 @@
             }
             @if (Model.entityType.ToLower() == "cable")
             {
-                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control", id = "gisDesignId", @maxlength = "35" })
+                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control", id = "gisDesignId", @maxlength = "35", style = "display: none;" })
             }
             else
             {
-                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control",  @maxlength = "35" })
+                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control",  @maxlength = "35",style = "display: none;"  })
             }
         </div>
     </div>
     <div class="form-group row">
-        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_545</label>
-        <div class="col-md-4 ">
-            @Html.TextBoxFor(m => m.subarea_id, new {@class = "form-control" })
+        <div style="display:none">
+            <label class="control-label col-sm-2" >@Resources.Resources.SI_OSP_GBL_NET_FRM_545</label>
+            <div class="col-md-4 ">
+                @Html.TextBoxFor(m => m.subarea_id, new { @class = "form-control" })
+            </div>
         </div>
         <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_544</label>
         <div class="col-md-4">
