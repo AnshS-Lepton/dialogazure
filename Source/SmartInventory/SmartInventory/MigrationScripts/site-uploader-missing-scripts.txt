@@ -1,0 +1,364 @@
+-----------------missing site uploader scripts------------
+UPDATE public.data_uploader_template
+	SET max_value=1000
+	WHERE layer_id=(select layer_id from layer_details where layer_name='POD') AND db_column_name='tower_height';
+	
+UPDATE public.data_uploader_template
+	SET max_value=1000
+	WHERE layer_id=(select layer_id from layer_details where layer_name='POD') AND db_column_name='bandwidth';
+	
+UPDATE public.data_uploader_template
+	SET max_value=100000
+	WHERE layer_id=(select layer_id from layer_details where layer_name='POD') and db_column_name='site_rank';
+UPDATE public.data_uploader_template
+	SET max_value=10000
+	WHERE layer_id=(select layer_id from layer_details where layer_name='POD')AND db_column_name='self_tx_traffic';
+UPDATE public.data_uploader_template
+	SET max_value=10000
+	WHERE layer_id=(select layer_id from layer_details where layer_name='POD') AND db_column_name='agg_tx_traffic';
+UPDATE public.data_uploader_template
+	SET max_value=10000
+	WHERE layer_id=(select layer_id from layer_details where layer_name='POD') AND db_column_name='csr_count';
+UPDATE public.data_uploader_template
+	SET max_value=10000
+	WHERE layer_id=(select layer_id from layer_details where layer_name='POD') AND db_column_name='dti_circuit';
+	------------------------------------------------------------------
+	
+-- DROP FUNCTION public.fn_uploader_insert_pod(int4, int4);
+
+CREATE OR REPLACE FUNCTION public.fn_uploader_insert_pod(p_uploadid integer, p_batchid integer)
+ RETURNS integer
+ LANGUAGE plpgsql
+AS $function$
+
+declare
+REC RECORD;
+v_current_system_id integer;
+v_parent_system_id integer;
+v_parent_network_id character varying;
+v_parent_entity_type character varying;
+v_network_code character varying;
+v_sequence_id integer;
+v_network_id_type character varying;
+v_latitude double precision;
+v_longitude double precision;
+v_network_code_seperator character varying;
+v_display_name character varying;
+v_display_value character varying;
+v_str_system_id integer;
+v_flr_system_id integer;
+v_shaft_system_id integer;
+v_unit_id integer;
+v_unit_system_id integer;
+v_auto_character_count integer;
+v_network_name character varying;
+
+-- Added by Diksha
+v_specification character varying;
+v_category_reference character varying; 
+v_subcategory_1 character varying; 
+v_subcategory_2  character varying; 
+v_subcategory_3 character varying;  
+v_vendor_id integer;
+v_item_code character varying;
+v_another_current_system_id integer;
+BEGIN
+-- GET NETWORK ID TYPE (AUTO/MANUAL) AND NETWORK CODE SEPERATOR FROM LAYER DETAILS..
+select network_id_type,network_code_seperator into v_network_id_type,v_network_code_seperator from layer_details where upper(layer_name)='POD';
+
+-- INSERT BATCH WISE RECORDS..
+FOR REC IN select * from temp_du_pod where upload_id=p_uploadid and is_valid=true and batch_id= p_batchid and is_processed = false
+LOOP
+BEGIN
+
+v_str_system_id:=0;
+v_unit_id:=0;
+v_shaft_system_id:=0;
+v_flr_system_id:=0;
+v_sequence_id:=0;
+v_network_name:=rec.pod_name;
+v_latitude:=rec.latitude::double precision;
+v_longitude:=rec.longitude::double precision;
+v_shaft_system_id:= rec.shaft_id;
+v_flr_system_id:= rec.floor_id;
+
+-- IF MANUAL THEN ACCEPT THE NETWORK CODE ENTERED BY USER.
+if (v_network_id_type='M' and coalesce(REC.network_id,'')!='')
+then
+v_network_code=rec.parent_network_id||v_network_code_seperator||rec.network_id;
+elsif((v_network_id_type='A' and coalesce(REC.network_id,'')!=''))
+then
+v_network_code=rec.parent_network_id||v_network_code_seperator||rec.network_id;
+select (length(network_code_format)-length(replace(network_code_format,RIGHT(network_code_format, 1),''))) into v_auto_character_count
+from vw_layer_mapping where upper(child_layer_name)=upper('POD') and upper(parent_layer_name)=UPPER(REC.PARENT_ENTITY_TYPE) and is_used_for_network_id=true;
+v_sequence_id:=RIGHT(rec.network_id, v_auto_character_count);
+else
+-- GET NETWORK CODE & PARENT DETAILS..
+select o_p_system_id,o_p_network_id,o_p_entity_type,message,o_sequence_id
+from fn_get_clone_network_code('POD', 'Point',''||v_longitude||' '||v_latitude||'', rec.parent_system_id, rec.parent_entity_type) into
+v_parent_system_id,v_parent_network_id,v_parent_entity_type,v_network_code,v_sequence_id;
+end if;
+
+IF(upper(rec.parent_entity_type)='UNIT') THEN
+select str.system_id, str.longitude, str.latitude, Isp.id, Isp.floor_id into v_str_system_id, v_longitude, v_latitude, v_unit_id,v_flr_system_id from att_details_bld_structure str inner join (select id,floor_id, structure_id from isp_entity_mapping where entity_id=rec.parent_system_id and upper(entity_type)=upper(rec.parent_entity_type))as Isp on str.system_id = isp.structure_id;
+END IF;
+raise info'v_parent_system_id::%',v_parent_system_id;
+raise info'v_parent_network_id::%',v_parent_network_id;
+raise info'v_parent_entity_type::%',v_parent_entity_type;
+IF(coalesce(v_network_name,'')='')
+then
+v_network_name=v_network_code;
+END IF;
+--INSERT INTO MAIN TABLE
+insert into att_details_pod(network_id, pod_name, latitude, longitude, province_id, region_id, address, pincode,
+specification, category,subcategory1, subcategory2, subcategory3, item_code, vendor_id, status, created_by,
+created_on, network_status, parent_system_id,parent_network_id, parent_entity_type, sequence_id,type,brand,model,
+construction,activation,accessibility,ownership_type, structure_id, audit_item_master_id, source_ref_type, source_ref_id,
+remarks,origin_from,origin_Ref_id,origin_Ref_code,origin_Ref_description,request_ref_id,requested_by,request_approved_by,bom_sub_category,st_x,st_y,site_id ,site_name ,on_air_date ,removed_date ,tx_type,tx_technology,tx_segment,tx_ring,province,district ,depot ,ds_division ,local_authority ,owner_name ,access_24_7 ,tower_type ,tower_height ,cabinet_type ,solution_type ,site_rank ,self_tx_traffic ,agg_tx_traffic,csr_count ,dti_circuit ,agg_01 ,agg_02 ,bandwidth ,ring_type ,link_id ,alias_name,region, region_address, metro_ring_utilization, tx_agg, bh_status, segment, ring, maximum_cost, project_category, priority, no_of_cores, fiber_link_type, comment, plan_cost, fiber_distance, fiber_link_code, port_type, destination_site_id, destination_port_type, destination_no_of_cores, target_ref_code, target_ref_description, target_ref_id, elevation
+ )
+select v_network_code, v_network_name, v_latitude, v_longitude, rec.province_id, rec.region_id, rec.address,
+rec.pin_code, rec.specification,rec.category, rec.subcategory1, rec.subcategory2, rec.subcategory3, rec.item_code,
+rec.vendor_id, 'A', rec.created_by, now(), coalesce(rec.network_status,'P'),rec.parent_system_id,rec.parent_network_id,
+REC.PARENT_ENTITY_TYPE, v_sequence_id,0,0,0,0,0,0,'Own', v_str_system_id, rec.audit_item_master_id, 'DU',
+p_uploadid, rec.remarks ,rec.origin_from,rec.origin_Ref_id,rec.origin_Ref_code,
+rec.origin_Ref_description,rec.request_ref_id,rec.requested_by,rec.request_approved_by,'Proposed',rec.st_x,rec.st_y,rec.site_id,rec.site_name,rec.on_air_date,rec.removed_date,rec.tx_type,rec.tx_technology,   rec.tx_segment,rec.tx_ring,rec.province,rec.district,rec.depot,rec.ds_division,rec.local_authority,rec.owner_name,rec.access_24_7,rec.tower_type,rec.tower_height,rec.cabinet_type,rec.solution_type,rec.site_rank,rec.self_tx_traffic,rec.agg_tx_traffic,rec.csr_count,rec.dti_circuit,rec.agg_01,rec.agg_02,rec.bandwidth,rec.ring_type,rec.link_id,rec.alias_name,rec.region, rec.region_address, rec.metro_ring_utilization::numeric , rec.tx_agg, rec.bh_status, rec.segment, rec.ring, rec.maximum_cost, rec.project_category, rec.priority, rec.no_of_cores, rec.fiber_link_type, rec.comment, rec.plan_cost, rec.fiber_distance, rec.fiber_link_code, rec.port_type, rec.destination_site_id, rec.destination_port_type, rec.destination_no_of_cores::numeric, rec.target_ref_code, rec.target_ref_description, rec.target_ref_id, rec.elevation::double precision
+returning system_id into v_current_system_id;
+
+--INSERT INTO POINT MASTER
+insert into point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,creator_remark,
+approver_remark,created_by,approver_id,common_name,db_flag,network_status,display_name,st_x,st_y)
+select v_current_system_id,'POD',v_longitude,v_latitude, 'A', ST_GEOMFROMTEXT('POINT('||v_longitude||' '||v_latitude||')', 4326),
+now(), 'NA', 'NA',rec.created_by,0, v_network_code, rec.upload_id,coalesce(rec.network_status,'P'),fn_get_display_name(v_current_system_id,'POD'),rec.st_x,rec.st_y;
+
+-- INSERT isp_entity_mapping..
+
+IF(upper(rec.parent_entity_type)='STRUCTURE' and rec.parent_system_id is not null)
+THEN
+select rec.parent_system_id into v_str_system_id;
+END IF;
+IF(v_str_system_id>0)THEN
+raise info'v_str_system_id::%',v_str_system_id;
+raise info'v_shaft_system_id::%',v_shaft_system_id;
+raise info'v_flr_system_id::%',v_flr_system_id;
+raise info'v_str_system_id::%',v_str_system_id;
+raise info'v_unit_id::%',v_unit_id;
+IF(rec.unit_system_id > 0)
+THEN
+select id,floor_id,shaft_id into v_unit_id,v_flr_system_id,v_shaft_system_id
+from isp_entity_mapping where entity_id=rec.unit_system_id
+and structure_id = v_str_system_id and upper(entity_type)= upper('UNIT');
+End IF;
+
+insert into isp_entity_mapping(structure_id,shaft_id,floor_id,entity_type,entity_id,parent_id)values
+(v_str_system_id, v_shaft_system_id, v_flr_system_id, 'POD', v_current_system_id, coalesce(v_unit_id,0));
+
+End if;
+END;
+
+-- UPDATE STATUS INTO TEMP TABLE..
+update temp_du_pod set is_processed=true where system_id=rec.system_id;
+perform (fn_geojson_update_entity_attribute(v_current_system_id::integer,'POD'::character varying ,rec.province_id::integer,0,false));
+
+if(rec.origin_Ref_id is not null) then 
+--Create ODF for POP in SP 
+raise info 'POP Start' ;
+select specification, category_reference , subcategory_1, subcategory_2, subcategory_3, code, vendor_id  from item_template_master itm 
+where layer_id =(select layer_id  from layer_details where layer_name ='FMS' ) and specification ='Generic' into 
+v_specification, v_category_reference , v_subcategory_1, v_subcategory_2, v_subcategory_3, v_item_code, v_vendor_id;
+
+
+--Create ODF for POP in SP 
+raise info 'POP Start' ;
+select specification, category_reference , subcategory_1, subcategory_2, subcategory_3, code, vendor_id  from item_template_master itm 
+where layer_id =(select layer_id  from layer_details where layer_name ='FMS' ) and specification ='Generic' into 
+v_specification, v_category_reference , v_subcategory_1, v_subcategory_2, v_subcategory_3, v_item_code, v_vendor_id;
+
+raise info 'Insert Statement % , % , % , % , % , % , %',v_specification, v_category_reference , v_subcategory_1, v_subcategory_2, v_subcategory_3, v_item_code, v_vendor_id ;
+
+---Insert FMS details into point_master
+insert into point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,creator_remark,approver_remark,created_by,approver_id,common_name,db_flag,modified_on,network_status,no_of_ports,entity_category,display_name)
+
+select system_id ,'FMS',longitude,latitude,'A',ST_GeomFromText('POINT('||longitude||' '||latitude||')',4326),'NA','NA',created_by ,0,network_id ,0,now(),network_status ,no_of_port ,category ,fn_get_display_name(system_id,'FMS') from att_details_fms adf where system_id =v_another_current_system_id;
+
+------Inserting port data by fn_bulk_insert_port_info....
+
+perform fn_bulk_insert_port_info(48,48,'FMS',v_another_current_system_id,(select network_id from att_details_fms where system_id=v_another_current_system_id),(select created_by from att_details_fms where system_id=v_another_current_system_id));
+ end if;
+END LOOP;
+return 1;
+END;
+$function$
+;
+
+----------------------chandra scripts below------------
+update layer_mapping set network_code_format ='PODxxxxx' where layer_id=10
+
+---------------------------------------
+ CREATE OR REPLACE VIEW public.vw_att_details_pod
+AS SELECT pod.system_id,
+    pod.network_id,
+    pod.pod_name,
+    round(pod.latitude::numeric, 6) AS latitude,
+    round(pod.longitude::numeric, 6) AS longitude,
+    pod.pincode,
+    pod.address,
+    pod.specification,
+    pod.category,
+    pod.subcategory1,
+    pod.subcategory2,
+    pod.subcategory3,
+    pod.item_code,
+    pod.vendor_id,
+    pod.type,
+    pod.brand,
+    pod.model,
+    pod.construction,
+    pod.activation,
+    pod.accessibility,
+    pod.status,
+    pod.network_status,
+    pod.province_id,
+    pod.region_id,
+    pod.created_by,
+    pod.created_on,
+    pod.modified_by,
+    pod.modified_on,
+    pod.parent_system_id,
+    pod.parent_network_id,
+    pod.parent_entity_type,
+    pod.sequence_id,
+    pod.structure_id,
+    pod.shaft_id,
+    pod.floor_id,
+    pod.project_id,
+    pod.planning_id,
+    pod.purpose_id,
+    pod.workorder_id,
+    prov.province_name,
+    reg.region_name,
+    um.user_name,
+    vm.name AS vendor_name,
+    tp.type AS pod_types,
+    bd.brand AS pod_brand,
+    ml.model AS pod_model,
+    fn_get_date(pod.created_on) AS created_date,
+    fn_get_date(pod.modified_on) AS modified_date,
+    um.user_name AS created_by_user,
+    um2.user_name AS modified_by_user,
+    ( SELECT system_spec_master.prop_name
+           FROM system_spec_master
+          WHERE system_spec_master.id = pod.accessibility) AS pod_accessibility,
+    ( SELECT system_spec_master.prop_name
+           FROM system_spec_master
+          WHERE system_spec_master.id = pod.construction) AS pod_construction,
+    ( SELECT system_spec_master.prop_name
+           FROM system_spec_master
+          WHERE system_spec_master.id = pod.activation) AS pod_activation,
+    ''::character varying AS additional_attributes,
+    ''::text AS total_ports,
+    ''::text AS entity_category,
+    pod.pod_name AS entity_name,
+    pod.acquire_from,
+    pod.pod_type,
+    pod.ownership_type,
+    vm2.id AS third_party_vendor_id,
+    vm2.name AS third_party_vendor_name,
+    pod.source_ref_type,
+    pod.source_ref_id,
+    pod.source_ref_description,
+    pod.status_remark,
+    pod.status_updated_by,
+    pod.status_updated_on,
+    pod.is_visible_on_map,
+    pod.is_new_entity,
+    pod.remarks,
+    pod.audit_item_master_id,
+    pod.is_acquire_from,
+    isp_room_info.network_id AS unit_network_id,
+    s.shaft_name,
+    f.floor_name,
+    pod.origin_from,
+    pod.origin_ref_id,
+    pod.origin_ref_code,
+    pod.origin_ref_description,
+    pod.request_ref_id,
+    pod.requested_by,
+    pod.request_approved_by,
+    pod.subarea_id,
+    pod.area_id,
+    pod.dsa_id,
+    pod.csa_id,
+    pod.bom_sub_category,
+    pod.gis_design_id,
+    pod.st_x,
+    pod.st_y,
+    pod.ne_id,
+    pod.prms_id,
+    pod.jc_id,
+    pod.mzone_id,
+    pod.hierarchy_type,
+    vm3.name AS own_vendor_name,
+    pod.site_id,
+    pod.site_name,
+    pod.on_air_date,
+    pod.removed_date,
+    pod.tx_type,
+    pod.tx_technology,
+    pod.tx_segment,
+    pod.tx_ring,
+    pod.province,
+    pod.district,
+    pod.depot,
+    pod.ds_division,
+    pod.local_authority,
+    pod.owner_name,
+    pod.access_24_7,
+    pod.tower_type,
+    pod.tower_height,
+    pod.cabinet_type,
+    pod.solution_type,
+    pod.site_rank,
+    pod.self_tx_traffic,
+    pod.agg_tx_traffic,
+    pod.csr_count,
+    pod.dti_circuit,
+    pod.agg_01,
+    pod.agg_02,
+    pod.bandwidth,
+    pod.ring_type,
+    pod.link_id,
+    pod.alias_name
+   FROM att_details_pod pod
+     JOIN province_boundary prov ON pod.province_id = prov.id
+     JOIN region_boundary reg ON pod.region_id = reg.id
+     JOIN user_master um ON pod.created_by = um.user_id
+     JOIN vendor_master vm ON pod.vendor_id = vm.id
+     LEFT JOIN vendor_master vm2 ON pod.third_party_vendor_id = vm2.id
+     LEFT JOIN vendor_master vm3 ON pod.own_vendor_id::integer = vm3.id
+     LEFT JOIN isp_type_master tp ON pod.type = tp.id
+     LEFT JOIN isp_brand_master bd ON pod.brand = bd.id
+     LEFT JOIN isp_base_model ml ON pod.model = ml.id
+     LEFT JOIN user_master um2 ON pod.modified_by = um2.user_id
+     LEFT JOIN ( SELECT isp_entity_mapping.entity_id,
+            isp_entity_mapping.parent_id
+           FROM isp_entity_mapping
+          WHERE isp_entity_mapping.entity_type::text = 'POD'::text) m1 ON pod.system_id = m1.entity_id
+     LEFT JOIN ( SELECT isp_entity_mapping.id,
+            isp_entity_mapping.structure_id,
+            isp_entity_mapping.shaft_id,
+            isp_entity_mapping.floor_id,
+            isp_entity_mapping.entity_type,
+            isp_entity_mapping.entity_id,
+            isp_entity_mapping.parent_id
+           FROM isp_entity_mapping
+          WHERE isp_entity_mapping.entity_type::text = 'UNIT'::text) m2 ON m1.parent_id = m2.id
+     LEFT JOIN isp_room_info ON m2.entity_id = isp_room_info.system_id AND m2.floor_id = isp_room_info.floor_id
+     LEFT JOIN isp_shaft_info s ON m2.shaft_id = s.system_id
+     LEFT JOIN isp_floor_info f ON m2.floor_id = f.system_id;
+
+-----------------------
+
+update global_settings set value='W56FjZgNMRDcMR+GX9IKVAbt8hL26yz8bCT0Da7WgWn2FUY2AiLXSBAwJWh/+gQXN+lbRdiRgnLJ2Jp15lDQPJdp8j8QcigJy0fni69FfCskDp0vFx8fUSV8dUuBAS3M+q/llOgKVfRC3raC5AAV4UoAp7ME6x6FjHFTye09quSoKgtDtnAdhoNEzZpIWfdax2oK9cjf3jOHiTi5UDDZU9OySt1aYy1enQNBhnVbtYIIplkgMN7fEkQLx9gViU+mThJjLTHHPGtzaOQkh24kH6pwY6ddthkMo8GFOyUXbfESVFjbUukJKw24K4ddLDOtmIBDK8V1XAXlRK5CGrlInQ==' where key ilike 'product_license_%';
+
+
+	
