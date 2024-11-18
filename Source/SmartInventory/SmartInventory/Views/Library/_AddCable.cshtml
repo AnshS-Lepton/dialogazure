@@ -60,7 +60,7 @@
     var gis_design_id = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.gis_design_id.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var a_location_code = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.a_location_code.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var b_location_code = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.b_location_code.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
-    Model.cable_name = (string.IsNullOrEmpty(Model.cable_name) ? Model.a_location_name + ":" + Model.b_location_name : Model.cable_name);
+    Model.cable_name = (string.IsNullOrEmpty(Model.cable_name) ? Model.a_location_name + "-" + Model.b_location_name : Model.cable_name);
 }
 <!DOCTYPE html>
 <div>
