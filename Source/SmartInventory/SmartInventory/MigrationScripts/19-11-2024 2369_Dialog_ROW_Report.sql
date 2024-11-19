@@ -142,3 +142,6 @@ UPDATE public.res_resources SET value='can not convert into dormant,as it is use
 UPDATE public.res_resources SET value='kann nicht in „dormant“ umgewandelt werden, da es mit einer Entität verknüpft ist!' WHERE culture='de-DE' AND "key"='SI_GBL_GBL_GBL_GBL_142';
 UPDATE public.res_resources SET value='can not convert into dormant,as it is associated with some entity!' WHERE culture='en' AND "key"='SI_GBL_GBL_GBL_GBL_142';
 UPDATE public.res_resources SET value='can not convert into dormant,as it is associated with some entity!' WHERE culture='ja-JP' AND "key"='SI_GBL_GBL_GBL_GBL_142';
+
+------------------
+update global_settings set value='Ad+cluHdxNN0VdcMn2gxd2gbPROLlmtgg5IhSewtKC8rmTI/BSeTsCXG/U0HuC34E/rhcry8NmAhRicezJTZ1F046UJX1OqDbU1s/e5I72vk0Q+upbaLNXIuX6xOHwfXnAcfl7ZCiA3PqiiFf6hGWuNlIZN2tNip5b6vPh+BGEbY7hZHTWJMBMf7wEBq1u5I21HQDZrG3HHsYlAQl2IfUZHARx3d134aI/ujV0PXPcirI7ntVdbW/yEXzXVNfXXjLcrjYemiPTHvW6zxuBi7hZSvA09KtYMoxcdnZaCa6rV3pErUsF5U8G5ZTdnFZyHhHj0msbZmlRBQI+lyI8/Yug==' where key ilike 'product_license_%'
