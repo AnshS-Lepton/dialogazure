@@ -24,7 +24,8 @@
 
                         </th>
                         <th>
-                            @Resources.Resources.SI_OSP_GBL_NET_RPT_017 @string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency)
+                            @*@Resources.Resources.SI_OSP_GBL_NET_RPT_017 @string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency)*@
+                            @Html.Raw(String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_017, ApplicationSettings.Currency))
                         </th>
                         <th>@string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_085, ApplicationSettings.Currency)</th>
 
