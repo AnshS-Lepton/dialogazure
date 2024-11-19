@@ -169,15 +169,17 @@ AS $function$
 DECLARE 
     rec RECORD;
     total_core integer;
-   p_source character varying;
-  p_destination character varying;
- avaiableCore  integer;
- usedCore  integer;
-source_system_id integer;
-begin
-	avaiableCore = 0;
-    usedCore = 0;
-    -- Create temporary table for cable routes
+    p_source character varying;
+    p_destination character varying;
+    avaiableCore integer;
+    usedCore integer;
+    source_system_id integer;
+   p_destination_system_id integer;
+BEGIN
+    avaiableCore := 0;
+    usedCore := 0;
+
+    -- Create temporary tables
     CREATE TEMP TABLE temp_cable_routes(
         seq integer,
         path_seq integer, 
@@ -187,114 +189,132 @@ begin
         end_point character varying
     ) ON COMMIT DROP;
 
-   select longitude ||' '||latitude as geom,system_id  into p_source,source_system_id from att_details_fms where network_id = source_network_id;
-   select longitude ||' '||latitude as geom into p_destination from att_details_fms where network_id = destination_network_id;
+    CREATE TEMP TABLE temp_isp_port_info(
+        system_id int4 NULL,
+        network_id varchar NULL,
+        parent_system_id int4 NULL,
+        parent_network_id varchar NULL,
+        port_status_id int4 NULL,
+        is_valid boolean DEFAULT true,
+        port_number int4 NULL
+    ) ON COMMIT DROP;
 
-    -- Insert shortest route cables into the temporary table
+    -- Clear previous logs for the user
+    DELETE FROM core_planner_logs WHERE user_id = p_user_id;
+
+    -- Get source and destination points
+    SELECT longitude || ' ' || latitude AS geom, system_id
+    INTO p_source, source_system_id
+    FROM att_details_fms
+    WHERE network_id = source_network_id;
+
+    SELECT longitude || ' ' || latitude AS geom,system_id
+    INTO p_destination,p_destination_system_id
+    FROM att_details_fms
+    WHERE network_id = destination_network_id;
+
+    -- Calculate available and used cores
+    SELECT 
+        COUNT(CASE WHEN port_status_id = 1 and input_output = 'O' THEN 1 END) AS avaiableCore,
+        COUNT(CASE WHEN port_status_id > 1 and input_output = 'O' THEN 1 END) AS usedCore
+    INTO avaiableCore, usedCore
+    FROM isp_port_info a
+    WHERE a.parent_system_id = source_system_id 
+      AND a.parent_entity_type = 'FMS';
+
+    -- Populate temporary cable routes table
     INSERT INTO temp_cable_routes (seq, path_seq, edge_targetid, roadline_geomtext, start_point, end_point)
     SELECT * FROM fn_sf_get_routes(p_source, p_destination, buffer, buffer);
 
-   delete from core_planner_logs where user_id = p_user_id;
-    -- Loop through each record in the temporary table
-    FOR rec IN (SELECT * FROM temp_cable_routes order by seq asc)
-    loop
-	    raise info 'rec 1 : %',rec;
-        -- Check if the required core count is available for a cable
-        SELECT COUNT(*) INTO total_core
-        FROM att_details_cable_info adci 
-        WHERE adci.cable_id = rec.edge_targetid 
-          AND a_end_status_id = 1 
-          AND b_end_status_id = 1;
- raise info 'total_core 1 : %',total_core;
+    -- Populate temporary ISP port info table
+    INSERT INTO temp_isp_port_info (system_id, network_id, parent_system_id, 
+    parent_network_id, port_status_id, port_number)
+    
+    SELECT system_id, network_id, parent_system_id, parent_network_id, port_status_id, port_number
+    FROM isp_port_info a WHERE a.parent_system_id = source_system_id  AND a.parent_entity_type = 'FMS'
+    AND port_status_id = 1 and input_output = 'O' ORDER BY system_id;
+   
+   UPDATE temp_isp_port_info
+   SET is_valid = FALSE
+   WHERE system_id IN (
+    SELECT system_id
+    FROM temp_isp_port_info t
+    WHERE ((SELECT COUNT(*) FROM att_details_cable_info  WHERE cable_id IN (SELECT edge_targetid 
+        FROM temp_cable_routes) AND fiber_number = t.port_number  AND a_end_status_id = 1 
+        AND b_end_status_id = 1 ) != (SELECT COUNT(*) FROM temp_cable_routes))
+        and
+        ((SELECT COUNT(*) FROM att_details_cable_info  WHERE cable_id IN (SELECT edge_targetid 
+        FROM temp_cable_routes) AND fiber_number = (SELECT port_number FROM isp_port_info it
+        where  it.parent_system_id = p_destination_system_id  AND it.parent_entity_type = 'FMS'
+        and it.port_number = t.port_number and input_output = 'O' AND port_status_id = 1)  
+        AND a_end_status_id = 1 AND b_end_status_id = 1 ) != (SELECT COUNT(*) FROM temp_cable_routes)) );
 
-   SELECT COUNT(*) INTO avaiableCore
-  from isp_port_info a where a.parent_system_id=source_system_id and a.parent_entity_type='FMS' and port_status_id=1 ; 
- raise info 'avaiableCore 1 : %',avaiableCore;
-
-SELECT COUNT(*) INTO usedCore
-from isp_port_info a where a.parent_system_id=source_system_id and a.parent_entity_type='FMS' and port_status_id >1 ; 
-     raise info 'usedCore 1 : %',usedCore;
-
-        IF total_core = required_core THEN
-            -- Insert record with available ports
-            INSERT INTO core_planner_logs(
-                cable_id, cable_name, network_status, total_core, cable_length, 
-                a_system_id, b_system_id, a_entity_type, b_entity_type, 
-                error_msg, is_valid, user_id, a_network_id, b_network_id,cable_network_id,avaiable,used_core  
-            )     
-            SELECT att.system_id, att.cable_name, att.network_status, att.total_core, att.cable_calculated_length, 
-                   att.a_system_id, att.b_system_id, att.a_entity_type, att.b_entity_type, 
-                   'Available Port', TRUE, p_user_id, att.a_network_id, att.b_network_id,att.network_id ,avaiableCore,usedCore
-            FROM att_details_cable att 
-            WHERE att.system_id = rec.edge_targetid;
-        ELSE
-            -- Insert record with error message if required core is not available
-            INSERT INTO core_planner_logs(
-                cable_id, cable_name, network_status, total_core, cable_length, 
-                error_msg, is_valid, user_id, a_system_id, b_system_id, a_entity_type, b_entity_type, a_network_id, b_network_id,cable_network_id,avaiable,used_core
-            )     
-            SELECT att.system_id, att.cable_name, att.network_status, att.total_core, att.cable_calculated_length, 
-                   'Required core is not available', FALSE, p_user_id, att.a_system_id, att.b_system_id, 
-                   att.a_entity_type, att.b_entity_type, att.a_network_id, att.b_network_id,att.network_id,avaiableCore,usedCore 
-            FROM att_details_cable att 
-            WHERE att.system_id = rec.edge_targetid;
+   /* -- Validate ports against cable routes
+    FOR rec IN (SELECT * FROM temp_isp_port_info) LOOP
+        IF (SELECT COUNT(*) FROM att_details_cable_info  WHERE cable_id IN (SELECT edge_targetid 
+        FROM temp_cable_routes) AND fiber_number = rec.port_number  AND a_end_status_id = 1 
+        AND b_end_status_id = 1 ) != (SELECT COUNT(*) FROM temp_cable_routes)
+        THEN
+            UPDATE temp_isp_port_info
+            SET is_valid = FALSE
+            WHERE system_id = rec.system_id;
         END IF;
-    END LOOP;
+       
+       IF (SELECT COUNT(*) FROM att_details_cable_info  WHERE cable_id IN (SELECT edge_targetid 
+        FROM temp_cable_routes) AND fiber_number = (SELECT port_number FROM isp_port_info it where  it.parent_system_id = p_destination_system_id  AND it.parent_entity_type = 'FMS' and it.port_number = rec.port_number 
+        and input_output = 'O' AND port_status_id = 1  )  AND a_end_status_id = 1 
+        AND b_end_status_id = 1 ) != (SELECT COUNT(*) FROM temp_cable_routes)
+        THEN
+            UPDATE temp_isp_port_info
+            SET is_valid = FALSE
+            WHERE system_id = rec.system_id;
+        END IF;
+       
+    END LOOP; */
+   
+          -- Log valid cables
+        INSERT INTO core_planner_logs( cable_id, cable_name, network_status, total_core, cable_length, 
+        a_system_id, b_system_id, a_entity_type, b_entity_type, error_msg, is_valid, user_id, 
+        a_network_id, b_network_id, cable_network_id, avaiable, used_core )
+        
+        SELECT att.system_id, att.cable_name, att.network_status, 
+        att.total_core, att.cable_calculated_length, att.a_system_id, att.b_system_id, att.a_entity_type,
+        att.b_entity_type, CASE WHEN (SELECT COUNT(*) FROM temp_isp_port_info WHERE is_valid = TRUE) 
+        >= required_core THEN 'Available Port' ELSE 'Required core is not available' end, 
+        (SELECT COUNT(*) FROM temp_isp_port_info WHERE is_valid = TRUE) >= required_core, 
+        p_user_id, att.a_network_id, att.b_network_id, att.network_id, (select count(*) 
+        from temp_isp_port_info), usedCore FROM att_details_cable att WHERE att.system_id in 
+        (select edge_targetid from temp_cable_routes);
 
-    -- Validate if any record has 'FMS' in either `a_entity_type` or `b_entity_type`
-    IF NOT EXISTS (
-        SELECT 1
-        FROM core_planner_logs logs  
-        WHERE (logs.a_entity_type = 'FMS' OR logs.b_entity_type = 'FMS') 
-          AND logs.user_id = p_user_id
-        ORDER BY logs.id ASC 
-        LIMIT 1
-    ) THEN 
+
+      -- Validate if any record has 'FMS' in either `a_entity_type` or `b_entity_type`
+    IF NOT EXISTS ( SELECT 1 FROM core_planner_logs logs WHERE (logs.a_entity_type = 'FMS' 
+    OR logs.b_entity_type = 'FMS') AND logs.user_id = p_user_id ORDER BY logs.id ASC LIMIT 1) 
+    THEN 
         UPDATE core_planner_logs 
         SET is_valid = FALSE 
         WHERE user_id = p_user_id;
     END IF;
-
-    IF NOT EXISTS (
-        SELECT 1
-        FROM core_planner_logs logs  
-        WHERE (logs.a_entity_type = 'FMS' OR logs.b_entity_type = 'FMS') 
-          AND logs.user_id = p_user_id
-        ORDER BY logs.id DESC 
-        LIMIT 1
-    ) THEN 
-        UPDATE core_planner_logs 
-        SET is_valid = FALSE 
-        WHERE user_id = p_user_id;
-    END IF;
-
+   
     -- Validate if `a_system_id` or `b_system_id` is null
-    IF EXISTS (
-        SELECT 1
-        FROM core_planner_logs logs  
-        WHERE logs.a_system_id IS NULL OR logs.b_system_id IS NULL
-          AND logs.user_id = p_user_id
-    ) THEN 
-        UPDATE core_planner_logs log2
-SET is_valid = FALSE 
-WHERE user_id = p_user_id 
-  AND (a_system_id IS NULL OR b_system_id IS NULL)
-  AND EXISTS (
-    SELECT 1 
-    FROM core_planner_logs log1 
-    WHERE log1.cable_id = log2.cable_id 
-      AND log1.id = log2.id
-  );
+    IF EXISTS ( SELECT 1 FROM core_planner_logs logs WHERE logs.a_system_id IS NULL OR logs.b_system_id
+    IS NULL AND logs.user_id = p_user_id) 
+    THEN      
+    UPDATE core_planner_logs log2 SET is_valid = FALSE WHERE user_id = p_user_id 
+    AND (a_system_id IS NULL OR b_system_id IS NULL)
+    AND EXISTS ( SELECT 1 FROM core_planner_logs log1 
+    WHERE log1.cable_id = log2.cable_id AND log1.id = log2.id);
     END IF;
 
-   if (SELECT count(*) 
-    FROM core_planner_logs 
-    WHERE user_id = p_user_id AND is_valid = TRUE) > 0 THEN
-    -- Return the cable routes log records as JSON for the specified user_id
-    return query select row_to_json(row) from ( select true as status, 'Success' as message ) row;
-   else 
-   return query select row_to_json(row) from ( select false as status, 'Failed' as message ) row;
-   end if;
+    -- Return result
+    IF (SELECT COUNT(*) FROM core_planner_logs WHERE user_id = p_user_id AND is_valid = TRUE) > 0 THEN
+        RETURN QUERY SELECT row_to_json(row) 
+        FROM (SELECT true AS status, 'Success' AS message) row;
+    ELSE
+        RETURN QUERY SELECT row_to_json(row) 
+        FROM (SELECT false AS status, 'Failed' AS message) row;
+    END IF;
+
 END;
 $function$
 ;
