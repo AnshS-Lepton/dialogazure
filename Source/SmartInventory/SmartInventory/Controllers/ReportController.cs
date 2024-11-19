@@ -11815,7 +11815,9 @@ namespace SmartInventory.Controllers
                     if (dtReport.Columns.Contains("entity_type")) { dtReport.Columns["entity_type"].ColumnName = "Entity Type"; }
                     if (dtReport.Columns.Contains("length_qty")) { dtReport.Columns["length_qty"].ColumnName = "Length/Qty"; }
                     if (dtReport.Columns.Contains("cost_per_unit")) { dtReport.Columns["cost_per_unit"].ColumnName = "Cost Per " + String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency); }
-                    if (dtReport.Columns.Contains("service_cost_per_unit")) { dtReport.Columns["service_cost_per_unit"].ColumnName = Resources.Resources.SI_OSP_GBL_NET_RPT_017 + " " + string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency); }
+                    if (dtReport.Columns.Contains("service_cost_per_unit")) { dtReport.Columns["service_cost_per_unit"].ColumnName = "Service Cost Per " + string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency); }
+
+                    //if (dtReport.Columns.Contains("service_cost_per_unit")) { dtReport.Columns["service_cost_per_unit"].ColumnName = /*Resources.Resources.SI_OSP_GBL_NET_RPT_017 + " " + */string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_017, ApplicationSettings.Currency); }
                     if (dtReport.Columns.Contains("amount")) { dtReport.Columns["amount"].ColumnName = string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_085, ApplicationSettings.Currency); }
                     if (dtReport.Columns.Contains("msg")) { dtReport.Columns.Remove("msg"); }
                     if (dtReport.Columns.Contains("is_template_extis")) { dtReport.Columns.Remove("is_template_extis"); }
