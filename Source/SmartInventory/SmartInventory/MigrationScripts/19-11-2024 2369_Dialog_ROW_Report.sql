@@ -133,3 +133,12 @@ AS SELECT enrow.system_id,
      LEFT JOIN att_details_workorder_master workorm ON enrow.workorder_id = workorm.system_id
      LEFT JOIN att_details_purpose_master purposem ON enrow.purpose_id = purposem.system_id
      LEFT JOIN att_details_csa csa ON csa.system_id = enrow.system_id;
+	 
+-------------------
+UPDATE public.res_resources SET value='kann nicht in Dormant umgewandelt werden, da es beim Spleißen verwendet wird' WHERE culture='de-DE' AND "key"='SI_GBL_GBL_GBL_GBL_141';
+UPDATE public.res_resources SET value='can not convert into dormant,as it is used in splicing' WHERE culture='en' AND "key"='SI_GBL_GBL_GBL_GBL_141';
+UPDATE public.res_resources SET value='can not convert into dormant,as it is used in splicing' WHERE culture='ja-JP' AND "key"='SI_GBL_GBL_GBL_GBL_141';
+
+UPDATE public.res_resources SET value='kann nicht in „dormant“ umgewandelt werden, da es mit einer Entität verknüpft ist!' WHERE culture='de-DE' AND "key"='SI_GBL_GBL_GBL_GBL_142';
+UPDATE public.res_resources SET value='can not convert into dormant,as it is associated with some entity!' WHERE culture='en' AND "key"='SI_GBL_GBL_GBL_GBL_142';
+UPDATE public.res_resources SET value='can not convert into dormant,as it is associated with some entity!' WHERE culture='ja-JP' AND "key"='SI_GBL_GBL_GBL_GBL_142';
