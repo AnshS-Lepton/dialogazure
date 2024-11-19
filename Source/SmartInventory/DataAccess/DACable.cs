@@ -345,6 +345,50 @@ namespace DataAccess
                 throw;
             }
         }
+        public List<CoreLogicSearchdetails> GetSearchResult(string searchText, string search_type)
+        {
+
+            try
+            {
+                return repo.ExecuteProcedure<CoreLogicSearchdetails>("fn_get_corelogicsearchdetails", new { p_searchText = searchText, p_searchType = search_type }, true);
+            }
+            catch { throw; }
+        }
+        public List<Fiberlinkdetails> GetFiberLinkDetails(string network_id)
+        {
+
+            try
+            {
+                return repo.ExecuteProcedure<Fiberlinkdetails>("fn_get_fiberdetails", new { network_id = network_id }, true);
+            }
+            catch { throw; }
+        }
+        public DbMessageConePlanLogic Validate(string odf1, string odf2, int require_core, int user_id)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<DbMessageConePlanLogic>("fn_get_core_planner_validation", new { source_network_id = odf1, destination_network_id = odf2, buffer = 5, required_core = require_core, p_user_id = user_id }, true).FirstOrDefault();
+                return res;
+            }
+            catch { throw; }
+        }
+        public List<CorePlannerLogs> GetCorePlanLogsByUserId(int user_id)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<CorePlannerLogs>("fn_get_core_planner_logs", new { p_user_id = user_id }, true);
+                return res;
+            }
+            catch { throw; }
+        }
+        public DbMessageConePlanLogic SaveCorePlanLogic(string required_core, int user_id, string link_system_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DbMessageConePlanLogic>("fn_get_core_planner_splicing", new { required_core = Convert.ToInt32(required_core), p_user_id = user_id, fiber_link_network_id = link_system_id }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
         public List<KeyValueDropDown> GetAllVendorType(string type)
         {
             try

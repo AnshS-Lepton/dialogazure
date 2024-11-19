@@ -13150,5 +13150,79 @@ namespace SmartInventory.Controllers
 
 
         #endregion
+
+        public ActionResult GetcorePlanLogic()
+        {
+            FMSMaster obj = new FMSMaster();
+            //obj.lstODFdetails = new BLCable().GetODFDetails("").ToList();
+            //obj.lstFiberlinkdetails = new BLCable().GetFiberLinkDetails("").ToList();
+
+            return PartialView("_GetcorePlanLogic", obj);
+        }
+        public JsonResult checkAvailability(string odf1, string odf2, string required_core)
+        {
+
+            JsonResponse<string> jResp = new JsonResponse<string>();
+            DbMessageConePlanLogic obj = new DbMessageConePlanLogic();
+            obj = new BLCable().Validate(odf1, odf2, Convert.ToInt32(required_core), Convert.ToInt32(Session["user_id"]));
+
+            return Json(obj, JsonRequestBehavior.AllowGet);
+
+        }
+        public void ExportPlanLogicReport()
+        {
+
+
+
+            string fileName = "Core_Plan_Logic_Report_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
+            int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+            List<CorePlannerLogs> lstCorePlannerLogs = new BLCable().GetCorePlanLogsByUserId(user_id);
+
+            DataTable dtReport = MiscHelper.ListToDataTable<CorePlannerLogs>(lstCorePlannerLogs);
+            if (dtReport != null && dtReport.Rows.Count > 0)
+            {
+                if (dtReport.Columns.Contains("cable_id")) { dtReport.Columns["cable_id"].ColumnName = "Cable Id"; }
+                if (dtReport.Columns.Contains("cable_name")) { dtReport.Columns["cable_name"].ColumnName = "Cable Name"; }
+                if (dtReport.Columns.Contains("network_status")) { dtReport.Columns["network_status"].ColumnName = "Network Status"; }
+                if (dtReport.Columns.Contains("total_core")) { dtReport.Columns["total_core"].ColumnName = "Total Cores"; }
+                if (dtReport.Columns.Contains("available")) { dtReport.Columns["available"].ColumnName = "Available Cores"; }
+                if (dtReport.Columns.Contains("cable_length")) { dtReport.Columns["cable_length"].ColumnName = "Cable Length(m)"; }
+                if (dtReport.Columns.Contains("a_system_id")) { dtReport.Columns.Remove("a_system_id"); }
+                if (dtReport.Columns.Contains("b_system_id")) { dtReport.Columns.Remove("b_system_id"); }
+                if (dtReport.Columns.Contains("a_entity_type")) { dtReport.Columns.Remove("a_entity_type"); }
+                if (dtReport.Columns.Contains("b_entity_type")) { dtReport.Columns.Remove("b_entity_type"); }
+                if (dtReport.Columns.Contains("error_msg")) { dtReport.Columns.Remove("error_msg"); }
+                if (dtReport.Columns.Contains("user_id")) { dtReport.Columns.Remove("user_id"); }
+                if (dtReport.Columns.Contains("is_valid")) { dtReport.Columns.Remove("is_valid"); }
+                if (dtReport.Columns.Contains("a_network_id")) { dtReport.Columns.Remove("a_network_id"); }
+                if (dtReport.Columns.Contains("b_network_id")) { dtReport.Columns.Remove("b_network_id"); }
+                if (dtReport.Columns.Contains("cable_network_id")) { dtReport.Columns.Remove("cable_network_id"); }
+                if (dtReport.Columns.Contains("id")) { dtReport.Columns.Remove("id"); }
+            }
+            if (dtReport.Rows.Count > 0)
+            {
+                ExportData(dtReport, fileName);
+            }
+
+        }
+        public JsonResult GetSearchResult(string searchText, string search_type)
+        {
+            JsonResponse<string> jResp = new JsonResponse<string>();
+            FMSMaster obj = new FMSMaster();
+            obj.lstCoreLogicSearchdetails = new BLCable().GetSearchResult(searchText, search_type).ToList();
+            return Json(obj.lstCoreLogicSearchdetails, JsonRequestBehavior.AllowGet);
+
+        }
+        public JsonResult SaveCorePlanLogic(string required_core, string link_system_id)
+        {
+
+            JsonResponse<string> jResp = new JsonResponse<string>();
+            DbMessageConePlanLogic obj = new DbMessageConePlanLogic();
+            obj = new BLCable().SaveCorePlanLogic(required_core, Convert.ToInt32(Session["user_id"]), link_system_id);
+
+            return Json(obj, JsonRequestBehavior.AllowGet);
+
+        }
+
     }
 }

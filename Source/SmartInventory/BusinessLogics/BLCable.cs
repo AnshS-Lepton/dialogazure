@@ -165,5 +165,26 @@ namespace BusinessLogics
         {
             return DACDBAttribute.Instance.Get(SystemId);
         }
+        public List<CoreLogicSearchdetails> GetSearchResult(string searchText, string search_type)
+        {
+            return DACable.Instance.GetSearchResult(searchText, search_type);
+        }
+        public List<Fiberlinkdetails> GetFiberLinkDetails(string searchText)
+        {
+            return DACable.Instance.GetFiberLinkDetails(searchText);
+        }
+        public DbMessageConePlanLogic Validate(string odf1, string odf2, int require_core, int user_id)
+        {
+            return DACable.Instance.Validate(odf1, odf2, require_core, user_id);
+        }
+        public List<CorePlannerLogs> GetCorePlanLogsByUserId(int user_id)
+        {
+            return new DACable().GetCorePlanLogsByUserId(user_id);
+        }
+        public DbMessageConePlanLogic SaveCorePlanLogic(string required_core, int user_id, string link_system_id)
+        {
+            return DACable.Instance.SaveCorePlanLogic(required_core, user_id, link_system_id);
+        }
+
     }
 }

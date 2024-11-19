@@ -1623,6 +1623,7 @@
     <Content Include="Content\js\vis_4_18_1.min.js" />
     <Content Include="Content\sort_asc.png" />
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
+    <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
     <Content Include="MigrationScripts\01-07-2024.sql" />
     <Content Include="MigrationScripts\15-11-2024 rename odf - .sql" />
@@ -2396,6 +2397,7 @@
     <Content Include="Views\CommonPathFinder\_CommonPathFinder.cshtml" />
     <Content Include="Views\Library\_AddSite.cshtml" />
     <Content Include="Views\Library\_SiteDtls.cshtml" />
+    <Content Include="Views\Library\_GetcorePlanLogic.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
