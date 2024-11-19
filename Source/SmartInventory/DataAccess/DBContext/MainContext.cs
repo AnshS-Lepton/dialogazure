@@ -67,6 +67,8 @@ namespace DataAccess.DBContext
         public DbSet<Payment_Details> Payment_Details { get; set; }
 
         public DbSet<EmailEventTemplate> EmailEventTemplateList { get; set; }
+        public DbSet<CorePlannerLogs> CorePlannerLogs { get; set; }
+
 
         //public DbSet<ExportReportLog> ExportReportLog { get; set; }
         public MainContext() : base("constr")
@@ -90,6 +92,7 @@ namespace DataAccess.DBContext
             //dbschema = DbProvider.Name.Equals(Provider.Oracle) ? dbschema.ToUpper() : dbschema.ToLower();
 
             Database.SetInitializer<MainContext>(null);
+            modelBuilder.Entity<CorePlannerLogs>().ToTable("core_planner_logs", dbschema);
             modelBuilder.Entity<ConstructionOhLogicMaster>().ToTable("construction_oh_logic_master", dbschema);
             modelBuilder.Entity<SchedulerLog>().ToTable("oh_logic_scheduler_log", dbschema);
             modelBuilder.Entity<User_Master>().ToTable("vw_user_details", dbschema);

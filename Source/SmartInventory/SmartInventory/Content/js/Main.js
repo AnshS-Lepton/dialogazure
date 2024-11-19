@@ -19414,6 +19414,53 @@ var Main = function () {
                 break;
         }
     }
+
+    this.corePlanLogic = function (tbType, divObj) {
+        $(app.DE.InfoDiv).hide();
+        $(app.DE.SplicingDiv).hide();
+        si.resetShapeTools();
+        app.mapReport.clearSelection();
+
+        var pageUrl = 'Library/GetcorePlanLogic';
+        var modalClass = 'modal-lg';
+        popup.LoadModalDialog(app.ParentModel, pageUrl, { userid: 0 }, 'Core Plan Logic', modalClass);
+    }
+    this.checkAvailability = function () {
+        ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val(), ODF2: $("#txtODF2").val(), required_core: $("#txtRequiredCore").val() }, false, function (resp) {
+            if (resp != null && resp != undefined) {
+                debugger;
+                if (resp.status) {
+                    $("#btnSubmit").prop("disabled", false);
+                    $("#ddlfiberlink").prop("required", true)
+                    alert(resp.message);
+                }
+                else {
+                    $("#btnSubmit").prop("disabled", true);
+                    $("#ddlfiberlink").prop("required", false)
+                    alert(resp.message);
+                }
+            }
+
+        }, true);
+    }
+    this.showReport = function () {
+
+        window.location = appRoot + 'Library/ExportPlanLogicReport';
+    }
+    this.saveCorePlanLogic = function () {
+        ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val(), link_system_id: $("#txtfiberlink").val() }, false, function (resp) {
+            if (resp != null && resp != undefined) {
+                debugger;
+                if (resp.status) {
+                    alert(resp.message);
+                }
+                else {
+                    alert(resp.message);
+                }
+            }
+
+        }, true);
+    }
     this.toggleBuildingUpload = function () {
         var pageUrl = 'SurveyArea/UploadBuilding';
         var modalClass = 'modal-sm';
@@ -20762,6 +20809,7 @@ var Main = function () {
     }
 
     this.uploadMultipleDocumentFile = function () {
+      
         debugger;
         var frmData = new FormData();
         var filesize = $('#hdnMaxFileUploadSizeLimit').val();
@@ -20849,6 +20897,7 @@ var Main = function () {
         }
     }
     this.uploadMultiDocFileWithfileType = function () {
+        debugger;
         var frmData = new FormData();
         var filesize = parseInt($('#hdnMaxFileUploadSizeLimit').val(), 10);
         var maxFileCountLimit = parseInt($('#fdnMaxFileCountLimit').val(), 10);
@@ -20912,7 +20961,8 @@ var Main = function () {
                 }, true);
             } else {
                 console.log("MSG false:" + resp.message);
-                alert(resp.message);
+                if (resp.status == 'INVALID_INPUTS') { alert('Invalid file size'); } else { alert(resp.message); }
+               
             }
         }, true);
     }

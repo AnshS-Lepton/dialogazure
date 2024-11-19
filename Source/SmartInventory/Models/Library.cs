@@ -1975,6 +1975,16 @@ namespace Models
         public List<RouteInfo> lstRouteInfo { get; set; }
         [NotMapped]
         public List<int> selected_route_ids { get; set; }
+        [NotMapped]
+        public List<ODFdetails> lstODFdetails { get; set; }
+        [NotMapped]
+        public List<Fiberlinkdetails> lstFiberlinkdetails { get; set; }
+        [NotMapped]
+        public List<CoreLogicSearchdetails> lstCoreLogicSearchdetails { get; set; }
+        [NotMapped]
+        public string requiredcore { get; set; }
+        [NotMapped]
+        public PageMessage pageMsg { get; set; }
         public FMSMaster()
         {
             objPM = new PageMessage();
@@ -1991,6 +2001,74 @@ namespace Models
             bom_sub_category = Convert.ToString(Bom_boq_category.Proposed);
             lstUserModule = new List<string>();
             lstRouteInfo = new List<RouteInfo>();
+            lstODFdetails = new List<Models.ODFdetails>();
+            lstFiberlinkdetails = new List<Models.Fiberlinkdetails>();
+            lstCoreLogicSearchdetails = new List<Models.CoreLogicSearchdetails>();
+        }
+    }
+
+    public class ODFdetails
+    {
+        public int system_id { get; set; }
+        public string network_id { get; set; }
+        public PageMessage objPM { get; set; }
+        public ODFdetails()
+        {
+            objPM = new PageMessage();
+
+        }
+    }
+    public class CorePlannerLogs
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int cable_id { get; set; }
+        public string cable_name { get; set; }
+        public string network_status { get; set; }
+        public int? total_core { get; set; }
+        public int? id { get; set; }
+        public int? used_core { get; set; }
+        public int? available { get; set; }
+        public string cable_length { get; set; }
+        public int a_system_id { get; set; }
+        public int b_system_id { get; set; }
+        public string a_entity_type { get; set; }
+        public string b_entity_type { get; set; }
+        public string error_msg { get; set; }
+        public int user_id { get; set; }
+        public bool is_valid { get; set; }
+        public string a_network_id { get; set; }
+        public string b_network_id { get; set; }
+        public string cable_network_id { get; set; }
+    }
+    public class DbMessageConePlanLogic
+    {
+        public bool status { get; set; }
+        public string message { get; set; }
+
+    }
+    public class Fiberlinkdetails
+    {
+        public int system_id { get; set; }
+        public string network_id { get; set; }
+        public string link_id { get; set; }
+        public PageMessage objPM { get; set; }
+        public Fiberlinkdetails()
+        {
+            objPM = new PageMessage();
+
+        }
+    }
+    public class CoreLogicSearchdetails
+    {
+        public int system_id { get; set; }
+        public string network_id { get; set; }
+        public string link_system_id { get; set; }
+        public PageMessage objPM { get; set; }
+        public CoreLogicSearchdetails()
+        {
+            objPM = new PageMessage();
+
         }
     }
 
@@ -5339,6 +5417,7 @@ namespace Models
     {
         public string splicingtype { get; set; }
     }
+    
 
 }
 
