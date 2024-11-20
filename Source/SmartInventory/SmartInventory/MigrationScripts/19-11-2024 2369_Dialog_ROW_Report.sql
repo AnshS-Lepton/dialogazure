@@ -459,3 +459,13 @@ AS SELECT splt.system_id,
      LEFT JOIN entity_status_master es ON es.status::text = splt.status::text
      LEFT JOIN layer_details ld ON ld.layer_name::text = splt.parent_entity_type::text
      LEFT JOIN att_details_csa c ON COALESCE(splt.csa_system_id, 0) > 0 AND splt.csa_system_id::text = c.system_id::text AND splt.splitter_type::text = 'Secondary'::text;
+	 
+	 --------------------------------------------------------------
+	 update module_master set connection_id =null where module_abbr = ('SPLIT_EXRPT')
+	 
+	 -------------------------------------------------------------
+	 select * from fn_sync_layer_columns()
+	 
+-------------------------------------Association Report Duration Based Column Data Created---------------------
+INSERT INTO public.dropdown_master (layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id) VALUES(0, 'Association_Report', 'Modified_On', true, 1, Now(), NULL, Now(), 'Modified_On', NULL, 'Association_Report', false, true, 0);
+INSERT INTO public.dropdown_master (layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id) VALUES(0, 'Association_Report', 'Created_On', true, 1, Now(), NULL, Now(), 'Created_On', NULL, 'Association_Report', false, true, 0);
