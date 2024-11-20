@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccess.DBHelpers;
@@ -83,6 +84,8 @@ namespace DataAccess
                     objRow.created_by = userId;
                     objRow.created_on = DateTimeHelper.Now;
                     objRow.row_stage = "New";
+                    objRow.status = (string.IsNullOrEmpty(objRow.status) ? "A" : objRow.status);
+
                     var resultItem = repo.Insert(objRow);
                     // Save geometry
                     InputGeom geom = new InputGeom();
