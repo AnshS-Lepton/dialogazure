@@ -465,3 +465,7 @@ AS SELECT splt.system_id,
 	 
 	 -------------------------------------------------------------
 	 select * from fn_sync_layer_columns()
+	 
+-------------------------------------Association Report Duration Based Column Data Created---------------------
+INSERT INTO public.dropdown_master (layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id) VALUES(0, 'Association_Report', 'Modified_On', true, 1, Now(), NULL, Now(), 'Modified_On', NULL, 'Association_Report', false, true, 0);
+INSERT INTO public.dropdown_master (layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id) VALUES(0, 'Association_Report', 'Created_On', true, 1, Now(), NULL, Now(), 'Created_On', NULL, 'Association_Report', false, true, 0);
