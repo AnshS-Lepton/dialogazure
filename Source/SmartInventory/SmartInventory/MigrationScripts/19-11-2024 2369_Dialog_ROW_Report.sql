@@ -459,3 +459,9 @@ AS SELECT splt.system_id,
      LEFT JOIN entity_status_master es ON es.status::text = splt.status::text
      LEFT JOIN layer_details ld ON ld.layer_name::text = splt.parent_entity_type::text
      LEFT JOIN att_details_csa c ON COALESCE(splt.csa_system_id, 0) > 0 AND splt.csa_system_id::text = c.system_id::text AND splt.splitter_type::text = 'Secondary'::text;
+	 
+	 --------------------------------------------------------------
+	 update module_master set connection_id =null where module_abbr = ('SPLIT_EXRPT')
+	 
+	 -------------------------------------------------------------
+	 select * from fn_sync_layer_columns()
