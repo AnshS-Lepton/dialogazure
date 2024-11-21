@@ -252,7 +252,7 @@ new { id = "frmAddPole", enctype = "multipart/form-data", autocomplete = "off", 
                                 @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control", @id = "txtParentCode", @readonly = true })
                             </div>
                         </div>
-                        <div>
+                        <div class="form-group">
                             @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
             <div class="col-sm-45">
                 @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })

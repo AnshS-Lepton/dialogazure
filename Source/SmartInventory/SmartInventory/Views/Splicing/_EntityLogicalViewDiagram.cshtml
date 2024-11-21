@@ -30,8 +30,8 @@
 {
     <input type="hidden" id="hdn_ClientLogoImageBytesForWeb" value="@ApplicationSettings.ClientLogoImageBytesForWeb" />
     <div id="divLogicalContainer">
-        <div class="logicalHeaderSection">
-            <div id="divNetworkId" style="float:left;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_001:</b> @Model.networkId</div>
+        <div class="logicalHeaderSection" style="text-align: center;">
+            <span id="divNetworkId"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_001:</b> @Model.networkId</span>
             <a class="printLogicalView btn btn-success" onclick="ExportDivToPDF('divlogicalDiagram', 'Logical Plan', document.getElementById('divNetworkId').innerText,true);" title="@Resources.Resources.SI_OSP_HTB_NET_FRM_012"><i class="fa fa-file-pdf-o"></i></a>
         </div>
 
