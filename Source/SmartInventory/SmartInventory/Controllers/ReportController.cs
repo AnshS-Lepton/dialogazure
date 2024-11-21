@@ -5898,8 +5898,8 @@ namespace SmartInventory.Controllers
             }
             else
             {
-                objAssociationEntitiesReport.lstReportData = new BLLayer().GetAssociationReportSummary(objAssociationEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
-                Session["EntityAssociationSummaryData"] = objAssociationEntitiesReport;
+                //objAssociationEntitiesReport.lstReportData = new BLLayer().GetAssociationReportSummary(objAssociationEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
+                //Session["EntityAssociationSummaryData"] = objAssociationEntitiesReport;
                 DownloadAssociationEntityReport(objAssociationEntitiesReport.objReportFilters.purpose, objAssociationEntitiesReport.objReportFilters.SelectedLayerIds, 0, 0, 0);
                 objAssociationEntitiesReport.popupmessage = "Request is processing in background.Please check the export report log page.";
                 return PartialView("_EntityAssociationReport", objAssociationEntitiesReport);
