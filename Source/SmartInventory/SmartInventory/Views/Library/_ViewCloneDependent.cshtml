@@ -52,7 +52,7 @@
 },
 new { id = "frmSaveClone", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
 {
-    <div class="form-group">
+    <div class="space-pad">
         @Html.HiddenFor(m => m.refId)
         @Html.HiddenFor(m => m.entityName)
         @Html.HiddenFor(m => m.geomType)
@@ -75,10 +75,10 @@ new { id = "frmSaveClone", enctype = "multipart/form-data", autocomplete = "off"
                     <div style="width: 14px; height: 14px; background-color: #65b4db; border: 1px solid grey; margin-top: 2px; float: left; margin-right: 10px; "></div> <b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_183</b>
                 </div>
                 <div style="float: right; padding-top: 5px;"><b>@Resources.Resources.SI_OSP_GBL_NET_FRM_500 : @Model.associatedEntityCount</b></div>
-                <div style="float: right; margin-right: 10px; padding-top: 5px;"><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_178 : @Model.childEntityCount</b></div>
+                <div style="margin-right: 10px; padding-top: 5px;"><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_178 : @Model.childEntityCount</b></div>
             </div>
         </div>
-        <div>
+        <div class="table-responsive mt-01">
             <table id="tbcloneDependent" class="grid" cellpadding="0" cellspacing="0">
 
                 <thead>

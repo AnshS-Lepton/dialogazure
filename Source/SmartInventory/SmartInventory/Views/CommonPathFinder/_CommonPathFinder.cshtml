@@ -172,5 +172,9 @@
         $('#chkSelectAll').change(function () {
             $('.chklink').prop('checked', $(this).prop('checked'));
         });
+
+        $('#closeModalPopup').on('click', function () {
+            clearLinksfromMap();
+        });
     });
 </script>
