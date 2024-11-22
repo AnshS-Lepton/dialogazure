@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,22 +56,22 @@ namespace DTSIntegrationDialog
                     }
                     else
                     {
-                        WriteLog.WriteLogFile($"Failed to call the API. Status code: {response.StatusCode}");
+                        WriteLog.WriteLogFile($"Did not get any response: {JsonConvert.SerializeObject(response)}. Status code: {response.StatusCode}");
                     }
 
                 }
                 catch (HttpRequestException httpEx)
                 {
-                    WriteLog.WriteLogFile("HTTP Request Exception: " + httpEx.StackTrace);
+                    WriteLog.WriteLogFile("HTTP Request Exception: " + httpEx.StackTrace + httpEx.Message);
                 }
                 catch (Exception ex)
                 {
-                    WriteLog.WriteLogFile("Exception caught at GetAccessTokenAsync: " + ex.StackTrace);
+                    WriteLog.WriteLogFile("Exception caught at GetAccessTokenAsync: " + ex.StackTrace + ex.Message);
                 }
                 return accessToken;
             }
         }
-        public static void ConsumeSiteListApi(string token,int processID)
+        public static void ConsumeSiteListApi(string token, int processID)
         {
             WriteLog.WriteLogFile("ConsumeApiAsync started");
             string GetSiteListURL = ConfigurationManager.AppSettings["GetSiteListURL"];
@@ -102,7 +103,7 @@ namespace DTSIntegrationDialog
                     else
                     {
                         string errorResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                        WriteLog.WriteLogFile($"Failed to call the API. Status code: {response.StatusCode}, Error: {errorResponse}");
+                        WriteLog.WriteLogFile($"Did not get any response: {JsonConvert.SerializeObject(response)}. Status code: {response.StatusCode}, Error: {errorResponse}");
                     }
                 }
                 var sites = sitelst[0].Response.ToList();
@@ -110,11 +111,11 @@ namespace DTSIntegrationDialog
             }
             catch (Exception ex)
             {
-                WriteLog.WriteLogFile("Exception caught at ConsumeApiAsync: " + ex.StackTrace);
+                WriteLog.WriteLogFile("Exception caught at ConsumeApiAsync: " + ex.StackTrace + ex.Message);
             }
         }
 
-        public static void CheckandUpdateSite(string token,int progressID)
+        public static void CheckandUpdateSite(string token, int progressID)
         {
             WriteLog.WriteLogFile("CheckandUpdateSite start");
             string GetSiteDetailsURL = ConfigurationManager.AppSettings["GetSiteDetailsURL"];
@@ -154,7 +155,7 @@ namespace DTSIntegrationDialog
                         else
                         {
                             string errorResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                            var message = $"Failed to call the API. Status code: {response.StatusCode}";
+                            var message = $"Did not get any response for SiteId: {siteID}. Status code: {response.StatusCode}";
                             BLDTS.UpdateSiteList(siteID, progressID, message);
                             WriteLog.WriteLogFile(message);
                         }
@@ -168,7 +169,7 @@ namespace DTSIntegrationDialog
             }
             catch (Exception ex)
             {
-                WriteLog.WriteLogFile("Exception caught at CheckandUpdateSite: " + ex.StackTrace);
+                WriteLog.WriteLogFile("Exception caught at CheckandUpdateSite: " + ex.StackTrace + ex.Message);
             }
         }
     }
