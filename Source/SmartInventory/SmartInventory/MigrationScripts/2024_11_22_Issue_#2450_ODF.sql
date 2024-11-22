@@ -1,0 +1,2 @@
+update layer_columns_settings set display_name='ODF Name' where display_name='FMS Name' and layer_id =36
+update layer_columns_settings set display_name='ODF Type' where display_name='Fms Type' and layer_id =36
