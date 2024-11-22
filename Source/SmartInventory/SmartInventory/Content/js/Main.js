@@ -19008,6 +19008,7 @@ var Main = function () {
         //}
     }
     this.getNewDuctDetails = function () {
+        $('#btnSplitduct').prop('disabled', '');
         var splitductsystemid = $("input[name='Duct']:checked").attr('s_id');
         $('#split_duct_system_id').val(splitductsystemid);
         var splitEnityNetworkId = $('#split_entity_networkId').val();
