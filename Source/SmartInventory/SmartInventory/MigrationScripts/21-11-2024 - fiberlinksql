@@ -1,1 +1,2 @@
-update layer_details set isvisible=false where layer_name='FiberLink';
+update layer_details set is_entity_along_direction=false where layer_name='FiberLink'
+
