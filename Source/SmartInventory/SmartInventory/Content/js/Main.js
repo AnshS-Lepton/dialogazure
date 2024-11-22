@@ -19053,6 +19053,7 @@ var Main = function () {
                     $('#duct_two_calculated_length').valid();
                     $('#duct_two_measured_length').rules('remove', 'required');
                     $('#duct_two_measured_length').valid();
+                    $('#btnSplitduct').prop('disabled', '');
 
                 }
                 else {
