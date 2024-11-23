@@ -689,6 +689,206 @@ LAYER
 		END
 		
 	END
+	
+	# ==========================Reinstatement================================================ 
+	LAYER
+		NAME 'RIT'
+		TYPE LINE
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		#EXTENT 72.504366 18.900959 73.403214 19.320367
+		INCLUDE "datashare.inc"
+		DATA 'sp_geometry FROM "vw_att_details_reinstatement_map" USING UNIQUE system_id USING srid=4326' 
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )  and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))	
+		
+		VALIDATION		
+			'provinceFilter'   '.*'
+			'layerFilter'   '.*'
+			'prjectspecificationFilter'   '.*'
+			'ownershipFilter'   '.*'
+			'PODFilter'   '.*'
+            'NetworkFilter'   '.*'	
+			'AutoPlanningNetworkFilter' '.*'
+		END 	
+		METADATA
+			'ows_title' 'Trench'
+		END
+		STATUS OFF
+		GROUP 'Network'
+		TRANSPARENCY 100
+		LABELITEM 'label_column'
+		PROJECTION
+			'proj=longlat'
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASSITEM 'count_ducts' 
+		CLASS 
+			NAME "count_ducts"
+			#TEXT "[count_ducts]"
+			EXPRESSION "count_ducts"
+			STYLE
+				WIDTH 3
+				COLOR 169 169 169
+				LINECAP ROUND
+				PATTERN 10 10 END
+			END
+			
+		END
+		#====================Planned======================
+		CLASS 
+			NAME "Out_Of_Range"   
+			#TEXT "[count_ducts]"
+			EXPRESSION ('[network_status]'  eq 'P')	
+			STYLE
+				WIDTH 3
+				COLOR 169 169 169
+				LINECAP ROUND
+				PATTERN 10 10 END
+			END			
+			
+		END
+		#====================As-Built======================
+		CLASS 
+			NAME "Out_Of_Range"   
+			#TEXT "[count_ducts]"
+			EXPRESSION ('[network_status]'  eq 'A')	
+			STYLE
+				WIDTH 3
+				COLOR 96 130 182
+				LINECAP ROUND
+				#PATTERN 10 10 END
+			END		
+			
+		END
+		#====================Dormant======================
+		CLASS 
+			NAME "Out_Of_Range"   
+			#TEXT "[count_ducts]"
+			EXPRESSION ('[network_status]'  eq 'D')	
+			STYLE
+				WIDTH 3
+				COLOR 128 128 128
+				LINECAP ROUND
+				#PATTERN 10 10 END
+			END			
+			
+		END
+		#====================WIP======================
+		CLASS 
+			NAME "Out_Of_Range"   
+			#TEXT "[count_ducts]"
+			EXPRESSION ('[network_status]'  eq 'W')	
+			STYLE
+				WIDTH 3
+				COLOR 129 133 137
+				LINECAP ROUND
+				#PATTERN 10 10 END
+			END			
+			
+		END
+		
+	END
+	
+	# ==========================Rebar================================================ 
+	LAYER
+		NAME 'RBR'
+		TYPE LINE
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo
+		#EXTENT 72.504366 18.900959 73.403214 19.320367
+		INCLUDE "datashare.inc"
+		DATA 'sp_geometry FROM "vw_att_details_rebar_map" USING UNIQUE system_id USING srid=4326' 
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )  and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))	
+		
+		VALIDATION		
+			'provinceFilter'   '.*'
+			'layerFilter'   '.*'
+			'prjectspecificationFilter'   '.*'
+			'ownershipFilter'   '.*'
+			'PODFilter'   '.*'
+            'NetworkFilter'   '.*'	
+			'AutoPlanningNetworkFilter' '.*'
+		END 	
+		METADATA
+			'ows_title' 'Trench'
+		END
+		STATUS OFF
+		GROUP 'Network'
+		TRANSPARENCY 100
+		LABELITEM 'label_column'
+		PROJECTION
+			'proj=longlat'
+			'datum=WGS84'
+			'no_defs'
+		END
+		CLASSITEM 'count_ducts' 
+		CLASS 
+			NAME "count_ducts"
+			#TEXT "[count_ducts]"
+			EXPRESSION "count_ducts"
+			STYLE
+				WIDTH 3
+				COLOR 54 69 79
+				LINECAP ROUND
+				PATTERN 10 10 END
+			END
+			
+		END
+		#====================Planned======================
+		CLASS 
+			NAME "Out_Of_Range"   
+			#TEXT "[count_ducts]"
+			EXPRESSION ('[network_status]'  eq 'P')	
+			STYLE
+				WIDTH 3
+				COLOR 54 69 79
+				LINECAP ROUND
+				PATTERN 10 10 END
+			END			
+			
+		END
+		#====================As-Built======================
+		CLASS 
+			NAME "Out_Of_Range"   
+			#TEXT "[count_ducts]"
+			EXPRESSION ('[network_status]'  eq 'A')	
+			STYLE
+				WIDTH 3
+				COLOR 178 190 181
+				LINECAP ROUND
+				#PATTERN 10 10 END
+			END		
+			
+		END
+		#====================Dormant======================
+		CLASS 
+			NAME "Out_Of_Range"   
+			#TEXT "[count_ducts]"
+			EXPRESSION ('[network_status]'  eq 'D')	
+			STYLE
+				WIDTH 3
+				COLOR 113 121 126
+				LINECAP ROUND
+				#PATTERN 10 10 END
+			END			
+			
+		END
+		#====================WIP======================
+		CLASS 
+			NAME "Out_Of_Range"   
+			#TEXT "[count_ducts]"
+			EXPRESSION ('[network_status]'  eq 'W')	
+			STYLE
+				WIDTH 3
+				COLOR 113 121 126
+				LINECAP ROUND
+				#PATTERN 10 10 END
+			END			
+			
+		END
+		
+	END
 	# ========================================================================== 
 	LAYER
 		NAME 'DCT'
@@ -975,41 +1175,32 @@ LAYER
 			'datum=WGS84'
 			'no_defs'
 		END
-		
-
-	#CLASSITEM 'cable_cores' 
+		CLASSITEM 'cable_cores' 
 		#====================Planned======================
-		# CLASS to show cable only (no label) at zoom level 8
-CLASS
-    EXPRESSION ('[network_status]' eq 'P')
-    STYLE
-        WIDTH 2
-        COLOR [color_code]
-        PATTERN 10 5 END
-    END
- LABEL
-        FONT arial
-        TYPE truetype
-        COLOR 0 0 0
-        SIZE 8
-        STYLE
-            GEOMTRANSFORM 'labelpoly'
-            COLOR 255 255 255  # Background rectangle for label
-        END
-        OFFSET 0 0
-        ANTIALIAS TRUE
-        POSITION CC
-        ANGLE AUTO
-        FORCE FALSE
-        PARTIALS FALSE
-		#TEXT ''
-		#MINSCALEDENOM 1000000
-		MAXSCALEDENOM 
-    END
-END
-
-
-		
+		CLASS 
+			EXPRESSION ('[network_status]'  eq 'P')					
+		     STYLE
+				WIDTH 2
+				COLOR [color_code]				                					
+				PATTERN 10 5  END
+			END		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 0 0 0				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 255 255 255  # background rect.
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+			END
+		END	
 		#====================Dormant======================		
 		CLASS 
 			EXPRESSION ('[network_status]'  eq 'D')						
@@ -1033,7 +1224,6 @@ END
 				ANGLE AUTO
 				FORCE FALSE
 				PARTIALS FALSE
-				MAXSCALEDENOM 1000000
 			END
 		END	
 		#====================As-Built======================
@@ -1058,7 +1248,6 @@ END
 				ANGLE AUTO
 				FORCE FALSE
 				PARTIALS FALSE
-				MAXSCALEDENOM 1000000
 			END
 		END		
 	END
@@ -1779,6 +1968,59 @@ END
 			END	
 		END	
 		
+	END	
+	
+		#===============================DP====================
+	LAYER
+		NAME 'DP'
+		TYPE POINT
+		DUMP true
+		TEMPLATE fooOnlyForWMSGetFeatureInfo 
+		INCLUDE "datashare.inc"	
+		DATA 'sp_geometry FROM vw_att_details_dp_map USING UNIQUE system_id USING srid=4326'	
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% )AND (%ownershipFilter%) )
+		
+		VALIDATION		
+			'provinceFilter'   '.*'		
+			'layerFilter'   '.*'	
+			'prjectspecificationFilter'   '.*'  
+			'ownershipFilter'   '.*' 
+			'NetworkFilter'   '.*'			
+		END 
+		METADATA
+			'ows_title' 'DP'
+		END
+		STATUS OFF
+		GROUP 'Network'		
+		CLASS
+			NAME 'DP'
+            EXPRESSION ('[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/DP.png" 
+				SIZE 25
+				OFFSET 0 -5
+			END
+            			
+		END
+		CLASS
+			NAME 'DP'
+            EXPRESSION ('[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/DP.png" 
+				SIZE 21			
+			END
+            			
+		END
+		CLASS
+			NAME 'DP'
+            EXPRESSION ('[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/DP.png" 
+				SIZE 25
+				OFFSET 0 -5				
+			END
+            			
+		END		
 	END	
 		# ================ CDB ========================================================== 	
 	LAYER
@@ -3500,36 +3742,5 @@ LAYER
 			END	  
 		END		
 	END	
-#=============================================Site====================
-	LAYER
-		NAME 'SITE'
-		TYPE POINT
-		DUMP true
-		TEMPLATE fooOnlyForWMSGetFeatureInfo 
-		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_site_dailog_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter%)		
-		VALIDATION		
-			'provinceFilter'   '.*'	
-		END 
-		METADATA
-			'ows_title' 'Site'
-		END
-		STATUS OFF
-		GROUP 'Network'	
-		
-		
-		CLASS
-			NAME 'Site'
-            #EXPRESSION ('[pole_type]' eq 'Electrical' AND '[network_status]'  eq 'P')  			
-			STYLE
-				SYMBOL "icons/site.png" 
-				SIZE 30
-				OFFSET 0 -5				
-			END
-            			
-		END
-		
-		
-	END	
+
 END
