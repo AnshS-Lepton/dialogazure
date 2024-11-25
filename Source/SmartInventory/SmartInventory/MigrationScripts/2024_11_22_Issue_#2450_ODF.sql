@@ -88,4 +88,4 @@ UPDATE public.res_resources SET value='ODF Name' WHERE culture='ja-JP' AND "key"
 
 
 -------------#2563
-update layer_action_mapping set is_active =false where layer_id =7 and action_title ilike 'FDC Route Association'
+update layer_action_mapping set is_active =false where action_title ilike 'FDC Route Association'
