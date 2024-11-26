@@ -23,7 +23,7 @@ namespace DTSIntegrationDialog
             CheckandUpdateSite(token, processId);
             BLDTS.ExitLogOutProcessSummary(processId);
             WriteLog.WriteLogFile("Process completed for Process ID :" + processId + "at: " + DateTime.Now.ToString());
-            Console.WriteLine("Process ID: " + processId);
+            WriteLog.WriteLogFile("Main Method Process ID: " + processId);
         }
         public static string GetAccessTokenAsync()
         {
@@ -61,11 +61,11 @@ namespace DTSIntegrationDialog
                 }
                 catch (HttpRequestException httpEx)
                 {
-                    WriteLog.WriteLogFile("HTTP Request Exception: " + httpEx.Message);
+                    WriteLog.WriteLogFile("HTTP Request Exception: " + httpEx.StackTrace);
                 }
                 catch (Exception ex)
                 {
-                    WriteLog.WriteLogFile("Exception caught at GetAccessTokenAsync: " + ex.Message);
+                    WriteLog.WriteLogFile("Exception caught at GetAccessTokenAsync: " + ex.StackTrace);
                 }
                 return accessToken;
             }
@@ -110,8 +110,7 @@ namespace DTSIntegrationDialog
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception caught: {ex.Message}");
-                WriteLog.WriteLogFile("Exception caught at ConsumeApiAsync: " + ex.Message);
+                WriteLog.WriteLogFile("Exception caught at ConsumeApiAsync: " + ex.StackTrace);
             }
         }
 
@@ -139,12 +138,16 @@ namespace DTSIntegrationDialog
                         if (response.IsSuccessStatusCode)
                         {
                             string responseBody = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                            WriteLog.WriteLogFile("Site Details: " + responseBody);
-                            var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+                            //WriteLog.WriteLogFile("Site Details: " + responseBody);
+                            var settings = new JsonSerializerSettings();
+                            settings.Converters.Add(new CustomDateTimeConverter());
+                            var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody, settings);
+
+                            //var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
                             if (apiResponse?.Response != null && apiResponse.Response.Count > 0)
                             {
                                 var siteToSave = apiResponse.Response[0];
-                                WriteLog.WriteLogFile("Site Details: " + responseBody);
+                                //WriteLog.WriteLogFile("Site Details: " + responseBody);
                                 BLDTS.SaveSiteDetails(siteToSave, 1, progressID);
                             }
                         }
@@ -165,8 +168,7 @@ namespace DTSIntegrationDialog
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception caught: {ex.Message}");
-                WriteLog.WriteLogFile("Exception caught at CheckandUpdateSite: " + ex.Message);
+                WriteLog.WriteLogFile("Exception caught at CheckandUpdateSite: " + ex.StackTrace);
             }
         }
     }

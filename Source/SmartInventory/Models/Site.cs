@@ -210,8 +210,8 @@ namespace Models
         public int process_id { get; set; }
         public string site_id { get; set; }
         public string site_name { get; set; }
-        public DateTime on_air_date { get; set; }
-        public DateTime removed_date { get; set; }
+        public DateTime? on_air_date { get; set; }
+        public DateTime? removed_date { get; set; }
         public string tx_type { get; set; }
         public string tx_technology { get; set; }
         public string tx_segment { get; set; }
@@ -233,30 +233,30 @@ namespace Models
         public string access_24_7 { get; set; }
 
         public string tower_type { get; set; }
-        public int tower_height { get; set; }
+        public int? tower_height { get; set; }
         public string cabinet_type { get; set; }
         public string solution_type { get; set; }
 
-        public int site_rank { get; set; }
+        public int? site_rank { get; set; }
         [JsonProperty("TX_Self_Traffic")]
         public Decimal self_tx_traffic { get; set; }
         [JsonProperty("TX_Agg_Traffic")]
         public Decimal agg_tx_traffic { get; set; }
         public Decimal metro_ring_utilization { get; set; }
-        public int csr_count { get; set; }
-        public int dti_circuit { get; set; }
+        public int? csr_count { get; set; }
+        public int? dti_circuit { get; set; }
         public string agg_01 { get; set; }
         public string agg_02 { get; set; }
-        public int bandwidth { get; set; }
+        public int? bandwidth { get; set; }
         public string ring_type { get; set; }
         public string link_id { get; set; }
         public string alias_name { get; set; }
         public DateTime created_on { get; set; }
-        public int created_by { get; set; }
+        public int? created_by { get; set; }
         public DateTime? modified_on { get; set; }
         public int? modified_by { get; set; }
-        public int province_id { get; set; }
-        public int region_id { get; set; }
+        public int? province_id { get; set; }
+        public int? region_id { get; set; }
         public string network_status { get; set; }
         public string status { get; set; }
         public bool is_new_entity { get; set; }

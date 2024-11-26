@@ -5898,8 +5898,8 @@ namespace SmartInventory.Controllers
             }
             else
             {
-                objAssociationEntitiesReport.lstReportData = new BLLayer().GetAssociationReportSummary(objAssociationEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
-                Session["EntityAssociationSummaryData"] = objAssociationEntitiesReport;
+                //objAssociationEntitiesReport.lstReportData = new BLLayer().GetAssociationReportSummary(objAssociationEntitiesReport.objReportFilters).OrderBy(m => m.entity_name).ToList();
+                //Session["EntityAssociationSummaryData"] = objAssociationEntitiesReport;
                 DownloadAssociationEntityReport(objAssociationEntitiesReport.objReportFilters.purpose, objAssociationEntitiesReport.objReportFilters.SelectedLayerIds, 0, 0, 0);
                 objAssociationEntitiesReport.popupmessage = "Request is processing in background.Please check the export report log page.";
                 return PartialView("_EntityAssociationReport", objAssociationEntitiesReport);
@@ -9134,7 +9134,7 @@ namespace SmartInventory.Controllers
                         //objUtilizationEntitiesReport.objReportFilters.SelectedProvinceIds = (Filterobj.Count > 0) ? Filterobj.Where(x => Convert.ToInt32(x.id) == objUtilizationEntitiesReport.lstLayers[i].layer_id).Select(x => x.data.province_id).ToList()[0].ToString() : objUtilizationEntitiesReport.objReportFilters.SelectedProvinceIds;
                         var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objUtilizationEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
                         List<Dictionary<string, string>> lstUtilizationEntitiesDetail = new BLLayer().GetUtilizationReportSummaryView(objUtilizationEntitiesReport.objReportFilters);
-                        lstUtilizationEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstUtilizationEntitiesDetail);
+                        //lstUtilizationEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstUtilizationEntitiesDetail);
 
                         DataTable dtReport = new DataTable();
                         dtReport = MiscHelper.GetDataTableFromDictionaries(lstUtilizationEntitiesDetail);
@@ -11815,7 +11815,9 @@ namespace SmartInventory.Controllers
                     if (dtReport.Columns.Contains("entity_type")) { dtReport.Columns["entity_type"].ColumnName = "Entity Type"; }
                     if (dtReport.Columns.Contains("length_qty")) { dtReport.Columns["length_qty"].ColumnName = "Length/Qty"; }
                     if (dtReport.Columns.Contains("cost_per_unit")) { dtReport.Columns["cost_per_unit"].ColumnName = "Cost Per " + String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency); }
-                    if (dtReport.Columns.Contains("service_cost_per_unit")) { dtReport.Columns["service_cost_per_unit"].ColumnName = Resources.Resources.SI_OSP_GBL_NET_RPT_017 + " " + string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency); }
+                    if (dtReport.Columns.Contains("service_cost_per_unit")) { dtReport.Columns["service_cost_per_unit"].ColumnName = "Service Cost Per " + string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency); }
+
+                    //if (dtReport.Columns.Contains("service_cost_per_unit")) { dtReport.Columns["service_cost_per_unit"].ColumnName = /*Resources.Resources.SI_OSP_GBL_NET_RPT_017 + " " + */string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_017, ApplicationSettings.Currency); }
                     if (dtReport.Columns.Contains("amount")) { dtReport.Columns["amount"].ColumnName = string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_085, ApplicationSettings.Currency); }
                     if (dtReport.Columns.Contains("msg")) { dtReport.Columns.Remove("msg"); }
                     if (dtReport.Columns.Contains("is_template_extis")) { dtReport.Columns.Remove("is_template_extis"); }

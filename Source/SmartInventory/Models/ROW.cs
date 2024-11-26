@@ -78,6 +78,7 @@ namespace Models
         public string origin_ref_description { get; set; }
         public string request_ref_id { get; set; }
         public string requested_by { get; set; }
+        public string status { get; set; }
         public string request_approved_by { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }

@@ -19008,6 +19008,7 @@ var Main = function () {
         //}
     }
     this.getNewDuctDetails = function () {
+        $('#btnSplitduct').prop('disabled', '');
         var splitductsystemid = $("input[name='Duct']:checked").attr('s_id');
         $('#split_duct_system_id').val(splitductsystemid);
         var splitEnityNetworkId = $('#split_entity_networkId').val();
@@ -19053,6 +19054,7 @@ var Main = function () {
                     $('#duct_two_calculated_length').valid();
                     $('#duct_two_measured_length').rules('remove', 'required');
                     $('#duct_two_measured_length').valid();
+                    $('#btnSplitduct').prop('disabled', '');
 
                 }
                 else {
