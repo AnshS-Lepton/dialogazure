@@ -1,4 +1,5 @@
 ﻿using BusinessLogics;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,13 @@ namespace SmartInventory.Controllers
 
             return Json(new { status = "OK", data = lst });
 
+        }
+        public JsonResult validateLinkIds(string linkIds)
+        {
+            var lst = new BLSite().validateLinkIds(linkIds);
+
+            //return Json(new { status = "OK", data = lst });
+            return Json(new { data = lst }, JsonRequestBehavior.AllowGet);
         }
     }
 }

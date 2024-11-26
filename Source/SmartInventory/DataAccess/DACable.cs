@@ -389,6 +389,15 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public Dictionary<string, string> GetlinkPrefixbyPrefixType(string link_prefix)
+        {
+            try
+            {
+                var result = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_fiber_link_prefix", new { p_link_prefix = link_prefix, }, true);
+                return result != null && result.Count > 0 ? result[0] : new Dictionary<string, string>();
+            }
+            catch { throw; }
+        }
         public List<KeyValueDropDown> GetAllVendorType(string type)
         {
             try

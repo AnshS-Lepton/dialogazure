@@ -238,6 +238,7 @@ namespace Models
         OpticalRepeater_Port_Ratio,
         Amplifier_Type,
         FiberLinkType,
+        FiberLinkPrefix,
         Rack_Type,
         Cabinet_Type,//cabinet shazia
         Vault_Type,

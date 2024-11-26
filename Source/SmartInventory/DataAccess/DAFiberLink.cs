@@ -232,7 +232,15 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
+        public FiberLinkPrefix GetlinkPrefixbyPrefixType(string link_prefix)
+        {
+            try
+            {
+                var result = repo.ExecuteProcedure<FiberLinkPrefix>("fn_get_fiber_link_prefix", new { p_link_prefix = link_prefix, }, true).FirstOrDefault();
+                return result;
+            }
+            catch { throw; }
+        }
         public List<FiberLink> GetAutoFiberLinkId(string searchText)
         {
             try

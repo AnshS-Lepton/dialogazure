@@ -19425,43 +19425,73 @@ var Main = function () {
 
         var pageUrl = 'Library/GetcorePlanLogic';
         var modalClass = 'modal-lg';
-        popup.LoadModalDialog(app.ParentModel, pageUrl, { userid: 0 }, 'Core Plan Logic', modalClass);
+       // popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
+        popup.LoadModalDialog(app.ParentModel, pageUrl, { userid: 0 }, 'Core Planner', modalClass);
+    }
+    this.createFiberlinkCPL = function () {
+        debugger;
+           popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id:'' }, "Create Link", 'modal-xl');
+       
     }
     this.checkAvailability = function () {
+        if ($("#txtODF1").val() == '' || $("#txtODF2").val() == '' || $("#txtRequiredCore").val()=='')
+        { alert('RequiredCore ,ODF1, OD2 are required for checking Accessibility'); return false;}
+       
         ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val(), ODF2: $("#txtODF2").val(), required_core: $("#txtRequiredCore").val() }, false, function (resp) {
             if (resp != null && resp != undefined) {
-                debugger;
+               
                 if (resp.status) {
                     $("#btnSubmit").prop("disabled", false);
                     $("#ddlfiberlink").prop("required", true)
                     alert(resp.message);
+                   
                 }
                 else {
                     $("#btnSubmit").prop("disabled", true);
                     $("#ddlfiberlink").prop("required", false)
                     alert(resp.message);
+                    
                 }
             }
 
-        }, true);
+        }, true,true);
+        
     }
     this.showReport = function () {
-
+        debugger;
         window.location = appRoot + 'Library/ExportPlanLogicReport';
     }
+    
     this.saveCorePlanLogic = function () {
-        ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val(), link_system_id: $("#txtfiberlink").val() }, false, function (resp) {
+       
+        ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val(), link_system_id: $("#txtfiberlink").val() }, true, function (resp) {
             if (resp != null && resp != undefined) {
                 debugger;
                 if (resp.status) {
                     alert(resp.message);
+                   
                 }
                 else {
                     alert(resp.message);
+                    
                 }
             }
 
-        }, true);
+        }, true,true);
+       
+    }
+ 
+    this.GetlinkPrefixbyLinkType = function (obj) {
+        debugger;
+        var _link_prefix = obj.value;
+        ajaxReq('Library/GetlinkPrefixbyPrefixType', { link_prefix: _link_prefix }, false, function (resp) {
+            if (resp.data != null) {
+
+                $('#txtLinkId').val(resp.data);
+
+            }
+
+        });
     }
     this.toggleBuildingUpload = function () {
         var pageUrl = 'SurveyArea/UploadBuilding';

@@ -69,5 +69,13 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<String> validateLinkIds(string linkids)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<String>("fn_validate_linkids", new { v_linkids = linkids }, false);
+            }
+            catch { throw; }
+        }
     }
 }

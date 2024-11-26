@@ -31,6 +31,7 @@
         'customedate_chosen': '#customedate_chosen',
         'btnclear': '#btnclear',
         'ddlStartPointtype': '#ddlStartPointtype',
+        'ddlLinkPrifixType': '#ddlLinkPrifixType',
         'txtStartPointNwkID': '#txtStartPointNwkID',
         'ddlEndPointtype': '#ddlEndPointtype',
         'txtEndPointNwkID': '#txtEndPointNwkID',
@@ -969,9 +970,13 @@
     }
 
     this.SaveFiberLink = function(objFiberLink) {
-         
-        if (objFiberLink.pageMsg.status != "OK") {
+        debugger;
+        if (objFiberLink.pageMsg.status != "OK" || $('#hdnCheckforCLP').val() != '') {
+            $('#txtfiberlink').val(objFiberLink.network_id);
+            $('#hdnCheckforCLP').val('');
             alert(objFiberLink.pageMsg.message);
+            $("#closeChildPopup").click();
+            
         }
         else {
             if (objFiberLink.CreateFL== 0) {
@@ -1009,8 +1014,9 @@
         $(app.DE.tickIcon).css('display', 'none');
     }
     this.btncreatelink = function () {
+        debugger;
         app.CableFiberButton = true;
-        var _linkId = $(app.DE.txtFiberLinkId).val();
+        var _linkId = $('#txtLinkId').value();//$(app.DE.txtFiberLinkId).val();
         if (_linkId == "") {
             $(app.DE.txtFiberLinkId).css('border-color', 'red');
         }

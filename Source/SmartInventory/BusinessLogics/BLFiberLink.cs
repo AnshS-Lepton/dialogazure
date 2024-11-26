@@ -46,6 +46,10 @@ namespace BusinessLogics
         {
             return new DAFiberLink().getFiberLinkROWAuthority(searchText);
         }
+        public FiberLinkPrefix GetlinkPrefixbyPrefixType(string link_prefix)
+        {
+            return new DAFiberLink().GetlinkPrefixbyPrefixType(link_prefix);
+        }
         public List<FiberLink> GetAutoFiberLinkId(string searchText)
         {
             return new DAFiberLink().GetAutoFiberLinkId(searchText);
