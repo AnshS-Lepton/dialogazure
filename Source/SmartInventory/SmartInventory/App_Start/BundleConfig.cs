@@ -71,7 +71,8 @@ namespace SmartInventory
                              "~/Content/js/inputpicker/popper.min.js",
                            "~/Content/js/inputpicker/jquery.inputpicker.js",
                            "~/Content/js/jquery.serializejson.js", //js for additional attributes
-                           "~/Areas/Admin/Content/js/expressionBuilder.js"  // for expression builder
+                           "~/Areas/Admin/Content/js/expressionBuilder.js" , // for expression builder
+                           "~/Content/js/FiberLink.js"
 
                         ));
 

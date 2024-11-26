@@ -75,6 +75,13 @@ namespace Models
         public List<DropDownMaster> lstLinkType { get; set; }
 
         [NotMapped]
+        public List<DropDownMaster> lstPrefixType { get; set; }
+
+        [NotMapped]
+        public FiberLinkPrefix FiberLinkPrefix { get; set; }
+
+
+        [NotMapped]
         public List<LibraryAttachment> lstFiberLinkAttachments { get; set; }
         [NotMapped]
         public int CreateFL { get; set; }
@@ -84,6 +91,7 @@ namespace Models
             lstUserName = new List<Models.userName>();
             lstFiberLinkAttachments = new List<LibraryAttachment>();
             lstLinkType = new List<DropDownMaster>();
+            lstPrefixType = new List<DropDownMaster>();
             CreateFL = 0;
         } 
         [NotMapped]
@@ -138,6 +146,11 @@ namespace Models
         public int fiber_link_count { get; set; }
         public string color_code { get; set; }
         public bool isFiberLinkStatusChecked { get; set; } 
+    }
+    public class FiberLinkPrefix
+    {
+        public string link_prefix { get; set; }
+        
     }
     public class FiberLinkGrid
     {

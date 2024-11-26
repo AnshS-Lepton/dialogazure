@@ -26,6 +26,10 @@ namespace BusinessLogics
         {
             return new DASiteSync().getCablesByLinkIds(linkids);
         }
+        public List<String> validateLinkIds(string linkids)
+        {
+            return new DASiteSync().validateLinkIds(linkids);
+        }
 
     }
 }

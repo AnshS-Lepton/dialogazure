@@ -13172,37 +13172,51 @@ namespace SmartInventory.Controllers
         public void ExportPlanLogicReport()
         {
 
-
-
-            string fileName = "Core_Plan_Logic_Report_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
-            int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-            List<CorePlannerLogs> lstCorePlannerLogs = new BLCable().GetCorePlanLogsByUserId(user_id);
-
-            DataTable dtReport = MiscHelper.ListToDataTable<CorePlannerLogs>(lstCorePlannerLogs);
-            if (dtReport != null && dtReport.Rows.Count > 0)
+            try
             {
-                if (dtReport.Columns.Contains("cable_id")) { dtReport.Columns["cable_id"].ColumnName = "Cable Id"; }
-                if (dtReport.Columns.Contains("cable_name")) { dtReport.Columns["cable_name"].ColumnName = "Cable Name"; }
-                if (dtReport.Columns.Contains("network_status")) { dtReport.Columns["network_status"].ColumnName = "Network Status"; }
-                if (dtReport.Columns.Contains("total_core")) { dtReport.Columns["total_core"].ColumnName = "Total Cores"; }
-                if (dtReport.Columns.Contains("available")) { dtReport.Columns["available"].ColumnName = "Available Cores"; }
-                if (dtReport.Columns.Contains("cable_length")) { dtReport.Columns["cable_length"].ColumnName = "Cable Length(m)"; }
-                if (dtReport.Columns.Contains("a_system_id")) { dtReport.Columns.Remove("a_system_id"); }
-                if (dtReport.Columns.Contains("b_system_id")) { dtReport.Columns.Remove("b_system_id"); }
-                if (dtReport.Columns.Contains("a_entity_type")) { dtReport.Columns.Remove("a_entity_type"); }
-                if (dtReport.Columns.Contains("b_entity_type")) { dtReport.Columns.Remove("b_entity_type"); }
-                if (dtReport.Columns.Contains("error_msg")) { dtReport.Columns.Remove("error_msg"); }
-                if (dtReport.Columns.Contains("user_id")) { dtReport.Columns.Remove("user_id"); }
-                if (dtReport.Columns.Contains("is_valid")) { dtReport.Columns.Remove("is_valid"); }
-                if (dtReport.Columns.Contains("a_network_id")) { dtReport.Columns.Remove("a_network_id"); }
-                if (dtReport.Columns.Contains("b_network_id")) { dtReport.Columns.Remove("b_network_id"); }
-                if (dtReport.Columns.Contains("cable_network_id")) { dtReport.Columns.Remove("cable_network_id"); }
-                if (dtReport.Columns.Contains("id")) { dtReport.Columns.Remove("id"); }
+
+                string fileName = "Core_Planner_Report_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
+                int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+                List<CorePlannerLogs> lstCorePlannerLogs = new BLCable().GetCorePlanLogsByUserId(user_id);
+
+                DataTable dtReport = MiscHelper.ListToDataTable<CorePlannerLogs>(lstCorePlannerLogs);
+                if (dtReport != null && dtReport.Rows.Count > 0)
+                {
+                    try
+                    {
+                        if (dtReport.Columns.Contains("cable_id")) { dtReport.Columns["cable_id"].ColumnName = "Cable Id"; }
+                        if (dtReport.Columns.Contains("cable_name")) { dtReport.Columns["cable_name"].ColumnName = "Cable Name"; }
+                        if (dtReport.Columns.Contains("network_status")) { dtReport.Columns["network_status"].ColumnName = "Network Status"; }
+                        if (dtReport.Columns.Contains("total_core")) { dtReport.Columns["total_core"].ColumnName = "Total Cores"; }
+                        if (dtReport.Columns.Contains("avaiable")) { dtReport.Columns["avaiable"].ColumnName = "Available Cores"; }
+                        if (dtReport.Columns.Contains("cable_length")) { dtReport.Columns["cable_length"].ColumnName = "Cable Length(m)"; }
+                        if (dtReport.Columns.Contains("a_system_id")) { dtReport.Columns.Remove("a_system_id"); }
+                        if (dtReport.Columns.Contains("b_system_id")) { dtReport.Columns.Remove("b_system_id"); }
+                        if (dtReport.Columns.Contains("a_entity_type")) { dtReport.Columns.Remove("a_entity_type"); }
+                        if (dtReport.Columns.Contains("b_entity_type")) { dtReport.Columns.Remove("b_entity_type"); }
+                        if (dtReport.Columns.Contains("error_msg")) { dtReport.Columns.Remove("error_msg"); }
+                        if (dtReport.Columns.Contains("user_id")) { dtReport.Columns.Remove("user_id"); }
+                        if (dtReport.Columns.Contains("is_valid")) { dtReport.Columns.Remove("is_valid"); }
+                        if (dtReport.Columns.Contains("a_network_id")) { dtReport.Columns.Remove("a_network_id"); }
+                        if (dtReport.Columns.Contains("b_network_id")) { dtReport.Columns.Remove("b_network_id"); }
+                        if (dtReport.Columns.Contains("cable_network_id")) { dtReport.Columns.Remove("cable_network_id"); }
+                        if (dtReport.Columns.Contains("id")) { dtReport.Columns.Remove("id"); }
+                        ExportData(dtReport, fileName);
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
             }
-            if (dtReport.Rows.Count > 0)
+            catch (Exception)
             {
-                ExportData(dtReport, fileName);
+                throw;
             }
+            //if (dtReport.Rows.Count > 0)
+            //{
+            //    ExportData(dtReport, fileName);
+            //}
 
         }
         public JsonResult GetSearchResult(string searchText, string search_type)
@@ -13222,6 +13236,19 @@ namespace SmartInventory.Controllers
 
             return Json(obj, JsonRequestBehavior.AllowGet);
 
+        }
+        [HttpPost]
+        public ActionResult GetlinkPrefixbyPrefixType(string link_prefix)
+        {
+            BLFiberLink objBLFiberLink = new BLFiberLink();
+
+            FiberLinkPrefix fiberLinkPrefix = new FiberLinkPrefix();
+            if (!string.IsNullOrWhiteSpace(link_prefix))
+            {
+                fiberLinkPrefix = objBLFiberLink.GetlinkPrefixbyPrefixType(link_prefix);
+            }
+
+            return Json(new { data = fiberLinkPrefix.link_prefix }, JsonRequestBehavior.AllowGet);
         }
 
     }

@@ -79,6 +79,7 @@ namespace SmartInventory.Controllers
             objFiberLink.lstFiberLinkColumnsMapping = lstColumnMapping.Select(x => x.column_name).ToList();
             // Add Fiber link Type (NT Requirement 13-Apr-21)
             objFiberLink.lstLinkType = new BLMisc().GetDropDownList("", DropDownType.FiberLinkType.ToString());
+            objFiberLink.lstPrefixType = new BLMisc().GetDropDownList("", DropDownType.FiberLinkPrefix.ToString());
 
         }
 

@@ -185,6 +185,10 @@ namespace BusinessLogics
         {
             return DACable.Instance.SaveCorePlanLogic(required_core, user_id, link_system_id);
         }
+        public Dictionary<string, string> GetlinkPrefixbyPrefixType(string link_prefix)
+        {
+            return DACable.Instance.GetlinkPrefixbyPrefixType(link_prefix);
+        }
 
     }
 }
