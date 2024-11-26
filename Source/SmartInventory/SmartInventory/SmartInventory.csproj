@@ -1658,6 +1658,7 @@
     <Content Include="MigrationScripts\25-06-2024_2.sql" />
     <Content Include="MigrationScripts\26-06-2024.sql" />
     <Content Include="MigrationScripts\26-07-2024.sql" />
+    <Content Include="MigrationScripts\26-11-2024_Dialog.sql" />
     <Content Include="MigrationScripts\27-06-2024.sql" />
     <Content Include="MigrationScripts\27-06-2024_2.sql" />
     <Content Include="MigrationScripts\30-04-2024.sql" />
