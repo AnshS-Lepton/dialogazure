@@ -1,4 +1,5 @@
 ﻿using Models;
+using Newtonsoft.Json;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -47,7 +48,7 @@ namespace DTSIntegrationDialog
             catch (Exception ex)
             {
                 // Handle any exceptions that occur
-                WriteLog.WriteLogFile($"Error occurred: {ex.StackTrace}");
+                WriteLog.WriteLogFile($"Error occurred: {ex.StackTrace + ex.Message}");
                 throw;
             }
         }
@@ -70,7 +71,7 @@ namespace DTSIntegrationDialog
             catch (Exception ex)
             {
                 // Handle any exceptions that occur
-                WriteLog.WriteLogFile($"Error occurred: {ex.StackTrace}");
+                WriteLog.WriteLogFile($"Error occurred: {ex.StackTrace + ex.Message}");
                 throw;
             }
 
@@ -104,14 +105,14 @@ namespace DTSIntegrationDialog
                     }
                     catch (Exception ex)
                     {
-                        WriteLog.WriteLogFile("Error occurred while saving site list: " + ex.StackTrace);
+                        WriteLog.WriteLogFile("Error occurred while saving site list: " + ex.StackTrace + ex.Message);
                     }
                 }
             }
             catch (Exception ex)
             {
                 // Handle any exceptions that occur
-                WriteLog.WriteLogFile($"Error occurred: {ex.StackTrace}");
+                WriteLog.WriteLogFile($"Error occurred: {ex.StackTrace + ex.Message}");
                 throw;
             }
 
@@ -136,7 +137,7 @@ namespace DTSIntegrationDialog
             catch (Exception ex)
             {
                 // Handle any exceptions that occur
-                WriteLog.WriteLogFile($"Error occurred: {ex.StackTrace}");
+                WriteLog.WriteLogFile($"Error occurred: {ex.StackTrace + ex.Message}");
                 throw;
             }
 
@@ -157,7 +158,7 @@ namespace DTSIntegrationDialog
             catch (Exception ex)
             {
                 // Handle any exceptions that occur
-                WriteLog.WriteLogFile($"Error occurred: {ex.StackTrace}");
+                WriteLog.WriteLogFile($"Error occurred: {ex.StackTrace + ex.Message}");
                 throw;
             }
 
@@ -304,7 +305,7 @@ namespace DTSIntegrationDialog
             catch (Exception ex)
             {
                 // Handle any exceptions that occur
-                WriteLog.WriteLogFile($"Error occurred: {ex.StackTrace}");
+                WriteLog.WriteLogFile($"Error occurred: {ex.StackTrace + ex.Message}");
                 throw;
             }
         }
@@ -330,13 +331,13 @@ namespace DTSIntegrationDialog
             }
             catch (DbUpdateException dbEx)
             {
-                WriteLog.WriteLogFile("A database error occurred while retrieving RegionProvinceDetail." + dbEx.StackTrace);
+                WriteLog.WriteLogFile("A database error occurred while retrieving RegionProvinceDetail." + dbEx.StackTrace + dbEx.Message);
                 // Handle database-specific errors
                 throw new Exception("A database error occurred while retrieving RegionProvinceDetail.", dbEx);
             }
             catch (Exception ex)
             {
-                WriteLog.WriteLogFile("An error occurred while retrieving RegionProvinceDetail." + ex.StackTrace);
+                WriteLog.WriteLogFile("An error occurred while retrieving RegionProvinceDetail." + ex.StackTrace + ex.Message);
                 // General error handling
                 throw new Exception("An error occurred while retrieving RegionProvinceDetail.", ex);
             }
@@ -364,14 +365,14 @@ namespace DTSIntegrationDialog
             }
             catch (DbUpdateException dbEx)
             {
-                //Console.WriteLine(dbEx.StackTrace);
-                WriteLog.WriteLogFile("A database error occurred while retrieving network code details: " + dbEx.StackTrace);
+                //Console.WriteLine(dbex.StackTrace + ex.Message);
+                WriteLog.WriteLogFile("A database error occurred while retrieving network code details: " + dbEx.StackTrace + dbEx.Message);
 
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.StackTrace);
-                WriteLog.WriteLogFile("An error occurred while retrieving network code details: " + ex.StackTrace);
+                //Console.WriteLine(ex.StackTrace + ex.Message);
+                WriteLog.WriteLogFile("An error occurred while retrieving network code details: " + ex.StackTrace + ex.Message);
             }
             WriteLog.WriteLogFile("Inserted Count: " + records.inserted_count + " Updated Count: " + records.updated_count);
             return records ?? new ProcessSiteOutput();
@@ -402,13 +403,15 @@ namespace DTSIntegrationDialog
             }
             catch (DbUpdateException dbEx)
             {
-                WriteLog.WriteLogFile("A database error occurred while retrieving network code details." + dbEx.StackTrace);
+                WriteLog.WriteLogFile("Exception Serilized Object" + JsonConvert.SerializeObject(objIn));
+                WriteLog.WriteLogFile("A database error occurred while retrieving network code details." + dbEx.StackTrace + dbEx.Message);
                 // Specific handling for database-related exceptions
                 throw new Exception("A database error occurred while retrieving network code details.", dbEx);
             }
             catch (Exception ex)
             {
-                WriteLog.WriteLogFile("An error occurred while retrieving network code details." + ex.StackTrace);
+                WriteLog.WriteLogFile("Exception Serilized Object" + JsonConvert.SerializeObject(objIn));
+                WriteLog.WriteLogFile("An error occurred while retrieving network code details." + ex.StackTrace + ex.Message);
                 // General exception handling
                 throw new Exception("An error occurred while retrieving network code details.", ex);
             }
@@ -440,8 +443,8 @@ namespace DTSIntegrationDialog
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.StackTrace);
-                WriteLog.WriteLogFile("An error occurred while updating entity geometry: " + ex.StackTrace);
+                //Console.WriteLine(ex.StackTrace + ex.Message);
+                WriteLog.WriteLogFile("An error occurred while updating entity geometry: " + ex.StackTrace + ex.Message);
             }
 
         }
@@ -465,8 +468,8 @@ namespace DTSIntegrationDialog
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.StackTrace);
-                WriteLog.WriteLogFile("An error occurred while updating GeoJSON entity attribute: " + ex.StackTrace);
+                //Console.WriteLine(ex.StackTrace + ex.Message);
+                WriteLog.WriteLogFile("An error occurred while updating GeoJSON entity attribute: " + ex.StackTrace + ex.Message);
                 return null; // Ensure a value is returned in case of an exception
             }
         }
@@ -491,8 +494,8 @@ namespace DTSIntegrationDialog
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.StackTrace);
-                WriteLog.WriteLogFile("An error occurred while updating entity geometry: " + ex.StackTrace);
+                //Console.WriteLine(ex.StackTrace + ex.Message);
+                WriteLog.WriteLogFile("An error occurred while updating entity geometry: " + ex.StackTrace + ex.Message);
             }
 
         }
@@ -575,7 +578,7 @@ namespace DTSIntegrationDialog
             }
             catch (DbEntityValidationException ex)
             {
-                WriteLog.WriteLogFile("Exception in Method UpdateNetworkandGeomDetails" + ex.StackTrace);
+                WriteLog.WriteLogFile("Exception in Method UpdateNetworkandGeomDetails" + ex.StackTrace + ex.Message);
                 foreach (var validationErrors in ex.EntityValidationErrors)
                 {
                     foreach (var validationError in validationErrors.ValidationErrors)
@@ -586,8 +589,8 @@ namespace DTSIntegrationDialog
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.StackTrace);
-                WriteLog.WriteLogFile("Error occurred while updating network and geom details: " + ex.StackTrace);
+                //Console.WriteLine(ex.StackTrace + ex.Message);
+                WriteLog.WriteLogFile("Error occurred while updating network and geom details: " + ex.StackTrace + ex.Message);
 
             }
         }
