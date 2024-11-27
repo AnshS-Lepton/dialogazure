@@ -100,3 +100,71 @@ $BODY$;
 ALTER FUNCTION public.fn_get_dropdownlist(character varying, character varying)
     OWNER TO postgres;
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: public.fn_get_fiber_link_prefix(character varying)
+
+-- DROP FUNCTION IF EXISTS public.fn_get_fiber_link_prefix(character varying);
+
+CREATE OR REPLACE FUNCTION public.fn_get_fiber_link_prefix(
+	p_link_prefix character varying)
+    RETURNS SETOF json 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+    sql TEXT;
+BEGIN
+    -- Construct the dynamic SQL
+    sql := '
+    SELECT 
+        ' || quote_literal(p_link_prefix) || ' || LPAD((SUBSTRING(MAX(link_ID), ' || (LENGTH(p_link_prefix) + 1) || ')::INTEGER + 1)::TEXT, 8, ''0'') AS link_prefix
+    FROM 
+        att_details_fiber_link
+    WHERE 
+        link_ID ILIKE ' || quote_literal(p_link_prefix || '%') || ' 
+    ';
+
+    -- Debugging Information
+    RAISE INFO '%', sql;
+
+    -- Execute the query and return the results
+    RETURN QUERY EXECUTE 'SELECT row_to_json(row) FROM (' || sql || ') row';
+
+END;
+$BODY$;
+
+ALTER FUNCTION public.fn_get_fiber_link_prefix(character varying)
+    OWNER TO postgres;
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: public.fn_validate_linkids(character varying)
+
+-- DROP FUNCTION IF EXISTS public.fn_validate_linkids(character varying);
+
+CREATE OR REPLACE FUNCTION public.fn_validate_linkids(
+    p_link_ids character varying
+)
+RETURNS SETOF json
+LANGUAGE 'plpgsql'
+COST 100
+VOLATILE PARALLEL UNSAFE
+ROWS 1000
+AS $BODY$
+DECLARE
+    sql TEXT;
+BEGIN
+    -- Construct the dynamic SQL query
+    sql := 'WITH temp_ids AS (
+        SELECT unnest(string_to_array(''' || p_link_ids || ''', '','')) AS link_id
+    )
+    SELECT string_agg(temp_ids.link_id, '','') AS invalidLinkIds  -- Aggregate invalid ids into a comma-separated list
+    FROM temp_ids
+    LEFT JOIN att_details_fiber_link ON temp_ids.link_id = att_details_fiber_link.link_id
+    WHERE att_details_fiber_link.link_id IS NULL';
+    RAISE INFO 'Executing SQL: %', sql;
+    RETURN QUERY EXECUTE 'SELECT row_to_json(row) FROM (' || sql || ') row';
+END;
+$BODY$;
+ALTER FUNCTION public.fn_validate_linkids(character varying)
+    OWNER TO postgres;
