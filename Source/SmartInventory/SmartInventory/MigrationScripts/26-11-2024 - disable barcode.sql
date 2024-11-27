@@ -1,0 +1,1 @@
+update layer_action_mapping set is_active=false where  action_name='Barcode';
