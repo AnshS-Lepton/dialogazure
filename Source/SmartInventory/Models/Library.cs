@@ -2028,7 +2028,7 @@ namespace Models
         public int? total_core { get; set; }
         public int? id { get; set; }
         public int? used_core { get; set; }
-        public int? available { get; set; }
+        public int? avaiable { get; set; }
         public string cable_length { get; set; }
         public int a_system_id { get; set; }
         public int b_system_id { get; set; }

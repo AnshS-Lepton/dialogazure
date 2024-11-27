@@ -19434,10 +19434,11 @@ var Main = function () {
        
     }
     this.checkAvailability = function () {
+       debugger;
         if ($("#txtODF1").val() == '' || $("#txtODF2").val() == '' || $("#txtRequiredCore").val()=='')
         { alert('RequiredCore ,ODF1, OD2 are required for checking Accessibility'); return false;}
        
-        ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val(), ODF2: $("#txtODF2").val(), required_core: $("#txtRequiredCore").val() }, false, function (resp) {
+        ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val(), ODF2: $("#txtODF2").val(), required_core: $("#txtRequiredCore").val() }, true, function (resp) {
             if (resp != null && resp != undefined) {
                
                 if (resp.status) {

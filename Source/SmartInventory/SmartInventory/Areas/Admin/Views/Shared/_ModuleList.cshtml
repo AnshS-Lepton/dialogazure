@@ -40,7 +40,7 @@
                                         @Html.CheckBoxFor(model => parentModule[i].is_selected, new { @class = "allModule allAdmin chkModule module_" + parentModule[i].Id + "", @onclick = "CheckByClass('chkModuleChild_" + parentModule[i].Id + "',this)", @onchange = "CheckModule()", Name = "lstUserModule[" + count + "].is_selected" })
                                         @Html.HiddenFor(model => parentModule[i].Id, new { Name = "lstUserModule[" + count + "].Id" })
                                         @Html.HiddenFor(model => parentModule[i].type, new { Name = "lstUserModule[" + count + "].type" })
-                                        @Html.HiddenFor(model => parentModule[i].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+                                        @*@Html.HiddenFor(model => parentModule[i].module_name, new { Name = "lstUserModule[" + count + "].module_name" })*@
                                        
 
 
@@ -61,7 +61,7 @@
                                                         @Html.CheckBoxFor(model => childModule[j].is_selected, new { @class = "allModule allAdmin chkModule chkModuleChild_" + parentModule[i].Id + "", @onchange = "checkModuleSelected(" + parentModule[i].Id + ")", Name = "lstUserModule[" + count + "].is_selected" })
                                                         @Html.HiddenFor(model => childModule[j].Id, new { Name = "lstUserModule[" + count + "].Id" })
                                                         @Html.HiddenFor(model => childModule[j].type, new { Name = "lstUserModule[" + count + "].type" })
-                                                        @Html.HiddenFor(model => childModule[j].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+                                                        @*@Html.HiddenFor(model => childModule[j].module_name, new { Name = "lstUserModule[" + count + "].module_name" })*@
 
                                                         <label for="chk_child_@childModule[j].Id" style="margin-left:19px;" class="checkbox-custom-label ">
                                                             <span id="spnLayerName1" title="@childModule[j].module_name" class="pname1">@childModule[j].module_name</span>
@@ -108,7 +108,7 @@
                                         @Html.CheckBoxFor(model => parentModule[i].is_selected, new { @class = "allModule allWeb chkModule module_" + parentModule[i].Id + "", @onclick = "CheckByClass1('chkModuleChild_" + parentModule[i].Id + "','chkparent_" + parentModule[i].Id + "',this)", @onchange = "CheckModule()", Name = "lstUserModule[" + count + "].is_selected" })
                                         @Html.HiddenFor(model => parentModule[i].Id, new { Name = "lstUserModule[" + count + "].Id" })
                                         @Html.HiddenFor(model => parentModule[i].type, new { Name = "lstUserModule[" + count + "].type" })
-                                        @Html.HiddenFor(model => parentModule[i].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+                                        @*@Html.HiddenFor(model => parentModule[i].module_name, new { Name = "lstUserModule[" + count + "].module_name" })*@
                                         @Html.HiddenFor(model => parentModule[i].module_abbr, new { Name = "lstUserModule[" + count + "].module_abbr" })
 
                                         <label for="chk_parent_@parentModule[i].Id" style="margin-left:19px;" class="checkbox-custom-label ">
@@ -129,7 +129,7 @@
                                                         @Html.CheckBoxFor(model => childModule[j].is_selected, new { @class = "allModule allWeb chkModule ch_" + childModule[j].Id + " chkModuleChild_" + parentModule[i].Id + "", @onclick = "CheckByClass('chkModuleSubChild_" + childModule[j].Id + "',this)", @onchange = "checkModuleSelected(" + parentModule[i].Id + ")", Name = "lstUserModule[" + count + "].is_selected" })
                                                         @Html.HiddenFor(model => childModule[j].Id, new { Name = "lstUserModule[" + count + "].Id" })
                                                         @Html.HiddenFor(model => childModule[j].type, new { Name = "lstUserModule[" + count + "].type" })
-                                                        @Html.HiddenFor(model => childModule[j].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+                                                        @*@Html.HiddenFor(model => childModule[j].module_name, new { Name = "lstUserModule[" + count + "].module_name" })*@
                                                         @Html.HiddenFor(model => parentModule[i].module_abbr, new { Name = "lstUserModule[" + count + "].module_abbr" })
                                                         <label for="chk_child_@childModule[j].Id" style="margin-left:19px;" class="checkbox-custom-label ">
                                                             <span id="spnLayerName2" title="@childModule[j].module_name" class="pname2">@childModule[j].module_name</span>
@@ -153,7 +153,7 @@
                                                                                                                                     @Html.CheckBoxFor(model => subchildModule[k].is_selected, new { @class = "allModule allWeb chkModule chkparent_" + parentModule[i].Id + " chkModuleSubChild_" + childModule[j].Id + "", @onchange = "checkModuleSubSelected(" + childModule[j].Id + "," + parentModule[i].Id + ")", Name = "lstUserModule[" + count + "].is_selected" })
                                                                                                                                     @Html.HiddenFor(model => subchildModule[k].Id, new { Name = "lstUserModule[" + count + "].Id" })
                                                                                                                                     @Html.HiddenFor(model => subchildModule[k].type, new { Name = "lstUserModule[" + count + "].type" })
-                                                                                                                                    @Html.HiddenFor(model => subchildModule[k].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+                                                                                                                                    @*@Html.HiddenFor(model => subchildModule[k].module_name, new { Name = "lstUserModule[" + count + "].module_name" })*@
                                                                                                                                     @Html.HiddenFor(model => parentModule[i].module_abbr, new { Name = "lstUserModule[" + count + "].module_abbr" })
                                                                                                                                     <label for="chk_subchild_@subchildModule[k].Id" style="margin-left:19px;" class="checkbox-custom-label ">
                                                                                                                                         <span id="LayerName1" title="@subchildModule[k].module_name" class="name2">@subchildModule[k].module_name</span>
@@ -212,7 +212,7 @@
                                         @Html.CheckBoxFor(model => parentModule[i].is_selected, new { @class = "allModule allMobile chkModule module_" + parentModule[i].Id + "", @onclick = "CheckByClass('chkModuleChild_" + parentModule[i].Id + "',this)", @onchange = "CheckModule()", Name = "lstUserModule[" + count + "].is_selected" })
                                         @Html.HiddenFor(model => parentModule[i].Id, new { Name = "lstUserModule[" + count + "].Id" })
                                         @Html.HiddenFor(model => parentModule[i].type, new { Name = "lstUserModule[" + count + "].type" })
-                                        @Html.HiddenFor(model => parentModule[i].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+                                        @*@Html.HiddenFor(model => parentModule[i].module_name, new { Name = "lstUserModule[" + count + "].module_name" })*@
 
 
                                         <label for="chk_parent_@parentModule[i].Id" style="margin-left:19px;" class="checkbox-custom-label ">
@@ -232,7 +232,7 @@
                                                         @Html.CheckBoxFor(model => childMobileModule[j].is_selected, new { @class = "allModule allMobile chkModule chkModuleChild_" + parentModule[i].Id + "", @onchange = "checkModuleSelected(" + parentModule[i].Id + ")", Name = "lstUserModule[" + count + "].is_selected" })
                                                         @Html.HiddenFor(model => childMobileModule[j].Id, new { Name = "lstUserModule[" + count + "].Id" })
                                                         @Html.HiddenFor(model => childMobileModule[j].type, new { Name = "lstUserModule[" + count + "].type" })
-                                                        @Html.HiddenFor(model => childMobileModule[j].module_name, new { Name = "lstUserModule[" + count + "].module_name" })
+                                                        @*@Html.HiddenFor(model => childMobileModule[j].module_name, new { Name = "lstUserModule[" + count + "].module_name" })*@
 
                                                         <label for="chk_child_@childMobileModule[j].Id" style="margin-left:19px;" class="checkbox-custom-label ">
                                                             <span id="spnLayerName3" title="@childMobileModule[j].module_name" class="pname3">@childMobileModule[j].module_name</span>
