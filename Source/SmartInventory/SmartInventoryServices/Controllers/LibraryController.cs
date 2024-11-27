@@ -3255,7 +3255,7 @@ namespace SmartInventoryServices.Controllers
 			objLib.parent_entity_type = networkCodeDetail.parent_entity_type;
 			objLib.parent_network_id = networkCodeDetail.parent_network_id;
 			objLib.parent_system_id = networkCodeDetail.parent_system_id;
-			if (startObj != null)
+			if (startObj != null && startObj.system_id > 0)
 			{
 				var entityName = new BLMisc().GetEntityName(startObj.network_name, startObj.system_id);
 				objLib.a_entity_type = startObj.network_name;
@@ -3266,7 +3266,7 @@ namespace SmartInventoryServices.Controllers
 				objLib.a_long_lat = startObj.actualLatLng;
 				if (!string.IsNullOrEmpty(startObj.actualLatLng)) { objLib.geom = startObj.actualLatLng + "," + objLib.geom; }
 			}
-			if (endObj != null)
+			if (endObj != null && startObj.system_id > 0)
 			{
                 var entityName = new BLMisc().GetEntityName(endObj.network_name, endObj.system_id);
                 objLib.b_entity_type = endObj.network_name;
