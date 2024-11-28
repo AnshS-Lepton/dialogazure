@@ -682,12 +682,14 @@ namespace SmartInventoryServices.Providers
                     isWithinThreshold = difference.Days <= thresholdDays;
                     if (difference.Days <= 0)
                     {
-                        msg = Resources.Resources.SI_OSP_GBL_GBL_GBL_321;
+                        if (isPExpAlrtAllowed)
+                            msg = Resources.Resources.SI_OSP_GBL_GBL_GBL_321;
                         return false;
                     }
                     else if (isWithinThreshold)
                     {
-                        msg = Resources.Resources.SI_GBL_GBL_NET_FRM_442.Replace("<PExpTDays>", difference.Days.ToString());
+                        if (isPExpAlrtAllowed)
+                            msg = Resources.Resources.SI_GBL_GBL_NET_FRM_442.Replace("<PExpTDays>", difference.Days.ToString());
                     }
                 }
             }
