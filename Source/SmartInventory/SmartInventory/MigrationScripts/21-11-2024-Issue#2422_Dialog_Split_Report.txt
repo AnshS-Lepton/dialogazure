@@ -138,12 +138,12 @@ UPDATE public.res_resources SET value='FAT Template' WHERE culture='ja-JP' AND "
 -----------------------------------------------
 DO $$
 DECLARE
-    layer_id INT;
+    v_layer_id INT;
 BEGIN
-    FOR layer_id IN
-        SELECT layer_id FROM layer_details
+    FOR v_layer_id IN
+        SELECT ld.layer_id FROM layer_details ld
     LOOP
-        PERFORM fn_splicing_sync_connection_label(layer_id);
+        PERFORM fn_splicing_sync_connection_label(v_layer_id);
     END LOOP;
 END $$;
 ------------------------------------------------
