@@ -1198,6 +1198,7 @@ namespace SmartInventory.Controllers
             titleParagraph.Alignment = Element.ALIGN_CENTER;
             titleParagraph.SpacingAfter = 20;
             pdfDoc.Add(titleParagraph);
+            PdfPCell cell = new PdfPCell();
 
             // Loop through each table in the DataSet
             for (int i = 0; i < ds.Tables.Count; i++)
@@ -1219,7 +1220,7 @@ namespace SmartInventory.Controllers
                     // Add column headers
                     foreach (DataColumn column in table.Columns)
                     {
-                        PdfPCell cell = new PdfPCell(new Phrase(column.ColumnName, font));
+                        cell = new PdfPCell(new Phrase(column.ColumnName, font));
                         cell.HorizontalAlignment = Element.ALIGN_CENTER;
                         cell.BackgroundColor = new BaseColor(0, 186, 138);
                         cell.FixedHeight = 25f;
@@ -1229,13 +1230,34 @@ namespace SmartInventory.Controllers
                     // Add rows
                     foreach (DataRow row in table.Rows)
                     {
-                        foreach (DataColumn column in table.Columns)
+                        int cnt = 0;
+                        foreach (DataColumn column in ds.Tables[i].Columns)
                         {
-                            PdfPCell cell = new PdfPCell(new Phrase(row[column].ToString(), font));
-                            cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                            cell.FixedHeight = 25f;
-                            pdfTable.AddCell(cell);
+                            if (row[0] == Resources.Resources.SI_OSP_GBL_GBL_GBL_041)
+                            {
+                                cell = new PdfPCell(new Phrase("" + row[column] + "", font));
+                                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                cell.BackgroundColor = new BaseColor(0, 186, 138);
+                                cell.FixedHeight = 25f;
+                                pdfTable.AddCell(cell);
+                            }
+                            else
+                            {
+                                cell = new PdfPCell(new Phrase("" + row[column] + "", font));
+                                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                cell.FixedHeight = 35f;
+                                pdfTable.AddCell(cell);
+                            }
+                            cnt++;
                         }
+                        //foreach (DataColumn column in table.Columns)
+                        //{
+
+                        //    PdfPCell cell = new PdfPCell(new Phrase(row[column].ToString(), font));
+                        //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        //    cell.FixedHeight = 25f;
+                        //    pdfTable.AddCell(cell);
+                        //}
                     }
 
                     // Add table to PDF document
