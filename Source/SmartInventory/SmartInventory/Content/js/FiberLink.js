@@ -1016,7 +1016,7 @@
     this.btncreatelink = function () {
         debugger;
         app.CableFiberButton = true;
-        var _linkId = $('#txtLinkId').value();//$(app.DE.txtFiberLinkId).val();
+        var _linkId = $(app.DE.txtFiberLinkId).val();//$('#txtLinkId').value();
         if (_linkId == "") {
             $(app.DE.txtFiberLinkId).css('border-color', 'red');
         }

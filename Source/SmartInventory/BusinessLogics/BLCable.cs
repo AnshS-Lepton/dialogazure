@@ -181,9 +181,9 @@ namespace BusinessLogics
         {
             return new DACable().GetCorePlanLogsByUserId(user_id);
         }
-        public DbMessageConePlanLogic SaveCorePlanLogic(string required_core, int user_id, string link_system_id)
+        public DbMessageConePlanLogic SaveCorePlanLogic(string required_core, int user_id, string fiber_link_network_id, string source_network_id, string destination_network_id, int buffer)
         {
-            return DACable.Instance.SaveCorePlanLogic(required_core, user_id, link_system_id);
+            return DACable.Instance.SaveCorePlanLogic(required_core, user_id, fiber_link_network_id, source_network_id, destination_network_id, buffer);
         }
         public Dictionary<string, string> GetlinkPrefixbyPrefixType(string link_prefix)
         {
