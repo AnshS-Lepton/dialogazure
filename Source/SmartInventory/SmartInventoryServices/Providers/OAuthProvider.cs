@@ -516,7 +516,14 @@ namespace SmartInventoryServices.Providers
                             }
                             else
                             {
-                                context = GenerateToken(context, user, false, apiConsumerMaster.is_log_required, Source);
+                                string errMsg = string.Empty;
+                                bool isLicenseValid = CheckLicenseValidity(globalSettings, out errMsg);
+                                if (isLicenseValid)
+                                {
+                                    context = GenerateToken(context, user, false, apiConsumerMaster.is_log_required, Source, errMsg); //here errMsg is a warning message
+                                }
+                                else
+                                    HeaderErrorResponse(context, errMsg);
                             }
                         }
                         else
@@ -563,9 +570,15 @@ namespace SmartInventoryServices.Providers
                                 }
                                 else
                                 {
-                                    context = GenerateToken(context, user, false, apiConsumerMaster.is_log_required, Source);
+                                    string errMsg = string.Empty;
+                                    bool isLicenseValid = CheckLicenseValidity(globalSettings, out errMsg);   //here errMsg is a warning message
+                                    if (isLicenseValid)
+                                    {
+                                        context = GenerateToken(context, user, false, apiConsumerMaster.is_log_required, Source, errMsg);
+                                    }
+                                    else
+                                        HeaderErrorResponse(context, errMsg);
                                 }
-                                // context = GenerateToken(context, user);
                             }
                             else
                             {
@@ -638,21 +651,27 @@ namespace SmartInventoryServices.Providers
                 var json = JsonConvert.SerializeObject(lst);
                 context.AdditionalResponseParameters.Add("GlobalSettings", json);
             }
+
+            return Task.FromResult<object>(null);
+
+        }
+        private bool CheckLicenseValidity(List<GlobalSetting> globalSettings, out string msg)
+        {
+            msg = string.Empty;
             var pLData = globalSettings.Where(m => m.key == "product_license_mobile")
                                  .Select(m => new { m.key, m.value, m.max_value, /* other properties */ }).FirstOrDefault();
 
-            bool isPExpAlrtAllowed = @ApplicationSettings.IsLicenseExpAlrtAllowed;
+            bool isPExpAlrtAllowed = ApplicationSettings.IsLicenseExpAlrtAllowed;
 
             string encdDtStr = string.Empty;
             if (pLData != null)
             {
                 encdDtStr = MiscHelper.DecryptData(pLData.value);
-                if (string.IsNullOrEmpty(encdDtStr))
+                if (string.IsNullOrEmpty(encdDtStr)) //Checks if license details available in the DB
                 {
-                    context.AdditionalResponseParameters.Add("IsWithinThreshold", true.ToString());
-                    context.AdditionalResponseParameters.Add("PExpTDays", 0);
-                    context.AdditionalResponseParameters.Add("PExpThresholdMsg", Resources.Resources.SI_OSP_GBL_GBL_GBL_321);
-                    context.AdditionalResponseParameters.Add("PExpAlertVisibility", isPExpAlrtAllowed.ToString());
+                    if (isPExpAlrtAllowed)
+                        msg = Resources.Resources.SI_OSP_GBL_GBL_GBL_321;
+                    return false;
                 }
                 else
                 {
@@ -661,17 +680,21 @@ namespace SmartInventoryServices.Providers
                     bool isWithinThreshold = false;
                     CodeOperation.ValidateCO(encdDtStr, out difference);
                     isWithinThreshold = difference.Days <= thresholdDays;
-                    context.AdditionalResponseParameters.Add("IsWithinThreshold", isWithinThreshold);
-                    context.AdditionalResponseParameters.Add("PExpTDays", difference.Days);
-                    context.AdditionalResponseParameters.Add("PExpThresholdPriorMsg", isWithinThreshold ? Resources.Resources.SI_GBL_GBL_NET_FRM_442.Replace("<PExpTDays>", difference.Days.ToString()) : "");
-                    context.AdditionalResponseParameters.Add("PExpThresholdMsg", difference.Days <= 0 ? Resources.Resources.SI_OSP_GBL_GBL_GBL_321 : "");
-                    context.AdditionalResponseParameters.Add("PExpAlertVisibility", isPExpAlrtAllowed.ToString());
+                    if (difference.Days <= 0)
+                    {
+                        if (isPExpAlrtAllowed)
+                            msg = Resources.Resources.SI_OSP_GBL_GBL_GBL_321;
+                        return false;
+                    }
+                    else if (isWithinThreshold)
+                    {
+                        if (isPExpAlrtAllowed)
+                            msg = Resources.Resources.SI_GBL_GBL_NET_FRM_442.Replace("<PExpTDays>", difference.Days.ToString());
+                    }
                 }
             }
-            return Task.FromResult<object>(null);
-
+            return true;
         }
-
         #endregion
 
         //public override async Task GrantRefreshToken(OAuthGrantRefreshTokenContext context)
@@ -792,7 +815,7 @@ namespace SmartInventoryServices.Providers
         }
 
         #region[GenerateToken]
-        public OAuthGrantResourceOwnerCredentialsContext GenerateToken(OAuthGrantResourceOwnerCredentialsContext context, dynamic user, bool isMasterLogin, bool isLogRequired, string source)
+        public OAuthGrantResourceOwnerCredentialsContext GenerateToken(OAuthGrantResourceOwnerCredentialsContext context, dynamic user, bool isMasterLogin, bool isLogRequired, string source, string warnMsg = "")
         {
             try
             {
@@ -808,6 +831,7 @@ namespace SmartInventoryServices.Providers
                 }
                 //for testing
                 //is2FAuthEnabled = true;
+                dicResponseParams.Add("warningMessage", warnMsg);
                 if (source.ToUpper() != "WEB" && source.ToUpper() != "MOBILE")
                 {
                     dicResponseParams.Add("isLogRequired", Convert.ToString(isLogRequired));
