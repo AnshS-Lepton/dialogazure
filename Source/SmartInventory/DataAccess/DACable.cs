@@ -381,11 +381,11 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public DbMessageConePlanLogic SaveCorePlanLogic(string required_core, int user_id, string link_system_id)
+        public DbMessageConePlanLogic SaveCorePlanLogic(string required_core, int user_id, string fiber_link_network_id, string source_network_id, string destination_network_id, int buffer)
         {
             try
             {
-                return repo.ExecuteProcedure<DbMessageConePlanLogic>("fn_get_core_planner_splicing", new { required_core = Convert.ToInt32(required_core), p_user_id = user_id, fiber_link_network_id = link_system_id }, true).FirstOrDefault();
+                return repo.ExecuteProcedure<DbMessageConePlanLogic>("fn_get_core_planner_splicing", new { required_core = Convert.ToInt32(required_core), p_user_id = user_id, fiber_link_network_id = fiber_link_network_id, source_network_id=source_network_id, destination_network_id=destination_network_id, buffer=buffer }, true).FirstOrDefault();
             }
             catch { throw; }
         }

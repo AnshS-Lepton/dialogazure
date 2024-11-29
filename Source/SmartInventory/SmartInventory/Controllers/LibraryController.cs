@@ -13184,7 +13184,8 @@ namespace SmartInventory.Controllers
                 {
                     try
                     {
-                        if (dtReport.Columns.Contains("cable_id")) { dtReport.Columns["cable_id"].ColumnName = "Cable Id"; }
+                        //if (dtReport.Columns.Contains("cable_id")) { dtReport.Columns["cable_id"].ColumnName = "Cable Id"; }
+                        if (dtReport.Columns.Contains("cable_network_id")) { dtReport.Columns["cable_network_id"].ColumnName = "Cable Id"; }
                         if (dtReport.Columns.Contains("cable_name")) { dtReport.Columns["cable_name"].ColumnName = "Cable Name"; }
                         if (dtReport.Columns.Contains("network_status")) { dtReport.Columns["network_status"].ColumnName = "Network Status"; }
                         if (dtReport.Columns.Contains("total_core")) { dtReport.Columns["total_core"].ColumnName = "Total Cores"; }
@@ -13194,13 +13195,19 @@ namespace SmartInventory.Controllers
                         if (dtReport.Columns.Contains("b_system_id")) { dtReport.Columns.Remove("b_system_id"); }
                         if (dtReport.Columns.Contains("a_entity_type")) { dtReport.Columns.Remove("a_entity_type"); }
                         if (dtReport.Columns.Contains("b_entity_type")) { dtReport.Columns.Remove("b_entity_type"); }
-                        if (dtReport.Columns.Contains("error_msg")) { dtReport.Columns.Remove("error_msg"); }
+                        //if (dtReport.Columns.Contains("error_msg")) { dtReport.Columns.Remove("error_msg"); }
+                        if (dtReport.Columns.Contains("error_msg")) { dtReport.Columns["error_msg"].ColumnName = "Message"; }
+                        if (dtReport.Columns.Contains("cable_length")) { dtReport.Columns["cable_length"].ColumnName = "Cable Length(m)"; }
                         if (dtReport.Columns.Contains("user_id")) { dtReport.Columns.Remove("user_id"); }
                         if (dtReport.Columns.Contains("is_valid")) { dtReport.Columns.Remove("is_valid"); }
                         if (dtReport.Columns.Contains("a_network_id")) { dtReport.Columns.Remove("a_network_id"); }
                         if (dtReport.Columns.Contains("b_network_id")) { dtReport.Columns.Remove("b_network_id"); }
-                        if (dtReport.Columns.Contains("cable_network_id")) { dtReport.Columns.Remove("cable_network_id"); }
+                        if (dtReport.Columns.Contains("cable_id")) { dtReport.Columns.Remove("cable_id"); }
                         if (dtReport.Columns.Contains("id")) { dtReport.Columns.Remove("id"); }
+                        if (dtReport.Columns.Contains("Cable Id"))
+                        {
+                            dtReport.Columns["Cable Id"].SetOrdinal(0); // Move to the first column
+                        }
                         ExportData(dtReport, fileName);
                     }
                     catch (Exception)
@@ -13227,12 +13234,12 @@ namespace SmartInventory.Controllers
             return Json(obj.lstCoreLogicSearchdetails, JsonRequestBehavior.AllowGet);
 
         }
-        public JsonResult SaveCorePlanLogic(string required_core, string link_system_id)
+        public JsonResult SaveCorePlanLogic(string required_core, string fiber_link_network_id, string source_network_id,string destination_network_id,int buffer)
         {
 
             JsonResponse<string> jResp = new JsonResponse<string>();
             DbMessageConePlanLogic obj = new DbMessageConePlanLogic();
-            obj = new BLCable().SaveCorePlanLogic(required_core, Convert.ToInt32(Session["user_id"]), link_system_id);
+            obj = new BLCable().SaveCorePlanLogic(required_core, Convert.ToInt32(Session["user_id"]), fiber_link_network_id, source_network_id, destination_network_id, buffer);
 
             return Json(obj, JsonRequestBehavior.AllowGet);
 
