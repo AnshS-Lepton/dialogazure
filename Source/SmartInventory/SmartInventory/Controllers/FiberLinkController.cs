@@ -1087,101 +1087,195 @@ namespace SmartInventory.Controllers
             }
 
         }
-        private void GenerateToPDF(DataSet ds, string Name, string title)
+        //private void GenerateToPDF(DataSet ds, string Name, string title)
+        //{
+        //    iTextSharp.text.Font _font = new iTextSharp.text.Font(PDFHelper.GetFont(), 10, iTextSharp.text.Font.BOLD);
+        //    iTextSharp.text.Font font = new iTextSharp.text.Font(PDFHelper.GetFont(), 6, iTextSharp.text.Font.NORMAL);
+        //    Paragraph EntityHeading1 = new Paragraph(new Chunk("Fiber Link", _font));
+        //    EntityHeading1.Alignment = Element.ALIGN_CENTER;
+        //    EntityHeading1.SpacingAfter = 20;
+
+        //    PdfPTable table = new PdfPTable(ds.Tables[0].Columns.Count);
+        //    table.WidthPercentage = 100f;
+        //    PdfPCell cell = new PdfPCell();
+        //    foreach (DataColumn column in ds.Tables[0].Columns)
+        //    {
+        //        cell = new PdfPCell(new Phrase("" + column.ColumnName + "", font));
+        //        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //        cell.BackgroundColor = new BaseColor(0, 186, 138);
+        //        cell.FixedHeight = 70f;
+        //        table.AddCell(cell);
+        //    }
+        //    foreach (DataRow row in ds.Tables[0].Rows)
+        //    {
+        //        int cnt = 0;
+        //        foreach (DataColumn column in ds.Tables[0].Columns)
+        //        {
+        //            if (row[0] == Resources.Resources.SI_OSP_GBL_GBL_GBL_041)
+        //            {
+        //                cell = new PdfPCell(new Phrase("" + row[column] + "", font));
+        //                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //                cell.BackgroundColor = new BaseColor(0, 186, 138);
+        //                cell.FixedHeight = 70f;
+        //                table.AddCell(cell);
+        //            }
+        //            else
+        //            {
+        //                cell = new PdfPCell(new Phrase("" + row[column] + "", font));
+        //                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+        //                cell.FixedHeight = 70f;
+        //                table.AddCell(cell);
+        //            }
+        //            cnt++;
+        //        }
+        //    }
+        //    //Table 1
+        //    PdfPTable table1 = new PdfPTable(ds.Tables[1].Columns.Count);
+        //    table1.WidthPercentage = 100f;//90f;
+        //    Paragraph EntityHeading = new Paragraph(new Chunk("Cable Information", _font));
+        //    EntityHeading.Alignment = Element.ALIGN_CENTER;
+        //    EntityHeading.SpacingAfter = 20;
+        //    PdfPCell cell1 = new PdfPCell();
+        //    foreach (DataColumn column in ds.Tables[1].Columns)
+        //    {
+        //            cell1 = new PdfPCell(new Phrase("" + column.ColumnName + "", font));
+        //            cell1.HorizontalAlignment = Element.ALIGN_CENTER;
+        //            cell1.BackgroundColor = new BaseColor(0, 186, 138);
+        //            cell1.FixedHeight = 45f;
+        //            table1.AddCell(cell1);
+        //    }
+        //    foreach (DataRow row in ds.Tables[1].Rows)
+        //    {
+        //        int cnt = 0;
+        //        foreach (DataColumn column in ds.Tables[1].Columns)
+        //        {
+        //                if (row[0] == Resources.Resources.SI_OSP_GBL_GBL_GBL_041)
+        //                {
+        //                    cell1 = new PdfPCell(new Phrase("" + row[column] + "", font));
+        //                    cell1.HorizontalAlignment = Element.ALIGN_CENTER;
+        //                    cell1.BackgroundColor = new BaseColor(0, 186, 138);
+        //                    cell1.FixedHeight = 25f;
+        //                    table1.AddCell(cell1);
+        //                }
+        //                else
+        //                {
+        //                    cell1 = new PdfPCell(new Phrase("" + row[column] + "", font));
+        //                    cell1.HorizontalAlignment = Element.ALIGN_CENTER;
+        //                    cell1.FixedHeight = 35f;
+        //                    table1.AddCell(cell1);
+        //                }
+        //                cnt++;
+        //        }
+        //    }
+        //    Document pdfDoc = new Document(PageSize.A4, 0f, 0f, 25f, 30f);
+        //    PdfWriter writer = PdfWriter.GetInstance(pdfDoc, Response.OutputStream);
+        //    writer.PageEvent = new PDFHelper.AllPdfPageEvents();
+        //    pdfDoc.Open();
+        //    pdfDoc.Add(EntityHeading1);
+        //    pdfDoc.Add(table);
+        //    pdfDoc.Add(EntityHeading);
+        //    pdfDoc.Add(table1);
+        //    pdfDoc.Close();
+        //    Response.ContentType = "application/pdf";
+        //    Response.AddHeader("content-disposition", "attachment;filename=" + Name + ".pdf");
+        //    Response.Cache.SetCacheability(HttpCacheability.NoCache);
+        //    Response.Write(pdfDoc);
+        //    Response.End();
+        //}
+        private void GenerateToPDF(DataSet ds, string fileName, string title)
         {
             iTextSharp.text.Font _font = new iTextSharp.text.Font(PDFHelper.GetFont(), 10, iTextSharp.text.Font.BOLD);
             iTextSharp.text.Font font = new iTextSharp.text.Font(PDFHelper.GetFont(), 6, iTextSharp.text.Font.NORMAL);
-            Paragraph EntityHeading1 = new Paragraph(new Chunk("Fiber Link", _font));
-            EntityHeading1.Alignment = Element.ALIGN_CENTER;
-            EntityHeading1.SpacingAfter = 20;
 
-            PdfPTable table = new PdfPTable(ds.Tables[0].Columns.Count);
-            table.WidthPercentage = 100f;
-            PdfPCell cell = new PdfPCell();
-            foreach (DataColumn column in ds.Tables[0].Columns)
-            {
-                cell = new PdfPCell(new Phrase("" + column.ColumnName + "", font));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.BackgroundColor = new BaseColor(0, 186, 138);
-                cell.FixedHeight = 70f;
-                table.AddCell(cell);
-            }
-            foreach (DataRow row in ds.Tables[0].Rows)
-            {
-                int cnt = 0;
-                foreach (DataColumn column in ds.Tables[0].Columns)
-                {
-                    if (row[0] == Resources.Resources.SI_OSP_GBL_GBL_GBL_041)
-                    {
-                        cell = new PdfPCell(new Phrase("" + row[column] + "", font));
-                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                        cell.BackgroundColor = new BaseColor(0, 186, 138);
-                        cell.FixedHeight = 70f;
-                        table.AddCell(cell);
-                    }
-                    else
-                    {
-                        cell = new PdfPCell(new Phrase("" + row[column] + "", font));
-                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                        cell.FixedHeight = 70f;
-                        table.AddCell(cell);
-                    }
-                    cnt++;
-                }
-            }
-            //Table 1
-            PdfPTable table1 = new PdfPTable(ds.Tables[1].Columns.Count);
-            table1.WidthPercentage = 100f;//90f;
-            Paragraph EntityHeading = new Paragraph(new Chunk("Cable Information", _font));
-            EntityHeading.Alignment = Element.ALIGN_CENTER;
-            EntityHeading.SpacingAfter = 20;
-            PdfPCell cell1 = new PdfPCell();
-            foreach (DataColumn column in ds.Tables[1].Columns)
-            {
-                    cell1 = new PdfPCell(new Phrase("" + column.ColumnName + "", font));
-                    cell1.HorizontalAlignment = Element.ALIGN_CENTER;
-                    cell1.BackgroundColor = new BaseColor(0, 186, 138);
-                    cell1.FixedHeight = 45f;
-                    table1.AddCell(cell1);
-            }
-            foreach (DataRow row in ds.Tables[1].Rows)
-            {
-                int cnt = 0;
-                foreach (DataColumn column in ds.Tables[1].Columns)
-                {
-                        if (row[0] == Resources.Resources.SI_OSP_GBL_GBL_GBL_041)
-                        {
-                            cell1 = new PdfPCell(new Phrase("" + row[column] + "", font));
-                            cell1.HorizontalAlignment = Element.ALIGN_CENTER;
-                            cell1.BackgroundColor = new BaseColor(0, 186, 138);
-                            cell1.FixedHeight = 25f;
-                            table1.AddCell(cell1);
-                        }
-                        else
-                        {
-                            cell1 = new PdfPCell(new Phrase("" + row[column] + "", font));
-                            cell1.HorizontalAlignment = Element.ALIGN_CENTER;
-                            cell1.FixedHeight = 35f;
-                            table1.AddCell(cell1);
-                        }
-                        cnt++;
-                }
-            }
-            Document pdfDoc = new Document(PageSize.A4, 0f, 0f, 25f, 30f);
+            Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 20f, 20f);
             PdfWriter writer = PdfWriter.GetInstance(pdfDoc, Response.OutputStream);
             writer.PageEvent = new PDFHelper.AllPdfPageEvents();
+
             pdfDoc.Open();
-            pdfDoc.Add(EntityHeading1);
-            pdfDoc.Add(table);
-            pdfDoc.Add(EntityHeading);
-            pdfDoc.Add(table1);
+
+            // Add Title
+            Paragraph titleParagraph = new Paragraph(new Chunk(title, _font));
+            titleParagraph.Alignment = Element.ALIGN_CENTER;
+            titleParagraph.SpacingAfter = 20;
+            pdfDoc.Add(titleParagraph);
+            PdfPCell cell = new PdfPCell();
+
+            // Loop through each table in the DataSet
+            for (int i = 0; i < ds.Tables.Count; i++)
+            {
+                DataTable table = ds.Tables[i];
+                if (table.Columns.Count > 0)
+                {
+                    // Add table title
+                    Paragraph tableTitle = new Paragraph(new Chunk($"Table {i + 1}: {table.TableName}", _font));
+                    tableTitle.Alignment = Element.ALIGN_CENTER;
+                    tableTitle.SpacingAfter = 10;
+                    pdfDoc.Add(tableTitle);
+
+                    // Create PDF Table
+
+                    PdfPTable pdfTable = new PdfPTable(table.Columns.Count);
+                    pdfTable.WidthPercentage = 100f;
+
+                    // Add column headers
+                    foreach (DataColumn column in table.Columns)
+                    {
+                        cell = new PdfPCell(new Phrase(column.ColumnName, font));
+                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        cell.BackgroundColor = new BaseColor(0, 186, 138);
+                        cell.FixedHeight = 25f;
+                        pdfTable.AddCell(cell);
+                    }
+
+                    // Add rows
+                    foreach (DataRow row in table.Rows)
+                    {
+                        int cnt = 0;
+                        foreach (DataColumn column in ds.Tables[i].Columns)
+                        {
+                            if (row[0] == Resources.Resources.SI_OSP_GBL_GBL_GBL_041)
+                            {
+                                cell = new PdfPCell(new Phrase("" + row[column] + "", font));
+                                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                cell.BackgroundColor = new BaseColor(0, 186, 138);
+                                cell.FixedHeight = 25f;
+                                pdfTable.AddCell(cell);
+                            }
+                            else
+                            {
+                                cell = new PdfPCell(new Phrase("" + row[column] + "", font));
+                                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                                cell.FixedHeight = 35f;
+                                pdfTable.AddCell(cell);
+                            }
+                            cnt++;
+                        }
+                        //foreach (DataColumn column in table.Columns)
+                        //{
+
+                        //    PdfPCell cell = new PdfPCell(new Phrase(row[column].ToString(), font));
+                        //    cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                        //    cell.FixedHeight = 25f;
+                        //    pdfTable.AddCell(cell);
+                        //}
+                    }
+
+                    // Add table to PDF document
+                    pdfDoc.Add(pdfTable);
+                    pdfDoc.Add(new Paragraph("\n")); // Add spacing between tables
+                }
+            }
+
             pdfDoc.Close();
+
+            // Return PDF as response
             Response.ContentType = "application/pdf";
-            Response.AddHeader("content-disposition", "attachment;filename=" + Name + ".pdf");
+            Response.AddHeader("content-disposition", $"attachment;filename={fileName}.pdf");
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
             Response.Write(pdfDoc);
             Response.End();
         }
+
 
     }
 }
