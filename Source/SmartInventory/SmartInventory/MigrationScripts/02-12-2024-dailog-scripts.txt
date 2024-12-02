@@ -1,0 +1,117 @@
+ UPDATE public.layer_action_mapping
+	SET is_active=false where layer_id in(select layer_id from layer_details ld where layer_name='SubArea' ) and action_name in('FiberAllocationTool','Downloadlog','DesignBOMBOQ','BulkItemAssociate','ConstructionBOMBOQ');
+	--------------------------------------
+	 UPDATE public.layer_columns_settings
+	SET is_active=false where layer_id in (select layer_id from layer_details ld where layer_name='Cable') AND UPPER(SETTING_TYPE)='HISTORY' AND  column_name in ('demo','add_length');
+	
+	------------------------------------
+	UPDATE public.layer_columns_settings
+	SET is_active=false WHERE layer_id in(select layer_id from layer_details ld where layer_name='POD' ) AND UPPER(SETTING_TYPE)='REPORT' AND column_name='(site_id - site_name)' AND display_name='(Site Id - Site Name)' ;
+	------------------------------------------
+	UPDATE public.layer_columns_settings
+	SET is_active=false
+	where layer_id in (select layer_id from layer_details ld where layer_name='SpliceClosure') AND UPPER(SETTING_TYPE)='HISTORY' and column_name in ('is_plice');
+	
+	--------------------------------
+	 UPDATE public.module_master
+	SET is_active=true
+	WHERE module_abbr ='ARP';
+	-------------------------------
+	drop view vw_att_details_trench_audit;
+	
+	-------------------------------------------
+
+CREATE OR REPLACE VIEW public.vw_att_details_trench_audit
+AS SELECT trench.audit_id,
+    trench.system_id,
+    trench.network_id,
+    trench.trench_name,
+    trench.a_location,
+    trench.b_location,
+    prov.province_name,
+    reg.region_name,
+    trench.pin_code,
+    trench.a_entity_type,
+    trench.b_entity_type,
+    round(trench.trench_length::numeric, 2) AS trench_length,
+    round(trench.trench_width::numeric, 2) AS trench_width,
+    round(trench.trench_height::numeric, 2) AS trench_height,
+    trench.mcgm_ward,
+    trench.strata_type,
+    fn_get_date(trench.manufacture_year, false) AS manufacture_year,
+    trench.surface_type,
+    trench.customer_count,
+    trench.utilization,
+    trench.trench_type,
+    trench.no_of_ducts,
+    trench.specification,
+    trench.item_code,
+    trench.category,
+    trench.subcategory1,
+    trench.subcategory2,
+    trench.parent_system_id,
+    trench.parent_network_id,
+    trench.parent_entity_type,
+    trench.acquire_from,
+    vm.name AS vendor_name,
+    tp.type AS trench_specification_type,
+    pm.project_code,
+    pm.project_name,
+    plningm.planning_code,
+    plningm.planning_name,
+    workorm.workorder_code,
+    workorm.workorder_name,
+    purposem.purpose_code,
+    purposem.purpose_name,
+    trench.remarks,
+    fn_get_date(trench.created_on) AS created_on,
+    um.user_name AS created_by,
+    fn_get_date(trench.modified_on) AS modified_on,
+    ums.user_name AS modified_by,
+    fn_get_network_status(trench.network_status) AS network_status,
+    fn_get_status(trench.status) AS status,
+    fn_get_action(trench.action) AS action,
+    trench.ownership_type,
+    vm2.id AS third_party_vendor_id,
+    vm2.name AS third_party_vendor_name,
+    trench.source_ref_type,
+    trench.source_ref_id,
+    trench.source_ref_description,
+    trench.status_remark,
+    trench.status_updated_by,
+    trench.status_updated_on,
+    trench.is_visible_on_map,
+    trench.primary_pod_system_id,
+    trench.secondary_pod_system_id,
+    trench.origin_from,
+    trench.origin_ref_id,
+    trench.origin_ref_code,
+    trench.origin_ref_description,
+    trench.request_ref_id,
+    trench.requested_by,
+    trench.request_approved_by,
+    trench.subarea_id,
+    trench.area_id,
+    trench.dsa_id,
+    trench.csa_id,
+    trench.bom_sub_category,
+    trench.trench_serving_type,
+    trench.gis_design_id,
+    trench.ne_id,
+    trench.prms_id,
+    trench.jc_id,
+    trench.mzone_id
+   FROM audit_att_details_trench trench
+     JOIN province_boundary prov ON trench.province_id = prov.id
+     JOIN region_boundary reg ON trench.region_id = reg.id
+     JOIN user_master um ON trench.created_by = um.user_id
+     LEFT JOIN user_master ums ON trench.modified_by = ums.user_id
+     JOIN vendor_master vm ON trench.vendor_id = vm.id
+     LEFT JOIN vendor_master vm2 ON trench.third_party_vendor_id = vm2.id
+     LEFT JOIN isp_type_master tp ON trench.type = tp.id
+     LEFT JOIN isp_brand_master bd ON trench.brand = bd.id
+     LEFT JOIN isp_base_model ml ON trench.model = ml.id
+     LEFT JOIN att_details_project_master pm ON trench.project_id = pm.system_id
+     LEFT JOIN att_details_planning_master plningm ON trench.planning_id = plningm.system_id
+     LEFT JOIN att_details_workorder_master workorm ON trench.workorder_id = workorm.system_id
+     LEFT JOIN att_details_purpose_master purposem ON trench.purpose_id = purposem.system_id;
