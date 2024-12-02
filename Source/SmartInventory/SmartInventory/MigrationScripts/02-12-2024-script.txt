@@ -1,0 +1,4 @@
+UPDATE public.dropdown_master
+	SET is_action_allowed=true
+	WHERE layer_id in (select layer_id from layer_details ld where layer_name ='ROW')
+	---------------

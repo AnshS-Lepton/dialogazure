@@ -19122,6 +19122,7 @@ var Main = function () {
 
     //start ycode
     this.getNewTrenchDetails = function () {
+        $('#btnSplittrench').prop('disabled', '');
         var splittrenchsystemid = $("input[name='Trench']:checked").attr('s_id');
         $('#split_trench_system_id').val(splittrenchsystemid);
         var splitEnityNetworkId = $('#split_entity_networkId').val();
@@ -19153,6 +19154,7 @@ var Main = function () {
                     $('#trench_two_name').val(secondtrenchNetworkId);
                     $('#trench_two_a_location').val(resp.result.trench_two_a_location);
                     $('#trench_two_b_location').val(resp.result.trench_two_b_location);
+                    $('#btnSplittrench').prop('disabled', '');
 
                 }
                 else {
