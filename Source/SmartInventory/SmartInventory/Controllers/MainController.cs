@@ -2647,7 +2647,8 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
                 var systemId = collection["system_Id"];
                 var entityType = collection["entity_type"];
                 var featureName = collection["feature_name"];
-                var attachmentType = "Document";
+               // var attachmentType = "Document";
+               var attachmentType = collection["attachment_Type"];
                 var uploadedtype = collection["document_type"];
                 HttpFileCollectionBase files = Request.Files;
 
