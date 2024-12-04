@@ -1,0 +1,25 @@
+UPDATE public.res_resources
+	SET value='Convert To AsBuilt'
+	WHERE culture='en' AND "key"='SI_GBL_GBL_GBL_FRM_006';
+UPDATE public.res_resources
+	SET value='Convert To AsBuilt'
+	WHERE culture='en' AND "key"='SI_OSP_GBL_NET_FRM_272';
+
+	UPDATE public.res_resources
+	SET value='Convert To Dormant'
+	WHERE culture='en' AND "key"='SI_ISP_GBL_GBL_GBL_040';
+UPDATE public.res_resources
+	SET value='Convert To Dormant'
+	WHERE culture='en' AND "key"='SI_OSP_GBL_NET_RPT_031';
+	
+	---------------------------------------------------
+	UPDATE public.res_resources
+	SET value='Convert To As Built'
+	WHERE culture='en' AND "key"='SI_OSP_GBL_NET_RPT_030';
+	
+	UPDATE public.res_resources
+	SET value='Bulk Dormant'
+	WHERE culture='en' AND "key"='SI_OSP_GBL_NET_RPT_034';
+UPDATE public.res_resources
+	SET value='Bulk As Built'
+	WHERE culture='en' AND "key"='SI_OSP_GBL_NET_RPT_035';	
