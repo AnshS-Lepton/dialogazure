@@ -19472,11 +19472,11 @@ var Main = function () {
                 debugger;
                 if (resp.status) {
                     alert(resp.message);
-                    $("#txtRequiredCore").val('');
+                    $('#txtRequiredCore').val('');
                     $('#txtODF1').val('');
                     $('#txtODF2').val('');
-                    $("#txtfiberlink").val('');
-                    $("#btnSubmit").prop("disabled", true);
+                    $('#txtfiberlink').val('');
+                    $('#btnSubmit').prop("disabled", true);
                 }
                 else {
                     alert(resp.message);
