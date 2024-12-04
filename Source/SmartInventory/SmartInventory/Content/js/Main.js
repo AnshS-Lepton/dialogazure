@@ -19473,7 +19473,7 @@ var Main = function () {
                     $("#txtRequiredCore").val('');
                     $('#txtODF1').val('');
                     $('#txtODF2').val('');
-                    ("#txtfiberlink").val('');
+                    $("#txtfiberlink").val('');
                     $("#btnSubmit").prop("disabled", true);
                 }
                 else {
