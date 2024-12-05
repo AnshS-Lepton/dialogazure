@@ -13208,13 +13208,19 @@ namespace SmartInventory.Controllers
                         {
                             dtReport.Columns["Cable Id"].SetOrdinal(0); // Move to the first column
                         }
-                        ExportData(dtReport, fileName);
                     }
                     catch (Exception)
                     {
                         throw;
                     }
                 }
+                else
+                {
+                    dtReport = new DataTable();
+                    dtReport.Columns.Add("No record found.", typeof(string));
+                    dtReport.Rows.Add("");
+                }
+                ExportData(dtReport, fileName);
             }
             catch (Exception)
             {

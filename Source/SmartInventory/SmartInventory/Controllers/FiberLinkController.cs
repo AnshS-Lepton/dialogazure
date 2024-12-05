@@ -92,6 +92,8 @@ namespace SmartInventory.Controllers
                 User objUser = new BLUser().GetUserDetailByID(user_id);
 
                 objFiberLink = new BLFiberLink().GetFiberLinkById(system_id);
+                objFiberLink.gis_length = Math.Round(objFiberLink.gis_length, 3);
+                objFiberLink.total_route_length = Math.Round(objFiberLink.total_route_length, 3);
                 objFiberLink.lstFiberLinkAttachments = new BLAttachment().getAttachmentDetails(system_id, "", "Document", "");
                 foreach (var item in objFiberLink.lstFiberLinkAttachments)
                 {
