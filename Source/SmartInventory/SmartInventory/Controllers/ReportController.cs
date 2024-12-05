@@ -1,53 +1,39 @@
 ﻿using BusinessLogics;
+using Ionic.Zip;
+using iTextSharp.text;
+using iTextSharp.text.html.simpleparser;
+using iTextSharp.text.pdf;
+using Lepton.GISConvertor;
+using Lepton.Utility;
 using Models;
-using NPOI.HSSF.UserModel;
+using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.IO;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
+using ProjNet.CoordinateSystems;
 using SmartInventory.Filters;
 using SmartInventory.Helper;
 using SmartInventory.Settings;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Dynamic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Web;
-using System.Web.Helpers;
-using System.Web.Mvc;
-using Utility;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
-using ZXing.QrCode;
-using System.Web.UI;
-using iTextSharp;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
-using iTextSharp.text.html.simpleparser;
-using System.Globalization;
-using System.Threading;
-using NetTopologySuite.Features;
-using NetTopologySuite.Geometries;
-using NetTopologySuite.IO;
-using ProjNet.CoordinateSystems;
-using Ionic.Zip;
 using System.Net;
-using System.Web.Script.Serialization;
-using Lepton.GISConvertor;
-using System.Configuration;
-using System.Xml;
-using Lepton.Utility;
-using Newtonsoft.Json;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using NPOI.Util;
-using Models.ISP;
-using static iTextSharp.text.pdf.AcroFields;
-using System.Net.NetworkInformation;
-
+using System.Web;
+using System.Web.Mvc;
+using System.Xml;
+using System.Xml.Linq;
+using Utility;
 
 
 namespace SmartInventory.Controllers
@@ -12825,5 +12811,166 @@ namespace SmartInventory.Controllers
             Session["EntityExportLog"] = ObjExportReportLogVM.objGridAttributes;
             return PartialView("_AuditLogEntityExportReportLog", ObjExportReportLogVM);
         }
+        #region Site Report
+        public ActionResult ExportSiteReport(ExportEntitiesReport objExportEntitiesReport, int page = 1, string sort = "", string sortdir = "")
+        {
+
+            objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportEntitiesReport.objReportFilters.SelectedNetworkStatus != null && objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.Count > 0 ? "'" + string.Join("','", objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.ToArray()) + "'" : "";
+            objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportEntitiesReport.objReportFilters.SelectedProvinceId != null && objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToList().Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToArray()) : "";
+            objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportEntitiesReport.objReportFilters.SelectedRegionId != null && objExportEntitiesReport.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedRegionId.ToArray()) : "";
+            objExportEntitiesReport.objReportFilters.pageSize = 10;
+            objExportEntitiesReport.objReportFilters.currentPage = page == 0 ? 1 : page;
+            objExportEntitiesReport.objReportFilters.sort = sort;
+            objExportEntitiesReport.objReportFilters.sortdir = sortdir;
+            objExportEntitiesReport.objReportFilters.userId = Convert.ToInt32(Session["user_id"]);
+            if (!string.IsNullOrEmpty(objExportEntitiesReport.objReportFilters.layerName))
+            {
+                List<Dictionary<string, string>> lstExportEntitiesDetail = new BLSite().GetSiteReportData(objExportEntitiesReport.objReportFilters);
+                string[] arrIgnoreColumns = { "TOTALRECORDS", "S_NO", "BARCODE" };
+                foreach (Dictionary<string, string> dic in lstExportEntitiesDetail)
+                {
+                    var obj = (IDictionary<string, object>)new ExpandoObject();
+
+                    foreach (var col in dic)
+                    {
+                        obj.Add(col.Key, col.Value);
+                    }
+                    objExportEntitiesReport.lstReportData.Add(obj);
+                }
+
+                objExportEntitiesReport.lstReportData = BLConvertMLanguage.MultilingualConvert(objExportEntitiesReport.lstReportData, arrIgnoreColumns);
+                objExportEntitiesReport.objReportFilters.totalRecord = lstExportEntitiesDetail.Count > 0 ? Convert.ToInt32(lstExportEntitiesDetail[0].FirstOrDefault().Value) : 0;
+            }
+            Session["ExportReportFilter"] = objExportEntitiesReport.objReportFilters;
+            BindReportDropdown(ref objExportEntitiesReport, EntityType.POD);
+            return PartialView("_ExportSiteReport", objExportEntitiesReport);
+        }
+
+        public void BindReportDropdown(ref ExportEntitiesReport objExportEntitiesReport, EntityType entityType)
+        {
+
+            //Bind Regions..
+            objExportEntitiesReport.lstRegion = new BLLayer().GetAllRegion(new RegionIn() { userId = Convert.ToInt32(Session["user_id"]) });
+            //Bind Provinces..
+            if (!string.IsNullOrWhiteSpace(objExportEntitiesReport.objReportFilters.SelectedRegionIds))
+            {
+                objExportEntitiesReport.lstProvince = new BLLayer().GetProvinceByRegionId(new ProvinceIn() { regionIds = objExportEntitiesReport.objReportFilters.SelectedRegionIds, userId = Convert.ToInt32(Session["user_id"]) });
+            }
+
+            objExportEntitiesReport.lstLayerColumns = new BLLayer().GetSearchByColumnName(entityType.ToString());
+            objExportEntitiesReport.lstLayerDurationBasedColumns = new BLLayer().GetDurationBasedColumnName(entityType.ToString());
+
+
+        }
+        public void DownloadSiteReport(string fileType, string reportType)
+        {
+            if (!string.IsNullOrWhiteSpace(fileType))
+            {
+                if (reportType.ToUpper() == "ALL" && fileType.ToUpper() == "EXCEL")
+                {
+                    DownloadSiteReportIntoExcel(reportType);
+                }
+                else if (reportType.ToUpper() == "ALL" && fileType.ToUpper() == "KML")
+                {
+                    DownloadSiteReportIntoKML();
+                }
+            }
+
+        }
+        public void DownloadSiteReportIntoExcel(string reportType)
+        {
+            if (Session["ExportReportFilter"] != null)
+            {
+                try
+                {
+                    ExportReportFilter objReportFilter = (ExportReportFilter)Session["ExportReportFilter"];
+                    objReportFilter.currentPage = 0;
+                    //Filter the Layer Detail
+                    var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objReportFilter.layerName.ToUpper()).FirstOrDefault();
+
+                    List<Dictionary<string, string>> lstExportEntitiesDetail = new BLSite().GetSiteReportData(objReportFilter);
+                    lstExportEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstExportEntitiesDetail);
+                    DataTable dtReport = new DataTable();
+                    dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);
+                    dtReport.TableName = layerDetail.layer_title;
+                    if (dtReport != null && dtReport.Rows.Count > 0)
+                    {
+                        if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+                        if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+                        if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+                        if (dtReport.Columns.Contains("system_id")) { dtReport.Columns.Remove("system_id"); }
+                    }
+
+                    if (dtReport.Rows.Count > 0)
+                    {
+                        ExportData(dtReport, layerDetail.layer_title.ToUpper() + "_Report_" + MiscHelper.getTimeStamp());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogHelper.WriteErrorLog("DownloadSiteReportIntoExcel()", "Report", ex);
+                    throw ex;
+                }
+            }
+        }
+        public void DownloadSiteReportIntoKML()
+        {
+            if (Session["ExportReportFilter"] != null)
+            {
+                StringBuilder sbLine = new StringBuilder();
+                StringBuilder sbPoint = new StringBuilder();
+                StringBuilder sbPolygon = new StringBuilder();
+                sbLine.Append("<Folder>");
+                sbPoint.Append("<Folder>");
+                sbPolygon.Append("<Folder>");
+                try
+                {
+                    BLLayer objBLLayer = new BLLayer();
+                    List<ExportReportKML> lstExportReportKML = new List<ExportReportKML>();
+                    ExportReportFilter objReportFilter = (ExportReportFilter)Session["ExportReportFilter"];
+                    lstExportReportKML = new BLSite().GetExportReportDataKML(objReportFilter);
+
+                    foreach (var objEntity in lstExportReportKML)
+                    {
+                        if (objEntity.geom_type.ToUpper() == "POINT")
+                        {
+                            sbPoint.Append("<Placemark><name>" + new XText(objEntity.entity_title) + "</name>");
+                            sbPoint.Append("<description>" + objEntity.entity_name + "</description>");
+                            sbPoint.Append("<styleUrl>#downArrowIcon</styleUrl><Point><coordinates>");
+                            if (!string.IsNullOrEmpty(objEntity.geom))
+                            {
+                                sbPoint.Append(objEntity.geom);
+                            }
+                            sbPoint.Append("</coordinates></Point></Placemark>");
+                        }
+                    }
+
+                    sbLine.Append("</Folder>");
+                    sbPoint.Append("</Folder>");
+                    sbPolygon.Append("</Folder>");
+
+                    string finalKMLString = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" +
+                                "<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\">" +
+                               "<Document>  <!-- Begin Style Definitions -->" +
+                                "<Style id =\"feasibility_id\"><LineStyle><color>" + "#FF0000FF" + "</color><width>4</width></LineStyle></Style>" +
+                                "<Style id=\"downArrowIcon\"><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon28.png</href></Icon></IconStyle></Style>" +
+                                "<Style id=\"downArrowIcon\"><IconStyle><hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/></IconStyle></Style>" +
+                                sbPoint.ToString() + sbLine.ToString() + "</Document></kml>";
+
+                    string attachment = "attachment; filename=export_" + lstExportReportKML[0].entity_title + ".kml";
+                    Response.ClearContent();
+                    Response.ContentType = "application/xml";
+                    Response.AddHeader("content-disposition", attachment);
+                    Response.Write(finalKMLString);
+                    Response.End();
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogHelper.WriteErrorLog("DownloadSiteReportIntoKML()", "Report", ex);
+                    throw ex;
+                }
+            }
+        }
+        #endregion
     }
 }

@@ -285,7 +285,12 @@ namespace SmartInventory
                   "~/Content/js/DynamicForms/DeletePopupScript.js"
                ));
             #endregion
-            
+
+            #region SiteEntity JS
+            bundles.Add(new ScriptBundle("~/bundles/SiteScripts").Include(
+                        "~/Content/js/Site/site_entity.js"
+                        ));
+            #endregion
             BundleTable.EnableOptimizations = true;
         }
     }

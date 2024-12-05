@@ -1,15 +1,13 @@
-﻿using System;
-using System.Linq;
+﻿using DataAccess.DBHelpers;
 using Models;
-using DataAccess.DBHelpers;
-using Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DataAccess
 {
     public class DASite : Repository<Site>
     {
-
         public Site Save(Site site, int userId)
         {
             try
@@ -135,7 +133,6 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
         public List<Site> GelAll(DateTime lastSuccessDate)
         {
             List<Site> lst = new List<Site>();
@@ -145,6 +142,58 @@ namespace DataAccess
             }
             catch { throw; }
             return lst;
+        }
+        public List<Dictionary<string, string>> GetSiteReportData(ExportReportFilter objReportFilter)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_sr_get_export_report_data",
+                    new
+                    {
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_layer_name = objReportFilter.layerName,
+                        P_searchby = objReportFilter.SearchbyColumnName,
+                        p_searchbytext = objReportFilter.SearchbyText,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_pageno = objReportFilter.currentPage,
+                        p_pagerecord = objReportFilter.pageSize,
+                        p_sortcolname = objReportFilter.sort,
+                        p_sorttype = objReportFilter.sortdir,
+                        p_geom = objReportFilter.geom,
+                        p_duration_based_column = objReportFilter.DurationBasedColumnName,
+                        p_radius = objReportFilter.radius,
+                        p_userid = objReportFilter.userId
+                    }, true);
+                return lst;
+            }
+            catch { throw; }
+        }
+        public List<ExportReportKML> GetExportReportDataKML(ExportReportFilter objReportFilter)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<ExportReportKML>("fn_site_get_export_report_data_kml",
+                    new
+                    {
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_layer_name = objReportFilter.layerName,
+                        P_searchby = objReportFilter.SearchbyColumnName,
+                        p_searchbytext = objReportFilter.SearchbyText,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_duration_based_column = objReportFilter.DurationBasedColumnName,
+                        p_radius = objReportFilter.radius,
+                        p_userid = objReportFilter.userId
+                    }, true);
+                return lst;
+            }
+            catch { throw; }
         }
     }
 }

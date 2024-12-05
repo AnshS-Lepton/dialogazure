@@ -1,16 +1,15 @@
-﻿using iTextSharp.text.pdf.qrcode;
-using Models;
+﻿using Models;
 using Models.Admin;
+using Models.Dashboard;
 using Models.Feasibility;
 using Models.ISP;
 using Models.TempUpload;
+using Models.WFM;
+using System;
+using System.Configuration;
 //using Models.ISP;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using Models.WFM;
-using System.Configuration;
-using System;
-using Models.Dashboard;
 using Utility;
 
 namespace DataAccess.DBContext
@@ -656,7 +655,7 @@ namespace DataAccess.DBContext
 
             modelBuilder.Entity<TrenchExecution>().ToTable("att_entity_execution_method", dbschema);
             modelBuilder.Entity<Site>().ToTable("att_details_site", dbschema);
-            
+
 
         }
 

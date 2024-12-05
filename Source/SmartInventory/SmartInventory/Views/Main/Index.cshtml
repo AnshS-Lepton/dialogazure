@@ -242,14 +242,14 @@
                     <li class="techSep"></li>
                 }
                 @*@if (Model.lstUserModule.Contains("CPL"))
-                {*@
-                    <li>
-                        <a href="#" class="iconBaricomoon maintoolbar" id="dvCorePlanLogic" onclick="si.corePlanLogic('corePlanLogic', this)" title="Core Planner">
-                            <span class="icon-patchpanel"></span>
-                        </a>
-                    </li>
-                    <li class="techSep"></li>
-                    @*//}*@
+                    {*@
+                <li>
+                    <a href="#" class="iconBaricomoon maintoolbar" id="dvCorePlanLogic" onclick="si.corePlanLogic('corePlanLogic', this)" title="Core Planner">
+                        <span class="icon-patchpanel"></span>
+                    </a>
+                </li>
+                <li class="techSep"></li>
+                @*//}*@
 
                 @if (Model.lstUserModule.Contains("P-XML"))
                 {
@@ -326,15 +326,15 @@
                     int count = 0;
 
                     @*
-                        <div class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="Miscellaneous Tools">
-                <span class="icon-plus-Icon"></span>
-            </div>*@
+                                    <div class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="Miscellaneous Tools">
+                            <span class="icon-plus-Icon"></span>
+                        </div>*@
                     <li>
                         <a href="#" class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_165">
                             <span class="icon-miscellaneousTools"></span>
                         </a>
                         @*@if (Model.lstUserModule.Contains("MSC_Tools"))
-                {*@
+                            {*@
                         @if (Model.lstUserModule.Contains("MRG-CABLE") == true || Model.lstUserModule.Contains("MAP-LAYOUT") == true || Model.lstUserModule.Contains("EAD") == true)
                         {
                             count++;
@@ -516,16 +516,16 @@
 
 
                                 @*
+                                                <li>
+                                        <a href="#" class="iconBaricomoon Plantool" id="Plantool" onclick="si.ViewPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_284">
+                                            <span class="icon-Navigator"></span>
+                                        </a>
+                                    </li>
                                     <li>
-                            <a href="#" class="iconBaricomoon Plantool" id="Plantool" onclick="si.ViewPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_284">
-                                <span class="icon-Navigator"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="iconBaricomoon" id="BulkPlantool" onclick="si.showBulkPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_170">
-                                <span class="icon-draw_survey_area"></span>
-                            </a>
-                        </li>*@
+                                        <a href="#" class="iconBaricomoon" id="BulkPlantool" onclick="si.showBulkPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_170">
+                                            <span class="icon-draw_survey_area"></span>
+                                        </a>
+                                    </li>*@
                                 @if (Model.lstUserModule.Contains("WFM-AJO") || Model.lstUserModule.Contains("WFM-TTAJO"))
                                 {
                                     <li class="techSep"></li>
@@ -706,25 +706,25 @@
                 @if (Model.lstUserModule.Contains("WFM"))
                 {
                     @*<li>
-                <a href="#" class="fa fa-clock-o" onclick="si.SaveRoster()" title="SaveRoster">
-                    <span class="fa fa-clock-o"></span>
-                </a>
-            </li>
-            <li class="techSep"></li>*@
+                            <a href="#" class="fa fa-clock-o" onclick="si.SaveRoster()" title="SaveRoster">
+                                <span class="fa fa-clock-o"></span>
+                            </a>
+                        </li>
+                        <li class="techSep"></li>*@
 
                     @*<li id="liUserTimeSheet">
-                <a id="lnkUserTimeSheet" title="Roster Management"
-                   data-title="Roster Management" data-href="FiberLink/ViewUserTimeSheetDetails">
-                <i class="fa fa-clock-o" aria-hidden="true"></i></a>
-            </li>*@
+                            <a id="lnkUserTimeSheet" title="Roster Management"
+                               data-title="Roster Management" data-href="FiberLink/ViewUserTimeSheetDetails">
+                            <i class="fa fa-clock-o" aria-hidden="true"></i></a>
+                        </li>*@
 
 
                     <!--<li>
-        <a href="#" class="fa fa-list" onclick="si.ViewRoster()" title="ViewRoster">-->
+                    <a href="#" class="fa fa-list" onclick="si.ViewRoster()" title="ViewRoster">-->
                     @*<span class="fa fa-clock-o"></span>*@
                     <!--</a>
-        </li>
-        <li class="techSep"></li>-->
+                    </li>
+                    <li class="techSep"></li>-->
 
 
 
@@ -911,15 +911,15 @@
 
 
                 @*@if (Model.lstUserModule.Contains("SPI") && ApplicationSettings.isSmartPlannerEnabled)
-        {
+                    {
 
-            <li>
-                <a href="#" class="iconBaricomoon" onclick="si.showPlannerIntegration()" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_039">
-                    <span class="icon-Shift"></span>
-                </a>
-            </li>
-            <li class="techSep"></li>
-        }*@
+                        <li>
+                            <a href="#" class="iconBaricomoon" onclick="si.showPlannerIntegration()" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_039">
+                                <span class="icon-Shift"></span>
+                            </a>
+                        </li>
+                        <li class="techSep"></li>
+                    }*@
 
                 @if (Model.lstUserModule.Contains("TKM") && ApplicationSettings.isTicketManagerEnabled)
                 {
@@ -931,7 +931,26 @@
                     </li>
                     <li class="techSep"></li>
                 }
-
+                @if (Model.lstUserModule.Contains("SR"))
+                {
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar clsROWReport" onclick="si.SiteReport.showReportMenu('ManualReport',this);" id="dvSiteReport" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_354">
+                            <span class="icon-export_report_ROW"></span>
+                        </a>
+                        <ul>
+                            @if (Model.lstUserModule.Contains("SRD"))
+                            {
+                                <li>
+                                    <a href="#" class="iconBaricomoon" title="@Resources.Resources.SI_OSP_GBL_NET_RPT_354" onclick="si.SiteReport.SiteReport(null,null,null,this);">
+                                        <span class="icon-export_report"></span>
+                                    </a>
+                                </li>
+                            }
+                            <li class="techSep"></li>
+                        </ul>
+                    </li>
+                    <li class="techSep"></li>
+                }
 
                 @if (Model.lstUserModule.Contains("ROW"))
                 {
@@ -1006,15 +1025,15 @@
                                 }
 
                                 @*<li>
-                            <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'create');">
-                                <span class="icon-BOM-BOQ-Report New"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'review');">
-                                <span class="icon-BOM-BOQ-Report New"></span>
-                            </a>
-                        </li>*@
+                                        <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'create');">
+                                            <span class="icon-BOM-BOQ-Report New"></span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'review');">
+                                            <span class="icon-BOM-BOQ-Report New"></span>
+                                        </a>
+                                    </li>*@
                                 <li class="techSep"></li>
                                 @if (Model.lstUserModule.Contains("BMQ-POLY"))
                                 {
@@ -1403,10 +1422,10 @@
                                 }
 
                                 @*<li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Rectangle')">
-                                <span class="icon-DrawRectangle"></span>
-                            </a>
-                        </li>*@
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Rectangle')">
+                                            <span class="icon-DrawRectangle"></span>
+                                        </a>
+                                    </li>*@
 
                                 @if (Model.lstUserModule.Contains("EXRPT-RECT"))
                                 {
@@ -1609,12 +1628,12 @@
                 }
 
                 @*<li>
-            <a href="#" class="iconBaricomoon" id="dvSrch" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046">
-                <span class="icon-search"></span>
-            </a>
+                        <a href="#" class="iconBaricomoon" id="dvSrch" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046">
+                            <span class="icon-search"></span>
+                        </a>
 
 
-        </li>*@
+                    </li>*@
                 @if (Model.lstUserModule.Contains("WFM"))
                 {
                     <li id="liViewNotification">
