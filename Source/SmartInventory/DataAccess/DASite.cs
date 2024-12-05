@@ -1,15 +1,13 @@
-﻿using System;
-using System.Linq;
+﻿using DataAccess.DBHelpers;
 using Models;
-using DataAccess.DBHelpers;
-using Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DataAccess
 {
     public class DASite : Repository<Site>
     {
-
         public Site Save(Site site, int userId)
         {
             try
@@ -29,15 +27,15 @@ namespace DataAccess
                     objSite.site_name = site.site_name;
                     objSite.on_air_date = site.on_air_date;
                     objSite.removed_date = site.removed_date;
-                    objSite.tx_type  = site.tx_type;
+                    objSite.tx_type = site.tx_type;
                     objSite.tx_technology = site.tx_technology;
                     objSite.tx_segment = site.tx_segment;
                     objSite.tx_ring = site.tx_ring;
                     objSite.region = site.region;
                     objSite.province = site.province;
                     objSite.district = site.district;
-                    objSite.region_address   = site.region_address;
-                    objSite.depot    = site.depot;
+                    objSite.region_address = site.region_address;
+                    objSite.depot = site.depot;
                     objSite.ds_division = site.ds_division;
                     objSite.local_authority = site.local_authority;
                     objSite.latitude = site.latitude;
@@ -48,7 +46,7 @@ namespace DataAccess
 
                     objSite.access_24_7 = site.access_24_7;
                     objSite.tower_type = site.tower_type;
-                    objSite.tower_height = site.tower_height ;
+                    objSite.tower_height = site.tower_height;
                     objSite.cabinet_type = site.cabinet_type;
                     objSite.solution_type = site.solution_type;
                     objSite.site_rank = site.site_rank;
@@ -85,11 +83,11 @@ namespace DataAccess
                     objSite.destination_site_id = site.destination_site_id;
                     objSite.destination_port_type = site.destination_port_type;
                     objSite.destination_no_of_cores = site.destination_no_of_cores;
-                    objSite.project_id_dialog= site.project_id_dialog;
+                    objSite.project_id_dialog = site.project_id_dialog;
 
                     //objSite.served_by_ring=site.served_by_ring;
                     var Resp = repo.Update(objSite);
-                   // DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(Resp.system_id, Models.EntityType.Coupler.ToString(), Resp.province_id, 1);
+                    // DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(Resp.system_id, Models.EntityType.Coupler.ToString(), Resp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Coupler.ToString(), CouplerResp.province_id);
                     return Resp;
 
@@ -103,21 +101,20 @@ namespace DataAccess
                     var resultItem = repo.Insert(site);
                     // Save geometry
                     InputGeom geom = new InputGeom();
-                    geom.systemId =(int) resultItem.system_id;
+                    geom.systemId = (int)resultItem.system_id;
                     geom.longLat = resultItem.longitude + " " + resultItem.latitude;
                     geom.userId = userId;
                     geom.entityType = EntityType.Site.ToString();
                     geom.commonName = resultItem.site_name;
                     geom.geomType = GeometryType.Point.ToString();
-                   // geom.project_id = resultItem.project_id;
+                    // geom.project_id = resultItem.project_id;
                     string chkGeomInsert = DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
-                   // DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(resultItem.system_id, Models.EntityType.Coupler.ToString(), resultItem.province_id, 0);
+                    // DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(resultItem.system_id, Models.EntityType.Coupler.ToString(), resultItem.province_id, 0);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Coupler.ToString(), resultItem.province_id);
                     return resultItem;
                 }
             }
-            catch (Exception ex)
-            { throw; }
+            catch (Exception ex) { throw ex; }
         }
         public int DeleteById(int systemId)
         {
@@ -133,18 +130,69 @@ namespace DataAccess
                     return 0;
                 }
             }
-            catch { throw; }
+            catch (Exception ex) { throw ex; }
         }
-
         public List<Site> GelAll(DateTime lastSuccessDate)
         {
             List<Site> lst = new List<Site>();
             try
             {
-                lst = repo.GetAll(a=>a.created_on>= lastSuccessDate).ToList();
+                lst = repo.GetAll(a => a.created_on >= lastSuccessDate).ToList();
             }
-            catch { throw; }
+            catch (Exception ex) { throw ex; }
             return lst;
+        }
+        public List<Dictionary<string, string>> GetSiteReportData(ExportReportFilter objReportFilter)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_sr_get_export_report_data",
+                    new
+                    {
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_layer_name = objReportFilter.layerName,
+                        P_searchby = objReportFilter.SearchbyColumnName,
+                        p_searchbytext = objReportFilter.SearchbyText,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_pageno = objReportFilter.currentPage,
+                        p_pagerecord = objReportFilter.pageSize,
+                        p_sortcolname = objReportFilter.sort,
+                        p_sorttype = objReportFilter.sortdir,
+                        p_geom = objReportFilter.geom,
+                        p_duration_based_column = objReportFilter.DurationBasedColumnName,
+                        p_radius = objReportFilter.radius,
+                        p_userid = objReportFilter.userId
+                    }, true);
+                return lst;
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public List<ExportReportKML> GetExportReportDataKML(ExportReportFilter objReportFilter)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<ExportReportKML>("fn_site_get_export_report_data_kml",
+                    new
+                    {
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_layer_name = objReportFilter.layerName,
+                        P_searchby = objReportFilter.SearchbyColumnName,
+                        p_searchbytext = objReportFilter.SearchbyText,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_duration_based_column = objReportFilter.DurationBasedColumnName,
+                        p_radius = objReportFilter.radius,
+                        p_userid = objReportFilter.userId
+                    }, true);
+                return lst;
+            }
+            catch (Exception ex) { throw ex; }
         }
     }
 }

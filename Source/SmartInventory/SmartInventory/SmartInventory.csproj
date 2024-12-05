@@ -1616,6 +1616,7 @@
     <Content Include="Content\js\regionprovincedatauploader.js" />
     <Content Include="Content\js\room-view\EquipmentEditor.js" />
     <Content Include="Content\js\room-view\rack-manager.js" />
+    <Content Include="Content\js\Site\site_entity.js" />
     <Content Include="Content\js\SplicePlugins\Js-Plumb-1.4.1.min.js" />
     <Content Include="Content\js\SpliceTray.js" />
     <Content Include="Content\js\UserTimeSheet.js" />
@@ -2403,6 +2404,7 @@
     <Content Include="Views\Library\_AddSite.cshtml" />
     <Content Include="Views\Library\_SiteDtls.cshtml" />
     <Content Include="Views\Library\_GetcorePlanLogic.cshtml" />
+    <Content Include="Views\Report\_ExportSiteReport.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

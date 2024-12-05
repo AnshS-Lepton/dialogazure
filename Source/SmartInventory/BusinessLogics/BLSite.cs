@@ -2,9 +2,6 @@
 using Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogics
 {
@@ -30,6 +27,13 @@ namespace BusinessLogics
         {
             return new DASiteSync().validateLinkIds(linkids);
         }
-
+        public List<Dictionary<string, string>> GetSiteReportData(ExportReportFilter objReportFilter)
+        {
+            return new DASite().GetSiteReportData(objReportFilter);
+        }
+        public List<ExportReportKML> GetExportReportDataKML(ExportReportFilter objReportFilter)
+        {
+            return new DASite().GetExportReportDataKML(objReportFilter);
+        }
     }
 }

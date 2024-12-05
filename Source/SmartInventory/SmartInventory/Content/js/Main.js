@@ -203,7 +203,7 @@ var Main = function () {
     this.trenchLabelData = [];
 
     this.areaFilteredGeoJson = [];
-    this.subareaFilteredGeoJson = []; 
+    this.subareaFilteredGeoJson = [];
     this.dsaFilteredGeoJson = [];
     this.csaFilteredGeoJson = [];
     this.poleFilteredGeoJson = [];
@@ -387,8 +387,8 @@ var Main = function () {
         "txtNEBuffer": "#txtNEBuffer",
         "frtUserId": "#frtUserId",
     }
-    this.layestList = ['Network_Ticket', 'Area', 'SubArea', 'DSA', 'CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD', 'Duct', 'Customer', 'ROW', 'Handhole', 'Structure', 'SurveyArea', 'Cabinet', 'HTB', 'Equipment', 'Rack', 'PatchPanel', 'Tower', 'Slack', 'Sector', 'Loop', 'Antenna', 'Fault','Microduct','CDB'];
-    this.layerListAbbr = ['NT', 'ARA', 'SBA', 'DSA', 'CSA', 'POL', 'MH', 'WMT', 'FDB', 'BDB', 'SPL', 'ADB', 'SC', 'CBL', 'TRH', 'FMS', 'ONT', 'TRE', 'BLDP,BLD,BLDC', 'POD', 'DCT', 'CUS', 'ROW,ROWL,PIT', 'HH', 'STRC', 'SVA', 'CBT', 'HTB', 'EQPMNT', 'RCK', 'PATCHP', 'TWR', 'SLK', 'SCT', 'LOP', 'ANT', 'FAU','CDB','Microduct'];
+    this.layestList = ['Network_Ticket', 'Area', 'SubArea', 'DSA', 'CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD', 'Duct', 'Customer', 'ROW', 'Handhole', 'Structure', 'SurveyArea', 'Cabinet', 'HTB', 'Equipment', 'Rack', 'PatchPanel', 'Tower', 'Slack', 'Sector', 'Loop', 'Antenna', 'Fault', 'Microduct', 'CDB'];
+    this.layerListAbbr = ['NT', 'ARA', 'SBA', 'DSA', 'CSA', 'POL', 'MH', 'WMT', 'FDB', 'BDB', 'SPL', 'ADB', 'SC', 'CBL', 'TRH', 'FMS', 'ONT', 'TRE', 'BLDP,BLD,BLDC', 'POD', 'DCT', 'CUS', 'ROW,ROWL,PIT', 'HH', 'STRC', 'SVA', 'CBT', 'HTB', 'EQPMNT', 'RCK', 'PATCHP', 'TWR', 'SLK', 'SCT', 'LOP', 'ANT', 'FAU', 'CDB', 'Microduct'];
     this.layerListArranged = [];
     //'Area', 'SubArea', 'DSA','CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD'
     this.vectorLayerConfiguration =
@@ -765,7 +765,7 @@ var Main = function () {
         return {
             url: _iconPath + _entityType + '/' + _networkStage + entityCategory + '/' + _iconName,
             width: 20,
-            height: _networkStage == "A" ? 20: 27,
+            height: _networkStage == "A" ? 20 : 27,
             id: _entityType + '_' + _networkStage + '_' + entityCategory
         };
     }
@@ -849,13 +849,13 @@ var Main = function () {
                 return item.layer_name == 'Cable';
             });
             var CblclrObj = styleObj[0].LayerStyle.filter(function (item) {
-              
-                    if (item.expressions && eval(item.expressions)) {
-                        return item.entity_category == feature.properties[item.style_column_name];
-                    }
-                    else if (item.entity_category == feature.properties[item.style_column_name]) {
-                        return item.entity_category == feature.properties[item.style_column_name];
-                    }
+
+                if (item.expressions && eval(item.expressions)) {
+                    return item.entity_category == feature.properties[item.style_column_name];
+                }
+                else if (item.entity_category == feature.properties[item.style_column_name]) {
+                    return item.entity_category == feature.properties[item.style_column_name];
+                }
             });
             if (CblclrObj && CblclrObj.length > 0) {
                 clr = app.HexToRGBArray(CblclrObj[0].color_code_hex);
@@ -2666,7 +2666,7 @@ var Main = function () {
         return new GeoJsonLayer({
             id: 'cable',
             useDevicePixels: app.useDevicePixelsInVectorLayer,
-                data: app.filterDataWithProvinceGeom(app.cableFilteredGeoJson, "FeatureCollection","CBL"), //app.cableFilteredGeoJson,
+            data: app.filterDataWithProvinceGeom(app.cableFilteredGeoJson, "FeatureCollection", "CBL"), //app.cableFilteredGeoJson,
             lineWidthScale: 1,
             lineWidthUnits: 'pixels',
             lineWidthMinPixels: 1,
@@ -3680,7 +3680,7 @@ var Main = function () {
             },
         })
     };
-    this.getAntennaLayer = function () {        
+    this.getAntennaLayer = function () {
         var styleObj = app.LayerStyles.filter(function (item) {
             return item.layer_name == "Antenna";
         });
@@ -3850,7 +3850,7 @@ var Main = function () {
         }
     }
     // }
-    this.filterAreaGeoJsonData = function (eType) {       
+    this.filterAreaGeoJsonData = function (eType) {
         let sDesignId = '';
         let sSource_ref_id = '';
         let sSource_ref_type = '';
@@ -4105,7 +4105,7 @@ var Main = function () {
             sThirdPartyVendor = app.thirdpartyvendor;
         }
         if (app.selectedRoutevalue != '' && app.selectedRoutevalue != undefined) {
-            sRouteId =  '\'' + app.selectedRoutevalue.join('\',\'') + '\'';      
+            sRouteId = '\'' + app.selectedRoutevalue.join('\',\'') + '\'';
         }
         app.splitterFilteredGeoJson = {
             type: "FeatureCollection",
@@ -4129,7 +4129,7 @@ var Main = function () {
         let sOwnership = '';
         let sThirdPartyVendor = '';
         let sRouteId = '';
-        let sDesignId = '';    
+        let sDesignId = '';
         let sSource_ref_id = '';
         let sSource_ref_type = '';
         let sIs_new_entity = '';
@@ -4159,7 +4159,7 @@ var Main = function () {
         }
         if (app.fStatus != "" && app.fStatus != undefined) {
             sStatus = app.fStatus;
-        }       
+        }
         app.poleFilteredGeoJson = {
             type: "FeatureCollection",
             features: app.poleGeoJson.features.reduce(function (result, feature) {
@@ -4279,7 +4279,7 @@ var Main = function () {
             }, [])
         };
     }
-    this.filterFMSGeoJsonData = function (eType) {        
+    this.filterFMSGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
         let sRouteId = '';
@@ -4585,7 +4585,7 @@ var Main = function () {
             }, [])
         };
     }
-    this.filterSpliceClosureGeoJsonData = function (eType) {        
+    this.filterSpliceClosureGeoJsonData = function (eType) {
         let sOwnership = '';
         let sThirdPartyVendor = '';
         let sRouteId = '';
@@ -4793,7 +4793,7 @@ var Main = function () {
         };
     }
 
-    this.filterStructureGeoJsonData = function (eType) {      
+    this.filterStructureGeoJsonData = function (eType) {
         let sSource_ref_id = '';
         let sSource_ref_type = '';
         let sIs_new_entity = '';
@@ -4824,7 +4824,7 @@ var Main = function () {
         if (app.thirdpartyvendor != '' && app.thirdpartyvendor != undefined) {
             sThirdPartyVendor = app.thirdpartyvendor;
         }
-        app.structureFilteredGeoJson = {            
+        app.structureFilteredGeoJson = {
             type: "FeatureCollection",
             features: app.structureGeoJson.features.reduce(function (result, feature) {
                 if ((sSource_ref_id == '' || feature.properties.source_ref_id == sSource_ref_id) &&
@@ -5262,7 +5262,7 @@ var Main = function () {
             }, [])
         };
     }
-    this.filterSlackGeoJsonData = function (eType) {       
+    this.filterSlackGeoJsonData = function (eType) {
         let sRouteId = '';
         let sDesignId = '';
         let sSource_ref_id = '';
@@ -5603,7 +5603,7 @@ var Main = function () {
         //app.LoadLayerIconMapping();
         $(app.DE.lyrRefresh).addClass('eaSpin');
         let requestResult = new Promise(function (resolve, reject) {
-            ajaxReq('VectorLayer/GetVectorGeojson', { vectorPrvinceIds: vectorPrvinceSelected, entityType: _entityName}, true, function (resp) {
+            ajaxReq('VectorLayer/GetVectorGeojson', { vectorPrvinceIds: vectorPrvinceSelected, entityType: _entityName }, true, function (resp) {
                 if (resp.status == 'OK') {
                     //console.log(resp);
                     let layersData = resp.results.LayersData;
@@ -6040,7 +6040,7 @@ var Main = function () {
                 }
                 else {
                     app.updateLayerLoadingStatus(_entityName);
-                    console.log('error_'+_entityName);
+                    console.log('error_' + _entityName);
                     reject("There is some error");
                 }
 
@@ -6121,7 +6121,7 @@ var Main = function () {
             };
         }
     }
-    this.getRandomFeatures = function(geojson, percentage) {
+    this.getRandomFeatures = function (geojson, percentage) {
         const features = [...geojson.features];
         const numberOfFeatures = Math.ceil((percentage / 100) * features.length);
         // Fisher-Yates shuffle
@@ -9225,12 +9225,12 @@ var Main = function () {
             app.filterPODvalue = "1 = 1";
         }
     }
-    this.SetRouteFilters = function () {       
+    this.SetRouteFilters = function () {
         app.filterRoutevalue = "";
         app.selectedRoutevalue = $("#txtrouteInfo").val();
         if (app.selectedRoutevalue != "" && app.selectedRoutevalue != undefined) {
-            app.filterRoutevalue += " ([route_cable_id] in (" + '\'' + app.selectedRoutevalue.join('\',\'') + '\'' + "))";            
-        } 
+            app.filterRoutevalue += " ([route_cable_id] in (" + '\'' + app.selectedRoutevalue.join('\',\'') + '\'' + "))";
+        }
     }
     this.SetfilterNetworkTicketFilters = function (_isNetworkTicketRequest, _ticketId) {
         app.filterNetworkTicketValue = "1 = 1";
@@ -9258,7 +9258,7 @@ var Main = function () {
             app.filterNetworkTicketValue = " [status]='A'";
         }
 
-    } 
+    }
     this.SetDesignIdFilters = function () {
         app.filterdesignId = "";
         app.selected_design_id = $("#txtgisdesignid").val();
@@ -9301,7 +9301,7 @@ var Main = function () {
     }
     this.LoadLayersOnMap = function (_isClearMapObject) {
         if (_isClearMapObject == undefined) _isClearMapObject = true;
-        app.isNetworkTicketReq = false;     
+        app.isNetworkTicketReq = false;
         app.ticketStatus = '';
         app.layerDetails = [];
         LayerFilters = [];
@@ -9320,7 +9320,7 @@ var Main = function () {
         app.SetSplitterFilter();
         app.SetPODFilters();
         app.SetDesignIdFilters();
-        app.SetfilterNetworkTicketFilters(false, 0);       
+        app.SetfilterNetworkTicketFilters(false, 0);
         app.SetRouteFilters();
         var layerValidation = (app.ActiveRegionlayers.length == 0 && app.ActiveProvincelayers.length == 0);
         //if (this.role_Id == 1) {
@@ -11092,7 +11092,7 @@ var Main = function () {
     }
 
     this.OpenWorkspace = async function (wrkspcID) {
-        if (app.OldWorkSpaceId==0)
+        if (app.OldWorkSpaceId == 0)
             OpenNewWorkspace(wrkspcID);
         else {
             // confirm("Are you sure you want to open this workspace?", function () {
@@ -11142,7 +11142,7 @@ var Main = function () {
         var layerData = app.GetWSLayers();
         var landbaseLayerData = app.GetWSLandbaseLayers();
         if (app.OldWorkSpaceId != wrkspcID) {
-            confirm('Workspace <strong>' + _newWorkSpacename + '</strong> will be overridden by <strong>' + _oldWorkSpacename +'</strong>, do you want to continue?', function () {
+            confirm('Workspace <strong>' + _newWorkSpacename + '</strong> will be overridden by <strong>' + _oldWorkSpacename + '</strong>, do you want to continue?', function () {
                 app.updateWorkSpace(wrkspcID, wrkspcName, _Zoom, _lat, _lng, hasLabel, layerData, landbaseLayerData, regionProvinceData);
             });
         }
@@ -13335,7 +13335,7 @@ var Main = function () {
                         }
                         //$('#tblEntityInfo').append(' <tr class="' + ((i % 2 == 0) ? ('info_table_tr') : ('info_table_tr2')) + '"><td width="105">' + key + '</td><td>:</td><td>' + value + '</td></tr>');
                         $('#tblEntityInfo').append(' <tr class="' + ((i % 2 == 0) ? ('info_table_tr') : ('info_table_tr2')) + (value.is_updated == true ? ' UpdatedRecord' : '') + '" ><td width="105">' + value.display_column_name + '</td><td>' + (value.updated_value == null ? '' : value.updated_value != null && value.updated_value != undefined
-                            && value.display_column_name != 'Item Code' && value.display_column_name != 'Area Name' && value.display_column_name != 'Created By' && value.display_column_name != 'Modified By' && value.display_column_name != 'Created By ID'  && $.isNumeric(value.updated_value) ? getFormattedNumber(value.updated_value) : value.updated_value) + '</td></tr>');
+                            && value.display_column_name != 'Item Code' && value.display_column_name != 'Area Name' && value.display_column_name != 'Created By' && value.display_column_name != 'Modified By' && value.display_column_name != 'Created By ID' && $.isNumeric(value.updated_value) ? getFormattedNumber(value.updated_value) : value.updated_value) + '</td></tr>');
                         i++;
                     });
 
@@ -14689,7 +14689,7 @@ var Main = function () {
                         confirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_191, function () {
 
                             ajaxReq('Library/AutoCodification', { pEntityType: entityType, pSystemId: systemId, pGeomType: geomType }, true, function (resp) {
-                                alert(resp.message);                               
+                                alert(resp.message);
 
                             }, false, true);
                         });
@@ -15382,7 +15382,7 @@ var Main = function () {
                     $(obj).prop("checked", true);
                 });
             }
-            
+
 
         } else { $('#checkAllAssociation').prop("checked", false); }
     }
@@ -18718,8 +18718,7 @@ var Main = function () {
 
 
 
-    this.ClearAdvanceFilter = function ()
-    {
+    this.ClearAdvanceFilter = function () {
         $('#ddl_ProjectSpeciCode').val('0');
         $('#ddl_PlanningSpeciCode').val('0');
         $('#ddl_WorkorderSpeciCode').val('0');
@@ -18786,7 +18785,7 @@ var Main = function () {
         });
     }
 
-    this.ProjectSpeciFilter = function () {       
+    this.ProjectSpeciFilter = function () {
         var hasAdvSelectVal = $(".AdvanceFilterCHK").find("select").filter(function () {
             return $(this).val() !== '' && $(this).val() !== null && $(this).val() !== "0";
         }).length > 0;
@@ -19255,16 +19254,16 @@ var Main = function () {
 
                     var parentCable = resp.result.parentCableNetworkId;
 
-                   // var firstCableNetworkId = parentCable + '_01'; //Commented by Nikhil
+                    // var firstCableNetworkId = parentCable + '_01'; //Commented by Nikhil
                     var firstCableNetworkId = '';
-                    
+
                     $('#cable_one_network_id').val(firstCableNetworkId);
                     /* $('#cable_one_name').val(firstCableNetworkId);*/
                     $('#cable_one_name').val(displayname);
                     $('#cable_one_a_location').val(resp.result.cable1_a_location);
                     $('#cable_one_b_location').val(splitEnityNetworkId);
 
-                  //  var secondCableNetworkId = parentCable + '_02'; //Commented by Nikhil
+                    //  var secondCableNetworkId = parentCable + '_02'; //Commented by Nikhil
                     var secondCableNetworkId = '';
                     $('#cable_two_network_id').val(secondCableNetworkId);
                     /* $('#cable_two_name').val(secondCableNetworkId);*/
@@ -19427,47 +19426,46 @@ var Main = function () {
 
         var pageUrl = 'Library/GetcorePlanLogic';
         var modalClass = 'modal-lg';
-       // popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
+        // popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
         popup.LoadModalDialog(app.ParentModel, pageUrl, { userid: 0 }, 'Core Planner', modalClass);
     }
     this.createFiberlinkCPL = function () {
         debugger;
-           popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id:'' }, "Create Link", 'modal-xl');
-       
+        popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: '' }, "Create Link", 'modal-xl');
+
     }
     this.checkAvailability = function () {
-       debugger;
-        if ($("#txtODF1").val() == '' || $("#txtODF2").val() == '' || $("#txtRequiredCore").val()=='')
-        { alert('RequiredCore ,ODF1, OD2 are required for checking Accessibility'); return false;}
-       
+        debugger;
+        if ($("#txtODF1").val() == '' || $("#txtODF2").val() == '' || $("#txtRequiredCore").val() == '') { alert('RequiredCore ,ODF1, OD2 are required for checking Accessibility'); return false; }
+
         ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val(), ODF2: $("#txtODF2").val(), required_core: $("#txtRequiredCore").val() }, true, function (resp) {
             if (resp != null && resp != undefined) {
-               
+
                 if (resp.status) {
                     $("#btnSubmit").prop("disabled", false);
                     $("#ddlfiberlink").prop("required", true)
                     alert(resp.message);
-                   
+
                 }
                 else {
                     $("#btnSubmit").prop("disabled", true);
                     $("#ddlfiberlink").prop("required", false)
                     alert(resp.message);
-                    
+
                 }
             }
 
-        }, true,true);
-        
+        }, true, true);
+
     }
     this.showReport = function () {
         debugger;
         window.location = appRoot + 'Library/ExportPlanLogicReport';
     }
-    
+
     this.saveCorePlanLogic = function () {
-       
-        ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val(), fiber_link_network_id: $("#txtfiberlink").val(), source_network_id: $("#txtODF1").val(), destination_network_id: $("#txtODF2").val(), buffer:5 }, true, function (resp) {
+
+        ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val(), fiber_link_network_id: $("#txtfiberlink").val(), source_network_id: $("#txtODF1").val(), destination_network_id: $("#txtODF2").val(), buffer: 5 }, true, function (resp) {
             if (resp != null && resp != undefined) {
                 debugger;
                 if (resp.status) {
@@ -19480,14 +19478,14 @@ var Main = function () {
                 }
                 else {
                     alert(resp.message);
-                    
+
                 }
             }
 
-        }, true,true);
-       
+        }, true, true);
+
     }
- 
+
     this.GetlinkPrefixbyLinkType = function (obj) {
         debugger;
         var _link_prefix = obj.value;
@@ -20511,7 +20509,7 @@ var Main = function () {
             entityids: entityids,
             totalPlannedCount: totalPlannedCount,
             totalAsBuiltCount: totalAsBuiltCount,
-            totalDormantCount: totalDormantCount, 
+            totalDormantCount: totalDormantCount,
             reportType: reportType
         }, false, function (obj) {
             //if (obj.status == 'ERROR') {
@@ -20624,7 +20622,7 @@ var Main = function () {
         //    }
         //    $("#dvDocument").addClass('hideloader').removeClass('showloader');
         //}, true, true);
-    }    
+    }
 
     this.downloadall = function () {
         var system_Id = $('#infoTB').attr('att_systemid');
@@ -20848,7 +20846,7 @@ var Main = function () {
     }
 
     this.uploadMultipleDocumentFile = function () {
-      
+
         debugger;
         var frmData = new FormData();
         var filesize = $('#hdnMaxFileUploadSizeLimit').val();
@@ -20875,8 +20873,7 @@ var Main = function () {
                 if (allowedFileTypes.indexOf(fileExtension) === -1) {
                     invalidFiles.push(uploadedfile[i].name);
                 }
-                if (totalFilesize > TotalSizeinBytes)
-                {
+                if (totalFilesize > TotalSizeinBytes) {
                     totalFilesize = 0;
                     var tfilesize = (TotalSizeinBytes / 1024).toFixed(2);
                     alert("Total file size is too large.Maximum total file size allowed is, " + tfilesize);
@@ -20946,7 +20943,7 @@ var Main = function () {
         var allowedFileTypes = $('#allowedDocumentAttachmentType').val().split(',');
         var totalFilesize = 0;
 
-        $('#form-rows .form-group').each(function () {            
+        $('#form-rows .form-group').each(function () {
             var documentType = $(this).find('select').val();
             var uploadedFiles = $(this).find('input[type="file"]')[0].files;
             if (uploadedFiles) {
@@ -21001,7 +20998,7 @@ var Main = function () {
             } else {
                 console.log("MSG false:" + resp.message);
                 if (resp.status == 'INVALID_INPUTS') { alert('Invalid file size'); } else { alert(resp.message); }
-               
+
             }
         }, true);
     }
@@ -21198,7 +21195,7 @@ var Main = function () {
         var maxFileCountLimit = $('#fdnMaxFileCountLimit').val();
         var Sizeinbytes = filesize * 1024;
         var TotalSizeinBytes = Sizeinbytes * maxFileCountLimit;
-       
+
         var uploadedfile = $('#fuImgUpload')[0].files;
         var invalidFiles = [];
         var allowedFileTypes = $('#allowedImageAttachmentType').val();
@@ -21229,7 +21226,7 @@ var Main = function () {
                 totalFilesize = totalFilesize + uploadedfile[i].size;
             }
             if (invalidFiles.length > 0) {
-               alert("The following files are not of allowed file type or exceed the name length limit:\n" + invalidFiles.join("\n"));
+                alert("The following files are not of allowed file type or exceed the name length limit:\n" + invalidFiles.join("\n"));
                 return false; // Stop further processing
             }
             frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
@@ -21357,7 +21354,7 @@ var Main = function () {
             }, true);
         }
     }
-   
+
 
     this.getUserProfileImage = function () {
         //;
@@ -21586,7 +21583,7 @@ var Main = function () {
     // ## Get Slack Details For Duct
     this.getSlackDetailsForDuct = function (_system_id) {
 
-        ajaxReq('Library/GetSlackDetailsForDuct', {duct_system_id: _system_id}, true, function (resp) {
+        ajaxReq('Library/GetSlackDetailsForDuct', { duct_system_id: _system_id }, true, function (resp) {
             $("#SlackDetails").html(resp);
             $("#SlackDetails").css('background-image', 'none');
         }, false, false);
@@ -22444,7 +22441,7 @@ var Main = function () {
         ////;
         //  var totalSelected = $('#VwTicketGrid input:checkbox[name=chkSelect]:checked').length;
         var totalSelected = $("#tblTicketManagerGrid td :checkbox[data-ticketstatus='Assigned']:checked, #tblTicketManagerGrid td :checkbox[data-ticketstatus='Unassigned']:checked").length;
-       
+
         if (totalSelected == 0) {
             alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_023);
         }
@@ -22453,7 +22450,7 @@ var Main = function () {
         }
         else {
             // var _id = $('#VwTicketGrid input:checkbox[name=chkSelect]:checked').val();
-            var _id = $("#tblTicketManagerGrid td :checkbox[data-ticketstatus='Assigned']:checked, #tblTicketManagerGrid td :checkbox[data-ticketstatus='Unassigned']:checked").val();     showConfirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_025, function () {
+            var _id = $("#tblTicketManagerGrid td :checkbox[data-ticketstatus='Assigned']:checked, #tblTicketManagerGrid td :checkbox[data-ticketstatus='Unassigned']:checked").val(); showConfirm(MultilingualKey.SI_OSP_GBL_JQ_FRM_025, function () {
                 ajaxReq('TicketManager/AddTicket', {
                     ticket_id: _id
                 }, false, function (resp) {
@@ -22934,7 +22931,7 @@ var Main = function () {
             }
 
         },
-        setROWDateTimeCalendar : function (startdateid, startdateimgid, chkDisabled, isFutureDateAllowed) {
+        setROWDateTimeCalendar: function (startdateid, startdateimgid, chkDisabled, isFutureDateAllowed) {
             Calendar.setup({
                 inputField: startdateid,   // id of the input field
                 button: startdateimgid,
@@ -24414,10 +24411,54 @@ var Main = function () {
             if (diff > configuredDay) {
                 alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_015)
                 return false;
-
             }
         }
+    }
+    this.SiteReport = {
+        showReportMenu: function (tbType, divObj) {
+            $(app.DE.InfoDiv).hide();
+            $(app.DE.SplicingDiv).hide();
+            if (typeof networkdata != "undefined") {
+                networkdata.hideAllNetworkFile();
+            }
+            var func = function () { };
+            switch (tbType) {
+                case 'ManualReport':
+                    app.addRemoveActiveClass(divObj);
+                    app.showhideChildMenu('#VSATReportToolBar', '.childtoolbar');
+                    break;
+            }
+        },
+        SiteReport: function (geom, modeType, radius, obj) {
+            if (obj) {
+                $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
+                $(obj).addClass('activeToolBar');
+            }
+            if (geom != '' && geom != null) {
+                ajaxReq('Report/ValidatePotentialArea', {
+                    geom: geom, geomType: modeType, buff_Radius: radius
+                }, true, function (resp) {
+                    if (resp.status == 'FAILED' || resp.status == 'ERROR') {
+                        alert(resp.message);
+                        return false;
+                    }
+                    else {
+                        popup.LoadModalDialog('PARENT', 'Report/ExportSiteReport', {
+                            'objReportFilters.geom': geom, 'objReportFilters.geomType': modeType, 'objReportFilters.radius': radius, 'objReportFilters.layerName': 'SITE'
+                        }, MultilingualKey.SI_OSP_GBL_NET_RPT_354, 'modal-xl');
+                    }
 
+                }, true, true, true);
+            } else {
+                popup.LoadModalDialog('PARENT', 'Report/ExportSiteReport', {
+                    eType: ''
+                }, MultilingualKey.SI_OSP_GBL_NET_RPT_354, 'modal-xl');
+            }
+        },
+        ExportSiteReport: function (_fileType, _reportType) {
+
+            window.location = appRoot + 'Report/DownloadSiteReport?fileType=' + _fileType + '&reportType=' + _reportType;
+        }
     }
     this.showhideChildMenu = function (element, otherElements) {
         ;
@@ -24780,7 +24821,7 @@ var Main = function () {
             app.addNewNetworkOverlay(overlayLayer);
 
             var hdnIsWMSLayerLoadingEnabled = $("#hdnIsWMSLayerLoadingEnabled").val();
-           
+
 
             //load planned layers..
             app.ActivePlannedlayers = app.getActiveNetworkLayers('P', false);
@@ -24799,7 +24840,7 @@ var Main = function () {
                 var layerParam = { Name: app.ActivePlannedlayers.length > 0 ? app.ActivePlannedlayers.join(",") : '', DisplayName: "Planned_Layers", Filters: plannedLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'P', isWithLabel: false };
                 LayerFilters.push(layerParam);
             }
-           
+
             app.ActiveAsBuiltlayers = app.getActiveNetworkLayers('A', false);
             //if (app.ActiveAsBuiltlayers.length > 0) {
 
@@ -24922,7 +24963,7 @@ var Main = function () {
         shoNWTNetwork: function (_ticketId) {
             app.Networkticket.LoadLayersOnMap(_ticketId);
             app.layerChekedState = app.GetLayerEnableState();
-          
+
             if (app.IsVecorLayerEnabled) {
                 app.RefreshVectorDataAndLayer();
             }
@@ -24934,11 +24975,11 @@ var Main = function () {
 
             if (app.IsVecorLayerEnabled) {
                 $(app.DE.lyrRefresh).trigger("click");
-               
+
             }
         },
         showNetworkOnMap: function (_ticketId, _networkId, _regionId, _provinceId, _ticketName, ticket_status) {
-            app.ticketId = _ticketId;   
+            app.ticketId = _ticketId;
             app.ticketStatus = ticket_status;
             $(popup.DE.MinimizeModel).trigger("click");
             $('#spnTicketNetworkId').text(_networkId + '(' + _ticketName + ')');
@@ -24951,12 +24992,12 @@ var Main = function () {
             app.Networkticket.getEntityBounds(_ticketId);
             $("#dvShowNetworkOnmap").show();
             app.Networkticket.shoNWTNetwork(_ticketId);
-           
-            $('#chkTicketNetwork').prop('checked', true);            
-           
+
+            $('#chkTicketNetwork').prop('checked', true);
+
             //$('#chkTicketNetwork').trigger("click");
             $('#chkTicketNetwork').unbind('click').on("click", function () {
-                if ($(this).is(':checked')) { 
+                if ($(this).is(':checked')) {
                     app.isNetworkTicketReq = true;
                     app.fSource_ref_id = _ticketId;
                     app.fSource_ref_type = 'Network_Ticket';
@@ -24969,13 +25010,13 @@ var Main = function () {
                     app.Networkticket.shoNWTNetwork(_ticketId);
                     app.Networkticket.removeExistingNetwork();
                 } else {
-                    app.isNetworkTicketReq = false; 
+                    app.isNetworkTicketReq = false;
                     app.ticketStatus = '';
                     app.fSource_ref_id = '';
                     app.fSource_ref_type = '';
                     app.fIs_new_entity = false;
                     app.fStatus = 'A';
-                  
+
                     app.Networkticket.showExistingNetwork(_ticketId);
                     app.Networkticket.removeNWTNetwork();
                 }
@@ -28646,7 +28687,7 @@ var Main = function () {
         $('.gm-style-iw, .gm-style-iw-c').hide();
     }
     this.ShowUtilizationOnMap = function (summaryid, entitytitle, networkstatus, lowcount, moderatecount, highcount, overcount, ductutilization, utilizationtype, reportminval) {
-        if (lowcount != 0 || moderatecount!=0) {
+        if (lowcount != 0 || moderatecount != 0) {
             $("#L").attr('checked', true);
             $("#M").attr('checked', true);
         }
@@ -31926,7 +31967,7 @@ var Main = function () {
                         strokeWeight: 2,
                         fillColor: '#FF8800',
                         fillOpacity: 0.35,
-                        center: eventParam.latLng, 
+                        center: eventParam.latLng,
                         radius: 200,
                         editable: true,
                         draggable: true
@@ -32011,7 +32052,7 @@ var Main = function () {
         });
     }
 
-    this.AuditLogReport = {    
+    this.AuditLogReport = {
         showMenu: function (divObj) {
             app.addRemoveActiveClass(divObj);
             app.showhideChildMenu('#ExportReportToolBar', '.childtoolbar');
@@ -32236,14 +32277,14 @@ function ValidateGeomForJPBoundary(entityGeom, geomType) {
 //END REGION JP_BOUNDARY
 
 function validateImageFileType() {
-    var validFilesTypes = ["bmp", "gif", "png", "jpg", "jpeg","zip"];
+    var validFilesTypes = ["bmp", "gif", "png", "jpg", "jpeg", "zip"];
     var file = $("#fuImgUpload").val();
     var filepath = file;
     return ValidateFileType(validFilesTypes, filepath);
 }
 
 function validateDocumentFileType() {
-    var validFilesTypes = ["dwg", "pdf", "jpeg", "jpg", "doc", "docx", "xls", "xlsx", "csv", "vsd", "ppt", "pptx", "png", "htm", "html", "msg", "zip","rar"];
+    var validFilesTypes = ["dwg", "pdf", "jpeg", "jpg", "doc", "docx", "xls", "xlsx", "csv", "vsd", "ppt", "pptx", "png", "htm", "html", "msg", "zip", "rar"];
     var file = $("#fuAttachmentUpload").val();
     var filepath = file;
     return ValidateFileType(validFilesTypes, filepath);
