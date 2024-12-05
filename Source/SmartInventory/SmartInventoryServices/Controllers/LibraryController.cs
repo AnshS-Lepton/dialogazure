@@ -1279,15 +1279,17 @@ namespace SmartInventoryServices.Controllers
 
                     BindPoleRoute(objPoleMaster);
                     var resultItem = new BLPole().SaveEntityPole(objPoleMaster, objPoleMaster.user_id);
-                    var lnglat = objPoleMaster.longitude.ToString().Trim() + " " + objPoleMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objPoleMaster.user_id, objPoleMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
-
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objPoleMaster.longitude.ToString().Trim() + " " + objPoleMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objPoleMaster.user_id, objPoleMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     List<RouteInfo> objL = new List<RouteInfo>();
                     foreach (var itm in objPoleMaster.lstRouteInfo)
                     {
@@ -1506,14 +1508,17 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objManholeMaster.system_id > 0 ? false : true;
 					objManholeMaster.is_new_entity = (isNew && objManholeMaster.source_ref_id != "0" && objManholeMaster.source_ref_id != "");
 					var resultItem = new BLManhole().SaveEntityManhole(objManholeMaster, objManholeMaster.user_id);
-                    var lnglat = objManholeMaster.longitude.ToString().Trim() + " " + objManholeMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objManholeMaster.user_id, objManholeMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objManholeMaster.longitude.ToString().Trim() + " " + objManholeMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objManholeMaster.user_id, objManholeMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     BindManholeRoute(objManholeMaster);                    
                     List<RouteInfo> objL = new List<RouteInfo>();
                     foreach (var itm in objManholeMaster.lstRouteInfo)
@@ -1795,14 +1800,17 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objTreeMaster.system_id > 0 ? false : true;
 					objTreeMaster.is_new_entity = (isNew && objTreeMaster.source_ref_id != "0" && objTreeMaster.source_ref_id != "");
 					var resultItem = new BLTree().SaveEntityTree(objTreeMaster, objTreeMaster.user_id);
-                    var lnglat = objTreeMaster.longitude.ToString().Trim() + " " + objTreeMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objTreeMaster.user_id, objTreeMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objTreeMaster.longitude.ToString().Trim() + " " + objTreeMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objTreeMaster.user_id, objTreeMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     string[] LayerName = { EntityType.Tree.ToString() };
 					if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
@@ -2001,14 +2009,17 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objWallMountMaster.system_id > 0 ? false : true;
 					objWallMountMaster.is_new_entity = (isNew && objWallMountMaster.source_ref_id != "0" && objWallMountMaster.source_ref_id != "");
 					var resultItem = new BLWallMount().SaveEntityWallMount(objWallMountMaster, objWallMountMaster.user_id);
-                    var lnglat = objWallMountMaster.longitude.ToString().Trim() + " " + objWallMountMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objWallMountMaster.user_id, objWallMountMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objWallMountMaster.longitude.ToString().Trim() + " " + objWallMountMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objWallMountMaster.user_id, objWallMountMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						string[] LayerName = { EntityType.WallMount.ToString() };
@@ -2304,14 +2315,17 @@ namespace SmartInventoryServices.Controllers
 					//objPODMaster.Source_ref_description = headerAttribute.Source_ref_description;
 					//objPODMaster.Source_ref_id = headerAttribute.Source_ref_id;
 					var resultItem = new BLPOD().SaveEntityPOD(objPODMaster, objPODMaster.user_id);
-                    var lnglat = objPODMaster.longitude.ToString().Trim() + " " + objPODMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objPODMaster.user_id, objPODMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objPODMaster.longitude.ToString().Trim() + " " + objPODMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objPODMaster.user_id, objPODMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						//Save Reference
@@ -2626,14 +2640,17 @@ namespace SmartInventoryServices.Controllers
 					//objMPODMaster.Source_ref_id = headerAttribute.Source_ref_id;
 
 					var resultItem = new BLMPOD().SaveEntityMPOD(objMPODMaster, objMPODMaster.user_id);
-                    var lnglat = objMPODMaster.longitude.ToString().Trim() + " " + objMPODMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objMPODMaster.user_id, objMPODMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objMPODMaster.longitude.ToString().Trim() + " " + objMPODMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objMPODMaster.user_id, objMPODMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     //Save Reference
                     if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
@@ -2909,14 +2926,17 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objSCMaster.system_id > 0 ? false : true;
 					objSCMaster.is_new_entity = (isNew && objSCMaster.source_ref_id != "0" && objSCMaster.source_ref_id != "");
 					var resultItem = new BLSC().SaveEntitySC(objSCMaster, objSCMaster.user_id);
-                    var lnglat = objSCMaster.longitude.ToString().Trim() + " " + objSCMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objSCMaster.user_id, objSCMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objSCMaster.longitude.ToString().Trim() + " " + objSCMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objSCMaster.user_id, objSCMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     BindSpilceClosureRoute(objSCMaster);
                     List<RouteInfo> objL = new List<RouteInfo>();
                     foreach (var itm in objSCMaster.lstRouteInfo)
@@ -4804,14 +4824,17 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objONTMaster.system_id > 0 ? false : true;
 					objONTMaster.is_new_entity = (isNew && objONTMaster.source_ref_id != "0" && objONTMaster.source_ref_id != "");
 					var resultItem = new BLONT().SaveONTEntity(objONTMaster, objONTMaster.user_id);
-                    var lnglat = objONTMaster.longitude.ToString().Trim() + " " + objONTMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objONTMaster.user_id, objONTMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objONTMaster.longitude.ToString().Trim() + " " + objONTMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objONTMaster.user_id, objONTMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 
@@ -5138,14 +5161,17 @@ namespace SmartInventoryServices.Controllers
 					objFDBMaster.barcode = objFDBMaster.barcode;
 
 					var resultItem = BLISP.Instance.SaveFDBDetails(objFDBMaster);
-                    var lnglat = objFDBMaster.longitude.ToString().Trim() + " " + objFDBMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objFDBMaster.user_id, objFDBMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objFDBMaster.longitude.ToString().Trim() + " " + objFDBMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objFDBMaster.user_id, objFDBMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     BindFDBRoute(objFDBMaster);
                     List<RouteInfo> objL = new List<RouteInfo>();
                     foreach (var itm in objFDBMaster.lstRouteInfo)
@@ -5451,14 +5477,17 @@ namespace SmartInventoryServices.Controllers
 						}
 					}
 					var resultItem = new BLBDB().SaveEntityBDB(objBDBMaster, objBDBMaster.user_id);
-                    var lnglat = objBDBMaster.longitude.ToString().Trim() + " " + objBDBMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objBDBMaster.user_id, objBDBMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objBDBMaster.longitude.ToString().Trim() + " " + objBDBMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objBDBMaster.user_id, objBDBMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     BindBDBRoute(objBDBMaster);
                     List<RouteInfo> objL = new List<RouteInfo>();
                     foreach (var itm in objBDBMaster.lstRouteInfo)
@@ -5819,14 +5848,17 @@ namespace SmartInventoryServices.Controllers
 						objCDBMaster.no_of_output_port = Convert.ToInt32(objCDBMaster.unitValue.Split(':')[1]);
 					}
 					var resultItem = new BLCDB().SaveEntityCDB(objCDBMaster, objCDBMaster.user_id);
-                    var lnglat = objCDBMaster.longitude.ToString().Trim() + " " + objCDBMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objCDBMaster.user_id, objCDBMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objCDBMaster.longitude.ToString().Trim() + " " + objCDBMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objCDBMaster.user_id, objCDBMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     if (resultItem.isConvert && string.IsNullOrEmpty(resultItem.objPM.message) && isNew)
 					{
 						string[] LayerName = { EntityType.SpliceClosure.ToString(), EntityType.CDB.ToString() };
@@ -8074,14 +8106,17 @@ namespace SmartInventoryServices.Controllers
 						}
 					}
 					var result = new BLISP().SaveHTBDetails(model, model.user_id);
-                    var lnglat = model.longitude.ToString().Trim() + " " + model.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(result.system_id, model.user_id, model.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (result.objPM.status == "OK")
+					{
+						var lnglat = model.longitude.ToString().Trim() + " " + model.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(result.system_id, model.user_id, model.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     if (string.IsNullOrEmpty(result.objPM.message))
 					{
 						string[] LayerName = { EntityType.HTB.ToString() };
@@ -14036,14 +14071,17 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objVaultMaster.system_id > 0 ? false : true;
 
 					var resultItem = new BLVault().SaveEntityVault(objVaultMaster, objVaultMaster.user_id);
-                    var lnglat = objVaultMaster.longitude.ToString().Trim() + " " + objVaultMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objVaultMaster.user_id, objVaultMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objVaultMaster.longitude.ToString().Trim() + " " + objVaultMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objVaultMaster.user_id, objVaultMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     //Save Reference
                     if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
@@ -14664,14 +14702,17 @@ namespace SmartInventoryServices.Controllers
 					var isNew = objHandholeMaster.system_id > 0 ? false : true;
 					objHandholeMaster.is_new_entity = (isNew && objHandholeMaster.source_ref_id != "0" && objHandholeMaster.source_ref_id != "");
 					var resultItem = new BLHandhole().SaveEntityHandhole(objHandholeMaster, objHandholeMaster.user_id);
-                    var lnglat = objHandholeMaster.longitude.ToString().Trim() + " " + objHandholeMaster.latitude.ToString().Trim();
-                    var apiresp = SaveEditGeometry(resultItem.system_id, objHandholeMaster.user_id, objHandholeMaster.entityType, lnglat, headerAttribute);
-                    if (apiresp.status != "OK")
-                    {
-                        response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                        response.error_message = apiresp.error_message;
-                        return response;
-                    }
+					if (resultItem.objPM.status == "OK")
+					{
+						var lnglat = objHandholeMaster.longitude.ToString().Trim() + " " + objHandholeMaster.latitude.ToString().Trim();
+						var apiresp = SaveEditGeometry(resultItem.system_id, objHandholeMaster.user_id, objHandholeMaster.entityType, lnglat, headerAttribute);
+						if (apiresp.status != "OK")
+						{
+							response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+							response.error_message = apiresp.error_message;
+							return response;
+						}
+					}
                     if (string.IsNullOrEmpty(resultItem.objPM.message))
 					{
 						//Save Reference

@@ -25,7 +25,12 @@ namespace DataAccess
                             objVaultMaster.objPM = objPageValidate;
                             return objVaultMaster;
                         }
-
+                    var geomresp = new DAMisc().GetValidatePointGeometry(objVaultMaster.system_id, objVaultMaster.entityType, objVaultMaster.latitude.ToString(), objVaultMaster.longitude.ToString(), objVaultMaster.region_id, objVaultMaster.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        objVaultMaster.objPM = geomresp;
+                        return objVaultMaster;
+                    }
                     objVault.network_id = objVaultMaster.network_id;
                     objVault.vault_name = objVaultMaster.vault_name;
                     objVault.pincode = objVaultMaster.pincode;

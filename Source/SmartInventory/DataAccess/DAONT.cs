@@ -29,6 +29,13 @@ namespace DataAccess
                         objONTMaster.objPM = objPageValidate;
                         return objONTMaster;
                     }
+                    var geomresp = new DAMisc().GetValidatePointGeometry(objONTMaster.system_id, objONTMaster.entityType, objONTMaster.latitude.ToString(), objONTMaster.longitude.ToString(), objONTMaster.region_id, objONTMaster.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        objONTMaster.objPM = geomresp;
+                        return objONTMaster;
+                    }
+
                     objONT.network_id = objONTMaster.network_id;
                     objONT.ont_name = objONTMaster.ont_name;
                     objONT.serial_no = objONTMaster.serial_no;

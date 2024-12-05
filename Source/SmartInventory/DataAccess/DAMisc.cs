@@ -1776,6 +1776,17 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public PageMessage GetValidatePointGeometry(int systemId, string entityType, string latitude, string longitude,int? region_id,int? province_id)
+        {
+            PageMessage response;
+            try
+            {
+                response = repo.ExecuteProcedure<PageMessage>("fn_validate_point_geometry", new { p_system_id = systemId, p_entity_type = entityType, p_latitude = latitude, p_longitude = longitude, p_region_id = region_id, p_province_id = province_id }).FirstOrDefault();
+                return response;
+
+            }
+            catch { throw; }
+        }
 
     }
 

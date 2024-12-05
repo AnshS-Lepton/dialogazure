@@ -24,7 +24,12 @@ namespace DataAccess
                         objHandholeMaster.objPM = objPageValidate;
                         return objHandholeMaster;
                     }
-
+                    var geomresp = new DAMisc().GetValidatePointGeometry(objHandholeMaster.system_id, objHandholeMaster.entityType, objHandholeMaster.latitude.ToString(), objHandholeMaster.longitude.ToString(), objHandholeMaster.region_id, objHandholeMaster.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        objHandholeMaster.objPM = geomresp;
+                        return objHandholeMaster;
+                    }
                     objHandholeItem.handhole_name = objHandholeMaster.handhole_name;
                     objHandholeItem.address = objHandholeMaster.address;
                     objHandholeItem.is_virtual = objHandholeMaster.is_virtual;

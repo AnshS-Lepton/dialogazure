@@ -649,6 +649,12 @@ namespace DataAccess.ISP
                         model.objPM = objPageValidate;
                         return model;
                     }
+                    var geomresp = new DAMisc().GetValidatePointGeometry(model.system_id, model.entityType, model.latitude.ToString(), model.longitude.ToString(), model.region_id,model.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        model.objPM = geomresp;
+                        return model;
+                    }
                     result.htb_name = model.htb_name;
                     result.modified_by = userid;
                     result.modified_on = DateTimeHelper.Now;
@@ -1275,6 +1281,12 @@ namespace DataAccess.ISP
                     if (objPageValidate.message != null)
                     {
                         model.objPM = objPageValidate;
+                        return model;
+                    }
+                    var geomresp = new DAMisc().GetValidatePointGeometry(model.system_id, model.entityType, model.latitude.ToString(), model.longitude.ToString(), model.region_id, model.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        model.objPM = geomresp;
                         return model;
                     }
                     result.fdb_name = model.fdb_name;

@@ -24,6 +24,12 @@ namespace DataAccess
                         objTreeMaster.objPM = objPageValidate;
                         return objTreeMaster;
                     }
+                    var geomresp = new DAMisc().GetValidatePointGeometry(objTreeMaster.system_id, objTreeMaster.entityType, objTreeMaster.latitude.ToString(), objTreeMaster.longitude.ToString(), objTreeMaster.region_id, objTreeMaster.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        objTreeMaster.objPM = geomresp;
+                        return objTreeMaster;
+                    }
                     objTreeItem.tree_name = objTreeMaster.tree_name;
                     objTreeItem.tree_no = objTreeMaster.tree_no;
                     objTreeItem.tree_height = objTreeMaster.tree_height;

@@ -25,7 +25,12 @@ namespace DataAccess
                         objSCMaster.objPM = objPageValidate;
                         return objSCMaster;
                     }
-
+                    var geomresp = new DAMisc().GetValidatePointGeometry(objSCMaster.system_id, objSCMaster.entityType, objSCMaster.latitude.ToString(), objSCMaster.longitude.ToString(), objSCMaster.region_id, objSCMaster.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        objSCMaster.objPM = geomresp;
+                        return objSCMaster;
+                    }
                     objSCItem.spliceclosure_name = objSCMaster.spliceclosure_name;
                     objSCItem.address = objSCMaster.address;
 

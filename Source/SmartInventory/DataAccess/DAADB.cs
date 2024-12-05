@@ -281,6 +281,12 @@ namespace DataAccess
                         objCDBMaster.objPM = objPageValidate;
                         return objCDBMaster;
                     }
+                    var geomresp = new DAMisc().GetValidatePointGeometry(objCDB.system_id, objCDB.entityType, objCDB.latitude.ToString(), objCDB.longitude.ToString(), objCDB.region_id,objCDB.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        objCDB.objPM = geomresp;
+                        return objCDB;
+                    }
                     // objCDB.network_id = objCDBMaster.network_id;
                     objCDB.cdb_name = objCDBMaster.cdb_name;
                     objCDB.pincode = objCDBMaster.pincode;
@@ -507,7 +513,12 @@ namespace DataAccess
                         objBDBMaster.objPM = objPageValidate;
                         return objBDBMaster;
                     }
-
+                    var geomresp = new DAMisc().GetValidatePointGeometry(objBDB.system_id, objBDB.entityType, objBDB.latitude.ToString(), objBDB.longitude.ToString(), objBDB.region_id,objBDB.province_id);
+                    if (geomresp.status != "OK")
+                    {
+                        objBDB.objPM = geomresp;
+                        return objBDB;
+                    }
                     objBDB.bdb_name = objBDBMaster.bdb_name;
                     objBDB.pincode = objBDBMaster.pincode;
                     objBDB.address = objBDBMaster.address;
