@@ -66,7 +66,7 @@
         </label>
         <div class="col-md-4 col-sm-4">
             @*@Html.DropDownListFor(x => x.system_id, new SelectList(Model.lstFiberlinkdetails.Select(x => new { Value = x.system_id, Text = x.network_id }), "Value", "Text"), " -Select fiberLink-", new { @class = "chosen-select form-control", @id = "ddlfiberlink" })*@
-            <input type="text" id="txtfiberlink" class="input-sm form-control" placeholder=" Search FiberLink" onclick="if (this.value == 'Search FiberLink') { this.value = '' }" onblur="if(this.value==''){this.value='Search FiberLink'}" autocomplete="off">
+            <input type="text" id="txtfiberlink" class="input-sm form-control" placeholder="Search network id" onclick="if (this.value == 'Search network id') { this.value = '' }" onblur="if(this.value==''){this.value='Search network id'}" autocomplete="off">
             <div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new fiberlink"><i class="fa fa-plus"></i></button> </div>
         </div>
 
@@ -154,8 +154,129 @@
                 }
             });
         });
+        $('#txtODF1').bind('paste', function (e) {
+            $('#txtODF1').autocomplete({
+
+                source: function (request, response) {
+                    debugger;
+                    // var ntxt = request
+                    var IsSrchValid = false;
+                    //IsSrchValid = request.term.length >= 3 && (ntxt.length == 0 || ntxt.length == 1) ? true : ntxt.length > 1 && ntxt[1].length >= 3 ? true : false;
+                    IsSrchValid = request.term.length >= 3 ? true : false;
+                    if (IsSrchValid) {
+                        var res = ajaxReq('Library/GetSearchResult', { searchText: request.term, search_type: 'ODF' }, true, function (data) {
+                            if (data.length == 0) {
+                                var result = [
+                                    {
+                                        label: 'No match Found'
+                                    }
+                                ];
+                                response(result);
+                                $("#txtODF1").removeClass('ui-autocomplete-loading');
+                            }
+                            else {
+                                response($.map(data, function (item) {
+                                    return {
+                                        label: item.network_id
+                                    }
+                                }))
+                            }
+                        }, true, false);
+                    }
+                    else { $("#txtODF1").removeClass('ui-autocomplete-loading'); }
+                },
+                minLength: 3,
+                select: function (event, ui) {
+                    debugger;
+                    if (ui.item.label == 'No match Found') {
+                        // this prevents "no results" from being selected
+                        event.preventDefault();
+                        $("#txtODF1").removeClass('ui-autocomplete-loading');
+                    }
+                    else {
+                        event.preventDefault();
+
+                        if (ui.item.networ_id != null) {
+                            $("#txtODF1").val(ui.item.network_id);
+
+                            $("#txtODF1").removeClass('ui-autocomplete-loading');
+                        }
+                        else {
+                            $("#txtODF1").val(ui.item.label);
+                        }
+                    }
+                },
+                open: function () {
+                    $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+                },
+                close: function () {
+                    $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+                }
+            });
+        });
         //----------------------------------------------ODF2-------------------------------------------------------------------
         $('#txtODF2').on('keyup', function (e) {
+            debugger;
+            $('#txtODF2').autocomplete({
+
+                source: function (request, response) {
+                    debugger;
+                    // var ntxt = request
+                    var IsSrchValid = false;
+                    //IsSrchValid = request.term.length >= 3 && (ntxt.length == 0 || ntxt.length == 1) ? true : ntxt.length > 1 && ntxt[1].length >= 3 ? true : false;
+                    IsSrchValid = request.term.length >= 3 ? true : false;
+                    if (IsSrchValid) {
+                        var res = ajaxReq('Library/GetSearchResult', { searchText: request.term, search_type: 'ODF' }, true, function (data) {
+                            if (data.length == 0) {
+                                var result = [
+                                    {
+                                        label: 'No match Found'
+                                    }
+                                ];
+                                response(result);
+                                $("#txtODF2").removeClass('ui-autocomplete-loading');
+                            }
+                            else {
+                                response($.map(data, function (item) {
+                                    return {
+                                        label: item.network_id
+                                    }
+                                }))
+                            }
+                        }, true, false);
+                    }
+                    else { $("#txtODF2").removeClass('ui-autocomplete-loading'); }
+                },
+                minLength: 3,
+                select: function (event, ui) {
+                    debugger;
+                    if (ui.item.label == 'No match Found') {
+                        // this prevents "no results" from being selected
+                        event.preventDefault();
+                        $("#txtODF2").removeClass('ui-autocomplete-loading');
+                    }
+                    else {
+                        event.preventDefault();
+
+                        if (ui.item.networ_id != null) {
+                            $("#txtODF2").val(ui.item.network_id);
+
+                            $("#txtODF2").removeClass('ui-autocomplete-loading');
+                        }
+                        else {
+                            $("#txtODF2").val(ui.item.label);
+                        }
+                    }
+                },
+                open: function () {
+                    $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+                },
+                close: function () {
+                    $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+                }
+            });
+        });
+        $('#txtODF2').bind('paste', function (e) {
             debugger;
             $('#txtODF2').autocomplete({
 
@@ -278,7 +399,70 @@
                 }
             });
         });
+
+        $('#txtfiberlink').bind('paste', function (e) {
+            debugger;
+            $('#txtfiberlink').autocomplete({
+
+                source: function (request, response) {
+                    debugger;
+                    // var ntxt = request
+                    var IsSrchValid = false;
+                    //IsSrchValid = request.term.length >= 3 && (ntxt.length == 0 || ntxt.length == 1) ? true : ntxt.length > 1 && ntxt[1].length >= 3 ? true : false;
+                    IsSrchValid = request.term.length >= 3 ? true : false;
+                    if (IsSrchValid) {
+                        var res = ajaxReq('Library/GetSearchResult', { searchText: request.term, search_type: 'fiberlink' }, true, function (data) {
+                            if (data.length == 0) {
+                                var result = [
+                                    {
+                                        label: 'No match Found'
+                                    }
+                                ];
+                                response(result);
+                                $("#txtfiberlink").removeClass('ui-autocomplete-loading');
+                            }
+                            else {
+                                response($.map(data, function (item) {
+                                    return {
+                                        label: item.network_id
+                                    }
+                                }))
+                            }
+                        }, true, false);
+                    }
+                    else { $("#txtfiberlink").removeClass('ui-autocomplete-loading'); }
+                },
+                minLength: 3,
+                select: function (event, ui) {
+                    debugger;
+                    if (ui.item.label == 'No match Found') {
+                        // this prevents "no results" from being selected
+                        event.preventDefault();
+                        $("#txtfiberlink").removeClass('ui-autocomplete-loading');
+                    }
+                    else {
+                        event.preventDefault();
+
+                        if (ui.item.networ_id != null) {
+                            $("#txtfiberlink").val(ui.item.network_id);
+
+                            $("#txtfiberlink").removeClass('ui-autocomplete-loading');
+                        }
+                        else {
+                            $("#txtfiberlink").val(ui.item.label);
+                        }
+                    }
+                },
+                open: function () {
+                    $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+                },
+                close: function () {
+                    $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+                }
+            });
+        });
     });
+
 
     function validate() {
         debugger;

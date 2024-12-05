@@ -1866,7 +1866,7 @@ LAYER
             EXPRESSION ('[splitter_type]'  eq 'Primary' AND '[network_status]'  eq 'P')  			
 			STYLE
 				SYMBOL "icons/Planned/Psplitter.png" 
-				SIZE 18			
+				SIZE 35
 			END
             LABEL
 				COLOR  255 0 0 
@@ -1883,7 +1883,7 @@ LAYER
             EXPRESSION ('[splitter_type]'  eq 'Primary' AND '[network_status]'  eq 'A')  			
 			STYLE
 				SYMBOL "icons/AsBuild/Psplitter.png" 
-				SIZE 10			
+				SIZE 25			
 			END
             LABEL
 				COLOR  255 0 0 
@@ -1901,7 +1901,7 @@ LAYER
             EXPRESSION ('[splitter_type]'  eq 'Primary' AND '[network_status]'  eq 'D')  			
 			STYLE
 				SYMBOL "icons/Dorment/Psplitter.png" 
-				SIZE 18			
+				SIZE 35		
 			END
             LABEL
 				COLOR  255 0 0 
@@ -1920,13 +1920,13 @@ LAYER
 			EXPRESSION ('[splitter_type]'  eq 'Secondary' AND '[network_status]'  eq 'P')  
 			STYLE
 				SYMBOL "icons/Planned/Splitter.png" 
-				SIZE 16        
+				SIZE 35       
 			END
 			LABEL
 				COLOR  255 0 0 
 				FONT "arial"
 				TYPE truetype
-				SIZE 8
+				SIZE 30
 				POSITION AUTO
 				PARTIALS FALSE
 			END	
@@ -1938,7 +1938,7 @@ LAYER
 			EXPRESSION ('[splitter_type]'  eq 'Secondary' AND '[network_status]'  eq 'A')  
 			STYLE
 				SYMBOL "icons/AsBuild/Splitter.png" 
-				SIZE 10        
+				SIZE 27       
 			END
 			LABEL
 				COLOR  255 0 0 
@@ -1956,7 +1956,7 @@ LAYER
 			EXPRESSION ('[splitter_type]'  eq 'Secondary' AND '[network_status]'  eq 'D')  
 			STYLE
 				SYMBOL "icons/Dorment/Splitter.png" 
-				SIZE 16        
+				SIZE 35        
 			END
 			LABEL
 				COLOR  255 0 0 
