@@ -405,24 +405,5 @@
 <script type="text/javascript">
     $(document).ready(function () {
         callFormValidator("frmAddFiberLink");
-
-        //if ($('#txtHandoverDate').val() != undefined && $('#imgHandoverDate').val() != undefined) {
-        //    fiberLink.setDateTimeCalendar('txtHandoverDate', 'imgHandoverDate', '', false);
-        //}
-        //if ($('#txtHotoDate').val() != undefined && $('#imgHoToDate').val() != undefined) {
-        //    fiberLink.setDateTimeCalendar('txtHotoDate', 'imgHoToDate', '', false);
-        //}
-        debugger;
-        if ($('#txtLinkId').val() != '')
-        { 
-            let prefix = $('#txtLinkId').val().substring(0, 2);
-            if ($('#ddlLinkPrifixType option[value="' + prefix + '"]').length > 0) {
-                $('#ddlLinkPrifixType').val(prefix).trigger('chosen:updated');
-            } else
-            {
-                alert("Prefix not found in dropdown options");
-            }
-
-         } 
     });
 </script>
