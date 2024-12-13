@@ -128,6 +128,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-------------------------------------------------------------------------------------------------------
+select public.fn_set_core_and_tube_color_for_all_cables('core');
+select public.fn_set_core_and_tube_color_for_all_cables('tube');
+
 ---------------------------------------Picked from SIT Env--------------------------------------------------------------------
 Truncate table cable_color_master
 INSERT INTO public.cable_color_master (color_character, color_name, color_code, "type", created_by, created_on, modified_by, modified_on) VALUES('BLUE', NULL, '#0000ff', 'Core', 1, '2024-11-08 14:09:32.922', 1, '2024-11-21 10:01:38.176');
