@@ -10,7 +10,7 @@
         RESET_CREATE_LINK: MultilingualKey.SI_GBL_GBL_JQ_FRM_063,
         LINK_ASSOCIATED_SUCCESS: MultilingualKey.SI_GBL_GBL_JQ_FRM_064,
         NO_MATCH_FOUND: MultilingualKey.SI_GBL_GBL_JQ_GBL_001,
-        Fiber_Link_Status:MultilingualKey.SI_OSP_GBL_GBL_GBL_148,
+        Fiber_Link_Status: MultilingualKey.SI_OSP_GBL_GBL_GBL_148,
     }
     this.DE = {
         'chosen_select': '.chosen-select',
@@ -74,8 +74,8 @@
         '': '#',
         'btnExportPDFLinks': '#btnExportPDFLinks',
     }
-    this.InitApp = function () {       
-       // app.setDateTimeCalendar_viewLink("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+    this.InitApp = function () {
+        // app.setDateTimeCalendar_viewLink("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
         if (($(app.DE.ddlSearchBy).val() != 'Select') && ($(app.DE.ddlSearchBy).val() != "")) {
             $(app.DE.txtSearchTxt).prop('readonly', false);
         }
@@ -84,7 +84,7 @@
         app.GridColor();
         app.bindViewLinkEvents();
         app.bindCreateLinkEvents();
-        app.bindAssociateLinkEvents(); 
+        app.bindAssociateLinkEvents();
     }
 
     this.bindViewLinkEvents = function () {
@@ -112,26 +112,26 @@
             $(app.DE.imgFromDate).hide();
             $(app.DE.imgToDate).hide();
         }
-        $(app.DE.btnLinkData).on("click", function () { 
-            if (($(app.DE.ddlSearchBy).val() == 'Select') && ($(app.DE.txtSearchTxt).val() == "")) {            
-            if (($(app.DE.customedate + ' option:selected').text() != "Select") && ($(app.DE.txtDateFrom).val() == "")) {
-                alert(app.StatusMessages.SELECT_FROM_DATE);
-                return false;
-            }
+        $(app.DE.btnLinkData).on("click", function () {
+            if (($(app.DE.ddlSearchBy).val() == 'Select') && ($(app.DE.txtSearchTxt).val() == "")) {
+                if (($(app.DE.customedate + ' option:selected').text() != "Select") && ($(app.DE.txtDateFrom).val() == "")) {
+                    alert(app.StatusMessages.SELECT_FROM_DATE);
+                    return false;
+                }
 
-            else if (($(app.DE.customedate + ' option:selected').text() != "Select") && ($(app.DE.txtDateTo).val() == "")) {
-                alert(app.StatusMessages.SELECT_TO_DATE);
-                return false;
-            }
+                else if (($(app.DE.customedate + ' option:selected').text() != "Select") && ($(app.DE.txtDateTo).val() == "")) {
+                    alert(app.StatusMessages.SELECT_TO_DATE);
+                    return false;
+                }
 
-            else if ($(app.DE.txtDateFrom).val() != "" && $(app.DE.txtDateTo).val() != "") {
-                var startDate = new Date($(app.DE.txtDateFrom).val());
-                var endDate = new Date($(app.DE.txtDateTo).val());
-                var configuredDay = 1825;
-                return app.GetDaysDifference(startDate, endDate, configuredDay);
-            }
-            else {
-                return true;
+                else if ($(app.DE.txtDateFrom).val() != "" && $(app.DE.txtDateTo).val() != "") {
+                    var startDate = new Date($(app.DE.txtDateFrom).val());
+                    var endDate = new Date($(app.DE.txtDateTo).val());
+                    var configuredDay = 1825;
+                    return app.GetDaysDifference(startDate, endDate, configuredDay);
+                }
+                else {
+                    return true;
                 }
             }
             else {
@@ -142,7 +142,7 @@
             window.location = appRoot + 'FiberLink/ExportFiberLinkInPDF';
             $(".dropbox_BulkExport").slideToggle();
         });
-          
+
     }
     this.GetDaysDifference = function (firstDate, secondDate, configuredDay) {
 
@@ -158,10 +158,10 @@
         }
     }
     this.bindCreateLinkEvents = function () {
-       // callFormValidator(app.DE.CreateFiberLinkForm);
+        // callFormValidator(app.DE.CreateFiberLinkForm);
         ///CREATE LINK PAGE 
         $(app.DE.chosen_select).chosen({ width: "100%" });
-         
+
         if ($(app.DE.hdnFiberLinkSystemId).val() > 0) {
             $(app.DE.tickIcon).css('display', 'none');
             $(app.DE.crossIcon).css('display', 'none');
@@ -179,7 +179,7 @@
                         var result = [
                             {
                                 //label: 'No match Found'
-                                label:app.StatusMessages.NO_MATCH_FOUND
+                                label: app.StatusMessages.NO_MATCH_FOUND
                             }
                         ];
                         response(result);
@@ -282,17 +282,17 @@
         if ($(app.DE.txtHotoDate).val() != undefined && $(app.DE.imgHoToDate).val() != undefined) {
             app.setDateTimeCalendar('txtHotoDate', 'imgHoToDate', '', false);
         }
-       
+
     }
     this.bindAssociateLinkEvents = function () {
 
         $(app.DE.chosen_select).chosen({ width: '164%' });
-       // $(app.DE.dvAssociateLink).draggable({ containment: "parent" });
+        // $(app.DE.dvAssociateLink).draggable({ containment: "parent" });
         if ($(app.DE.hdnModelLinkSystemId).val() > 0) {
             $(app.DE.tickIcon).css('display', 'block');
         }
         $(app.DE.hdnLinkSystemId).val($(app.DE.hdnModelLinkSystemId).val());
-        $(app.DE.txtFiberLinkId).autocomplete({ 
+        $(app.DE.txtFiberLinkId).autocomplete({
             source: function (request, response) {
                 var res = ajaxReq('main/GetAutoFiberLinkId', { SearchText: request.term }, true, function (data) {
                     if (data.geonames.length == 0) {
@@ -318,11 +318,11 @@
             },
             minLength: 2,
             select: function (event, ui) {
-                if (ui.item.label == 'No match Found') { 
+                if (ui.item.label == 'No match Found') {
                     $("#btncreate").prop("disabled", false);
                     event.preventDefault();
                 }
-                else { 
+                else {
                     $("#btncreate").prop("disabled", true);
                     if (ui.item.entityName != null) {
                         $(app.DE.txtCableFiberLinkId).val(ui.item.value + ':' + ui.item.label);
@@ -340,7 +340,7 @@
             }
         });
     }
-    this.GridColor = function () { 
+    this.GridColor = function () {
         app.ActionColumn();
         $(app.DE.tblFiberLinkGrid + ' tbody tr').each(function (e) {
             var colIndex = $(app.DE.tblFiberLinkGrid + ' thead tr th[data-column-name= "' + MultilingualKey.SI_OSP_GBL_GBL_GBL_148 + '"]').index();
@@ -368,19 +368,19 @@
         })
 
         $(app.DE.tblFiberLinkGrid + ' tbody tr').each(function (index, value) {
-             
+
             var colIndex = $(app.DE.tblFiberLinkGrid + ' thead tr th[data-column-name="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_148 + '"]').index();
 
             var fiber_link_status = $($(this).children('td')[colIndex]).text().trim();
 
-            $(app.DE.tblFiberLinkGrid + ' thead tr th:eq(0)').html( MultilingualKey.SI_OSP_GBL_GBL_GBL_059);
+            $(app.DE.tblFiberLinkGrid + ' thead tr th:eq(0)').html(MultilingualKey.SI_OSP_GBL_GBL_GBL_059);
             var Excel = "'EXCEL'";
             var Kml = "'KML'";
             var systemId = $(app.DE.tblFiberLinkGrid + ' tbody tr:eq(' + index + ') td:eq(0)').attr('data-value');
             var rowAction = ' <a href="#" id="lnkdownloadLink' + index + '" style="padding:0;" class="default dropfiles"  onclick="fiberLink.FiberLinkDrp(' + index + ')">Download<i class="fa fa-chevron-down ml-03" onclick="fiberLink.FiberLinkDrp(' + index + ')"></i></a>';
             rowAction = rowAction + '<div class="dropbox" id="dropbox' + index + '"  style="margin-right:787px"> <span onclick="fiberLink.ExportFiberLinkDetail(' + Excel + ',' + systemId + ',' + index + ')"><b>Excel</b></span>'
                 + '<span  style="display:' + (fiber_link_status == "Free" ? "none" : "") + '" onclick="fiberLink.ExportFiberLinkIntoKML(' + Kml + ',' + systemId + ',' + index + ')"><b>Kml</b></span>  </div>';
-            rowAction = rowAction + '<span title="' + (fiber_link_status == "Free" ? MultilingualKey.SI_GBL_GBL_GBL_GBL_002 : 'Fiber Link is Associated with Cable, So Delete is not Allowed') +'"><i class="cptr icon-Delete ml-05' + (fiber_link_status == "Free" ? "" : " dvdisabled") + '" onclick="fiberLink.deleteFiberLinkById(' + systemId + ')"></i></span>';
+            rowAction = rowAction + '<span title="' + (fiber_link_status == "Free" ? MultilingualKey.SI_GBL_GBL_GBL_GBL_002 : 'Fiber Link is Associated with Cable, So Delete is not Allowed') + '"><i class="cptr icon-Delete ml-05' + (fiber_link_status == "Free" ? "" : " dvdisabled") + '" onclick="fiberLink.deleteFiberLinkById(' + systemId + ')"></i></span>';
             rowAction = rowAction + '<i class="cptr icon-map-view ' + (fiber_link_status == "Free" ? "dvdisabled" : "") + '" id="iconShowlinkOnMapp" title="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '" style="padding-left: 7px " onclick="splicing.showFiberLinkOnMap(' + systemId + ')" ></i></a>';
             rowAction = rowAction + '<a href="#" data-value="' + systemId + '"  class="cptr fa  fa-edit" id="iconViewDetails" title="' + MultilingualKey.SI_GBL_GBL_GBL_GBL_003 + '" onclick="fiberLink.editFiberLinkById(' + systemId + ')" style="padding-left: 7px;"></a>';
             rowAction = rowAction + '<i class="cptr icon-CUSTOMER ' + (fiber_link_status == "Free" ? "dvdisabled" : "") + '" id="iconAssociateCustomer" onclick="fiberLink.GetFiberLinkCustomer(' + systemId + ')" title="' + MultilingualKey.SI_OSP_GBL_NET_FRM_430 + '" style="padding-left: 7px;"></i>';
@@ -482,10 +482,10 @@
         $(".dropbox:not(#dropbox" + id + ")").fadeOut();
         $(".dropfiles:not(#lnkdownloadLink" + id + ")").find('i.fa').removeClass('fa-chevron-up').addClass('fa-chevron-down');
     }
-    this.deleteFiberLinkById = function (system_id) { 
+    this.deleteFiberLinkById = function (system_id) {
         showConfirm(app.StatusMessages.CONFIRM_DELETE_LINK, function () {
             ajaxReq('FiberLink/deleteFiberLinkById', { system_id: system_id, }, true, function (resp) {
-                 
+
                 if (resp.status == "OK") {
                     alert(resp.message);
                     $(app.DE.frmViewLink).submit();
@@ -589,17 +589,17 @@
     }
 
 
-   
+
 
     this.ExportFiberLinkDetail = function (reportType, systemId, index) {
         app.FiberLinkDrp(index);
         window.location = appRoot + 'FiberLink/ExportFiberLinkById?SystemId=' + parseInt(systemId) + '&ReportType=' + reportType + '';
-        
+
     }
 
     this.attachment = {
         upload: function (systemId, parentEntityType, parentSystemId) {
-             
+
             if ($('#FiberLinkDocUpload').val() == '') {
                 alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_096);
             }
@@ -611,7 +611,7 @@
             }
         },
         uploadDocumentFile: function (systemId, parentEntityType, parentSystemId) {
-             
+
             var frmData = new FormData();
             var filesize = $('#hdnMaxFileUploadSizeLimit').val();
             var uploadedfile = $('#FiberLinkDocUpload').get(0).files[0];
@@ -738,19 +738,19 @@
         });
     }
 
-    this.GetStartPointNetworkId= function() {
+    this.GetStartPointNetworkId = function () {
         if ($(app.DE.ddlStartPointtype).val()) {
             $(app.DE.txtStartPointNwkID).prop("disabled", false);
         }
     }
-    this.GetEndPointNetworkId= function() {
+    this.GetEndPointNetworkId = function () {
         if ($(app.DE.ddlEndPointtype).val()) {
             $(app.DE.txtEndPointNwkID).prop("disabled", false);
         }
     }
-      
+
     this.resetCreateLink = function () {
-        showConfirm(app.StatusMessages.RESET_CREATE_LINK, function () { 
+        showConfirm(app.StatusMessages.RESET_CREATE_LINK, function () {
             ajaxReq('FiberLink/AddFiberLink', { system_id: 0 }, false, function (resp) {
                 $(app.DE.CreateFiberLink).html(resp);
                 app.bindCreateLinkEvents();
@@ -759,7 +759,7 @@
     }
 
 
-    this.GetStartPoint= function() {
+    this.GetStartPoint = function () {
         if ($(app.DE.ddlStartPointtype).val()) {
             $(app.DE.txtStartPointNwkID).val('');
             $(app.DE.crossStartIcon).css('display', 'none');
@@ -775,12 +775,12 @@
         }
     }
 
-    this.GetEndPoint= function() {
+    this.GetEndPoint = function () {
         if ($(app.DE.ddlEndPointtype).val()) {
             $(app.DE.txtEndPointNwkID).val('');
             $(app.DE.crossEndIcon).css('display', 'none');
             $(app.DE.tickEndIcon).css('display', 'none');
-            $(app.DE.txtEndPointNwkID).prop("disabled", false); 
+            $(app.DE.txtEndPointNwkID).prop("disabled", false);
         }
         else {
             $(app.DE.crossEndIcon).css('display', 'none');
@@ -791,7 +791,7 @@
         }
     }
 
-    this.enableDisableBasedOnAnyRowPortion = function(_value) {
+    this.enableDisableBasedOnAnyRowPortion = function (_value) {
         if (_value) {
             $(app.DE.txtROWAuthority).prop("readonly", false);
             $(app.DE.txtROWSegments).prop("readonly", false);
@@ -812,6 +812,23 @@
 
 
     this.createUpdateLink = function (IsNewLink) {
+        $('#txtLinkId').val($('#txtLinkId').val().toUpperCase());
+        $('#txtFiberLinkId').val($('#txtLinkId').val().toUpperCase());
+        let prefix = $('#txtLinkId').val().substring(0, 2).toUpperCase();
+        let selectedLinkPrefix = $('#ddlLinkPrifixType option[value="' + prefix + '"]');
+        if (prefix != '') {
+            if (selectedLinkPrefix.length > 0) {
+                $('#ddlLinkPrifixType').val(prefix).trigger('chosen:updated');
+            }
+        }
+        if (selectedLinkPrefix.length <= 0) {
+            alert(MultilingualKey.SI_OSP_GBL_NET_RPT_417);
+            return false;
+        }
+        if (prefix != selectedLinkPrefix.val()) {
+            alert(MultilingualKey.SI_OSP_GBL_NET_RPT_418);
+            return false;
+        }
 
         if ($('#ddlLinkType').val() == "") {
             $('#ddlLinkType').css('border-color', 'red');
@@ -862,7 +879,7 @@
         } else {
             $('#txtredundantlinkid').css('border-color', '');
         }
-        
+
         if ($(app.DE.crossStartIconId).is(":visible")) {
             $(app.DE.txtStartPointNwkID).css('border-color', 'red');
             return false;
@@ -891,12 +908,12 @@
         }
     }
 
-    this.validateLinkId = function(_searchText, _columnName) {
+    this.validateLinkId = function (_searchText, _columnName) {
 
         if (_searchText.trim().length > 0) {
 
             ajaxReq('FiberLink/validateLinkIdByText', { searchText: _searchText.trim(), columnName: _columnName.trim() }, true, function (resp) {
-               
+
                 if (resp.status != 'OK') {
                     $(app.DE.crossIcon).css('display', 'none');
                     $(app.DE.tickIcon).css('display', 'block');
@@ -915,7 +932,7 @@
         }
     }
 
-     this.validateStartPointNetworkId = function(_networkId) {
+    this.validateStartPointNetworkId = function (_networkId) {
         if (_networkId.trim().length > 0 && ($(app.DE.ddlStartPointtype).val())) {
             ajaxReq('FiberLink/validateFiberLinkPointNetworkId', { networkId: _networkId.trim(), columnName: $(app.DE.ddlStartPointtype).val() }, true, function (resp) {
                 if (resp.msg == 'Ok') {
@@ -937,7 +954,7 @@
         }
     }
 
-    this.validateEndPointNetworkId = function(_networkId) {
+    this.validateEndPointNetworkId = function (_networkId) {
         if (_networkId.trim().length > 0 && ($(app.DE.ddlEndPointtype).val())) {
             ajaxReq('FiberLink/validateFiberLinkPointNetworkId', { networkId: _networkId.trim(), columnName: $(app.DE.ddlEndPointtype).val() }, true, function (resp) {
                 if (resp.msg == 'Ok') {
@@ -959,7 +976,7 @@
         }
     }
 
-    this.validateStartEndPoint = function() {
+    this.validateStartEndPoint = function () {
 
         if ($(app.DE.ddlStartPointtype).val()) {
             if ((($(app.DE.txtStartPointNwkID).val() != '') || ($(app.DE.txtStartPointNwkID).val() != null))) {
@@ -969,17 +986,17 @@
         }
     }
 
-    this.SaveFiberLink = function(objFiberLink) {
+    this.SaveFiberLink = function (objFiberLink) {
         debugger;
         if (objFiberLink.pageMsg.status != "OK" || $('#hdnCheckforCLP').val() != '') {
             $('#txtfiberlink').val(objFiberLink.network_id);
             $('#hdnCheckforCLP').val('');
             alert(objFiberLink.pageMsg.message);
             $("#closeChildPopup").click();
-            
+
         }
         else {
-            if (objFiberLink.CreateFL== 0) {
+            if (objFiberLink.CreateFL == 0) {
                 alert(objFiberLink.pageMsg.message);
             }
             ajaxReq('FiberLink/AddFiberLink', { system_id: 0 }, false, function (resp) {
@@ -989,21 +1006,21 @@
         }
     }
 
-    this.ExportFiberLinkIntoKML = function (reportType, _linkSystemId,Index) {
+    this.ExportFiberLinkIntoKML = function (reportType, _linkSystemId, Index) {
         app.FiberLinkDrp(Index);
         window.location = appRoot + 'FiberLink/ExportFiberLinkIntoKML?SystemId=' + parseInt(_linkSystemId) + '&ReportType=' + reportType + '';
-        
+
     }
-    this.GetFiberLinkCustomer = function (_system_id) { 
-        popup.LoadModalDialog('CHILD', 'FiberLink/GetFiberLinkCustomer', { LinkId: _system_id }, MultilingualKey.SI_OSP_GBL_NET_FRM_430 , 'modal-xl');
-    } 
-    this.FiberLinkCustomerExport = function () { 
+    this.GetFiberLinkCustomer = function (_system_id) {
+        popup.LoadModalDialog('CHILD', 'FiberLink/GetFiberLinkCustomer', { LinkId: _system_id }, MultilingualKey.SI_OSP_GBL_NET_FRM_430, 'modal-xl');
+    }
+    this.FiberLinkCustomerExport = function () {
         window.location = appRoot + 'FiberLink/ExportFiberLinkCustomer';
     }
     this.GetFiberLinkHistory = function (_system_id) {
         popup.LoadModalDialog('CHILD', 'Audit/GetFiberLinkHistory', { LinkSystemId: _system_id }, MultilingualKey.SI_OSP_GBL_NET_FRM_431, 'modal-xl');
     }
-    this.FiberLinkAuditReport= function(downloadEntity) {
+    this.FiberLinkAuditReport = function (downloadEntity) {
         window.location = appRoot + 'Audit/' + downloadEntity;
     }
     this.btnclearLinkId = function () {
@@ -1025,18 +1042,18 @@
         }
     }
     this.closepopup = function () {
-        
+
         $(app.DE.dvAssociateLink).hide();
     }
 
     // Associate Link-----
-    this.updateLinkId = function() {
-       // var _linkId = $(app.DE.txtFiberLinkId).val();
-       // var _fiberNo = $(app.DE.hdnFiberNumber).val();
+    this.updateLinkId = function () {
+        // var _linkId = $(app.DE.txtFiberLinkId).val();
+        // var _fiberNo = $(app.DE.hdnFiberNumber).val();
         //var _cableId = $(app.DE.hdnCableId).val();
-        
-       // app.validateFiberlinkId(_linkId, _fiberNo, _cableId);
-       // var _linkSystemId = $(app.DE.hdnLinkSystemId).val();
+
+        // app.validateFiberlinkId(_linkId, _fiberNo, _cableId);
+        // var _linkSystemId = $(app.DE.hdnLinkSystemId).val();
 
     }
     this.AssociatelinkId = function () {
@@ -1048,7 +1065,7 @@
             if (resp.objfiberLink != null) {
                 $(app.DE.hdnLinkSystemId).val(resp.objfiberLink.system_id);
                 $(app.DE.crossIcon).css('display', 'none');
-                $(app.DE.tickIcon).css('display', 'block'); 
+                $(app.DE.tickIcon).css('display', 'block');
                 $(app.DE.txtFiberLinkId).css('border-color', '');
                 app.associateFiberLink(resp.objfiberLink.system_id, _linkId, _fiberNo, _cableId, 'A');
                 $('.progressbarShow').css('display', 'none');
@@ -1069,8 +1086,8 @@
         });
     }
 
-    this.associateFiberLink= function(_linkSystemId, _linkId, _fiberNo, _cableId, _action) {
-     
+    this.associateFiberLink = function (_linkSystemId, _linkId, _fiberNo, _cableId, _action) {
+
         var gridFiberNumber = _fiberNo;
         var cableId = _cableId;
         var linkSystemId = 0;
@@ -1080,9 +1097,9 @@
             linkSystemId = $(app.DE.hdnLinkSystemId).val();
 
         ajaxReq('FiberLink/AssociateFiberLinkWithCable', { link_system_id: _linkSystemId, cable_id: _cableId, fiber_no: _fiberNo, action: _action }, true, function (resp) {
-            if (resp.status == 'OK') { 
+            if (resp.status == 'OK') {
                 $(app.DE.crossIcon).css('display', 'none');
-                $(app.DE.tickIcon).css('display', 'none'); 
+                $(app.DE.tickIcon).css('display', 'none');
                 $(app.DE.dvAssociateLink).hide();
                 alert(app.StatusMessages.LINK_ASSOCIATED_SUCCESS);
                 if (linkSystemId > 0 && $(app.DE.txtFiberLinkId).val().trim().length > 0) {
@@ -1092,9 +1109,9 @@
                 else {
 
                     $(app.DE.lblGrdLinkId_ + gridFiberNumber).html(MultilingualKey.SI_OSP_GBL_JQ_FRM_194);
-                } 
+                }
             }
-            else { 
+            else {
                 $(app.DE.crossIcon).css('display', 'block');
                 $(app.DE.tickIcon).css('display', 'none');
                 if (app.CableFiberButton == true) {
@@ -1110,7 +1127,7 @@
                     alert(resp.message);
                     $(app.DE.dvAssociateLink).hide();
                 }
-            } 
+            }
         });
-    }       
+    }
 }
