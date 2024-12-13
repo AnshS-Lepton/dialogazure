@@ -1188,7 +1188,7 @@ LAYER
 				FONT arial
 				TYPE truetype
 				COLOR 0 0 0				
-				SIZE 8
+				SIZE 12
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR 255 255 255  # background rect.
@@ -1213,7 +1213,7 @@ LAYER
 				FONT arial
 				TYPE truetype
 				COLOR 0 0 0				
-				SIZE 8
+				SIZE 12
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR 255 255 255  # background rect.
@@ -1237,7 +1237,7 @@ LAYER
 				FONT arial
 				TYPE truetype
 				COLOR 0 0 0				
-				SIZE 8
+				SIZE 12
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR 255 255 255  # background rect.
