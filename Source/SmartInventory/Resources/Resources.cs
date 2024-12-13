@@ -2609,7 +2609,7 @@ namespace Resources {
                }
             }
             
-        /// <summary>Convert To Operation</summary>
+        /// <summary>Convert To Dormant</summary>
         public static string SI_ISP_GBL_GBL_GBL_040 {
                get {
                    return resourceProvider.GetResource("SI_ISP_GBL_GBL_GBL_040", CultureInfo.CurrentUICulture.Name) as string;
@@ -2903,6 +2903,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>This display name already exist</summary>
+        public static string SF_GBL_GBL_JQ_FRM_014 {
+               get {
+                   return resourceProvider.GetResource("SF_GBL_GBL_JQ_FRM_014", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Not selected/approved building exist at this location!</summary>
         public static string SI_GBL_GBL_GBL_GBL_017 {
                get {
@@ -3092,10 +3099,10 @@ namespace Resources {
                }
             }
             
-        /// <summary>This display name already exist</summary>
-        public static string SF_GBL_GBL_JQ_FRM_014 {
+        /// <summary>Code</summary>
+        public static string SI_GBL_GBL_NET_FRM_213 {
                get {
-                   return resourceProvider.GetResource("SF_GBL_GBL_JQ_FRM_014", CultureInfo.CurrentUICulture.Name) as string;
+                   return resourceProvider.GetResource("SI_GBL_GBL_NET_FRM_213", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -3827,7 +3834,7 @@ namespace Resources {
                }
             }
             
-        /// <summary>Convert To Implementation</summary>
+        /// <summary>Convert To AsBuilt</summary>
         public static string SI_GBL_GBL_GBL_FRM_006 {
                get {
                    return resourceProvider.GetResource("SI_GBL_GBL_GBL_FRM_006", CultureInfo.CurrentUICulture.Name) as string;
@@ -4695,14 +4702,14 @@ namespace Resources {
                }
             }
             
-        /// <summary>can not convert into dorment,as it is used in splicing</summary>
+        /// <summary>can not convert into dormant,as it is used in splicing</summary>
         public static string SI_GBL_GBL_GBL_GBL_141 {
                get {
                    return resourceProvider.GetResource("SI_GBL_GBL_GBL_GBL_141", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
-        /// <summary>can not convert into dorment,as it is associated with some entity!</summary>
+        /// <summary>can not convert into dormant,as it is associated with some entity!</summary>
         public static string SI_GBL_GBL_GBL_GBL_142 {
                get {
                    return resourceProvider.GetResource("SI_GBL_GBL_GBL_GBL_142", CultureInfo.CurrentUICulture.Name) as string;
@@ -7355,13 +7362,6 @@ namespace Resources {
                }
             }
             
-        /// <summary>Code</summary>
-        public static string SI_GBL_GBL_NET_FRM_213 {
-               get {
-                   return resourceProvider.GetResource("SI_GBL_GBL_NET_FRM_213", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
         /// <summary>No</summary>
         public static string SI_GBL_GBL_NET_FRM_214 {
                get {
@@ -8276,6 +8276,13 @@ namespace Resources {
         public static string SI_OSP_BUL_NET_GBL_005 {
                get {
                    return resourceProvider.GetResource("SI_OSP_BUL_NET_GBL_005", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Region</summary>
+        public static string SI_OSP_GBL_GBL_GBL_002 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_GBL_GBL_002", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -9308,6 +9315,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>All Tabs</summary>
+        public static string SI_OSP_GBL_NET_FRM_062 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_FRM_062", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Floor Name</summary>
         public static string SI_OSP_CUS_NET_RPT_003 {
                get {
@@ -9490,6 +9504,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>Add PIT</summary>
+        public static string SI_OSP_GBL_NET_RPT_116 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_116", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Invalid File Extension. Please upload file having extension kml,kmz,xlsx,xls only</summary>
         public static string SI_OSP_DU_NET_FRM_032 {
                get {
@@ -9655,6 +9676,13 @@ namespace Resources {
         public static string SI_OSP_DUC_NET_GBL_001 {
                get {
                    return resourceProvider.GetResource("SI_OSP_DUC_NET_GBL_001", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Long/Lat</summary>
+        public static string SI_OSP_STR_NET_FRM_006 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_STR_NET_FRM_006", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -10253,6 +10281,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>Province Name</summary>
+        public static string SI_OSP_GBL_GBL_GBL_107 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_GBL_GBL_107", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Bill Of Quotation</summary>
         public static string SI_OSP_GBL_GBL_FRM_210 {
                get {
@@ -10383,13 +10418,6 @@ namespace Resources {
         public static string SI_OSP_GBL_GBL_FRM_230 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_GBL_FRM_230", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>Region</summary>
-        public static string SI_OSP_GBL_GBL_GBL_002 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_GBL_GBL_002", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -10820,13 +10848,6 @@ namespace Resources {
                }
             }
             
-        /// <summary>Province Name</summary>
-        public static string SI_OSP_GBL_GBL_GBL_107 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_GBL_GBL_107", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
         /// <summary>Back To Home</summary>
         public static string SI_OSP_GBL_GBL_GBL_108 {
                get {
@@ -10985,6 +11006,13 @@ namespace Resources {
         public static string SI_OSP_GBL_NET_RPT_353 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_353", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Co Polor Vertical Boresight</summary>
+        public static string SI_OSP_GBL_GBL_GBL_206 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_GBL_GBL_206", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -11272,13 +11300,6 @@ namespace Resources {
         public static string GBL_GBL_GBL_GBL_GBL_004 {
                get {
                    return resourceProvider.GetResource("GBL_GBL_GBL_GBL_GBL_004", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>Co Polor Vertical Boresight</summary>
-        public static string SI_OSP_GBL_GBL_GBL_206 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_GBL_GBL_206", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -12133,13 +12154,6 @@ namespace Resources {
         public static string SI_OSP_GBL_NET_FRM_061 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_FRM_061", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>All Tabs</summary>
-        public static string SI_OSP_GBL_NET_FRM_062 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_NET_FRM_062", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -13032,7 +13046,7 @@ namespace Resources {
                }
             }
             
-        /// <summary>Convert To Implementation</summary>
+        /// <summary>Convert To AsBuilt</summary>
         public static string SI_OSP_GBL_NET_FRM_272 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_FRM_272", CultureInfo.CurrentUICulture.Name) as string;
@@ -14467,7 +14481,7 @@ namespace Resources {
                }
             }
             
-        /// <summary>SubArea ID:</summary>
+        /// <summary>EE Area:</summary>
         public static string SI_OSP_GBL_NET_FRM_545 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_FRM_545", CultureInfo.CurrentUICulture.Name) as string;
@@ -16847,14 +16861,14 @@ namespace Resources {
                }
             }
             
-        /// <summary>Convert To Implementation</summary>
+        /// <summary>Convert To As Built</summary>
         public static string SI_OSP_GBL_NET_RPT_030 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_030", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
-        /// <summary>Convert To Operation</summary>
+        /// <summary>Convert To Dormant</summary>
         public static string SI_OSP_GBL_NET_RPT_031 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_031", CultureInfo.CurrentUICulture.Name) as string;
@@ -16868,14 +16882,14 @@ namespace Resources {
                }
             }
             
-        /// <summary>Bulk Operation</summary>
+        /// <summary>Bulk Dormant</summary>
         public static string SI_OSP_GBL_NET_RPT_034 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_034", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
-        /// <summary>Bulk Implementation</summary>
+        /// <summary>Bulk As Built</summary>
         public static string SI_OSP_GBL_NET_RPT_035 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_035", CultureInfo.CurrentUICulture.Name) as string;
@@ -17229,13 +17243,6 @@ namespace Resources {
         public static string SI_OSP_GBL_NET_RPT_114 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_114", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>Add PIT</summary>
-        public static string SI_OSP_GBL_NET_RPT_116 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_116", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -19885,13 +19892,6 @@ namespace Resources {
                }
             }
             
-        /// <summary>Long/Lat</summary>
-        public static string SI_OSP_STR_NET_FRM_006 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_STR_NET_FRM_006", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
         /// <summary>Business Pass</summary>
         public static string SI_OSP_STR_NET_FRM_009 {
                get {
@@ -21362,6 +21362,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>Buildings approved successfully.</summary>
+        public static string SI_OSP_BUL_JQ_FRM_003 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_BUL_JQ_FRM_003", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Cable calculated lenth should be greater or equal to cable measured length !</summary>
         public static string SI_OSP_GBL_NET_FRM_574 {
                get {
@@ -21534,6 +21541,13 @@ namespace Resources {
         public static string SI_OSP_GBL_NET_FRM_661 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_FRM_661", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>All</summary>
+        public static string SI_OSP_GBL_GBL_GBL_037 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_GBL_GBL_037", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -22482,6 +22496,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>Summary Report</summary>
+        public static string SI_OSP_GBL_NET_RPT_209 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_209", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Please Select Customer Id</summary>
         public static string SI_OSP_GBL_NET_RPT_200 {
                get {
@@ -22535,13 +22556,6 @@ namespace Resources {
         public static string SI_OSP_GBL_NET_RPT_207 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_207", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>Summary Report</summary>
-        public static string SI_OSP_GBL_NET_RPT_209 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_209", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -23630,7 +23644,7 @@ namespace Resources {
                }
             }
             
-        /// <summary>Section ID</summary>
+        /// <summary>Route Name</summary>
         public static string SI_GBL_GBL_GBL_GBL_164 {
                get {
                    return resourceProvider.GetResource("SI_GBL_GBL_GBL_GBL_164", CultureInfo.CurrentUICulture.Name) as string;
@@ -23917,6 +23931,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>Information</summary>
+        public static string GBL_GBL_GBL_JQ_GBL_001 {
+               get {
+                   return resourceProvider.GetResource("GBL_GBL_GBL_JQ_GBL_001", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Drag Pegman onto the map to open Street View</summary>
         public static string GBL_GBL_GBL_GBL_GBL_017 {
                get {
@@ -23956,13 +23977,6 @@ namespace Resources {
         public static string SI_OSP_GBL_GBL_GBL_039 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_GBL_GBL_039", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>Information</summary>
-        public static string GBL_GBL_GBL_JQ_GBL_001 {
-               get {
-                   return resourceProvider.GetResource("GBL_GBL_GBL_JQ_GBL_001", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -24225,6 +24239,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>Confirm?</summary>
+        public static string SI_GBL_GBL_JQ_FRM_015 {
+               get {
+                   return resourceProvider.GetResource("SI_GBL_GBL_JQ_FRM_015", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Use the above filters to export LMC report!</summary>
         public static string SI_GBL_GBL_JQ_FRM_014 {
                get {
@@ -24250,13 +24271,6 @@ namespace Resources {
         public static string SI_OSP_GBL_GBL_GBL_287 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_GBL_GBL_287", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>Confirm?</summary>
-        public static string SI_GBL_GBL_JQ_FRM_015 {
-               get {
-                   return resourceProvider.GetResource("SI_GBL_GBL_JQ_FRM_015", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -24414,6 +24428,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>Please select a ticket!</summary>
+        public static string SI_OSP_GBL_JQ_FRM_023 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_023", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Some elements are associated with selected shaft. Please remove them first !</summary>
         public static string SI_OSP_GBL_NET_FRM_301 {
                get {
@@ -24449,6 +24470,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>Your current map zoom is</summary>
+        public static string SI_OSP_GBL_JQ_FRM_086 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_086", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Approved & NE Associated</summary>
         public static string SI_GBL_GBL_JQ_FRM_023 {
                get {
@@ -24474,6 +24502,13 @@ namespace Resources {
         public static string SI_OSP_GBL_NET_RPT_277 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_277", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Connections does not exist!</summary>
+        public static string SI_OSP_GBL_JQ_GBL_065 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_JQ_GBL_065", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -24974,6 +25009,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>Floor Width</summary>
+        public static string SI_ISP_GBL_JQ_GBL_006 {
+               get {
+                   return resourceProvider.GetResource("SI_ISP_GBL_JQ_GBL_006", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Please select shaft first!</summary>
         public static string SI_ISP_GBL_JQ_FRM_022 {
                get {
@@ -25079,13 +25121,6 @@ namespace Resources {
                }
             }
             
-        /// <summary>Floor Width</summary>
-        public static string SI_ISP_GBL_JQ_GBL_006 {
-               get {
-                   return resourceProvider.GetResource("SI_ISP_GBL_JQ_GBL_006", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
         /// <summary>Unit Width</summary>
         public static string SI_ISP_GBL_JQ_GBL_007 {
                get {
@@ -25139,6 +25174,13 @@ namespace Resources {
         public static string SI_ISP_GBL_JQ_GBL_014 {
                get {
                    return resourceProvider.GetResource("SI_ISP_GBL_JQ_GBL_014", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Floor height can not be less then unit height ({0}) !</summary>
+        public static string SI_ISP_GBL_JQ_GBL_037 {
+               get {
+                   return resourceProvider.GetResource("SI_ISP_GBL_JQ_GBL_037", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -25310,13 +25352,6 @@ namespace Resources {
                }
             }
             
-        /// <summary>Floor height can not be less then unit height ({0}) !</summary>
-        public static string SI_ISP_GBL_JQ_GBL_037 {
-               get {
-                   return resourceProvider.GetResource("SI_ISP_GBL_JQ_GBL_037", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
         /// <summary>Minimum one range is required!</summary>
         public static string SI_ISP_GBL_JQ_GBL_038 {
                get {
@@ -25363,6 +25398,13 @@ namespace Resources {
         public static string SI_ISP_GBL_JQ_GBL_044 {
                get {
                    return resourceProvider.GetResource("SI_ISP_GBL_JQ_GBL_044", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>ROW Report</summary>
+        public static string SI_OSP_GBL_JQ_RPT_005 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_JQ_RPT_005", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -25475,13 +25517,6 @@ namespace Resources {
         public static string SI_OSP_BUL_JQ_FRM_002 {
                get {
                    return resourceProvider.GetResource("SI_OSP_BUL_JQ_FRM_002", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>Buildings approved successfully.</summary>
-        public static string SI_OSP_BUL_JQ_FRM_003 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_BUL_JQ_FRM_003", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -26052,13 +26087,6 @@ namespace Resources {
                }
             }
             
-        /// <summary>All</summary>
-        public static string SI_OSP_GBL_GBL_GBL_037 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_GBL_GBL_037", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
         /// <summary>Total</summary>
         public static string SI_OSP_GBL_GBL_GBL_041 {
                get {
@@ -26402,13 +26430,6 @@ namespace Resources {
                }
             }
             
-        /// <summary>Please select a ticket!</summary>
-        public static string SI_OSP_GBL_JQ_FRM_023 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_023", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
         /// <summary>Please select only one ticket!</summary>
         public static string SI_OSP_GBL_JQ_FRM_024 {
                get {
@@ -26504,6 +26525,13 @@ namespace Resources {
         public static string SI_OSP_GBL_JQ_FRM_037 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_037", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>No proper boundary found!</summary>
+        public static string SI_OSP_GBL_JQ_FRM_068 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_068", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -26710,13 +26738,6 @@ namespace Resources {
                }
             }
             
-        /// <summary>No proper boundary found!</summary>
-        public static string SI_OSP_GBL_JQ_FRM_068 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_068", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
         /// <summary>Info tools works on {0} or greater zoom level. <br> Your current map zoom is {1} Do you want to zoom?</summary>
         public static string SI_OSP_GBL_JQ_FRM_069 {
                get {
@@ -26819,13 +26840,6 @@ namespace Resources {
         public static string SI_OSP_GBL_JQ_FRM_085 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_085", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>Your current map zoom is</summary>
-        public static string SI_OSP_GBL_JQ_FRM_086 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_086", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -26945,6 +26959,13 @@ namespace Resources {
         public static string SI_OSP_GBL_JQ_FRM_103 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_103", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>ATB History</summary>
+        public static string SI_OSP_HTB_JQ_HIS_001 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_HTB_JQ_HIS_001", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -27162,6 +27183,13 @@ namespace Resources {
         public static string SI_OSP_GBL_JQ_FRM_135 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_135", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>SPLICE CLOSURE History</summary>
+        public static string SI_OSP_SC_JQ_HIS_001 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_SC_JQ_HIS_001", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -27543,6 +27571,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>Please enter landmark at PointA Row {0} !</summary>
+        public static string SI_OSP_GBL_JQ_GBL_011 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_JQ_GBL_011", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Please select </summary>
         public static string SI_OSP_GBL_JQ_GBL_005 {
                get {
@@ -27582,13 +27617,6 @@ namespace Resources {
         public static string SI_OSP_GBL_JQ_GBL_010 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_JQ_GBL_010", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>Please enter landmark at PointA Row {0} !</summary>
-        public static string SI_OSP_GBL_JQ_GBL_011 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_JQ_GBL_011", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -27953,13 +27981,6 @@ namespace Resources {
         public static string SI_OSP_GBL_JQ_GBL_064 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_JQ_GBL_064", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>Connections does not exist!</summary>
-        public static string SI_OSP_GBL_JQ_GBL_065 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_JQ_GBL_065", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -28341,13 +28362,6 @@ namespace Resources {
                }
             }
             
-        /// <summary>ROW Report</summary>
-        public static string SI_OSP_GBL_JQ_RPT_005 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_JQ_RPT_005", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
         /// <summary>Please enter search text!</summary>
         public static string SI_OSP_GBL_JQ_RPT_006 {
                get {
@@ -28513,13 +28527,6 @@ namespace Resources {
         public static string SI_OSP_HTB_JQ_FRM_002 {
                get {
                    return resourceProvider.GetResource("SI_OSP_HTB_JQ_FRM_002", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>ATB History</summary>
-        public static string SI_OSP_HTB_JQ_HIS_001 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_HTB_JQ_HIS_001", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -28821,13 +28828,6 @@ namespace Resources {
         public static string SI_OSP_SC_JQ_FRM_005 {
                get {
                    return resourceProvider.GetResource("SI_OSP_SC_JQ_FRM_005", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>SPLICE CLOSURE History</summary>
-        public static string SI_OSP_SC_JQ_HIS_001 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_SC_JQ_HIS_001", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
             
@@ -29531,6 +29531,13 @@ namespace Resources {
                }
             }
             
+        /// <summary>Agg1</summary>
+        public static string SI_OSP_GBL_NET_RPT_415 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_415", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
         /// <summary>Use the above filers to export Site report!</summary>
         public static string SI_OSP_GBL_NET_RPT_355 {
                get {
@@ -29951,13 +29958,6 @@ namespace Resources {
                }
             }
             
-        /// <summary>Agg1</summary>
-        public static string SI_OSP_GBL_NET_RPT_415 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_415", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
         /// <summary>District/Division</summary>
         public static string GBL_GBL_GBL_GBL_GBL_039 {
                get {
@@ -30046,6 +30046,20 @@ namespace Resources {
         public static string SI_ADM_GBL_JQ_FRM_005 {
                get {
                    return resourceProvider.GetResource("SI_ADM_GBL_JQ_FRM_005", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Link Id prefix does not exist in the Link Prefix dropdown!</summary>
+        public static string SI_OSP_GBL_NET_RPT_417 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_417", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Link Id prefix must match with Link Prefix!</summary>
+        public static string SI_OSP_GBL_NET_RPT_418 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_418", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
 
