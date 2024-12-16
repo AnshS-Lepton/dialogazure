@@ -2922,7 +2922,7 @@ CLASS
 				COLOR 0 0 0	
 				FONT arial
 				TYPE truetype							
-				SIZE 8
+				SIZE 12
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR [color_code]  # background rect.
@@ -2949,7 +2949,7 @@ CLASS
 				COLOR 0 0 0	
 				FONT arial
 				TYPE truetype								
-				SIZE 8
+				SIZE 12
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR [color_code]  # background rect.
@@ -2975,7 +2975,7 @@ CLASS
 				COLOR 0 0 0	
 				FONT arial
 				TYPE truetype				
-				SIZE 8
+				SIZE 12
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR [color_code]  # background rect.
