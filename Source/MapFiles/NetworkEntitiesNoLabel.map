@@ -126,6 +126,7 @@ MAP
 				WIDTH 3
 				OUTLINECOLOR 255 0 0
 				COLOR -1 -1 -1
+				PATTERN 3 8  END
 			END
 		END
 	END
@@ -158,6 +159,7 @@ MAP
 				WIDTH 2
 				OUTLINECOLOR 0 0 255
 				COLOR -1 -1 -1
+				PATTERN 3 8  END
 			END
 		END
 	END
