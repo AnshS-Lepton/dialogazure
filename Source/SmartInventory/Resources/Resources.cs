@@ -30062,6 +30062,13 @@ namespace Resources {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_418", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
+            
+        /// <summary>Fiber Link Deletion is not allowed due to its association with a cable!</summary>
+        public static string SI_OSP_GBL_NET_RPT_419 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_419", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
 
         }        
 }
