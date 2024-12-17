@@ -6618,7 +6618,7 @@ var Main = function () {
     this.middleMarkers = [];
     //direction planning end
     this.initApp = function () {
-
+        
         this.initGlobalSettings();
         this.LoadMap();
         this.bindEvents();
@@ -7164,25 +7164,7 @@ var Main = function () {
 
         $(app.DE.btnlayerSwitch).on("click", function () { app.handleLayerSwitch(); });
         $(app.DE.lyrRefresh).on("click", function () {
-            $("#hdnMapRegionProvinceLimit").val(app.provinceLimitToSelectForLoadinVectorLayer);
-            if ($(app.DE.ulProvinceLayers + '>li>input[type="checkbox"]:checked').length > $("#hdnMapRegionProvinceLimit").val()) {
-                alert($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_120, $("#hdnMapRegionProvinceLimit").val()));
-                return;
-            }
-            //Check selected Province/Layers and load Data 
-            if (app.IsVecorLayerEnabled) {
-                app.RefreshVectorDataAndLayer();
-            }
-            // alert("fdf");
-
-            app.reqver++;
-            //app.LoadLayersOnMap();
-            setTimeout(function () {
-
-                $("#dvProgress").hide();
-                $('#dvProgress').css('display', 'none');
-            }, 2000);
-            app.LoadLayersOnMap();
+            app.RefreshLayersForSync();
         });
         $(document).on('click', app.DE.LayerAccordin, function (e) {
 
@@ -8217,109 +8199,8 @@ var Main = function () {
             }
         });
         $('.mainlyr .checkbox-custom').change(function () {
-
-            if (this.checked) {
-                var chkid = this.id;
-                var id = $('#' + chkid).attr("data-layerid");
-                var groupType = $('#' + chkid).attr("data-layergroup");
-                $('input:checkbox#chk_netP_' + id).not(":disabled").prop('checked', this.checked);
-                $('input:checkbox#chk_netA_' + id).not(":disabled").prop('checked', this.checked);
-                $('input:checkbox#chk_netD_' + id).not(":disabled").prop('checked', this.checked);
-                //  $('input:checkbox#chk_netL_' + id).prop('checked', this.checked);
-
-                if ($('.layers .network li input[type=checkbox]:checked').filter('.checkbox-custom').length
-                    < $('.layers .network li input[type=checkbox]').filter('.checkbox-custom').length) {
-                    $(app.DE.chkPlannedAll).not(":disabled").prop('checked', false);
-                    $(app.DE.chkAsBuiltAll).not(":disabled").prop('checked', false);
-                    $(app.DE.chkDormentAll).not(":disabled").prop('checked', false);
-                    $(app.DE.chklabelAll).not(":disabled").prop('checked', false);
-
-                }
-
-                checkedallNetwork();
-                //// group layer selection checked unchecked
-                if ($('.layers .network li input[type=checkbox]:checked').filter('.checkbox-custom').filter("[data-layergroup='" + groupType + "']").length
-                    == $('.layers .network li input[type=checkbox]').filter('.checkbox-custom').filter("[data-layergroup='" + groupType + "']").length) {
-
-                    $('input:checkbox#' + groupType).not(":disabled").prop('checked', true);
-
-                }
-                else {
-                    $('input:checkbox#' + groupType).not(":disabled").prop('checked', false);
-                }
-
-
-
-            }
-            else {
-                var chkid = this.id;
-                var id = $('#' + chkid).attr("data-layerid");
-                var lyrName = $('#' + chkid).attr("data-mapabbr");
-                var groupType = $('#' + chkid).attr("data-layergroup");
-                $('input:checkbox#chk_netP_' + id).not(":disabled").prop('checked', false);
-                $('input:checkbox#chk_netA_' + id).not(":disabled").prop('checked', false);
-                $('input:checkbox#chk_netD_' + id).not(":disabled").prop('checked', false);
-                $('input:checkbox#chk_netL_' + id).not(":disabled").prop('checked', false);
-
-                if ($('.layers .network li input[type=checkbox]:checked').filter('.checkbox-custom').length
-                    < $('.layers .network li input[type=checkbox]').filter('.checkbox-custom').length) {
-                    $(app.DE.chkPlannedAll).not(":disabled").prop('checked', false);
-                    $(app.DE.chkAsBuiltAll).not(":disabled").prop('checked', false);
-                    $(app.DE.chkDormentAll).not(":disabled").prop('checked', false);
-                    $(app.DE.chklabelAll).not(":disabled").prop('checked', false);
-                }
-
-                //// group layer selection checked unchecked
-
-                if ($('.layers .network li input[type=checkbox]:checked').filter('.checkbox-custom').filter("[data-layergroup='" + groupType + "']").length
-                    == $('.layers .network li input[type=checkbox]').filter('.checkbox-custom').filter("[data-layergroup='" + groupType + "']").length) {
-
-                    $('input:checkbox#' + groupType).not(":disabled").prop('checked', true);
-
-                }
-                else {
-                    $('input:checkbox#' + groupType).not(":disabled").prop('checked', false);
-                }
-
-
-                //var remLyrItem  app.DE.layerManager.includes(lyrName);
-
-                // app.layerManager.pop(lyrName);
-
-
-            }
-
-
-            /// Parent node checked if all group layer checkbox checked
-
-            if ($('.checkbox-customgrp:checkbox:checked').length
-                == $('.checkbox-customgrp:checkbox').length) {
-                $('#checkAll').not(":disabled").prop('checked', true);
-            }
-            else {
-                $('#checkAll').not(":disabled").prop('checked', false);
-            }
-
-
-
-            /////
-            if ($('.checkbox-custom2:checked').filter('[data-networktype=P]').length
-                == $('.checkbox-custom2').filter('[data-networktype=P]').length) {
-                $('#chkPlannedAll').not(":disabled").prop('checked', true);
-            }
-            if ($('.checkbox-custom2:checked').filter('[data-networktype=A]').length
-                == $('.checkbox-custom2').filter('[data-networktype=A]').length) {
-                $('#chkAsBuiltAll').not(":disabled").prop('checked', true);
-            }
-            if ($('.checkbox-custom2:checked').filter('[data-networktype=D]').length
-                == $('.checkbox-custom2').filter('[data-networktype=D]').length) {
-                $('#chkDormentAll').not(":disabled").prop('checked', true);
-            }
-            if ($('.checkbox-custom2:checked').filter('[data-networktype=L]').length
-                == $('.checkbox-custom2').filter('[data-networktype=L]').length) {
-                $('#chklabelAll').not(":disabled").prop('checked', true);
-            }
-
+            
+            app.TriggerEntityChangeEvent.call(this);
 
         });
         // for grop checkbox checked/unchecked
@@ -11108,8 +10989,7 @@ var Main = function () {
         $(app.DE.ulProvinceLayers + ' li input[type="checkbox"]').prop("checked", false);
 
     }
-    this.saveWorkSpace = function (wrkspcID) {
-        //debugger;
+    this.saveWorkSpace = function (wrkspcID) {        
         var _oldWorkSpacename = $('#workspace_' + app.OldWorkSpaceId).text();
         var _newWorkSpacename = $('#workspace_' + wrkspcID).text();
 
@@ -13264,8 +13144,7 @@ var Main = function () {
         ajaxReq('Main/ValidateEntityGeom', { geomType: geomType, enType: eType, txtGeom: txtGeom, isTemplate: isTemplate }, true,
             function (resp) {
                 if (resp.status == "OK") {
-                    //debugger;
-
+                    
 
                     app.showLibraryTools();
                     $('#LibraryTools a:nth-child(2)').off('click');
@@ -13327,7 +13206,6 @@ var Main = function () {
                             value = "";
                         }
                         if (value.updated_value != null) {
-                            //debugger;
                             if ((eType.toUpperCase() == 'SPLITTER') && (value.updated_value.toUpperCase() == 'SECONDARY')) {
                                 setTimeout(function () { $("#hdnspltype").val('SECONDARY'); }, 50);
 
@@ -13600,7 +13478,6 @@ var Main = function () {
             var $iconElement = $(this);
             if (!$iconElement.hasClass("dvdisabled") && !$iconElement.hasClass("roledisabled") && !$iconElement.hasClass("buffer-disabled")) {
                 var actionName = $iconElement.data("action")
-                //debugger;
                 switch (actionName.toUpperCase()) {
                     case "ADDENTITY":
                         app.toggleEntityDropdown(e)
@@ -16896,8 +16773,6 @@ var Main = function () {
         }
     }
     this.checkCblLength = function () {
-        //debugger;
-        //;commented by pk
         var measureLen = parseFloat($("#cable_measured_length").val());
         var calculatedLen = parseFloat($("#cable_calculated_length").val());
 
@@ -18550,7 +18425,6 @@ var Main = function () {
         popup.LoadModalDialog('CHILD', 'Library/GetPodDetailsInBulk', { geom: _geom, entity_sub_type: _entitySubtype }, pageTitleText, modalClass);
     }
     this.funBulkDeleteEntity = function (_networkStatus, _entitytype, _entitySubtype, system_id) {
-        debugger;
         var rootid = $("#ddl_RootId").val();
         var _data = {
             geom: $('#objFilterAttributes_geom').val(),
@@ -19429,13 +19303,11 @@ var Main = function () {
         // popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
         popup.LoadModalDialog(app.ParentModel, pageUrl, { userid: 0 }, 'Core Planner', modalClass);
     }
-    this.createFiberlinkCPL = function () {
-        debugger;
+    this.createFiberlinkCPL = function () {        
         popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: '' }, "Create Link", 'modal-xl');
 
     }
-    this.checkAvailability = function () {
-        debugger;
+    this.checkAvailability = function () {        
         if ($("#txtODF1").val() == '' || $("#txtODF2").val() == '' || $("#txtRequiredCore").val() == '') { alert('RequiredCore ,ODF1, OD2 are required for checking Accessibility'); return false; }
 
         ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val(), ODF2: $("#txtODF2").val(), required_core: $("#txtRequiredCore").val() }, true, function (resp) {
@@ -19458,16 +19330,14 @@ var Main = function () {
         }, true, true);
 
     }
-    this.showReport = function () {
-        debugger;
+    this.showReport = function () {        
         window.location = appRoot + 'Library/ExportPlanLogicReport';
     }
 
     this.saveCorePlanLogic = function () {
 
         ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val(), fiber_link_network_id: $("#txtfiberlink").val(), source_network_id: $("#txtODF1").val(), destination_network_id: $("#txtODF2").val(), buffer: 5 }, true, function (resp) {
-            if (resp != null && resp != undefined) {
-                debugger;
+            if (resp != null && resp != undefined) {                
                 if (resp.status) {
                     alert(resp.message);
                     $('#txtRequiredCore').val('');
@@ -19486,8 +19356,7 @@ var Main = function () {
 
     }
 
-    this.GetlinkPrefixbyLinkType = function (obj) {
-        debugger;
+    this.GetlinkPrefixbyLinkType = function (obj) {        
         var _link_prefix = obj.value;
         ajaxReq('Library/GetlinkPrefixbyPrefixType', { link_prefix: _link_prefix }, false, function (resp) {
             if (resp.data != null) {
@@ -19516,7 +19385,6 @@ var Main = function () {
     }
 
     this.togglePrint = function (obj, _geom) {
-        //debugger;
         ;
         $("#hdnPrintAreaType").val(_geom);
         app.addRemoveActiveClass('');
@@ -20502,8 +20370,7 @@ var Main = function () {
 
     this.ExportEntityReportNewEnhancement = function (_fileType, entityids, totalPlannedCount, totalAsBuiltCount, totalDormantCount, reportType) {
 
-        //window.open(appRoot + 'Report/DownloadEntityReportNew?fileType=' + _fileType + '&entityids=' + entityids + '&totalPlannedCount=' + totalPlannedCount + '&totalAsBuiltCount=' + totalAsBuiltCount + '&totalDormantCount=' + totalDormantCount, '_blank');
-        debugger;
+        //window.open(appRoot + 'Report/DownloadEntityReportNew?fileType=' + _fileType + '&entityids=' + entityids + '&totalPlannedCount=' + totalPlannedCount + '&totalAsBuiltCount=' + totalAsBuiltCount + '&totalDormantCount=' + totalDormantCount, '_blank');        
         ajaxReq('Report/DownloadEntityReportNew', {
             fileType: _fileType,
             entityids: entityids,
@@ -20845,9 +20712,7 @@ var Main = function () {
         app.getAttachmentFiles();
     }
 
-    this.uploadMultipleDocumentFile = function () {
-
-        debugger;
+    this.uploadMultipleDocumentFile = function () {        
         var frmData = new FormData();
         var filesize = $('#hdnMaxFileUploadSizeLimit').val();
         var maxFileCountLimit = $('#fdnMaxFileCountLimit').val();
@@ -20932,8 +20797,7 @@ var Main = function () {
             return false;
         }
     }
-    this.uploadMultiDocFileWithfileType = function () {
-        debugger;
+    this.uploadMultiDocFileWithfileType = function () {        
         var frmData = new FormData();
         var filesize = parseInt($('#hdnMaxFileUploadSizeLimit').val(), 10);
         var maxFileCountLimit = parseInt($('#fdnMaxFileCountLimit').val(), 10);
@@ -21188,8 +21052,7 @@ var Main = function () {
         });
     }
 
-    this.uploadMultipleImageFile = function () {
-        debugger;
+    this.uploadMultipleImageFile = function () {        
         var frmData = new FormData();
         var filesize = $('#hdnMaxFileUploadSizeLimit').val();
         var maxFileCountLimit = $('#fdnMaxFileCountLimit').val();
@@ -21872,7 +21735,6 @@ var Main = function () {
         }
         var pageScale = $("#pageScale").val();
         var scl = GenerateMapScaleRatio(pageScale);
-        //debugger;
         var layerList = LayerFilters;
         let mapScale = $('#hdnPrintHighQuality').val();
 
@@ -27305,11 +27167,9 @@ var Main = function () {
                     app.mapReport.showExportReportDetail(si.gMapObj.shapeObj.getPath().getArray(), si.gMapObj.shapeType);
                     break;
                 case 'Rectangle':
-                    //debugger;
                     app.mapReport.showExportReportDetail(getRectanglePath(si.gMapObj.shapeObj), si.gMapObj.shapeType);
                     break;
                 case 'Circle':
-                    //debugger;
                     //getCirclePotential('circle', si.gMapObj.purposeType);
                     //app.mapReport.getCircleExportReport('circle', si.gMapObj.purposeType);
                     app.mapReport.showExportReportDetail(si.gMapObj.shapeObj.getCenter(), si.gMapObj.shapeType);
@@ -28332,7 +28192,6 @@ var Main = function () {
             hideProgress();
         }
         else if (_purpose == "SHOWONMAP") {
-            //debugger;
             showProgress();
             ajaxReq('RegionProvince/GetRegionProvinceGeomDetails', {
                 filter: _id, boundaryType: _boundaryType
@@ -29107,13 +28966,150 @@ var Main = function () {
         }, true);
     }
     //var timeoutId;
-    $(document).ready(function () {
+    $(document).ready(function () {        
+        app.LoadMap();
         if ($("#notifiCount").length > 0) {
             updateCount();
             window.setInterval(updateCount, 300000);
         }
-    });
+        // Filter checkboxes with ID containing 'chk_nLyr_' and are checked
+        $('.mainlyr .checkbox-custom:checked').filter(function () {
+            return this.id.includes('chk_nLyr_');
+        }).each(function () {
+            app.TriggerEntityChangeEvent.call(this);
+        });
 
+        //Refresh Layers
+        app.RefreshLayersForSync();
+    });
+    this.TriggerEntityChangeEvent = function () {
+        
+        if (this.checked) {
+            var chkid = this.id;
+            var id = $('#' + chkid).attr("data-layerid");
+            var groupType = $('#' + chkid).attr("data-layergroup");
+            $('input:checkbox#chk_netP_' + id).not(":disabled").prop('checked', this.checked);
+            $('input:checkbox#chk_netA_' + id).not(":disabled").prop('checked', this.checked);
+            $('input:checkbox#chk_netD_' + id).not(":disabled").prop('checked', this.checked);
+            //  $('input:checkbox#chk_netL_' + id).prop('checked', this.checked);
+
+            if ($('.layers .network li input[type=checkbox]:checked').filter('.checkbox-custom').length
+                < $('.layers .network li input[type=checkbox]').filter('.checkbox-custom').length) {
+                $(app.DE.chkPlannedAll).not(":disabled").prop('checked', false);
+                $(app.DE.chkAsBuiltAll).not(":disabled").prop('checked', false);
+                $(app.DE.chkDormentAll).not(":disabled").prop('checked', false);
+                $(app.DE.chklabelAll).not(":disabled").prop('checked', false);
+
+            }
+
+            checkedallNetwork();
+            //// group layer selection checked unchecked
+            if ($('.layers .network li input[type=checkbox]:checked').filter('.checkbox-custom').filter("[data-layergroup='" + groupType + "']").length
+                == $('.layers .network li input[type=checkbox]').filter('.checkbox-custom').filter("[data-layergroup='" + groupType + "']").length) {
+
+                $('input:checkbox#' + groupType).not(":disabled").prop('checked', true);
+
+            }
+            else {
+                $('input:checkbox#' + groupType).not(":disabled").prop('checked', false);
+            }
+
+
+
+        }
+        else {
+            var chkid = this.id;
+            var id = $('#' + chkid).attr("data-layerid");
+            var lyrName = $('#' + chkid).attr("data-mapabbr");
+            var groupType = $('#' + chkid).attr("data-layergroup");
+            $('input:checkbox#chk_netP_' + id).not(":disabled").prop('checked', false);
+            $('input:checkbox#chk_netA_' + id).not(":disabled").prop('checked', false);
+            $('input:checkbox#chk_netD_' + id).not(":disabled").prop('checked', false);
+            $('input:checkbox#chk_netL_' + id).not(":disabled").prop('checked', false);
+
+            if ($('.layers .network li input[type=checkbox]:checked').filter('.checkbox-custom').length
+                < $('.layers .network li input[type=checkbox]').filter('.checkbox-custom').length) {
+                $(app.DE.chkPlannedAll).not(":disabled").prop('checked', false);
+                $(app.DE.chkAsBuiltAll).not(":disabled").prop('checked', false);
+                $(app.DE.chkDormentAll).not(":disabled").prop('checked', false);
+                $(app.DE.chklabelAll).not(":disabled").prop('checked', false);
+            }
+
+            //// group layer selection checked unchecked
+
+            if ($('.layers .network li input[type=checkbox]:checked').filter('.checkbox-custom').filter("[data-layergroup='" + groupType + "']").length
+                == $('.layers .network li input[type=checkbox]').filter('.checkbox-custom').filter("[data-layergroup='" + groupType + "']").length) {
+
+                $('input:checkbox#' + groupType).not(":disabled").prop('checked', true);
+
+            }
+            else {
+                $('input:checkbox#' + groupType).not(":disabled").prop('checked', false);
+            }
+
+
+            //var remLyrItem  app.DE.layerManager.includes(lyrName);
+
+            // app.layerManager.pop(lyrName);
+
+
+        }
+
+
+        /// Parent node checked if all group layer checkbox checked
+
+        if ($('.checkbox-customgrp:checkbox:checked').length
+            == $('.checkbox-customgrp:checkbox').length) {
+            $('#checkAll').not(":disabled").prop('checked', true);
+        }
+        else {
+            $('#checkAll').not(":disabled").prop('checked', false);
+        }
+
+
+
+        /////
+        if ($('.checkbox-custom2:checked').filter('[data-networktype=P]').length
+            == $('.checkbox-custom2').filter('[data-networktype=P]').length) {
+            $('#chkPlannedAll').not(":disabled").prop('checked', true);
+        }
+        if ($('.checkbox-custom2:checked').filter('[data-networktype=A]').length
+            == $('.checkbox-custom2').filter('[data-networktype=A]').length) {
+            $('#chkAsBuiltAll').not(":disabled").prop('checked', true);
+        }
+        if ($('.checkbox-custom2:checked').filter('[data-networktype=D]').length
+            == $('.checkbox-custom2').filter('[data-networktype=D]').length) {
+            $('#chkDormentAll').not(":disabled").prop('checked', true);
+        }
+        if ($('.checkbox-custom2:checked').filter('[data-networktype=L]').length
+            == $('.checkbox-custom2').filter('[data-networktype=L]').length) {
+            $('#chklabelAll').not(":disabled").prop('checked', true);
+        }
+
+    }
+
+    this.RefreshLayersForSync = function () {
+        
+        $("#hdnMapRegionProvinceLimit").val(app.provinceLimitToSelectForLoadinVectorLayer);
+        if ($(app.DE.ulProvinceLayers + '>li>input[type="checkbox"]:checked').length > $("#hdnMapRegionProvinceLimit").val()) {
+            alert($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_120, $("#hdnMapRegionProvinceLimit").val()));
+            return;
+        }
+        //Check selected Province/Layers and load Data 
+        if (app.IsVecorLayerEnabled) {
+            app.RefreshVectorDataAndLayer();
+        }
+        // alert("fdf");
+
+        app.reqver++;
+        //app.LoadLayersOnMap();
+        setTimeout(function () {
+
+            $("#dvProgress").hide();
+            $('#dvProgress').css('display', 'none');
+        }, 2000);
+        app.LoadLayersOnMap();
+    }
 
     this.UpdateIssueNoti = function (id, message, isread) {
         if (isread == "1") {
@@ -32088,7 +32084,6 @@ var Main = function () {
             }, "Audit Report Log", 'modal-lg');
         },
         initiateDrawingsAuditLogReport: function (obj, shapeFlag, isAuditlogReport) {
-            debugger;
             if (si.PointentityOBJ.length > 0) {
                 for (var k = 0; k < si.PointentityOBJ.length; k++) {
                     si.PointentityOBJ[k].setMap(null);
@@ -32204,8 +32199,7 @@ var Main = function () {
             }
             si.gMapObj.shapeObj.setMap(si.map);
         },
-        shapeClickInfoAuditLogReport: function () {
-            debugger;
+        shapeClickInfoAuditLogReport: function () {            
             switch (si.gMapObj.shapeType) {
                 case 'Polygon':
                     app.AuditLogReport.showAuditLogReportDetail(si.gMapObj.shapeObj.getPath().getArray(), 'polygon', si.gMapObj.purposeType, si.gMapObj.isAuditlogReport);
@@ -32510,7 +32504,6 @@ function CopyLatLong(ltlg) {
 
 }
 function enableMouseEvent(obj) {
-    //debugger;
     if ($("#mEvent").is(':checked')) {
         $("#coordDiv").attr('title', 'Coordinate change on mouse click');
 
@@ -32530,7 +32523,7 @@ function checkedallNetwork() {
 }
 /*js for table footer*/
 
-$(document).ready(function () {
+$(document).ready(function () {    
     setWebGridCurrentPageStyle();
 });
 

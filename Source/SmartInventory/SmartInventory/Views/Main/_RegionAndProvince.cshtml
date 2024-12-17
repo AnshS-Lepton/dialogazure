@@ -4,19 +4,18 @@
 
     @foreach (var Country in Model.OrderBy(x => x.countryname.ToLower()).Select(x => x.countryname.ToLower()).Distinct())
     {
-
-         <div class="checkbox-custom-label countryName countryLabel">
-               <input type="checkbox" class="checkbox-custom select-all-checkbox" id="checkallregionlayers_@Country" data-country="@Country">
-               <b><label for="checkallregionlayers_@Country" class="checkbox-custom-label fw-bold">@Country</label></b>
-           <span></span>
-       </div>
+        <div class="checkbox-custom-label countryName countryLabel">
+            <input type="checkbox" checked class="checkbox-custom select-all-checkbox" id="checkallregionlayers_@Country" data-country="@Country">
+            <b><label for="checkallregionlayers_@Country" class="checkbox-custom-label fw-bold">@Country</label></b>
+            <span></span>
+        </div>
 
         foreach (var objLayer in Model.Where(x => x.countryname.ToLower() == Country.ToLower()))
         {
             var inactiveRegion = objLayer.regionVisibility == false ? "inactiveArea" : "";
             var flNamesRe = @objLayer.regionName + " (" + @objLayer.regionAbbr + ")";
             <li data-country-name="@Country">
-                <input id="chk_rLyr_@objLayer.regionId" type="checkbox" class="checkbox-custom" data-regionid="@objLayer.regionId" /><b>
+                <input id="chk_rLyr_@objLayer.regionId" type="checkbox" checked class="checkbox-custom" data-regionid="@objLayer.regionId" /><b>
                     <label for="chk_rLyr_@objLayer.regionId" class="checkbox-custom-label @inactiveRegion">
                         @if (SmartInventory.Settings.ApplicationSettings.IsRegionProvinceAbbrShowInLeftPnl == 1)
                         {
@@ -31,25 +30,25 @@
                 </b>
                 @if (objLayer.role_id == 1 && SmartInventory.Settings.ApplicationSettings.isRegionProvinceEdidAllowed == 1)
                 {
-            <div class="text-right regionDetails floatVisibility pos-rel" id="dvReg_dtl_@objLayer.regionId">
-                <i href="#" class="dropdown-toggle mr-01" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="si.EditRegionProvinceDetails(@objLayer.regionId,'SHOWONMAP','REGION','@objLayer.regionName')" ;"><i style="cursor: pointer;" class="fa rp-iconSize  fa-globe"></i></i>
-                <i href="#" class="dropdown-toggle mr-01" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_077" onclick="si.loadLayerOnEntity()" ;"> <i id="loadNetworkP_@objLayer.regionId" onclick="refreshIcon('@objLayer.regionId')" class="fa rp-iconSize fa-refresh  loadNetworkP_@objLayer.regionId" style="color: #888; opacity: 0.6; pointer-events: none; cursor: pointer; "></i></i>
-                @if (objLayer.role_id == 1)
-                {
-                    <i class="fa fa-ellipsis-v dropfiles rp-iconSize" style="cursor:pointer;" aria-hidden="true"></i>
-                }
-                <div class="dropbox rp-r-dropDown rp-t-dropDown" id="dvReg_box_@objLayer.regionId">
-                    <span onclick="si.EditRegionProvinceDetails(0,@objLayer.regionId,'DETAIL','REGION','@objLayer.regionName')">@Resources.Resources.SI_OSP_GBL_NET_FRM_344</span>
-                    <span onclick="si.EditRegionProvinceDetails(0,@objLayer.regionId,'BOUNDARY','REGION','@objLayer.regionName')">@Resources.Resources.SI_OSP_GBL_NET_FRM_345</span>
-                    <span onclick="si.EditRegionProvinceDetails(0,@objLayer.regionId,'DELETE','REGION','@objLayer.regionName')">Delete</span>
-                    @*<span onclick="si.EditRegionProvinceDetails(@objLayer.regionId,'SHOWONMAP','REGION','@objLayer.regionName')">Show On Map</span>*@
+                    <div class="text-right regionDetails floatVisibility pos-rel" id="dvReg_dtl_@objLayer.regionId">
+                        <i href="#" class="dropdown-toggle mr-01" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="si.EditRegionProvinceDetails(@objLayer.regionId,'SHOWONMAP','REGION','@objLayer.regionName')" ;"><i style="cursor: pointer;" class="fa rp-iconSize  fa-globe"></i></i>
+                        <i href="#" class="dropdown-toggle mr-01" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_077" onclick="si.loadLayerOnEntity()" ;"> <i id="loadNetworkP_@objLayer.regionId" onclick="refreshIcon('@objLayer.regionId')" class="fa rp-iconSize fa-refresh  loadNetworkP_@objLayer.regionId" style="color: #888; opacity: 0.6; pointer-events: none; cursor: pointer; "></i></i>
+                        @if (objLayer.role_id == 1)
+                        {
+                            <i class="fa fa-ellipsis-v dropfiles rp-iconSize" style="cursor:pointer;" aria-hidden="true"></i>
+                        }
+                        <div class="dropbox rp-r-dropDown rp-t-dropDown" id="dvReg_box_@objLayer.regionId">
+                            <span onclick="si.EditRegionProvinceDetails(0,@objLayer.regionId,'DETAIL','REGION','@objLayer.regionName')">@Resources.Resources.SI_OSP_GBL_NET_FRM_344</span>
+                            <span onclick="si.EditRegionProvinceDetails(0,@objLayer.regionId,'BOUNDARY','REGION','@objLayer.regionName')">@Resources.Resources.SI_OSP_GBL_NET_FRM_345</span>
+                            <span onclick="si.EditRegionProvinceDetails(0,@objLayer.regionId,'DELETE','REGION','@objLayer.regionName')">Delete</span>
+                            @*<span onclick="si.EditRegionProvinceDetails(@objLayer.regionId,'SHOWONMAP','REGION','@objLayer.regionName')">Show On Map</span>*@
 
-                </div>
-            </div>
-               }
+                        </div>
+                    </div>
+                }
                 @if (objLayer.lstProvince != null && objLayer.lstProvince.Count > 0)
                 {
-                  
+
                     <ul class="province" id="r@objLayer.regionId">
                         @foreach (var objSubLayer in objLayer.lstProvince)
                         {
@@ -59,9 +58,9 @@
                                 var flNamesPro = @objSubLayer.provinceName + " (" + @objSubLayer.provinceAbbr + ")";
                                 <li>
                                     <img src="Content/css/images/t.gif" alt="">
-                                    <input id="chk_pLyr_@objSubLayer.provinceId" class="checkbox-custom" type="checkbox" data-region-id="@objLayer.regionId" data-provinceid="@objSubLayer.provinceId" /><b>
+                                    <input id="chk_pLyr_@objSubLayer.provinceId" class="checkbox-custom" type="checkbox" checked data-region-id="@objLayer.regionId" data-provinceid="@objSubLayer.provinceId" checked /><b>
                                         <label for="chk_pLyr_@objSubLayer.provinceId" class="checkbox-custom-label txtEllipsis @inactiveProvince">
-                                            
+
                                             @if (SmartInventory.Settings.ApplicationSettings.IsRegionProvinceAbbrShowInLeftPnl == 1)
                                             {
                                                 <span id="spnLayerName" title="@flNamesPro" class="pname">@objSubLayer.provinceName</span><span class="pname"> (@objSubLayer.provinceAbbr)</span>
@@ -73,33 +72,33 @@
                                         </label>
                                     </b>
                                     @*@if (objLayer.role_id == 1 && SmartInventory.Settings.ApplicationSettings.isRegionProvinceEdidAllowed == 1)
-                                    {*@
-                                <div class="text-right provinceDetails d-flex --gap05" style="float: right;position:relative;" id="dvProv_dtl_@objSubLayer.provinceId">
-                                    <i href="#" class="dropdown-toggle colIconGrey cur-poiner" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="si.EditRegionProvinceDetails(@objLayer.regionId,@objSubLayer.provinceId,'SHOWONMAP','PROVINCE','@objLayer.regionName')"><i class="fa fa-globe"></i></i>
-                                    <span href="#" class="dropdown-toggle" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_077" onclick="si.loadLayerOnEntity()"><i id="loadNetworkC_@objSubLayer.provinceId" onclick="refreshIcon('@objSubLayer.provinceId')" class="smRefresh loadNetworkP_@objLayer.regionId"></i></span>
+                                        {*@
+                                    <div class="text-right provinceDetails d-flex --gap05" style="float: right;position:relative;" id="dvProv_dtl_@objSubLayer.provinceId">
+                                        <i href="#" class="dropdown-toggle colIconGrey cur-poiner" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="si.EditRegionProvinceDetails(@objLayer.regionId,@objSubLayer.provinceId,'SHOWONMAP','PROVINCE','@objLayer.regionName')"><i class="fa fa-globe"></i></i>
+                                        <span href="#" class="dropdown-toggle" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_077" onclick="si.loadLayerOnEntity()"><i id="loadNetworkC_@objSubLayer.provinceId" onclick="refreshIcon('@objSubLayer.provinceId')" class="smRefresh loadNetworkP_@objLayer.regionId"></i></span>
 
 
-                                    @*<i class="fa fa-ellipsis-v dropfiles" aria-hidden="true" style="font-size: 15px;color: grey;  cursor:pointer;"></i>*@
+                                        @*<i class="fa fa-ellipsis-v dropfiles" aria-hidden="true" style="font-size: 15px;color: grey;  cursor:pointer;"></i>*@
 
-                                    @if (objLayer.role_id == 1)
-                                    {
-                                        <i class="fa fa-ellipsis-v dropfiles rp-iconSize" style="cursor:pointer;" aria-hidden="true"></i>
-                                    }
+                                        @if (objLayer.role_id == 1)
+                                        {
+                                            <i class="fa fa-ellipsis-v dropfiles rp-iconSize" style="cursor:pointer;" aria-hidden="true"></i>
+                                        }
 
-                                    <div class="dropbox clearfix" style="margin-right: 0px;" id="dvProv_box_@objSubLayer.provinceId">
-                                        <span onclick="si.EditRegionProvinceDetails(@objSubLayer.provinceId,@objSubLayer.regionId,'DETAIL','PROVINCE','@objSubLayer.provinceName')">@Resources.Resources.SI_OSP_GBL_NET_FRM_344</span>
-                                        <span onclick="si.EditRegionProvinceDetails(@objSubLayer.provinceId,objSubLayer.regionId,'BOUNDARY','PROVINCE','@objSubLayer.provinceName')">@Resources.Resources.SI_OSP_GBL_NET_FRM_345</span>
-                                        <span onclick="si.EditRegionProvinceDetails(@objSubLayer.provinceId,objSubLayer.regionId,'DELETE','PROVINCE','@objSubLayer.provinceName')">Delete</span>
-                                        @*<span onclick="si.EditRegionProvinceDetails(@objSubLayer.provinceId,'SHOWONMAP','PROVINCE','@objLayer.regionName')">Show On Map</span>*@
+                                        <div class="dropbox clearfix" style="margin-right: 0px;" id="dvProv_box_@objSubLayer.provinceId">
+                                            <span onclick="si.EditRegionProvinceDetails(@objSubLayer.provinceId,@objSubLayer.regionId,'DETAIL','PROVINCE','@objSubLayer.provinceName')">@Resources.Resources.SI_OSP_GBL_NET_FRM_344</span>
+                                            <span onclick="si.EditRegionProvinceDetails(@objSubLayer.provinceId,objSubLayer.regionId,'BOUNDARY','PROVINCE','@objSubLayer.provinceName')">@Resources.Resources.SI_OSP_GBL_NET_FRM_345</span>
+                                            <span onclick="si.EditRegionProvinceDetails(@objSubLayer.provinceId,objSubLayer.regionId,'DELETE','PROVINCE','@objSubLayer.provinceName')">Delete</span>
+                                            @*<span onclick="si.EditRegionProvinceDetails(@objSubLayer.provinceId,'SHOWONMAP','PROVINCE','@objLayer.regionName')">Show On Map</span>*@
+                                        </div>
                                     </div>
-                                </div>
                                     @*}*@
                                 </li>
                             }
-                            
+
                         }
                     </ul>
-                    
+
                 }
             </li>
         }
@@ -113,7 +112,7 @@
         selectAllCheckbox.addEventListener('change', function () {
             const country = selectAllCheckbox.getAttribute('data-country');
             const isChecked = selectAllCheckbox.checked;
-            
+
             document.querySelectorAll(`li[data-country-name="${country}"] input[type="checkbox"]`).forEach(function (regionCheckbox) {
                 regionCheckbox.checked = isChecked;
             });

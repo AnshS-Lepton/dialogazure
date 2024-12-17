@@ -1,4 +1,5 @@
 @model Models.MainViewModel
+@using Models;
 @using SmartInventory.Settings;
 @{
     ViewBag.Title = "Index";
@@ -1865,10 +1866,15 @@
 
                                     @foreach (var objLayer in Model.lstNetworkLayers.Where(x => x.layerNetworkGroup == grpLayer && x.isvisible == true).ToList())
                                     {
+                                        bool isChecked = false;
+                                        if (@objLayer.layerName == @EntityType.Cable.ToString())
+                                        {
+                                            isChecked = true;
+                                        }
 
                                         <li data-mapabbr="@objLayer.mapAbbr" data-geomtype="@(objLayer.layerName=="Building"?"Polygon": objLayer.geomType)">
                                             <img src="Content/css/images/t.gif" alt="">
-                                            <input id="chk_nLyr_@objLayer.layerId" class="mainLyr checkbox-custom" type="checkbox" data-parent-group="@grpLayer" data-mapabbr="@objLayer.mapAbbr" data-layerid="@objLayer.layerId" data-layergroup="chkid_@Chkid"
+                                            <input id="chk_nLyr_@objLayer.layerId" checked="@isChecked" class="mainLyr checkbox-custom" type="checkbox" data-parent-group="@grpLayer" data-mapabbr="@objLayer.mapAbbr" data-layerid="@objLayer.layerId" data-layergroup="chkid_@Chkid"
                                                    data-minzoomlvl="@objLayer.minZoomLevel" data-maxzoomlvl="@objLayer.maxZoomLevel" data-layername="@objLayer.layerName" data-isnetworktyperequired="@objLayer.isNetworkTypeRequired" data-maplayerseq="@objLayer.maplayerseq" style="width: 0px;" data-is-networktype-required="@objLayer.isNetworkTypeRequired" data-is-network-entity="@objLayer.isNetworkEntity" data-entity-geom-type="@objLayer.geomType" />
                                             <b><label for="chk_nLyr_@objLayer.layerId" class="checkbox-custom-label"><span>@objLayer.layerTitle</span></label></b>&nbsp;
                                             <span class="floatVisibility">
@@ -2219,6 +2225,6 @@
         var hdn_IsBroadcastMessageEnabled = document.getElementById('hdn_IsBroadcastMessageEnabled').value;
         if (hdn_IsBroadcastMessageEnabled == 'True') {
             showMessageBox(MultilingualKey.SI_OSP_GBL_GBL_GBL_321, '', "Information");
-        }
+        } 
     });
 </script>
