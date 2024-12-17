@@ -126,6 +126,7 @@ MAP
 				WIDTH 3
 				OUTLINECOLOR 255 0 0
 				COLOR -1 -1 -1
+				PATTERN 3 8  END
 			END
 		END
 	END
@@ -158,6 +159,7 @@ MAP
 				WIDTH 2
 				OUTLINECOLOR 0 0 255
 				COLOR -1 -1 -1
+				PATTERN 3 8  END
 			END
 		END
 	END
@@ -1188,7 +1190,7 @@ LAYER
 				FONT arial
 				TYPE truetype
 				COLOR 0 0 0				
-				SIZE 8
+				SIZE 12
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR 255 255 255  # background rect.
@@ -1213,7 +1215,7 @@ LAYER
 				FONT arial
 				TYPE truetype
 				COLOR 0 0 0				
-				SIZE 8
+				SIZE 12
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR 255 255 255  # background rect.
@@ -1237,7 +1239,7 @@ LAYER
 				FONT arial
 				TYPE truetype
 				COLOR 0 0 0				
-				SIZE 8
+				SIZE 12
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR 255 255 255  # background rect.
