@@ -1,0 +1,2 @@
+INSERT INTO public.global_settings ("key", value, description, "type", is_edit_allowed, data_type, min_value, max_value, created_by, created_on, modified_by, modified_on, is_mobile_key, is_web_key, is_edit_allowed_for_sa, min_value_logic, max_value_logic) 
+VALUES('isMultilingual', false, 'Multilingual drop down show hide on login screen', 'Web', false, 'string', 0, 0, 5, Now(), 5, Now(), true, true, false, NULL, NULL);

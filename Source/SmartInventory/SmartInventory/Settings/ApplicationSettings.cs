@@ -133,7 +133,7 @@ namespace SmartInventory.Settings
         public static int BufferNearbyFault = 0;
         public static int BulkPoleUploadMaxCount = 0;
         //public static bool isMultilingual;
-        public static bool isMultilingual = Convert.ToBoolean(ConfigurationManager.AppSettings["isMultilingual"]);
+        public static bool IsMultilingual = false; /*Convert.ToBoolean(ConfigurationManager.AppSettings["isMultilingual"]);*/
         public static int ExportReportMaxRecord = 0;
         public static int RegProvExpMaxRecord = 0;
         public static int maxNotificationDurationInMonth = 0;
@@ -918,6 +918,10 @@ namespace SmartInventory.Settings
                     .FirstOrDefault();
             IsAADEnabled = globalSettings
                     .Where(m => m.key == "isAADEnabled")
+                    .Select(m => bool.TryParse(m.value, out bool result) ? result : false)
+                    .FirstOrDefault();
+            IsMultilingual = globalSettings
+                    .Where(m => m.key == "isMultilingual")
                     .Select(m => bool.TryParse(m.value, out bool result) ? result : false)
                     .FirstOrDefault();
         }
