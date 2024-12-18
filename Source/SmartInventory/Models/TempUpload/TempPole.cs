@@ -6,7 +6,7 @@ using System.Web.UI.WebControls;
 
 namespace Models.TempUpload
 {
-    public class TempPole:IReference
+    public class TempPole : IReference
     {
 
         [Key]
@@ -41,5 +41,7 @@ namespace Models.TempUpload
         public string requested_by { get; set; }
         public string request_approved_by { get; set; }
         public string network_status { get; set; }
+        public string gis_design_id { get; set; }
+        public string subarea_id { get; set; }
     }
 }

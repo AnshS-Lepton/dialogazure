@@ -45,5 +45,7 @@ namespace Models.TempUpload
         public string hierarchy_type { get; set; }
         public string aerial_location { get; set; }
         public string route_id { get; set; }
+        public string gis_design_id { get; set; }
+        public string subarea_id { get; set; }
     }
 }
