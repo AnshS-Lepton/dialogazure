@@ -570,11 +570,11 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public DbMessage SetConnectionWithSplitCable(string cable_one_network_id, string cable_two_network_id, int old_cable_system_id, int splitentitysystemid, string splitentity_network_id, string splitentitytype, int user_id, string splicing_source)
+        public DbMessage SetConnectionWithSplitCable(int cable_one_system_id, int cable_two_system_id, int old_cable_system_id, int splitentitysystemid, string splitentity_network_id, string splitentitytype, int user_id, string splicing_source)
         {
             try
             {
-                return repo.ExecuteProcedure<DbMessage>("fn_splicing_save_osp_split_connection", new { p_cable_one_network_id = cable_one_network_id, p_cable_two_network_id = cable_two_network_id, p_old_cable_system_id = old_cable_system_id, p_split_entity_system_id = splitentitysystemid, p_split_entity_network_id = splitentity_network_id, p_split_entity_type = splitentitytype, p_user_id = user_id, p_splicing_source = splicing_source }).FirstOrDefault();
+                return repo.ExecuteProcedure<DbMessage>("fn_splicing_save_osp_split_connection", new { p_cable_one_system_id = cable_one_system_id, p_cable_two_system_id = cable_two_system_id, p_old_cable_system_id = old_cable_system_id, p_split_entity_system_id = splitentitysystemid, p_split_entity_network_id = splitentity_network_id, p_split_entity_type = splitentitytype, p_user_id = user_id, p_splicing_source = splicing_source }).FirstOrDefault();
             }
             catch { throw; }
         }

@@ -5720,6 +5720,7 @@ namespace SmartInventory.Controllers
                 {
                     return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
                 }
+                Session["Splitcable"] = response.results;
                 BLLayer objBLLayer = new BLLayer();
                 objCbl.lstUserModule = objBLLayer.GetUserModuleAbbrList(objCbl.user_id, UserType.Web.ToString());
                 return PartialView("_AddCable", response.results);
@@ -6134,8 +6135,11 @@ namespace SmartInventory.Controllers
                 cableobjCable1.splitting_netwok_id = model.split_entity_networkId;
                 cableobjCable1.splitting_entitytype = model.split_entity_type;
                 SaveCable(cableobjCable1, "CableInfo", false);
+                var objcablelist1 = Session["Splitcable"];
+                CableMaster cm1 = (CableMaster)objcablelist1;
                 //-- Add LMC Attribute IF Existes
                 CableMaster objCablemaster1 = new CableMaster();
+                objCablemaster1.system_id = cm1.system_id;
                 objCablemaster1.LMCCableInfo = new BLLmcInfo().GetLMCIfo(model.split_cable_system_id);
                 if (!string.IsNullOrWhiteSpace(objCablemaster1.LMCCableInfo.lmc_id))
                 {
@@ -6155,7 +6159,7 @@ namespace SmartInventory.Controllers
                     string surveyStatus = new BLAttachment().UpdateLibraryAttachmentbyId(strAttachmentIds, details.system_id);
                 }
                 //---END; 
-                cableOneSystemid = cableobjCable1.system_id;
+                cableOneSystemid = objCablemaster1.system_id;
                 string[] geomObjLongLat = SplitCablesEntity.geom_cable2.Split(',');
                 EditGeomIn geomObj = new EditGeomIn();
                 geomObj.entityType = model.split_entity_type;
@@ -6189,8 +6193,11 @@ namespace SmartInventory.Controllers
                 cableobjCable2.splitting_entitytype = model.split_entity_type;
                 SaveCable(cableobjCable2, "CableInfo", false);
 
+                var objcablelist = Session["Splitcable"];
+                CableMaster cm2 = (CableMaster)objcablelist;
                 //-- Add LMC Attribute IF Existes
                 CableMaster objCablemaster2 = new CableMaster();
+                objCablemaster2.system_id = cm2.system_id;
                 objCablemaster2.LMCCableInfo = new BLLmcInfo().GetLMCIfo(model.split_cable_system_id);
                 int parentLMCId = objCablemaster2.LMCCableInfo.system_id;
                 if (!string.IsNullOrWhiteSpace(objCablemaster1.LMCCableInfo.lmc_id))
@@ -6202,9 +6209,9 @@ namespace SmartInventory.Controllers
                     var result = BLLmcInfo.Instance.SaveLMCInfo(objCablemaster2.LMCCableInfo, Convert.ToInt32(Session["user_id"]));
                 }
                 //---END; 
-                cableTwoSystemid = cableobjCable2.system_id;
+                cableTwoSystemid = objCablemaster2.system_id;
                 // make connection with split cable
-                BLCable.Instance.SetConnectionWithSplitCable(networkCodeDetail.network_code, networkCodeDetail2.network_code, model.split_cable_system_id, model.split_entity_system_id, model.split_entity_networkId, model.split_entity_type, model.userId, model.splicing_source);
+                BLCable.Instance.SetConnectionWithSplitCable(cableOneSystemid, cableTwoSystemid, model.split_cable_system_id, model.split_entity_system_id, model.split_entity_networkId, model.split_entity_type, model.userId, model.splicing_source);
 
                 // accociate split cables
                 new BLMisc().AssociateSplitEntities(cableOneSystemid, cableTwoSystemid, networkCodeDetail.network_code, networkCodeDetail2.network_code, EntityType.Cable.ToString(), model.split_cable_system_id);
