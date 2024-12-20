@@ -28,7 +28,7 @@
     </div>
     <div class="row form-group">
         <label class="control-label col-md-2 col-sm-2">
-            ODF1
+            ODF1 <i class="clsMandatory">*</i>
         </label>
         <div class="col-md-4 col-sm-4">
             @*@Html.DropDownListFor(x => x.network_id, new SelectList(Model.lstODFdetails.Select(x => new { Value = x.network_id, Text = x.network_id }), "Value", "Text"), " -Select ODF1-", new { @class = "chosen-select form-control", @id = "ddlNetworkid1", @required = "required" })*@
@@ -37,7 +37,7 @@
 
         </div>
         <label class="control-label col-md-2 col-sm-2">
-            ODF2
+            ODF2<i class="clsMandatory">*</i>
         </label>
         <div class="col-md-4 col-sm-4">
             @*@Html.DropDownListFor(x => x.network_id, new SelectList(Model.lstODFdetails.Select(x => new { Value = x.network_id, Text = x.network_id }), "Value", "Text"), " -Select ODF2-", new { @class = "chosen-select form-control", @id = "ddlNetworkid2", @required = "required" })*@
@@ -47,10 +47,10 @@
     </div>
     <div class="row form-group">
         <label class="control-label col-md-2 col-sm-2">
-            Required Core
+            Required Core <i class="clsMandatory">*</i>
         </label>
         <div class="col-md-4 col-sm-4">
-            @Html.TextBoxFor(m => m.requiredcore, new { @id = "txtRequiredCore", @class = "input-sm form-control", @required = "required" })
+            @Html.TextBoxFor(m => m.requiredcore, new { @id = "txtRequiredCore", @class = "input-sm form-control", @maxlength = "2", @required = "required" })
 
         </div>
         <div class="col-md-6 col-sm-6 d-flex">
@@ -62,7 +62,7 @@
 
     <div class="row form-group">
         <label class="control-label col-md-2 col-sm-2">
-            FiberLink <span class="vdesc"></span>
+            FiberLink <i class="clsMandatory">*</i><span class="vdesc"></span>
         </label>
         <div class="col-md-4 col-sm-4">
             @*@Html.DropDownListFor(x => x.system_id, new SelectList(Model.lstFiberlinkdetails.Select(x => new { Value = x.system_id, Text = x.network_id }), "Value", "Text"), " -Select fiberLink-", new { @class = "chosen-select form-control", @id = "ddlfiberlink" })*@
@@ -91,6 +91,13 @@
                 }
             }, 0);
         });
+
+        $("#txtODF1, #txtODF2, #txtRequiredCore, #txtfiberlink").on("input", function () {
+            if ($(this).val() != '') {
+                $(this).removeClass("error-border");
+            }
+        });
+
         $('.chosen-select').chosen({ placeholder_text_multiple: '-All-', width: '100%' });
         //----------------------------------------------ODF1-------------------------------------------------------------------
         $('#txtODF1').on('keyup', function (e) {
@@ -466,19 +473,29 @@
 
     function validate() {
         debugger;
-        if ($("#txtfiberlink").val() == "") { alert('Fiber Link can not be empty'); return false; }
+        if ($("#txtfiberlink").val() == "") {
+            $("#txtfiberlink").addClass("error-border");
+            alert('The field Fiber Link is required.'); return false;
+        }
 
-        if ($("#txtODF1").val() == $("#txtODF2").val()) { alert('ODF1 and OD2 can not be same'); return false; }
+        if ($("#txtODF1").val() == $("#txtODF2").val()) {
+            $("#txtODF1").addClass("error-border");
+            $("#txtODF2").addClass("error-border");
+            alert('The fields ODF1 and ODF2 can not be same');
+            return false;
+        }
 
         var number = Number($("#txtRequiredCore").val());
 
         if (isNaN(number)) {
             $("#btnSubmit").prop("disabled", false);
+            $("#txtRequiredCore").addClass("error-border");
             alert("Invalid input: " + "Please enter a valid number.");
             return false;
 
         } else if (number < 1 || number > 48) {
             $("#btnSubmit").prop("disabled", false);
+            $("#txtRequiredCore").addClass("error-border");
             alert("Invalid input: " + "The required core must be between 1 and 48.");
             return false;
         }
