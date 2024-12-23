@@ -201,25 +201,25 @@ BEGIN
 ) a 
 left join layer_details l on upper(a.entity_type)=upper(l.layer_name)
 inner  join role_permission_entity rp on l.layer_id  = rp.layer_id and rp.role_id = v_role_id and rp.network_status = a.network_status and rp.viewonly = true
-order by display_name desc 
-limit 10;
-RAISE INFO '%',(SELECT TT.SYSTEM_ID FROM temp_search_results TT LIMIT 1);
+order by display_name desc;
+--RAISE INFO '%', 'QUERY';
+
 -- Fetch system_id from att_details_fiber_link if p_link_id is provided
     IF p_link_id IS NOT NULL AND p_link_id <> '' THEN
 		
 		RETURN QUERY 
         SELECT tsr.*
         FROM temp_search_results tsr
-        INNER JOIN att_details_cable_info ci ON tsr.system_id = ci.cable_id
-		where ci.link_system_id IN (
+        INNER JOIN att_details_cable_info ci ON tsr.system_id = ci.cable_id 
+		where ci.link_system_id>0 AND ci.link_system_id IN (
 			SELECT fl.system_id 
-        FROM vw_att_details_fiber_link fl
+        FROM att_details_fiber_link fl
         WHERE fl.link_id = p_link_id
-		);
+		) LIMIT 10;
 	ELSE
         RETURN QUERY 
         SELECT *
-        FROM temp_search_results;
+        FROM temp_search_results LIMIT 10;
     END IF;
 
 END
