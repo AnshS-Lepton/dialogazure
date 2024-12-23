@@ -132,7 +132,7 @@
             },
             minLength: 3,
             select: function (event, ui) {
-                debugger;
+                
                 $('#dvViewConnectionPathFinder,#dvSchematicViewContainer').html('');
                 $('#divNoRecordExist').show();
                 var label = ui.item.label;
@@ -141,7 +141,7 @@
                 }
                 else {
                     event.preventDefault();
-                    $(app.DE.fiberLinkId).val(ui.item.linkId);       //NetworkId
+                    $(app.DE.fiberLinkId).val(ui.item.linkId);
                     $(app.DE.entity_type).val(ui.item.entity_type);
                     $(app.DE.entityid).val(ui.item.entity_id);
                     $(app.DE.entityName).val(ui.item.Link_Name);
@@ -213,7 +213,7 @@
         $('#ModalPopUp div').removeClass('modal-xxl');
     }
     this.spliceHere = function (dvObj) {
-        debugger;
+        
         si.clearTPRelatedObjects();
         $('#InfoDiv').hide();
         si.removeEventListnrs('click');
@@ -2110,7 +2110,7 @@
         });
     }
     this.BindEquipementPort = function (entityid, entitytype) {
-        debugger;
+        
         var ddlCore = $(app.DE.ddlCore);
         ajaxReq('Splicing/GetEquipmentPortInfo', { entity_id: entityid, entity_type: entitytype }, false, function (resp) {
             if (resp.status = 'OK') {
