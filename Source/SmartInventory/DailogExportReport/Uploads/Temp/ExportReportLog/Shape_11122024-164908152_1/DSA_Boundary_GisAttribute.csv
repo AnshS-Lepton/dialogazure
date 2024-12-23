@@ -1,0 +1,5 @@
+"string_agg"
+"Design ID|Area ID|SubArea ID|DSA ID|CSA ID|State Name|City Name|Network ID|DSA Name|Parent Code|Parent Type|Network Status|Status|Remarks|User Name|Created On|Modified On|Created By|Modified By|Region ID|Province ID|Created By ID|Status Remark|Status Updated By|Status Updated On|Is Visible On Map|Country Name|Origin Ref Description|Origin From|Origin Ref ID|Requested By|Request Approved By|Origin Ref Code|Request Ref ID|Served By Ring|No Of Homepass|PRMS Id|Mzone Id|"
+"|||||Andhra Pradesh|Anantapur|ANA-DSA000001|ANA-DSA000001|ANA|Province1|Planned|A||admin|19-Nov-24||admin||28|1527|5||||true|India||||||||Ring2|0||"
+"|||||Meghalaya|KANDY|KAN-DSA000001|KAN-DSA000001|KAN|Province1|Planned|A||admin|19-Nov-24||admin||16|758|5||||true|India||||||||Ring2|0||"
+"|||||Meghalaya|KANDY|KAN-DSA000001|KAN-DSA000001|KAN|Province1|Planned|A||admin|19-Nov-24||admin||16|758|5||||true|India||||||||Ring1|0||"
