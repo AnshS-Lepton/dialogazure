@@ -19307,8 +19307,28 @@ var Main = function () {
         popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: '' }, "Create Link", 'modal-xl');
 
     }
-    this.checkAvailability = function () {        
-        if ($("#txtODF1").val() == '' || $("#txtODF2").val() == '' || $("#txtRequiredCore").val() == '') { alert('RequiredCore ,ODF1, OD2 are required for checking Accessibility'); return false; }
+    this.checkAvailability = function () {
+      
+        // Reset previous red borders before validating
+        $("#txtODF1, #txtODF2, #txtRequiredCore").removeClass("error-border");
+
+        // Check if any of the fields are empty
+        if ($("#txtODF1").val() == '' || $("#txtODF2").val() == '' || $("#txtRequiredCore").val() == '' || $("#txtODF1").val() == 'Search ODF' || $("#txtODF2").val() == 'Search ODF') {
+            alert('All fields (ODF1, ODF2 and RequiredCore) are mandatory for checking Availability Core.');
+
+            // Highlight empty fields with red border
+            if ($("#txtODF1").val() == '' || $("#txtODF1").val() == 'Search ODF' ) {
+                $("#txtODF1").addClass("error-border");
+            }
+            if ($("#txtODF2").val() == '' || $("#txtODF2").val() == 'Search ODF') {
+                $("#txtODF2").addClass("error-border");
+            }
+            if ($("#txtRequiredCore").val() == '') {
+                $("#txtRequiredCore").addClass("error-border");
+            }
+
+            return false;
+        }
 
         ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val(), ODF2: $("#txtODF2").val(), required_core: $("#txtRequiredCore").val() }, true, function (resp) {
             if (resp != null && resp != undefined) {
