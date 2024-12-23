@@ -21,11 +21,11 @@ namespace BusinessLogics
             return new DAOSPSplicing().getSplicingInfo(objSplicingIn, listConnectors);
         }
 
-		public Boolean CheckSplicingPermission(int system_id, string entity_type)
-		{
-			return new DAOSPSplicing().CheckSplicingPermission(system_id, entity_type);
-		}
-		public List<SplicingConectionInfo> getSplicingInfoReport(connectionInput objSplicingIn, string listConnectors)
+        public Boolean CheckSplicingPermission(int system_id, string entity_type)
+        {
+            return new DAOSPSplicing().CheckSplicingPermission(system_id, entity_type);
+        }
+        public List<SplicingConectionInfo> getSplicingInfoReport(connectionInput objSplicingIn, string listConnectors)
         {
             return new DAOSPSplicing().getSplicingInfoReport(objSplicingIn, listConnectors);
         }
@@ -41,9 +41,9 @@ namespace BusinessLogics
         {
             return new DAOSPSplicing().GetSearchEquipmentResult(srchText, entityType, userId);
         }
-        public List<EquipementSearchResult> GetSearchEquipmentResult(string srchText, int userId)
+        public List<EquipementSearchResult> GetSearchEquipmentResult(string srchText, int userId, string linkId)
         {
-            return new DAOSPSplicing().GetSearchEquipmentResult(srchText, userId);
+            return new DAOSPSplicing().GetSearchEquipmentResult(srchText, userId, linkId);
         }
         public List<LogicalViewEquipementSearch> GetLogicalViewSearchEquipmentResult(string srchText, string entityType, int userId)
         {
@@ -149,9 +149,9 @@ namespace BusinessLogics
         {
             return new DAConnectionInfo().ValidtaeConnections(connections);
         }
-        public DbMessage ValidateConnections(string entitytype, int systemId , int from , int to)
+        public DbMessage ValidateConnections(string entitytype, int systemId, int from, int to)
         {
-            return new DAConnectionInfo().ValidateConnections(entitytype, systemId, from,to);
+            return new DAConnectionInfo().ValidateConnections(entitytype, systemId, from, to);
         }
         public List<LogicalViewPortDetail> getEntityLogicalView(int systemid, string entitytype)
         {
@@ -166,7 +166,7 @@ namespace BusinessLogics
         {
             return DARoomInfo.Instance.getPODList(structureId);
         }
-        public List<SplicingConectionInfo> getModelSplicingInfo(int sourceId, string sourceType, int destinationId, string destinationType,bool isInsideConnectivity)
+        public List<SplicingConectionInfo> getModelSplicingInfo(int sourceId, string sourceType, int destinationId, string destinationType, bool isInsideConnectivity)
         {
             return new DAOSPSplicing().getModelSplicingInfo(sourceId, sourceType, destinationId, destinationType, isInsideConnectivity);
         }
@@ -177,7 +177,7 @@ namespace BusinessLogics
 
         public List<ExportPatchingInfo> getPatchingConnection(int source_id, string source_type, string parent_type, int parent_id)
         {
-            return new DAOSPSplicing().getPatchingConnection(source_id, source_type,  parent_type,  parent_id);
+            return new DAOSPSplicing().getPatchingConnection(source_id, source_type, parent_type, parent_id);
         }
         public List<PortHistory> viewPortHistory(int systemid)
         {

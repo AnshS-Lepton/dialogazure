@@ -14,6 +14,7 @@ namespace Models
     public class ViewOSPCPFModel
     {
 
+        public string FiberLinkId { get; set; }
         public string equipment_id { get; set; }
         public double txtTransmit { get; set; }
         public int txtReceiving { get; set; }

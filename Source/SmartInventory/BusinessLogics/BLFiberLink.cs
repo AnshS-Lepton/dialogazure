@@ -91,7 +91,10 @@ namespace BusinessLogics
         {
             return new DAFiberLink().checkDuplicaketLinkId(link_id);
         }
-
+        public List<Dictionary<string, string>> GetFiberLinks(int userId, FiberLinkFilter objFiberLinkFilter)
+        {
+            return new DAFiberLink().GetFiberLinks(userId, objFiberLinkFilter);
+        }
     }
     public class BLFiberLinkColumns
     {

@@ -16,7 +16,7 @@ namespace DataAccess
         {
             try
             {
-                 
+
                 return repo.ExecuteProcedure<SplicingEntity>("fn_splicing_get_entity", new { longitude = longitude, latitude = latitude, p_buffer_radius = bufferRadius, p_role_id = roleId }, true).ToList();
 
             }
@@ -108,7 +108,7 @@ namespace DataAccess
                         p_entity_name = objConInput.source_entity_type.ToString()
                     }, true);
                 return lst;
-               
+
             }
             catch
             {
@@ -142,12 +142,12 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public List<EquipementSearchResult> GetSearchEquipmentResult(string srchText, int userId)
+        public List<EquipementSearchResult> GetSearchEquipmentResult(string srchText, int userId, string linkId)
         {
             try
             {
 
-                return repo.ExecuteProcedure<EquipementSearchResult>("fn_get_search_equipment", new { p_searchtext = srchText.Trim(), p_user_id = userId });
+                return repo.ExecuteProcedure<EquipementSearchResult>("fn_get_search_equipment", new { p_searchtext = srchText.Trim(), p_user_id = userId, p_link_id = linkId });
             }
             catch { throw; }
         }
@@ -211,19 +211,19 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public VizButterFlyNetwork GetVizButterflyNetwork(int systemId,string entityType)
+        public VizButterFlyNetwork GetVizButterflyNetwork(int systemId, string entityType)
         {
             try
             {
                 return repo.ExecuteProcedure<VizButterFlyNetwork>("fn_get_vis_butterfly_network", new
                 {
                     p_system_id = systemId,
-                    p_entityType= entityType
+                    p_entityType = entityType
                 }, true).FirstOrDefault();
             }
             catch { throw; }
         }
-        public SLDModel GetSLDDiagram(int entityId, string entityType,string sldType)
+        public SLDModel GetSLDDiagram(int entityId, string entityType, string sldType)
         {
             try
             {
@@ -282,12 +282,12 @@ namespace DataAccess
         {
             try
             {
-                return repo.ExecuteProcedure<ExportPatchingInfo>("fn_export_patching_report", new 
+                return repo.ExecuteProcedure<ExportPatchingInfo>("fn_export_patching_report", new
                 {
                     p_source_system_id = source_id,
                     p_source_type = source_type,
                     p_parent_type = parent_type,
-                    p_parent_id =  parent_id.ToString()
+                    p_parent_id = parent_id.ToString()
                 });
             }
             catch { throw; }
@@ -366,7 +366,7 @@ namespace DataAccess
             try
             {
 
-                  return repo.ExecuteProcedure<SplicingEntity>("fn_splicing_get_isp_entity", new { p_structure_id = structureId, p_system_id = systemId, p_entity_type = entityType, p_point_entity_x = point_x, p_point_entity_y = point_y, p_role_id = roleId }, true).ToList();
+                return repo.ExecuteProcedure<SplicingEntity>("fn_splicing_get_isp_entity", new { p_structure_id = structureId, p_system_id = systemId, p_entity_type = entityType, p_point_entity_x = point_x, p_point_entity_y = point_y, p_role_id = roleId }, true).ToList();
 
             }
             catch
@@ -391,7 +391,7 @@ namespace DataAccess
                 throw;
             }
         }
-        public List<SplicingConectionInfo> getModelSplicingInfo(int sourceId, string sourceType, int destinationId, string destinationType,bool isInsideConnectivity)
+        public List<SplicingConectionInfo> getModelSplicingInfo(int sourceId, string sourceType, int destinationId, string destinationType, bool isInsideConnectivity)
         {
             try
             {
@@ -402,7 +402,7 @@ namespace DataAccess
                       p_source_entity_type = sourceType,
                       p_destination_system_id = destinationId,
                       p_destination_entity_type = destinationType,
-                      p_port_type =(isInsideConnectivity?InOutPortType.I.ToString(): InOutPortType.O.ToString())
+                      p_port_type = (isInsideConnectivity ? InOutPortType.I.ToString() : InOutPortType.O.ToString())
                   }).ToList();
             }
             catch
@@ -410,7 +410,7 @@ namespace DataAccess
                 throw;
             }
         }
-        public List<MultipleConnections> getMultipleConnections(int systemId, int portNo,string portType)
+        public List<MultipleConnections> getMultipleConnections(int systemId, int portNo, string portType)
         {
             try
             {
@@ -418,7 +418,7 @@ namespace DataAccess
                 {
                     p_system_id = systemId,
                     p_port_no = portNo,
-                    p_port_type= portType
+                    p_port_type = portType
                 }, true);
             }
             catch { throw; }
@@ -432,9 +432,9 @@ namespace DataAccess
             {
                 return repo.ExecuteProcedure<connectedCusotmer>("fn_get_connected_customer_details_for_info", new
                 {
-                   
-                   p_entity_system_id = objFilterAttributes.entityid,
-                   
+
+                    p_entity_system_id = objFilterAttributes.entityid,
+
                     p_entity_type = objFilterAttributes.entity_type,
                 });
             }
@@ -451,8 +451,8 @@ namespace DataAccess
                     p_destination_system_id = objConection.destination_system_id,
                     p_destination_entity_type = objConection.destination_entity_type,
                     p_equipment_id = objConection.equipment_system_id,
-                    p_equipment_type = objConection.equipment_entity_type                    
-                },true);
+                    p_equipment_type = objConection.equipment_entity_type
+                }, true);
             }
             catch { throw; }
         }
@@ -472,7 +472,7 @@ namespace DataAccess
         {
             try
             {
-                
+
                 return repo.ExecuteProcedure<DbMessage>("fn_splicing_save_connections", new { p_connections = connections }, true).FirstOrDefault();
             }
             catch { throw; }
@@ -494,7 +494,7 @@ namespace DataAccess
                     }, true).FirstOrDefault();
             }
             catch { throw; }
-            }
+        }
 
         public DbMessage deleteConnection(string listConnection)
         {
@@ -533,7 +533,7 @@ namespace DataAccess
         {
             try
             {
-                return repo.ExecuteProcedure<DbMessage>("fn_splicing_validate_connection_mobile", new { p_entitytype=entitytype, p_systemId= systemId, p_from=from, p_to=to }).FirstOrDefault();
+                return repo.ExecuteProcedure<DbMessage>("fn_splicing_validate_connection_mobile", new { p_entitytype = entitytype, p_systemId = systemId, p_from = from, p_to = to }).FirstOrDefault();
             }
             catch { throw; }
         }
@@ -623,7 +623,7 @@ namespace DataAccess
             catch { throw; }
         }
 
-       
+
     }
 
 }

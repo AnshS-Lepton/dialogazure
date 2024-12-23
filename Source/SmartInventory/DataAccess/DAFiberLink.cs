@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess
 {
-   public class DAFiberLink: Repository<FiberLink>
+    public class DAFiberLink : Repository<FiberLink>
     {
 
         public FiberLink SaveFiberLink(FiberLink objFiberLink, int userId)
@@ -61,8 +61,8 @@ namespace DataAccess
                 }
                 objFiberLink.created_on = DateTimeHelper.Now;
                 objFiberLink.fiber_link_status = "Free";
-                objFiberLink.created_by = userId; 
-                objFiberLink.pageMsg.isNewEntity = true; 
+                objFiberLink.created_by = userId;
+                objFiberLink.pageMsg.isNewEntity = true;
                 var resultItem = repo.Insert(objFiberLink);
                 return resultItem;
             }
@@ -76,7 +76,7 @@ namespace DataAccess
         {
             try
             {
-                 
+
                 return repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_fiber_link_details", new
                 {
                     p_systemid = objFiberLinkFilter.system_id,
@@ -88,8 +88,8 @@ namespace DataAccess
                     P_SORTTYPE = objFiberLinkFilter.orderBy,
                     p_userid = userId,
                     p_searchfrom = objFiberLinkFilter.fromDate,
-                    p_searchto = objFiberLinkFilter.toDate  
-                },true).ToList();
+                    p_searchto = objFiberLinkFilter.toDate
+                }, true).ToList();
             }
             catch (Exception ex)
             {
@@ -128,7 +128,7 @@ namespace DataAccess
             try
             {
 
-                var result= repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_fiber_link_info_for_kml", new{p_systemid = linkSystemId}, true);
+                var result = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_fiber_link_info_for_kml", new { p_systemid = linkSystemId }, true);
                 return result != null && result.Count > 0 ? result[0] : new Dictionary<string, string>();
             }
             catch (Exception ex)
@@ -137,7 +137,7 @@ namespace DataAccess
                 throw ex;
             }
         }
-        public  Dictionary<string, string> getAssociatedLinkInfo(int cable_id, int fiber_number)
+        public Dictionary<string, string> getAssociatedLinkInfo(int cable_id, int fiber_number)
         {
             try
             {
@@ -145,7 +145,7 @@ namespace DataAccess
                 return repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_associated_fiber_link_info", new
                 {
                     p_cable_id = cable_id,
-                    p_fiber_number = fiber_number 
+                    p_fiber_number = fiber_number
                 }, true).FirstOrDefault();
             }
             catch (Exception ex)
@@ -153,7 +153,7 @@ namespace DataAccess
 
                 throw ex;
             }
-        } 
+        }
         public List<fiberLinkStatus> getfiberLinkStatusCounts(FiberLinkFilter objFiberLinkFilter, int userId)
         {
             try
@@ -197,7 +197,7 @@ namespace DataAccess
             try
             {
                 var result = repo.ExecuteProcedure<FLNetworkCode>("fn_get_link_network_id", new { });
-                return result != null && result.Count > 0 ? result[0] : new FLNetworkCode(); 
+                return result != null && result.Count > 0 ? result[0] : new FLNetworkCode();
             }
             catch (Exception)
             {
@@ -249,12 +249,12 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public FiberLink isFiberLinkIdExist(string linkId,string columnName,int userId)
+        public FiberLink isFiberLinkIdExist(string linkId, string columnName, int userId)
         {
             try
             {
-               return repo.GetAll().Where(x => x.link_id == linkId).FirstOrDefault();
-                
+                return repo.GetAll().Where(x => x.link_id == linkId).FirstOrDefault();
+
             }
             catch (Exception)
             {
@@ -300,24 +300,24 @@ namespace DataAccess
             {
 
                 return repo.ExecuteProcedure<vmfiberLinkOnMap>("fn_get_fiber_link_path", new
-                { 
+                {
                     p_linkSystemId = linkSystemId,
                     p_userId = userId
-                },true).FirstOrDefault();
+                }, true).FirstOrDefault();
             }
             catch { throw; }
         }
-        public vmfiberLinkOnMap getFiberLinkElementsByLinkSystemIds(string linkSystemIds,int userId)
+        public vmfiberLinkOnMap getFiberLinkElementsByLinkSystemIds(string linkSystemIds, int userId)
         {
             try
             {
 
                 return repo.ExecuteProcedure<vmfiberLinkOnMap>("fn_get_fiber_link_path_by_linksystemids", new
                 {
-                    p_linksystemid= linkSystemIds,
+                    p_linksystemid = linkSystemIds,
                     p_userId = userId
                 }, true).FirstOrDefault();
-                
+
             }
             catch { throw; }
         }
@@ -366,38 +366,55 @@ namespace DataAccess
             {
                 return repo.GetAll(u => u.link_id.Trim() == p_link_id.Trim()).ToList();
 
-                
+
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
-            }          
+            }
         }
-
+        public List<Dictionary<string, string>> GetFiberLinks(int userId, FiberLinkFilter objFiberLinkFilter)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_fiber_links", new
+                {
+                    p_searchtext = objFiberLinkFilter.Searchtext,
+                    P_PAGENO = objFiberLinkFilter.currentPage,
+                    P_PAGERECORD = objFiberLinkFilter.pageSize,
+                    P_SORTTYPE = objFiberLinkFilter.orderBy,
+                    p_userid = userId
+                }, true).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
-    public class DAFiberLinkColumns: Repository<fiberLinkColumnsMapping>
+    public class DAFiberLinkColumns : Repository<fiberLinkColumnsMapping>
     {
-       	        
-		 //public List<Dictionary<string, string>> /*getFiberLinkColumns*/()
-   //     {
-   //         try
-   //         { 
-   //             return repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_fiber_link_columns_mappings", new { }, true) ; 
-   //         }
-   //         catch (Exception)
-   //         {
 
-   //             throw;
-   //         }
-            
-   //     }
+        //public List<Dictionary<string, string>> /*getFiberLinkColumns*/()
+        //     {
+        //         try
+        //         { 
+        //             return repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_fiber_link_columns_mappings", new { }, true) ; 
+        //         }
+        //         catch (Exception)
+        //         {
+
+        //             throw;
+        //         }
+
+        //     }
         public List<fiberLinkColumnsMapping> getFiberLinkColumns()
         {
             try
             {
                 //return repo.GetAll().Where(x=>x.is_active=true).OrderBy(x=>x.column_sequence).ToList();
-                  return repo.ExecuteProcedure<fiberLinkColumnsMapping>("fn_get_fiber_link_columns_mappings", new {  }, true).ToList();
+                return repo.ExecuteProcedure<fiberLinkColumnsMapping>("fn_get_fiber_link_columns_mappings", new { }, true).ToList();
             }
             catch (Exception)
             {
@@ -406,7 +423,7 @@ namespace DataAccess
             }
 
         }
-       
+
     }
     public class DATempFiberMaster : Repository<TempFiberLink>
 
@@ -438,7 +455,7 @@ namespace DataAccess
 
                 throw;
             }
-        }         
+        }
         public void BulkUploadTempFiber(List<TempFiberLink> TempFiber)
         {
             try
@@ -473,6 +490,6 @@ namespace DataAccess
             }
             catch { throw; }
         }
-       
+
     }
 }

@@ -2924,7 +2924,7 @@ CLASS
 				COLOR 0 0 0	
 				FONT arial
 				TYPE truetype							
-				SIZE 12
+				SIZE 8
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR [color_code]  # background rect.
@@ -2935,6 +2935,7 @@ CLASS
 				ANGLE AUTO
 				FORCE FALSE
 				PARTIALS FALSE
+				MAXSCALEDENOM 70000
 			END
 		END	
 		#====================Dormant======================		
@@ -2951,7 +2952,7 @@ CLASS
 				COLOR 0 0 0	
 				FONT arial
 				TYPE truetype								
-				SIZE 12
+				SIZE 8
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR [color_code]  # background rect.
@@ -2962,6 +2963,7 @@ CLASS
 				ANGLE AUTO
 				FORCE FALSE
 				PARTIALS FALSE
+				MAXSCALEDENOM 70000
 			END
 		END	
 		#====================As-Built======================
@@ -2977,7 +2979,7 @@ CLASS
 				COLOR 0 0 0	
 				FONT arial
 				TYPE truetype				
-				SIZE 12
+				SIZE 8
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR [color_code]  # background rect.
@@ -2988,6 +2990,7 @@ CLASS
 				ANGLE AUTO
 				FORCE FALSE
 				PARTIALS FALSE
+				MAXSCALEDENOM 70000
 			END
 		END		
 	END

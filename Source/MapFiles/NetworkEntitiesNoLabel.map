@@ -1190,7 +1190,7 @@ LAYER
 				FONT arial
 				TYPE truetype
 				COLOR 0 0 0				
-				SIZE 12
+				SIZE 8
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR 255 255 255  # background rect.
@@ -1201,6 +1201,7 @@ LAYER
 				ANGLE AUTO
 				FORCE FALSE
 				PARTIALS FALSE
+				MAXSCALEDENOM 70000
 			END
 		END	
 		#====================Dormant======================		
@@ -1215,7 +1216,7 @@ LAYER
 				FONT arial
 				TYPE truetype
 				COLOR 0 0 0				
-				SIZE 12
+				SIZE 8
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR 255 255 255  # background rect.
@@ -1226,6 +1227,7 @@ LAYER
 				ANGLE AUTO
 				FORCE FALSE
 				PARTIALS FALSE
+				MAXSCALEDENOM 70000
 			END
 		END	
 		#====================As-Built======================
@@ -1239,7 +1241,7 @@ LAYER
 				FONT arial
 				TYPE truetype
 				COLOR 0 0 0				
-				SIZE 12
+				SIZE 8
 				STYLE
 					GEOMTRANSFORM 'labelpoly'
 					COLOR 255 255 255  # background rect.
@@ -1250,6 +1252,7 @@ LAYER
 				ANGLE AUTO
 				FORCE FALSE
 				PARTIALS FALSE
+				MAXSCALEDENOM 70000
 			END
 		END		
 	END

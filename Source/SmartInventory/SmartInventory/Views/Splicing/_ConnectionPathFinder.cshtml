@@ -79,9 +79,16 @@
                         <div class="@(Model.lstUserModule.Contains("ENT-CPF-PT")?"space-pad":"space-pad dvdisabled")">
                             <div class="d-fx --gap07 fullWidth">
                                 <div class="width50 --gap07 flex-dir-column">
-                                    <label  for="txtEquipment_id">@layerDetail.layer_title @Resources.Resources.SI_OSP_ONT_NET_RPT_008<i class="clsMandatory">*</i>:</label>
+                                    <label for="txtFiberLinkId">@Resources.Resources.SI_OSP_GBL_NET_FRM_421 / @Resources.Resources.SI_OSP_GBL_GBL_FRM_100:</label>
                                     <div class="fullWidth">
-                                            @Html.TextBoxFor(m => m.equipment_id, new { @class = "form-control", @maxlength = 100 })
+                                        @Html.TextBoxFor(m => m.FiberLinkId, new { @class = "form-control", @maxlength = 100 })
+                                    </div>
+
+                                </div>
+                                <div class="width50 --gap07 flex-dir-column">
+                                    <label for="txtEquipment_id">@layerDetail.layer_title @Resources.Resources.SI_OSP_ONT_NET_RPT_008<i class="clsMandatory">*</i>:</label>
+                                    <div class="fullWidth">
+                                        @Html.TextBoxFor(m => m.equipment_id, new { @class = "form-control", @maxlength = 100 })
                                     </div>
 
                                 </div>
@@ -102,21 +109,21 @@
                                     <button type="button" id="btnSchView" target="_blank" title="@Resources.Resources.SI_OSP_ONT_NET_RPT_012" @*value="@Resources.Resources.SI_OSP_ONT_NET_RPT_012"*@ class="btn btn-primary btn-small" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")>@Resources.Resources.SI_OSP_ONT_NET_RPT_012</button>
                                     <button type="button" id="btnShowOnMap" value="" title="Show on map" class="btn btn-primary btn-small" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")> @Resources.Resources.SI_OSP_GBL_GBL_GBL_036</button>
 
-                                        @if (grid.TotalRowCount != 0)
-                                        {
-                                            <div class="text-right d-inline-block pos-rel">
-                                                <button type="button" class="btn btn-default dropfiles  w100">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
-                                                <div class="dropbox">
-                                                    <span id="btncpfExport" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")>@Resources.Resources.SI_GBL_GBL_NET_FRM_042</span>
-                                                    <span id="btnCPFexportToKML" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")>@Resources.Resources.SI_GBL_GBL_NET_FRM_043</span>
-                                                </div>
+                                    @if (grid.TotalRowCount != 0)
+                                    {
+                                        <div class="text-right d-inline-block pos-rel">
+                                            <button type="button" class="btn btn-default dropfiles  w100">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                                            <div class="dropbox">
+                                                <span id="btncpfExport" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")>@Resources.Resources.SI_GBL_GBL_NET_FRM_042</span>
+                                                <span id="btnCPFexportToKML" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")>@Resources.Resources.SI_GBL_GBL_NET_FRM_043</span>
                                             </div>
-                                        }
-                                        else
-                                        {
-                                            <input type="button" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-primary btn-small" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "") />
-                                        }
-                                    
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <input type="button" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-primary btn-small" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "") />
+                                    }
+
                                     <button type="button" class="btn btn-default btn-small ml-auto" id="btncpfClear" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "")> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>
 
                                 </div>

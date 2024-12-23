@@ -597,6 +597,7 @@
     <Compile Include="Controllers\BulkUserUploadController.cs" />
     <Compile Include="Controllers\CRMController.cs" />
     <Compile Include="Controllers\FEController.cs" />
+    <Compile Include="Controllers\FiberLinkController.cs" />
     <Compile Include="Controllers\GoogleMapAPIController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IntegrationController.cs" />
