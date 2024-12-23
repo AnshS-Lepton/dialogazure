@@ -99,10 +99,10 @@ namespace BusinessLogics
         {
             return DAIspLine.Instance.saveLineGeom(objLine);
         }
-        
-        public DbMessage SetConnectionWithSplitCable(string cable_one_network_id, string cable_two_network_id, int old_cable_system_id, int splitentitysystemid, string splitentity_network_id, string splitentitytype, int user_id, string splicing_source)
+
+        public DbMessage SetConnectionWithSplitCable(int cable_one_system_id, int cable_two_system_id, int old_cable_system_id, int splitentitysystemid, string splitentity_network_id, string splitentitytype, int user_id, string splicing_source)
         {
-            return DACable.Instance.SetConnectionWithSplitCable(cable_one_network_id, cable_two_network_id, old_cable_system_id, splitentitysystemid, splitentity_network_id, splitentitytype, user_id, splicing_source);
+            return DACable.Instance.SetConnectionWithSplitCable(cable_one_system_id, cable_two_system_id, old_cable_system_id, splitentitysystemid, splitentity_network_id, splitentitytype, user_id, splicing_source);
         }
         public DbMessage SetISPConnectionWithSplitCable(string cable_one_network_id, string cable_two_network_id, int old_cable_system_id, int splitentitysystemid, string splitentity_network_id, string splitentitytype, int user_id, string splicing_source, int split_entity_x, int split_entity_y)
         {

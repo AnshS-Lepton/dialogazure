@@ -14382,9 +14382,9 @@ namespace SmartInventoryServices.Controllers
 			cableobjCable2.bom_sub_category = "Proposed";
 			BLCable.Instance.SaveCable(cableobjCable2, user_id);
 			cableTwoSystemid = cableobjCable2.system_id;
-			BLCable.Instance.SetConnectionWithSplitCable(firstCableNetworkId, secondCableNetworkId, split_cable_system_id, system_id, cableDetail.network_id, entityType, user_id, model.splicing_source);
-			// associate split cables
-			new BLMisc().AssociateSplitEntities(cableOneSystemid, cableTwoSystemid, firstCableNetworkId, secondCableNetworkId, EntityType.Cable.ToString(), split_cable_system_id);
+            BLCable.Instance.SetConnectionWithSplitCable(cableOneSystemid, cableTwoSystemid, split_cable_system_id, system_id, cableDetail.network_id, entityType, user_id, model.splicing_source);
+            // associate split cables
+            new BLMisc().AssociateSplitEntities(cableOneSystemid, cableTwoSystemid, firstCableNetworkId, secondCableNetworkId, EntityType.Cable.ToString(), split_cable_system_id);
 			// Delete parent cable
 			new BLMisc().deleteParentSplitEntity(split_cable_system_id, EntityType.Cable.ToString());
 		}
