@@ -2,8 +2,7 @@
 @using Models;
 @using Utility;
 
-@*<script src="~/Content/js/FiberLink.js"></script>
-    <script> var fiberLink = new FiberLink();</script>*@
+
 <link href="~/Content/css/FiberLink.css" rel="stylesheet" />
 @{
     var userModuleList = (List<string>)Session["ApplicableModuleList"];
@@ -20,9 +19,9 @@
     { Html.RenderPartial("~/Views/FiberLink/_CreateFiberlink.cshtml", Model.objFiberLink); }
 }
 @helper UploadFiberLink()
-    {
-        { Html.RenderPartial("~/Views/FiberLink/_UploadFiberlink.cshtml", Model.objFiberLink); }
-    }
+{
+    { Html.RenderPartial("~/Views/FiberLink/_UploadFiberlink.cshtml", Model.objFiberLink); }
+}
 
 @Html.HiddenFor(m => m.objFiberLink.system_id)
 
@@ -42,9 +41,9 @@
         {
             <li id="liAddFiberLink" class="@(Model.objFiberLink.user_role_id!=1?"":"dvdisabled")" style="@(Model.objFiberLink.user_role_id!=1?"": "pointer-events: none;opacity: 0.4;")"><a data-toggle="tab" href="#CreateFiberLink">@Resources.Resources.SI_OSP_GBL_NET_FRM_424</a></li>
         }
-       
-            <li id="liUploadFiberLink"><a data-toggle="tab" href="#UploadFiberLink">Upload Fiber Link</a></li>
-        
+
+        <li id="liUploadFiberLink"><a data-toggle="tab" href="#UploadFiberLink">Upload Fiber Link</a></li>
+
     </ul>
     @if (userModuleList.Contains("VLK"))
     {
@@ -168,19 +167,26 @@
             @CreateFiberLink()
         </div>
 
-    }  
-            <div id="UploadFiberLink" class="tab-pane fade in">
+    }
+    else
+    {
+        <script>
+            var fiberLink = new FiberLink();
+            $(document).ready(function () {
+                fiberLink.InitApp();
+            });
+        </script>
+    }
+    <div id="UploadFiberLink" class="tab-pane fade in">
 
-                @UploadFiberLink()
-            </div>
-        
+        @UploadFiberLink()
+    </div>
+
 </div>
-<script src="~/Content/js/FiberLink.js"></script>
 
 <script>
-    var fiberLink = new FiberLink();
+
     $(document).ready(function () {
-        fiberLink.InitApp();
         fiberLink.setDateTimeCalendar_viewLink("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
         $('th a, tfoot a').on("click", function () {
             // onGridHeaderClick('tblFiberLinkGrid');
