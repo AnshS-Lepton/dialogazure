@@ -20826,7 +20826,7 @@ var Main = function () {
         var invalidFiles = [];
         var allowedFileTypes = $('#allowedDocumentAttachmentType').val().split(',');
         var totalFilesize = 0;
-        debugger;
+
         var uploadedfile = $('#UploadDoc_0')[0].files;
         if (uploadedfile.length > maxFileCountLimit) {
             alert(MultilingualKey.SI_OSP_GBL_NET_GBL_289.replace('maxFileCountLimit', maxFileCountLimit));
@@ -21090,7 +21090,7 @@ var Main = function () {
         var allowedFileTypes = $('#allowedImageAttachmentType').val();
         //var allowedFileTypes = ["bmp", "gif", "png", "jpg", "jpeg"];
         var totalFilesize = 0;
-        debugger;
+
         if (uploadedfile.length > maxFileCountLimit) {
             alert(MultilingualKey.SI_OSP_GBL_NET_GBL_289.replace('maxFileCountLimit', maxFileCountLimit));
             return false;
