@@ -10281,6 +10281,7 @@ tfoot tr td a:hover {
 }
 .fullWidth {
     width: 100%;
+    box-sizing: border-box;
 }
 
 .error-border {

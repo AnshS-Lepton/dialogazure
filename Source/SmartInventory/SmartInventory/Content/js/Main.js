@@ -20858,6 +20858,7 @@ var Main = function () {
                         }
                         frmData.append('document_type', documentType);
                         frmData.append('uploadedfile', uploadedFile);
+                        
                     }
                 }
             }
@@ -30842,6 +30843,7 @@ var Main = function () {
     }
     this.entityDirectionProcess = function () {
         //showProgress();
+        debugger;
         var status = app.checkEntitySelected();
         var $ddlEntity = $("#ddlEntity");
         var $ddlEntityChosen = $("#ddlEntity_chosen");
