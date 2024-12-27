@@ -1867,8 +1867,8 @@ LAYER
 			NAME 'Primary Splitter'
             EXPRESSION ('[splitter_type]'  eq 'Primary' AND '[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL "icons/Planned/Psplitter.png" 
-				SIZE 35
+				SYMBOL [icon_path] 
+				SIZE 18
 			END
             LABEL
 				COLOR  255 0 0 
@@ -1884,8 +1884,8 @@ LAYER
 			NAME 'Primary Splitter'
             EXPRESSION ('[splitter_type]'  eq 'Primary' AND '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL "icons/AsBuild/Psplitter.png" 
-				SIZE 25			
+				SYMBOL [icon_path] 
+				SIZE 10			
 			END
             LABEL
 				COLOR  255 0 0 
@@ -1902,8 +1902,8 @@ LAYER
 			NAME 'Primary Splitter'
             EXPRESSION ('[splitter_type]'  eq 'Primary' AND '[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL "icons/Dorment/Psplitter.png" 
-				SIZE 35		
+				SYMBOL [icon_path] 
+				SIZE 18		
 			END
             LABEL
 				COLOR  255 0 0 
@@ -1921,8 +1921,8 @@ LAYER
 			NAME 'Secondary Splitter' 
 			EXPRESSION ('[splitter_type]'  eq 'Secondary' AND '[network_status]'  eq 'P')  
 			STYLE
-				SYMBOL "icons/Planned/Splitter.png" 
-				SIZE 35       
+				SYMBOL [icon_path] 
+				SIZE 16       
 			END
 			LABEL
 				COLOR  255 0 0 
@@ -1939,8 +1939,8 @@ LAYER
 			NAME 'Secondary Splitter' 
 			EXPRESSION ('[splitter_type]'  eq 'Secondary' AND '[network_status]'  eq 'A')  
 			STYLE
-				SYMBOL "icons/AsBuild/Splitter.png" 
-				SIZE 27       
+				SYMBOL [icon_path] 
+				SIZE 10       
 			END
 			LABEL
 				COLOR  255 0 0 
@@ -1957,8 +1957,8 @@ LAYER
 			NAME 'Secondary Splitter' 
 			EXPRESSION ('[splitter_type]'  eq 'Secondary' AND '[network_status]'  eq 'D')  
 			STYLE
-				SYMBOL "icons/Dorment/Splitter.png" 
-				SIZE 35        
+				SYMBOL [icon_path] 
+				SIZE 16        
 			END
 			LABEL
 				COLOR  255 0 0 
