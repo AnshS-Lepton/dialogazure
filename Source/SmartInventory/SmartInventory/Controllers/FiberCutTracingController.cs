@@ -32,7 +32,7 @@ namespace SmartInventory.Controllers
             List<EquipementSearchResult> lstEquipment = new List<EquipementSearchResult>();
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
-                lstEquipment = objSplicing.GetSearchEquipmentResult(SearchText, Convert.ToInt32(Session["user_id"]));
+                lstEquipment = objSplicing.GetSearchEquipmentResult(SearchText, Convert.ToInt32(Session["user_id"]), string.Empty);
             }
             return Json(lstEquipment, JsonRequestBehavior.AllowGet);
         }

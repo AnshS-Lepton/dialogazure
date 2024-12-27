@@ -1,35 +1,26 @@
 ﻿using BusinessLogics;
-using SmartInventory.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using Lepton.Utility;
 using Models;
-using System.Data;
-using Utility;
-using System.IO;
+using Models.Admin;
+using Newtonsoft.Json;
 using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using SmartInventory.Filters;
 using SmartInventory.Helper;
 using SmartInventory.Settings;
-using Newtonsoft.Json;
-using System.Xml.Linq;
-using System.Text.RegularExpressions;
-using Models.Admin;
-using System.Threading;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
 using System.Text;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
-using iTextSharp.text.html.simpleparser;
-using System.Web.UI;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Web;
+using System.Web.Mvc;
 using System.Web.UI.WebControls;
-using NPOI.XSSF.UserModel;
-using System.Dynamic;
-using static Mono.Security.X509.X520;
-using NPOI.SS.Formula.Functions;
-using System.Reflection.Emit;
-using System.Data.Entity.Infrastructure;
-using System.Threading.Tasks;
+using System.Xml.Linq;
+using Utility;
 
 namespace SmartInventory.Controllers
 {
@@ -253,7 +244,7 @@ namespace SmartInventory.Controllers
                     List<HttpPostedFileBase> objHttpPostedFileBase = null;
                     BLUser objBLuser = new BLUser();
                     List<EventEmailTemplateDetail> objEventEmailTemplateDetail = objBLuser.GetEventEmailTemplateDetail(EmailEventList.PercentUtilization70.ToString());
-                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, objHttpPostedFileBase, EmailSettings.AllEmailSettings, filePath,"", EmailEventList.PercentUtilization70.ToString()));
+                    System.Threading.Tasks.Task.Run(() => commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, objHttpPostedFileBase, EmailSettings.AllEmailSettings, filePath, "", EmailEventList.PercentUtilization70.ToString()));
                     //commonUtil.SendEventBasedEmail(objEventEmailTemplateDetail, objDict, objHttpPostedFileBase, filePath);
                     #endregion
                 }
@@ -415,9 +406,25 @@ namespace SmartInventory.Controllers
             var lstUserModule = (List<string>)Session["ApplicableModuleList"];
             objOSP.isOLBEnabled = lstUserModule.Contains("OLB");
             objOSP.lstUserModule = new BLLayer().GetUserModuleAbbrList(userdetails.user_id, UserType.Web.ToString());
+
             return PartialView("_ConnectionPathFinder", objOSP);
         }
+        public ActionResult GetFiberLinks(FiberLinksFilter objFiberLinks)
+        {
+            // Construct the query string
+            int page = objFiberLinks.PageSize;
+            string sort = objFiberLinks.OrderBy;
+            string searchText = objFiberLinks.SearchText;
+            int user_id = Convert.ToInt32(Session["user_id"]);
+            string queryString = $"?user_id={user_id}&page={page}&sort={sort}&searchText={searchText}";
+            string url = "api/FiberLink/GetFiberLinks" + queryString;
 
+            // Call the method
+            string result = WebAPIRequest.GetAPIRequest(url);
+            objFiberLinks = JsonConvert.DeserializeObject<FiberLinksFilter>(result);
+
+            return Json(objFiberLinks, JsonRequestBehavior.AllowGet);
+        }
         public ActionResult SchematicView(string val)
         {
             string[] value = val.Split(',');
@@ -475,13 +482,14 @@ namespace SmartInventory.Controllers
             return objSchematicView;
         }
 
-        public ActionResult GetEquipmentSearchResult(string SearchText)
+        public ActionResult GetEquipmentSearchResult(string searchText, string linkId = "")
         {
             BLOSPSplicing objSplicing = new BLOSPSplicing();
             List<EquipementSearchResult> lstEquipment = new List<EquipementSearchResult>();
-            if (!string.IsNullOrWhiteSpace(SearchText))
+            if (!string.IsNullOrWhiteSpace(searchText))
             {
-                lstEquipment = objSplicing.GetSearchEquipmentResult(SearchText, Convert.ToInt32(Session["user_id"]));
+                linkId = string.IsNullOrEmpty(linkId) ? "" : linkId;
+                lstEquipment = objSplicing.GetSearchEquipmentResult(searchText, Convert.ToInt32(Session["user_id"]), linkId);
             }
 
             return Json(lstEquipment, JsonRequestBehavior.AllowGet);

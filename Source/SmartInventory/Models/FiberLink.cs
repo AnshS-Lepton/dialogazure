@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -388,5 +389,31 @@ namespace Models
     public class count
     {
         public int count_id { get; set; }
+    }
+    public class FiberLinkDetail
+    {
+        public string system_id { get; set; }
+
+        [JsonProperty("Network ID")]
+        public string Network_Id { get; set; }
+
+        [JsonProperty("Link/Route ID")]
+        public string Link_Id { get; set; }
+
+        [JsonProperty("Link/Route Name")]
+        public string Link_Name { get; set; }
+        [JsonProperty("Link Type")]
+        public string Link_Type { get; set; }
+    }
+
+    public class FiberLinksFilter
+    {
+        public List<FiberLinkDetail> LstFiberLinkDetails { get; set; }
+        public int TotalRecord { get; set; }
+        public int PageSize { get; set; }
+        public int CurrentPage { get; set; }
+        public string OrderBy { get; set; }
+        public string SearchText { get; set; }
+        public string S_No { get; set; }
     }
 }

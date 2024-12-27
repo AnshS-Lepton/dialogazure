@@ -56,7 +56,8 @@
         "chkSpliceTerminatedCablesOnly": "#chkSpliceTerminatedCablesOnly",
         "btnConnectedCustomerExport": "#btnConnectedCustomerExport",
         "btnSchView": "#btnSchView",
-        "ddlSpliceTray": "#ddl_SpliceTray"
+        "ddlSpliceTray": "#ddl_SpliceTray",
+        "fiberLinkId": "#FiberLinkId"
     }
     this.initApp = function () {
         this.bindEvents();
@@ -65,8 +66,7 @@
         $(app.DE.equipmentid).autocomplete({
             
             source: function (request, response) {
-                var res = ajaxReq('Splicing/GetEquipmentSearchResult', { SearchText: $.trim(request.term) }, true, function (data) {
-                    debugger;
+                var res = ajaxReq('Splicing/GetEquipmentSearchResult', { searchText: $.trim(request.term), linkId: $.trim($(app.DE.fiberLinkId).val()) }, true, function (data) {
                     if (data.length == 0) {
                         var result = [
                             {
@@ -104,6 +104,52 @@
             }
 
         });
+        $(app.DE.fiberLinkId).autocomplete({
+            source: function (request, response) {
+                var res = ajaxReq('Splicing/GetFiberLinks', { SearchText: $.trim(request.term), PageSize: 0, OrderBy: 'desc' }, true, function (data) {
+                    if (data.length == 0) {
+                        var result = [
+                            {
+                                label: MultilingualKey.SI_GBL_GBL_JQ_GBL_001,
+                                entity_id: 0
+                            }
+                        ];
+                        response(result);
+                    }
+                    else {
+                        response($.map(data.LstFiberLinkDetails, function (item) {
+                            return {
+                                label: item.Link_Name,      // Display name
+                                value: item.Network_Id,     // Value for autocomplete
+                                entity_type: item.Link_Type,  // Static entity type
+                                entity_id: item.system_id,   // Entity ID
+                                linkId: item.Link_Id,
+
+                            };
+                        }))
+                    }
+                }, true, false);
+            },
+            minLength: 3,
+            select: function (event, ui) {
+                
+                $('#dvViewConnectionPathFinder,#dvSchematicViewContainer').html('');
+                $('#divNoRecordExist').show();
+                var label = ui.item.label;
+                if (ui.item.entity_id == 0) {
+                    event.preventDefault();
+                }
+                else {
+                    event.preventDefault();
+                    $(app.DE.fiberLinkId).val(ui.item.linkId);
+                    $(app.DE.entity_type).val(ui.item.entity_type);
+                    $(app.DE.entityid).val(ui.item.entity_id);
+                    $(app.DE.entityName).val(ui.item.Link_Name);
+                    $(app.DE.equipmentid).val('');
+                }
+            }
+        });
+
         $(app.DE.btnShowRoute).on("click", function () {
             var srchrtxt = $(app.DE.equipmentid).val();
             if (srchrtxt == '') {
@@ -167,7 +213,7 @@
         $('#ModalPopUp div').removeClass('modal-xxl');
     }
     this.spliceHere = function (dvObj) {
-        debugger;
+        
         si.clearTPRelatedObjects();
         $('#InfoDiv').hide();
         si.removeEventListnrs('click');
@@ -2064,7 +2110,7 @@
         });
     }
     this.BindEquipementPort = function (entityid, entitytype) {
-        debugger;
+        
         var ddlCore = $(app.DE.ddlCore);
         ajaxReq('Splicing/GetEquipmentPortInfo', { entity_id: entityid, entity_type: entitytype }, false, function (resp) {
             if (resp.status = 'OK') {
