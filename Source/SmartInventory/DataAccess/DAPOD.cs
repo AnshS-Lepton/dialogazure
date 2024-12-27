@@ -28,7 +28,7 @@ namespace DataAccess
                         objPODMaster.objPM = objPageValidate;
                         return objPODMaster;
                     }
-                    var geomresp = new DAMisc().GetValidatePointGeometry(objPOD.system_id, objPOD.entityType, objPOD.latitude.ToString(), objPOD.longitude.ToString(), objPOD.region_id, objPOD.province_id);
+                    var geomresp = new DAMisc().GetValidatePointGeometry(objPODMaster.system_id, objPODMaster.entityType, objPODMaster.latitude.ToString(), objPODMaster.longitude.ToString(), objPODMaster.region_id, objPODMaster.province_id);
                     if (geomresp.status != "OK")
                     {
                         objPOD.objPM = geomresp;

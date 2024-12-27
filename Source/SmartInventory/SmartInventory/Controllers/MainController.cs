@@ -2649,6 +2649,10 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
                 var featureName = collection["feature_name"];
                // var attachmentType = "Document";
                var attachmentType = collection["attachment_Type"];
+                if (string.IsNullOrEmpty(attachmentType))
+                {
+                    attachmentType = "Document";
+                }
                 var uploadedtype = collection["document_type"];
                 HttpFileCollectionBase files = Request.Files;
 
