@@ -6618,7 +6618,7 @@ var Main = function () {
     this.middleMarkers = [];
     //direction planning end
     this.initApp = function () {
-        
+
         this.initGlobalSettings();
         this.LoadMap();
         this.bindEvents();
@@ -8199,7 +8199,7 @@ var Main = function () {
             }
         });
         $('.mainlyr .checkbox-custom').change(function () {
-            
+
             app.TriggerEntityChangeEvent.call(this);
 
         });
@@ -10989,7 +10989,7 @@ var Main = function () {
         $(app.DE.ulProvinceLayers + ' li input[type="checkbox"]').prop("checked", false);
 
     }
-    this.saveWorkSpace = function (wrkspcID) {        
+    this.saveWorkSpace = function (wrkspcID) {
         var _oldWorkSpacename = $('#workspace_' + app.OldWorkSpaceId).text();
         var _newWorkSpacename = $('#workspace_' + wrkspcID).text();
 
@@ -13144,7 +13144,7 @@ var Main = function () {
         ajaxReq('Main/ValidateEntityGeom', { geomType: geomType, enType: eType, txtGeom: txtGeom, isTemplate: isTemplate }, true,
             function (resp) {
                 if (resp.status == "OK") {
-                    
+
 
                     app.showLibraryTools();
                     $('#LibraryTools a:nth-child(2)').off('click');
@@ -19303,12 +19303,12 @@ var Main = function () {
         // popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
         popup.LoadModalDialog(app.ParentModel, pageUrl, { userid: 0 }, 'Core Planner', modalClass);
     }
-    this.createFiberlinkCPL = function () {        
+    this.createFiberlinkCPL = function () {
         popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: '' }, "Create Link", 'modal-xl');
 
     }
     this.checkAvailability = function () {
-      
+
         // Reset previous red borders before validating
         $("#txtODF1, #txtODF2, #txtRequiredCore").removeClass("error-border");
 
@@ -19317,7 +19317,7 @@ var Main = function () {
             alert('All fields (ODF1, ODF2 and RequiredCore) are mandatory for checking Availability Core.');
 
             // Highlight empty fields with red border
-            if ($("#txtODF1").val() == '' || $("#txtODF1").val() == 'Search ODF' ) {
+            if ($("#txtODF1").val() == '' || $("#txtODF1").val() == 'Search ODF') {
                 $("#txtODF1").addClass("error-border");
             }
             if ($("#txtODF2").val() == '' || $("#txtODF2").val() == 'Search ODF') {
@@ -19350,14 +19350,14 @@ var Main = function () {
         }, true, true);
 
     }
-    this.showReport = function () {        
+    this.showReport = function () {
         window.location = appRoot + 'Library/ExportPlanLogicReport';
     }
 
     this.saveCorePlanLogic = function () {
 
         ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val(), fiber_link_network_id: $("#txtfiberlink").val(), source_network_id: $("#txtODF1").val(), destination_network_id: $("#txtODF2").val(), buffer: 5 }, true, function (resp) {
-            if (resp != null && resp != undefined) {                
+            if (resp != null && resp != undefined) {
                 if (resp.status) {
                     alert(resp.message);
                     $('#txtRequiredCore').val('');
@@ -19376,7 +19376,7 @@ var Main = function () {
 
     }
 
-    this.GetlinkPrefixbyLinkType = function (obj) {        
+    this.GetlinkPrefixbyLinkType = function (obj) {
         var _link_prefix = obj.value;
         ajaxReq('Library/GetlinkPrefixbyPrefixType', { link_prefix: _link_prefix }, false, function (resp) {
             if (resp.data != null) {
@@ -20732,7 +20732,7 @@ var Main = function () {
         app.getAttachmentFiles();
     }
 
-    this.uploadMultipleDocumentFile = function () {        
+    this.uploadMultipleDocumentFile = function () {
         var frmData = new FormData();
         var filesize = $('#hdnMaxFileUploadSizeLimit').val();
         var maxFileCountLimit = $('#fdnMaxFileCountLimit').val();
@@ -20817,15 +20817,21 @@ var Main = function () {
             return false;
         }
     }
-    this.uploadMultiDocFileWithfileType = function () {        
+    this.uploadMultiDocFileWithfileType = function () {
         var frmData = new FormData();
         var filesize = parseInt($('#hdnMaxFileUploadSizeLimit').val(), 10);
         var maxFileCountLimit = parseInt($('#fdnMaxFileCountLimit').val(), 10);
         var Sizeinbytes = filesize * 1024;
-        var TotalSizeinBytes = Sizeinbytes * maxFileCountLimit;
+        var TotalSizeinBytes = Sizeinbytes;
         var invalidFiles = [];
         var allowedFileTypes = $('#allowedDocumentAttachmentType').val().split(',');
         var totalFilesize = 0;
+        debugger;
+        var uploadedfile = $('#UploadDoc_0')[0].files;
+        if (uploadedfile.length > maxFileCountLimit) {
+            alert(MultilingualKey.SI_OSP_GBL_NET_GBL_289.replace('maxFileCountLimit', maxFileCountLimit));
+            return false;
+        }
 
         $('#form-rows .form-group').each(function () {
             var documentType = $(this).find('select').val();
@@ -21072,18 +21078,23 @@ var Main = function () {
         });
     }
 
-    this.uploadMultipleImageFile = function () {        
+    this.uploadMultipleImageFile = function () {
         var frmData = new FormData();
         var filesize = $('#hdnMaxFileUploadSizeLimit').val();
         var maxFileCountLimit = $('#fdnMaxFileCountLimit').val();
         var Sizeinbytes = filesize * 1024;
-        var TotalSizeinBytes = Sizeinbytes * maxFileCountLimit;
+        var TotalSizeinBytes = Sizeinbytes;
 
         var uploadedfile = $('#fuImgUpload')[0].files;
         var invalidFiles = [];
         var allowedFileTypes = $('#allowedImageAttachmentType').val();
         //var allowedFileTypes = ["bmp", "gif", "png", "jpg", "jpeg"];
         var totalFilesize = 0;
+        debugger;
+        if (uploadedfile.length > maxFileCountLimit) {
+            alert(MultilingualKey.SI_OSP_GBL_NET_GBL_289.replace('maxFileCountLimit', maxFileCountLimit));
+            return false;
+        }
         if (uploadedfile.length > 0) {
             for (var i = 0; i < uploadedfile.length; i++) {
                 frmData.append('images[]', uploadedfile[i]);
@@ -28986,7 +28997,7 @@ var Main = function () {
         }, true);
     }
     //var timeoutId;
-    $(document).ready(function () {        
+    $(document).ready(function () {
         app.LoadMap();
         if ($("#notifiCount").length > 0) {
             updateCount();
@@ -29003,7 +29014,7 @@ var Main = function () {
         app.RefreshLayersForSync();
     });
     this.TriggerEntityChangeEvent = function () {
-        
+
         if (this.checked) {
             var chkid = this.id;
             var id = $('#' + chkid).attr("data-layerid");
@@ -29109,7 +29120,7 @@ var Main = function () {
     }
 
     this.RefreshLayersForSync = function () {
-        
+
         $("#hdnMapRegionProvinceLimit").val(app.provinceLimitToSelectForLoadinVectorLayer);
         if ($(app.DE.ulProvinceLayers + '>li>input[type="checkbox"]:checked').length > $("#hdnMapRegionProvinceLimit").val()) {
             alert($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_120, $("#hdnMapRegionProvinceLimit").val()));
@@ -32219,7 +32230,7 @@ var Main = function () {
             }
             si.gMapObj.shapeObj.setMap(si.map);
         },
-        shapeClickInfoAuditLogReport: function () {            
+        shapeClickInfoAuditLogReport: function () {
             switch (si.gMapObj.shapeType) {
                 case 'Polygon':
                     app.AuditLogReport.showAuditLogReportDetail(si.gMapObj.shapeObj.getPath().getArray(), 'polygon', si.gMapObj.purposeType, si.gMapObj.isAuditlogReport);
@@ -32543,7 +32554,7 @@ function checkedallNetwork() {
 }
 /*js for table footer*/
 
-$(document).ready(function () {    
+$(document).ready(function () {
     setWebGridCurrentPageStyle();
 });
 
