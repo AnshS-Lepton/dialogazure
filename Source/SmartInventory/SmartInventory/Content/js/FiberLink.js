@@ -994,7 +994,7 @@
             $('#hdnCheckforCLP').val('');
             alert(objFiberLink.pageMsg.message);
             $("#closeChildPopup").click();
-
+            $("#closeModalPopup").click();
         }
         else {
             if (objFiberLink.CreateFL == 0) {

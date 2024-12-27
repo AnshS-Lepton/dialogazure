@@ -124,7 +124,7 @@ namespace SmartInventory.Controllers
                     objFiberLink.network_id = FLNetworkId.network_id;
                 }
                 var result = new BLFiberLink().SaveFiberLink(objFiberLink, Convert.ToInt32(Session["user_id"]));
-                if (string.IsNullOrEmpty(result.pageMsg.message))
+                if (result != null && string.IsNullOrEmpty(result.pageMsg.message))
                 {
                     if (objFiberLink.pageMsg.isNewEntity)
                     {

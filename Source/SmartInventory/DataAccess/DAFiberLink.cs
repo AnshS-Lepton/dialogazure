@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utility;
 
 namespace DataAccess
 {
@@ -61,16 +62,20 @@ namespace DataAccess
                 }
                 objFiberLink.created_on = DateTimeHelper.Now;
                 objFiberLink.fiber_link_status = "Free";
-                objFiberLink.created_by = userId; 
-                objFiberLink.pageMsg.isNewEntity = true; 
+                objFiberLink.created_by = userId;
+                objFiberLink.pageMsg.isNewEntity = true;
                 var resultItem = repo.Insert(objFiberLink);
                 return resultItem;
             }
+            catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
+            {
+                ErrorLogHelper.WriteErrorLog("SaveFiberLink", "DAFiberLink", ex, "Exception: Link Id already exist in the system!");
+            }
             catch (Exception ex)
             {
-
-                throw ex;
+                ErrorLogHelper.WriteErrorLog("SaveFiberLink", "DAFiberLink", ex);
             }
+            return null;
         }
         public List<Dictionary<string, string>> getFiberLinkDetails(int userId, FiberLinkFilter objFiberLinkFilter)
         {
