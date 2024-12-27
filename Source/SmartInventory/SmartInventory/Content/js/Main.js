@@ -20817,7 +20817,7 @@ var Main = function () {
             return false;
         }
     }
-    this.uploadMultiDocFileWithfileType = function () {        
+    this.uploadMultiDocFileWithfileType = function () {   
         var frmData = new FormData();
         var filesize = parseInt($('#hdnMaxFileUploadSizeLimit').val(), 10);
         var maxFileCountLimit = parseInt($('#fdnMaxFileCountLimit').val(), 10);
@@ -20852,6 +20852,7 @@ var Main = function () {
                         }
                         frmData.append('document_type', documentType);
                         frmData.append('uploadedfile', uploadedFile);
+                        
                     }
                 }
             }
@@ -30831,6 +30832,7 @@ var Main = function () {
     }
     this.entityDirectionProcess = function () {
         //showProgress();
+        debugger;
         var status = app.checkEntitySelected();
         var $ddlEntity = $("#ddlEntity");
         var $ddlEntityChosen = $("#ddlEntity_chosen");

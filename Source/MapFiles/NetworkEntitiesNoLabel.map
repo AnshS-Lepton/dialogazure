@@ -297,7 +297,7 @@ MAP
 			NAME 'Customer'
 			EXPRESSION ('[customer_type]' eq '')			
 			STYLE
-				SYMBOL "icons/AsBuild/Customer.png" 
+				SYMBOL "icons/Planned/Customer.png" 
 				SIZE 18			
 			END
             			
