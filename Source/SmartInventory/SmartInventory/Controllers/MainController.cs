@@ -541,7 +541,7 @@ namespace SmartInventory.Controllers
                     objResp.message = Resources.Resources.SI_GBL_GBL_GBL_GBL_007;
 
                     return Json(objResp, JsonRequestBehavior.AllowGet);
-                }               
+                }
                 switch (enType)
                 {
                     case EntityType.Area:
@@ -1886,7 +1886,7 @@ namespace SmartInventory.Controllers
             objEntityLstCount.lstBindProjectCode = objTemplateForDropDown.lstBindProject;
 
             objTemplateForDropDown.lstBindRoot = new BLProject().BindRootId(objEntityLstCount.objFilterAttributes.userid, objEntityLstCount.objFilterAttributes.geom,
-objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilterAttributes.buff_Radius,objEntityLstCount.objFilterAttributes.dd_networkStatus);
+objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilterAttributes.buff_Radius, objEntityLstCount.objFilterAttributes.dd_networkStatus);
 
             objEntityLstCount.lstBindRootId = objTemplateForDropDown.lstBindRoot;
             objEntityLstCount.objFilterAttributes.SelectedParentUsers = objEntityLstCount.objFilterAttributes.SelectedParentUser != null && objEntityLstCount.objFilterAttributes.SelectedParentUser.Count > 0 ? string.Join(",", objEntityLstCount.objFilterAttributes.SelectedParentUser.ToArray()) : "";
@@ -2426,7 +2426,7 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
             {
                 try
                 {
-                    
+
                     var systemId = collection["system_Id"];
                     var entityType = collection["entity_type"];
                     var featureName = collection["feature_name"];
@@ -2453,7 +2453,7 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
                         return Json(jResp, JsonRequestBehavior.AllowGet);
 
                     }
-                    else 
+                    else
                     {
                         for (int i = 0; i < files.Count; i++)
                         {
@@ -2498,7 +2498,7 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
                 jResp.status = StatusCodes.INVALID_INPUTS.ToString();
                 return Json(jResp, JsonRequestBehavior.AllowGet);
             }
-        }       
+        }
         public VailidateAttachment ValidateImageFileType(HttpFileCollectionBase files)
         {
             VailidateAttachment obj = new VailidateAttachment();
@@ -2525,7 +2525,7 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
             if (totalUploadedAttachmentSize > maxallowedAttachmentSize)
             {
                 totalUploadedAttachmentSize = 0;
-                obj.invalidattachmentsize = "Total file size is too large.Maximum total file size allowed is, " + maxallowedAttachmentSize/1024 +" MB";
+                obj.invalidattachmentsize = "Total file size is too large.Maximum total file size allowed is, " + maxallowedAttachmentSize / 1024 + " MB";
             }
             obj.invalidattachmentType = invalidAttachmentType.Count > 0 ? "The following files are not of allowed file type are " + string.Join(", ", invalidAttachmentType) : string.Empty;
             obj.invalidattachmentename = invalidAttachmentName.Count > 0 ? "File Name length should be less than 100 characters. invalid files are " + string.Join(", ", invalidAttachmentType) : string.Empty;
@@ -2540,7 +2540,7 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
             int totalUploadedAttachmentSize = 0;
             for (int i = 0; i < files.Count; i++)
             {
-               // var allowedFileTypes = ApplicationSettings.allowedDocumentAttachmentType;
+                // var allowedFileTypes = ApplicationSettings.allowedDocumentAttachmentType;
                 var validDocumentTypes = ApplicationSettings.validDocumentTypes.Split(new string[] { "," }, StringSplitOptions.None);
                 var fileExtension = Path.GetExtension(files[i].FileName);//var fileExtension = files[i].FileName.Split('.').LastOrDefault()?.ToLower();
                 totalUploadedAttachmentSize = totalUploadedAttachmentSize + files[i].ContentLength;
@@ -2548,19 +2548,19 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
                 {
                     invalidAttachmentType.Add(files[i].FileName);
                 }
-                if (files[i].FileName.Length>100)
+                if (files[i].FileName.Length > 100)
                 {
                     invalidAttachmentName.Add(files[i].FileName);
-                    
+
                 }
             }
-            if(totalUploadedAttachmentSize > maxallowedAttachmentSize) 
+            if (totalUploadedAttachmentSize > maxallowedAttachmentSize)
             {
                 totalUploadedAttachmentSize = 0;
-                obj.invalidattachmentsize = "Total file size is too large.Maximum total file size allowed is, " + maxallowedAttachmentSize/1024 +" MB";
+                obj.invalidattachmentsize = "Total file size is too large.Maximum total file size allowed is, " + maxallowedAttachmentSize / 1024 + " MB";
             }
             obj.invalidattachmentType = invalidAttachmentType.Count > 0 ? "The following files are not of allowed file type are " + string.Join(", ", invalidAttachmentType) : string.Empty;
-            obj.invalidattachmentename = invalidAttachmentName.Count>0? "File Name length should be less than 100 characters. invalid files are "+ string.Join(", ", invalidAttachmentType): string.Empty;
+            obj.invalidattachmentename = invalidAttachmentName.Count > 0 ? "File Name length should be less than 100 characters. invalid files are " + string.Join(", ", invalidAttachmentType) : string.Empty;
             return obj;
         }
 
@@ -2647,12 +2647,10 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
                 var systemId = collection["system_Id"];
                 var entityType = collection["entity_type"];
                 var featureName = collection["feature_name"];
-               // var attachmentType = "Document";
-               var attachmentType = collection["attachment_Type"];
+                // var attachmentType = "Document";
+                var attachmentType = collection["attachment_Type"];
                 if (string.IsNullOrEmpty(attachmentType))
-                {
                     attachmentType = "Document";
-                }
                 var uploadedtype = collection["document_type"];
                 HttpFileCollectionBase files = Request.Files;
 
@@ -2744,7 +2742,7 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
             jResp.status = statusCode.ToString();
             return Json(jResp, JsonRequestBehavior.AllowGet);
         }
-        
+
         #region Acceptance Testing       
 
         [HttpGet]
@@ -4158,23 +4156,23 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
                 var lstImages = new BLAttachment().getAttachmentDetailsDocs(system_Id, entity_type, "Image");
                 foreach (var item in lstImages)
                 {
-                    var _imgSrc = "";                       
-                        string imageUrl = string.Concat(FtpUrl, item.FileLocation, item.FileName);
+                    var _imgSrc = "";
+                    string imageUrl = string.Concat(FtpUrl, item.FileLocation, item.FileName);
 
-                        WebClient request = new WebClient();
-                        if (!string.IsNullOrEmpty(UserName)) //Authentication require..
-                            request.Credentials = new NetworkCredential(UserName, PassWord);
+                    WebClient request = new WebClient();
+                    if (!string.IsNullOrEmpty(UserName)) //Authentication require..
+                        request.Credentials = new NetworkCredential(UserName, PassWord);
 
-                        byte[] objdata = null;
-                        if (isFileExistOnFTP(imageUrl))
-                        {
-                            objdata = request.DownloadData(imageUrl);
-                        }
-                        if (objdata != null && objdata.Length > 0)
-                            _imgSrc = string.Concat("data:image//png;base64,", Convert.ToBase64String(objdata));
-                        ImageResult Imr = new ImageResult();
+                    byte[] objdata = null;
+                    if (isFileExistOnFTP(imageUrl))
+                    {
+                        objdata = request.DownloadData(imageUrl);
+                    }
+                    if (objdata != null && objdata.Length > 0)
+                        _imgSrc = string.Concat("data:image//png;base64,", Convert.ToBase64String(objdata));
+                    ImageResult Imr = new ImageResult();
 
-                        getLatLongFromImage(objdata, Imr);
+                    getLatLongFromImage(objdata, Imr);
 
                     lstImageResult.Add(new DocumentResult()
                     {
@@ -4244,7 +4242,7 @@ objEntityLstCount.objFilterAttributes.selection_type,objEntityLstCount.objFilter
             }
             return PartialView("_DocumentList", lstDocumentResult);
         }
-        
+
         public ActionResult UploadRefLink(FormCollection collection)
         {
             JsonResponse<string> jResp = new JsonResponse<string>();
