@@ -4236,7 +4236,7 @@ namespace SmartInventory.Controllers
             return objFMS;
         }
 
-        public PartialViewResult AddFMS(string networkIdType, int systemId = 0, string geom = "", int pSystemId = 0, string pEntityType = "", string pNetworkId = "")
+        public PartialViewResult AddFMS(string networkIdType, int systemId = 0, string geom = "", int pSystemId = 0, string pEntityType = "", string pNetworkId = "", string siteIdSiteName = "")
         {
             //if (string.IsNullOrWhiteSpace(geom) && systemId == 0)
             //{
@@ -4258,6 +4258,7 @@ namespace SmartInventory.Controllers
             obj.pSystemId = pSystemId;
             obj.pEntityType = pEntityType;
             obj.pNetworkId = pNetworkId;
+            obj.SiteIdSiteName = siteIdSiteName;  
             obj.user_id = Convert.ToInt32(Session["user_id"]);
             string url = "api/Library/EntityOperations";
             var response = WebAPIRequest.PostIntegrationAPIRequest<FMSMaster>(url, obj, EntityType.FMS.ToString(), EntityAction.Get.ToString());
@@ -4765,43 +4766,43 @@ namespace SmartInventory.Controllers
                 objCustomer.geom = GetPointTypeParentGeom(objCustomer.pSystemId, objCustomer.pEntityType);
             }
 
-			if (objCustomer.networkIdType == NetworkIdType.A.ToString() && objCustomer.system_id == 0)
-			{
-				//GET AUTO NETWORK CODE...Temporary Solution:== Pass the parent_sysId=0 and parent_eType=""  to sove the customer network id duplicacy.
-				var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Customer.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCustomer.geom, parent_eType = "", parent_sysId = 0 });
-				if (isDirectSave == true)
-				{
-					//GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
-					objCustomer = GetCustomerDetail(objCustomer.pSystemId, objCustomer.pEntityType, objCustomer.networkIdType, objCustomer.system_id, objCustomer.geom);
-					// INITIALIZE DEFAULT VALUE FOR REQUIRED FIELDS
-					objCustomer.customer_name = objNetworkCodeDetail.network_code;
-					objCustomer.parent_system_id = pSystemId;
-					objCustomer.parent_entity_type = pEntitytype;
-					objCustomer.parent_network_id = pNetworkId;
-				}
-				//SET NETWORK CODE
-				objCustomer.network_id = objNetworkCodeDetail.network_code;
-				objCustomer.sequence_id = objNetworkCodeDetail.sequence_id;
-			}
-			if (string.IsNullOrEmpty(objCustomer.customer_name))
-			{
-				objCustomer.customer_name = objCustomer.network_id;
-			}
-			if (TryValidateModel(objCustomer))
-			{
-				//if (objCustomer.objIspEntityMap.AssociateStructure != 0)
-				//{
-				//    objCustomer.objIspEntityMap.structure_id = Convert.ToInt32(objCustomer.objIspEntityMap.AssociateStructure);
-				//}
-				objCustomer.objIspEntityMap.structure_id = Convert.ToInt32(objCustomer.objIspEntityMap.AssociateStructure);
-				//objCustomer.objIspEntityMap.structure_id = objCustomer.AssociateStructure != 0 ? objCustomer.AssociateStructure : objCustomer.objIspEntityMap.structure_id;
-				objCustomer.objIspEntityMap.shaft_id = objCustomer.objIspEntityMap.AssoType == "Floor" ? 0 : objCustomer.objIspEntityMap.shaft_id;
-				if (string.IsNullOrEmpty(objCustomer.objIspEntityMap.AssoType))
-				{
-					objCustomer.objIspEntityMap.shaft_id = 0; objCustomer.objIspEntityMap.floor_id = 0;
-				}
-				if (objCustomer.objIspEntityMap.structure_id == 0 && objCustomer.system_id > 0 )
-				{
+            if (objCustomer.networkIdType == NetworkIdType.A.ToString() && objCustomer.system_id == 0)
+            {
+                //GET AUTO NETWORK CODE...Temporary Solution:== Pass the parent_sysId=0 and parent_eType=""  to sove the customer network id duplicacy.
+                var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.Customer.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCustomer.geom, parent_eType = "", parent_sysId = 0 });
+                if (isDirectSave == true)
+                {
+                    //GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
+                    objCustomer = GetCustomerDetail(objCustomer.pSystemId, objCustomer.pEntityType, objCustomer.networkIdType, objCustomer.system_id, objCustomer.geom);
+                    // INITIALIZE DEFAULT VALUE FOR REQUIRED FIELDS
+                    objCustomer.customer_name = objNetworkCodeDetail.network_code;
+                    objCustomer.parent_system_id = pSystemId;
+                    objCustomer.parent_entity_type = pEntitytype;
+                    objCustomer.parent_network_id = pNetworkId;
+                }
+                //SET NETWORK CODE
+                objCustomer.network_id = objNetworkCodeDetail.network_code;
+                objCustomer.sequence_id = objNetworkCodeDetail.sequence_id;
+            }
+            if (string.IsNullOrEmpty(objCustomer.customer_name))
+            {
+                objCustomer.customer_name = objCustomer.network_id;
+            }
+            if (TryValidateModel(objCustomer))
+            {
+                //if (objCustomer.objIspEntityMap.AssociateStructure != 0)
+                //{
+                //    objCustomer.objIspEntityMap.structure_id = Convert.ToInt32(objCustomer.objIspEntityMap.AssociateStructure);
+                //}
+                objCustomer.objIspEntityMap.structure_id = Convert.ToInt32(objCustomer.objIspEntityMap.AssociateStructure);
+                //objCustomer.objIspEntityMap.structure_id = objCustomer.AssociateStructure != 0 ? objCustomer.AssociateStructure : objCustomer.objIspEntityMap.structure_id;
+                objCustomer.objIspEntityMap.shaft_id = objCustomer.objIspEntityMap.AssoType == "Floor" ? 0 : objCustomer.objIspEntityMap.shaft_id;
+                if (string.IsNullOrEmpty(objCustomer.objIspEntityMap.AssoType))
+                {
+                    objCustomer.objIspEntityMap.shaft_id = 0; objCustomer.objIspEntityMap.floor_id = 0;
+                }
+                if (objCustomer.objIspEntityMap.structure_id == 0 && objCustomer.system_id > 0)
+                {
 
                     var parentDetails = new BLMisc().getParentInfo(new NetworkCodeIn() { eType = EntityType.Customer.ToString(), gType = GeometryType.Point.ToString(), eGeom = objCustomer.longitude + " " + objCustomer.latitude, parent_eType = "", parent_sysId = 0 });
                     if (parentDetails != null)
@@ -8913,7 +8914,7 @@ namespace SmartInventory.Controllers
         }
         public PartialViewResult SaveLineEntityAssociate(AssociateLineEntity objLineEntity)
         {
-            
+
             objLineEntity.manhole_count = objLineEntity.listLineEntityInfo.Where(m => m.entity_type == EntityType.Manhole.ToString() && m.is_associated == true).Count();
 
             //PageMessage objPM = new PageMessage();
@@ -12503,8 +12504,8 @@ namespace SmartInventory.Controllers
         public ActionResult AutoCodification(string pEntityType, int pSystemId, string pGeomType)
         {
             int p_user_id = Convert.ToInt32(Session["user_id"]);
-            var ProcessData = BLBuilding.Instance.UpdateGeographicDetails(pEntityType, pSystemId, pGeomType, p_user_id);          
-            
+            var ProcessData = BLBuilding.Instance.UpdateGeographicDetails(pEntityType, pSystemId, pGeomType, p_user_id);
+
             return Json(ProcessData, JsonRequestBehavior.AllowGet);
         }
         public void ExportCodificationLogs()
@@ -13127,8 +13128,8 @@ namespace SmartInventory.Controllers
                 //objSite.ownership_type = "Own";
 
                 // Item template binding
-               // var objItem = BLItemTemplate.Instance.GetTemplateDetail<CouplerTemplateMaster>(Convert.ToInt32(Session["user_id"]), EntityType.Site);
-               // MiscHelper.CopyMatchingProperties(objItem, objSite);
+                // var objItem = BLItemTemplate.Instance.GetTemplateDetail<CouplerTemplateMaster>(Convert.ToInt32(Session["user_id"]), EntityType.Site);
+                // MiscHelper.CopyMatchingProperties(objItem, objSite);
             }
             else
             {
@@ -13247,7 +13248,7 @@ namespace SmartInventory.Controllers
             return Json(obj.lstCoreLogicSearchdetails, JsonRequestBehavior.AllowGet);
 
         }
-        public JsonResult SaveCorePlanLogic(string required_core, string fiber_link_network_id, string source_network_id,string destination_network_id,int buffer)
+        public JsonResult SaveCorePlanLogic(string required_core, string fiber_link_network_id, string source_network_id, string destination_network_id, int buffer)
         {
 
             JsonResponse<string> jResp = new JsonResponse<string>();
