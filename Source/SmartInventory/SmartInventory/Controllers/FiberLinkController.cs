@@ -92,6 +92,7 @@ namespace SmartInventory.Controllers
                 User objUser = new BLUser().GetUserDetailByID(user_id);
 
                 objFiberLink = new BLFiberLink().GetFiberLinkById(system_id);
+                objFiberLink.FiberLinkPrefix.link_prefix = objFiberLink.Link_Prefix;
                 objFiberLink.gis_length = Math.Round(objFiberLink.gis_length, 3);
                 objFiberLink.total_route_length = Math.Round(objFiberLink.total_route_length, 3);
                 objFiberLink.lstFiberLinkAttachments = new BLAttachment().getAttachmentDetails(system_id, "", "Document", "");
@@ -224,7 +225,7 @@ namespace SmartInventory.Controllers
 
 
                                 TempFiberLink objTempFiberLink = new TempFiberLink();
-                                
+
 
                                 objTempFiberLink.link_id = dr["link_id"].ToString();
                                 objTempFiberLink.link_name = dr["link_name"].ToString();
@@ -250,20 +251,20 @@ namespace SmartInventory.Controllers
 
                                 string strErrorMsg = ValidateFiberData(dr, ref objTempFiberLink);
                                 lstFiberLink.Add(objTempFiberLink);
-                               
+
 
                             }
 
                             if (lstFiberLink.Count > 0)
                             {
-                                for(int i =0;i< lstFiberLink.Count; i++)
+                                for (int i = 0; i < lstFiberLink.Count; i++)
                                 {
                                     var FLNetworkId = new BLFiberLink().GetFiberLinkNetworkId();
                                     lstFiberLink[i].network_id = FLNetworkId.network_id.ToString();
-                                    List<TempFiberLink> lst =new List<TempFiberLink> { lstFiberLink[i] };   
+                                    List<TempFiberLink> lst = new List<TempFiberLink> { lstFiberLink[i] };
                                     BLTempFiberLink.Instance.BulkUploadTempFiber(lst);
-                                    result = BLTempFiberLink.Instance.UploadFiber(userId, lstFiberLink[i].network_id.ToString());                               
-                                }                           
+                                    result = BLTempFiberLink.Instance.UploadFiber(userId, lstFiberLink[i].network_id.ToString());
+                                }
                                 if (!result.status)
                                 {
                                     // exit function if failed..
@@ -370,8 +371,8 @@ namespace SmartInventory.Controllers
                     }
 
                 }
-                
-                if ((dr["link_id"].ToString()) !=""  || !string.IsNullOrWhiteSpace(dr["link_id"].ToString()))
+
+                if ((dr["link_id"].ToString()) != "" || !string.IsNullOrWhiteSpace(dr["link_id"].ToString()))
                 {
                     string link_id = dr["link_id"].ToString();
                     var lstLinkId = new BLFiberLink().checkDuplicaketLinkId(link_id);
@@ -426,7 +427,7 @@ namespace SmartInventory.Controllers
                 }
             }
         }
-        
+
         public JsonResult deleteFiberLinkById(int system_id)
         {
             JsonResponse<string> objResp = new JsonResponse<string>();
@@ -973,11 +974,11 @@ namespace SmartInventory.Controllers
                 objResp.message = Resources.Resources.SI_GBL_GBL_NET_FRM_125;
             }
         }
-        public PartialViewResult CreateFiberLink(int system_id = 0,string link_id="")
+        public PartialViewResult CreateFiberLink(int system_id = 0, string link_id = "")
         {
             FiberLink objFiberLink = new FiberLink();
-            objFiberLink.link_id= link_id;
-            objFiberLink.CreateFL = 1;           
+            objFiberLink.link_id = link_id;
+            objFiberLink.CreateFL = 1;
             BindFiberLinkDropDown(objFiberLink);
             return PartialView("_CreateFiberLink", objFiberLink);
         }

@@ -19379,6 +19379,7 @@ var Main = function () {
 
     this.GetlinkPrefixbyLinkType = function (obj) {
         var _link_prefix = obj.value;
+        $('#hdnLinkPrefix').val(obj.value);
         ajaxReq('Library/GetlinkPrefixbyPrefixType', { link_prefix: _link_prefix }, false, function (resp) {
             if (resp.data != null) {
 
