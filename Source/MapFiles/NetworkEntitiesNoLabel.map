@@ -97,6 +97,10 @@ MAP
 	 	# TYPE PIXMAP		
 	  	#IMAGE "icons/railway.png"		
 	#END	
+#================= POLE  ===========================================
+
+	INCLUDE "PoleNoLabel.map"
+  
 #=================REGION=====================================	
 	LAYER		
 		NAME 'REG' 
@@ -1482,157 +1486,6 @@ LAYER
 		END 	
 	END	
 
-		#=================================================POLE ====
-	LAYER
-		NAME 'POL'
-		TYPE POINT
-		DUMP true
-		TEMPLATE fooOnlyForWMSGetFeatureInfo 
-		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_pole_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%)and (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%))		
-		VALIDATION		
-			'provinceFilter'   '.*'	
-			'layerFilter'   '.*'
-			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'
-			'PODFilter'   '.*'
-			'NetworkFilter'   '.*'	
-			'AutoPlanningNetworkFilter' '.*'
-		END 
-		METADATA
-			'ows_title' 'POLE'
-		END
-		STATUS OFF
-		GROUP 'Network'	
-		
-		
-		CLASS
-			NAME 'Pole'
-            EXPRESSION ('[pole_type]' eq 'Electrical' AND '[network_status]'  eq 'P')  			
-			STYLE
-				SYMBOL "icons/Planned/electric_pole.png" 
-				SIZE 30
-				OFFSET 0 -5				
-			END
-            			
-		END
-		CLASS
-			NAME 'Pole'
-            EXPRESSION ('[pole_type]' eq 'Electrical' AND '[network_status]'  eq 'A')  			
-			STYLE
-				SYMBOL "icons/AsBuild/electric_pole.png" 
-				SIZE 20			
-			END
-            			
-		END
-		CLASS
-			NAME 'Pole'
-            EXPRESSION ('[pole_type]' eq 'Electrical' AND '[network_status]'  eq 'D')  			
-			STYLE
-				SYMBOL "icons/Dorment/electric_pole.png" 
-				SIZE 30
-				OFFSET 0 -5				
-			END
-            			
-		END       
-
-		
-		
-		CLASS
-			NAME 'Pole'
-            EXPRESSION ('[pole_type]' eq 'Light' AND '[network_status]'  eq 'P')  			
-			STYLE
-				SYMBOL "icons/Planned/LightPole.png" 
-				SIZE 30
-				OFFSET 0 -5				
-			END
-            			
-		END
-		CLASS
-			NAME 'Pole'
-            EXPRESSION ('[pole_type]' eq 'Light' AND '[network_status]'  eq 'A')  			
-			STYLE
-				SYMBOL "icons/AsBuild/LightPole.png" 
-				SIZE 20			
-			END
-            			
-		END
-		CLASS
-			NAME 'Pole'
-            EXPRESSION ('[pole_type]' eq 'Light' AND '[network_status]'  eq 'D')  			
-			STYLE
-				SYMBOL "icons/Dorment/LightPole.png" 
-				SIZE 30
-				OFFSET 0 -5				
-			END
-            			
-		END
-		
-		CLASS
-			NAME 'Pole'
-            EXPRESSION ('[pole_type]' eq 'Other' AND '[network_status]'  eq 'P')  			
-			STYLE
-				SYMBOL "icons/Planned/TelephoneandOtherOwnerPole.png" 
-				SIZE 30
-				OFFSET 0 -5				
-			END
-            			
-		END
-		CLASS
-			NAME 'Pole'
-            EXPRESSION ('[pole_type]' eq 'Other' AND '[network_status]'  eq 'A')  			
-			STYLE
-				SYMBOL "icons/AsBuild/TelephoneandOtherOwnerPole.png" 
-				SIZE 20			
-			END
-            			
-		END
-		CLASS
-			NAME 'Pole'
-            EXPRESSION ('[pole_type]' eq 'Other' AND '[network_status]'  eq 'D')  			
-			STYLE
-				SYMBOL "icons/Dorment/TelephoneandOtherOwnerPole.png" 
-				SIZE 30
-				OFFSET 0 -5				
-			END
-            			
-		END
-		
-		CLASS
-			NAME 'Pole'
-            EXPRESSION ('[pole_type]' ne 'Electrical' and '[pole_type]' ne 'Light' AND '[network_status]'  eq 'P')  			
-			STYLE
-				SYMBOL "icons/Planned/TelephoneandOtherOwnerPole.png" 
-				SIZE 30
-				OFFSET 0 -5				
-			END  
-						
-		END
-		
-		CLASS
-			NAME 'Pole'
-            EXPRESSION ('[pole_type]' ne 'Electrical' and '[pole_type]' ne 'Light' AND '[network_status]'  eq 'A')  			
-			STYLE
-				SYMBOL "icons/AsBuild/TelephoneandOtherOwnerPole.png" 
-				SIZE 30
-				OFFSET 0 -5				
-			END 
-			
-		END
-		
-		CLASS
-			NAME 'Pole'
-            EXPRESSION ('[pole_type]' ne 'Electrical' and '[pole_type]' ne 'Light' AND '[network_status]'  eq 'D')  			
-			STYLE
-				SYMBOL "icons/Dorment/TelephoneandOtherOwnerPole.png" 
-				SIZE 30
-				OFFSET 0 -5				
-			END
-						
-		END
-				
-	END	
 		# ==============================MPOD============================================ 
 	LAYER
 		NAME 'MOD'

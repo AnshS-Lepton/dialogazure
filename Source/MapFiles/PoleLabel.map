@@ -1,0 +1,642 @@
+LAYER
+	NAME 'POL'
+	TYPE POINT
+	DUMP true
+	TEMPLATE fooOnlyForWMSGetFeatureInfo 
+	INCLUDE "datashare.inc"	
+	DATA 'sp_geometry FROM vw_att_details_pole_map USING UNIQUE system_id USING srid=4326'	
+	FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))
+			
+	VALIDATION		
+		'provinceFilter'   '.*'
+		'layerFilter'   '.*'
+		'prjectspecificationFilter'   '.*'
+		'ownershipFilter'   '.*'							
+		'PODFilter'   '.*'
+		'NetworkFilter'   '.*'
+		'AutoPlanningNetworkFilter' '.*'
+	END 
+	METADATA
+		'ows_title' 'POLE'
+	END
+	STATUS OFF
+	LABELITEM 'label_column'
+	GROUP 'Network'		
+									
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '7 M' AND '[network_status]'  eq 'P')
+		STYLE
+			SYMBOL "icons/Planned/Pole6.7.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END				
+	END
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '7 M' AND '[network_status]'  eq 'A')  			
+		STYLE
+			SYMBOL "icons/AsBuild/Pole6.7.png"
+			SIZE 20			
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END				
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '7 M' AND '[network_status]'  eq 'D')   			
+		STYLE
+			SYMBOL "icons/Dorment/Pole6.7.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END				
+	END       
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '5.6 M' AND '[network_status]'  eq 'P')
+		STYLE
+			SYMBOL "icons/Planned/Pole5.6.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END				
+	END
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '5.6 M' AND '[network_status]'  eq 'A') 		
+		STYLE
+			SYMBOL "icons/AsBuild/Pole5.6.png"
+			SIZE 20			
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END				
+	END
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '5.6 M' AND '[network_status]'  eq 'D')
+		STYLE
+			SYMBOL "icons/Dorment/Pole5.6.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END				
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '6.7 M' AND '[network_status]'  eq 'P')
+		STYLE
+			SYMBOL "icons/Planned/Pole6.7.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END				
+	END
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '6.7 M' AND '[network_status]'  eq 'A')
+		STYLE
+			SYMBOL "icons/AsBuild/Pole6.7.png"
+			SIZE 20			
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END				
+	END
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '6.7 M' AND '[network_status]'  eq 'D')
+		STYLE
+			SYMBOL "icons/Dorment/Pole6.7.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END				
+	END
+
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '8 M' AND '[network_status]'  eq 'P')
+		STYLE
+			SYMBOL "icons/Planned/Pole8.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END  
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END			
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '8 M' AND '[network_status]'  eq 'A')
+		STYLE
+			SYMBOL "icons/AsBuild/Pole8.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END 
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '8 M' AND '[network_status]'  eq 'D')
+		STYLE
+			SYMBOL "icons/Dorment/Pole8.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END			
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '9 M' AND '[network_status]'  eq 'P')
+		STYLE
+			SYMBOL "icons/Planned/Pole9.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END  
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END			
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '9 M' AND '[network_status]'  eq 'A')
+		STYLE
+			SYMBOL "icons/AsBuild/Pole9.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END 
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* '9 M' AND '[network_status]'  eq 'D')
+		STYLE
+			SYMBOL "icons/Dorment/Pole9.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END			
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* 'LECO' AND '[network_status]'  eq 'P')
+		STYLE
+			SYMBOL "icons/Planned/PoleLECO.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END  
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END			
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* 'LECO' AND '[network_status]'  eq 'A')
+		STYLE
+			SYMBOL "icons/AsBuild/PoleLECO.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END 
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* 'LECO' AND '[network_status]'  eq 'D')
+		STYLE
+			SYMBOL "icons/Dorment/PoleLECO.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END			
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* 'FTTX' AND '[network_status]'  eq 'P')
+		STYLE
+			SYMBOL "icons/Planned/PoleFTTX.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END  
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END			
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* 'FTTX' AND '[network_status]'  eq 'A')
+		STYLE
+			SYMBOL "icons/AsBuild/PoleFTTX.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END 
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[specification]' ~* 'FTTX' AND '[network_status]'  eq 'D')
+		STYLE
+			SYMBOL "icons/Dorment/PoleFTTX.png"
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END			
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[network_status]'  eq 'P')
+		STYLE
+			SYMBOL "icons/Planned/TelephoneandOtherOwnerPole.png" 
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END			
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[network_status]'  eq 'A')
+		STYLE
+			SYMBOL "icons/AsBuild/TelephoneandOtherOwnerPole.png" 
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END			
+	END
+	
+	CLASS
+		NAME 'Pole'
+		EXPRESSION ('[network_status]'  eq 'D')
+		STYLE
+			SYMBOL "icons/Dorment/TelephoneandOtherOwnerPole.png" 
+			SIZE 30
+			OFFSET 0 -5				
+		END
+		LEADER
+		  GRIDSTEP 6
+		  MAXDISTANCE 10000
+		  STYLE
+			COLOR 200 100 100
+			WIDTH 1
+		  END
+		END
+		LABEL 
+			COLOR  255 0 0  		
+			FONT "arial"
+			TYPE truetype
+			SIZE 8
+			POSITION AUTO
+			PARTIALS FALSE	
+		END			
+	END
+	
+END
