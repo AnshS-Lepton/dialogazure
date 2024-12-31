@@ -205,7 +205,8 @@
         HttpMethod = "POST",
         LoadingElementId = "dvProgress",
         UpdateTargetId = "dvModalBody",
-        OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.POD.ToString() + "');"
+        OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.POD.ToString() + "');",
+        OnSuccess = "si.showElementInfo(" + Model.system_id + ",'" + EntityType.POD.ToString() + "','Point','" + Model.network_id + "','" + Model.network_status + "','" + Model.pod_name + "','Point(" + @Model.latitude + "," + @Model.longitude + ")', _isBackButtonRequired=true);"
 
     },
                         new { id = "frmAddPOD", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))

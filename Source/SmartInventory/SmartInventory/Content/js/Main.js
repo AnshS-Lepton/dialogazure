@@ -13192,6 +13192,7 @@ var Main = function () {
         $("#hdnNetworkId").val(networkStatus);
         $("#hdnpEntityType").val(eType);
         $("#hdnspltype").val('Primary');
+        let siteIdSiteName = '';
         ajaxReq('main/GetEntityInfo', { systemId: systemID, entityType: eType, geomType: gType }, true, function (resp) {
             if (resp.status = 'OK') {
                 if (resp.result != null && resp.result != undefined) {
@@ -13214,12 +13215,15 @@ var Main = function () {
                         //$('#tblEntityInfo').append(' <tr class="' + ((i % 2 == 0) ? ('info_table_tr') : ('info_table_tr2')) + '"><td width="105">' + key + '</td><td>:</td><td>' + value + '</td></tr>');
                         $('#tblEntityInfo').append(' <tr class="' + ((i % 2 == 0) ? ('info_table_tr') : ('info_table_tr2')) + (value.is_updated == true ? ' UpdatedRecord' : '') + '" ><td width="105">' + value.display_column_name + '</td><td>' + (value.updated_value == null ? '' : value.updated_value != null && value.updated_value != undefined
                             && value.display_column_name != 'Item Code' && value.display_column_name != 'Area Name' && value.display_column_name != 'Created By' && value.display_column_name != 'Modified By' && value.display_column_name != 'Created By ID' && $.isNumeric(value.updated_value) ? getFormattedNumber(value.updated_value) : value.updated_value) + '</td></tr>');
+                        if (value.db_column_name == 'site_id_site_name' && eType == 'POD') {
+                            siteIdSiteName = value.updated_value;
+                        }
                         i++;
                     });
 
                 }
                 $('.infoMain #dvInfoElement').animate({ 'margin-left': '-445px' }, 700);
-                app.intializeInfoToolBar(eType, networkStatus, systemID, gType, networkId, displayname, geom, _isBackButtonRequired);
+                app.intializeInfoToolBar(eType, networkStatus, systemID, gType, networkId, displayname, geom, _isBackButtonRequired, siteIdSiteName);
                 $('.infoBack').show();
 
             }
@@ -13303,7 +13307,7 @@ var Main = function () {
     }
 
 
-    this.intializeInfoToolBar = function (eType, network_status, systemID, gType, networkId, displayname, geom, _isBackButtonRequired = true) {
+    this.intializeInfoToolBar = function (eType, network_status, systemID, gType, networkId, displayname, geom, _isBackButtonRequired = true, siteIdSiteName = '') {
         //;,
         $("#infoTB").css('background-image', 'url(' + baseUrl + appRoot + 'Content/images/loading_new.gif)');
         $("#infoTB").html("");
@@ -13369,7 +13373,7 @@ var Main = function () {
             //    //$('#EntityCPF').hide();
             //    //$('#EntityHistory, #EntityUploadImage').show();
             //}
-            app.initializeToolbarFunctions(systemID, eType, gType, networkId, displayname, geom);
+            app.initializeToolbarFunctions(systemID, eType, gType, networkId, displayname, geom, siteIdSiteName);
 
         }, false, false, true);
 
@@ -13458,8 +13462,7 @@ var Main = function () {
     }
 
 
-    this.initializeToolbarFunctions = function (systemId, entityType, geomType, networkId, displayname, geom) {
-        ;
+    this.initializeToolbarFunctions = function (systemId, entityType, geomType, networkId, displayname, geom, siteIdSiteName = '') {
         var lyrDetail = getLayerDetail(entityType);
         var layerMapping = getLayerMapping(entityType);
         var chkClone = lyrDetail['is_clone'];
@@ -14240,8 +14243,7 @@ var Main = function () {
                         }, false, false);
                         break;
                     case "ADDFMS":
-                        //;
-                        var _data = { pSystemId: systemId, pEntityType: entityType, pGeomType: geomType, entityType: 'FMS', geomType: 'Point' }
+                        var _data = { pSystemId: systemId, pEntityType: entityType, pGeomType: geomType, entityType: 'FMS', geomType: 'Point', pNetworkId: networkId, siteIdSiteName: siteIdSiteName }
                         //app.CreateEntityFromInfo(_data);
                         app.ChkEntityTemplateExist(_data);
                         break;
@@ -15384,7 +15386,6 @@ var Main = function () {
 
 
     this.CreateEntityFromInfo = function (_data) {
-        ;
         //systemId, entityType, geomType
         var modelClass = getPopUpModelClass(_data.entityType);
         var lyrDetail = getLayerDetail(_data.entityType);
@@ -20858,7 +20859,7 @@ var Main = function () {
                         }
                         frmData.append('document_type', documentType);
                         frmData.append('uploadedfile', uploadedFile);
-                        
+
                     }
                 }
             }
@@ -30843,7 +30844,6 @@ var Main = function () {
     }
     this.entityDirectionProcess = function () {
         //showProgress();
-        debugger;
         var status = app.checkEntitySelected();
         var $ddlEntity = $("#ddlEntity");
         var $ddlEntityChosen = $("#ddlEntity_chosen");
