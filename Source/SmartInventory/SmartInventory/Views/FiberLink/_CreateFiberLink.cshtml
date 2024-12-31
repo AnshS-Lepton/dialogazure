@@ -15,6 +15,7 @@
 {
     @Html.HiddenFor(m => m.system_id, new { @id = "hdnFiberLinkSystemId" })
     @Html.HiddenFor(m => m.CreateFL)
+    @Html.HiddenFor(m => m.Link_Prefix, new { @id = "hdnLinkPrefix" })
     <div id="CreateFiberLink" class="tab-pane fade in active show">
         <div class="space-pad fiber--min-height">
             <fieldset class="the-fieldset">

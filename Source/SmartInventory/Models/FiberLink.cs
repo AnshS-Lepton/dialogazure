@@ -86,6 +86,9 @@ namespace Models
         public List<LibraryAttachment> lstFiberLinkAttachments { get; set; }
         [NotMapped]
         public int CreateFL { get; set; }
+        [Column("link_prefix")]
+        [JsonProperty("link_prefix")]
+        public string Link_Prefix { get; set; }
         public FiberLink()
         {
             pageMsg = new PageMessage(); 
@@ -94,6 +97,7 @@ namespace Models
             lstLinkType = new List<DropDownMaster>();
             lstPrefixType = new List<DropDownMaster>();
             CreateFL = 0;
+            FiberLinkPrefix = new FiberLinkPrefix();
         } 
         [NotMapped]
         public int user_role_id { get; set; }

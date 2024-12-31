@@ -22,6 +22,7 @@ namespace DataAccess
                 if (objFiberDetail != null)
                 {
                     objFiberDetail.link_name = objFiberLink.link_name;
+                    objFiberDetail.Link_Prefix = objFiberLink.Link_Prefix;
                     objFiberDetail.link_type = objFiberLink.link_type;
                     objFiberDetail.start_point_type = objFiberLink.start_point_type;
                     objFiberDetail.start_point_location = objFiberLink.start_point_location;
