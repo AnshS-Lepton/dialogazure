@@ -7468,7 +7468,7 @@ namespace SmartInventoryServices.Controllers
 				}
 				if (string.IsNullOrEmpty(objFMSMaster.fms_name))
 				{
-					objFMSMaster.fms_name = objFMSMaster.network_id;
+					objFMSMaster.fms_name = string.IsNullOrEmpty(objFMSMaster.SiteIdSiteName) ? objFMSMaster.network_id : objFMSMaster.SiteIdSiteName;
 				}
 				objFMSMaster.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.FMS.ToString()).ToList();
 				this.Validate(objFMSMaster);

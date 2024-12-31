@@ -1985,6 +1985,8 @@ namespace Models
         public string requiredcore { get; set; }
         [NotMapped]
         public PageMessage pageMsg { get; set; }
+        [NotMapped]
+        public string SiteIdSiteName { get; set; }
         public FMSMaster()
         {
             objPM = new PageMessage();
