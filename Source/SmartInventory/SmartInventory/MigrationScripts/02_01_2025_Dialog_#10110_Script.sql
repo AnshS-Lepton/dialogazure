@@ -1,3 +1,11 @@
+/*------------------------------------------
+CreatedBy: 
+CreatedOn: 
+Description: This function generated new fiber link Id
+ModifiedOn: 02 Jan 2025
+ModifiedBy: Chandra Shekhar Sahni
+Purpose: This function was mis behaving while generating link Id same is corrected by using <!-- MAX(CAST(NULLIF(SUBSTRING( -->
+------------------------------------------*/
 -- FUNCTION: public.fn_get_fiber_link_prefix(character varying)
 
 -- DROP FUNCTION IF EXISTS public.fn_get_fiber_link_prefix(character varying);
@@ -42,6 +50,14 @@ ALTER FUNCTION public.fn_get_fiber_link_prefix(character varying)
     OWNER TO postgres;
 
 -----------------------------------------------------------------------
+/*------------------------------------------
+CreatedBy: 
+CreatedOn: 
+Description: This function retrieves the networkId and fiberlinkId according to search crieteria
+ModifiedOn: 02 Jan 2025
+ModifiedBy: Chandra Shekhar Sahni
+Purpose: We have extended the search functionality by adding linkId along with networkId also limited the results to latest top 10 records
+------------------------------------------*/
 -- DROP FUNCTION public.fn_get_corelogicsearchdetails(varchar, varchar);
 
 CREATE OR REPLACE FUNCTION public.fn_get_corelogicsearchdetails(p_searchtext character varying, p_searchtype character varying)
