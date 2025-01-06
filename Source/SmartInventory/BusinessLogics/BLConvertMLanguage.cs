@@ -226,8 +226,6 @@ namespace BusinessLogics
         }
         public static List<T> MultilingualConvertModel<T>(List<T> list, string[] arrIgnoreColumns, string culture = "en") where T : new()
         {
-            //var currentLang = CultureInfo.CurrentUICulture;
-            //string culture = currentLang.Name;
             var keysHavingText = new List<dynamic>();
             var dict = new BLResources().GetResourceAuditList(culture);
             List<dynamic> lstobj = new List<dynamic>();

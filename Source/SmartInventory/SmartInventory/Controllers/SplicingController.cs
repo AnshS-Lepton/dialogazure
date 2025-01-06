@@ -494,6 +494,26 @@ namespace SmartInventory.Controllers
 
             return Json(lstEquipment, JsonRequestBehavior.AllowGet);
         }
+        public ActionResult GetEquipmentByLinkId(string linkId = "")
+        {
+            JsonResponse<List<EquipementSearchResult>> objResp = new JsonResponse<List<EquipementSearchResult>>();
+            BLOSPSplicing objSplicing = new BLOSPSplicing();
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(linkId))
+                {
+                    objResp.result = objSplicing.GetSearchEquipmentResult(Convert.ToInt32(Session["user_id"]), linkId);
+                    objResp.status = ResponseStatus.OK.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("GetEquipmentByLinkId()", "Splicing", ex);
+                objResp.status = ResponseStatus.ERROR.ToString();
+                objResp.message = "Error while fetching Equipment Details!";
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
         private void BindEquipementCoreDropDown(ViewOSPCPFModel obj)
         {
             var objddl = new BLOSPSplicing().GetEquipmentPort(obj.objFilterAttributes.entityid, obj.objFilterAttributes.entity_type);

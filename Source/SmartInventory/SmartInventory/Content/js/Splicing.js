@@ -57,14 +57,15 @@
         "btnConnectedCustomerExport": "#btnConnectedCustomerExport",
         "btnSchView": "#btnSchView",
         "ddlSpliceTray": "#ddl_SpliceTray",
-        "fiberLinkId": "#FiberLinkId"
+        "fiberLinkId": "#FiberLinkId",
+        "ddlEquipmentId": "#ddlEquipmentId"
     }
     this.initApp = function () {
         this.bindEvents();
     }
     this.bindEvents = function () {
         $(app.DE.equipmentid).autocomplete({
-            
+
             source: function (request, response) {
                 var res = ajaxReq('Splicing/GetEquipmentSearchResult', { searchText: $.trim(request.term), linkId: $.trim($(app.DE.fiberLinkId).val()) }, true, function (data) {
                     if (data.length == 0) {
@@ -98,9 +99,8 @@
                     $(app.DE.equipmentid).val(ui.item.label);
                     $(app.DE.entity_type).val(ui.item.entity_type);
                     $(app.DE.entityid).val(ui.item.entity_id);
-                    app.BindEquipementPort(ui.item.entity_id, ui.item.entity_type);//
+                    app.BindEquipementPort(ui.item.entity_id, ui.item.entity_type);
                 }
-
             }
 
         });
@@ -119,12 +119,11 @@
                     else {
                         response($.map(data.LstFiberLinkDetails, function (item) {
                             return {
-                                label: item.Link_Name,      // Display name
+                                label: item.Link_Id,      // Display name
                                 value: item.Network_Id,     // Value for autocomplete
                                 entity_type: item.Link_Type,  // Static entity type
                                 entity_id: item.system_id,   // Entity ID
                                 linkId: item.Link_Id,
-
                             };
                         }))
                     }
@@ -132,26 +131,76 @@
             },
             minLength: 3,
             select: function (event, ui) {
-                
+
                 $('#dvViewConnectionPathFinder,#dvSchematicViewContainer').html('');
                 $('#divNoRecordExist').show();
                 var label = ui.item.label;
                 if (ui.item.entity_id == 0) {
                     event.preventDefault();
+                    $('#txtEquipment').css("display", "block");
+                    $('#ddlEquipment').css("display", "none");
                 }
                 else {
                     event.preventDefault();
                     $(app.DE.fiberLinkId).val(ui.item.linkId);
-                    $(app.DE.entity_type).val(ui.item.entity_type);
-                    $(app.DE.entityid).val(ui.item.entity_id);
-                    $(app.DE.entityName).val(ui.item.Link_Name);
                     $(app.DE.equipmentid).val('');
+                    if ($(app.DE.fiberLinkId).val() !== '') {
+                        $('#txtEquipment').css("display", "none");
+                        $('#ddlEquipment').css("display", "block");
+                        app.BindEquipmentDropDown(ui.item.linkId);
+                    }
+                    else {
+                        $('#txtEquipment').css("display", "block");
+                        $('#ddlEquipment').css("display", "none");
+                    }
                 }
+            }
+        });
+        this.BindEquipmentDropDown = function (linkId) {
+            var ddlEquipment_id = $(app.DE.ddlEquipmentId);
+            ajaxReq('Splicing/GetEquipmentByLinkId', { linkId: $.trim($(app.DE.fiberLinkId).val()) }, false, function (resp) {
+                if (resp.status = 'OK') {
+                    ddlEquipment_id.removeClass('input-validation-error');
+                    $("#ddlEquipmentId_chosen").removeClass('input-validation-error');
+                    ddlEquipment_id.empty();
+                    ddlEquipment_id.append($("<option></option>").val('0').html(MultilingualKey.SI_OSP_GBL_NET_RPT_307));
+                    $.each(resp.result, function (index, value) {
+                        var option = $("<option></option>").val(value.network_id).html(value.display_name);
+                        option.attr("data-entityType", value.entity_type);
+                        option.attr("data-entityId", value.system_id);
+                        ddlEquipment_id.append(option);
+                    });
+                }
+                else {
+                    $("#ddlEquipmentId_chosen").addClass('input-validation-error');
+                    alert(resp.message);
+                }
+            }, true, false);
+            ddlEquipment_id.trigger("chosen:updated");
+        }
+        $(app.DE.ddlEquipmentId).change(function () {
+            var selectedOption = $(this).find('option:selected');
+            var entityId = selectedOption.attr('data-entityId');
+            var entityType = selectedOption.attr('data-entityType');
+            $(app.DE.equipmentid).val(selectedOption.val());
+            app.BindEquipementPort(entityId, entityType);
+            
+        });
+        $(app.DE.fiberLinkId).change(function () {
+            if ($(this).val() !== '') {
+                $('#txtEquipment').css("display", "none");
+                $('#ddlEquipment').css("display", "block");
+            } else {
+                $('#txtEquipment').css("display", "block");
+                $('#ddlEquipment').css("display", "none");
             }
         });
 
         $(app.DE.btnShowRoute).on("click", function () {
             var srchrtxt = $(app.DE.equipmentid).val();
+            if (srchrtxt === '') {
+                srchrtxt = $(app.DE.ddlEquipmentId).val();
+            }
             if (srchrtxt == '') {
                 $(app.DE.equipmentid).addClass('input-validation-error');
                 return false;
@@ -174,7 +223,7 @@
             app.showPath();
         });
         $(app.DE.btnCPFexport).on("click", function () {
-             
+
             app.downloadCPE();
             $("#PathTrack .dropfiles").trigger("click");
         });
@@ -213,7 +262,7 @@
         $('#ModalPopUp div').removeClass('modal-xxl');
     }
     this.spliceHere = function (dvObj) {
-        
+
         si.clearTPRelatedObjects();
         $('#InfoDiv').hide();
         si.removeEventListnrs('click');
@@ -250,7 +299,7 @@
         else {
             //Splicing tools works on 19 or greater zoom level.//Your current map zoom is//Do you want to zoom?
             var func = function () { si.map.setCenter(e); si.map.setZoom(19); };
-             
+
             confirm(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_020, _zoom)), func);
         }
     }
@@ -724,7 +773,7 @@
     }
     this.bindjsPlumbEvent = function (objJsPlumb) {
         objJsPlumb.bind("connection", function (info, originalEvent) {
-             
+
             if (!app.isMoved) {
                 var connection = app.getConnectionsData(info.sourceId, info.targetId, true);
                 if ((connection.source_entity_type == 'HTB' && connection.destination_entity_type == 'ONT') || (connection.source_entity_type == 'ONT' && connection.destination_entity_type == 'HTB')) {
@@ -752,7 +801,7 @@
             }
         });
         objJsPlumb.bind("beforeDrop", function (params) {
-             
+
             SetThroughConnValue();
             var connection = app.getConnectionsData(params.sourceId, params.targetId, true);
 
@@ -841,7 +890,7 @@
         return connection;
     }
     this.saveConnection = function (_data, sourceId, targetId, info) {
-         
+
         ajaxReq('Splicing/SaveConnectionInfo', _data, true, function (resp) {
             if (resp.status) {
                 $('#SlideMessage').text(MultilingualKey.SI_OSP_GBL_JQ_GBL_052);//Connection has saved successfully!
@@ -871,11 +920,11 @@
     }
     this.savebulkConnection = function (_data) {
         //Splice all will perform straight connectivity except the cores/ports which are already connected or connected to other// Do you want to continue?
-         
+
         var IsSamePortConnForThrough = true;
         var is_through = $("input[name='ConnInfoMaster.is_through_connection']:checked").val();
         $.each(_data, function (index, item) {
-             
+
             _data[index].splicing_source = 'Splice All';
             if (is_through != undefined) {
                 if (is_through.toLowerCase() == 'true' && item.source_port_no != item.destination_port_no) {
@@ -950,7 +999,7 @@
         $(app.DE.SourceCable).val('0').trigger("chosen:updated");
     }
     this.ShowCablesTerminatedOnDeviceOnly = function (sysId, eType) {
-         
+
         if (sysId > 0) {
             $(app.DE.SourceCable + ' option:not([value="0"])').hide();
             $(app.DE.SourceCable + ' option[data-a-system-id="' + sysId + '"][data-a-entity-type="' + eType + '" i][data-is-both-ends="False"]').show();
@@ -1032,12 +1081,12 @@
         else {
             $(app.DE.divLeftCable).show();
             $(app.DE.lblRightCable).text(MultilingualKey.SI_ISP_GBL_GBL_FRM_008);
-             // update multilingual from and to           
+            // update multilingual from and to           
             //$(app.DE.lblLeftCable).text(MultilingualKey.SI_OSP_GBL_GBL_GBL_322);
             //$(app.DE.lblRightCable).text(MultilingualKey.SI_OSP_GBL_GBL_GBL_323);
             //$(app.DE.lblLeftCable).text(MultilingualKey.SI_OSP_GBL_GBL_FRM_011 == "IN" ? MultilingualKey.SI_OSP_CAB_NET_FRM_054 : MultilingualKey.SI_OSP_GBL_NET_FRM_130);
             //$(app.DE.lblRightCable).text(MultilingualKey.SI_OSP_GBL_GBL_FRM_012 == "OUT" ? MultilingualKey.SI_OSP_CAB_NET_FRM_055 : MultilingualKey.SI_OSP_GBL_NET_FRM_131);
-            }
+        }
 
         if (cableDirection == 'Source') {
             if (systemID == '0') {
@@ -1305,7 +1354,7 @@
         $('#dvProgressSplice').hide();
     }
     this.createConnection = function (sourceId, targetId) {
-         
+
         var colorCode = '#00ba8a';
         if ($('#' + sourceId).attr('data-through-conn') != undefined && $('#' + sourceId).attr('data-through-conn').toUpperCase() == "TRUE")
         { colorCode = '#808080'; }
@@ -1328,10 +1377,10 @@
             app.currentConnections.push(app.getConnectionsData(sourceId, targetId));
 
             if (datalinkid > 0) {
-                 
+
                 conObject.setPaintStyle({ strokeStyle: colorCode, lineWidth: 2 });
                 conObject.setParameters($('#' + conObject.sourceId).data().viaSystemId);
-                 $('#divSpliceWindow #' + sourceId).siblings('._jsPlumb_connector').tooltip({ title: $('#' + sourceId).attr("data-name"), html: true, placement: "top" });
+                $('#divSpliceWindow #' + sourceId).siblings('._jsPlumb_connector').tooltip({ title: $('#' + sourceId).attr("data-name"), html: true, placement: "top" });
             }
 
             if (($('#' + sourceId).data().entityType == 'HTB' && $('#' + targetId).data().entityType == 'ONT')
@@ -1687,7 +1736,7 @@
         return true;
     }
     this.bindCoreInfoWindow = function () {
-         
+        
         if ($('#hdnIsSplicingEditEnabled').val() == 'True') {
             //document.addEventListener('contextmenu', event => event.preventDefault());
             $('div[data-is-connected-to-same]').bind("click", function (e) {
@@ -1700,11 +1749,11 @@
                     $('.rel_pop').css('margin-left', entityType == 'Customer' ? '-95px' : '-65px');
                     $('.fa-caret-left').addClass('fa-caret-right').css({ 'left': '95%' });
                 }
-                 
+
                 app.entityInfo = $(e.currentTarget).data();
                 var PortStatusId = parseInt($(this).attr('data-status-id'));
                 var portcommont = $(this).attr('data-port-comment');
-                var portStatus = $(this).attr('data-port-status');
+                var portStatus = $(this).attr('data-port-status');       
                 $('#btnConnectionPath').click({ networkId: app.entityInfo.networkId, entityType: app.entityInfo.entityType, systemId: app.entityInfo.systemId, portNo: app.entityInfo.portNo, isControllEnable: false, isParentPopup: false, entityName: null }, app.redirectToCPF)
                 $('#btnConnectedCustomerDetails').click({ networkId: app.entityInfo.networkId, entityType: app.entityInfo.entityType, systemId: app.entityInfo.systemId, portNo: app.entityInfo.portNo, isControllEnable: false, isParentPopup: false, entityName: null }, app.redirectToCustomerDetails)
                 //$('#btnConnectedlinkInfo').click({ networkId: app.entityInfo.networkId, entityType: app.entityInfo.entityType, systemId: app.entityInfo.systemId, portNo: app.entityInfo.portNo, isControllEnable: false, isParentPopup: false, entityName: null }, app.redirectToLinkInfo)
@@ -1823,7 +1872,7 @@
             var canvas_image_height = HTML_Height;
 
             var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
-             
+
             // At this point the container has no SVG, it only has HTML and Canvases.
             html2canvas($(targetElem)[0], {
                 width: $(targetElem)[0].scrollWidth, height: $(targetElem)[0].scrollHeight, quality: 2, scale: 2
@@ -1849,7 +1898,7 @@
                 var destination_type = $(app.DE.DestinationCable + ' :selected').attr('data-entity-type');
                 var is_destination_connected = $(app.DE.SourceCable + ' :selected').attr('data-is-start-point');
                 var customer_Ids = '';
-                 
+
 
                 var canvasimgdata = imgData.replace(/^data:image\/(png|jpg);base64,/, "");
                 //Save Image in filesystem and get fullpath of image
@@ -1969,7 +2018,7 @@
                     canvas: canvas
                 };
             });
-            
+
             var computedHeight = window.outerHeight + window.innerHeight + $(targetElem)[0].scrollHeight;
             // At this point the container has no SVG, it only has HTML and Canvases.
             html2canvas($(targetElem)[0], {
@@ -2093,7 +2142,7 @@
     //    }
     //};
     this.GetZoomPercentage = (svgSize) => {
-         
+
         var windowWidth = window.innerWidth;
         var percentage = (svgSize / windowWidth) * 100;
         if (percentage > 100)
@@ -2101,7 +2150,7 @@
         return percentage - 10 + "%";
     }
     /*CPF AND END 2 END SCHEMATIC*/
-    this.SinglePathFind = function (fromISP) {
+    this.SinglePathFind = function (fromISP) {    
         $("#wLineTBar").find(".activeToolBar").removeClass('activeToolBar');
         popup.LoadModalDialog('PARENT', 'Splicing/ConnectionPathFinder', { eType: '' }, 'Connection Path Finder', 'modal-xxl', function () {
             if (fromISP) {
@@ -2155,11 +2204,11 @@
 
 
     this.showFiberLinkOnMap = function (_linkSystemID) {
-         
+
 
         ajaxReq('FiberLink/showFiberLinkOnMap', { linkSystemID: _linkSystemID }, true, function (resp) {
             if (resp.status = 'OK') {
-                 
+
                 if (resp.result != null && resp.result != undefined) {
                     $(popup.DE.MinimizeModel).trigger("click");
                     app.clearUserTempOverlay(gMapObj.TraceRoute);
@@ -2293,7 +2342,7 @@
 
     this.showPath = function () {
         //alert('Entry Splice without osp');
-        ajaxReq('Splicing/GetCPFelementPath', {}, true, function (resp) {
+        ajaxReq('Splicing/GetCPFelementPath', {}, true, function (resp) {      
             if (resp.status = 'OK') {
                 if (resp.result != null && resp.result != undefined) {
                     $(popup.DE.MinimizeModel).trigger("click");
@@ -2321,7 +2370,7 @@
                     });
                     for (var i = 0; i < resp.result.length; i++) {
                         _color = '#ff0000';
-                         
+
                         var entityCount = resp.result.filter(function (e) { return e.system_id == resp.result[i].system_id; }).length;
                         //if (entityCount <= 1) {
                         if (resp.result[i].en_type == 'Cable') {
@@ -2371,10 +2420,10 @@
                             //IE Solution
                             var ptObj = null;
                             if (resp.result[i].entity_category != null && resp.result[i].entity_category != '') {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.result[i].entity_category + '_' + resp.result[i].en_type.toUpperCase() + '.png', system_id, en_type, port_no,network_id,display_name, is_virtual_port_allowed);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.result[i].entity_category + '_' + resp.result[i].en_type.toUpperCase() + '.png', system_id, en_type, port_no, network_id, display_name, is_virtual_port_allowed);
                             }
                             else {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result[i].is_virtual ? 'v_' : '') + resp.result[i].en_type + '.png', system_id, en_type, port_no,network_id,display_name, is_virtual_port_allowed);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result[i].is_virtual ? 'v_' : '') + resp.result[i].en_type + '.png', system_id, en_type, port_no, network_id, display_name, is_virtual_port_allowed);
                             }
                             var SourceEquipmentId = $('#equipment_id').val().split(" ")[0];
                             //JIRA- SSSI-452 bug fix change done by Ram
@@ -2427,7 +2476,7 @@
                         setTimeout(function () { animateLine(item, 0) }, 20);
                     });
                     if ($('#chkFittomap').is(':checked')) {
-                        
+
                         si.map.fitBounds(bounds);
 
                     } else {
@@ -2444,7 +2493,7 @@
     }
 
     this.downloadConnectedCustomerDetails = function () {
-         
+
         window.location = appRoot + 'Splicing/DownloadConnectedCustomerReport';
     }
     this.downloadCPEKML = function () {
@@ -2453,15 +2502,15 @@
     //pk
     this.clearCFPGrid = function () {
         if (app.apptestvalue == false) {
-            $(app.DE.equipmentid).val('');            
+            $(app.DE.equipmentid).val('');
             $(app.DE.ddlCore).html('').html('<option value="0">-Select-</option>').val("0").trigger("chosen:updated");
             $(app.DE.entityid).val(0);
             $('#objFilterAttributes_port_no').val(0);
             $('#objFilterAttributes_entity_type').val('');
             $(app.DE.btnShowRoute).trigger("click");
-        }                
-        app.clearCPFMarker();        
-        $('#divNoRecordExist').show();        
+        }
+        app.clearCPFMarker();
+        $('#divNoRecordExist').show();
         $('#tblConnectionPathFinderInfo,#dvHeader').hide();
         $('.libTab--dis').hide();
         $(app.DE.ddlCore).val(0).trigger("chosen:updated");
@@ -2476,7 +2525,7 @@
         var port_no = $('#objFilterAttributes_port_no').val();
         //var entityid = $('#objFilterAttributes_entityid').val();
         var systemId = $(app.DE.ConnectingEntity).val();
-         
+
         ajaxReq('main/EncryptMultiple', { entityid: entityid, entity_type: entity_type, port_no: port_no }, false, function (resp) {
             window.open(appRoot + 'Splicing/SchematicView?val='
                 + resp.entityid + ','
@@ -2486,7 +2535,7 @@
     }
 
     $(document).on("click", "#export", function () {
-         
+
         var enType = $(this).attr('enType');
         var systemId = $(this).attr('systemId');
         var portNo = $(this).attr('portNo');;
@@ -2570,7 +2619,7 @@
         app.apptestvalue = event.data.isControllEnable;
     }
     this.redirectToCustomerDetails = function (event, networkId, entity_type, systemId, portNo, isParentPopup) {
-         
+
         pageTitleText = 'Connected Customer Details';
         modalClass = 'modal-xxl';
         var _data = null;
@@ -2586,7 +2635,7 @@
     }
 
     this.redirectToLinkInfo = function (event, networkId, entity_type, systemId, portNo, isParentPopup) {
-         
+
         pageTitleText = 'Link Info';
         modalClass = 'modal-md';
         var _data = null;
@@ -2684,7 +2733,7 @@
     //}
     this.patching = {
         save: function (connection, info) {
-             
+
             //ajaxReq('ISP/checkTemplateExist', { enType: 'PatchCord' }, true, function (data) {
             //    if (data.status == 'FAILED') {
             //        jsPlumb.detach(info);
@@ -2768,7 +2817,7 @@
         return '#' + parts.join('');
     }
     this.redirectToUpdateFiber = function (pEntitySystemId, pCorePortNumber, pEntityType, ptype, isGridCalling, pPortStatusId, pPortComment, pPortStatus) {
-         
+
         if (pEntityType == undefined) {
             pCorePortNumber = pEntitySystemId.data.pCorePortNumber;
             pEntityType = pEntitySystemId.data.pEntityType;
@@ -2780,7 +2829,7 @@
         }
         pageTitleText = pEntityType.toUpperCase() == "CABLE" ? 'Update Core Status' : 'Update Port Status';
         modalClass = 'modal-sm';
-        popup.LoadModalDialog('CHILD', 'splicing/UpdateCorePortStatus', { entitySystemId: pEntitySystemId, entityType: pEntityType, corePortNumber: pCorePortNumber, type: ptype, isGridCalling: isGridCalling, PortStatusId: pPortStatusId, PortComment: pPortComment, Status: pPortStatus}, pageTitleText, modalClass);
+        popup.LoadModalDialog('CHILD', 'splicing/UpdateCorePortStatus', { entitySystemId: pEntitySystemId, entityType: pEntityType, corePortNumber: pCorePortNumber, type: ptype, isGridCalling: isGridCalling, PortStatusId: pPortStatusId, PortComment: pPortComment, Status: pPortStatus }, pageTitleText, modalClass);
     }
     this.viewPortHistory = function (system_id) {
         pageTitleText = 'Port History';
@@ -2948,7 +2997,7 @@
         }
     }
     function SetThroughConnValue() {
-         
+
         var _isthrough = $(app.DE.ConnectingEntity + ' :selected').attr('data-is-virtual');
         if (_isthrough.toLowerCase() == 'false') {
             app.color = '#00ba8a';

@@ -55,28 +55,29 @@
         HttpMethod = "POST",
         UpdateTargetId = "dvModalBody",
         LoadingElementId = "dvProgress",
+        OnSuccess = "delayContentUpdate"
     },
-                                                       new { id = "frmCPF", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+                                               new { id = "frmCPF", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
     {
         @Html.HiddenFor(m => m.objFilterAttributes.entity_type)
         @Html.HiddenFor(m => m.objFilterAttributes.entityid)
         @Html.HiddenFor(m => m.objFilterAttributes.port_no)
         @Html.HiddenFor(m => m.entity_geomid)
         @Html.HiddenFor(m => m.isControllEnable)
-        
-            <div class="libTabs">
-                <ul class="nav nav-tabs tabs-left">
-                    <li class="@(Model.lstUserModule.Contains("ENT-CPF-PT")?"active":"active roledisabled")"
-                        title="@Resources.Resources.SI_OSP_ONT_NET_RPT_006 @(Model.lstUserModule.Contains("ENT-CPF-PT")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)"><a href="@(Model.lstUserModule.Contains("ENT-CPF-PT")?"#PathTrack":"")" data-toggle="tab">@Resources.Resources.SI_OSP_ONT_NET_RPT_006</a></li>
-                        <li class="@(Model.lstUserModule.Contains("OLB") ? "" : "roledisabled")"
-                            title="@Resources.Resources.SI_OSP_ONT_NET_RPT_007 @(Model.lstUserModule.Contains("OLB") ? "" : Resources.Resources.SI_GBL_GBL_GBL_GBL_1436)"><a href="@(Model.lstUserModule.Contains("OLB") ? "#OpticalLinkBudget" : "")" data-toggle="tab">@Resources.Resources.SI_OSP_ONT_NET_RPT_007</a></li>
-                        </ul>
-                    </div>
-               
+
+        <div class="libTabs">
+            <ul class="nav nav-tabs tabs-left">
+                <li class="@(Model.lstUserModule.Contains("ENT-CPF-PT") ? "active" : "active roledisabled")"
+                    title="@Resources.Resources.SI_OSP_ONT_NET_RPT_006 @(Model.lstUserModule.Contains("ENT-CPF-PT") ? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)"><a href="@(Model.lstUserModule.Contains("ENT-CPF-PT") ? "#PathTrack" : "")" data-toggle="tab">@Resources.Resources.SI_OSP_ONT_NET_RPT_006</a></li>
+                    <li class="@(Model.lstUserModule.Contains("OLB") ? "" : "roledisabled")"
+                        title="@Resources.Resources.SI_OSP_ONT_NET_RPT_007 @(Model.lstUserModule.Contains("OLB") ? "" : Resources.Resources.SI_GBL_GBL_GBL_GBL_1436)"><a href="@(Model.lstUserModule.Contains("OLB") ? "#OpticalLinkBudget" : "")" data-toggle="tab">@Resources.Resources.SI_OSP_ONT_NET_RPT_007</a></li>
+                    </ul>
+                </div>
+
 
                 <div class="tab-content">
                     <div class="tab-pane active" id="PathTrack">
-                        <div class="@(Model.lstUserModule.Contains("ENT-CPF-PT")?"space-pad":"space-pad dvdisabled")">
+                        <div class="@(Model.lstUserModule.Contains("ENT-CPF-PT") ? "space-pad" : "space-pad dvdisabled")">
                             <div class="d-fx --gap07 fullWidth">
                                 <div class="width50 --gap07 flex-dir-column">
                                     <label for="txtFiberLinkId">@Resources.Resources.SI_OSP_GBL_NET_FRM_421 / @Resources.Resources.SI_OSP_GBL_GBL_FRM_100:</label>
@@ -85,13 +86,27 @@
                                     </div>
 
                                 </div>
-                                <div class="width50 --gap07 flex-dir-column">
-                                    <label for="txtEquipment_id">@layerDetail.layer_title @Resources.Resources.SI_OSP_ONT_NET_RPT_008<i class="clsMandatory">*</i>:</label>
+
+                                @*-------------Equipment Id drop down and text box start---------------*@
+                                @{
+                                    string isVisible = !string.IsNullOrEmpty(Model.FiberLinkId) ? "block" : "none";
+                                }
+                                <div class="width50 --gap07 flex-dir-column" id="ddlEquipment" style="display:@isVisible">
+                                    <label for="ddlEquipmentId">@layerDetail.layer_title Id:</label>
+                                    <div class="fullWidth">
+                                        <select id="ddlEquipmentId" name="ddlEquipmentId" class="chosen-select" data-entityType="" data-entityId="">
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="width50 --gap07 flex-dir-column" id="txtEquipment">
+                                    <label for="equipment_id">@layerDetail.layer_title @Resources.Resources.SI_OSP_ONT_NET_RPT_008:<i class="clsMandatory">*</i>:</label>
                                     <div class="fullWidth">
                                         @Html.TextBoxFor(m => m.equipment_id, new { @class = "form-control", @maxlength = 100 })
                                     </div>
-
                                 </div>
+                                @*-------------Equipment Id drop down and text box end---------------*@
+
                                 <div class="--gap07 flex-dir-column">
                                     <label for="ddlport">@Resources.Resources.SI_OSP_ONT_NET_RPT_010<i class="clsMandatory">*</i>:</label>
                                     <div class="fullWidth">
@@ -140,12 +155,12 @@
                                         <b><label for="chkFittomap" id="chklblFittomap" class="checkbox-custom3-label"></label></b>
                                         <b>Fit to map</b>
                                     </span>
-                                    <span  id="divDownStream">
+                                    <span id="divDownStream">
                                         <input id="chkDownStream" type="checkbox" class="checkbox-custom2" checked="checked" onchange="splicing.changeUpDownStream('#chkDownStream', '.downStream');">
                                         <b><label for="chkDownStream" id="chklbldownstream" class="checkbox-custom2-label"></label></b>
                                         <b>@Resources.Resources.SI_OSP_ONT_NET_RPT_013</b>
                                     </span>
-                                    <span  id="divUpStream">
+                                    <span id="divUpStream">
                                         <input id="chkUpStream" type="checkbox" class="checkbox-custom2" checked="checked" onchange="splicing.changeUpDownStream('#chkUpStream', '.upStream');">
                                         <b><label for="chkUpStream" id="chklblupstream" class="checkbox-custom2-label"></label></b>
                                         <b>@Resources.Resources.SI_OSP_ONT_NET_RPT_014</b>
@@ -174,7 +189,7 @@
 
 
                                             @*@Resources.Resources.SI_OSP_GBL_GBL_GBL_034,
-                                            |@string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_016, "A"): <span id="spnCableMeasuredLength">@Math.Round(Convert.ToDouble(Model.lstConnectionInfo.Where(a => a.cable_network_status == "A").Sum(m => m.cable_measured_length)), 2)</span>*@
+                                                |@string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_016, "A"): <span id="spnCableMeasuredLength">@Math.Round(Convert.ToDouble(Model.lstConnectionInfo.Where(a => a.cable_network_status == "A").Sum(m => m.cable_measured_length)), 2)</span>*@
 
 
                                             @string.Format(Resources.Resources.SI_OSP_ONT_NET_RPT_015, "A"):  <span id="spnCableCalculatedLength">@Math.Round(Convert.ToDouble(Model.lstConnectionInfo.Where(a => a.cable_network_status == "A").Sum(m => m.cable_calculated_length)), 2)</span>
@@ -192,12 +207,12 @@
                       columns: grid.Columns(
 
                     grid.Column("source_entity_title", Resources.Resources.SI_OSP_ONT_NET_RPT_017, format:
-                                                                                                                                    @<text>@item.source_entity_title
-                                                                                                                                    <input type="hidden" id="hdnCPFRowid" value="@item.id" />
-                                                                                                                                    <input type="hidden" id="hdncalculatedLength" value="@item.cable_calculated_length" />
-                                                                                                                                    <input type="hidden" id="hdnMeasuredLength" value="@item.cable_measured_length" />
-                                                                                                                                    </text>),
- grid.Column("source_display_name", Resources.Resources.SI_OSP_ONT_NET_RPT_018, format: @<text>@item.source_display_name</text>),
+                                                                                                                                                                @<text>@item.source_entity_title
+                                                                                                                                                                <input type="hidden" id="hdnCPFRowid" value="@item.id" />
+                                                                                                                                                                <input type="hidden" id="hdncalculatedLength" value="@item.cable_calculated_length" />
+                                                                                                                                                                <input type="hidden" id="hdnMeasuredLength" value="@item.cable_measured_length" />
+                                                                                                                                                                </text>),
+grid.Column("source_display_name", Resources.Resources.SI_OSP_ONT_NET_RPT_018, format: @<text>@item.source_display_name</text>),
 
 grid.Column("source_tray_display_name", Resources.Resources.SI_OSP_GBL_GBL_FRM_146, format: @<text>@item.source_tray_display_name</text>),
 grid.Column("source_cable_calculated_length", "Source Cable Calculated Length(meter)", format: @<text>@(item.source_cable_calculated_length!=null?(@Math.Round(Convert.ToDouble(@item.source_cable_calculated_length), 2)):@item.source_cable_calculated_length)</text>),
@@ -342,7 +357,7 @@ grid.Column("created_on", Resources.Resources.SI_OSP_ONT_NET_RPT_023, format: @<
         if ('@Model.objFilterAttributes.totalRecord' == 0) {
             $('#txt_transmit').val(0);
         }
-
+        
         $("#tblConnectionPathFinderInfo tbody tr").each(function (i, row) {
             var $actualRow = $(row);
             if ($actualRow.find('input[id^=hdnIsBackwardPath]').val().toUpperCase() == "FALSE") {
@@ -379,7 +394,19 @@ grid.Column("created_on", Resources.Resources.SI_OSP_ONT_NET_RPT_023, format: @<
         $('#dvSchematicView').removeClass('divErrorMessage');
     }*@
 
-
+    function delayContentUpdate(result) {
+        if ($('#FiberLinkId').val() !== '') {
+            
+            $('#ddlEquipment').css("display", "block");
+            $('#txtEquipment').css("display", "none");
+            splicing.BindEquipmentDropDown($('#FiberLinkId').val());
+            $('#ddlEquipmentId').val($('#equipment_id').val());
+        }
+        else {
+            $('#ddlEquipment').css("display", "none");
+            $('#txtEquipment').css("display", "block");
+        }
+    }
     function UpdateFormattedNumbers() {
         // Get the table element
         const table = document.getElementById('tblConnectionPathFinderInfo');

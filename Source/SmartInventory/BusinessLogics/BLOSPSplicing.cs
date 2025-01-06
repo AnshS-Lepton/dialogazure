@@ -45,6 +45,10 @@ namespace BusinessLogics
         {
             return new DAOSPSplicing().GetSearchEquipmentResult(srchText, userId, linkId);
         }
+        public List<EquipementSearchResult> GetSearchEquipmentResult(int userId, string linkId)
+        {
+            return new DAOSPSplicing().GetSearchEquipmentResult(userId, linkId);
+        }
         public List<LogicalViewEquipementSearch> GetLogicalViewSearchEquipmentResult(string srchText, string entityType, int userId)
         {
             return new DAOSPSplicing().GetLogicalViewSearchEquipmentResult(srchText, entityType, userId);
