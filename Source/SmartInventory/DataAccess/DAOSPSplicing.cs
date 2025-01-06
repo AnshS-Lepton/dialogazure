@@ -151,6 +151,14 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<EquipementSearchResult> GetSearchEquipmentResult(int userId, string linkId)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<EquipementSearchResult>("fn_get_search_equipment", new { p_user_id = userId, p_link_id = linkId });
+            }
+            catch { throw; }
+        }
 
         public List<LogicalViewEquipementSearch> GetLogicalViewSearchEquipmentResult(string srchText, string entityType, int userId)
         {
