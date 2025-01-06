@@ -2006,7 +2006,7 @@ CLASS
 			NAME 'Primary Splitter'
             EXPRESSION ('[splitter_type]'  eq 'Primary' AND '[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/Planned/Psplitter.png" 
 				SIZE 18			
 			END
 			LEADER
@@ -2031,7 +2031,7 @@ CLASS
 			NAME 'Primary Splitter'
             EXPRESSION ('[splitter_type]'  eq 'Primary' AND '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/AsBuild/Psplitter.png" 
 				SIZE 10			
 			END
 			LEADER
@@ -2057,7 +2057,7 @@ CLASS
 			NAME 'Primary Splitter'
             EXPRESSION ('[splitter_type]'  eq 'Primary' AND '[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/Dorment/Psplitter.png" 
 				SIZE 18			
 			END
 			LEADER
@@ -2084,7 +2084,7 @@ CLASS
 			NAME 'Secondary Splitter' 
 			EXPRESSION ('[splitter_type]'  eq 'Secondary' AND '[network_status]'  eq 'P')  
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/Planned/Splitter.png" 
 				SIZE 16        
 			END
 			LEADER
@@ -2110,7 +2110,7 @@ CLASS
 			NAME 'Secondary Splitter' 
 			EXPRESSION ('[splitter_type]'  eq 'Secondary' AND '[network_status]'  eq 'A')  
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/AsBuild/Splitter.png" 
 				SIZE 10        
 			END
 			LEADER
@@ -2136,7 +2136,7 @@ CLASS
 			NAME 'Secondary Splitter' 
 			EXPRESSION ('[splitter_type]'  eq 'Secondary' AND '[network_status]'  eq 'D')  
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/Dorment/Splitter.png" 
 				SIZE 16        
 			END
 			LEADER
