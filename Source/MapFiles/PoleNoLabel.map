@@ -56,7 +56,7 @@ LAYER
 	
 	CLASS
 		NAME 'Pole'
-		EXPRESSION ('[specification]' contains '5.6 M' AND '[network_status]'  eq 'P')
+		EXPRESSION ('[specification]' ~* '5.6m' AND '[network_status]'  eq 'P')
 		STYLE
 			SYMBOL "icons/Planned/Pole5.6.png"
 			SIZE 30
@@ -66,7 +66,7 @@ LAYER
 	END
 	CLASS
 		NAME 'Pole'
-		EXPRESSION ('[specification]' ~* '5.6 M' AND '[network_status]'  eq 'A') 		
+		EXPRESSION ('[specification]' ~* '5.6m' AND '[network_status]'  eq 'A') 		
 		STYLE
 			SYMBOL "icons/AsBuild/Pole5.6.png"
 			SIZE 20			
@@ -75,7 +75,7 @@ LAYER
 	END
 	CLASS
 		NAME 'Pole'
-		EXPRESSION ('[specification]' ~* '5.6 M' AND '[network_status]'  eq 'D')
+		EXPRESSION ('[specification]' ~* '5.6m' AND '[network_status]'  eq 'D')
 		STYLE
 			SYMBOL "icons/Dorment/Pole5.6.png"
 			SIZE 30
@@ -86,7 +86,7 @@ LAYER
 	
 	CLASS
 		NAME 'Pole'
-		EXPRESSION ('[specification]' ~* '6.7 M' AND '[network_status]'  eq 'P')
+		EXPRESSION ('[specification]' ~* '6.7m' AND '[network_status]'  eq 'P')
 		STYLE
 			SYMBOL "icons/Planned/Pole6.7.png"
 			SIZE 30
@@ -96,7 +96,7 @@ LAYER
 	END
 	CLASS
 		NAME 'Pole'
-		EXPRESSION ('[specification]' ~* '6.7 M' AND '[network_status]'  eq 'A')
+		EXPRESSION ('[specification]' ~* '6.7m' AND '[network_status]'  eq 'A')
 		STYLE
 			SYMBOL "icons/AsBuild/Pole6.7.png"
 			SIZE 20			
@@ -105,7 +105,7 @@ LAYER
 	END
 	CLASS
 		NAME 'Pole'
-		EXPRESSION ('[specification]' ~* '6.7 M' AND '[network_status]'  eq 'D')
+		EXPRESSION ('[specification]' ~* '6.7m' AND '[network_status]'  eq 'D')
 		STYLE
 			SYMBOL "icons/Dorment/Pole6.7.png"
 			SIZE 30
@@ -116,7 +116,7 @@ LAYER
 
 	CLASS
 		NAME 'Pole'
-		EXPRESSION ('[specification]' ~* '8 M' AND '[network_status]'  eq 'P')
+		EXPRESSION ('[specification]' ~* '8m' AND '[network_status]'  eq 'P')
 		STYLE
 			SYMBOL "icons/Planned/Pole8.png"
 			SIZE 30
@@ -127,7 +127,7 @@ LAYER
 	
 	CLASS
 		NAME 'Pole'
-		EXPRESSION ('[specification]' ~* '8 M' AND '[network_status]'  eq 'A')
+		EXPRESSION ('[specification]' ~* '8m' AND '[network_status]'  eq 'A')
 		STYLE
 			SYMBOL "icons/AsBuild/Pole8.png"
 			SIZE 30
@@ -138,7 +138,7 @@ LAYER
 	
 	CLASS
 		NAME 'Pole'
-		EXPRESSION ('[specification]' ~* '8 M' AND '[network_status]'  eq 'D')
+		EXPRESSION ('[specification]' ~* '8m' AND '[network_status]'  eq 'D')
 		STYLE
 			SYMBOL "icons/Dorment/Pole8.png"
 			SIZE 30
@@ -149,7 +149,7 @@ LAYER
 	
 	CLASS
 		NAME 'Pole'
-		EXPRESSION ('[specification]' ~* '9 M' AND '[network_status]'  eq 'P')
+		EXPRESSION ('[specification]' ~* '9m' AND '[network_status]'  eq 'P')
 		STYLE
 			SYMBOL "icons/Planned/Pole9.png"
 			SIZE 30
@@ -160,7 +160,7 @@ LAYER
 	
 	CLASS
 		NAME 'Pole'
-		EXPRESSION ('[specification]' ~* '9 M' AND '[network_status]'  eq 'A')
+		EXPRESSION ('[specification]' ~* '9m' AND '[network_status]'  eq 'A')
 		STYLE
 			SYMBOL "icons/AsBuild/Pole9.png"
 			SIZE 30
@@ -171,7 +171,7 @@ LAYER
 	
 	CLASS
 		NAME 'Pole'
-		EXPRESSION ('[specification]' ~* '9 M' AND '[network_status]'  eq 'D')
+		EXPRESSION ('[specification]' ~* '9m' AND '[network_status]'  eq 'D')
 		STYLE
 			SYMBOL "icons/Dorment/Pole9.png"
 			SIZE 30
@@ -184,7 +184,7 @@ LAYER
 		NAME 'Pole'
 		EXPRESSION ('[specification]' ~* 'LECO' AND '[network_status]'  eq 'P')
 		STYLE
-			SYMBOL "icons/Planned/LECOEP-P.png"
+			SYMBOL "icons/Planned/PoleLECO.png"
 			SIZE 30
 			OFFSET 0 -5				
 		END  
@@ -195,7 +195,7 @@ LAYER
 		NAME 'Pole'
 		EXPRESSION ('[specification]' ~* 'LECO' AND '[network_status]'  eq 'A')
 		STYLE
-			SYMBOL "icons/AsBuild/LECOEP-AB.png"
+			SYMBOL "icons/AsBuild/PoleLECO.png"
 			SIZE 30
 			OFFSET 0 -5				
 		END 
@@ -206,7 +206,7 @@ LAYER
 		NAME 'Pole'
 		EXPRESSION ('[specification]' ~* 'LECO' AND '[network_status]'  eq 'D')
 		STYLE
-			SYMBOL "icons/Dorment/LECOEP-D.png"
+			SYMBOL "icons/Dorment/PoleLECO.png"
 			SIZE 30
 			OFFSET 0 -5				
 		END
