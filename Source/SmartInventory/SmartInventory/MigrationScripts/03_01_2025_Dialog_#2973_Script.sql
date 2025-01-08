@@ -5088,7 +5088,7 @@ $function$
 -- DROP FUNCTION public.fn_get_search_equipment(int4, varchar);
 
 CREATE OR REPLACE FUNCTION public.fn_get_search_equipment(p_user_id integer, p_link_id character varying)
- RETURNS TABLE(system_id integer, network_id character varying, entity_type character varying, geom_type character varying, network_status character varying, no_of_ports character varying, display_name text)
+ RETURNS TABLE(system_id integer, network_id character varying, entity_type character varying, geom_type character varying, network_status character varying, no_of_ports character varying, display_name character varying)
  LANGUAGE plpgsql
 AS $function$ 
 declare
@@ -5122,7 +5122,14 @@ RAISE INFO '%',(SELECT TT.SYSTEM_ID FROM temp_search_results TT LIMIT 1);
 
 -- Fetch system_id from att_details_fiber_link if p_link_id is provided
 		RETURN QUERY 
-        SELECT tsr.*
+        SELECT 
+		tsr.system_id, 
+		tsr.network_id, 
+		tsr.entity_type, 
+		tsr.geom_type, 
+		tsr.network_status, 
+		tsr.no_of_ports::character varying, 
+		tsr.display_name::character varying
         FROM temp_search_results tsr
         INNER JOIN att_details_cable_info ci ON tsr.system_id = ci.cable_id
 		where ci.link_system_id IN (
