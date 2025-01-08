@@ -1,6 +1,6 @@
 /*<------------>Version:<------------>Query Type:View<------------>PR NO:3130<------------>Created By:Arabind Kumar<------------>Created On:27-Dec-24 05:23 PM<------------>*/
 
-- View: public.vw_att_details_pod
+-- View: public.vw_att_details_pod
 
 -- DROP VIEW public.vw_att_details_pod;
 
@@ -368,3 +368,4 @@ update layer_details set is_visible_in_ne_library=false,is_visible_in_mobile_lib
 --select * from module_master where module_name ilike '%LMC%' and is_active=true
 
 update module_master set is_active=false where module_name in('LMC Report','LMC Information','Survey Assignment','Building Survey','Survey Module','Survey Building','Survey');
+
