@@ -1,15 +1,11 @@
-﻿using System;
+﻿using Models.Admin;
+using Newtonsoft.Json;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Models.Admin;
 using System.Web.Helpers;
-using Models.ISP;
-using System.Collections;
 using System.Web.Mvc;
 
 namespace Models
@@ -2067,10 +2063,11 @@ namespace Models
         public string network_id { get; set; }
         public string link_system_id { get; set; }
         public PageMessage objPM { get; set; }
+        [JsonProperty("link_id")]
+        public string Link_Id { get; set; }
         public CoreLogicSearchdetails()
         {
             objPM = new PageMessage();
-
         }
     }
 

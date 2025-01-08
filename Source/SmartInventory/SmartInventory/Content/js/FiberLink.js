@@ -990,11 +990,10 @@
     this.SaveFiberLink = function (objFiberLink) {
         debugger;
         if (objFiberLink.pageMsg.status != "OK" || $('#hdnCheckforCLP').val() != '') {
-            $('#txtfiberlink').val(objFiberLink.network_id);
+            $('#txtfiberlink').val(objFiberLink.link_id);
             $('#hdnCheckforCLP').val('');
             alert(objFiberLink.pageMsg.message);
             $("#closeChildPopup").click();
-            $("#closeModalPopup").click();
         }
         else {
             if (objFiberLink.CreateFL == 0) {
