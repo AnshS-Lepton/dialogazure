@@ -22239,7 +22239,6 @@ var Main = function () {
         return si.validateLooplength();
     }
     this.isValidAssociation = function () {
-        ;
         var isValid = true;
         if ($('#ddlStructureList').val() != '' && $('#ddlStructureList').val() != null) {
             if ($('#ddlAssociationtype').val() == '') {

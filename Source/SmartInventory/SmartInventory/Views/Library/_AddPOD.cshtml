@@ -582,8 +582,28 @@
             $('#parent_entity_type').val('Structure');
             $('#parent_network_id').val($('#ddlStructureList :selected').text());
         }
-        if (si.isValidAssociation()) {
+
+        if (validateFields() && $("#frmAddPOD").valid() && si.isValidAssociation()) {
             $("#frmAddPOD").submit();
+        } else {
+            alert(MultilingualKey.Required_Fields);
         }
+    }
+    function validateFields() {
+        var siteId = $('#txtSiteId').val();
+        var siteName = $('#txtSiteName').val();
+
+        if (siteId === '') {
+            $($(".libTabs ul li a")[2]).trigger("click");
+            $('#txtSiteId').addClass('input-validation-error');
+            return false;
+        } else if (siteName === '') {
+            $('#txtSiteName').addClass('input-validation-error');
+            return false;
+        } else {
+            $('#txtSiteId').removeClass('input-validation-error');
+            $('#txtSiteName').removeClass('input-validation-error');
+        }
+        return true;
     }
 </script>
