@@ -419,7 +419,9 @@ namespace Models
         public List<string> lstUserModule { get; set; }
 
         /// Site Details 30 Properties
+        [Required]
         public string site_id { get; set; }
+        [Required]
         public string site_name { get; set; }
         public DateTime? on_air_date { get; set; }
         public DateTime? removed_date { get; set; }
