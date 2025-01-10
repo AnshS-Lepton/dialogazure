@@ -2043,6 +2043,23 @@ namespace Models
     {
         public bool status { get; set; }
         public string message { get; set; }
+        public int source_system_id { get; set; }
+        public string source_network_id { get; set; }
+        public int destination_system_id { get; set; }
+        public string destination_network_id { get; set; }
+        public string sp_geometry { get; set; }
+        public string source_endgeom { get; set; }
+        public string source_geometry_extent { get; set; }
+        public string destination_geometry_extent { get; set; }
+        public string destination_endgeom { get; set; }
+        public int calculated_distance { get; set; }
+        public CableLatLngDetails source { get; set; }
+        public CableLatLngDetails destination { get; set; }
+    }
+    public class CableLatLngDetails
+    {
+        public latlong southWest { get; set; }
+        public latlong northEast { get; set; }
 
     }
     public class Fiberlinkdetails

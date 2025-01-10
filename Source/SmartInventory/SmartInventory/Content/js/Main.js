@@ -19341,9 +19341,16 @@ var Main = function () {
 
                 }
                 else {
-                    $("#btnSubmit").prop("disabled", true);
-                    $("#ddlfiberlink").prop("required", false)
-                    alert(resp.message);
+                    if (resp.source_network_id != null && resp.source_network_id != undefined && resp.source_network_id != '') {
+                        app.ShowCableOnMapbyGeom('Polygon', resp);
+                        $("#btnSubmit").prop("disabled", true);
+                        $("#ddlfiberlink").prop("required", false)
+                        alert(resp.message + resp.source_network_id);
+                    } else {
+                        $("#btnSubmit").prop("disabled", true);
+                        $("#ddlfiberlink").prop("required", false)
+                        alert(resp.message);
+                    }
 
                 }
             }
@@ -32276,6 +32283,13 @@ var Main = function () {
         }, false, function (obj) {
             alert(obj.message);
         });
+    }
+    this.ShowCableOnMapbyGeom = function (gType, resp) {
+        if (resp.source_endgeom != null) {
+            resp.sp_geometry = resp.source_endgeom;
+            app.HighlightEntityOnMap(gType, resp);
+            app.fitElementOnMap(resp.source)
+        }
     }
 
 }
