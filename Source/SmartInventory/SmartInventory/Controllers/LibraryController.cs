@@ -13172,8 +13172,18 @@ namespace SmartInventory.Controllers
 
             JsonResponse<string> jResp = new JsonResponse<string>();
             DbMessageConePlanLogic obj = new DbMessageConePlanLogic();
+            var cableSourceLatLng = new CableLatLngDetails();
             obj = new BLCable().Validate(odf1, odf2, Convert.ToInt32(required_core), Convert.ToInt32(Session["user_id"]));
-
+            if (obj.source_geometry_extent != null && obj.destination_geometry_extent != null)
+            {
+                var extentSource = obj.source_geometry_extent.TrimStart("BOX(".ToCharArray()).TrimEnd(")".ToCharArray());
+                string[] Sourcebounds = extentSource.Split(',');
+                string[] SourcesouthWest = Sourcebounds[0].Split(' ');
+                string[] SourcenorthEast = Sourcebounds[1].Split(' ');
+                cableSourceLatLng.southWest = new latlong { Lat = SourcesouthWest[1], Long = SourcesouthWest[0] };
+                cableSourceLatLng.northEast = new latlong { Lat = SourcenorthEast[1], Long = SourcenorthEast[0] };
+                obj.source = cableSourceLatLng;
+            }
             return Json(obj, JsonRequestBehavior.AllowGet);
 
         }
