@@ -19,7 +19,7 @@ namespace BusinessLogics
         {
             return new DASite().GelAll(lastSuccessDate);
         }
-        public List<String> getCablesByLinkIds(string linkids)
+        public List<string> getCablesByLinkIds(string linkids)
         {
             return new DASiteSync().getCablesByLinkIds(linkids);
         }

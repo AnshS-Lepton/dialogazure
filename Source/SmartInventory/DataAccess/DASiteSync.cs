@@ -61,11 +61,11 @@ namespace DataAccess
             return lst;
         }
 
-        public List<String> getCablesByLinkIds(string linkids)
+        public List<string> getCablesByLinkIds(string linkids)
         {
             try
             {
-                return repo.ExecuteProcedure<String>("fn_cable_list_by_linkids", new { v_linkids = linkids },false);
+                return repo.ExecuteProcedure<string>("fn_cable_list_by_linkids", new { v_linkids = linkids },false);
             }
             catch { throw; }
         }

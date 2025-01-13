@@ -398,6 +398,14 @@ namespace DataAccess
                 throw ex;
             }
         }
+        public List<string> GetFiberLinksByLinkIds(string linkids)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<string>("fn_fiberlink_list_by_linkids", new { v_linkids = linkids }, false);
+            }
+            catch { throw; }
+        }
     }
     public class DAFiberLinkColumns : Repository<fiberLinkColumnsMapping>
     {
