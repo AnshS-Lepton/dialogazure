@@ -1,0 +1,237 @@
+/*------------------------------------------
+CreatedBy: Chandra Shekhar Sahni
+CreatedOn: 14 Jan 2025
+Description: This is one time script for updating the network_id and other necessary details in ATT_DETAILS_POD and point_master
+ModifiedOn: 
+ModifiedBy: 
+Purpose: 
+------------------------------------------*/
+-- FUNCTION: public.fn_update_pod_details()
+
+-- DROP FUNCTION IF EXISTS public.fn_update_pod_details();
+CREATE OR REPLACE FUNCTION fn_update_pod_details()
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    rec RECORD;
+    result RECORD;
+BEGIN
+    -- Loop over each row from the query
+    FOR rec IN 
+        SELECT system_id, LONGITUDE, LATITUDE 
+        FROM ATT_DETAILS_POD 
+        WHERE (NETWORK_ID IS NULL OR NETWORK_ID='Fail') AND LONGITUDE > 0 AND LATITUDE > 0
+    LOOP
+        BEGIN
+            RAISE INFO 'rec.LONGITUDE : %', rec.LONGITUDE;
+            RAISE INFO 'rec.LATITUDE : %', rec.LATITUDE;
+            
+            -- Call the function to get the required data
+            SELECT status, message, o_p_system_id, o_p_network_id, o_p_entity_type, o_sequence_id
+            INTO result
+            FROM fn_get_clone_network_code('POD', 'Point', rec.LONGITUDE || ' ' || rec.LATITUDE, NULL, NULL)
+			WHERE message IS NOT NULL AND message <> '';
+
+			-- Update the table with the obtained data
+			UPDATE ATT_DETAILS_POD
+			SET 
+				status = result.status,
+				network_id = result.message,
+				pod_name = result.message,
+				parent_system_id = result.o_p_system_id,
+				parent_network_id = result.o_p_network_id,
+				parent_entity_type = result.o_p_entity_type,
+				sequence_id = result.o_sequence_id
+			WHERE 
+				system_id = rec.system_id;
+
+			UPDATE point_master
+			SET
+				common_name = result.message
+			WHERE
+				system_id = rec.system_id;
+        EXCEPTION
+            WHEN OTHERS THEN
+                -- Handle any exceptions and skip to the next record
+                RAISE NOTICE 'Exception occurred for system_id: %, skipping to next record.', rec.system_id;
+                CONTINUE;
+        END;
+    END LOOP;
+END;
+$$;
+
+--------------------------------------------------------------------------------------------------------------
+/*------------------------------------------
+CreatedBy: 
+CreatedOn: 
+Description: This function runs from DTS Integration Service to update the site/pod details that we get from the DTS Api
+ModifiedOn: 14 Jan 2025
+ModifiedBy: Chandra Shekhar Sahni
+Purpose: We have added logic to update following columns : status, message/network_id, o_p_system_id, o_p_network_id, o_p_entity_type, o_sequence_id and pod_name of att_details_pod table
+------------------------------------------*/
+-- DROP FUNCTION public.fn_process_save_pod_details(in int4, out int4, out int4);
+
+CREATE OR REPLACE FUNCTION public.fn_process_save_pod_details(process_id_input integer, OUT updated_count integer, OUT inserted_count integer)
+ RETURNS record
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    process_id_input INTEGER := 1;  -- Example process_id_input, replace as needed
+    inserted_count INTEGER;
+    rec RECORD;
+    status TEXT;
+    message TEXT;
+    o_p_system_id INTEGER;
+    o_p_network_id INTEGER;
+    o_p_entity_type TEXT;
+    o_sequence_id INTEGER;
+BEGIN
+    -- First condition: Update records in att_details_pod based on matching site_id in process_site_details
+    WITH update_cte AS (
+        UPDATE public.att_details_pod AS ads
+        SET 
+            site_name = psd.site_name,
+            on_air_date = psd.on_air_date,
+            removed_date = psd.removed_date,
+            tx_type = psd.tx_type,
+            tx_technology = psd.tx_technology,
+            tx_segment = psd.tx_segment,
+            tx_ring = psd.tx_ring,
+            address = psd.address,
+            region = psd.region,
+            province = psd.province,
+            district = psd.district,
+            region_address = psd.region_address,
+            depot = psd.depot,
+            ds_division = psd.ds_division,
+            local_authority = psd.local_authority,
+            latitude = CASE WHEN psd.network_status <> 'A' THEN psd.latitude ELSE ads.latitude END,
+            longitude = CASE WHEN psd.network_status <> 'A' THEN psd.longitude ELSE ads.longitude END,
+            owner_name = psd.owner_name,
+            access_24_7 = psd.access_24_7,
+            tower_type = psd.tower_type,
+            tower_height = psd.tower_height,
+            cabinet_type = psd.cabinet_type,
+            solution_type = psd.solution_type,
+            site_rank = psd.site_rank,
+            self_tx_traffic = psd.self_tx_traffic,
+            agg_tx_traffic = psd.agg_tx_traffic,
+            metro_ring_utilization = psd.metro_ring_utilization,
+            csr_count = psd.csr_count,
+            dti_circuit = psd.dti_circuit,
+            agg_01 = psd.agg_01,
+            agg_02 = psd.agg_02,
+            bandwidth = psd.bandwidth,
+            ring_type = psd.ring_type,
+            link_id = psd.link_id,
+            alias_name = psd.alias_name,
+            created_on = psd.created_on,
+            created_by = psd.created_by,
+            tx_agg = psd.tx_agg,
+            bh_status = psd.bh_status,
+            elevation = psd.elevation::double precision,
+            segment = psd.segment,
+            ring = psd.ring,
+            maximum_cost = psd.maximum_cost,
+            project_category = psd.project_category,
+            priority = psd.priority,
+            no_of_cores = psd.no_of_cores,
+            fiber_link_type = psd.fiber_link_type,
+            "comment" = psd.comment,
+            plan_cost = psd.plan_cost,
+            fiber_distance = psd.fiber_distance,
+            fiber_link_code = psd.fiber_link_code,
+            port_type = psd.port_type,
+            destination_site_id = psd.destination_site_id,
+            destination_port_type = psd.destination_port_type,
+            destination_no_of_cores = psd.destination_no_of_cores,
+            project_id_dialog = psd.project_id_dialog,
+			network_status=psd.network_status
+        FROM process_site_details AS psd
+        WHERE ads.site_id = psd.site_id
+          AND psd.process_id = process_id_input
+        RETURNING 1
+    )
+    SELECT COUNT(*) INTO updated_count FROM update_cte;
+
+    -- Second condition: Insert records into att_details_pod where site_id from process_site_details doesn't exist in att_details_pod
+    -- Create a temporary table
+    CREATE TEMPORARY TABLE temp_pod_details AS
+    SELECT 
+        psd.site_id, psd.site_name, psd.on_air_date, psd.removed_date, psd.tx_type, psd.tx_technology, psd.tx_segment,
+        psd.tx_ring, psd.address, psd.region, psd.province, psd.district, psd.region_address, psd.depot,
+        psd.ds_division, psd.local_authority, psd.latitude, psd.longitude, psd.owner_name, psd.access_24_7,
+        psd.tower_type, psd.tower_height, psd.cabinet_type, psd.solution_type, psd.site_rank, psd.self_tx_traffic,
+        psd.agg_tx_traffic, psd.metro_ring_utilization, psd.csr_count, psd.dti_circuit, psd.agg_01, psd.agg_02,
+        psd.bandwidth, psd.ring_type, psd.link_id, psd.alias_name, psd.created_on, psd.created_by, psd.province_id, psd.region_id,
+        psd.network_status, psd.tx_agg, psd.bh_status, psd.elevation::double precision, psd.segment, psd.ring, psd.maximum_cost,
+        psd.project_category, psd.priority, psd.no_of_cores, psd.fiber_link_type, psd.comment, psd.plan_cost, psd.fiber_distance,
+        psd.fiber_link_code, psd.port_type, psd.destination_site_id, psd.destination_port_type, psd.destination_no_of_cores,
+        psd.project_id_dialog, '' AS status, '' AS message, 0 AS o_p_system_id, 0 AS o_p_network_id,
+        '' AS o_p_entity_type, 0 AS o_sequence_id,
+        0 AS vendor_id, '' AS type, '' AS brand, '' AS ownership_type, '' AS bom_sub_category,
+        '' AS item_code, '' AS model, '' AS construction, '' AS activation, '' AS accessibility
+    FROM process_site_details AS psd
+    WHERE psd.process_id = process_id_input
+      AND psd.site_id NOT IN (SELECT site_id FROM public.att_details_pod WHERE site_id IS NOT NULL);
+
+	-- Populate the temporary table with additional data
+    FOR rec IN (SELECT * FROM temp_pod_details) LOOP
+        BEGIN
+            -- Call the function to get the required data and check if message is not NULL or empty
+            SELECT status, message, o_p_system_id, o_p_network_id, o_p_entity_type, o_sequence_id
+            INTO rec.status, rec.message, rec.o_p_system_id, rec.o_p_network_id, rec.o_p_entity_type, rec.o_sequence_id
+            FROM fn_get_clone_network_code('POD', 'Point', rec.longitude || ' ' || rec.latitude, NULL, NULL)
+            WHERE message IS NOT NULL AND message <> '';
+            
+            -- Update the temporary table with the obtained data
+            UPDATE temp_pod_details
+            SET 
+                status = rec.status,
+                message = rec.message,
+                o_p_system_id = rec.o_p_system_id,
+                o_p_network_id = rec.o_p_network_id,
+                o_p_entity_type = rec.o_p_entity_type,
+                o_sequence_id = rec.o_sequence_id
+            WHERE 
+                site_id = rec.site_id;
+        EXCEPTION
+            WHEN OTHERS THEN
+                -- Handle any exceptions and skip to the next record
+                RAISE NOTICE 'Exception occurred for site_id: %, skipping to next record.', rec.site_id;
+                CONTINUE;
+        END;
+    END LOOP;
+
+	 -- Insert data from the temporary table into the att_details_pod table
+    INSERT INTO public.att_details_pod (
+        site_id, site_name, on_air_date, removed_date, tx_type, tx_technology, tx_segment, tx_ring,
+        address, region, province, district, region_address, depot, ds_division, local_authority,
+        latitude, longitude, owner_name, access_24_7, tower_type, tower_height, cabinet_type, solution_type,
+        site_rank, self_tx_traffic, agg_tx_traffic, metro_ring_utilization, csr_count, dti_circuit, agg_01, agg_02,
+        bandwidth, ring_type, link_id, alias_name, created_on, created_by, province_id, region_id, network_status, tx_agg, bh_status, elevation, segment,
+        ring, maximum_cost, project_category, priority, no_of_cores, fiber_link_type, "comment", plan_cost,
+        fiber_distance, fiber_link_code, port_type, destination_site_id, destination_port_type, destination_no_of_cores,
+        project_id_dialog, parent_system_id, sequence_id, vendor_id, type, brand, ownership_type, bom_sub_category, item_code, model, construction, activation, accessibility,
+        status, message, o_p_system_id, o_p_network_id, o_p_entity_type, o_sequence_id
+    )
+    SELECT 
+        site_id, site_name, on_air_date, removed_date, tx_type, tx_technology, tx_segment, tx_ring,
+        address, region, province, district, region_address, depot, ds_division, local_authority,
+        latitude, longitude, owner_name, access_24_7, tower_type, tower_height, cabinet_type, solution_type,
+        site_rank, self_tx_traffic, agg_tx_traffic, metro_ring_utilization, csr_count, dti_circuit, agg_01, agg_02,
+        bandwidth, ring_type, link_id, alias_name, created_on, created_by, province_id, region_id, network_status, tx_agg, bh_status, elevation, segment,
+        ring, maximum_cost, project_category, priority, no_of_cores, fiber_link_type, "comment", plan_cost,
+        fiber_distance, fiber_link_code, port_type, destination_site_id, destination_port_type, destination_no_of_cores,
+        project_id_dialog, parent_system_id, sequence_id, vendor_id, type, brand, ownership_type, bom_sub_category, item_code, model, construction, activation, accessibility,
+        status, message, o_p_system_id, o_p_network_id, o_p_entity_type, o_sequence_id
+    FROM temp_pod_details;
+	
+	SELECT COUNT(*) INTO inserted_count FROM temp_pod_details;
+    -- Drop the temporary table
+    DROP TABLE IF EXISTS temp_pod_details;
+
+END;
+$function$
+;
