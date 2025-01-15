@@ -68,7 +68,7 @@ CreatedOn:
 Description: This function runs from DTS Integration Service to update the site/pod details that we get from the DTS Api
 ModifiedOn: 14 Jan 2025
 ModifiedBy: Chandra Shekhar Sahni
-Purpose: We have added logic to update following columns : status, message/network_id, o_p_system_id, o_p_network_id, o_p_entity_type, o_sequence_id and pod_name of att_details_pod table
+Purpose: We have added logic to update following columns : status, network_id, parent_system_id, parent_network_id, parent_entity_type, sequence_id and pod_name of att_details_pod table
 ------------------------------------------*/
 -- DROP FUNCTION public.fn_process_save_pod_details(in int4, out int4, out int4);
 
@@ -235,3 +235,6 @@ BEGIN
 END;
 $function$
 ;
+
+
+--Multiple customer sites have been created as "Trillium_Resi_Ind' #10140 #3263
