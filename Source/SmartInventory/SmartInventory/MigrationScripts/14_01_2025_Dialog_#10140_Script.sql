@@ -270,6 +270,3 @@ EXECUTE 'select row_to_json(row) from ('||sql||') row';
 END ;
 $function$
 ;
-
-
---Multiple customer sites have been created as "Trillium_Resi_Ind' #10140 #3263
