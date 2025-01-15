@@ -236,5 +236,40 @@ END;
 $function$
 ;
 
+/*------------------------------------------
+CreatedBy: 
+CreatedOn: 
+Description: This function retrieves the networkId and fiberlinkId according to search crieteria
+ModifiedOn: 02 Jan 2025
+ModifiedBy: Chandra Shekhar Sahni
+Purpose: We have extended the search functionality by adding linkId along with networkId also limited the results to latest top 10 records
+------------------------------------------*/
+-- DROP FUNCTION public.fn_get_corelogicsearchdetails(varchar, varchar);
+
+CREATE OR REPLACE FUNCTION public.fn_get_corelogicsearchdetails(p_searchtext character varying, p_searchtype character varying)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+
+DECLARE
+sql TEXT;
+
+BEGIN
+
+sql:='';
+if(p_searchType='ODF') then
+sql:= 'select distinct network_id from att_details_fms where network_id ilike ''%' || p_searchText || '%'' order by network_id desc limit 10';
+else
+sql:= 'select network_id,link_id from att_details_fiber_link  where network_id ilike ''%' || p_searchtext || '%'' OR link_id ilike ''%' || p_searchtext || '%'' order by network_id desc limit 10';
+end if;
+RAISE INFO '%', sql;
+
+RETURN QUERY
+EXECUTE 'select row_to_json(row) from ('||sql||') row';
+
+END ;
+$function$
+;
+
 
 --Multiple customer sites have been created as "Trillium_Resi_Ind' #10140 #3263
