@@ -77,15 +77,15 @@ CREATE OR REPLACE FUNCTION public.fn_process_save_pod_details(process_id_input i
  LANGUAGE plpgsql
 AS $function$
 DECLARE
-    process_id_input INTEGER := 1;  -- Example process_id_input, replace as needed
-    inserted_count INTEGER;
+--    process_id_input INTEGER := 1;  -- Example process_id_input, replace as needed
+--    inserted_count INTEGER;
     rec RECORD;
-    status TEXT;
-    message TEXT;
-    o_p_system_id INTEGER;
-    o_p_network_id INTEGER;
-    o_p_entity_type TEXT;
-    o_sequence_id INTEGER;
+    v_status TEXT;
+    v_message TEXT;
+    v_p_system_id INTEGER;
+    v_p_network_id INTEGER;
+    v_p_entity_type TEXT;
+    v_sequence_id INTEGER;
 BEGIN
     -- First condition: Update records in att_details_pod based on matching site_id in process_site_details
     WITH update_cte AS (
@@ -168,10 +168,10 @@ BEGIN
         psd.network_status, psd.tx_agg, psd.bh_status, psd.elevation::double precision, psd.segment, psd.ring, psd.maximum_cost,
         psd.project_category, psd.priority, psd.no_of_cores, psd.fiber_link_type, psd.comment, psd.plan_cost, psd.fiber_distance,
         psd.fiber_link_code, psd.port_type, psd.destination_site_id, psd.destination_port_type, psd.destination_no_of_cores,
-        psd.project_id_dialog, '' AS status, '' AS message, 0 AS o_p_system_id, 0 AS o_p_network_id,
-        '' AS o_p_entity_type, 0 AS o_sequence_id,
-        0 AS vendor_id, '' AS type, '' AS brand, '' AS ownership_type, '' AS bom_sub_category,
-        '' AS item_code, '' AS model, '' AS construction, '' AS activation, '' AS accessibility
+        psd.project_id_dialog, '' AS status, '' AS network_id, 0 AS parent_system_id, 0 AS parent_network_id,
+        '' AS parent_entity_type, 0 AS sequence_id,
+        0 AS vendor_id, 0 AS type, 0 AS brand, '' AS ownership_type, '' AS bom_sub_category,
+        '' AS item_code, 0 AS model, 0 AS construction, 0 AS activation, 0 AS accessibility
     FROM process_site_details AS psd
     WHERE psd.process_id = process_id_input
       AND psd.site_id NOT IN (SELECT site_id FROM public.att_details_pod WHERE site_id IS NOT NULL);
@@ -181,19 +181,19 @@ BEGIN
         BEGIN
             -- Call the function to get the required data and check if message is not NULL or empty
             SELECT status, message, o_p_system_id, o_p_network_id, o_p_entity_type, o_sequence_id
-            INTO rec.status, rec.message, rec.o_p_system_id, rec.o_p_network_id, rec.o_p_entity_type, rec.o_sequence_id
+            INTO v_status, v_message, v_p_system_id, v_p_network_id, v_p_entity_type, v_sequence_id
             FROM fn_get_clone_network_code('POD', 'Point', rec.longitude || ' ' || rec.latitude, NULL, NULL)
             WHERE message IS NOT NULL AND message <> '';
             
             -- Update the temporary table with the obtained data
             UPDATE temp_pod_details
             SET 
-                status = rec.status,
-                message = rec.message,
-                o_p_system_id = rec.o_p_system_id,
-                o_p_network_id = rec.o_p_network_id,
-                o_p_entity_type = rec.o_p_entity_type,
-                o_sequence_id = rec.o_sequence_id
+                status = v_status,
+                network_id = v_message,
+                parent_system_id = v_p_system_id,
+                parent_network_id = v_p_network_id,
+                parent_entity_type = v_p_entity_type,
+                sequence_id = v_sequence_id
             WHERE 
                 site_id = rec.site_id;
         EXCEPTION
@@ -214,7 +214,7 @@ BEGIN
         ring, maximum_cost, project_category, priority, no_of_cores, fiber_link_type, "comment", plan_cost,
         fiber_distance, fiber_link_code, port_type, destination_site_id, destination_port_type, destination_no_of_cores,
         project_id_dialog, parent_system_id, sequence_id, vendor_id, type, brand, ownership_type, bom_sub_category, item_code, model, construction, activation, accessibility,
-        status, message, o_p_system_id, o_p_network_id, o_p_entity_type, o_sequence_id
+        status, network_id, pod_name, parent_network_id,parent_entity_type
     )
     SELECT 
         site_id, site_name, on_air_date, removed_date, tx_type, tx_technology, tx_segment, tx_ring,
@@ -225,7 +225,7 @@ BEGIN
         ring, maximum_cost, project_category, priority, no_of_cores, fiber_link_type, "comment", plan_cost,
         fiber_distance, fiber_link_code, port_type, destination_site_id, destination_port_type, destination_no_of_cores,
         project_id_dialog, parent_system_id, sequence_id, vendor_id, type, brand, ownership_type, bom_sub_category, item_code, model, construction, activation, accessibility,
-        status, message, o_p_system_id, o_p_network_id, o_p_entity_type, o_sequence_id
+        status, network_id, network_id,  parent_network_id, parent_entity_type
     FROM temp_pod_details;
 	
 	SELECT COUNT(*) INTO inserted_count FROM temp_pod_details;
