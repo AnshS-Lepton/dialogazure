@@ -24402,12 +24402,7 @@ var Main = function () {
                 }, 
                 
             true, true, true);
-            
-
-            //popup.LoadModalDialog('CHILD', 'Report/AwardSiteToSelectedVendor', {
-            //    eType: '', userId: user_id, vendorCost: vendorCost,
-            //}, MultilingualKey.SI_OSP_GBL_NET_RPT_420, 'modal-xl');
-            
+           
         }
     }
     this.showhideChildMenu = function (element, otherElements) {
