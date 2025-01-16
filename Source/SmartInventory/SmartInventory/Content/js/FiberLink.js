@@ -989,7 +989,7 @@
 
     this.SaveFiberLink = function (objFiberLink) {
         debugger;
-        if (objFiberLink.pageMsg.status != "OK" || $('#hdnCheckforCLP').val() != '') {
+        if (objFiberLink.pageMsg.status != "OK" || ($('#hdnCheckforCLP').val()  !== undefined && $('#hdnCheckforCLP').val() != '')) {
             $('#txtfiberlink').val(objFiberLink.link_id);
             $('#hdnCheckforCLP').val('');
             alert(objFiberLink.pageMsg.message);
@@ -999,7 +999,7 @@
             if (objFiberLink.CreateFL == 0) {
                 alert(objFiberLink.pageMsg.message);
             }
-            ajaxReq('FiberLink/AddFiberLink', { system_id: 0 }, false, function (resp) {
+            ajaxReq('FiberLink/AddFiberLink', { system_id: 0 }, true, function (resp) {
                 $(app.DE.CreateFiberLink).html(resp);
             }, false, true);
             $(app.DE.frmViewLink).submit();
