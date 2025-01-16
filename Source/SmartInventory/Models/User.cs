@@ -49,7 +49,7 @@ namespace Models
         public string application_access { get; set; }
         [NotMapped]
         public string reporting_manager { get; set; }
-        public string vendorCost { get; set; }
+        public double vendorcost { get; set; }
     }
     public class userName
     {
