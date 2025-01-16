@@ -13016,5 +13016,235 @@ namespace SmartInventory.Controllers
             }
         }
         #endregion
+
+        #region Site Awarding process 
+        public ActionResult SiteAwarding(ViewUserModel objViewUser, int page = 0, string sort = "", string sortdir = "", string refrenceData = "")
+        {
+            try
+            {
+
+                objViewUser = GetVendorList(objViewUser, page, sort, sortdir, refrenceData);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("SiteAwarding()", "Report", ex);
+                throw ex;
+            }
+
+            return PartialView("_SiteAwarding", objViewUser);
+        }
+
+        private ViewUserModel GetVendorList(ViewUserModel objViewUser, int page = 0, string sort = "", string sortdir = "", string refrenceData = "")
+        {
+            try
+            {
+
+                if (refrenceData != "")
+                {
+                    Session["refrenceData"] = refrenceData;
+                }
+                var objLgnUsrDtl = (User)Session["userDetail"];
+                string SearchVar = "";
+
+                if (sort != "" || page != 0)
+                {
+                    objViewUser.objGridAttributes = (CommonGridAttributes)Session["GridAttributes"];
+                }
+
+
+                objViewUser.lstSearchBy = GetVendorSearchByColumns();
+                objViewUser.objGridAttributes.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
+                objViewUser.objGridAttributes.currentPage = page == 0 ? 1 : page;
+                objViewUser.objGridAttributes.sort = sort;
+                objViewUser.objGridAttributes.orderBy = sortdir;
+
+
+                if ((objViewUser.objGridAttributes.searchBy == "name" || objViewUser.objGridAttributes.searchBy == "user_email")
+                    && !string.IsNullOrEmpty(objViewUser.objGridAttributes.searchText))
+                {
+                    SearchVar = objViewUser.objGridAttributes.searchText;
+                    objViewUser.objGridAttributes.searchText = "";
+                    objViewUser.objGridAttributes.currentPage = 0;
+
+                }
+
+                var user = new BLUser().GetVendorList(objViewUser.objGridAttributes, objLgnUsrDtl.role_id, objLgnUsrDtl.user_id);
+
+                if (user.Count > 0)
+                {
+                    if (SearchVar != "" && objViewUser.objGridAttributes.searchBy == "name")
+                    {
+                        user = user.Where(c => MiscHelper.Decrypt(c.name).ToLower().Contains(SearchVar.ToLower())).ToList();
+                        objViewUser.objGridAttributes.pageSize = 1000;
+                    }
+                    else if (SearchVar != "" && objViewUser.objGridAttributes.searchBy == "user_email")
+                    {
+                        user = user.Where(c => MiscHelper.Decrypt(c.user_email).ToLower().Contains(SearchVar.ToLower())).ToList();
+                        objViewUser.objGridAttributes.pageSize = 1000;
+                    }
+
+
+
+                    foreach (var item in user)
+                    {
+                        item.user_email = MiscHelper.Decrypt(item.user_email);
+                        item.mobile_number = MiscHelper.Decrypt(item.mobile_number);
+                        item.name = MiscHelper.Decrypt(item.name);
+                    }
+                    objViewUser.lstUsers = user;
+                }
+
+
+                objViewUser.loginId_UserId = objLgnUsrDtl.is_admin_rights_enabled ? objLgnUsrDtl.user_id : 0;
+                //  objViewUser.objGridAttributes.totalRecord = objViewUser.lstUsers != null && objViewUser.lstUsers.Count > 0 ?  objViewUser.lstUsers[0].totalRecords : 0;
+                objViewUser.objGridAttributes.totalRecord = objViewUser.lstUsers != null && objViewUser.lstUsers.Count > 0 ? SearchVar != "" ? objViewUser.lstUsers.Count : objViewUser.lstUsers[0].totalRecords : 0;
+                Session["GridAttributes"] = objViewUser.objGridAttributes;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("GetVendorList()", "Report", ex);
+                throw ex;
+            }
+
+            return objViewUser;
+        }
+        public List<KeyValueDropDown> GetVendorSearchByColumns()
+        {
+            List<KeyValueDropDown> lstSearchBy = new List<KeyValueDropDown>();
+            lstSearchBy.Add(new KeyValueDropDown { key = "User Name", value = "user_name" });
+            lstSearchBy.Add(new KeyValueDropDown { key = "Name", value = "name" });
+            lstSearchBy.Add(new KeyValueDropDown { key = "Email", value = "user_email" });
+            return lstSearchBy.OrderBy(m => m.key).ToList();
+        }
+
+        public ActionResult AwardSiteToSelectedVendor(int userId, double vendorCost = 0)
+        {
+            JsonResponse<string> objBom = new JsonResponse<string>();
+            try
+            {
+                string refData = Session["refrenceData"].ToString();
+                string[] data = refData.Split(',');
+                int refrenceId = Convert.ToInt32(data[0]);
+                int region_id = Convert.ToInt32(data[1]);
+                int province_id = Convert.ToInt32(data[2]);
+                var user = new BLUser().AwardSiteToSelectedVendor(refrenceId, userId, vendorCost);
+                if (user.Count > 0)
+                {
+                    #region Network ticket
+                    NetworkTicket objTicketMaster = new NetworkTicket();
+                    objTicketMaster.assigned_to = userId;
+                    objTicketMaster.reference_type = "GIS";
+                    objTicketMaster.region_id = region_id;
+                    objTicketMaster.province_id = province_id;
+                    objTicketMaster.target_date = System.DateTime.Now.AddDays(30);
+                    objTicketMaster.ticket_status_id = 5;// InProgress
+                    objTicketMaster.for_network_type = "P";
+                    objTicketMaster.ticket_type_id = 7;//Construction
+                    objTicketMaster.name = "Award Site";// default name
+                    objTicketMaster.pageMsg.message = new BLNetworkTicket().SaveNetworkTicket(objTicketMaster, Convert.ToInt32(Session["user_id"]));
+                    // always retunrs "Save" ;
+                    #endregion
+
+                    Session["refrenceData"] = null;
+                    objBom.status = ResponseStatus.OK.ToString();
+                    objBom.message = "Site awarded successfully!";
+
+                }
+                else
+                {
+                    objBom.status = ResponseStatus.FAILED.ToString();
+                    objBom.message = "Something went wrong!";
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                objBom.status = ResponseStatus.FAILED.ToString();
+                objBom.message = "An error occurred while processing your request.";
+                ErrorLogHelper.WriteErrorLog("AwardSiteToSelectedVendor()", "Report", ex);
+                throw ex;
+            }
+
+            return Json(objBom, JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        public void DownloadVendorDetails()
+        {
+
+            var objLgnUsrDtl = (User)Session["userDetail"];
+            CommonGridAttributes objViewFilter = (CommonGridAttributes)Session["GridAttributes"];
+            List<UserDetail> lstViewUserDetails = new List<UserDetail>();
+            objViewFilter.currentPage = 0;
+            objViewFilter.pageSize = 0;
+            lstViewUserDetails = new BLUser().GetVendorList(objViewFilter, objLgnUsrDtl.role_id, objLgnUsrDtl.user_id);
+
+            DataTable dtReport = new DataTable();
+            dtReport = MiscHelper.ListToDataTable<UserDetail>(lstViewUserDetails);
+
+
+            for (int i = 0; i < dtReport.Rows.Count; i++)
+            {
+                dtReport.Rows[i]["user_email"] = MiscHelper.Decrypt(dtReport.Rows[i]["user_email"].ToString());
+                dtReport.Rows[i]["mobile_number"] = MiscHelper.Decrypt(dtReport.Rows[i]["mobile_number"].ToString());
+                dtReport.Rows[i]["name"] = MiscHelper.Decrypt(dtReport.Rows[i]["name"].ToString());
+            }
+            dtReport.Columns.Remove("USER_ID");
+            dtReport.Columns.Remove("PASSWORD");
+            dtReport.Columns.Remove("ISACTIVE");
+            dtReport.Columns.Remove("MANAGER_ID");
+            dtReport.Columns.Remove("ROLE_ID");
+            dtReport.Columns.Remove("MODULE_ID");
+            dtReport.Columns.Remove("USER_IMG");
+            dtReport.Columns.Remove("TEMPLATE_ID");
+            dtReport.Columns.Remove("GROUP_ID");
+            dtReport.Columns.Remove("IS_DELETED");
+            dtReport.Columns.Remove("REMARKS");
+            dtReport.Columns.Remove("CREATED_BY");
+            dtReport.Columns.Remove("TOTALRECORDS");
+            dtReport.Columns.Remove("MODIFIED_BY");
+            dtReport.Columns.Remove("IS_ACTIVE");
+            dtReport.Columns.Remove("CREATED_ON");
+            dtReport.Columns.Remove("MODIFIED_ON");
+            dtReport.Columns.Remove("HISTORY_ID");
+            dtReport.Columns.Remove("REPORTING_MANAGER");
+            dtReport.Columns.Remove("MODIFIED_BY_TEXT");
+            dtReport.Columns.Remove("CREATED_BY_TEXT");
+            dtReport.Columns.Remove("APPLICATION_ACCESS");
+            dtReport.Columns.Remove("role_name");
+            dtReport.Columns.Remove("user_name");
+            dtReport.Columns.Remove("user_type");
+
+            dtReport.Columns["s_no"].SetOrdinal(0);
+            dtReport.Columns["name"].SetOrdinal(1);
+            dtReport.Columns["mobile_number"].SetOrdinal(2);
+            dtReport.Columns["user_email"].SetOrdinal(3);
+
+            dtReport.Columns["name"].ColumnName = "Name";
+            dtReport.Columns["user_email"].ColumnName = "Email";
+            dtReport.Columns["mobile_number"].ColumnName = "Mobile No.";
+            var filename = "VendorDetails";
+            ExportVendorList(dtReport, "Export_" + filename + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));
+
+        }
+        private void ExportVendorList(DataTable dtReport, string fileName)
+        {
+            using (var exportData = new MemoryStream())
+            {
+                Response.Clear();
+                if (dtReport != null && dtReport.Rows.Count > 0)
+                {
+                    if (string.IsNullOrEmpty(dtReport.TableName))
+                        dtReport.TableName = fileName;
+                    IWorkbook workbook = NPOIExcelHelper.DataTableToExcel("xlsx", dtReport);
+                    workbook.Write(exportData);
+                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", fileName + ".xlsx"));
+                    Response.BinaryWrite(exportData.ToArray());
+                    Response.End();
+                }
+            }
+        }
+        #endregion
     }
 }

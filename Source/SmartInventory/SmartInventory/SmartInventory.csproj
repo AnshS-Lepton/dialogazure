@@ -1626,6 +1626,7 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\14-01-2025_#3221.sql" />
     <Content Include="MigrationScripts\01-07-2024.sql" />
     <Content Include="MigrationScripts\12-27-2024_dailog.sql" />
     <Content Include="MigrationScripts\15-11-2024 rename odf - .sql" />
@@ -2406,6 +2407,7 @@
     <Content Include="Views\Library\_SiteDtls.cshtml" />
     <Content Include="Views\Library\_GetcorePlanLogic.cshtml" />
     <Content Include="Views\Report\_ExportSiteReport.cshtml" />
+    <Content Include="Views\Report\_SiteAwarding.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

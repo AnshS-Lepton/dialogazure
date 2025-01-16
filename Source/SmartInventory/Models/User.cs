@@ -49,6 +49,7 @@ namespace Models
         public string application_access { get; set; }
         [NotMapped]
         public string reporting_manager { get; set; }
+        public string vendorCost { get; set; }
     }
     public class userName
     {
@@ -245,6 +246,8 @@ namespace Models
         
         [NotMapped]
         public List<KeyValueDropDown> lstFEtool { get; set; }
+        // added for the vendor type user used in award site process
+        public double? vendorcost { get; set; }
 
     }
 

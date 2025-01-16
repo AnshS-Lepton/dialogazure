@@ -30070,10 +30070,24 @@ namespace Resources {
                }
             }
             
-        /// <summary>Only ${maxFileCountLimit} files are allowed to upload!</summary>
+        /// <summary>Only maxFileCountLimit files are allowed to upload!</summary>
         public static string SI_OSP_GBL_NET_GBL_289 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_GBL_289", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Award a site to a vendor</summary>
+        public static string SI_OSP_GBL_GBL_RPT_002 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_GBL_RPT_002", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Vendor Report</summary>
+        public static string SI_OSP_GBL_NET_RPT_420 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_420", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
 
