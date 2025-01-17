@@ -942,6 +942,10 @@ namespace SmartInventory.Controllers
         {
             fiberLinkAssociation objfiberLinkAssociation = new fiberLinkAssociation();
             objfiberLinkAssociation = new BLFiberLink().getAssociatedLinkId(cable_id, fiber_no);
+            var lstPrefixType = new BLMisc().GetDropDownList("", DropDownType.FiberLinkPrefix.ToString());
+            var prefixList = lstPrefixType.Select(prefix => prefix.dropdown_value).ToList();
+            ViewBag.LinkPrefixes = string.Join(", ", prefixList);
+
             return PartialView("_AssociateLink", objfiberLinkAssociation);
         }
         public string getFirstErrorFromModelState()

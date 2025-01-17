@@ -50,6 +50,10 @@
 @Html.HiddenFor(x => x.link_system_id, new { id = "hdnModelLinkSystemId" })
 @Html.HiddenFor(x => x.cable_id, new { id = "hdnCableId" })
 @Html.HiddenFor(x => x.fiber_number, new { id = "hdnFiberNumber" })
+@{
+    string linkPrefixes = ViewBag.LinkPrefixes as string;
+}
+@Html.Hidden("hdnLinkPrefixes", linkPrefixes)
 
 <!DOCTYPE html>
 <div class="modal-header">
