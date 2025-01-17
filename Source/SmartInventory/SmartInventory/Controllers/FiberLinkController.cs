@@ -991,9 +991,17 @@ namespace SmartInventory.Controllers
         public PartialViewResult CreateFiberLink(int system_id = 0, string link_id = "")
         {
             FiberLink objFiberLink = new FiberLink();
+
             objFiberLink.link_id = link_id;
             objFiberLink.CreateFL = 1;
             BindFiberLinkDropDown(objFiberLink);
+            var prefixList = objFiberLink.lstPrefixType.Select(prefix => prefix.dropdown_value).ToList();
+
+            // Use LINQ to find the matched prefix
+            string matchedPrefix = prefixList.FirstOrDefault(prefix => link_id.StartsWith(prefix));
+            objFiberLink.FiberLinkPrefix.link_prefix = matchedPrefix;
+            objFiberLink.Lst_Link_Prefix = string.Join(",", prefixList);
+
             return PartialView("_CreateFiberLink", objFiberLink);
         }
         public void ExportFiberLinkInPDF()

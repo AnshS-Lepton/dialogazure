@@ -171,7 +171,9 @@
     else
     {
         <script>
-            var fiberLink = new FiberLink();
+            if (typeof fiberLink === 'undefined' || fiberLink === null) {
+                var fiberLink = new FiberLink();
+            }
             $(document).ready(function () {
                 fiberLink.InitApp();
             });

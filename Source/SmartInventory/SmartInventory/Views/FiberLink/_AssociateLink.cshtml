@@ -1,7 +1,7 @@
 ﻿@model Models.fiberLinkAssociation
- 
+
 <style>
-    .ui-menu-item { 
+    .ui-menu-item {
         margin: 0;
         padding: 6px 0px 6px 20px;
         list-style: none;
@@ -22,9 +22,9 @@
         background-color: #bab3b3 !important;
     }
 
-    .TickCrossicon { 
+    .TickCrossicon {
         margin-left: 264px;
-    } 
+    }
 
     .crossIcon {
         display: none;
@@ -34,21 +34,22 @@
         display: none;
     }
 
-    .tickCrossImg { 
+    .tickCrossImg {
         width: 17px;
         cursor: pointer;
-        margin-top: -22px; 
+        margin-top: -22px;
         margin-right: 27px;
         margin-left: 265px;
     }
-    .progressbarShow{
-        display:none;
+
+    .progressbarShow {
+        display: none;
     }
 </style>
 <input type="hidden" value="0" id="hdnLinkSystemId" />
-@Html.HiddenFor(x=>x.link_system_id,new { id= "hdnModelLinkSystemId" })
+@Html.HiddenFor(x => x.link_system_id, new { id = "hdnModelLinkSystemId" })
 @Html.HiddenFor(x => x.cable_id, new { id = "hdnCableId" })
-@Html.HiddenFor(x=>x.fiber_number,new { id = "hdnFiberNumber" })
+@Html.HiddenFor(x => x.fiber_number, new { id = "hdnFiberNumber" })
 
 <!DOCTYPE html>
 <div class="modal-header">
@@ -58,7 +59,7 @@
 <div class="row padRow">
     <div class="form-group">
         <div>
-            <input type="text" name="LinkId" class="form-control ui-autocomplete-input" id="txtFiberLinkId" maxlength="100" style="width: 86%;margin-top: 12px;margin-left: 22px;"  value="@Model.link_id" />
+            <input type="text" name="LinkId" class="form-control ui-autocomplete-input" id="txtFiberLinkId" maxlength="100" style="width: 86%;margin-top: 12px;margin-left: 22px;" value="@Model.link_id" />
         </div>
         <div class="TickCrossicons" style="position: absolute">
             <img src="~/Content/images/cross.gif" class="tickCrossImg crossIcon @(Model.link_system_id==0?"crossIcon":"")" id="IconCross" />
@@ -74,7 +75,7 @@
     <div class="col-md-12">
         <p style="background-color:#bfedba;color:#0044cc;padding:4px;white-space: initial;font-size: 12px;margin-left: 15px;margin-right: 13px;">
             @*<b style="color:#0044cc;">Note:</b>*@
-                @*This Link ID will be associate with the<br /> corresponding connected fiber Number.*@
+            @*This Link ID will be associate with the<br /> corresponding connected fiber Number.*@
             @Html.Raw(Resources.Resources.SI_OSP_GBL_NET_FRM_427)
         </p>
     </div>
@@ -88,7 +89,9 @@
 </div>
 <div class="clearfix"></div>
 <script type="text/javascript">
-    var fiberLink = new FiberLink();
+    if (typeof fiberLink === 'undefined' || fiberLink === null) {
+        var fiberLink = new FiberLink();
+    }
     $(document).ready(function () {
         fiberLink.InitApp();
         @*$('.chosen-select').chosen({ width: '164%' });
@@ -98,14 +101,14 @@
         }
         $('#hdnLinkSystemId').val(@Model.link_system_id);*@
     });
-    @*function updateLinkId() { 
+    @*function updateLinkId() {
         var _linkId = $('#txtFiberLinkId').val();
         var _fiberNo = '@Model.fiber_number';
         var _cableId = '@Model.cable_id';
-         
+
             validateFiberlinkId(_linkId, _fiberNo, _cableId);
-         
-        var _linkSystemId = $('#hdnLinkSystemId').val(); 
+
+        var _linkSystemId = $('#hdnLinkSystemId').val();
     }
 
     $("#btnclear").on("click", function () {
@@ -124,7 +127,7 @@
                 if (resp.objfiberLink != null) {
                     $('#hdnLinkSystemId').val(resp.objfiberLink.system_id);
                     $('.crossIcon').css('display', 'none');
-                    $('.tickIcon').css('display', 'block'); 
+                    $('.tickIcon').css('display', 'block');
                     $('#txtFiberLinkId').css('border-color', '');
                     associateFiberLink(resp.objfiberLink.system_id, _linkId, _fiberNo, _cableId, 'A');
                 }
@@ -139,11 +142,11 @@
                     }
                 }
 
-            }); 
+            });
     }
 
     function associateFiberLink(_linkSystemId, _linkId, _fiberNo, _cableId, _action) {
-         
+
         var gridFiberNumber = _fiberNo;
         var cableId = _cableId;
         var linkSystemId = 0;
@@ -154,9 +157,9 @@
 
         ajaxReq('FiberLink/AssociateFiberLinkWithCable', { link_system_id: _linkSystemId, cable_id: _cableId, fiber_no: _fiberNo, action: _action }, true, function (resp) {
             if (resp.status == 'OK') {
-                 
+
                 $('.crossIcon').css('display', 'none');
-                $('.tickIcon').css('display', 'none'); 
+                $('.tickIcon').css('display', 'none');
                 $('#dvAssociateLink').hide();
                 alert("Link Associated Successfully!");
                 if (linkSystemId > 0 && $('#txtFiberLinkId').val().trim().length > 0) {
@@ -166,19 +169,19 @@
                 else {
 
                     $('#lblGrdLinkId_' + gridFiberNumber).html('Enter Link Id');
-                } 
+                }
             }
             else {
 
                 $('.crossIcon').css('display', 'block');
-                $('.tickIcon').css('display', 'none'); 
+                $('.tickIcon').css('display', 'none');
             }
 
         });
     }
     function closepopup() {
         $('#dvAssociateLink').hide();
-    }*@  
+    }*@
 </script>
 
 

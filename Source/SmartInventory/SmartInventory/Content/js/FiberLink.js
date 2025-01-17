@@ -1003,6 +1003,7 @@
                 $(app.DE.CreateFiberLink).html(resp);
             }, false, true);
             $(app.DE.frmViewLink).submit();
+            $("#closeChildPopup").click();
         }
     }
 
@@ -1033,7 +1034,9 @@
     this.btncreatelink = function () {
         debugger;
         app.CableFiberButton = true;
-        var _linkId = $(app.DE.txtFiberLinkId).val();//$('#txtLinkId').value();
+        // Get the link ID and convert it to uppercase
+        var _linkId = $(app.DE.txtFiberLinkId).val().toUpperCase();
+
         if (_linkId == "") {
             $(app.DE.txtFiberLinkId).css('border-color', 'red');
         }
