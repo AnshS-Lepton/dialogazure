@@ -244,7 +244,16 @@ namespace BusinessLogics
         {
             return new DAUser().GetUserList(objGridAttributes, role_id, user_id);
         }
-        
+        public List<UserDetail> GetVendorList(CommonGridAttributes objGridAttributes, int role_id, int user_id)
+        {
+            return new DAUser().GetVendorList(objGridAttributes, role_id, user_id);
+        }
+
+        public List<userName> AwardSiteToSelectedVendor(int reference_id, int user_id,double vendorCost)
+        {
+            return new DAUser().AwardSiteToSelectedVendor(reference_id, user_id, vendorCost);
+        }
+
         public List<User> GetUsersListByMGRIds(List<int> mgrIds)
         {
             return new DAUser().GetUsersListByMGRIds(mgrIds);

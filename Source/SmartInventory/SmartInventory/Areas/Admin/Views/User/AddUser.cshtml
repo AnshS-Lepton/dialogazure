@@ -263,22 +263,22 @@
                                 </div>
                                 @if (string.IsNullOrEmpty(ApplicationSettings.ADFSEndPoint))
                                 {
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label class="control-label">
-                                                    Password<i class="clsMandatory">*</i>:
-                                                </label>
-                                            </div>
-                                            <div class="col-md-7">
-                                                <div class="password">
-                                                    @*@Html.ValidationMessageFor(model => model.password)*@
-                                                    @Html.TextBoxFor(model => model.password, new { @class = "form-control", @minlength = "8", @maxlength = "20", @placeholder = "Enter Password", @title = "1 lower and 1 upper case letter. 1 number and 1 special character. Minimum 8 character long!" })
-                                                    <img style="width:21px;" class="GifImg" id="ImgPwd" />
-                                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Password<i class="clsMandatory">*</i>:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div class="password">
+                                                @*@Html.ValidationMessageFor(model => model.password)*@
+                                                @Html.TextBoxFor(model => model.password, new { @class = "form-control", @minlength = "8", @maxlength = "20", @placeholder = "Enter Password", @title = "1 lower and 1 upper case letter. 1 number and 1 special character. Minimum 8 character long!" })
+                                                <img style="width:21px;" class="GifImg" id="ImgPwd" />
                                             </div>
                                         </div>
                                     </div>
+                                </div>
                                 }
                                 <div class="form-group">
                                     <div class="row">
@@ -317,12 +317,12 @@
                                         <div class="col-md-7">
                                             @if (Model.is_multi_manager_allowed)
                                             {
-                                                @Html.DropDownListFor(m => m.manager_id, new SelectList(Model.lstRM.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @multiple = "multiple", @id = "ddl_UserReportingManager", @onchange = "onChangeRMId();", @required = true })
-                                                @*@Html.ValidationMessageFor(m => m.manager_id)*@
+                                            @Html.DropDownListFor(m => m.manager_id, new SelectList(Model.lstRM.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @multiple = "multiple", @id = "ddl_UserReportingManager", @onchange = "onChangeRMId();", @required = true })
+                                            @*@Html.ValidationMessageFor(m => m.manager_id)*@
                                             }
                                             else
                                             {
-                                                @Html.DropDownListFor(m => m.manager_id, new SelectList(Model.lstRM.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @id = "ddl_UserReportingManager", @onchange = "onChangeRMId();", @required = true })
+                                            @Html.DropDownListFor(m => m.manager_id, new SelectList(Model.lstRM.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12", @id = "ddl_UserReportingManager", @onchange = "onChangeRMId();", @required = true })
                                             }
                                             @Html.HiddenFor(m => m.multi_manager_ids)
                                             @Html.HiddenFor(m => m.is_multi_manager_allowed)
@@ -411,116 +411,128 @@ new SelectListItem{ Text="-Select-", Value = "" },
                                         </div>
                                     </div>
                                 </div>
+                                <div id="divVendorCost" class="form-group" style="display:none;">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                        Vendor Cost:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.vendorcost, new { @class = "form-control", @maxlength = "10", @onkeypress = "return allowNumberwithOneDotDecimal(event,this);", @placeholder = "Enter Cost" })
+                                        </div>
+                                    </div>
+                                </div>
                                 @if (ApplicationSettings.fetoolsenabled)
                                 {
-                                        <div id="divfetool" class="form-group">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <label class="control-label">
-                                                        FE Tools :
-                                                    </label>
-                                                </div>
-                                                <div class="col-md-7">
-                                                    @Html.DropDownListFor(m => m.user_id, new SelectList(Model.lstFEtool.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12 chosenfetool", @multiple = "", @onchange = "onChangeToolId();", @id = "ddl_fetool", @required = true })
-                                                    @Html.HiddenFor(m => m.multi_tool_ids)
-                                                </div>
-                                            </div>
+                                <div id="divfetool" class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                FE Tools :
+                                            </label>
                                         </div>
-                                    }
-
-
-                                    <div id="divpan" class="form-group" style="@(ispanprmvendorvisible? Html.Raw("display:block") : Html.Raw("display:none"))">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label class="control-label">
-                                                    PAN:
-                                                </label>
-                                            </div>
-                                            <div class="col-md-7">
-                                                @Html.TextBoxFor(model => model.pan, new { @class = "form-control uppercase", @maxlength = "10", @minlength = "10", @placeholder = "Enter PAN" })
-                                            </div>
+                                        <div class="col-md-7">
+                                            @Html.DropDownListFor(m => m.user_id, new SelectList(Model.lstFEtool.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), new { @class = "chosen-select col-sm-12 chosenfetool", @multiple = "", @onchange = "onChangeToolId();", @id = "ddl_fetool", @required = true })
+                                            @Html.HiddenFor(m => m.multi_tool_ids)
                                         </div>
                                     </div>
-                                    @if (prms_id != null)
-                                    {
-                                        <div id="divprmsid" class="form-group" style="@(ispanprmvendorvisible ? Html.Raw("display:block") : Html.Raw("display:none"))">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <label class="control-label">
-                                                        PRMS Id:
-                                                    </label>
-                                                </div>
-                                                @*<div class="col-md-7">
-                            @Html.TextBoxFor(model => model.prms_id, new { @class = "form-control ", style = "background-color:#e9ecef;", @readonly = "readonly" })
-                        </div>*@
-                                                <div class="col-md-7">
-                                                    @Html.TextBoxFor(model => model.prms_id,
-                                                 SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
-                                                 {
-                                                     @class = "form-control",
-                                                     @placeholder = "Enter PRMS ID",
-                                                 }, (prms_id != null) ? (prms_id.is_readonly == true) ? new { @readonly = "readonly" } : null : null))
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
-                                    <div id="divvendorid" class="form-group" style="@(ispanprmvendorvisible? Html.Raw("display:block") : Html.Raw("display:none"))">
-
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label class="control-label">
-                                                    Vendor Id:
-                                                </label>
-                                            </div>
-                                            <div class="col-md-7">
-                                                @Html.TextBoxFor(model => model.vendor_id, new { @class = "form-control", disabled = "disabled", @readonly = "readonly" })
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="margin-bottom:0px;">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label class="control-label">
-                                                    Is Admin Rights Allowed?
-                                                </label>
-                                            </div>
-                                            <div class="col-md-7">
-                                                @Html.CheckBoxFor(m => m.is_admin_rights_enabled, new { @class = "chk", id = "isadminrghts", @onclick = "isAdminChecked()" })
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="margin-bottom:0px;">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label class="control-label">
-                                                    Is Active?
-                                                </label>
-                                            </div>
-                                            <div class="col-md-7">
-                                                @Html.CheckBoxFor(m => m.is_active, new { @class = "chk" })
-                                                <button class="btn btn-primary Nextbtn">Next ></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style="display:none">
-                                        <div class="row">
-                                            <div class="col-md-4 form-group">
-                                                @Html.TextBoxFor(m => m.created_by, new { @class = "form-control", placeholder = "Created By" })
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @if (string.IsNullOrEmpty(ApplicationSettings.ADFSEndPoint))
-                                    {
-                                        <div class="row">
-                                            <div class="col-md-11">
-                                                <p style="background-color:#cce6ff;color:#0044cc;padding:4px;white-space: initial;font-size: 12px;">
-                                                    <b style="color:#0044cc;">Password Rules:</b>
-                                                    1 lower and 1 upper case letter.1 number and 1 special character (@@,#,$,%,&). Minimum length 8 characters.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    }
                                 </div>
+                                    }
+
+
+                                <div id="divpan" class="form-group" style="@(ispanprmvendorvisible? Html.Raw("display:block") : Html.Raw("display:none"))">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                PAN:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.pan, new { @class = "form-control uppercase", @maxlength = "10", @minlength = "10", @placeholder = "Enter PAN" })
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (prms_id != null)
+                                    {
+                                <div id="divprmsid" class="form-group" style="@(ispanprmvendorvisible ? Html.Raw("display:block") : Html.Raw("display:none"))">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                PRMS Id:
+                                            </label>
+                                        </div>
+                                        @*<div class="col-md-7">
+                    @Html.TextBoxFor(model => model.prms_id, new { @class = "form-control ", style = "background-color:#e9ecef;", @readonly = "readonly" })
+                </div>*@
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.prms_id,
+                                         SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                         {
+                                             @class = "form-control",
+                                             @placeholder = "Enter PRMS ID",
+                                         }, (prms_id != null) ? (prms_id.is_readonly == true) ? new { @readonly = "readonly" } : null : null))
+                                        </div>
+                                    </div>
+                                </div>
+                                    }
+                                <div id="divvendorid" class="form-group" style="@(ispanprmvendorvisible? Html.Raw("display:block") : Html.Raw("display:none"))">
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Vendor Id:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.TextBoxFor(model => model.vendor_id, new { @class = "form-control", disabled = "disabled", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Is Admin Rights Allowed?
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.CheckBoxFor(m => m.is_admin_rights_enabled, new { @class = "chk", id = "isadminrghts", @onclick = "isAdminChecked()" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="control-label">
+                                                Is Active?
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            @Html.CheckBoxFor(m => m.is_active, new { @class = "chk" })
+                                            <button class="btn btn-primary Nextbtn">Next ></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="display:none">
+                                    <div class="row">
+                                        <div class="col-md-4 form-group">
+                                            @Html.TextBoxFor(m => m.created_by, new { @class = "form-control", placeholder = "Created By" })
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (string.IsNullOrEmpty(ApplicationSettings.ADFSEndPoint))
+                                    {
+                                <div class="row">
+                                    <div class="col-md-11">
+                                        <p style="background-color:#cce6ff;color:#0044cc;padding:4px;white-space: initial;font-size: 12px;">
+                                            <b style="color:#0044cc;">Password Rules:</b>
+                                            1 lower and 1 upper case letter.1 number and 1 special character (@@,#,$,%,&). Minimum length 8 characters.
+                                        </p>
+                                    </div>
+                                </div>
+                                    }
+                            </div>
                             <div id="SubmitDiv" style="margin-top: 150px;min-height: 300px;width:100%;top:40%;text-align:center;position:relative;@(Model.IsSubmit == true ? "display: block;" : "display:none;")">
                                 <img src="@Url.Content("~/Areas/Admin/Content/images/check.png")" id="chkImg_workarea" style="height:32px;width:32px;margin:auto;@ViewBag.showSubmitDiv" />
                                 <div id="Success-Msg" style="color:green"><b>Success</b></div>
@@ -718,6 +730,24 @@ new SelectListItem{ Text="-Select-", Value = "" },
 
                 }
             });
+
+            $("#ddluser_type").change(function () {
+         if ($(this).val() === 'Vendor') {
+             $('#divVendorCost').show(); // Make the div visible
+         } else {
+             $('#divVendorCost').hide(); // Hide the div
+         }
+     });
+     function allowNumberwithOneDotDecimal(event, element) {
+         const charCode = (event.which) ? event.which : event.keyCode;
+         if (charCode !== 46 && (charCode < 48 || charCode > 57)) {
+             return false; // Only allow digits and one dot
+         }
+         if (charCode === 46 && element.value.includes('.')) {
+             return false; // Prevent multiple dots
+         }
+         return true;
+     }
 
         </script>
        
