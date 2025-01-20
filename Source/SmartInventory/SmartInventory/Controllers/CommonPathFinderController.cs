@@ -1,10 +1,9 @@
 ﻿using BusinessLogics;
+using Lepton.Utility;
 using Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using Utility;
 
 namespace SmartInventory.Controllers
 {
@@ -15,12 +14,26 @@ namespace SmartInventory.Controllers
         {
             return PartialView("_CommonPathFinder");
         }
-        public JsonResult getCableListByLinkIds(string linkIds)
+        public JsonResult GetCableListByLinkIds(string linkIds)
         {
-            var lst = new BLSite().getCablesByLinkIds(linkIds);
+            try
+            {
+                var lst = new BLSite().getCablesByLinkIds(linkIds);
 
-            return Json(new { status = "OK", data = lst });
+                //Construct the query string
+                string queryString = $"?linkIds={linkIds}";
+                string url = "api/FiberLink/GetFiberLinksByLinkIds" + queryString;
 
+                //Call the Api to get the Fiber Links
+                string fiberLinksData = WebAPIRequest.GetAPIRequest(url);
+
+                return Json(new { status = "OK", data = lst, fiberData = fiberLinksData });
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("GetCableListByLinkIds()", "CommonPathFinder", ex);
+                return Json(new { status = ResponseStatus.ERROR.ToString(), data = "", fiberData = "" });
+            }
         }
         public JsonResult validateLinkIds(string linkIds)
         {

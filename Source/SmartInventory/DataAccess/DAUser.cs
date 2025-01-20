@@ -583,7 +583,39 @@ namespace DataAccess
             }
             catch { throw; }
         }
-      
+        public List<UserDetail> GetVendorList(CommonGridAttributes objGridAttributes, int role_id, int user_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<UserDetail>("fn_get_vendor_details", new
+                {
+                    p_searchby = objGridAttributes.searchBy,
+                    p_searchtext = ((objGridAttributes.searchBy == "name" || objGridAttributes.searchBy == "user_email") && (!string.IsNullOrEmpty(objGridAttributes.searchText))) ? MiscHelper.Encrypt(objGridAttributes.searchText) : objGridAttributes.searchText,
+                    is_active = objGridAttributes.is_active,
+                    P_PAGENO = objGridAttributes.currentPage,
+                    P_PAGERECORD = objGridAttributes.pageSize,
+                    P_SORTCOLNAME = objGridAttributes.sort,
+                    P_SORTTYPE = objGridAttributes.orderBy,
+                    p_application_access = objGridAttributes.application_access,
+                    p_role_id = role_id,
+                    p_user_id = user_id
+                }, true);
+            }
+            catch { throw; }
+        }
+        public List<userName> AwardSiteToSelectedVendor(int _reference_id, int _user_id, double _vendorCost)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<userName>("fn_update_selected_vendor_details", new
+                {
+                    reference_id = _reference_id,
+                    user_id = _user_id,
+                    vendorCost = _vendorCost
+                }, true);
+            }
+            catch { throw; }
+        }
 
         public List<User> GetUsersListByMGRIds(List<int> mgrIds)
         {

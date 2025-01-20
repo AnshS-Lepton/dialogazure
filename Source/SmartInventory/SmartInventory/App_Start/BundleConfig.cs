@@ -291,6 +291,12 @@ namespace SmartInventory
                         "~/Content/js/Site/site_entity.js"
                         ));
             #endregion
+
+            #region Common Path Finder JS
+            bundles.Add(new ScriptBundle("~/bundles/CommonPathFinder").Include(
+                        "~/Content/js/CommonPathFinder/common_path_finder.js"
+                        ));
+            #endregion
             BundleTable.EnableOptimizations = true;
         }
     }

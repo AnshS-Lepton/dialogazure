@@ -19388,9 +19388,10 @@ var Main = function () {
         $('#hdnLinkPrefix').val(obj.value);
         ajaxReq('Library/GetlinkPrefixbyPrefixType', { link_prefix: _link_prefix }, false, function (resp) {
             if (resp.data != null) {
-
                 $('#txtLinkId').val(resp.data);
-
+            }
+            else{
+                $('#txtLinkId').val('');
             }
 
         });
@@ -24359,6 +24360,56 @@ var Main = function () {
         ExportSiteReport: function (_fileType, _reportType) {
 
             window.location = appRoot + 'Report/DownloadSiteReport?fileType=' + _fileType + '&reportType=' + _reportType;
+        },
+        SiteAwarding: function (geom, modeType, radius, obj) {
+            if (obj) {
+                $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
+                $(obj).addClass('activeToolBar');
+            }
+            if (geom != '' && geom != null) {
+                ajaxReq('Report/ValidatePotentialArea', {
+                    geom: geom, geomType: modeType, buff_Radius: radius
+                }, true, function (resp) {
+                    if (resp.status == 'FAILED' || resp.status == 'ERROR') {
+                        alert(resp.message);
+                        return false;
+                    }
+                    else {
+                        popup.LoadModalDialog('CHILD', 'Report/SiteAwarding', {
+                            'objReportFilters.geom': geom, 'objReportFilters.geomType': modeType, 'objReportFilters.radius': radius, 'objReportFilters.layerName': 'SITE'
+                        }, MultilingualKey.SI_OSP_GBL_NET_RPT_420, 'modal-xl');
+                    }
+
+                }, true, true, true);
+            }
+            else {
+                popup.LoadModalDialog('CHILD', 'Report/SiteAwarding', {
+                    eType: '', refrenceData: modeType,
+                }, MultilingualKey.SI_OSP_GBL_NET_RPT_420, 'modal-xl');
+            }
+        },
+       
+        AwardSiteToSelectedVendor: function (user_id, vendorCost) {
+            
+            if (vendorCost == '' || vendorCost == null)
+                vendorCost =0;
+
+            ajaxReq('Report/AwardSiteToSelectedVendor', {
+                eType: '', userId: user_id, vendorCost: vendorCost,
+                }, true, function (resp) {
+                    if (resp.status == 'OK') {
+                        alert(resp.message);
+                        $(popup.DE.CloseChildPopup).trigger("click");
+                    }
+                    else {
+                        alert(resp.message);
+                        return false;
+                    }
+
+                }, 
+                
+            true, true, true);
+           
         }
     }
     this.showhideChildMenu = function (element, otherElements) {

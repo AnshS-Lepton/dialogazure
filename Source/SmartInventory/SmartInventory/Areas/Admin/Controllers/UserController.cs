@@ -65,7 +65,7 @@ namespace SmartInventory.Areas.Admin.Controllers
                 objUser.lstRM = GetReportingManagers(objUser.role_id);
                 objUser.lstWarehouseCode = new BLUser().BindWarehouseCode();
 
-                objUser.lstUserModule = new BLMisc().GetRoleModule(objUser.role_id);// new BLMisc().GetUserModuleMasterList();
+               objUser.lstUserModule = new BLMisc().GetRoleModule(objUser.role_id);// new BLMisc().GetUserModuleMasterList();
                 objUser.lstUserPermissionArea = new BLUserPermissionArea().GetUserPermissionArea(id);
                 objUser.lstUserModuleMapping = new BLUserModuleMapping().GetModuleMapping(id);
                 foreach (var item in objUser.lstUserModule)

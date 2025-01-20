@@ -317,11 +317,25 @@ namespace SmartInventory.Controllers
         }
         public string ValidateFiberData(DataRow dr, ref TempFiberLink objTempFiberLink)
         {
-
             objTempFiberLink.is_valid = true;
             Regex nonNumericRegex = new Regex(@"\.");
             try
             {
+                FiberLink objFiberLink = new FiberLink();
+                objFiberLink.lstPrefixType = new BLMisc().GetDropDownList("", DropDownType.FiberLinkPrefix.ToString());
+                string linkId = dr["link_id"].ToString();
+
+                var prefixList = objFiberLink.lstPrefixType.Select(prefix => prefix.dropdown_value).ToList();
+
+                bool containsPrefix = prefixList.Any(prefix => linkId.StartsWith(prefix));
+
+                if (linkId != "" && !string.IsNullOrWhiteSpace(linkId) && !containsPrefix)
+                {
+                    string commaSeparatedPrefixes = string.Join(", ", prefixList);
+                    objTempFiberLink.is_valid = false;
+                    objTempFiberLink.error_msg = "link_id Can Not Be without following link prefix! " + commaSeparatedPrefixes;
+                    return "";
+                }
                 if (objTempFiberLink.link_type == "Main Link".ToString())
                 {
 
@@ -330,17 +344,17 @@ namespace SmartInventory.Controllers
                         objTempFiberLink.is_valid = false;
                         objTempFiberLink.error_msg = "link_id Can Not Be Blank! ";
                     }
-                    if (string.IsNullOrWhiteSpace(dr["redundant_link_type"].ToString()))
+                    else if (string.IsNullOrWhiteSpace(dr["redundant_link_type"].ToString()))
                     {
                         objTempFiberLink.is_valid = false;
                         objTempFiberLink.error_msg = "redundant_link_type Can Not Be Blank! ";
                     }
-                    if (string.IsNullOrWhiteSpace(dr["redundant_link_id"].ToString()))
+                    else if (string.IsNullOrWhiteSpace(dr["redundant_link_id"].ToString()))
                     {
                         objTempFiberLink.is_valid = false;
                         objTempFiberLink.error_msg = "redundant_link_id Can Not Be Blank!";
                     }
-                    if (string.IsNullOrWhiteSpace(dr["link_name"].ToString()))
+                    else if (string.IsNullOrWhiteSpace(dr["link_name"].ToString()))
                     {
                         objTempFiberLink.is_valid = false;
                         objTempFiberLink.error_msg = "link_name Can Not Be Blank!";
@@ -353,18 +367,18 @@ namespace SmartInventory.Controllers
                         objTempFiberLink.is_valid = false;
                         objTempFiberLink.error_msg = "link_id Can Not Be Blank!";
                     }
-                    if (string.IsNullOrWhiteSpace(dr["main_link_type"].ToString()))
+                    else if (string.IsNullOrWhiteSpace(dr["main_link_type"].ToString()))
                     {
                         objTempFiberLink.is_valid = false;
                         objTempFiberLink.error_msg = "main_link_type Not Be Blank!";
                     }
-                    if (string.IsNullOrWhiteSpace(dr["main_link_id"].ToString()))
+                    else if (string.IsNullOrWhiteSpace(dr["main_link_id"].ToString()))
 
                     {
                         objTempFiberLink.is_valid = false;
                         objTempFiberLink.error_msg = "main_link_id Not Be Blank!";
                     }
-                    if (string.IsNullOrWhiteSpace(dr["link_name"].ToString()))
+                    else if (string.IsNullOrWhiteSpace(dr["link_name"].ToString()))
                     {
                         objTempFiberLink.is_valid = false;
                         objTempFiberLink.error_msg = "link_name Not Be Blank!";
@@ -372,7 +386,7 @@ namespace SmartInventory.Controllers
 
                 }
 
-                if ((dr["link_id"].ToString()) != "" || !string.IsNullOrWhiteSpace(dr["link_id"].ToString()))
+                if (objTempFiberLink.is_valid && dr["link_id"].ToString() != "")
                 {
                     string link_id = dr["link_id"].ToString();
                     var lstLinkId = new BLFiberLink().checkDuplicaketLinkId(link_id);
@@ -928,6 +942,10 @@ namespace SmartInventory.Controllers
         {
             fiberLinkAssociation objfiberLinkAssociation = new fiberLinkAssociation();
             objfiberLinkAssociation = new BLFiberLink().getAssociatedLinkId(cable_id, fiber_no);
+            var lstPrefixType = new BLMisc().GetDropDownList("", DropDownType.FiberLinkPrefix.ToString());
+            var prefixList = lstPrefixType.Select(prefix => prefix.dropdown_value).ToList();
+            ViewBag.LinkPrefixes = string.Join(", ", prefixList);
+
             return PartialView("_AssociateLink", objfiberLinkAssociation);
         }
         public string getFirstErrorFromModelState()
@@ -977,9 +995,17 @@ namespace SmartInventory.Controllers
         public PartialViewResult CreateFiberLink(int system_id = 0, string link_id = "")
         {
             FiberLink objFiberLink = new FiberLink();
+
             objFiberLink.link_id = link_id;
             objFiberLink.CreateFL = 1;
             BindFiberLinkDropDown(objFiberLink);
+            var prefixList = objFiberLink.lstPrefixType.Select(prefix => prefix.dropdown_value).ToList();
+
+            // Use LINQ to find the matched prefix
+            string matchedPrefix = prefixList.FirstOrDefault(prefix => link_id.StartsWith(prefix));
+            objFiberLink.FiberLinkPrefix.link_prefix = matchedPrefix;
+            objFiberLink.Lst_Link_Prefix = string.Join(",", prefixList);
+
             return PartialView("_CreateFiberLink", objFiberLink);
         }
         public void ExportFiberLinkInPDF()
