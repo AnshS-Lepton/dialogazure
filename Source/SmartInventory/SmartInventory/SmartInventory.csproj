@@ -1578,6 +1578,7 @@
     <Content Include="Content\images\warning.svg" />
     <Content Include="Content\js\chartist-bar-labels.js" />
     <Content Include="Content\js\chartist-plugin-legend.js" />
+    <Content Include="Content\js\CommonPathFinder\common_path_finder.js" />
     <Content Include="Content\js\Deckgl\unpkg.com_deck.gl%408.9.19_dist.min.js" />
     <Content Include="Content\js\Deckgl\unpkg.com_turf_turf6.5.0_turf.min.js" />
     <Content Include="Content\js\distanceWidget.js" />

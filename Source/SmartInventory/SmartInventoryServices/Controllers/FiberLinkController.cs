@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Web.Http;
-using System.Web.Script.Serialization;
+using Utility;
 
 namespace SmartInventoryServices.Controllers
 {
@@ -20,7 +20,7 @@ namespace SmartInventoryServices.Controllers
             objFiberLinkFilter.currentPage = page == 0 ? 1 : page;
             objFiberLinkFilter.orderBy = sort;
             objFiberLinkFilter.Searchtext = searchText;
-            
+
             List<Dictionary<string, string>> lstFiberLinks = new BLFiberLink().GetFiberLinks(user_id, objFiberLinkFilter);
 
             string[] arrIgnoreColumns = { "TOTALRECORDS", "S_NO" };
@@ -47,6 +47,23 @@ namespace SmartInventoryServices.Controllers
                 PageSize = objFiberLinkFilter.pageSize,
                 CurrentPage = objFiberLinkFilter.currentPage
             });
+        }
+        [HttpGet]
+        public IHttpActionResult GetFiberLinksByLinkIds(string linkIds)
+        {
+            try
+            {
+                List<string> FiberLinkDetails = new BLFiberLink().GetFiberLinksByLinkIds(linkIds);
+                return Json(new
+                {
+                    result = FiberLinkDetails.FirstOrDefault()
+                });
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("GetFiberLinksByLinkIds()", "FiberLink", ex);
+                return Json(new { status = ResponseStatus.ERROR.ToString(), result = "" });
+            }
         }
     }
 }

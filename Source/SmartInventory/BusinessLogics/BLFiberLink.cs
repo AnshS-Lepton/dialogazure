@@ -95,6 +95,10 @@ namespace BusinessLogics
         {
             return new DAFiberLink().GetFiberLinks(userId, objFiberLinkFilter);
         }
+        public List<string> GetFiberLinksByLinkIds(string linkids)
+        {
+            return new DAFiberLink().GetFiberLinksByLinkIds(linkids);
+        }
     }
     public class BLFiberLinkColumns
     {
