@@ -89,6 +89,8 @@ namespace Models
         [Column("link_prefix")]
         [JsonProperty("link_prefix")]
         public string Link_Prefix { get; set; }
+        [NotMapped]
+        public string Lst_Link_Prefix { get; set; }
         public FiberLink()
         {
             pageMsg = new PageMessage(); 

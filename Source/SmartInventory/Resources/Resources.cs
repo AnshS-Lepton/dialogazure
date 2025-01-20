@@ -30084,10 +30084,17 @@ namespace Resources {
                }
             }
             
-        /// <summary>Vendor Report</summary>
+        /// <summary>Vendor List</summary>
         public static string SI_OSP_GBL_NET_RPT_420 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_420", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>FiberLinkId link prefix is not correct. Available link prefixes:</summary>
+        public static string SI_OSP_GBL_NET_GBL_290 {
+               get {
+                   return resourceProvider.GetResource("SI_OSP_GBL_NET_GBL_290", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
 

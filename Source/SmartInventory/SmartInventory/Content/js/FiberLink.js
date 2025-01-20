@@ -73,6 +73,7 @@
         'txtredundantlinkid': '#txtredundantlinkid',
         '': '#',
         'btnExportPDFLinks': '#btnExportPDFLinks',
+        'hdnLinkPrefixes': '#hdnLinkPrefixes'
     }
     this.InitApp = function () {
         // app.setDateTimeCalendar_viewLink("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
@@ -380,7 +381,7 @@
             var rowAction = ' <a href="#" id="lnkdownloadLink' + index + '" style="padding:0;" class="default dropfiles"  onclick="fiberLink.FiberLinkDrp(' + index + ')">Download<i class="fa fa-chevron-down ml-03" onclick="fiberLink.FiberLinkDrp(' + index + ')"></i></a>';
             rowAction = rowAction + '<div class="dropbox" id="dropbox' + index + '"  style="margin-right:787px"> <span onclick="fiberLink.ExportFiberLinkDetail(' + Excel + ',' + systemId + ',' + index + ')"><b>Excel</b></span>'
                 + '<span  style="display:' + (fiber_link_status == "Free" ? "none" : "") + '" onclick="fiberLink.ExportFiberLinkIntoKML(' + Kml + ',' + systemId + ',' + index + ')"><b>Kml</b></span>  </div>';
-                //Fiber link Deletion disabled due to its occupation to another entity
+            //Fiber link Deletion disabled due to its occupation to another entity
             rowAction = rowAction + '<span title="' + (fiber_link_status == "Free" ? MultilingualKey.SI_GBL_GBL_GBL_GBL_002 : MultilingualKey.SI_OSP_GBL_NET_RPT_419) + '"><i class="cptr icon-Delete ml-05' + (fiber_link_status == "Free" ? "" : " dvdisabled") + '" onclick="fiberLink.deleteFiberLinkById(' + systemId + ')"></i></span>';
             rowAction = rowAction + '<i class="cptr icon-map-view ' + (fiber_link_status == "Free" ? "dvdisabled" : "") + '" id="iconShowlinkOnMapp" title="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '" style="padding-left: 7px " onclick="splicing.showFiberLinkOnMap(' + systemId + ')" ></i></a>';
             rowAction = rowAction + '<a href="#" data-value="' + systemId + '"  class="cptr fa  fa-edit" id="iconViewDetails" title="' + MultilingualKey.SI_GBL_GBL_GBL_GBL_003 + '" onclick="fiberLink.editFiberLinkById(' + systemId + ')" style="padding-left: 7px;"></a>';
@@ -989,7 +990,7 @@
 
     this.SaveFiberLink = function (objFiberLink) {
         debugger;
-        if (objFiberLink.pageMsg.status != "OK" || $('#hdnCheckforCLP').val() != '') {
+        if (objFiberLink.pageMsg.status != "OK" || ($('#hdnCheckforCLP').val() !== undefined && $('#hdnCheckforCLP').val() != '')) {
             $('#txtfiberlink').val(objFiberLink.link_id);
             $('#hdnCheckforCLP').val('');
             alert(objFiberLink.pageMsg.message);
@@ -999,10 +1000,11 @@
             if (objFiberLink.CreateFL == 0) {
                 alert(objFiberLink.pageMsg.message);
             }
-            ajaxReq('FiberLink/AddFiberLink', { system_id: 0 }, false, function (resp) {
+            ajaxReq('FiberLink/AddFiberLink', { system_id: 0 }, true, function (resp) {
                 $(app.DE.CreateFiberLink).html(resp);
             }, false, true);
             $(app.DE.frmViewLink).submit();
+            $("#closeChildPopup").click();
         }
     }
 
@@ -1033,9 +1035,21 @@
     this.btncreatelink = function () {
         debugger;
         app.CableFiberButton = true;
-        var _linkId = $(app.DE.txtFiberLinkId).val();//$('#txtLinkId').value();
+        var linkPrefixes = $(app.DE.hdnLinkPrefixes).val();
+        // Ensure the linkPrefixes is a string and split it into an array 
+        linkPrefixes = linkPrefixes ? linkPrefixes.split(', ') : [];
+
+        // Get the link ID and convert it to uppercase
+        var _linkId = $(app.DE.txtFiberLinkId).val().toUpperCase();
+
+        // Check if _linkId starts with any of the link prefixes 
+        var containsPrefix = linkPrefixes.some(prefix => _linkId.startsWith(prefix));
+
         if (_linkId == "") {
             $(app.DE.txtFiberLinkId).css('border-color', 'red');
+        }
+        else if (!containsPrefix) {
+            alert(MultilingualKey.SI_OSP_GBL_NET_GBL_290 + linkPrefixes);
         }
         else {
             popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: _linkId }, "Create Link", 'modal-xl');
