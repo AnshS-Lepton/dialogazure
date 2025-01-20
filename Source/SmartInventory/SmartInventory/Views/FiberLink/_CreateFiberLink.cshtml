@@ -16,6 +16,7 @@
     @Html.HiddenFor(m => m.system_id, new { @id = "hdnFiberLinkSystemId" })
     @Html.HiddenFor(m => m.CreateFL)
     @Html.HiddenFor(m => m.Link_Prefix, new { @id = "hdnLinkPrefix" })
+    @Html.HiddenFor(m => m.Lst_Link_Prefix, new { @id = "hdnLstLinkPrefix" })
     <div id="CreateFiberLink" class="tab-pane fade in active show">
         <div class="space-pad fiber--min-height">
             <fieldset class="the-fieldset">
@@ -403,7 +404,9 @@
     </div>
 }
 <script type="text/javascript">
-    var fiberLink = new FiberLink();
+    if (typeof fiberLink === 'undefined' || fiberLink === null) {
+        var fiberLink = new FiberLink();
+    }
     $(document).ready(function () {
         fiberLink.InitApp();
         callFormValidator("frmAddFiberLink");
