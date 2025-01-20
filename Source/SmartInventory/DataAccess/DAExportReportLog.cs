@@ -41,7 +41,7 @@ namespace DataAccess
             { throw ex; }
         }
 
-        public List<ExportReportLogInfo> GetExportExportLogList(CommonGridAttributes objGridAttributes, int user_id, string timeInterval)
+        public List<ExportReportLogInfo> GetExportExportLogList(CommonGridAttributes objGridAttributes, int user_id, string timeInterval, string log_type)
         {
             try
             {

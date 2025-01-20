@@ -57,9 +57,14 @@ namespace BusinessLogics
         {
             return new DAOSPSplicing().GetEquipmentPort(systemid, entity_type);
         }
+      
         public connectionInfoPath GetConnectionInfoPath(ConnectionInfoFilter objFilterAttributes)
         {
             return new DAOSPSplicing().GetConnectionInfoPath(objFilterAttributes);
+        }
+        public connectionInfoCable GetCablerouteInfo(ExportReportFilter objExportEntitiesReport)
+        {
+            return new DAOSPSplicing().GetCablerouteInfo(objExportEntitiesReport);
         }
         public SchematicView GetSchematicView(ConnectionInfoFilter objFilterAttributes, bool isUpstream, bool isConnectedPort)
         {

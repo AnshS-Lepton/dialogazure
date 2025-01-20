@@ -2410,6 +2410,7 @@
     <Content Include="Views\Library\_GetcorePlanLogic.cshtml" />
     <Content Include="Views\Report\_ExportSiteReport.cshtml" />
     <Content Include="Views\Report\_SiteAwarding.cshtml" />
+    <Content Include="Views\Report\_ExportFiberAllocationReport.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

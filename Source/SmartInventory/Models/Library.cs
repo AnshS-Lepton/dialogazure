@@ -2801,7 +2801,7 @@ namespace Models
         public List<layerDetail> lstLayers { get; set; }
         public List<KeyValueDropDown> lstLayerColumns { get; set; }
         public List<KeyValueDropDown> lstLayerDurationBasedColumns { get; set; }
-
+        public PageMessage pageMsg { get; set; }
         public ExportEntitiesReport()
         {
             lstLayers = new List<layerDetail>();
