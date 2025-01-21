@@ -14,9 +14,9 @@ namespace BusinessLogics
         {
             return new DAExportReportLog().SaveExportReportLog(exportReportLog);
         }
-        public List<ExportReportLogInfo> GetExportExportLogList(CommonGridAttributes objGridAttributes, int user_id, string timeInterval)
+        public List<ExportReportLogInfo> GetExportExportLogList(CommonGridAttributes objGridAttributes, int user_id, string timeInterval, string log_type)
         {
-            return new DAExportReportLog().GetExportExportLogList(objGridAttributes, user_id, timeInterval);
+            return new DAExportReportLog().GetExportExportLogList(objGridAttributes, user_id, timeInterval,log_type);
         }
         public List<ExportReportLogInfo> GetAuditlogExportExportLogList(CommonGridAttributes objGridAttributes, int user_id, string timeInterval)
         {
