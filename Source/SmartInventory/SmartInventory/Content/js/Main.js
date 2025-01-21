@@ -13400,12 +13400,17 @@ var Main = function () {
 
             var $iconElement = $(this);
             if (!$iconElement.hasClass("dvdisabled") && !$iconElement.hasClass("roledisabled")) {
+                debugger;
                 var actionName = $iconElement.data("action")
                 //console.log("actionName::" + actionName.toUpperCase());
                 switch (actionName.toUpperCase()) {
 
                     case "DELETE":
                         app.dellandbaseEntityfromInfo(systemId, entityType, geomType);
+                        break;
+                    case "FIBERALLOCATIONREPORT":
+                        //;
+                        app.fiberLocationReport(systemId, entityType, networkId);
                         break;
                     case "EXPORT":
                         app.ExportLandbaseEntity(systemId, entityType);
@@ -15021,6 +15026,17 @@ var Main = function () {
         $('#rdoParallelCableLeft').prop('checked', false);
         $('#rdoParallelCableRight').prop('checked', false);
         $(obj).prop('checked', true);
+
+    }
+    this.fiberLocationReport = function (systemId, entityType, networkId) {
+        debugger;
+        //popup.LoadModalDialog('PARENT', 'Report/ExportFiberAllocationReport', {
+        //    'objReportFilters.geom': '', 'objReportFilters.geomType': '', 'objReportFilters.radius': 0, 'objReportFilters.layerName': 'FMS', 'objReportFilters.SearchbyColumnName': 'network_id', 'objReportFilters.SearchbyText': networkId
+        //}, "Fiber Allocation Report", 'modal-xl');
+
+        popup.LoadModalDialog(app.ChildModel, 'Report/ExportFiberAllocationReport', {
+            'objReportFilters.SearchbyColumnName': 'network_id', 'objReportFilters.SearchbyText': networkId
+        }, entityType + ' Splicing Report', 'modal-xl');
 
     }
     this.associateEntity = function (systemId, entityType, networkId) {
@@ -23570,6 +23586,34 @@ var Main = function () {
         ExportROWReport: function (_fileType, _reportType) {
 
             window.location = appRoot + 'Report/DownloadROWReport?fileType=' + _fileType + '&reportType=' + _reportType;
+        },
+        FiberAllocationReport: function (geom, modeType, radius, obj) {
+            ////;
+            if (obj) {
+                $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
+                $(obj).addClass('activeToolBar');
+
+            }
+            if (geom != '' && geom != null) {
+                ajaxReq('Report/ValidatePotentialArea', {
+                    geom: geom, geomType: modeType, buff_Radius: radius
+                }, true, function (resp) {
+                    if (resp.status == 'FAILED' || resp.status == 'ERROR') {
+                        alert(resp.message);
+                        return false;
+                    }
+                    else {
+                        popup.LoadModalDialog('PARENT', 'Report/ExportFiberAllocationReport', {
+                            'objReportFilters.geom': geom, 'objReportFilters.geomType': modeType, 'objReportFilters.radius': radius, 'objReportFilters.layerName': 'FMS'
+                        }, "FMS Splicing Report", 'modal-xl');
+                    }
+
+                }, true, true, true);
+            } else {
+                popup.LoadModalDialog('PARENT', 'Report/ExportFiberAllocationReport', {
+                    eType: ''
+                }, "FMS Splicing Report", 'modal-xl');
+            }
         },
         initiateDrawingsExportReport: function (obj, shapeFlag) {
             si.resetShapeTools();

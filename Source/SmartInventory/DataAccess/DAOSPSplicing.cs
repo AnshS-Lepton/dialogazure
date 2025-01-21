@@ -198,6 +198,41 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public connectionInfoCable GetCablerouteInfo(ExportReportFilter objExportEntitiesReport)
+        {
+            try
+            {
+
+                return repo.ExecuteProcedure<connectionInfoCable>("fn_get_fms_connection_report", new
+                {
+                    //p_region = reg,
+                    //p_province= pro,
+                    //p_layerColumns = scol,
+                    //p_txtSearchText = stext,
+                    //p_layerDurationBasedColumns = dbcol,
+                    //p_customedate = objExportEntitiesReport.objReportFilters.customDate.ToString(),
+                    //p_txtDateFrom = objExportEntitiesReport.objReportFilters.fromDate,
+                    //p_txtDateTo = objExportEntitiesReport.objReportFilters.toDate,
+                    p_networkstatues = objExportEntitiesReport.SelectedNetworkStatues,
+                    p_provinceids = objExportEntitiesReport.SelectedProvinceIds,
+                    p_regionids = objExportEntitiesReport.SelectedRegionIds,
+                    p_layer_name = objExportEntitiesReport.layerName,
+                    P_searchby = objExportEntitiesReport.SearchbyColumnName,
+                    p_searchbytext = objExportEntitiesReport.SearchbyText,
+                    p_fromdate = objExportEntitiesReport.fromDate,
+                    p_todate = objExportEntitiesReport.toDate,
+                    p_pageno = objExportEntitiesReport.currentPage,
+                    p_pagerecord = objExportEntitiesReport.pageSize,
+                    p_sortcolname = objExportEntitiesReport.sort,
+                    p_sorttype = objExportEntitiesReport.sortdir,
+                    p_geom = objExportEntitiesReport.geom,
+                    p_duration_based_column = objExportEntitiesReport.DurationBasedColumnName,
+                    p_radius = objExportEntitiesReport.radius,
+                    p_userid = objExportEntitiesReport.userId
+                }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
         public SchematicView GetSchematicView(ConnectionInfoFilter objFilterAttributes, bool isUpstream, bool isConnectedPort)
         {
             try
