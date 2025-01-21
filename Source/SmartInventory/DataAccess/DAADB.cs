@@ -513,7 +513,7 @@ namespace DataAccess
                         objBDBMaster.objPM = objPageValidate;
                         return objBDBMaster;
                     }
-                    var geomresp = new DAMisc().GetValidatePointGeometry(objBDB.system_id, objBDB.entityType, objBDB.latitude.ToString(), objBDB.longitude.ToString(), objBDB.region_id,objBDB.province_id);
+                    var geomresp = new DAMisc().GetValidatePointGeometry(objBDB.system_id, objBDBMaster.entityType, objBDB.latitude.ToString(), objBDB.longitude.ToString(), objBDB.region_id, objBDB.province_id);
                     if (geomresp.status != "OK")
                     {
                         objBDB.objPM = geomresp;

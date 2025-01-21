@@ -186,7 +186,7 @@
 
                             </div>
 
-                            <label class="control-label col-sm-2 SelectEntityToolTip" for="txtFaultEntity" title="@String.Format(Resources.Resources.SI_OSP_GBL_GBL_FRM_016, ApplicationSettings.SplitCableBuffer)">@Resources.Resources.SI_OSP_GBL_NET_GBL_211<i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2 SelectEntityToolTip" for="txtFaultEntity" title="@String.Format(Resources.Resources.SI_OSP_GBL_GBL_FRM_016, ApplicationSettings.SplitCableBuffer)">@Resources.Resources.SI_OSP_GBL_NET_GBL_211:</label>
                             <div class="col-sm-4" id="dvselectEntity">
                                 @*@Html.DropDownListFor(m => m.select_entity, new SelectList(Model.lstEntitiesNearbyFault.Select(x => new { Value = x.system_id.ToString(), Text = x.entity_type }), "Value", "Text"), "Select Entity", new { @id="ddlSelectEntity", @class = "chosen-select col-sm-12", @style = "padding:0;", @onchange = "si.ddlChangeRemoveCss(this.id, 'fault_entity_type');" })*@
                                 @*<select name="ddlSelectEntity" id="ddlSelectEntity" class="chosen-select form-control" onchange="si.ddlChangeRemoveCss(this.id, 'fault_entity_type');">*@
@@ -360,8 +360,12 @@
 </div>
 <script type="text/javascript">
 
-                $(document).ready(function () {
+    $(document).ready(function () {
+        debugger;
                     callFormValidator("frmAddFault");
+                     if ($('#ddlSelectEntity').val() == "0") {
+                        $('#ddlSelectEntity').css('border', '2px solid red');
+                    }
                     $('.chosen-select').chosen({ width: '100%' });
                     getMaskedNetworkId('@Model.network_id', '@Model.system_id', '@Model.networkIdType');
                     si.faultEntity.setDateTimeCalendar('txtFaultStatusUpdated', 'imgFaultDate', '1', false);
