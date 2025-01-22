@@ -1657,6 +1657,7 @@
     <Content Include="MigrationScripts\2024-05-07_unique_constraint_lbl_clm_stng.sql" />
     <Content Include="MigrationScripts\2024_02_27_vodafone_issues.sql" />
     <Content Include="MigrationScripts\2024_02_25_vodafone_issues.sql" />
+    <Content Include="MigrationScripts\21-01-2025_dailog.sql" />
     <Content Include="MigrationScripts\23-05-2024.sql" />
     <Content Include="MigrationScripts\23-07-2024.sql" />
     <Content Include="MigrationScripts\24-06-2024.sql" />

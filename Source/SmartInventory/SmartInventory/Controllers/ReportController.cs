@@ -2098,7 +2098,7 @@ namespace SmartInventory.Controllers
                             var headerCount = filteredData.GroupBy(m => m.path_id)
                            .OrderByDescending(group => group.Count()).FirstOrDefault().Count();
                             NPOIExcelHelper.AddHeader(workbook, sheet, headerCount, from);
-                            workbook = NPOIExcelHelper.DataTableToExcelCableRoute(filteredData, workbook, "xlsx", sheet);
+                            workbook = NPOIExcelHelper.DataTableToExcelCableRoute(filteredData, workbook, "xlsx", sheet,from);
                             i = i + 1;
                         }
 
@@ -12378,6 +12378,7 @@ namespace SmartInventory.Controllers
             ObjExportReportLogVM.ExportLog = new BLExportReportLog().GetExportExportLogList(ObjExportReportLogVM.objGridAttributes, usrDetail.user_id, timeInteval, log_type);
             ObjExportReportLogVM.objGridAttributes.totalRecord = ObjExportReportLogVM.ExportLog != null && ObjExportReportLogVM.ExportLog.Count > 0 ? ObjExportReportLogVM.ExportLog[0].totalRecords : 0;
             Session["EntityExportLog"] = ObjExportReportLogVM.objGridAttributes;
+            ObjExportReportLogVM.objGridAttributes.log_type = log_type == "" ? ObjExportReportLogVM.ExportLog.Select(m => m.log_type).FirstOrDefault() : log_type;
             return PartialView("_EntityExportReportLog", ObjExportReportLogVM);
         }
 

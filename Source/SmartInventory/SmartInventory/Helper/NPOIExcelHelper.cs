@@ -694,13 +694,12 @@ namespace SmartInventory.Helper
             return workbook;
         }
 
-        public static IWorkbook DataTableToExcelCableRoute(List<CablerouteInfo> filteredData, IWorkbook workbook, string extension, ISheet sheet)//arvind
+        public static IWorkbook DataTableToExcelCableRoute(List<CablerouteInfo> filteredData, IWorkbook workbook, string extension, ISheet sheet,string from )//arvind
         {
             var prvR = 0;
             var currR = 0;
             IRow currRow = null;
             IRow prvRow = null;
-            string from = string.Empty;
             //-----------------------------------loops through data--------------------------------------------------------------------------------        
             var cellstyle = getCellStyle(workbook);
             var pathZLocation = "";
@@ -718,7 +717,6 @@ namespace SmartInventory.Helper
                 {
                     CreateCustomCellFiberAllocation(prvRow, 0, from, cellstyle, true, false);
                     CreateCustomCellFiberAllocation(currRow, 0, "", cellstyle, true, false);
-                    CreateCustomCellFiberAllocation(prvRow, 0, path.source_network_id, cellstyle, true, false);
                     //---------------------------------via_network_id------------------------------------------------------//
                     sheet.AddMergedRegion(new CellRangeAddress(prvR, prvR, rowbl1, rowbl2));
                     CreateCustomCellFiberAllocation(prvRow, rowbl1, path.via_network_id, cellstyle, true, true);
