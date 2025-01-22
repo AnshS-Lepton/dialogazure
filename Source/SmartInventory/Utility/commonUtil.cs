@@ -803,6 +803,67 @@ namespace Utility
             }
         }
 
+        public static HttpStatusCode getHttpsStatus(string obj)
+        {
+            switch (obj.ToUpper())
+            {
+
+                case "ACCEPTED":
+                    return HttpStatusCode.Accepted;
+                case "AMBIGUOUS":
+                    return HttpStatusCode.Ambiguous;
+                case "BADGATEWAY":
+                    return HttpStatusCode.BadGateway;
+                case "BADREQUEST":
+                    return HttpStatusCode.BadRequest;
+                case "CONFLICT":
+                    return HttpStatusCode.Conflict;
+                case "CONTINUE":
+                    return HttpStatusCode.Continue;
+                case "CREATED":
+                    return HttpStatusCode.Created;
+                case "EXPECTATIONFAILED":
+                    return HttpStatusCode.ExpectationFailed;
+                case "FORBIDDEN":
+                    return HttpStatusCode.Forbidden;
+                case "FOUND":
+                    return HttpStatusCode.Found;
+                case "GATEWAYTIMEOUT":
+                    return HttpStatusCode.GatewayTimeout;
+                case "GONE":
+                    return HttpStatusCode.Gone;
+                case "HTTPVERSIONNOTSUPPORTED":
+                    return HttpStatusCode.HttpVersionNotSupported;
+                case "INTERNALSERVERERROR":
+                    return HttpStatusCode.InternalServerError;
+                case "LENGTHREQUIRED":
+                    return HttpStatusCode.LengthRequired;
+                case "METHODNOTALLOWED":
+                    return HttpStatusCode.MethodNotAllowed;
+                case "MOVED":
+                    return HttpStatusCode.Moved;
+                case "MOVEDPERMANENTLY":
+                    return HttpStatusCode.MovedPermanently;
+                case "MULTIPLECHOICES":
+                    return HttpStatusCode.MultipleChoices;
+                case "NOCONTENT":
+                    return HttpStatusCode.NoContent;
+                case "NONAUTHORITATIVEINFORMATION":
+                    return HttpStatusCode.NonAuthoritativeInformation;
+                case "NOTACCEPTABLE":
+                    return HttpStatusCode.NotAcceptable;
+                case "NOTFOUND":
+                    return HttpStatusCode.NotFound;
+                case "NOTIMPLEMENTED":
+                    return HttpStatusCode.NotImplemented;
+                case "NOTMODIFIED":
+                    return HttpStatusCode.NotModified;
+                case "OK":
+                    return HttpStatusCode.OK;
+                default:
+                    return HttpStatusCode.OK;
+            }
+        }
     }
 
 
@@ -830,4 +891,5 @@ namespace Utility
 
 
     }
+   
 }
