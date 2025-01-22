@@ -804,4 +804,10 @@ namespace Models
         public string reference_id { get; set; }
         public string ticketid { get; set; }
     }
+    public class DbMessageForDaFiFeasibility
+    {
+        public string status { get; set; }
+        public string message { get; set; }
+
+    }
 }

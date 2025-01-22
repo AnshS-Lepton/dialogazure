@@ -17,6 +17,8 @@ namespace IntegrationServices.Settings
         public static int Is_Clientip_Required = 1;
         public static string Map_Key = ConfigurationManager.AppSettings["MapKey"].Trim();
         public static string Map_Key_Backend = ConfigurationManager.AppSettings["MapKeyBackend"].Trim();
+        public static string feasibility_buffer_limit = ConfigurationManager.AppSettings["feasibilitybufferlimit"].Trim();
+        public static string fiber_core_limit = ConfigurationManager.AppSettings["fibercorelimit"].Trim();
         public static void InitializeGlobalSettings()
         {
             var globalSettings = new BLGlobalSetting().GetGlobalSettings("WEB");

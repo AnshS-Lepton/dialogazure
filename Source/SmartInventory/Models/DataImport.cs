@@ -185,4 +185,14 @@ namespace Models
         public string style_column_name { get; set; }
         public string expressions { get; set; }
     }
+    public class GeoJsonLineString
+    {
+        public string type { get; set; }
+        public List<List<double>> coordinates { get; set; }
+    }
+    public class GeoJsonMultiLineString
+    {
+        public string type { get; set; }
+        public List<List<List<double>>> coordinates { get; set; }
+    }
 }
