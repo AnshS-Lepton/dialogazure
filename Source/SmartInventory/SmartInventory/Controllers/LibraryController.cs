@@ -8326,6 +8326,89 @@ namespace SmartInventory.Controllers
 
         #endregion
 
+        #region PEP
+
+        public PartialViewResult AddPEP(string networkIdType, int systemId = 0, string geom = "", int pSystemId = 0, string pEntityType = "", string pNetworkId = "")
+        {
+            
+            PEPMaster obj = new PEPMaster();
+            obj.networkIdType = networkIdType;
+            obj.system_id = systemId;
+            obj.geom = geom;
+            obj.user_id = Convert.ToInt32(Session["user_id"]);
+            obj.pEntityType = pEntityType;
+            obj.pSystemId = pSystemId;
+            string url = "api/Library/EntityOperations";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<PEPMaster>(url, obj, EntityType.PEP.ToString(), EntityAction.Get.ToString());
+            return PartialView("_AddPEP", response.results);
+        }
+
+        public PEPMaster GetPEPDetail(string networkIdType, int systemId, string geom = "")
+        {
+            PEPMaster objPEP = new PEPMaster();
+            var userdetails = (User)Session["userDetail"];
+            objPEP.geom = geom;
+            objPEP.networkIdType = networkIdType;
+            if (systemId == 0)
+            {
+                //NEW ENTITY->Fill Region and Province Detail..
+                fillRegionProvinceDetail(objPEP, GeometryType.Point.ToString(), geom);
+                //Fill Parent detail...              
+                fillParentDetail(objPEP, new NetworkCodeIn() { eType = EntityType.PEP.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPEP.geom }, networkIdType);
+                objPEP.longitude = Convert.ToDouble(geom.Split(' ')[0]);
+                objPEP.latitude = Convert.ToDouble(geom.Split(' ')[1]);
+                objPEP.ownership_type = "Own";
+                // Item template binding
+                var objItem = BLItemTemplate.Instance.GetTemplateDetail<PEPTemplateMaster>(Convert.ToInt32(Session["user_id"]), EntityType.PEP);
+                Utility.MiscHelper.CopyMatchingProperties(objItem, objPEP);
+            }
+            else
+            {
+                // Get entity detail by Id...
+                objPEP = new BLMisc().GetEntityDetailById<PEPMaster>(systemId, EntityType.PEP);
+            }
+            objPEP.lstUserModule = new BLLayer().GetUserModuleAbbrList(userdetails.user_id, UserType.Web.ToString());
+            return objPEP;
+        }
+
+        public ActionResult SavePEP(PEPMaster objPEPMaster, bool isDirectSave = false)
+        {
+
+            objPEPMaster.isDirectSave = isDirectSave;
+            objPEPMaster.user_id = Convert.ToInt32(Session["user_id"]);
+            var NWTicketDetails = new NetworkTicket();
+            if (Session["NWTicketDetails"] != null)
+            {
+                NWTicketDetails = (NetworkTicket)Session["NWTicketDetails"];
+                objPEPMaster.source_ref_id = Convert.ToString(NWTicketDetails.ticket_id);
+                objPEPMaster.source_ref_type = "NETWORK_TICKET";
+                objPEPMaster.status = "D";
+            }
+            string url = "api/Library/EntityOperations";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<PEPMaster>(url, objPEPMaster, EntityType.PEP.ToString(), EntityAction.Save.ToString());
+            if (Session["NWTicketDetails"] != null)
+            {
+                DataTable DT = new BLNetworkTicket().GetNetworkTicketDetailsById(NWTicketDetails.ticket_id);
+                NWTicketDetails.ticket_status = DT.Rows[0]["Ticket_Status"].ToString();
+                Session["NWTicketDetails"] = NWTicketDetails;
+
+            }
+            if (isDirectSave)
+            {
+                return Json(response.results.objPM, JsonRequestBehavior.AllowGet);
+            }
+            return PartialView("_AddPEP", response.results);
+        }
+        private void BindPEPDropDown(PEPMaster objPEPMaster)
+        {
+            var objDDL = new BLMisc().GetDropDownList(EntityType.PEP.ToString());
+            //objWallMountMaster.listOwnership = new BLMisc().GetDropDownList("", DropDownType.Ownership.ToString());
+            objPEPMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
+            objPEPMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+        }
+
+        #endregion
+
         #region clone
         public JsonResult SaveCloneEntity(int refId, string entityName, string geomType, string geom)
         {

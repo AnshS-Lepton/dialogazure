@@ -204,6 +204,7 @@
     <Compile Include="DARack.cs" />
     <Compile Include="DASite.cs" />
     <Compile Include="DASlack.cs" />
+    <Compile Include="DAPEP.cs" />
     <Compile Include="DAWebRequestLog.cs" />
     <Compile Include="DAXMLBuilderDashboard.cs" />
     <Compile Include="DARedline.cs" />

@@ -637,6 +637,7 @@
     <Content Include="Content\images\icons\lib\big\Site.png" />
     <Content Include="Content\images\icons\lib\big\tower.png" />
     <Content Include="Content\images\icons\lib\big\Vault.png" />
+    <Content Include="Content\images\icons\lib\big\PEP.png" />
     <Content Include="Content\images\icons\lib\circle\ADB25x25.png" />
     <Content Include="Content\images\icons\lib\circle\ADB.png" />
     <Content Include="Content\images\icons\lib\circle\BDB25x25.png" />
@@ -929,6 +930,7 @@
     <Content Include="Content\images\icons\lib\small\tower.png" />
     <Content Include="Content\images\icons\lib\small\UGCable.png" />
     <Content Include="Content\images\icons\lib\small\Vault.png" />
+    <Content Include="Content\images\icons\lib\small\PEP.png" />
     <Content Include="Content\images\icons\lib\UtilizationIcons\ADB_H.png" />
     <Content Include="Content\images\icons\lib\UtilizationIcons\ADB_L.png" />
     <Content Include="Content\images\icons\lib\UtilizationIcons\ADB_M.png" />
@@ -2410,6 +2412,9 @@
     <Content Include="Views\Library\_GetcorePlanLogic.cshtml" />
     <Content Include="Views\Report\_ExportSiteReport.cshtml" />
     <Content Include="Views\Report\_SiteAwarding.cshtml" />
+    <Content Include="Views\ItemTemplate\_PEPTemplate.cshtml" />
+    <Content Include="Views\ItemTemplate\_PEPTemplateMaster.cshtml" />
+    <Content Include="Views\Library\_AddPEP.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
