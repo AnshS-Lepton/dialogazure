@@ -179,6 +179,10 @@ namespace DataAccess.DBContext
             modelBuilder.Entity<ViewRegionProvinces>().ToTable("vw_att_details_provice_region", dbschema);
             modelBuilder.Entity<WallMountMaster>().ToTable("att_details_wallmount", dbschema);
             modelBuilder.Entity<WallMountItemMaster>().ToTable("item_template_wallmount", dbschema);
+
+            modelBuilder.Entity<PEPMaster>().ToTable("att_details_pep", dbschema);
+            modelBuilder.Entity<PEPItemMaster>().ToTable("item_template_pep", dbschema);
+
             modelBuilder.Entity<ispShaftRange>().ToTable("isp_shaft_range", dbschema);
             modelBuilder.Entity<AssociateEntityMaster>().ToTable("associate_entity_master", dbschema);
 

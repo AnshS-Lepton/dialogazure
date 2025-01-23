@@ -637,6 +637,7 @@
     <Content Include="Content\images\icons\lib\big\Site.png" />
     <Content Include="Content\images\icons\lib\big\tower.png" />
     <Content Include="Content\images\icons\lib\big\Vault.png" />
+    <Content Include="Content\images\icons\lib\big\PEP.png" />
     <Content Include="Content\images\icons\lib\circle\ADB25x25.png" />
     <Content Include="Content\images\icons\lib\circle\ADB.png" />
     <Content Include="Content\images\icons\lib\circle\BDB25x25.png" />
@@ -929,6 +930,7 @@
     <Content Include="Content\images\icons\lib\small\tower.png" />
     <Content Include="Content\images\icons\lib\small\UGCable.png" />
     <Content Include="Content\images\icons\lib\small\Vault.png" />
+    <Content Include="Content\images\icons\lib\small\PEP.png" />
     <Content Include="Content\images\icons\lib\UtilizationIcons\ADB_H.png" />
     <Content Include="Content\images\icons\lib\UtilizationIcons\ADB_L.png" />
     <Content Include="Content\images\icons\lib\UtilizationIcons\ADB_M.png" />
@@ -1627,6 +1629,7 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\23-01-2025_#3223.sql" />
     <Content Include="MigrationScripts\20-01-2025_dialog.sql" />
     <Content Include="MigrationScripts\20-01-2025_Dialog_issue.sql" />
     <Content Include="MigrationScripts\14-01-2025_#3221.sql" />
@@ -2413,7 +2416,6 @@
     <Content Include="Views\Library\_GetcorePlanLogic.cshtml" />
     <Content Include="Views\Report\_ExportSiteReport.cshtml" />
     <Content Include="Views\Report\_SiteAwarding.cshtml" />
-    <Content Include="Views\Report\_ExportFiberAllocationReport.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
