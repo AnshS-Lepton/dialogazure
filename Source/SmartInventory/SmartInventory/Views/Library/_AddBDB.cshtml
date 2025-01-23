@@ -355,6 +355,8 @@
 <script>
     var inputs = [];
     $(document).ready(function () {
+       
+        
         if ('@layerDetail' != null && '@layerDetail.is_trayinfo_enabled') {
             st.getTrayInfo('@Model.system_id', '@EntityType.BDB.ToString()');
         }
@@ -386,6 +388,7 @@ $("#txtrouteInfo").val(selectedRouteIds.split(',')).trigger("chosen:updated");
         $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
     });
     function formPost() {
+        debugger;
         if (!entityReferencevalidation()) { return false; }
         //$('#parent_system_id').val(0);
         //$('#parent_entity_type').val('Province');
@@ -398,6 +401,19 @@ $("#txtrouteInfo").val(selectedRouteIds.split(',')).trigger("chosen:updated");
             $('#parent_entity_type').val('Structure');
             $('#parent_network_id').val($('#ddlStructureList :selected').text());
         }
+        if ($('#txt3rdPartyVendor').val() != '' && $('#txt3rdPartyVendor').val() != null) {
+            $('#txtOwnVendor').next().removeClass('input-validation-error');
+        }
+        else if ($('#txt3rdPartyVendor').val() == '' && $('#txt3rdPartyVendor').val() == null) {
+            $('#txt3rdPartyVendor').next().addClass('input-validation-error');
+            return false;
+        }
+        if ($('#txtOwnVendor').val() == '' && $('#txtOwnVendor').val() == null) {
+            $('#txtOwnVendor').next().addClass('input-validation-error');
+            return false;
+        }
+        
+
         if (si.isValidAssociation()) {
             $("#frmAddBDB").submit();
         }

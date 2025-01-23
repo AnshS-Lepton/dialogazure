@@ -14,7 +14,7 @@
         <label class="control-label col-md-2 col-sm-2" for="txt3rdprtyvndr">@Resources.Resources.SI_GBL_GBL_GBL_GBL_166</label>
 
         <div class="col-md-4 col-sm-4">
-            @Html.DropDownListFor(m => m.own_vendor_id, new SelectList(Model.listOwnVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), new { @class = "chosen-select form-control required", id = "txtOwnVendor", @onchange = "onChangeOwnVendor()" })
+            @Html.DropDownListFor(m => m.own_vendor_id, new SelectList(Model.listOwnVendorId.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"),  new { @class = "chosen-select form-control", id = "txtOwnVendor", @onchange = "onChangeOwnVendor()" })
         </div>
     </div>
     <div class="radio whiteSpace row">
@@ -46,13 +46,19 @@
 <script>
 
     $(document).ready(function () {
+        debugger
             if ('@Model.ownership_type.ToUpper()' == 'OWN') {
                 $("input[id='rdb_Own']").prop("checked", true);
                 $('#txt3rdPartyVendor').prop('disabled', true).trigger("chosen:updated");
             }
             else {
                 $("input[id='rdb_ThirdParty']").prop("checked", true);
-            }
+        }
+        if ($("input[name='rdbOwnershipType']:checked").val() == "Third Party") {
+            $('#txtOwnVendor').val('');
+            $('#txtOwnVendor').prop('disabled', true).trigger("chosen:updated");
+
+        }
             $(document).on('click', 'form button[type=submit]', function (e) {
                 var selected_ownership = $("input[name='rdbOwnershipType']:checked").val();
                 if (selected_ownership == 'OWN' && $('#txtOwnVendor').val() == '' && $('#txtOwnVendor').val() == null) {
@@ -75,8 +81,8 @@
 
         var ownvendorvalue = '@Model.own_vendor_id';
         if (ownvendorvalue == '' || ownvendorvalue == null) {
-            //$("#txtOwnVendor").prop("selectedIndex", 0).val();
-            $('#txtOwnVendor option:nth-child(1)').val();
+            $("#txtOwnVendor").prop("selectedIndex", 0).val();
+           // $('#txtOwnVendor option:nth-child(1)').val();
         }
 
         });
