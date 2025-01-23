@@ -116,7 +116,6 @@ namespace IntegrationServices.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public IHttpActionResult GetCablesByFiberLinkIds(string linkIds)
         {
             try
