@@ -2093,12 +2093,39 @@ namespace SmartInventory.Controllers
                         foreach (var item in lstrouteconnectionInfo.GroupBy(m => m.fms_id).Select(group => group.First()).ToList())
                         {
                             var filteredData = lstrouteconnectionInfo.Where(m => m.fms_id == item.fms_id).ToList();
-                            var from = filteredData.Select(m => m.source_network_id).FirstOrDefault();
                             ISheet sheet = workbook.CreateSheet("Sheet-" + i);
-                            var headerCount = filteredData.GroupBy(m => m.path_id)
-                           .OrderByDescending(group => group.Count()).FirstOrDefault().Count();
+                            var from = filteredData.Select(m => m.source_network_id).FirstOrDefault();
+                            var headerCount = filteredData.GroupBy(m => m.path_id).OrderByDescending(group => group.Count()).FirstOrDefault().Count();
+                            var distinctPathCount = filteredData.Select(m => m.path_id).Distinct().Count();
+                            bool isSpl = false;
+                            int? fromsplId = 0;
+
+                            foreach (var spl in filteredData.Where(m => m.splitter_id != null)
+                                 .GroupBy(m => m.splitter_id)
+                                 .Select(group => group.First())
+                                 .ToList())
+                            {
+
+                                var splfilteredData = filteredData.Where(m => m.splitter_id == spl.splitter_id).ToList();
+                                var fromspl = splfilteredData.Select(m => m.source_network_id).FirstOrDefault();
+
+                                var headerCountspl = splfilteredData.GroupBy(m => m.path_id).OrderByDescending(group => group.Count()).FirstOrDefault().Count();
+
+                                if (fromsplId != splfilteredData.Select(m => m.splitter_id).FirstOrDefault())
+                                {
+                                    isSpl = true;
+                                    NPOIExcelHelper.AddHeader(workbook, sheet, headerCountspl, fromspl, isSpl, distinctPathCount);
+                                }
+
+                                workbook = NPOIExcelHelper.DataTableToExcelCableRoute(splfilteredData, workbook, "xlsx", sheet, fromspl, isSpl, distinctPathCount);
+                                // isSpl = false;
+                                fromsplId = splfilteredData.Select(m => m.splitter_id).FirstOrDefault();
+                                //  isSpl = false;
+                            }
+
+
                             NPOIExcelHelper.AddHeader(workbook, sheet, headerCount, from);
-                            workbook = NPOIExcelHelper.DataTableToExcelCableRoute(filteredData, workbook, "xlsx", sheet,from);
+                            workbook = NPOIExcelHelper.DataTableToExcelCableRoute(filteredData, workbook, "xlsx", sheet, from);
                             i = i + 1;
                         }
 
