@@ -1275,6 +1275,25 @@ namespace SmartInventory.Controllers
 
         #endregion
 
+        #region PEP
+        public PartialViewResult PEPTemplate(string eType)
+        {
+            var obj = new { eType = eType, userId = Convert.ToInt32(Session["user_id"]) };
+            string url = "api/ItemTemplate/EntityTemplate";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<PEPItemMaster>(url, obj, EntityType.PEP.ToString(), EntityAction.Get.ToString());
+            return PartialView("_PEPTemplate", response.results);
+        }
+
+        public ActionResult SavePEPTemplate(PEPItemMaster objPEPItem)
+        {
+            objPEPItem.UserId = Convert.ToInt32(Session["user_id"]);
+            string url = "api/ItemTemplate/EntityTemplate";
+            var response = WebAPIRequest.PostIntegrationAPIRequest<PEPItemMaster>(url, objPEPItem, EntityType.PEP.ToString(), EntityAction.Save.ToString());
+            return PartialView("_PEPTemplate", response.results);
+        }
+
+        #endregion
+
         #region ProjectSpeicification
 
         public PartialViewResult AddProjectSpecification()

@@ -889,6 +889,43 @@ namespace Models
             objPM = new PageMessage();
         }
     }
+
+    public class PEPTemplateMaster : itemMaster
+    {
+        // ADDITION FIELD WHICH ARE COMMON FOR PEP FORM AND TEMPLATE WILL BE THERE.
+        [NotMapped]
+        public override int no_of_input_port { get; set; }
+        [NotMapped]
+        public override int no_of_output_port { get; set; }
+        [NotMapped]
+        public override int no_of_port { get; set; }
+        [NotMapped]
+        public override string unit { get; set; }
+        [NotMapped]
+        public override string other { get; set; }
+    }
+
+    public class PEPItemMaster : PEPTemplateMaster
+    {
+        //ADDITION FIELD WHICH ARE REQUIRED FOR PEP TEMPLATE ONLY WILL BE THERE
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
+        public int created_by { get; set; }
+        [NotMapped]
+        public DateTime created_on { get; set; }
+        public int? modified_by { get; set; }
+        public DateTime? modified_on { get; set; }
+        [NotMapped]
+        public PageMessage objPM { get; set; }
+        [NotMapped]
+        public int UserId { get; set; }
+        public PEPItemMaster()
+        {
+            objPM = new PageMessage();
+        }
+    }
     /// <summary>
     /// ================================  ISP TEMPLATES     =============================================================
     /// </summary>
@@ -1422,5 +1459,8 @@ namespace Models
             objPM = new PageMessage();
         }
     }
+
+
+
 
 }
