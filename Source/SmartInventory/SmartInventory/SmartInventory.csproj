@@ -1630,6 +1630,7 @@
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
     <Content Include="MigrationScripts\23-01-2025_#3223.sql" />
+    <Content Include="MigrationScripts\20-01-2025_dialog.sql" />
     <Content Include="MigrationScripts\20-01-2025_Dialog_issue.sql" />
     <Content Include="MigrationScripts\14-01-2025_#3221.sql" />
     <Content Include="MigrationScripts\01-07-2024.sql" />
@@ -1659,6 +1660,8 @@
     <Content Include="MigrationScripts\2024-05-07_unique_constraint_lbl_clm_stng.sql" />
     <Content Include="MigrationScripts\2024_02_27_vodafone_issues.sql" />
     <Content Include="MigrationScripts\2024_02_25_vodafone_issues.sql" />
+    <Content Include="MigrationScripts\21-01-2025_dailog.sql" />
+    <Content Include="MigrationScripts\23-01-2025_dailog.sql" />
     <Content Include="MigrationScripts\23-05-2024.sql" />
     <Content Include="MigrationScripts\23-07-2024.sql" />
     <Content Include="MigrationScripts\24-06-2024.sql" />
@@ -2413,9 +2416,6 @@
     <Content Include="Views\Library\_GetcorePlanLogic.cshtml" />
     <Content Include="Views\Report\_ExportSiteReport.cshtml" />
     <Content Include="Views\Report\_SiteAwarding.cshtml" />
-    <Content Include="Views\ItemTemplate\_PEPTemplate.cshtml" />
-    <Content Include="Views\ItemTemplate\_PEPTemplateMaster.cshtml" />
-    <Content Include="Views\Library\_AddPEP.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

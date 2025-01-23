@@ -935,6 +935,44 @@ namespace Models
         public string status { get; set; }
         public bool isGridCalling { get; set; }
     }
+    
+    public class connectionInfoCable
+    {
+        public List<CablerouteInfo> lstConnectionInfo { get; set; }
+    }
+    public class CablerouteInfo
+    {
+
+        public int source_system_id { get; set; }
+        public string source_network_id { get; set; }
+        public int source_port_no { get; set; }
+        public string source_entity_type { get; set; }
+        public string source_entity_title { get; set; }
+
+        public int destination_system_id { get; set; }
+        public string destination_network_id { get; set; }
+        public int destination_port_no { get; set; }
+        public string destination_entity_type { get; set; }
+        public string destination_entity_title { get; set; }
+
+        public int? viya_system_id { get; set; }
+        public string via_network_id { get; set; }
+        public string via_entity_type { get; set; }
+        public int path_id { get; set; }
+        public int headerCol { get; set; }
+        public int rowsdataloop { get; set; }
+        public int globaLoopcount { get; set; }
+
+        public string source_tube_colour_code { get; set; }
+        public string source_port_colour_code { get; set; }
+        public string source_tube_name { get; set; }
+        public string destination_tube_colour_code { get; set; }
+        public string destination_port_colour_code { get; set; }
+        public string destination_tube_name { get; set; }
+        public int fms_id { get; set; }
+        public int? splitter_id { get; set; }
+
+    }
     public class connectionInfoPath
     {
         public List<ConnectionInfo> lstConnectionInfo { get; set; }

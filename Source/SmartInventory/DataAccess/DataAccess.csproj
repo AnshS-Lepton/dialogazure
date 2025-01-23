@@ -161,6 +161,7 @@
     <Compile Include="DAAssociationReportLog.cs" />
     <Compile Include="DAFetools_Attachement.cs" />
     <Compile Include="DAExecution.cs" />
+    <Compile Include="DaFiFeasibilityAPI\DADarkFiberFeasibility.cs" />
     <Compile Include="DAGipipe.cs" />
     <Compile Include="DADuct.cs" />
     <Compile Include="DADynamicAttributes.cs" />

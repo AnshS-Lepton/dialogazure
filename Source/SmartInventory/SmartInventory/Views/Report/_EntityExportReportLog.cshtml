@@ -37,57 +37,60 @@
                                     @*@Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @tabindex = "4", @class = "form-control inp-n-w inp-n-h ml-auto", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @maxlength = 50 })
         <button type="submit" class="btn btn-success ml-10" id="btnPrintLogSearch">@Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
         <button type="button" class="btn btn-default ml-10" id="btnSearchClear">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>*@
-                                    <button type="button" class="btn btn-default ml-auto" onclick="si.Entityreport.EntityExportReportLog(null, null, null, this)">Refresh</button>
+                                    <button type="button" class="btn btn-default ml-auto" onclick="si.Entityreport.EntityExportReportLog(null, null, null, this,'@Model.objGridAttributes.log_type')">Refresh</button>
                                 </div>
                                 <div class="table-responsive print-maxH">
-                                    @grid.GetHtml(tableStyle: "stickyTh",
-                                                 htmlAttributes: new { id = "tblExportReportLog" },
-                                                 mode: WebGridPagerModes.All,
-                                                 columns: grid.Columns(
-        grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>@if (!string.IsNullOrEmpty(item.status) && item.status.ToUpper() == "SUCCESS")
-         {
-        <span>
-            <a title="Download" style="font-size: 16px;" href="@Url.Action("DownloadFileFromFTP", "Report",new { filePath = item.file_location,fileExtension = item.file_extension })" target="_self">
-                <i class="fa fa-download"></i>
-            </a>
-        </span>
+                                    @if (Model.objGridAttributes.log_type == "FiberAllocation")
+                                    {
+                                        @grid.GetHtml(tableStyle: "stickyTh",
+                                        htmlAttributes: new { id = "tblExportReportLog" },
+                                        mode: WebGridPagerModes.All,
+                                        columns: grid.Columns(
 
-}
-        </text>),
-@*
-    grid.Column("", Resources.Resources.SI_OSP_GBL_NET_GBL_160, format: @<text>@if (string.IsNullOrEmpty(item.export_status))
+                                      grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>@if (!string.IsNullOrEmpty(item.status) && item.status.ToUpper() == "SUCCESS")
+                                            {
+                                                <span>
+                                                    <a title="Download" style="font-size: 16px;" href="@Url.Action("DownloadFileFromFTP", "Report", new { filePath = item.file_location, fileExtension = item.file_extension })" target="_self">
+                                                        <i class="fa fa-download"></i>
+                                                    </a>
+                                                </span>
 
-    {
-    <div class="col-xl-12 col-sm-12 progress-container" style="margin-left:-17px; width:100px;">
-        <div class="Progress progress-striped active" style="height:20px; margin-top:-10px; width:100%; background-image:none;">
-            <div class="progress-bar progress-bar-success text-center" style="color: #fff;width: @(item.export_progress == null ? "0" : item.export_progress)">
-                @(item.export_progress == null ? "0%" : item.export_progress)
-            </div>
-        </div>
-    </div>
-    }
-    else if (item.export_status.ToUpper() == "SUCCESS")
-    {
-    <span style="color:green;">@(item.export_status)</span>
-    }
-    else
-    {
-    <span style="color:red;">@(item.export_status)</span>
-    }
-    </text>),
-    grid.Column("page_type", Resources.Resources.SI_OSP_PM_NET_FRM_037, format: @<text>@item.page_type</text>),
-    grid.Column("page_title", Resources.Resources.SI_OSP_GBL_GBL_GBL_047, format: @<text>@item.page_title</text>),
-    grid.Column("page_count", Resources.Resources.SI_OSP_PM_NET_FRM_038, format: @<text>@(item.page_count == 0 ? "-" : item.page_count.ToString())</text>),
-    grid.Column("file_size", Resources.Resources.SI_OSP_GBL_GBL_GBL_030, format: @<text>@(item.file_size == null ? "-" : item.file_size)</text>),
-    grid.Column("start_on", Resources.Resources.SI_OSP_PM_NET_FRM_039, format: @<text>@(item.start_on == null ? "-" : MiscHelper.FormatDateTime(item.start_on.ToString()))</text>),
-*@
+                                            }
+                                    </text>),
+        grid.Column("status", "Status", format: @<text>@item.status</text>),
+grid.Column("user_name", "User Name", format: @<text>@item.user_name</text>),
+grid.Column("file_name", "File Name", format: @<text>@item.file_name</text>),
+grid.Column("file_type", "File Type", format: @<text>@item.file_type</text>),
+grid.Column("export_started_on", "Start On", format: @<text>@(item.export_started_on == null ? "-" : (item.export_started_on.ToString("dd-MMM-yy hh:mm:ss tt")))</text>),
+grid.Column("export_ended_on", "End On", format: @<text>@(item.export_ended_on == null ? "-" : (item.export_ended_on.ToString("dd-MMM-yy hh:mm:ss tt")))</text>)
+))
 
-grid.Column("status", "Status", format: @<text>@item.status</text>),
+                                        @Html.Hidden("dir", grid.SortDirection)
+                                        @Html.Hidden("col", grid.SortColumn)
+                                    }
+                                    else
+                                    { @grid.GetHtml(tableStyle: "stickyTh",
+                         htmlAttributes: new { id = "tblExportReportLog" },
+                         mode: WebGridPagerModes.All,
+                         columns: grid.Columns(
+
+                       grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>@if (!string.IsNullOrEmpty(item.status) && item.status.ToUpper() == "SUCCESS")
+                                    {
+                                        <span>
+                                            <a title="Download" style="font-size: 16px;" href="@Url.Action("DownloadFileFromFTP", "Report", new { filePath = item.file_location, fileExtension = item.file_extension })" target="_self">
+                                                <i class="fa fa-download"></i>
+                                            </a>
+                                        </span>
+
+                                    }
+                                </text>),
+    grid.Column("status", "Status", format: @<text>@item.status</text>),
 grid.Column("user_name", "User Name", format: @<text>@item.user_name</text>),
 grid.Column("file_name", "File Name", format: @<text>@item.file_name</text>),
 grid.Column("file_type", "File Type", format: @<text>@item.file_type</text>),
 grid.Column("export_started_on", "Start On", format: @<text>@(item.export_started_on == null ? "-" : (item.export_started_on.ToString("dd-MMM-yy hh:mm:ss tt")))</text>),
 grid.Column("export_ended_on", "End On", format: @<text>@(item.export_ended_on == null ? "-" : (item.export_ended_on.ToString("dd-MMM-yy hh:mm:ss tt")))</text>),
+
 grid.Column("total_entity", "Total Entity", format: @<text>@item.total_entity</text>),
 grid.Column("planned", "Planned", format: @<text>@item.planned</text>),
 grid.Column("asbuilt", "AsBuilt", format: @<text>@item.asbuilt</text>),
@@ -95,7 +98,7 @@ grid.Column("dormant", "Dormant", format: @<text>@item.dormant</text>)
 ))
 
                                     @Html.Hidden("dir", grid.SortDirection)
-                                    @Html.Hidden("col", grid.SortColumn)
+                                    @Html.Hidden("col", grid.SortColumn)}
 
                                 </div>
                             </div>

@@ -23,6 +23,7 @@ using Microsoft.SqlServer.Server;
 using Utility;
 using NPOI.SS.Formula.Functions;
 using SmartInventory.Settings;
+using System.Linq;
 
 namespace SmartInventory.Helper
 {
@@ -692,6 +693,221 @@ namespace SmartInventory.Helper
 
             return workbook;
         }
+
+        public static IWorkbook DataTableToExcelCableRoute(List<CablerouteInfo> filteredData, IWorkbook workbook, string extension, ISheet sheet, string from, bool isSpl = false, int headerCount = 0)//arvind
+        {
+            var prvR = 0;
+            var currR = 0;
+            IRow currRow = null;
+            IRow prvRow = null;
+            //-----------------------------------loops through data--------------------------------------------------------------------------------        
+            var cellstyle = getCellStyle(workbook);
+            var pathZLocation = "";
+            foreach (var (item, index) in filteredData.GroupBy(m => m.path_id).Select(group => group.Key).Select((item, index) => (item, index)).ToList())
+            {
+                int i = index;
+                int rowbl1 = 2, rowbl2 = 7, c_sd1 = 2, c_sd2 = 4;
+                if (isSpl)
+                {
+                    currRow = sheet.CreateRow(i * 2 + 5 + headerCount + 10);
+                    prvRow = sheet.CreateRow(i * 2 + 4 + headerCount + 10);
+                }
+                else
+                {
+                    currRow = sheet.CreateRow(i * 2 + 5);
+                    prvRow = sheet.CreateRow(i * 2 + 4);
+
+                }
+
+                prvR = prvRow.RowNum;
+                currR = currRow.RowNum;
+                sheet.AddMergedRegion(new CellRangeAddress(currR - 1, currR, 0, 0));
+                sheet.AddMergedRegion(new CellRangeAddress(currR - 1, currR, 1, 1));
+                foreach (var path in filteredData.Where(m => m.path_id == item))
+                {
+                    if (path.source_entity_type != "Splitter" || isSpl == true)
+                    {
+                        CreateCustomCellFiberAllocation(prvRow, 0, from, cellstyle, true, false);
+                        CreateCustomCellFiberAllocation(currRow, 0, "", cellstyle, true, false);
+                        //---------------------------------via_network_id------------------------------------------------------//
+                        sheet.AddMergedRegion(new CellRangeAddress(prvR, prvR, rowbl1, rowbl2));
+                        CreateCustomCellFiberAllocation(prvRow, rowbl1, path.via_network_id, cellstyle, true, true);
+
+                        CreateCustomCellFiberAllocation(currRow, c_sd1, path.source_network_id, cellstyle, true, false);
+                        var customcellstyle = getCustomCellStyle(workbook, string.IsNullOrEmpty(path.source_port_colour_code) ? "#FFFFFF" : path.source_port_colour_code);
+                        CreateCustomCellFiberAllocation(currRow, c_sd1 + 1, path.source_tube_name, customcellstyle, true, false);
+                        var customcellstyle1 = getCustomCellStyle(workbook, string.IsNullOrEmpty(path.source_port_colour_code) ? "#FFFFFF" : path.source_port_colour_code);
+                        CreateCustomCellFiberAllocation(currRow, c_sd1 + 2, Convert.ToString(path.source_port_no), customcellstyle1, true, false);
+                        //------------------------------------destination------------------------------------------------------------
+                        CreateCustomCellFiberAllocation(currRow, c_sd1 + 3, path.destination_network_id, cellstyle, true, false);
+                        var customcellstyle2 = getCustomCellStyle(workbook, string.IsNullOrEmpty(path.source_tube_colour_code) ? "#FFFFFF" : path.source_tube_colour_code);
+                        CreateCustomCellFiberAllocation(currRow, c_sd1 + 4, path.destination_tube_name, customcellstyle2, true, false);
+                        var customcellstyle3 = getCustomCellStyle(workbook, string.IsNullOrEmpty(path.destination_port_colour_code) ? "#FFFFFF" : path.destination_port_colour_code);
+                        CreateCustomCellFiberAllocation(currRow, c_sd1 + 5, Convert.ToString(path.destination_port_no), customcellstyle3, true, false);
+                        pathZLocation = path.destination_network_id;
+                        c_sd1 = c_sd1 + 3 * 2; c_sd2 = c_sd2 + 3 * 2;
+                        rowbl1 = rowbl1 + 3 * 2; rowbl2 = rowbl2 + 3 * 2;
+                    }
+
+                }
+                sheet.AddMergedRegion(new CellRangeAddress(prvR, prvR + 1, 1, 1));
+                CreateCustomCellFiberAllocation(prvRow, 1, pathZLocation, cellstyle, true, false);
+                CreateCustomCellFiberAllocation(currRow, 1, "", cellstyle, true, false);
+
+            }
+            for (int sheetIndex = 0; sheetIndex < workbook.NumberOfSheets; sheetIndex++)
+            {
+                for (int i = 0; i <= filteredData.Count(); i++)
+                {
+                    sheet.AutoSizeColumn(i);
+                }
+            }
+            return workbook;
+
+        }
+
+        public static void AddHeader(IWorkbook workbook, ISheet sheet, int headercolNo, string source_network_id, bool isSpl = false, int tRecord = 0)
+        {
+            int c1 = 2, c2 = 4, cb1 = 2, cb2 = 7;
+
+            tRecord = isSpl == true ? tRecord + 10 : tRecord;
+            ICellStyle headerStyle = workbook.CreateCellStyle();
+            headerStyle.Alignment = HorizontalAlignment.Center;
+            headerStyle.VerticalAlignment = VerticalAlignment.Center;
+            IFont headerFont = workbook.CreateFont();
+            headerFont.Boldweight = (short)FontBoldWeight.Bold;
+            headerFont.FontName = "Arial";
+            headerFont.FontHeightInPoints = 10;
+            headerStyle.SetFont(headerFont);
+            headerStyle.BorderBottom = BorderStyle.Thin;
+            headerStyle.BorderTop = BorderStyle.Thin;
+            headerStyle.BorderLeft = BorderStyle.Thin;
+            headerStyle.BorderRight = BorderStyle.Thin;
+            headerStyle.BottomBorderColor = IndexedColors.Black.Index;
+            headerStyle.TopBorderColor = IndexedColors.Black.Index;
+            headerStyle.LeftBorderColor = IndexedColors.Black.Index;
+            headerStyle.RightBorderColor = IndexedColors.Black.Index;
+
+            // ICellStyle headerStyle = getCellStyle(workbook, "HEADER");
+            //--------------------------------------------
+            if (isSpl)
+            {
+                sheet.AddMergedRegion(new CellRangeAddress(0 + tRecord, 0 + tRecord, 0, 0));
+                sheet.AddMergedRegion(new CellRangeAddress(0 + tRecord, 0 + tRecord, 1, 1));
+                AddBordersToMergedRegions(sheet, 0 + tRecord, 0 + tRecord, 0, 0, headerStyle);
+                AddBordersToMergedRegions(sheet, 0 + tRecord, 0 + tRecord, 1, 1, headerStyle);
+
+            }
+            else
+            {
+
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 0));
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 1, 1));
+                AddBordersToMergedRegions(sheet, 0, 0, 0, 0, headerStyle);
+                AddBordersToMergedRegions(sheet, 0, 0, 1, 1, headerStyle);
+            }
+
+
+
+            IRow row1 = isSpl == false ? sheet.CreateRow(0) : sheet.CreateRow(0 + tRecord);
+            var rn1 = row1.RowNum;
+            row1.HeightInPoints = 20;
+            row1.CreateCell(0).SetCellValue("From");
+            row1.CreateCell(1).SetCellValue(source_network_id);
+            row1.Cells[0].CellStyle = headerStyle;
+            row1.Cells[1].CellStyle = headerStyle;
+
+            if (isSpl)
+            {
+                sheet.AddMergedRegion(new CellRangeAddress(2 + tRecord, 3 + tRecord, 0, 0));
+                sheet.AddMergedRegion(new CellRangeAddress(2 + tRecord, 3 + tRecord, 1, 1));
+                AddBordersToMergedRegions(sheet, 2 + tRecord, 3 + tRecord, 0, 0, headerStyle);
+                AddBordersToMergedRegions(sheet, 2 + tRecord, 3 + tRecord, 1, 1, headerStyle);
+
+            }
+            else
+            {
+
+                sheet.AddMergedRegion(new CellRangeAddress(2, 3, 0, 0));
+                sheet.AddMergedRegion(new CellRangeAddress(2, 3, 1, 1));
+                AddBordersToMergedRegions(sheet, 2, 3, 0, 0, headerStyle);
+                AddBordersToMergedRegions(sheet, 2, 3, 1, 1, headerStyle);
+            }
+
+            IRow row2 = isSpl == false ? sheet.CreateRow(2) : sheet.CreateRow(2 + tRecord);
+            var rn2 = row2.RowNum;
+            row2.HeightInPoints = 20;
+            row2.CreateCell(0).SetCellValue("A-Location");
+            row2.CreateCell(1).SetCellValue("Z-Location");
+            //-------------------------------------------apply style---------------------------------------------
+            for (int i = 0; i <= headercolNo - 1; i++)
+            {
+
+                if (isSpl)
+                {
+                    sheet.AddMergedRegion(new CellRangeAddress(2 + tRecord, 2 + tRecord, c1, c2));
+                    sheet.AddMergedRegion(new CellRangeAddress(2 + tRecord, 2 + tRecord, c1 + 3, c2 + 3));
+                    AddBordersToMergedRegions(sheet, 2 + tRecord, 2 + tRecord, c1, c2, headerStyle);
+                    AddBordersToMergedRegions(sheet, 2 + tRecord, 2 + tRecord, c1 + 3, c2 + 3, headerStyle);
+
+                }
+                else
+                {
+
+                    sheet.AddMergedRegion(new CellRangeAddress(2, 2, c1, c2));
+                    sheet.AddMergedRegion(new CellRangeAddress(2, 2, c1 + 3, c2 + 3));
+                    AddBordersToMergedRegions(sheet, 2, 2, c1, c2, headerStyle);
+                    AddBordersToMergedRegions(sheet, 2, 2, c1 + 3, c2 + 3, headerStyle);
+                }
+
+                row2.CreateCell(c1).SetCellValue("Source");
+                row2.CreateCell(c1 + 3).SetCellValue("Destination");
+                c1 = c1 + 3 * 2; c2 = c2 + 3 * 2;
+                cb1 = cb1 + 3 * 2; cb2 = cb2 + 3 * 2;
+            }
+            foreach (var cell in row2.Cells)
+            {
+                cell.CellStyle = headerStyle;
+            }
+            //-----------------------------------------------------Sub header----------------------------------------------------------------------
+            IRow row3 = isSpl == false ? sheet.CreateRow(3) : sheet.CreateRow(3 + tRecord);
+            CreateCustomCellFiberAllocation(row3, 0, "", headerStyle, true, false);
+            var rn3 = row3.RowNum;
+            row3.HeightInPoints = 20;
+            string[] level3Headers = { "Entity", "Tube", "Port/Fiber" };
+            for (int i = 0; i <= (headercolNo - 1) * 6 + 5; i++)
+            {
+                int columnIndex = i + 2;
+                var cell = row3.CreateCell(columnIndex);
+                cell.SetCellValue(level3Headers[i % 3]);
+                cell.CellStyle = headerStyle;
+            }
+
+        }
+        private static void AddBordersToMergedRegions(ISheet sheet, int startRow, int endRow, int startCol, int endCol, ICellStyle headerStyle)
+        {
+            // Apply borders to the merged region cells
+            for (int row = startRow; row <= endRow; row++)
+            {
+                for (int col = startCol; col <= endCol; col++)
+                {
+                    IRow rowToModify = sheet.GetRow(row);
+                    if (rowToModify == null)
+                    {
+                        rowToModify = sheet.CreateRow(row);
+                    }
+
+                    ICell cell = rowToModify.GetCell(col);
+                    if (cell == null)
+                    {
+                        cell = rowToModify.CreateCell(col);
+                    }
+
+                    // Apply headerStyle (including borders) to the cell
+                    cell.CellStyle = headerStyle;
+                }
+            }
+        }
         public static IWorkbook ROWBudgetDataTableToExcel(string extension, DataTable dt, string roadName, string networkId)
         {
             // dll refered NPOI.dll and NPOI.OOXML  
@@ -1139,7 +1355,46 @@ namespace SmartInventory.Helper
 
         }
 
+        public static void CreateCustomCellFiberAllocation(IRow row, int colIndex, string colText, ICellStyle cellStyle, bool applyBorder, bool centerAlign, bool isHeader = false, ICellStyle customStyle = null)
+        {
+            ICell cell = row.CreateCell(colIndex);
 
+
+            if (customStyle != null && double.TryParse(colText, out double d))
+            {
+                cell.SetCellValue(d);
+                cell.CellStyle = customStyle;
+            }
+            else if (customStyle != null && int.TryParse(colText, out int i))
+            {
+                cell.SetCellValue(i);
+                cell.CellStyle = customStyle;
+            }
+            else
+            {
+                cell.SetCellValue(colText);
+                cell.CellStyle = cellStyle;
+            }
+            if (applyBorder)
+            {
+                cell.CellStyle.BorderBottom = BorderStyle.Thin;
+                cell.CellStyle.BorderTop = BorderStyle.Thin;
+                cell.CellStyle.BorderLeft = BorderStyle.Thin;
+                cell.CellStyle.BorderRight = BorderStyle.Thin;
+                cell.CellStyle.BottomBorderColor = IndexedColors.Black.Index;
+                cell.CellStyle.TopBorderColor = IndexedColors.Black.Index;
+                cell.CellStyle.LeftBorderColor = IndexedColors.Black.Index;
+                cell.CellStyle.RightBorderColor = IndexedColors.Black.Index;
+            }
+
+            // Apply center alignment conditionally
+            if (centerAlign)
+            {
+                cell.CellStyle.Alignment = HorizontalAlignment.Center;
+                cell.CellStyle.VerticalAlignment = VerticalAlignment.Center;
+            }
+
+        }
         public static void setBordersToMergedCells(IWorkbook workBook, ISheet sheet)
         {
             for (int i = 0; i < sheet.NumMergedRegions; i++)

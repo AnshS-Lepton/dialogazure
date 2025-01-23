@@ -209,6 +209,7 @@
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="App_Start\Swagger\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\DaFiFeasibilityController.cs" />
     <Compile Include="Controllers\DistanceController.cs" />
     <Compile Include="Controllers\HealthController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -282,6 +283,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\CustomAction\" />
+    <Folder Include="Views\DaFiFeasibility\" />
     <Folder Include="Views\OSSIntegration\" />
   </ItemGroup>
   <PropertyGroup>

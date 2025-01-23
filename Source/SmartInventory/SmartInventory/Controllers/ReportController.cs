@@ -2043,6 +2043,145 @@ namespace SmartInventory.Controllers
             }
 
         }
+        public void DownloadFiberAllocationReportIntoExcel(ExportEntitiesReport objExportEntitiesReport)
+        {
+            try
+            {
+                System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
+                {
+                    objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportEntitiesReport.objReportFilters.SelectedNetworkStatus != null && objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.Count > 0 ? "'" + string.Join("','", objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.ToArray()) + "'" : "";
+                    objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportEntitiesReport.objReportFilters.SelectedProvinceId != null && objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToList().Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToArray()) : "";
+                    objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportEntitiesReport.objReportFilters.SelectedRegionId != null && objExportEntitiesReport.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedRegionId.ToArray()) : "";
+                    objExportEntitiesReport.objReportFilters.pageSize = 10;
+                    List<CablerouteInfo> lstrouteconnectionInfo = new List<CablerouteInfo>();
+                    lstrouteconnectionInfo = new BLOSPSplicing().GetCablerouteInfo(objExportEntitiesReport.objReportFilters).lstConnectionInfo != null ? new BLOSPSplicing().GetCablerouteInfo(objExportEntitiesReport.objReportFilters).lstConnectionInfo.ToList() : new List<CablerouteInfo>();
+                    var filename = "ConnectionRoute" + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss") + ".xlsx";
+
+                    string tempFileName = filename;
+                    string ftpFilePath = ApplicationSettings.FTPAttachment + ftpFolder;
+                    string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
+                    string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
+
+                    ExportReportLog exportReportLog = new ExportReportLog();
+                    exportReportLog.user_id = 5; //userdetails.user_id;
+                    exportReportLog.export_started_on = DateTime.Now;
+                    exportReportLog.file_name = filename;
+                    exportReportLog.file_type = "Excel";
+                    exportReportLog.file_extension = ".xlsx";
+                    exportReportLog.status = "InProgress";
+                    exportReportLog.applied_filter = null;//JsonConvert.SerializeObject(dtFilter);
+                    exportReportLog.file_location = ftpFolder + tempFileName;
+                    exportReportLog.log_type = "FiberAllocation";
+                    exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
+                    try
+                    {
+                        IWorkbook workbook = new XSSFWorkbook(); int i = 1; int j = 1;
+
+                        var distinctFmsId = lstrouteconnectionInfo.GroupBy(m => m.fms_id).Select(group => group.First()).ToList().Select(m => m.source_network_id).ToList();
+                        var cellstyle = NPOIExcelHelper.getCellStyle(workbook);
+                        ISheet sheet1 = workbook.CreateSheet("summary");
+                        IRow currRowH = sheet1.CreateRow(0);
+                        NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowH, 0, "FMS Id", cellstyle, true, false);
+                        NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowH, 1, "Sheet Name", cellstyle, true, false);
+                        foreach (var item in distinctFmsId)
+                        {
+                            IRow currRow = sheet1.CreateRow(j);
+                            NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 0, item, cellstyle, true, false);
+                            NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 1, "Sheet-" + j, cellstyle, true, false);
+                            j = j + 1;
+                        }
+                        foreach (var item in lstrouteconnectionInfo.GroupBy(m => m.fms_id).Select(group => group.First()).ToList())
+                        {
+                            var filteredData = lstrouteconnectionInfo.Where(m => m.fms_id == item.fms_id).ToList();
+                            ISheet sheet = workbook.CreateSheet("Sheet-" + i);
+                            var from = filteredData.Select(m => m.source_network_id).FirstOrDefault();
+                            var headerCount = filteredData.GroupBy(m => m.path_id).OrderByDescending(group => group.Count()).FirstOrDefault().Count();
+                            var distinctPathCount = filteredData.Select(m => m.path_id).Distinct().Count();
+                            bool isSpl = false;
+                            int? fromsplId = 0;
+
+                            foreach (var spl in filteredData.Where(m => m.splitter_id != null)
+                                 .GroupBy(m => m.splitter_id)
+                                 .Select(group => group.First())
+                                 .ToList())
+                            {
+
+                                var splfilteredData = filteredData.Where(m => m.splitter_id == spl.splitter_id).ToList();
+                                var fromspl = splfilteredData.Select(m => m.source_network_id).FirstOrDefault();
+
+                                var headerCountspl = splfilteredData.GroupBy(m => m.path_id).OrderByDescending(group => group.Count()).FirstOrDefault().Count();
+
+                                if (fromsplId != splfilteredData.Select(m => m.splitter_id).FirstOrDefault())
+                                {
+                                    isSpl = true;
+                                    NPOIExcelHelper.AddHeader(workbook, sheet, headerCountspl, fromspl, isSpl, distinctPathCount);
+                                }
+
+                                workbook = NPOIExcelHelper.DataTableToExcelCableRoute(splfilteredData, workbook, "xlsx", sheet, fromspl, isSpl, distinctPathCount);
+                                // isSpl = false;
+                                fromsplId = splfilteredData.Select(m => m.splitter_id).FirstOrDefault();
+                                //  isSpl = false;
+                            }
+
+
+                            NPOIExcelHelper.AddHeader(workbook, sheet, headerCount, from);
+                            workbook = NPOIExcelHelper.DataTableToExcelCableRoute(filteredData, workbook, "xlsx", sheet, from);
+                            i = i + 1;
+                        }
+
+                        using (var exportData = new MemoryStream())
+                        {
+
+
+                            LogHelper.GetInstance.WriteDebugLog("\r\n");
+                            LogHelper.GetInstance.WriteDebugLog($"Start Process to write the data in excel: {DateTime.Now}");
+
+                            LogHelper.GetInstance.WriteDebugLog($"End Process to write the data in excel: {DateTime.Now}");
+                            LogHelper.GetInstance.WriteDebugLog("\r\n");
+                            string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
+                            string directoryPath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"));
+                            string tempfilePath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"), filename);
+                            if (Directory.Exists(directoryPath).Equals(false))
+                                Directory.CreateDirectory(directoryPath);
+                            using (FileStream xfile = new FileStream(tempfilePath, FileMode.Create, System.IO.FileAccess.Write))
+                            {
+                                workbook.Write(xfile);
+                            }
+                            LogHelper.GetInstance.WriteDebugLog($"FTP Connection created: {DateTime.Now}");
+                            CommonUtility.FTPFileUpload(tempfilePath, filename, ftpFilePath, ftpUserName, ftpPwd);
+                            LogHelper.GetInstance.WriteDebugLog($"File uploaded and FTP Connection closed: {DateTime.Now}");
+
+                            System.IO.File.Delete(tempfilePath);
+
+                        }
+
+                        exportReportLog.user_id = 5;
+                        exportReportLog.export_started_on = DateTime.Now;
+                        exportReportLog.file_name = filename;
+                        exportReportLog.file_type = "Excel";
+                        exportReportLog.file_extension = ".xlsx";
+                        exportReportLog.export_ended_on = DateTime.Now;
+                        exportReportLog.status = "Success";
+                        exportReportLog.file_location = ftpFolder + tempFileName;
+                        exportReportLog.log_type = "FiberAllocation";
+                        exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
+                    }
+                    catch (Exception ex)
+                    {
+                        exportReportLog.export_ended_on = DateTime.Now;
+                        exportReportLog.status = "Error occurred while processing request";
+                        exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
+                        ErrorLogHelper.WriteErrorLog("DownloadFiberAllocationReportIntoExcel()", "Report", ex);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+
+        }
         public void DownloadEntityReportNewIntoPDF(string entityids)
         {
             if (Session["EntityExportSummaryData"] != null)// ExportReportFilterNew
@@ -8255,6 +8394,54 @@ namespace SmartInventory.Controllers
 
 
         }
+        public ActionResult ExportFiberAllocationReport(ExportEntitiesReport objExportEntitiesReport, int page = 1, string sort = "", string sortdir = "")
+        {
+
+            objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportEntitiesReport.objReportFilters.SelectedNetworkStatus != null && objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.Count > 0 ? "'" + string.Join("','", objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.ToArray()) + "'" : "";
+            objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportEntitiesReport.objReportFilters.SelectedProvinceId != null && objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToList().Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToArray()) : "";
+            objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportEntitiesReport.objReportFilters.SelectedRegionId != null && objExportEntitiesReport.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedRegionId.ToArray()) : "";
+            objExportEntitiesReport.objReportFilters.pageSize = 10;
+            objExportEntitiesReport.objReportFilters.currentPage = page == 0 ? 1 : page;
+            objExportEntitiesReport.objReportFilters.sort = sort;
+            objExportEntitiesReport.objReportFilters.sortdir = sortdir;
+            objExportEntitiesReport.objReportFilters.userId = Convert.ToInt32(Session["user_id"]);
+            if (!string.IsNullOrEmpty(objExportEntitiesReport.objReportFilters.layerName))
+            {
+                PageMessage objMsg = new PageMessage();
+                Response.Cookies.Add(new HttpCookie("downloadStarted", "1"));
+                ////create ftp folder if not exist
+
+                string ftpFilePath = ApplicationSettings.FTPAttachment;
+                string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
+                string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
+                string[] ftplogReportDirectory = new string[] { ftpFolder.Replace("/", "") };
+                CreateNestedDirectoryOnFTP(ftpFilePath, ftpUserName, ftpPwd, ftplogReportDirectory);
+                DownloadFiberAllocationReportIntoExcel(objExportEntitiesReport);
+                objMsg.status = ResponseStatus.OK.ToString();
+                objMsg.message = "Request is processing in background.Please check the export report log page.";
+                objExportEntitiesReport.pageMsg = objMsg;
+
+            }
+            Session["ExportReportFilter"] = objExportEntitiesReport.objReportFilters;
+            BindExportFiberAllocationReportDropdown(ref objExportEntitiesReport);
+            return PartialView("_ExportFiberAllocationReport", objExportEntitiesReport);
+        }
+        public void BindExportFiberAllocationReportDropdown(ref ExportEntitiesReport objExportEntitiesReport)
+        {
+
+            //Bind Regions..
+            objExportEntitiesReport.lstRegion = new BLLayer().GetAllRegion(new RegionIn() { userId = Convert.ToInt32(Session["user_id"]) });
+            //Bind Provinces..
+            if (!string.IsNullOrWhiteSpace(objExportEntitiesReport.objReportFilters.SelectedRegionIds))
+            {
+                objExportEntitiesReport.lstProvince = new BLLayer().GetProvinceByRegionId(new ProvinceIn() { regionIds = objExportEntitiesReport.objReportFilters.SelectedRegionIds, userId = Convert.ToInt32(Session["user_id"]) });
+            }
+
+            objExportEntitiesReport.lstLayerColumns = new BLLayer().GetSearchByColumnName(EntityType.FMS.ToString());
+            objExportEntitiesReport.lstLayerDurationBasedColumns = new BLLayer().GetDurationBasedColumnName(EntityType.FMS.ToString());
+
+
+        }
         public void DownloadROWReport(string fileType, string reportType)
         {
             if (!string.IsNullOrWhiteSpace(fileType))
@@ -12201,10 +12388,10 @@ namespace SmartInventory.Controllers
 
         }
 
-        public ActionResult EntityExportReportLog(ExportReportLogVM ObjExportReportLogVM, int page = 0, string sort = "", string sortdir = "")
+        public ActionResult EntityExportReportLog(ExportReportLogVM ObjExportReportLogVM, int page = 0, string sort = "", string sortdir = "", string log_type = "")
         {
 
-            //System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken => new Worker().StartProcessing(cancellationToken));
+             //System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken => new Worker().StartProcessing(cancellationToken));
             var usrDetail = (User)Session["userDetail"];
             if (sort != "" || page != 0)
             {
@@ -12215,9 +12402,10 @@ namespace SmartInventory.Controllers
             ObjExportReportLogVM.objGridAttributes.currentPage = page == 0 ? 1 : page;
             ObjExportReportLogVM.objGridAttributes.sort = sort;
             ObjExportReportLogVM.objGridAttributes.orderBy = sortdir;
-            ObjExportReportLogVM.ExportLog = new BLExportReportLog().GetExportExportLogList(ObjExportReportLogVM.objGridAttributes, usrDetail.user_id, timeInteval);
+            ObjExportReportLogVM.ExportLog = new BLExportReportLog().GetExportExportLogList(ObjExportReportLogVM.objGridAttributes, usrDetail.user_id, timeInteval, log_type);
             ObjExportReportLogVM.objGridAttributes.totalRecord = ObjExportReportLogVM.ExportLog != null && ObjExportReportLogVM.ExportLog.Count > 0 ? ObjExportReportLogVM.ExportLog[0].totalRecords : 0;
             Session["EntityExportLog"] = ObjExportReportLogVM.objGridAttributes;
+            ObjExportReportLogVM.objGridAttributes.log_type = log_type == "" ? ObjExportReportLogVM.ExportLog.Select(m => m.log_type).FirstOrDefault() : log_type;
             return PartialView("_EntityExportReportLog", ObjExportReportLogVM);
         }
 
@@ -12309,9 +12497,7 @@ namespace SmartInventory.Controllers
                         catch (WebException ex)
                         {
                             FtpWebResponse response = (FtpWebResponse)ex.Response;
-                            //Directory already exists
                             if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable) { response.Close(); }
-                            //Error in creating new directory on FTP..
                             else { throw new Exception("Error in creating directory/sub-directory!", ex); }
                         }
                     }
