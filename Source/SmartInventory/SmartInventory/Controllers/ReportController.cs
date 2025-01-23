@@ -12391,7 +12391,7 @@ namespace SmartInventory.Controllers
         public ActionResult EntityExportReportLog(ExportReportLogVM ObjExportReportLogVM, int page = 0, string sort = "", string sortdir = "", string log_type = "")
         {
 
-            //System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken => new Worker().StartProcessing(cancellationToken));
+             //System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken => new Worker().StartProcessing(cancellationToken));
             var usrDetail = (User)Session["userDetail"];
             if (sort != "" || page != 0)
             {
