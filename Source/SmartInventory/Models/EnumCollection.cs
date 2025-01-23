@@ -60,7 +60,6 @@ namespace Models
         Trench,
         Duct,
         WallMount,
-        PEP,
         //Room,
         HTB,
         FDB,

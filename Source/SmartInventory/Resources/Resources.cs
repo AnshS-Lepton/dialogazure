@@ -29468,7 +29468,7 @@ namespace Resources {
                }
             }
             
-        /// <summary>Manhole</summary>
+        /// <summary>Chamber</summary>
         public static string SI_OSP_GBL_JQ_FRM_217 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_JQ_FRM_217", CultureInfo.CurrentUICulture.Name) as string;
@@ -30095,20 +30095,6 @@ namespace Resources {
         public static string SI_OSP_GBL_NET_GBL_290 {
                get {
                    return resourceProvider.GetResource("SI_OSP_GBL_NET_GBL_290", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>PEP template saved successfully.</summary>
-        public static string SI_OSP_PEP_NET_FRM_001 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_PEP_NET_FRM_001", CultureInfo.CurrentUICulture.Name) as string;
-               }
-            }
-            
-        /// <summary>PEP template update successfully.</summary>
-        public static string SI_OSP_PEP_NET_FRM_002 {
-               get {
-                   return resourceProvider.GetResource("SI_OSP_PEP_NET_FRM_002", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
 

@@ -1252,47 +1252,6 @@ namespace DataAccess
 
 
     }
-
-    public class DAPEPItemMaster : Repository<PEPItemMaster>
-    {
-        public PEPItemMaster SavePEPItemTemplate(PEPItemMaster PEPItem, int userId)
-        {
-            try
-            {
-                var objPEPItem = repo.Get(x => x.id == PEPItem.id);
-                if (objPEPItem != null)
-                {
-                    objPEPItem.specification = PEPItem.specification;
-                    objPEPItem.category = PEPItem.category;
-                    objPEPItem.subcategory1 = PEPItem.subcategory1;
-                    objPEPItem.subcategory2 = PEPItem.subcategory2;
-                    objPEPItem.subcategory3 = PEPItem.subcategory3;
-                    objPEPItem.vendor_id = PEPItem.vendor_id;
-                    objPEPItem.item_code = PEPItem.item_code;
-                    objPEPItem.type = PEPItem.type;
-                    objPEPItem.brand = PEPItem.brand;
-                    objPEPItem.model = PEPItem.model;
-                    objPEPItem.construction = PEPItem.construction;
-                    objPEPItem.activation = PEPItem.activation;
-                    objPEPItem.accessibility = PEPItem.accessibility;
-                    objPEPItem.modified_by = userId;
-                    objPEPItem.modified_on = DateTimeHelper.Now;
-                    objPEPItem.audit_item_master_id = PEPItem.audit_item_master_id;
-                    return repo.Update(objPEPItem);
-                }
-                else
-                {
-                    PEPItem.created_by = userId;
-                    PEPItem.created_on = DateTimeHelper.Now;
-                    return repo.Insert(PEPItem);
-                }
-            }
-            catch { throw; }
-        }
-
-
-
-    }
     public class DAPatchCordItemMaster : Repository<PatchCordItemMaster>
     {
         public PatchCordItemMaster SavePatchCordItemTemplate(PatchCordItemMaster PatchCordItem, int userId)

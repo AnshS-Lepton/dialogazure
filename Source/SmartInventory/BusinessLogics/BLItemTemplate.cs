@@ -319,14 +319,7 @@ namespace BusinessLogics
 			return new DAWallMountItemMaster().SaveWallMountItemTemplate(WallItem, userId);
 		}
 	}
-    public class BLPEPItemMaster
-    {
-        public PEPItemMaster SavePEPItemTemplate(PEPItemMaster PEPItem, int userId)
-        {
-            return new DAPEPItemMaster().SavePEPItemTemplate(PEPItem, userId);
-        }
-    }
-    public class BLPatchCordItemMaster
+	public class BLPatchCordItemMaster
 	{
 		public PatchCordItemMaster SavePatchCordItemTemplate(PatchCordItemMaster CableItem, int userId)
 		{

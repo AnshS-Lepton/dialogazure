@@ -106,24 +106,6 @@ namespace SmartInventoryServices.Controllers
                         return response;
                     }
                 }
-                else if (headerAttribute.entity_type.ToUpper() == EntityType.PEP.ToString().ToUpper())
-                {
-                    if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
-                    {
-                        return GetPEPTemplate(data);
-                    }
-                    else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
-                    {
-                        return SavePEPTemplate(data);
-                    }
-
-                    else
-                    {
-                        response.status = ResponseStatus.FAILED.ToString();
-                        response.error_message = "Entity_Action not matched";
-                        return response;
-                    }
-                }
                 else if (headerAttribute.entity_type.ToUpper() == EntityType.POD.ToString().ToUpper())
                 {
                     if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
@@ -962,85 +944,6 @@ namespace SmartInventoryServices.Controllers
             {
                 ErrorLogHelper logHelper = new ErrorLogHelper();
                 logHelper.ApiLogWriter("SaveWallMountTemplate()", "Item Template Controller", data.data, ex);
-                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                response.error_message = "Error While Processing  Request.";
-            }
-            return response;
-        }
-        #endregion
-        #endregion
-
-        #region PEP
-        #region Get PEP Template 
-        
-        public ApiResponse<PEPItemMaster> GetPEPTemplate(ReqInput data)
-        {
-            var response = new ApiResponse<PEPItemMaster>();
-            try
-            {
-                ItemTemplateIn objItemTemplateIn = ReqHelper.GetRequestData<ItemTemplateIn>(data);
-                PEPItemMaster objPEPItemMaster = BLItemTemplate.Instance.GetTemplateDetail<PEPItemMaster>(objItemTemplateIn.userId, EntityType.PEP);
-                BLItemTemplate.Instance.BindItemDropdowns(objPEPItemMaster, EntityType.WallMount.ToString());
-                response.status = StatusCodes.OK.ToString();
-                response.results = objPEPItemMaster;
-            }
-            catch (Exception ex)
-            {
-                ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.ApiLogWriter("GetPEPTemplate()", "Item Template Controller", data.data, ex);
-                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
-                response.error_message = "Error While fetching PEP Template!";
-            }
-            return response;
-        }
-        #endregion
-
-        #region Save PEP Template 
-      
-        public ApiResponse<PEPItemMaster> SavePEPTemplate(ReqInput data)
-        {
-            var response = new ApiResponse<PEPItemMaster>();
-            try
-            {
-                PEPItemMaster objPEPItem = ReqHelper.GetRequestData<PEPItemMaster>(data);
-                this.Validate(objPEPItem);
-                if (ModelState.IsValid)
-                {
-                    var itemid = objPEPItem.id;
-                    var resultItem = new BLPEPItemMaster().SavePEPItemTemplate(objPEPItem, objPEPItem.UserId);
-
-                    if (itemid > 0)  // Update 
-                    {
-                        objPEPItem.objPM.status = ResponseStatus.OK.ToString();
-                        objPEPItem.objPM.message = Resources.Resources.SI_OSP_PEP_NET_FRM_002;
-                        response.status = ResponseStatus.OK.ToString();
-                        response.error_message = Resources.Resources.SI_OSP_PEP_NET_FRM_002;
-                    }
-                    else
-                    {
-                        objPEPItem.objPM.status = ResponseStatus.OK.ToString();
-                        objPEPItem.objPM.message = Resources.Resources.SI_OSP_PEP_NET_FRM_001;
-                        objPEPItem = resultItem;
-                        response.status = ResponseStatus.OK.ToString();
-                        response.error_message = Resources.Resources.SI_OSP_PEP_NET_FRM_001;
-                    }
-                }
-                else
-                {
-                    objPEPItem.objPM.message = getFirstErrorFromModelState();
-                    objPEPItem.objPM.status = ResponseStatus.FAILED.ToString();
-                    response.status = ResponseStatus.FAILED.ToString();
-                    response.error_message = getFirstErrorFromModelState();
-                    response.results = objPEPItem;
-                }
-                //fill dropdown
-                BLItemTemplate.Instance.BindItemDropdowns(objPEPItem, EntityType.PEP.ToString());
-                response.results = objPEPItem;
-            }
-            catch (Exception ex)
-            {
-                ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.ApiLogWriter("SavePEPTemplate()", "Item Template Controller", data.data, ex);
                 response.status = StatusCodes.UNKNOWN_ERROR.ToString();
                 response.error_message = "Error While Processing  Request.";
             }

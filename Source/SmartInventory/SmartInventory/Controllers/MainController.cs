@@ -659,9 +659,6 @@ namespace SmartInventory.Controllers
                     case EntityType.WallMount:
                         response = new BLMisc().deleteEntity(systemId, EntityType.WallMount.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
                         break;
-                    case EntityType.PEP:
-                        response = new BLMisc().deleteEntity(systemId, EntityType.PEP.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
-                        break;
                     case EntityType.FDB:
                         response = new BLMisc().deleteEntity(systemId, EntityType.FDB.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
                         break;
