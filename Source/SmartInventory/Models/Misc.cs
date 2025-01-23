@@ -393,7 +393,8 @@ namespace Models
 		public DateTime? fromDate { get; set; }
 		public DateTime? toDate { get; set; }
 		public int history_id { get; set; }
-		public CommonGridAttributes()
+        public string log_type { get; set; }
+        public CommonGridAttributes()
 		{
 			sort = "";
 			orderBy = "";

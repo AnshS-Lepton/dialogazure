@@ -13408,10 +13408,7 @@ var Main = function () {
                     case "DELETE":
                         app.dellandbaseEntityfromInfo(systemId, entityType, geomType);
                         break;
-                    case "FIBERALLOCATIONREPORT":
-                        //;
-                        app.fiberLocationReport(systemId, entityType, networkId);
-                        break;
+                   
                     case "EXPORT":
                         app.ExportLandbaseEntity(systemId, entityType);
                         break;
@@ -13571,6 +13568,10 @@ var Main = function () {
                         break;
                     case "HISTORY":
                         app.showHistory(systemId, entityType, geomType);
+                        break;
+                    case "FIBERALLOCATIONREPORT":
+                        //;
+                        app.fiberAllocationReport(systemId, entityType, networkId);
                         break;
                     case "EXPORT":
                         app.ExportEntity(systemId, entityType, geomType);
@@ -15028,7 +15029,7 @@ var Main = function () {
         $(obj).prop('checked', true);
 
     }
-    this.fiberLocationReport = function (systemId, entityType, networkId) {
+    this.fiberAllocationReport = function (systemId, entityType, networkId) {
         debugger;
         //popup.LoadModalDialog('PARENT', 'Report/ExportFiberAllocationReport', {
         //    'objReportFilters.geom': '', 'objReportFilters.geomType': '', 'objReportFilters.radius': 0, 'objReportFilters.layerName': 'FMS', 'objReportFilters.SearchbyColumnName': 'network_id', 'objReportFilters.SearchbyText': networkId
@@ -26423,11 +26424,11 @@ var Main = function () {
                 }, MultilingualKey.SI_OSP_GBL_GBL_GBL_043, 'modal-md-new');
             }
         },
-        EntityExportReportLog: function (geom, modeType, radius, obj) {
+        EntityExportReportLog: function (geom, modeType, radius, obj,log_type) {
             si.resetShapeTools();
             popup.LoadModalDialog('PARENT', 'Report/EntityExportReportLog', {
-                eType: ''
-            }, "Export Report Log", 'modal-lg');
+                eType: '',log_type: log_type
+            }, "Report Log", 'modal-lg');
         },
         initiateDrawingsExportReport: function (obj, shapeFlag) {
             if (si.PointentityOBJ.length > 0) {
