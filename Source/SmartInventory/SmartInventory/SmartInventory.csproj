@@ -1629,6 +1629,7 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\23-01-2025_#3223.sql" />
     <Content Include="MigrationScripts\20-01-2025_Dialog_issue.sql" />
     <Content Include="MigrationScripts\14-01-2025_#3221.sql" />
     <Content Include="MigrationScripts\01-07-2024.sql" />
