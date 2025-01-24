@@ -86,7 +86,9 @@
 </div>
 <script src="~/Content/js/DynamicForms/dynamic.js"></script>
 <script type="text/javascript">
-    var additionalAttributesUtility = new AdditionalAttributesUtility();
+	if (typeof additionalAttributesUtility === 'undefined' || additionalAttributesUtility === null) {
+		var additionalAttributesUtility = new AdditionalAttributesUtility();
+	}
     function bindcal(classname) {
          
         $('.' + classname).each(function () {

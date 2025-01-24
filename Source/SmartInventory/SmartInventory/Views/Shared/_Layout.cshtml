@@ -11,7 +11,7 @@
     <script type="text/javascript">
 
         var appRoot = '@Url.Content("~")';
-        var baseUrl = '@Request.Url.GetLeftPart(UriPartial.Authority)';
+        var baseUrl = window.location.origin + appRoot;
     </script>
 </head>
 <body>
