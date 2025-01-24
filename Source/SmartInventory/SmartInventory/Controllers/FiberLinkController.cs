@@ -246,6 +246,7 @@ namespace SmartInventory.Controllers
                                 objTempFiberLink.handover_date = DateTimeHelper.Now;
                                 objTempFiberLink.hoto_signoff_date = DateTimeHelper.Now;
                                 objTempFiberLink.fiber_link_status = "Free";
+                                objTempFiberLink.link_prefix = dr["link_prefix"].ToString(); ;
                                 //Get Network Id
 
 
