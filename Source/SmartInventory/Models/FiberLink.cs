@@ -385,6 +385,7 @@ namespace Models
 
         public string main_link_id { get; set; }
         public string redundant_link_id { get; set; }
+        public string link_prefix { get; set; }
         public TempFiberLink()
         {
             
