@@ -2079,15 +2079,26 @@ namespace SmartInventory.Controllers
 
                         var distinctFmsId = lstrouteconnectionInfo.GroupBy(m => m.fms_id).Select(group => group.First()).ToList().Select(m => m.source_network_id).ToList();
                         var cellstyle = NPOIExcelHelper.getCellStyle(workbook);
-                        ISheet sheet1 = workbook.CreateSheet("summary");
+                        ISheet sheet1 = workbook.CreateSheet("Summary");
                         IRow currRowH = sheet1.CreateRow(0);
                         NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowH, 0, "FMS Id", cellstyle, true, false);
                         NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowH, 1, "Sheet Name", cellstyle, true, false);
                         foreach (var item in distinctFmsId)
                         {
+                            ICellStyle hyperlinkStyle = workbook.CreateCellStyle();
+                            IFont hyperlinkFont = workbook.CreateFont();
+                            hyperlinkFont.Underline = FontUnderlineType.Single; // Underline the text
+                            hyperlinkFont.Color = IndexedColors.Blue.Index; // Set the text color to blue
+                            hyperlinkStyle.SetFont(hyperlinkFont);
+
                             IRow currRow = sheet1.CreateRow(j);
                             NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 0, item, cellstyle, true, false);
-                            NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 1, "Sheet-" + j, cellstyle, true, false);
+                            NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 1, "Sheet-" + j, hyperlinkStyle, true, false);
+                            XSSFHyperlink hyperlink = new XSSFHyperlink(HyperlinkType.Document);
+                            var sheetname = "Sheet-" + j;
+                            hyperlink.Address = $"'{sheetname}'!B1";
+                            hyperlink.Tooltip = "Click to go to " + sheetname;
+                            currRow.GetCell(1).Hyperlink = hyperlink;
                             j = j + 1;
                         }
                         foreach (var item in lstrouteconnectionInfo.GroupBy(m => m.fms_id).Select(group => group.First()).ToList())
