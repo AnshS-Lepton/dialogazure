@@ -39,7 +39,7 @@ namespace IntegrationServices.Controllers
         }
 
         [HttpPost]
-        [Route("UpdatePortStatus")]       
+        [Route("UpdatePortStatus")]
         public ApiResponse<dynamic> UpdatePortStatus(PortStatusUpdateInfo obj)
         {
             var response = new ApiResponse<dynamic>();
@@ -58,7 +58,7 @@ namespace IntegrationServices.Controllers
                     return response;
                 }
                 obj.user_id = ApplicationSettings.getUser("user_id");
-                obj.source_ref_type= ApplicationSettings.getUser("source_ref_type");
+                obj.source_ref_type = ApplicationSettings.getUser("source_ref_type");
                 var objResponse = BLDeviceSearch.Instance.UpdatePortStatus(obj);
                 response.status = objResponse.status.ToString();
                 response.error_message = Convert.ToString(objResponse.error_message);
@@ -80,7 +80,7 @@ namespace IntegrationServices.Controllers
             var response = new ApiResponse<dynamic>();
             try
             {
-              
+
                 if (obj.core_port_no == null)
                 {
                     response.status = StatusCodes.VALIDATION_FAILED.ToString();
@@ -115,5 +115,25 @@ namespace IntegrationServices.Controllers
             return response;
         }
 
-        }   
+        [HttpGet]
+        public IHttpActionResult GetCablesByFiberLinkIds(string linkIds)
+        {
+            try
+            {
+                string cableDetails = new BLSite().GetCablesByFiberLinkIds(linkIds).FirstOrDefault();
+
+                var cableDetailsObject = JsonConvert.DeserializeObject(cableDetails);
+
+                return Json(new
+                {
+                    cableDetails = cableDetailsObject
+                });
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("IntegrationServices.GetCableListByLinkIds()", "Search", ex);
+                return Json(new { status = ResponseStatus.ERROR.ToString(), result = "" });
+            }
+        }
+    }
 }

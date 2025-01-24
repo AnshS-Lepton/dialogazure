@@ -69,6 +69,14 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<string> GetCablesByFiberLinkIds(string linkids)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<string>("fn_get_cables_by_fiberlink_ids", new { v_linkids = linkids }, false);
+            }
+            catch(Exception ex) { throw ex; }
+        }
         public List<String> validateLinkIds(string linkids)
         {
             try

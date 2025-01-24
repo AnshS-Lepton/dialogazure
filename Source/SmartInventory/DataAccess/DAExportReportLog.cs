@@ -55,7 +55,8 @@ namespace DataAccess
                     P_SORTCOLNAME = objGridAttributes.sort,
                     P_SORTTYPE = objGridAttributes.orderBy,
                     p_user_id = user_id,
-                    p_timeInterval = timeInterval
+                    p_timeInterval = timeInterval,
+                    p_log_type = log_type
                 }, true);
             }
             catch { throw; }

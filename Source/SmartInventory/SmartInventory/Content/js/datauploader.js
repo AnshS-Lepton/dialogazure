@@ -30,9 +30,9 @@
 
     }
     this.Images = {
-        "loader": baseUrl + appRoot + "/Content/images/loader.gif",
-        "check": baseUrl + appRoot + "/Content/images/check.png",
-        "failed": baseUrl + appRoot + "/Content/images/failed.png"
+        "loader": baseUrl + "/Content/images/loader.gif",
+        "check": baseUrl + "/Content/images/check.png",
+        "failed": baseUrl + "/Content/images/failed.png"
 
     }
     this.StatusMessages = {
@@ -202,7 +202,7 @@
     }
 
     this.InitializeUploader = function () {
-         
+
         app.initActiveTab();
 
 
@@ -223,7 +223,7 @@
         app.isValidated = false;
 
         $(app.DE.liImportDataUtility).on("click", function () {
-             
+
             $(app.DE.liFileUploadUtility).remove('active')
             app.isValidated = false;
 
@@ -381,7 +381,7 @@
     }
     this.FileUploadStart = function () {
         app.hideSteps();
-         
+
         let isImportDataActivetab = app.activeTab();
 
         if (isImportDataActivetab) {
@@ -475,7 +475,7 @@
         }
     }
     this.Validated = function (result) {
-         
+
         app.hideSteps();
         $(app.DE.btnSingleDone).hide();
         let isImportDataActivetab = app.activeTab();
@@ -493,7 +493,7 @@
                     let downloadIcon = '';
                     var str = '';
                     if (item != '') {
-                         
+
 
                         downloadIcon = ($(app.DE.downloadFailedLogsID).attr("data-uploadid", result[i].id));
                         //$(app.DE.divTotalReordsdetails).append(($(app.DE.EntityName).text(item.entity_type)))  
@@ -540,14 +540,14 @@
         }
 
         $(document).on("click", 'a[name=lnkdownloadImportDataLogs]', function (e) {
-             
+
             let uploadId = $(this).data("uploadid");
             app.fnDownloadUploadLogs(uploadId, 'ALL')
         });
 
 
         $(document).on("click", '#lnkExecuteImportDataLogs', function (e) {
-             
+
             showProgress();
             //let uploadId = $(this).data("uploadid");
             var $entityBtn = $(this);
@@ -640,7 +640,7 @@
         $(app.DE.btnIDDone).removeAttr('disabled');
     }
     this.Done = function () {
-         
+
         app.showHideControls(app.Actions.PAGE_LOAD);
         $(app.DE.Uploadlogs).trigger("click");
         $(app.DE.btnExecute).hide();
@@ -680,7 +680,7 @@
     }
     this.Previous3 = function () {
         app.hideSteps();
-         
+
         let isImportDataActivetab = app.activeTab();
 
         if (isImportDataActivetab) {
@@ -712,7 +712,7 @@
     }
 
     this.ExecuteData = function () {
-         
+
         app.showHideControls(app.Actions.EXECUTE);
         ajaxReq('DataUploader/ProcessData', { uploadId: app.uploadId }, true, function (resp) {
             if (resp.status == app.StatusMessages.OK) {
@@ -725,7 +725,7 @@
     }
 
     this.ExecuteImportData = function () {
-         
+
         app.showHideControls(app.Actions.EXECUTE);
         ajaxReq('DataUploader/ProcessImportData', { planId: app.planId }, true, function (resp) {
             if (resp.status == app.StatusMessages.OK) {
@@ -737,10 +737,10 @@
         }, false, false);
     }
     this.ValidateData = function () {
-         
+
         app.showHideControls(app.Actions.VALIDATING);
         ajaxReq('DataUploader/ValidateData', { uploadId: app.uploadId }, true, function (resp) {
-             
+
             if (resp.status == app.StatusMessages.OK) {
                 app.isValidated = true;
                 app.showHideControls(app.Actions.VALIDATED, null, resp);
@@ -762,10 +762,10 @@
     }
 
     this.ValidateDataImport = function () {
-         
+
         app.showHideControls(app.Actions.VALIDATING);
         ajaxReq('DataUploader/Insert_ValidateData', { planId: app.planId }, true, function (resp) {
-             
+
             if (resp[0].status == app.StatusMessages.OK) {
                 app.isValidated = true;
                 app.showHideControls(app.Actions.VALIDATED, null, resp);
@@ -989,7 +989,7 @@
             ajaxReqforFileUpload('Datauploader/UploadFiles', fileData, true, function (result) {
                 let status = result.status;
                 let message = result.status + " :" + (result.err_description || result.error_msg);
-                 
+
                 switch (status) {
 
                     case app.StatusMessages.OK:
@@ -1056,7 +1056,7 @@
             fileData.append('planId', app.planId);
             app.showHideControls(app.Actions.FILE_UPLOAD_START);
             ajaxReqforFileUpload('Datauploader/ImportData', fileData, true, function (result) {
-                 
+
                 let status = result.status;
                 let message = result.status + " :" + (result.err_description || result.error_msg);
                 switch (status) {
@@ -1098,7 +1098,7 @@
     this.bindEvents = function () {
 
         $(app.DE.selEntity).change(function (e) {
-             
+
             app.uploadId = 0;
             let entityType = $(this).val();
             app.showHideControls(app.Actions.ENTITY_TYPE_CHANGE);
@@ -1139,7 +1139,7 @@
 
         });
         $(app.DE.btnUpload).on("click", function () {
-             
+
             if (app.uploadId == 0) {
                 isAuthenticate();
                 app.UploadData();
@@ -1151,7 +1151,7 @@
 
 
         $(app.DE.btnIDUpload).on("click", function () {
-             
+
             if (app.uploadId == 0) {
                 isAuthenticate();
                 app.UploadIDData();
@@ -1171,7 +1171,7 @@
         });
 
         $(app.DE.btnDone).on("click", function () {
-             
+
             app.showHideControls(app.Actions.DONE);
             app.showHideControls(app.Actions.PAGE_LOAD);
         });
@@ -1201,7 +1201,7 @@
         });
 
         $(app.DE.btnImpDataPrevious1).on("click", function () {
-             
+
             app.showHideControls(app.Actions.PREVIOUS_1);
         });
 
@@ -1222,7 +1222,7 @@
         });
 
         $(app.DE.btnNextStep2).on("click", function () {
-             
+
             if (app.isValidated == false)
                 app.ValidateData();
             else {
@@ -1235,7 +1235,7 @@
         });
 
         $(app.DE.btnIDNext).on("click", function () {
-             
+
             if (app.isValidated == false)
                 app.ValidateDataImport();
             else {
@@ -1306,7 +1306,7 @@
                     data: { entityType: _entityType },
                     success: function (result) {
                         if (result.status) {
-                            window.location = appRoot + 'DataUploader/downloadTemplate?entityType=' + _entityType + '&templateType=' + _templateType + '&geomType=' + geomType;
+                            window.location = 'DataUploader/downloadTemplate?entityType=' + _entityType + '&templateType=' + _templateType + '&geomType=' + geomType;
                         } else {
                             alert(result.message);
                         }
@@ -1320,7 +1320,7 @@
 
     }
     this.RemoveOldFeature = function () {
-         
+
         si.map.data.forEach(function (feature) {
             si.map.data.remove(feature);
         });
@@ -1328,7 +1328,7 @@
 
     this.fnShowEntityonMap = function (id) {
         //if ($(event).hasClass("glyphicon-eye-open")) {
-         
+
 
         var bounds = new google.maps.LatLngBounds();
         ajaxReq('DataUploader/ShowOnMap', { id: id }, false, function (resp) {
@@ -1350,7 +1350,7 @@
 
 
     this.mouseInToRegion = function mouseInToRegion(e) {
-         
+
         var feature = e.feature;
 
         var geometry = feature.getGeometry().g;
@@ -1398,12 +1398,12 @@
     }
 
     this.loadMapShapes = function loadMapShapes(bSetBound) {
-         
+
         var JSONData = app.concatGeoJSON(app.CableViewJSONResp, app.Upload_SummaryJSONResp);
         si.map.data.addGeoJson(JSONData, { idPropertyName: 'id' });
         var bounds = new google.maps.LatLngBounds();
         si.map.data.setStyle(function (feature) {
-             
+
 
             var geomstyle
             var type = feature.getGeometry().getType();
@@ -1441,11 +1441,11 @@
                     }
                     break;
                 case "Point":
-                     
+
                     //for(var i=0;i<objJSON.features.length;i++){
                     //si.SetPointTypeBound(bounds, objJSON.features[i].geometry);
                     if (entity_name.toUpperCase() != 'LANDBASE') {
-                        var imageUrl = baseUrl + appRoot + '/Content/images/icons/lib/KMLICONS/' + entity_name.toUpperCase() + '.png';
+                        var imageUrl = baseUrl + '/Content/images/icons/lib/KMLICONS/' + entity_name.toUpperCase() + '.png';
                         geomstyle = {
                             icon: imageUrl,
                             //   title: feature.i.network_id
@@ -1551,7 +1551,7 @@
                 $(app.DE.DownloadTemplate).removeAttr('disabled');
                 ajaxReq('datauploader/getDxfSourceList', null, true, function (response) {
                     //$('#ddlSourceList').html('');
-                     
+
 
                     var result = $.parseJSON(response);
 
@@ -1626,17 +1626,17 @@
         $(obj).show();
     }
     this.getMappingTemplate = function () {
-         
+
         let _templateId = 0;
         if ($('#ddlColumTemplates').val() > 0) { _templateId = parseInt($('#ddlColumTemplates').val()); }
         let _layerName = $(app.DE.selEntity).val();
         ajaxReq('DataUploader/getColumnMappping', { layerName: _layerName, templateId: _templateId }, true, function (resp) {
-             
+
             $(app.DE.step2).html(resp);
         }, false, true);
     }
     this.setTemplateTame = function () {
-         
+
         var _isValid = true;
         $.each($('#step2 select[is-Required="1"]'), function (i, item) {
             if ($(item).val() == '') { _isValid = false; $(this).next('.chosen-container').addClass('notvalid'); }
@@ -1667,7 +1667,7 @@
 
     this.successMapping = function (resp) {
 
-         
+
         if ($('#hdnIsFinalMapping').val().toLowerCase() == 'true') {
             if (resp.status == app.Actions.INVALID_INPUTS) {
                 let message = resp.status + " :" + (resp.err_description || resp.error_msg);
@@ -1686,7 +1686,7 @@
         $('.modal-backdrop').hide();
     }
     this.ChangeColumnMapping = function () {
-         
+
         $('#hdnUploadId').val(app.uploadId);
         $('#hdnIsFinalMapping').val(true);
         var _isValid = true;
@@ -1732,7 +1732,7 @@
     }
     this.checkLogFileExist = function (id, status) {
         ajaxReq('FileDownload/checkLogFileExist', { id: id, status: status }, false, function (resp) {
-             
+
             if (resp.status == 'FAILED') {
                 alert(resp.message);
             } else { window.location = applicationUrl + '/FileDownload/DownloadUploadLogs?id=' + id + '&status=' + status; }

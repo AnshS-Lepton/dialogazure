@@ -22,6 +22,7 @@ using Utility;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Web.DynamicData;
+using static NPOI.HSSF.Util.HSSFColor;
 
 
 
@@ -407,9 +408,28 @@ namespace SmartInventoryServices.Controllers
 								return response;
 							}
 						}
-						#endregion
-						#region POD
-						else if (headerAttribute.entity_type.ToUpper() == EntityType.POD.ToString().ToUpper())
+                        #endregion
+                        #region PEP
+                        else if (headerAttribute.entity_type.ToUpper() == EntityType.PEP.ToString().ToUpper())
+                        {
+                            if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
+                            {
+                                return AddPEP(data);
+                            }
+                            else if (headerAttribute.entity_action.ToUpper() == EntityAction.Save.ToString().ToUpper())
+                            {
+                                return SavePEP(data, headerAttribute);
+                            }
+                            else
+                            {
+                                response.status = ResponseStatus.FAILED.ToString();
+                                response.error_message = "Entity_Action not matched";
+                                return response;
+                            }
+                        }
+                        #endregion
+                        #region POD
+                        else if (headerAttribute.entity_type.ToUpper() == EntityType.POD.ToString().ToUpper())
 						{
 							if (headerAttribute.entity_action.ToUpper() == EntityAction.Get.ToString().ToUpper())
 							{
@@ -2090,17 +2110,213 @@ namespace SmartInventoryServices.Controllers
 		}
 
 
-		#endregion
-		#endregion
+        #endregion
+        #endregion
 
-		#region Pod
+        #region PEP
 
-		#region Pod Details
-		/// <summary> Get Pod Details</summary>
-		/// <param name="data">networkIdType,systemId,geom,userId</param>
-		/// <returns>Pod Details</returns>
-		/// <CreatedBy>Sumit Poonia</CreatedBy>
-		public PODMaster GetPODDetail(PODMaster objPOD)
+        #region Add PEP
+
+        public ApiResponse<PEPMaster> AddPEP(ReqInput data)
+        {
+            var response = new ApiResponse<PEPMaster>();
+            try
+            {
+                PEPMaster objRequestIn = ReqHelper.GetRequestData<PEPMaster>(data);
+                PEPMaster objPEPMaster = GetPEPDetail(objRequestIn);
+                BLItemTemplate.Instance.BindItemDropdowns(objPEPMaster, EntityType.PEP.ToString());
+                BindPEPDropDown(objPEPMaster);
+                fillProjectSpecifications(objPEPMaster);
+                //Get the layer details to bind additional attributes PEP
+                var layerdetails = new BLLayer().getLayer(EntityType.PEP.ToString());
+                objPEPMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
+                objPEPMaster.formInputSettings = new BLFormInputSettings().getformInputSettings().Where(m => m.form_name == EntityType.PEP.ToString()).ToList();
+                //End for additional attributes PEP
+                response.status = StatusCodes.OK.ToString();
+                response.results = objPEPMaster;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("AddPEP()", "Library Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message.ToString();
+            }
+            return response;
+        }
+        #endregion
+
+        #region Bind PEP Dropdown
+        private void BindPEPDropDown(PEPMaster objPEPMaster)
+        {
+            var objDDL = new BLMisc().GetDropDownList(EntityType.PEP.ToString());
+            objPEPMaster.list3rdPartyVendorId = BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList();
+            objPEPMaster.listOwnVendorId = BLCable.Instance.GetAllVendorType(VendorType.Own.ToString()).ToList();
+            var obj_DDL = new BLMisc().GetDropDownList("");
+            objPEPMaster.lstBOMSubCategory = obj_DDL.Where(x => x.dropdown_type == DropDownType.bom_sub_category.ToString()).ToList();
+        }
+        #endregion
+
+        #region Get PEP Detail
+        public PEPMaster GetPEPDetail(PEPMaster objPEP)
+        {
+            int user_id = objPEP.user_id;
+            if (objPEP.system_id == 0)
+            {
+                //NEW ENTITY->Fill Region and Province Detail..
+                fillRegionProvinceDetail(objPEP, GeometryType.Point.ToString(), objPEP.geom);
+                //Fill Parent detail...              
+                fillParentDetail(objPEP, new NetworkCodeIn() { eType = EntityType.PEP.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPEP.geom }, objPEP.networkIdType);
+                objPEP.longitude = Convert.ToDouble(objPEP.geom.Split(' ')[0]);
+                objPEP.latitude = Convert.ToDouble(objPEP.geom.Split(' ')[1]);
+                objPEP.ownership_type = "Own";
+                // Item template binding
+                var objItem = BLItemTemplate.Instance.GetTemplateDetail<PEPTemplateMaster>(objPEP.user_id, EntityType.PEP);
+                MiscHelper.CopyMatchingProperties(objItem, objPEP);
+                objPEP.other_info = null; //for additional-attributes
+            }
+            else
+            {
+                // Get entity detail by Id...
+                objPEP = new BLMisc().GetEntityDetailById<PEPMaster>(objPEP.system_id, EntityType.PEP, objPEP.user_id);
+                //for additional-attributes
+                objPEP.other_info = new BLPEP().GetOtherInfoPEP(objPEP.system_id);
+                fillRegionProvAbbr(objPEP);
+            }
+            objPEP.lstUserModule = new BLLayer().GetUserModuleAbbrList(user_id, UserType.Web.ToString());
+            return objPEP;
+        }
+        #endregion
+
+        #region Save PEP
+
+        public ApiResponse<PEPMaster> SavePEP(ReqInput data, dynamic headerAttribute)
+        {
+            var response = new ApiResponse<PEPMaster>();
+            PEPMaster objPEPMaster = ReqHelper.GetRequestData<PEPMaster>(data);
+            try
+            {
+                if (objPEPMaster.networkIdType == NetworkIdType.A.ToString() && objPEPMaster.system_id == 0)
+                {
+                    //GET AUTO NETWORK CODE...
+                    var objNetworkCodeDetail = new BLMisc().GetNetworkCodeDetail(new NetworkCodeIn() { eType = EntityType.PEP.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPEPMaster.geom, parent_eType = objPEPMaster.pEntityType, parent_sysId = objPEPMaster.pSystemId });
+                    if (objPEPMaster.isDirectSave == true)
+                    {
+                        //GET ENTITY DETAIL FROM TEMPLATE (IF ANY) OTHER WISESET REGION PROVINCE DETAILS..
+                        objPEPMaster = GetPEPDetail(objPEPMaster);
+                        // INITIALIZE DEFAULT VALUE FOR REQUIRED FIELDS
+                        objPEPMaster.pep_name = objNetworkCodeDetail.network_code;
+                        var objBOMDDL = new BLMisc().GetDropDownList("", "bom_sub_category");
+                        //  var objSubCatDDL = new BLMisc().GetDropDownList("", "served_by_ring");
+                        objPEPMaster.bom_sub_category = objBOMDDL[0].dropdown_value;
+                        // objWallMountMaster.served_by_ring = objSubCatDDL[0].dropdown_value;
+                    }
+                    //SET NETWORK CODE
+                    objPEPMaster.network_id = objNetworkCodeDetail.network_code;
+                    objPEPMaster.sequence_id = objNetworkCodeDetail.sequence_id;
+                }
+                if (string.IsNullOrEmpty(objPEPMaster.pep_name))
+                {
+                    objPEPMaster.pep_name = objPEPMaster.network_id;
+                }
+                this.Validate(objPEPMaster);
+                if (ModelState.IsValid)
+                {
+                    var isNew = objPEPMaster.system_id > 0 ? false : true;
+                    objPEPMaster.is_new_entity = (isNew && objPEPMaster.source_ref_id != "0" && objPEPMaster.source_ref_id != "");
+                    var resultItem = new BLPEP().SaveEntityPEP(objPEPMaster, objPEPMaster.user_id);
+                    if (resultItem.objPM.status == "OK")
+                    {
+                        var lnglat = objPEPMaster.longitude.ToString().Trim() + " " + objPEPMaster.latitude.ToString().Trim();
+                        var apiresp = SaveEditGeometry(resultItem.system_id, objPEPMaster.user_id, objPEPMaster.entityType, lnglat, headerAttribute);
+                        if (apiresp.status != "OK")
+                        {
+                            response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                            response.error_message = apiresp.error_message;
+                            return response;
+                        }
+                    }
+                    if (string.IsNullOrEmpty(resultItem.objPM.message))
+                    {
+                        string[] LayerName = { EntityType.PEP.ToString() };
+                        //Save Reference
+                        if (objPEPMaster.EntityReference != null && resultItem.system_id > 0)
+                        {
+                            SaveReference(objPEPMaster.EntityReference, resultItem.system_id);
+                        }
+                        if (isNew)
+                        {
+                            objPEPMaster.objPM.status = ResponseStatus.OK.ToString();
+                            objPEPMaster.objPM.isNewEntity = isNew;
+                            objPEPMaster.objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName); ;
+                            response.status = ResponseStatus.OK.ToString();
+                            response.error_message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_GBL_GBL_GBL_GBL_095, ApplicationSettings.listLayerDetails, LayerName); ;
+                        }
+                        else
+                        {
+                            BLLoopMangment.Instance.UpdateLoopDetails(objPEPMaster.system_id, "PEP", objPEPMaster.network_id, objPEPMaster.lstLoopMangment, new NetworkCodeIn() { eType = EntityType.Loop.ToString(), gType = GeometryType.Point.ToString(), eGeom = objPEPMaster.longitude + " " + objPEPMaster.latitude }, objPEPMaster.user_id);
+                            objPEPMaster.objPM.status = ResponseStatus.OK.ToString();
+                            objPEPMaster.objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+                            response.status = ResponseStatus.OK.ToString();
+                            response.error_message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_GBL_GBL_064, ApplicationSettings.listLayerDetails, LayerName);
+                        }
+                        objPEPMaster.objPM = objPEPMaster.objPM;
+                    }
+                    else
+                    {
+                        objPEPMaster.objPM.status = ResponseStatus.FAILED.ToString();
+                        objPEPMaster.objPM.message = resultItem.objPM.message;
+                        response.error_message = resultItem.objPM.message;
+                        response.status = ResponseStatus.FAILED.ToString();
+                    }
+                }
+                else
+                {
+                    objPEPMaster.objPM.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                    objPEPMaster.objPM.message = getFirstErrorFromModelState();
+                    response.error_message = getFirstErrorFromModelState();
+                    response.status = ResponseStatus.VALIDATION_FAILED.ToString();
+                }
+                if (objPEPMaster.isDirectSave == true)
+                {
+                    response.results = objPEPMaster;
+                    response.status = ResponseStatus.OK.ToString();
+                }
+                else
+                {
+                    BLItemTemplate.Instance.BindItemDropdowns(objPEPMaster, EntityType.PEP.ToString());
+                    BindPEPDropDown(objPEPMaster);
+                    fillProjectSpecifications(objPEPMaster);
+                    //Get the layer details to bind additional attributes PEP
+                    var layerdetails = new BLLayer().getLayer(EntityType.PEP.ToString());
+                    objPEPMaster.objDynamicControls = GetAdditionalAttributesForm(layerdetails.layer_id);
+                    //End for additional attributes PEP
+                    response.results = objPEPMaster;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("SavePEP()", "Library Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = ex.Message;
+            }
+            return response;
+        }
+
+
+        #endregion
+        #endregion
+
+        #region Pod
+
+        #region Pod Details
+        /// <summary> Get Pod Details</summary>
+        /// <param name="data">networkIdType,systemId,geom,userId</param>
+        /// <returns>Pod Details</returns>
+        /// <CreatedBy>Sumit Poonia</CreatedBy>
+        public PODMaster GetPODDetail(PODMaster objPOD)
 		{
 			int user_id = objPOD.user_id;
 			if (objPOD.system_id == 0)

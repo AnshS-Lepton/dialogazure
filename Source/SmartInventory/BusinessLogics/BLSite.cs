@@ -23,6 +23,10 @@ namespace BusinessLogics
         {
             return new DASiteSync().getCablesByLinkIds(linkids);
         }
+        public List<string> GetCablesByFiberLinkIds(string linkids)
+        {
+            return new DASiteSync().GetCablesByFiberLinkIds(linkids);
+        }
         public List<String> validateLinkIds(string linkids)
         {
             return new DASiteSync().validateLinkIds(linkids);
