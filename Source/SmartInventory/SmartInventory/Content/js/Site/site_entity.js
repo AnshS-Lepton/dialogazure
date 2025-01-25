@@ -104,8 +104,8 @@ $(document).ready(function () {
         $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html('<div class="Created"></div>' + '<div style="width:150px;">' + firsttdHtml + '</div>')
         $('#tblExportReport thead tr th:eq(0)').html('' + MultilingualKey.SI_OSP_GBL_GBL_GBL_059 + '');
         var systemId = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(0)').attr('data-value');
-        var region_id = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(38)').attr('data-value');
-        var province_id = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(56)').attr('data-value');
+        var region_id = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(31)').attr('data-value');
+        var province_id = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(32)').attr('data-value');
         var rowAction = '<a href="#" data-value="' + systemId + '"  class="dropdown-toggle rowShowOnMap" title= "' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
         rowAction = rowAction + '<i class="fa fa-globe fa-fw m-r-xs"></i></a>';
         rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId+','+ region_id+','+province_id + '" class="dropdown-toggle rowShowSiteAwarding" title= "' + MultilingualKey.SI_OSP_GBL_GBL_RPT_002 + '"><i class="fa fa-user-plus"></i></a>';
