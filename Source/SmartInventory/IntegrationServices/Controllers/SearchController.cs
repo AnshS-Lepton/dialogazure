@@ -116,6 +116,7 @@ namespace IntegrationServices.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/v1/GetCablesByFiberLinkIds")]
         public IHttpActionResult GetCablesByFiberLinkIds(string linkIds)
         {
             try
