@@ -16,8 +16,8 @@ namespace IntegrationServices.Controllers
     {
 
         [HttpGet]
-        [Route("darkFiberFeasibility")]
-        public HttpResponseMessage getDarkFiberFeasibility(string request_id, string a_lat_lng, string z_lat_lng, string fiber_cores, string a_buffer = "500", string z_buffer = "500")
+        [Route("api/v1/enterpriseFeasibility")]
+        public HttpResponseMessage enterpriseFeasibility(string request_id, string a_lat_lng, string z_lat_lng, string fiber_cores, string a_buffer = "500", string z_buffer = "500")
         {
 
 
