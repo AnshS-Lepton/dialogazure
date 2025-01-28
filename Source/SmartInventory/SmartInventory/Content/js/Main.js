@@ -24433,6 +24433,34 @@ var Main = function () {
                 }, MultilingualKey.SI_OSP_GBL_NET_RPT_420, 'modal-xl');
             }
         },
+
+        SiteTopology: function (geom, modeType, radius, obj) {
+            if (obj) {
+                $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
+                $(obj).addClass('activeToolBar');
+            }
+            if (geom != '' && geom != null) {
+                ajaxReq('Report/ValidatePotentialArea', {
+                    geom: geom, geomType: modeType, buff_Radius: radius
+                }, true, function (resp) {
+                    if (resp.status == 'FAILED' || resp.status == 'ERROR') {
+                        alert(resp.message);
+                        return false;
+                    }
+                    else {
+                        popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
+                            'objReportFilters.geom': geom, 'objReportFilters.geomType': modeType, 'objReportFilters.radius': radius, 'objReportFilters.layerName': 'SITE'
+                        }, MultilingualKey.SI_OSP_GBL_NET_RPT_420, 'modal-xl');
+                    }
+
+                }, true, true, true);
+            }
+            else {
+                popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
+                    eType: '', refrenceData: modeType,
+                }, MultilingualKey.SI_OSP_GBL_NET_RPT_420, 'modal-xl');
+            }
+        },
        
         AwardSiteToSelectedVendor: function (user_id, vendorCost) {
             

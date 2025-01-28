@@ -1,4 +1,5 @@
 ﻿using BusinessLogics;
+using BusinessLogics.Admin;
 using Ionic.Zip;
 using iTextSharp.text;
 using iTextSharp.text.html.simpleparser;
@@ -13441,6 +13442,67 @@ namespace SmartInventory.Controllers
                     Response.End();
                 }
             }
+        }
+        #endregion
+
+        #region Site Topology process 
+        public ActionResult SiteTopology(TopologyPlan objToplogyPlan, int page = 0, string sort = "", string sortdir = "", string refrenceData = "")
+        {
+            try
+            {
+
+                objToplogyPlan.lsttopologytype = new BLMisc().GetToplogyDropDownList(DropDownType.Topology_Type.ToString());
+                objToplogyPlan.lstringtype = new BLMisc().GetToplogyDropDownList(DropDownType.Ring_Capacity.ToString());
+                objToplogyPlan.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
+              
+
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("SiteTopology()", "Report", ex);
+                throw ex;
+            }
+
+            return PartialView("_SiteTopologyPlan", objToplogyPlan);
+        }
+        public JsonResult GetSegmentsByRegion(int regionId)
+        {
+            // Fetch segments based on regionId
+            var segments = new BLProject().getSegmentDetailByIdList(regionId);
+
+            // Transform into key-value pairs for dropdown
+            var segmentDropdownData = segments.Select(s => new
+            {
+                Value = s.SegmentId,      // Segment ID as value
+                Text = s.segment_name      // Segment name as text getRingDetailByIdList
+            }).ToList();
+
+            // Return as JSON
+            return Json(segmentDropdownData, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetRingTypesByRegion(int segmentId)
+        {
+            var ringsdata = new BLProject().getRingDetailByIdList(segmentId);
+            // Transform into key-value pairs for dropdown
+            var ringsDropdownData = ringsdata.Select(s => new
+            {
+                Value = s.SegmentId,     
+                Text = s.ring_name      
+            }).ToList();
+
+            // Return as JSON
+            return Json(ringsDropdownData, JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult SaveSiteTopology(TopologyPlan objTopologyPlan)
+        {
+            ModelState.Clear();
+            if (TryValidateModel(objTopologyPlan))
+            {
+                objTopologyPlan = new BLProject().SaveToploogyPlan(objTopologyPlan);
+            }
+
+            return Json(objTopologyPlan, JsonRequestBehavior.AllowGet);
         }
         #endregion
     }

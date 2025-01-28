@@ -178,5 +178,21 @@ namespace BusinessLogics.Admin
         {
             return new DAPurposeCode().getPurposeDetailByWorkOrderIds(workorder_ids);
         }
+        public List<TopologyRegionMaster> getTopologyRegionDetails()
+        {
+            return new DAToplologyRegion().getTopologyRegionDetails();
+        }
+        public List<TopologySegmentMaster> getSegmentDetailByIdList(int region_Id=0)
+        {
+            return new DAToplologySegment().getSegmentDetailByIdList(region_Id);
+        }
+        public List<TopologyRingMaster> getRingDetailByIdList(int segment_Id = 0)
+        {
+            return new DAToplologyRing().getRingDetailByIdList(segment_Id);
+        }
+        public TopologyPlan SaveToploogyPlan(TopologyPlan objTopologyPlan)
+        {
+            return new DAToplologyPlan().SaveToploogyPlan(objTopologyPlan);
+        }
     }
 }

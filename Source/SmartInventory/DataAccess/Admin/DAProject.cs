@@ -1,6 +1,8 @@
 ﻿using DataAccess.DBHelpers;
 using Models;
 using Models.Admin;
+using Models.API;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -504,6 +506,38 @@ namespace DataAccess.Admin
 
     }
 
+    public class DAToplologyRegion : Repository<TopologyRegionMaster>
+    {
+        public List<TopologyRegionMaster> getTopologyRegionDetails()
+        {
+            return repo.GetAll().ToList();
+            // return new List<ProjectCodeMaster>();
+        }
 
 
+    }
+
+    public class DAToplologySegment : Repository<TopologySegmentMaster>
+    {
+        public List<TopologySegmentMaster> getSegmentDetailByIdList(int region_Id)
+        {
+            return repo.GetAll(m => m.RegionId == region_Id).ToList();
+        }
+    }
+    public class DAToplologyRing : Repository<TopologyRingMaster>
+    {
+        public List<TopologyRingMaster> getRingDetailByIdList(int segment_Id)
+        {
+            return repo.GetAll(m => m.SegmentId == segment_Id).ToList();
+        }
+    }
+
+    public class DAToplologyPlan : Repository<TopologyPlan>
+    {
+        public TopologyPlan SaveToploogyPlan(TopologyPlan objTopologyPlan)
+        {
+            var TopologyResp = repo.Insert(objTopologyPlan);
+            return TopologyResp;
+        }
+    }
 }

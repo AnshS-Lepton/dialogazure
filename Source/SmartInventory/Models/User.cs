@@ -927,6 +927,85 @@ namespace Models
         public string email_id { get; set; }
 
     }
+
+    public class TopologyPlan
+        {
+            [Key]
+            [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+            public int id { get; set; }
+            public string site_id { get; set; } = string.Empty;
+            public string site_name { get; set; } = string.Empty;
+            public int topology_type { get; set; } = 0;
+            public int ring_type { get; set; } = 0;
+            public int region_id { get; set; } = 0;
+            public int segment_id { get; set; } = 0;
+            public int ring_id { get; set; } = 0;        
+            public string agg1 { get; set; } 
+            public string agg2 { get; set; }
+            public int no_of_sites { get; set; } = 0;
+            public double max_distance_peer { get; set; } = 0.0;
+            [NotMapped]
+            public IList<DropDownMaster> lsttopologytype { get; set; }
+            public int topologytype { get; set; }
+            [NotMapped]
+            public IList<DropDownMaster> lstringtype { get; set; }
+            public int ringtype { get; set; }
+            [NotMapped]
+            public List<TopologyRegionMaster> lstTopologyRegionMaster { get; set; }
+            [NotMapped]
+            public int RegionId { get; set; }
+            [NotMapped]
+            public List<TopologySegmentMaster> lstTopologySegmentMaster { get; set; }
+            [NotMapped]
+            public int SegmentId { get; set; }
+            [NotMapped]
+            public List<TopologyRingMaster> lstTopologyRingMaster { get; set; }
+            public TopologyPlan()
+            {
+                lstTopologyRegionMaster = new List<TopologyRegionMaster>();
+                lstTopologySegmentMaster = new List<TopologySegmentMaster>();
+                lstTopologyRingMaster = new List<TopologyRingMaster>();
+            }
+    }
+            public class TopologyRegionMaster
+            {
+                [Key]
+                [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+                public int id { get; set; }
+                [Column("region_id")]  // Use snake_case if the column is named region_id
+                public int RegionId { get; set; }
+                public string region_name { get; set; } = string.Empty;
+                [NotMapped]
+                public List<int> lstRegion { get; set; }
+                // Navigation Property: One Region can have many Segments
+            }
+    public class TopologySegmentMaster
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
+
+        [Column("segment_id")] // Ensure this matches the database column name
+        public int SegmentId { get; set; }
+
+        public string segment_name { get; set; } = string.Empty;
+
+        [Column("region_id")]  // Use snake_case if the column is named region_id
+        public int RegionId { get; set; }
+
+        [NotMapped]
+        public List<int> lstSegment { get; set; }
+    }
+
+            public class TopologyRingMaster
+            {
+                [Key]
+                [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+                public int id { get; set; }
+                public string ring_name { get; set; } = string.Empty;
+                [Column("segment_id")] // Ensure this matches the database column name
+                public int SegmentId { get; set; }
+             }
 }
 
 

@@ -660,6 +660,11 @@ namespace DataAccess.DBContext
             modelBuilder.Entity<TrenchExecution>().ToTable("att_entity_execution_method", dbschema);
             modelBuilder.Entity<Site>().ToTable("att_details_site", dbschema);
 
+            modelBuilder.Entity<TopologyPlan>().ToTable("topology_plan_details", dbschema);
+            modelBuilder.Entity<TopologyRegionMaster>().ToTable("topology_region_master", dbschema);
+            modelBuilder.Entity<TopologySegmentMaster>().ToTable("topology_segment_master", dbschema);
+            modelBuilder.Entity<TopologyRingMaster>().ToTable("topology_ring_master", dbschema);
+
 
         }
 

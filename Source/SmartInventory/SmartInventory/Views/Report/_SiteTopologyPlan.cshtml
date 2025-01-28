@@ -1,0 +1,183 @@
+﻿@using SmartInventory.Settings;
+@model Models.TopologyPlan
+<style>
+
+    .btn {
+        font-weight: bold !important;
+        line-height: 1.42857143 !important;
+    }
+
+    .icon-kmldownload {
+        font-size: 20px;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="libDetail">
+
+
+    @using (Ajax.BeginForm("SaveSiteTopology", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvProgress" },
+                                                    new { id = "frmsittopology", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        @*@Html.HiddenFor(m => m.objReportFilters.geom)
+            @Html.HiddenFor(m => m.objReportFilters.geomType)
+            @Html.HiddenFor(m => m.objReportFilters.radius)
+            @Html.HiddenFor(m => m.objReportFilters.layerName, new { id = "hdnLayerName" })*@
+        <input type="hidden" id="hdnApproveCount" value="0">
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_357 :</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "input-sm col-sm-12", @placeholder = "Search text", @maxlength = 100 })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 :</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "input-sm col-sm-12", @placeholder = "Search text", @maxlength = 100 })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_457 :</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.topologytype, new SelectList(Model.lsttopologytype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_458 :</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.ringtype, new SelectList(Model.lstringtype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 :</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.agg1, new { @id = "txtagg1", @title = "Search text", @tabindex = "4", @class = "input-sm col-sm-12", @placeholder = "Search text", @maxlength = 100 })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 :</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.agg2, new { @id = "txtagg2", @title = "Search text", @tabindex = "4", @class = "input-sm col-sm-12", @placeholder = "Search text", @maxlength = 100})
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_461 :</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.no_of_sites, new { @id = "txtnoOfsite", @title = "Search text", @tabindex = "4", @class = "input-sm col-sm-12", @placeholder = "Search text", @maxlength = 100 })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 :</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Search text", @tabindex = "4", @class = "input-sm col-sm-12", @placeholder = "Search text", @maxlength = 100 })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">Region Type :</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstTopologyRegionMaster.Select(x => new { Value = x.RegionId, Text = x.region_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlregionid" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">Segment Type :</label>
+                        <div class="col-sm-4">
+                            @*<select id="ddlsegment" class="form-control">
+                                <option value="">--Select Segment Type--</option>
+                            </select>*@
+                            @Html.DropDownListFor(m => m.segment_id,new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"),"--Select Segment Type--",new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">Ring Type :</label>
+
+                        <div class="col-sm-4">
+                            @*<select id="ddlringtype" class="form-control">
+            <option value="">--Select Ring Type--</option>
+        </select>*@
+                            @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologyRingMaster, "Value", "Text"), "--Select Segment Type--", new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ml-auto">
+              
+                <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCancel" onclick="si.clearTPRelatedObjects();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                <input type="button" formmethod="post" class="btn btn-primary" name="actionTab" id="btnSave" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+
+
+
+            </div>
+        </div>
+        
+    }
+
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('#ddlregionid').change(function () {
+            debugger;
+        var regionId = $(this).val(); // Get the selected RegionId
+
+        if (regionId) {
+        $.ajax({
+            url: '@Url.Action("GetSegmentsByRegion", "Report")', // Action to fetch ring types
+            type: 'GET',
+            data: { regionId: regionId }, // Pass selected regionId to the server
+            success: function (data) {
+                // Populate the Ring Type Dropdown
+                var ringtypeDropdown = $('#ddlsegment');
+                ringtypeDropdown.empty(); // Clear existing options
+                ringtypeDropdown.append('<option value="">--Select Ring Type--</option>');
+
+                // Append options from the data
+                $.each(data, function (index, item) {
+                    ringtypeDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                });
+            },
+            error: function () {
+                alert("Error fetching ring types. Please try again.");
+            }
+        });
+    } else {
+        // Clear the ringtype dropdown if no region is selected
+        $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
+            }
+            $('#ddlsegment').change(function () {
+                debugger;
+            var segmentId = $(this).val(); // Get the selected SegmentId
+
+    if (segmentId) {
+        $.ajax({
+            url: '@Url.Action("GetRingTypesByRegion", "Report")', // Action to fetch ring types
+            type: 'GET',
+            data: { segmentId: segmentId }, // Pass the selected SegmentId
+            success: function (data) {
+                // Populate the Ring Type Dropdown
+                var ringTypeDropdown = $('#ddlringtype');
+                ringTypeDropdown.empty(); // Clear existing options
+                ringTypeDropdown.append('<option value="">--Select Ring Type--</option>');
+
+                // Append options from the response
+                $.each(data, function (index, item) {
+                    ringTypeDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                });
+            },
+            error: function () {
+                alert("Error fetching ring types. Please try again.");
+            }
+        });
+    } else {
+        // Clear the ringtype dropdown if no segment is selected
+        $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
+                }
+               
+});
+
+});
+        $('#btnSave').click(function (e) {
+            e.preventDefault(); // Prevent default button action
+            $('#frmsittopology').submit(); // Manually submit the form
+        });
+    });
+  
+</script>

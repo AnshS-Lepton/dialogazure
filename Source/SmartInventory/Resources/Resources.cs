@@ -30111,6 +30111,55 @@ namespace Resources {
                    return resourceProvider.GetResource("SI_OSP_PEP_NET_FRM_002", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
+        public static string SI_OSP_GBL_NET_RPT_456
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_456", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+        public static string SI_OSP_GBL_NET_RPT_457
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_457", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+        public static string SI_OSP_GBL_NET_RPT_458
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_458", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+        public static string SI_OSP_GBL_NET_RPT_459
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_459", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+        public static string SI_OSP_GBL_NET_RPT_460
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_460", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+        public static string SI_OSP_GBL_NET_RPT_461
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_461", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+        public static string SI_OSP_GBL_NET_RPT_462
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_462", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
 
-        }        
+    }        
 }
