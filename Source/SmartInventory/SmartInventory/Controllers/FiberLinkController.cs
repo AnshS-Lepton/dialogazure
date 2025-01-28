@@ -19,6 +19,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Utility;
+using Newtonsoft.Json;
 
 namespace SmartInventory.Controllers
 {
@@ -1306,6 +1307,27 @@ namespace SmartInventory.Controllers
             Response.End();
         }
 
+        public ActionResult GetSLDDiagram(int link_system_id)
+        {
+            //string[] value = key.Split(',');
+            //var pEntityId = MiscHelper.Decrypt(value[0]);
+            //var pEntityType = MiscHelper.Decrypt(value[1]);
+            //var pSLDType = MiscHelper.Decrypt(value[2]);
+            SLDModel obj = new SLDModel();
+            //fn_get_fiberlink_schematicview_deepak(5507);
+            obj = new BLOSPSplicing().GetSLDDiagrambyLinkSystemId(link_system_id);
+            if (!string.IsNullOrEmpty(obj.legends))
+            {
+                obj.lstlegend = JsonConvert.DeserializeObject<List<legend>>(obj.legends);
+            }
+            if (!string.IsNullOrEmpty(obj.cables))
+            {
+                obj.lstCableLegend = JsonConvert.DeserializeObject<List<CableLegend>>(obj.cables);
+            }
+            // obj.title = pSLDType; primary done after discuss with Deepak yadav Sir
+            obj.title = "Primary";
+            return PartialView("_SLDdiagramFiberLink", obj);
+        }
 
     }
 }

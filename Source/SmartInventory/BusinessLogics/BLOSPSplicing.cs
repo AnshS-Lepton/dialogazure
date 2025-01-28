@@ -78,6 +78,11 @@ namespace BusinessLogics
         {
             return new DAOSPSplicing().GetSLDDiagram(entityId, entityType, sldType);
         }
+        
+        public SLDModel GetSLDDiagrambyLinkSystemId(int link_system_id)
+        {
+            return new DAOSPSplicing().GetSLDDiagrambyLinkSystemId(link_system_id);
+        }
         public List<ConnectionInfo> GetConnectionInfo(ConnectionInfoFilter objFilterAttributes)
         {
             return new DAOSPSplicing().GetConnectionInfo(objFilterAttributes);

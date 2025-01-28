@@ -1,0 +1,787 @@
+﻿@model Models.SLDModel
+@using SmartInventory.Settings;
+@{
+    Layout = null;
+    var iconBaseUrl = Url.Content("~/Content/images/icons/lib/VisIcons/");
+}
+<style>
+    .cableLegendColor {
+        width: 12px !important;
+        height: 12px !important;
+        float: left;
+        margin-top: 2px;
+    }
+    .cableLegendtext {
+        float: left;
+        text-align: right;
+        width: auto !important;
+        padding-left: 5px;
+    }
+
+    .contentFooter {
+        padding-bottom: 30px;
+    }
+    .legand3 {
+        width: 98%;
+        float: left;
+        height: 135px;
+        border: 1px ridge;
+        margin-left: 10px;
+    }
+    .maincls {
+        border-collapse: collapse;
+    }
+    .maincol {
+        border: 1px ridge;
+        padding: 8px;
+        width: 200px;
+        height: 21px;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    span {
+        word-spacing: 100px;
+    }
+
+    .legend3Icon {
+        bottom: 27px;
+        position: relative;
+        font-size: 10px;
+        padding-left: 1px;
+    }
+    .maininnercol {
+        width: 20px;
+        height: 20px;
+    }
+    .halfmerg {
+        height: 50px;
+        margin-left: -9px;
+        margin-right: -9px;
+        margin-top: -24px;
+        margin-bottom: 8px;
+        border: 1px ridge;
+        border-top: none;
+    }
+</style>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@string.Concat(Model.title, " SLD")</title>
+    <link id="favicon" rel="shortcut icon" href="@ApplicationSettings.ClientFavicon" type="image/x-icon" />
+    
+
+    @Styles.Render("~/VizNetworkCSS")
+    @Scripts.Render("~/VizNetworkScripts")
+</head>
+<body>
+    <input type="hidden" id="ImgBaseUrl" value="@iconBaseUrl" />
+    <div id="header">
+        <div id="logo">
+            @ApplicationSettings.ApplicationName
+        </div>
+    </div>
+    <div id="content" class="mainContainer">
+        <div class="contentHeader">
+            <div class="pagetitle" style="width:90%;"><h2>Schematic View</h2></div>
+            @*<div class="midContent" style="width:20%;">             
+                @Model.entityDisplayText
+            </div>*@
+            @*<div class="StreamActions" style="width:40%;">
+                <div style="width:60%;float:left;">
+                    <label>
+                        <input type="checkbox" name="SchematicStream" id="chkSchematicValue" onclick="onChangeSchematicStream(this);" />Change Direction
+                    </label>
+                </div>
+                <div style="width:30%;float:left;">
+                    @if (ApplicationSettings.SLDTypeSpider == 0)
+                    {
+                        <span>Direction</span>
+                        @Html.DropDownList("ddldirection", new List<SelectListItem>
+                     {
+                        new SelectListItem{ Text="Left-Right", Value = "LR" },
+                        new SelectListItem{ Text="Up-Down", Value = "UD" }
+                     }, new { @onchange = "draw(this.value)", @class = "chosen-select col-sm-4", @style = "width: 81px !important;height: 26px;float: right;margin-left: 11px;" })
+                    }
+             </div>
+            </div>*@
+            <div class="exportActions" style="width:10%;">
+                <input type="button" id="btnExport" value="Export" class="Download" onclick="downloadPDF();" />
+            </div>
+        </div>
+        <div class="visContainer">
+            <div class="visDiagram" id="divNetworkContainer">
+                <div id="mynetwork"></div>
+                <canvas id="newCanvas"></canvas>
+            </div>
+            <div class="contentFooter">
+                <div class="legand1">
+                    <div class="Legend1Heading">Entity Legend</div>
+                    <div class="legend1IconContainer">
+                       @if (Model.lstlegend != null)
+                       {
+                           foreach (var item in Model.lstlegend)
+                           {
+                            <div class="legend1Icon @(item.upstream ? "upStream" : "downStream")">
+                                <img src="@Url.Content(string.Concat(iconBaseUrl, item.entity_type, ".svg"))" />
+                                <span> @item.entity_title</span>
+                            </div>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="legand2">
+                    <div class="Legend2Heading">Patch Cord/Cable Legend</div>
+                    <div class="legend2IconContainer">
+                        <div style="width:100%;height:15px;padding-bottom:5px;margin-bottom:5px;border-bottom:1px solid grey;padding-top:5px;">
+                            <div class="legend2Icon">
+                                <div style='border-top: 2px dashed black;'></div>
+                                <span>Planned </span>
+                            </div>
+
+                            <div class="legend2Icon">
+                                <div style='border-top: 2px solid black;'></div>
+                                <span>As-Built</span>
+                            </div>
+                            <div class="legend2Icon">
+                                <div style="border-top: 6px solid black;"></div>
+                                <span>Patch Cord</span>
+                            </div>
+                        </div>
+                       <br />
+                     @if (Model.lstCableLegend != null)
+                     {
+                         foreach (var item in Model.lstCableLegend)
+                         {
+                            <div class="legend2Icon @(item.upstream ? "upStream" : "downStream")">
+                                    <div class="cableLegendColor" style='background-color:@item.color_code;'></div>
+                                    <div class="cableLegendtext"> @item.text</div>
+                           </div>
+
+                            }
+                        }
+                        <br />
+                        <div style="width: 100%; float: left; padding-bottom: 5px; padding-top: 5px;">
+                            <div>
+                                Cable Label: &nbsp; &lt;Cable code&gt;(&lt;Length&gt;m)(&lt;Tube*fiber&gt;) (Tube/Fiber range) e.g. GGN-CBL000012(1*1) T1(F2)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="legand3" style="height:175px; margin-top:10px; border-collapse:collapse">
+                    <table class="maincls">
+                        <tr>
+                            <td class="maincol">
+                                <input type="checkbox" id="SLDchkPD" name="SLDchkPD" value="Bike">@Resources.Resources.SI_OSP_PM_NET_FRM_022
+                                <input type="checkbox" id="SLDchkABD" name="SLDchkABD">As-Bult Design
+                            </td>
+                            <td colspan="2" class="maincol">@Resources.Resources.SI_OSP_PM_NET_FRM_024</td>
+                            <td colspan="2" class="maincol">@System.Configuration.ConfigurationManager.AppSettings["ClientName"]</td>
+                            <td colspan="2" class="maincol"><span>@Resources.Resources.SI_OSP_GBL_JQ_FRM_166 </span>  <span>@Resources.Resources.SI_OSP_PM_NET_FRM_016 </span></td>
+                        </tr>
+                        <tr>
+                            <td class="maincol">@Resources.Resources.SI_OSP_PM_NET_FRM_008</td>
+                            <td class="maincol">@Resources.Resources.SI_OSP_PM_NET_FRM_026</td>
+                            <td class="maincol">@Resources.Resources.SI_OSP_PM_NET_FRM_011</td>
+                            <td rowspan="3" class="maincol">
+                                <div class="halfmerg"><div style="margin-left: 10px; margin-top: 5px;">@Resources.Resources.SI_OSP_PM_NET_FRM_028</div></div>
+                                <div>@Resources.Resources.SI_OSP_PM_NET_FRM_013</div>
+                            </td>
+                            <td rowspan="3" class="maincol">
+                                <div class="halfmerg"><div style="margin-left: 10px; margin-top: 5px;">Latitude:<b> @Model.latitude</b></div></div>
+                                <div>Longitude:<b> @Model.longitude</b></div>
+                            </td>
+                            <td rowspan="3" class="maincol">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <table class="maincls">
+                                                <tr>
+                                                    <td class="maincol"></td>
+                                                    <td class="maincol"></td>
+                                                    <td class="maincol"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="maincol"></td>
+                                                    <td class="maincol"></td>
+                                                    <td class="maincol"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="maincol"></td>
+                                                    <td class="maincol"></td>
+                                                    <td class="maincol"></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td><div class="legend3Icon">Sheets1</div></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td class="maincol">@Resources.Resources.SI_OSP_PM_NET_FRM_017</td>
+                        </tr>
+                        <tr>
+                            <td class="maincol">@Resources.Resources.SI_OSP_GBL_GBL_GBL_027: <b> @String.Format("{0:MM/dd/yyyy}", Model.created_on);</b> &nbsp;&nbsp; @Resources.Resources.SI_OSP_PM_NET_FRM_033:<b> @String.Format("{0:t}", Model.created_on);</b> </td>
+                            <td rowspan="2" class="maincol">IT</td>
+                            <td rowspan="2" class="maincol">@Resources.Resources.SI_OSP_PM_NET_FRM_012</td>
+                            <td class="maincol">@Resources.Resources.SI_OSP_PM_NET_FRM_034</td>
+                        </tr>
+                        <tr>
+                            <td class="maincol">@Resources.Resources.SI_OSP_PM_NET_FRM_009</td>
+                            <td class="maincol"><span>@Resources.Resources.SI_OSP_PM_NET_FRM_035. </span> <span>@Resources.Resources.SI_OSP_PM_NET_FRM_036 </span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+
+        var nodes = null;
+        var edges = null;
+        var currentDynamicPosition = null;
+        var currentDynamicZoom = null;
+        network = null;
+
+        var isSpiderDiagram;
+        pageTitle = $(".pagetitle>h2").text();
+        // contain the Entity icons and detail in key value format.
+        var lstVisIcons = {};
+        $(document).ready(function () {
+            isSpiderDiagram = '@ApplicationSettings.SLDTypeSpider';
+            if ('@Model.legends' != '') {
+                lstVisIcons = getVisIcons('@Model.legends');
+            }
+            $('#ddldirection option[value="LR"]').attr("selected", "selected");
+
+            downStream();
+            $("div.downStream").show();
+            $("div.upStream").hide();
+
+
+            $("#TempDataDiv").html($(".contentFooter").html() + $(".contentFooter").html());
+        });
+        function onChangeSchematicStream() {
+             
+            $('#mynetwork').empty();
+            if ($('#chkSchematicValue').is(":checked") == false) {
+                downStream();
+                $("div.downStream").show();
+                $("div.upStream").hide();
+            }
+            else if ($('#chkSchematicValue').is(":checked") == true) {
+                upStream();
+                $("div.downStream").hide();
+                $("div.upStream").show();
+            }
+        }
+        function getVisIcons(legendJSON) {
+            var Icons = {};
+            var legends = $.parseJSON((legendJSON.replace(/&quot;/g, '"')));
+            if (legends != undefined && legends != '') {
+                for (var item, i = 0; item = legends[i++];) {
+                    var img = $("#ImgBaseUrl").val() + item.entity_type + ".svg";
+                    Icons[item.entity_type] = { shape: 'image', color: "#2B7CE9", size: 12, image: img, font: { size: 12 } };
+                }
+            }
+            return Icons;
+        }
+        function downStream() {
+            var nodesJSON = null;
+            var edgesJSON = null;
+            nodes = null;
+            edges = null;
+            if ('@Model.nodesDownstream' != '') {
+                nodesJSON = $.parseJSON(('@Model.nodesDownstream'.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>')));
+            }
+            if ('@Model.edgesDownstream' != '') {
+                edgesJSON = $.parseJSON(('@Model.edgesDownstream'.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>')));
+            }
+            nodes = new vis.DataSet(nodesJSON);
+            edges = new vis.DataSet(edgesJSON);
+            var direction = $('#ddldirection').val();
+            if (isSpiderDiagram == 0) {
+                draw(direction)
+            }
+            else {
+                drawSpiderDiagram();
+            }
+        }
+        function upStream() {
+            var nodesJSON = null;
+            var edgesJSON = null;
+            nodes = null;
+            edges = null;
+            if ('@Model.nodes' != '') {
+                nodesJSON = $.parseJSON(('@Model.nodes'.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>')));
+                nodes = new vis.DataSet(nodesJSON);
+            }
+            if ('@Model.edges' != '') {
+                edgesJSON=$.parseJSON(('@Model.edges'.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>')));
+                edges = new vis.DataSet(edgesJSON);
+            }
+            var direction = $('#ddldirection').val();
+            if (isSpiderDiagram == 0) {
+                draw(direction)
+            }
+            else {
+                drawSpiderDiagram();
+            }
+        }
+        // Called when the Visualization API is loaded.
+        function draw(direction) {
+
+             
+            if (edges != undefined && edges.length > 0) {
+                $("#btnExport").prop('disabled', false);
+                // create a network
+                var options;
+                var container = document.getElementById('mynetwork');
+                var data = { nodes: nodes, edges: edges };
+                options = {
+                    autoResize: true,
+                    layout: {
+                        randomSeed: 2,
+                        improvedLayout: direction == "LR" ?true:false,
+                        //clusterThreshold: 11,
+                        hierarchical: {
+                            enabled: true,
+                            levelSeparation: 300,
+                            nodeSpacing: direction == "LR" ? 100 : 90,
+                            treeSpacing: 50,
+                            blockShifting: direction == "LR" ? false : true,
+                            edgeMinimization: true,
+                            parentCentralization: true,
+                            direction: direction,
+                            sortMethod: "directed"
+                            //, shakeTowards: "roots"
+                        }
+                    },
+                    interaction: { tooltipDelay: 100, navigationButtons: false, keyboard: false, dragNodes: true, dragView: true, zoomView: false },
+                    edges: {
+                        smooth: {
+                            type: direction == "LR" ? 'curvedCCW' : "curvedCW",
+                            //roundness:0
+                        },
+                        arrows: {
+                            from: { enabled: false }, to: false
+                        },
+                        font: {
+
+                            multi: 'html', size: 12, align: 'top', color: 'black', face: 'Arial', strokeWidth: 1, strokeColor: 'white',
+                            bold: { color: 'black', mod: 'bold' },////for <b></b> for edge label
+                            ital: { color: 'blue', mod: 'bold' },////<i> no uses
+                            mono: { color: '#FFFFFF', mod: 'bold' },////for blank tube and core reference <code></code>
+                            boldital: { color: '#00022e', mod: 'bold' },////for tube and core reference <b><i></i><b>
+                        },
+                        arrowStrikethrough: true,
+
+                    },
+                    nodes: {
+                        shape: 'dot',
+                        color: "#000000", // blue,
+                        size: 5,
+                        font: {
+                            multi: 'html', size: 13, align: 'center', color: 'black', face: 'Arial', strokeWidth: .5,
+                            bold: { color: 'black' },////for <b></b> for node label
+                            ital: { color: '#8B0000' },////<i></i> not in use
+                            mono: { color: '#FFFFFF' },////<code></code> not in use
+                            boldital: { color: '#8B0000' },////<b><i><for output core reference
+                        },
+                        //widthConstraint: { maximum: 120 },
+                    },
+                    physics: false,
+                    groups: lstVisIcons
+                };
+
+                 network = new vis.Network(container, data, options);
+
+                /////[[dynamic height settings
+                let yMin = Number.MAX_SAFE_INTEGER
+                let yMax = Number.MIN_SAFE_INTEGER
+
+                let xMin = Number.MAX_SAFE_INTEGER
+                let xMax = Number.MIN_SAFE_INTEGER
+                nodes.forEach(node => {
+                    // Using bounding box takes node height into account
+                    const boundingBox = network.getBoundingBox(node.id)
+                    if (boundingBox.top < yMin)
+                        yMin = boundingBox.top
+
+                    if (boundingBox.bottom > yMax)
+                        yMax = boundingBox.bottom
+
+                    if (boundingBox.left < xMin)
+                        xMin = boundingBox.left
+
+                    if (boundingBox.right > xMax)
+                        xMax = boundingBox.right
+                })
+
+                // Accounts for some node label clipping
+                let heightOffset = 50
+                // "Natural" aka 1.0 zoom height of the network
+                let naturalHeight = yMax - yMin + heightOffset;
+                let naturalWidth = xMax - xMin + (heightOffset + 50);
+                //set the minimum height of page as 100% -65 px;
+                naturalHeight = naturalHeight > container.parentElement.offsetHeight ? naturalHeight : (container.parentElement.offsetHeight);
+                naturalWidth = naturalWidth > container.parentElement.offsetWidth ? naturalWidth : (container.parentElement.offsetWidth);
+
+                // container is a <div /> around the network with fixed px height;
+                // the child network <canvas /> is height 100%
+                container.style.height = naturalHeight + 'px' //'608px'//
+                container.style.width = naturalWidth + 'px'//'1155px'//
+
+                // Lets the network adjust to its new height inherited from container,
+                // then fit() to zoom out as needed; note `autoResize` must be DISABLED for the network
+                network.redraw();
+                network.fit();
+                // Sometimes the network grows too wide and fit() zooms out accordingly;
+                // in this case, scale the height down and redraw/refit
+                container.style.height = naturalHeight + 'px'
+                container.style.width = naturalWidth + 'px'
+                network.redraw();
+
+                network.on("stabilizationIterationsDone", function () { network.setOptions({ physics: false }) });
+                network.on("zoom", function (data) {
+                    var tscale = data.scale;
+                    network.moveTo({ scale: tscale });
+                });
+                $('.vis-network > canvas').attr('id', 'myCanavas');
+            }
+            else {
+                $("#btnExport").prop('disabled', true);
+                $('#mynetwork').innerHTML = '<div style="text-align: center; margin-top: 100px; font: 20px bold; color: #ff0000;">No network found!.</div>';
+            }
+        }
+        function drawSpiderDiagram() {
+
+            if (edges != undefined && edges.length > 0) {
+
+                $("#btnExport").prop('disabled', false);
+                // create a network
+                var container = document.getElementById('mynetwork');
+                var data = { nodes: nodes, edges: edges };
+
+                options = {
+                    interaction: {
+                        //hover: true,
+                        tooltipDelay: 300
+                    },
+                    //height: '100%',
+                    edges: {
+                        smooth: {
+                            type: 'curvedCCW',
+                            roundness: 0.1
+                        },
+                        arrows: { from: { enabled: false }, to: false },
+                        font: {
+                            multi: 'html', size: 16, align: 'top', color: 'black', face: 'Arial', strokeWidth: 1, strokeColor: 'white',
+                            bold: { color: 'black' },////for <b></b> for edge label
+                            ital: { color: 'blue' },////<i> no uses
+                            mono: { color: '#FFFFFF' },////for blank tube and core reference <code></code>
+                            boldital: { color: '#8B0000' },////for tube and core reference <b><i></i><b>
+
+                        },
+                        arrowStrikethrough: true
+                    },
+                    nodes: {
+                        shape: 'dot',
+                        // color: "#000000", // blue,
+                        size: 5,
+                        font: {
+                            //multi: true,
+                            multi: 'html',
+                            size: 10, align: 'center', color: 'black', face: 'Arial', strokeWidth: .5,
+                            bold: { color: 'black' },////for <b></b> for node label
+                            ital: { color: '#8B0000' },////<i></i> not in use
+                            mono: { color: '#FFFFFF' },////<code></code> not in use
+                            boldital: { color: '#8B0000' },////<b><i><for output core reference
+                        }
+                    },
+                    layout: {
+                        randomSeed: undefined,
+                        improvedLayout: true,
+
+                        hierarchical: {
+                            enabled: false, //change to true to see the other graph
+                            direction: 'LR',
+                            sortMethod: 'directed',
+                            levelSeparation: 4000,
+                            nodeSpacing: 100,
+                            treeSpacing: 50
+                        }
+                    },
+                    configure: { enabled: false },
+                    physics: {
+                        barnesHut: { gravitationalConstant: -30000 },
+                        stabilization: { iterations: 2500 },
+                        "enabled": false,
+                        "minVelocity": 0.75,
+                        solver: 'repulsion'
+                    },
+                    groups: lstVisIcons
+                };
+                network = new vis.Network(container, data, options);
+                /////[[dynamic height settings
+                let yMin = Number.MAX_SAFE_INTEGER
+                let yMax = Number.MIN_SAFE_INTEGER
+
+                let xMin = Number.MAX_SAFE_INTEGER
+                let xMax = Number.MIN_SAFE_INTEGER
+                nodes.forEach(node => {
+                    // Using bounding box takes node height into account
+                    const boundingBox = network.getBoundingBox(node.id)
+                    if (boundingBox.top < yMin)
+                        yMin = boundingBox.top
+
+                    if (boundingBox.bottom > yMax)
+                        yMax = boundingBox.bottom
+
+                    if (boundingBox.left < xMin)
+                        xMin = boundingBox.left
+
+                    if (boundingBox.right > xMax)
+                        xMax = boundingBox.right
+                })
+
+                // Accounts for some node label clipping
+                let heightOffset = 50
+                // "Natural" aka 1.0 zoom height of the network
+                let naturalHeight = yMax - yMin + heightOffset;
+                let naturalWidth = xMax - xMin + (heightOffset + 50);
+                //set the minimum height of page as 100% -65 px;
+                naturalHeight = naturalHeight > container.parentElement.offsetHeight ? naturalHeight : (container.parentElement.offsetHeight);
+                naturalWidth = naturalWidth > container.parentElement.offsetWidth ? naturalWidth : (container.parentElement.offsetWidth);
+
+                // container is a <div /> around the network with fixed px height;
+                // the child network <canvas /> is height 100%
+                container.style.height = naturalHeight + 'px' //'608px'//
+                container.style.width = naturalWidth + 'px' //'1155px'//
+
+                // Lets the network adjust to its new height inherited from container,
+                // then fit() to zoom out as needed; note `autoResize` must be DISABLED for the network
+                network.redraw();
+                network.fit();
+                // Sometimes the network grows too wide and fit() zooms out accordingly;
+                // in this case, scale the height down and redraw/refit
+                container.style.height = naturalHeight + 'px'
+                container.style.width = naturalWidth + 'px'
+                network.redraw();
+
+                network.on("stabilizationIterationsDone", function () { network.setOptions({ physics: false }) });
+                network.on("zoom", function (data) {
+                    var tscale = data.scale;
+                    currentDynamicPosition = network.getViewPosition();
+                    currentDynamicZoom = data.scale;
+                    network.moveTo({ scale: tscale });
+                });
+
+                network.on("dragEnd", function (params) {
+                     
+                    currentDynamicPosition = network.getViewPosition();
+                    currentDynamicZoom = network.getScale();
+
+                    //var currentPosition =  network.getPositions();
+                    //network.moveTo({ position: { x: 324, y: 0 }});
+                    //if (params.nodes.length == 0) {
+                    //    console.log('CANVAS.X ' + currentPosition.x);
+                    //    console.log('CANVAS.Y' + currentPosition.y);
+                    //    //console.log('DOM.X' + params.pointer.DOM.x);
+                    //    //console.log('DOM.Y' + params.pointer.DOM.y);
+                    //    //for (var i = 0; i < params.nodeIds.length; i++) {
+                    //    //    var nodeId = params.nodeIds[i];
+                    //    //    nodes.update({ id: nodeId, allowedToMoveX: false, allowedToMoveY: false });
+                    //    //}
+                    //}
+                });
+
+                //network.on("doubleClick", function (params) {
+                //    var currentPosition = network.getViewPosition();
+                //    if (params.nodes.length == 0) {
+                //        console.log('****************************');
+                //        console.log('doubleClick_CANVAS.X ' + currentPosition.x);
+                //        console.log('doubleClick_CANVAS.Y ' + currentPosition.y);
+
+
+                //        //console.log('doubleClick_DOM.X' + params.pointer.DOM.x);
+                //        //console.log('doubleClick_DOM.Y' + params.pointer.DOM.y);
+                //        //for (var i = 0; i < params.nodeIds.length; i++) {
+                //        //    var nodeId = params.nodeIds[i];
+                //        //    nodes.update({ id: nodeId, allowedToMoveX: false, allowedToMoveY: false });
+                //        //}
+                //    }
+                //});
+
+                $('.vis-network > canvas').attr('id', 'myCanavas');
+            }
+            else {
+                $("#btnExport").prop('disabled', true);
+                $('#mynetwork').innerHTML = '<div style="text-align: center; margin-top: 100px; font: 20px bold; color: #ff0000;">No network found!.</div>';
+            }
+        }
+
+        //function downloadPDF() {
+        //          var direction = $('#ddldirection').val();
+        //          //draw(direction)
+        //          var filename = "";
+        //          var filename = filename.concat(pageTitle.replace(/ /g, "_"), "_", fncCurrentDate(new Date()), ".pdf");
+        //          var canvas = document.querySelector('#myCanavas');
+        //          //var newCanvas = document.getElementById('newCanvas');
+        //          //var newCanvasctx = newCanvas.getContext('2d');
+        //          //newCanvas.height = $('#divNetworkContainer').height();
+        //          //newCanvas.width = $('#divNetworkContainer').width();
+        //          //newCanvasctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height, 0, 0, newCanvas.width, newCanvas.height);
+        //    //dataURL = newCanvas.toDataURL("image/png", 1.0);
+        //          var dataURL = canvas.toDataURL("image/png", 1.0);
+        //          var CANVAS_Width = canvas.scrollWidth;
+        //          var CANVAS_Height = canvas.scrollHeight;
+        //          var targetElem = $(".contentFooter");
+        //          var FOOTER_Width = $(targetElem)[0].scrollWidth;
+        //          var FOOTER_Height = $(targetElem)[0].scrollHeight;
+        //          var top_left_margin = 15;
+        //          var PDF_Width = CANVAS_Width + (top_left_margin * 2);
+        //          var PDF_Height = FOOTER_Height + CANVAS_Height + (top_left_margin * 2);
+        //          var totalPDFPages = Math.ceil(FOOTER_Height / PDF_Height) - 1;
+        //          // At this point the container has no SVG, it only has HTML and Canvases.
+        //          var imgData;
+        //          html2canvas($(targetElem)[0], {
+        //              windowWidth: $(targetElem)[0].scrollWidth, windowHeight: $(targetElem)[0].scrollHeight,
+        //              width: $(targetElem)[0].scrollWidth, height: $(targetElem)[0].scrollHeight, quality: 5, scale: 2
+        //          }, { allowTaint: true, useCORS: true }).then(function (footer) {
+        //              //debugBase64(canvas.toDataURL("image/jpeg", 0.9));
+        //              setTimeout(function () { window.location.href = image; }, 10)
+        //              footer.getContext('2d').scale(5, 5);
+        //              imgData = footer.toDataURL("image/png", 1.0);
+        //              $("#TempDataDiv").html("");
+        //              var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+        //              pdf.deletePage(1);
+        //              pdf.addPage(PDF_Width, PDF_Height + 50);
+        //              pdf.setFontSize(16);
+        //              pdf.text(pageTitle, (FOOTER_Width / 2), 20, 'center');
+        //              pdf.setFontSize(14);
+        //              pdf.addImage(dataURL, 'PNG', top_left_margin, top_left_margin + 20, CANVAS_Width, CANVAS_Height, '', 'FAST');
+        //              pdf.addImage(imgData, 'PNG', top_left_margin, CANVAS_Height + 20, FOOTER_Width, FOOTER_Height);
+        //              pdf.height = PDF_Height + 50;
+        //              setTimeout(function () { pdf.save(filename); }, 0);
+        //              $("#TempDataDiv").html($(".contentFooter").html() + $(".contentFooter").html());
+        //          });
+        //          return false;
+        //}
+
+
+        function downloadPDF() {
+
+            let myPromise = new Promise(function (myResolve, myReject) {
+                // $("#divNetworkContainer").hide();
+                //showProgress();
+                network.fit();
+                setTimeout(function () {
+                    myResolve();
+                    //$("#mynetwork").show();
+                    if (currentDynamicPosition != null && currentDynamicZoom != null) {
+                        network.moveTo({ position: { x: currentDynamicPosition.x, y: currentDynamicPosition.y }, scale: currentDynamicZoom });
+                    }
+                    //$("#divNetworkContainer").show();
+                    //hideProgress();
+                }, 0);
+                // when successful
+                // myReject();  // when error
+            });
+
+            myPromise.then(
+                function (value) {
+
+                    var direction = $('#ddldirection').val();
+                    //draw(direction)
+                    var filename = "";
+                    var filename = filename.concat(pageTitle.replace(/ /g, "_"), "_", fncCurrentDate(new Date()), ".pdf");
+
+                    var canvas = document.querySelector('#myCanavas');
+                    //var newCanvas = document.getElementById('newCanvas');
+                    //var newCanvasctx = newCanvas.getContext('2d');
+                    //newCanvas.height = $('#divNetworkContainer').height();
+                    //newCanvas.width = $('#divNetworkContainer').width();
+                    //newCanvasctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height, 0, 0, newCanvas.width, newCanvas.height);
+                    //dataURL = newCanvas.toDataURL("image/png", 1.0);
+
+                    var dataURL = canvas.toDataURL("image/png", 1.0);
+                    var CANVAS_Width = canvas.scrollWidth;
+                    var CANVAS_Height = canvas.scrollHeight;
+
+                    var targetElem = $(".contentFooter");
+
+                    var FOOTER_Width = $(targetElem)[0].scrollWidth;
+                    var FOOTER_Height = $(targetElem)[0].scrollHeight;
+                    var top_left_margin = 15;
+                    var PDF_Width = CANVAS_Width + (top_left_margin * 2);
+                    var PDF_Height = FOOTER_Height + CANVAS_Height + (top_left_margin * 2);
+
+                    var totalPDFPages = Math.ceil(FOOTER_Height / PDF_Height) - 1;
+                    // At this point the container has no SVG, it only has HTML and Canvases.
+
+                    var imgData;
+
+
+                    html2canvas($(targetElem)[0], {
+                        windowWidth: $(targetElem)[0].scrollWidth, windowHeight: $(targetElem)[0].scrollHeight,
+                        width: $(targetElem)[0].scrollWidth, height: $(targetElem)[0].scrollHeight, quality: 5, scale: 2
+                    }, { allowTaint: true, useCORS: true }).then(function (footer) {
+                        //debugBase64(canvas.toDataURL("image/jpeg", 0.9));
+
+                        setTimeout(function () { window.location.href = image; }, 10)
+                        footer.getContext('2d').scale(5, 5);
+                        imgData = footer.toDataURL("image/png", 1.0);
+                        $("#TempDataDiv").html("");
+                        var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+                        pdf.deletePage(1);
+                        pdf.addPage(PDF_Width, PDF_Height + 50);
+                        pdf.setFontSize(16);
+                        pdf.text(pageTitle, (FOOTER_Width / 2), 20, 'center');
+                        pdf.setFontSize(14);
+                        pdf.addImage(dataURL, 'PNG', top_left_margin, top_left_margin + 20, CANVAS_Width, CANVAS_Height, '', 'FAST');
+                        pdf.addImage(imgData, 'PNG', top_left_margin, CANVAS_Height + 20, FOOTER_Width, FOOTER_Height);
+                        pdf.height = PDF_Height + 50;
+                        setTimeout(function () { pdf.save(filename); }, 0);
+                        $("#TempDataDiv").html($(".contentFooter").html() + $(".contentFooter").html());
+                    });
+                    return false;
+
+                },
+  function (error) { /* code if some error */ }
+);
+
+        }
+
+
+        //var GetZoomPercentage = (svgSize) => {
+        //     
+        //    var windowWidth = window.innerWidth;
+        //    var percentage = (svgSize / windowWidth) * 100;
+        //    if (percentage > 100)
+        //        return 100 + "%";
+        //    return percentage - 10 + "%";
+        //}
+
+        var convertImgToDataURLviaCanvas = function (url, callback) {
+            var img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = function () {
+                var canvas = document.createElement('CANVAS');
+                var ctx = canvas.getContext('2d');
+                var dataURL;
+                canvas.height = this.height;
+                canvas.width = this.width;
+                ctx.drawImage(this, 0, 0);
+                dataURL = canvas.toDataURL();
+                callback(dataURL);
+                canvas = null;
+            };
+            img.src = url;
+        }
+
+    </script>
+    <div id="TempDataDiv" style="visibility:hidden;"></div>
+</body>
+</html>
+

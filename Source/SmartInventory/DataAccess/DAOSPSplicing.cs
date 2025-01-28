@@ -279,6 +279,19 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+        public SLDModel GetSLDDiagrambyLinkSystemId(int link_system_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<SLDModel>("fn_get_fiberlink_schematicview", new
+                {
+                    p_link_system_id = link_system_id
+                }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+
         public List<ConnectionInfo> GetConnectionInfo(ConnectionInfoFilter objFilterAttributes)
         {
             try

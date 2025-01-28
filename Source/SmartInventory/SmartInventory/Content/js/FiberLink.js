@@ -387,6 +387,7 @@
             rowAction = rowAction + '<a href="#" data-value="' + systemId + '"  class="cptr fa  fa-edit" id="iconViewDetails" title="' + MultilingualKey.SI_GBL_GBL_GBL_GBL_003 + '" onclick="fiberLink.editFiberLinkById(' + systemId + ')" style="padding-left: 7px;"></a>';
             rowAction = rowAction + '<i class="cptr icon-CUSTOMER ' + (fiber_link_status == "Free" ? "dvdisabled" : "") + '" id="iconAssociateCustomer" onclick="fiberLink.GetFiberLinkCustomer(' + systemId + ')" title="' + MultilingualKey.SI_OSP_GBL_NET_FRM_430 + '" style="padding-left: 7px;"></i>';
             rowAction = rowAction + '<i class="cptr fa fa-history m-r-xs" title="' + MultilingualKey.SF_GBL_GBL_JQ_HIS_001 + '" onclick="fiberLink.GetFiberLinkHistory(' + systemId + ')" style="color: #1b9461; font-size: 14px; padding-left: 7px"></i>';
+            rowAction = rowAction + '<i class="cptr fa fa-bullseye m-r-xs" title="Primary SLD" onclick="fiberLink.GetSLDDaigramFiberLink(' + systemId + ')" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>';
             $(app.DE.tblFiberLinkGrid + ' tbody tr:eq(' + index + ') td:eq(0)').html(rowAction);
         });
     }
@@ -1021,6 +1022,9 @@
     }
     this.FiberLinkAuditReport = function (downloadEntity) {
         window.location = appRoot + 'Audit/' + downloadEntity;
+    }
+    this.GetSLDDaigramFiberLink = function (_system_id) {
+        window.open(appRoot + 'FiberLink/GetSLDDiagram?link_system_id=' + _system_id);
     }
     this.btnclearLinkId = function () {
 
