@@ -1053,3 +1053,35 @@ $function$
 ;
 
 
+update isp_port_info set link_system_id=b.link_system_id
+
+from (
+
+select c.destination_system_id,c.destination_port_no,b.link_system_id from connection_info c
+
+inner join att_details_cable_info b
+
+on c.source_system_id=b.cable_id and c.source_port_no=b.fiber_number and  destination_entity_type='FMS'
+
+and b.link_system_id>0)b
+
+where isp_port_info.parent_system_id=b.destination_system_id and isp_port_info.parent_entity_type='FMS' and isp_port_info.port_number=b.destination_port_no;
+
+ 
+
+ 
+
+update isp_port_info set link_system_id=b.link_system_id
+
+from (
+
+select c.source_system_id,c.source_port_no,b.link_system_id from connection_info c
+
+inner join att_details_cable_info b
+
+on c.destination_system_id=b.cable_id and c.destination_port_no=b.fiber_number and  source_entity_type='FMS'
+
+and b.link_system_id>0)b
+
+where isp_port_info.parent_system_id=b.source_system_id and isp_port_info.parent_entity_type='FMS' and isp_port_info.port_number=b.source_port_no;
+
