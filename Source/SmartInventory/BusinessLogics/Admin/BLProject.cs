@@ -194,5 +194,13 @@ namespace BusinessLogics.Admin
         {
             return new DAToplologyPlan().SaveToploogyPlan(objTopologyPlan);
         }
+        public List<PODMaster> getSiteIdList(string site_id)
+        {
+            return new DAPodMaster().getSiteIdList(site_id);
+        }
+        public List<PODMaster> getSiteNameList(string site_name)
+        {
+            return new DAPodMaster().getSiteNameList(site_name);
+        }
     }
 }

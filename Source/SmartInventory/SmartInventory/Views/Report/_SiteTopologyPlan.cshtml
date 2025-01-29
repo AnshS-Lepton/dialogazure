@@ -33,11 +33,13 @@
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_357 :</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "input-sm col-sm-12", @placeholder = "Search text", @maxlength = 100 })
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+
+                            @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
                         </div>
                         <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 :</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "input-sm col-sm-12", @placeholder = "Search text", @maxlength = 100 })
+                            @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
                         </div>
                     </div>
                     <div class="form-group row">
@@ -53,21 +55,21 @@
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 :</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.agg1, new { @id = "txtagg1", @title = "Search text", @tabindex = "4", @class = "input-sm col-sm-12", @placeholder = "Search text", @maxlength = 100 })
+                            @Html.TextBoxFor(m => m.agg1, new { @id = "txtagg1", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
                         </div>
                         <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 :</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.agg2, new { @id = "txtagg2", @title = "Search text", @tabindex = "4", @class = "input-sm col-sm-12", @placeholder = "Search text", @maxlength = 100})
+                            @Html.TextBoxFor(m => m.agg2, new { @id = "txtagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_461 :</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.no_of_sites, new { @id = "txtnoOfsite", @title = "Search text", @tabindex = "4", @class = "input-sm col-sm-12", @placeholder = "Search text", @maxlength = 100 })
+                            @Html.TextBoxFor(m => m.no_of_sites, new { @id = "txtnoOfsite", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
                         </div>
                         <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 :</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Search text", @tabindex = "4", @class = "input-sm col-sm-12", @placeholder = "Search text", @maxlength = 100 })
+                            @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
                         </div>
                     </div>
                     <div class="form-group row">
@@ -78,9 +80,9 @@
                         <label class="control-label col-sm-2" for="txtSearchtext">Segment Type :</label>
                         <div class="col-sm-4">
                             @*<select id="ddlsegment" class="form-control">
-                                <option value="">--Select Segment Type--</option>
-                            </select>*@
-                            @Html.DropDownListFor(m => m.segment_id,new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"),"--Select Segment Type--",new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
+                                    <option value="">--Select Segment Type--</option>
+                                </select>*@
+                            @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), "--Select Segment Type--", new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
 
                         </div>
                     </div>
@@ -89,30 +91,75 @@
 
                         <div class="col-sm-4">
                             @*<select id="ddlringtype" class="form-control">
-            <option value="">--Select Ring Type--</option>
-        </select>*@
+                                    <option value="">--Select Ring Type--</option>
+                                </select>*@
                             @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologyRingMaster, "Value", "Text"), "--Select Segment Type--", new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
 
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="ml-auto">
-              
-                <a href="javascript:void(0);" class="btn btn-default mr-01" data-dismiss="modal" id="btnCancel" onclick="si.clearTPRelatedObjects();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
-                <input type="button" formmethod="post" class="btn btn-primary" name="actionTab" id="btnSave" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
 
-
-
-            </div>
         </div>
-        
+        <div class="ModalFooter d-flex --gap05">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancel" onclick="si.clearTPRelatedObjects();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            <input type="button" formmethod="post" class="btn btn-primary" name="actionTab" id="btnSave" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+        </div>
+
     }
 
 </div>
 
 <script>
     $(document).ready(function () {
+
+       $("#txtSiteId").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("GetSiteIds", "Report")', // Update with correct controller
+                    type: "GET",
+                    dataType: "json",
+                    data: { term: request.term }, // Sends user input
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.label, // Display site_id in dropdown
+                                value: item.value  // Store site_id in textbox
+                            };
+                        }));
+                    }
+                });
+            },
+            minLength: 3, // Minimum characters before search starts
+            select: function (event, ui) {
+                $("#txtSiteId").val(ui.item.value); // Set selected site_id
+                return false;
+            }
+        });
+        $("#txtSiteName").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: '@Url.Action("GetSiteName", "Report")', // Update with correct controller
+                type: "GET",
+                dataType: "json",
+                data: { term: request.term }, // Sends user input
+                success: function (data) {
+                    debugger;
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.label, // Display site_id in dropdown
+                            value: item.value  // Store site_id in textbox
+                        };
+                    }));
+                }
+            });
+        },
+        minLength: 3, // Minimum characters before search starts
+        select: function (event, ui) {
+            $("#txtSiteName").val(ui.item.value); // Set selected site_id
+            return false;
+        }
+    });
 
         $('#ddlregionid').change(function () {
             debugger;
@@ -170,7 +217,7 @@
         // Clear the ringtype dropdown if no segment is selected
         $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
                 }
-               
+
 });
 
 });
@@ -178,6 +225,6 @@
             e.preventDefault(); // Prevent default button action
             $('#frmsittopology').submit(); // Manually submit the form
         });
-    });
-  
+        $('.chosen-select').chosen({ width: '100%' });    });
+
 </script>

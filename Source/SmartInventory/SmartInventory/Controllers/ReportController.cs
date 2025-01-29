@@ -13504,6 +13504,22 @@ namespace SmartInventory.Controllers
 
             return Json(objTopologyPlan, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult GetSiteIds(string term)
+        {
+             var siteList = new BLProject().getSiteIdList(term); 
+             var filteredSites = siteList.Where(s => s.site_id.ToString().Contains(term)).Select(s => new { value = s.site_id.ToString(), label = s.site_id }).ToList();
+             return Json(filteredSites, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetSiteName(string term)
+        {
+            var siteList = new BLProject().getSiteNameList(term); 
+            var filteredSites = siteList.Where(s => s.site_name.ToString().Contains(term)).Select(s => new { value = s.site_name.ToString(), label = s.site_name }).ToList();
+            return Json(filteredSites, JsonRequestBehavior.AllowGet);
+        }
+
+
+
         #endregion
     }
 }

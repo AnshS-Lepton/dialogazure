@@ -540,4 +540,19 @@ namespace DataAccess.Admin
             return TopologyResp;
         }
     }
+
+    public class DAPodMaster : Repository<PODMaster>
+    {
+        public List<PODMaster> getSiteIdList(string  siteId)
+        {
+            return repo.GetAll(m => m.site_id.Contains(siteId)).ToList();
+        }
+        public List<PODMaster> getSiteNameList(string site_name)
+        {
+            var sitname = repo.GetAll(m => m.site_name.ToUpper().Contains(site_name.ToUpper())).ToList();
+
+            return sitname;
+        }
+        
+    }
 }

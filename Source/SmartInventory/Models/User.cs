@@ -936,7 +936,7 @@ namespace Models
             public string site_id { get; set; } = string.Empty;
             public string site_name { get; set; } = string.Empty;
             public int topology_type { get; set; } = 0;
-            public int ring_type { get; set; } = 0;
+            public int ring_capacity { get; set; } = 0;
             public int region_id { get; set; } = 0;
             public int segment_id { get; set; } = 0;
             public int ring_id { get; set; } = 0;        

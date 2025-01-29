@@ -61,7 +61,6 @@ namespace BusinessLogics.DaFiFeasibilityAPI
 
             var source = $"{a_coords[1].Trim()} {a_coords[0].Trim()}";
             var destination = $"{z_coords[1].Trim()} {z_coords[0].Trim()}";
-
             var routes = DADarkFiberFeasibility.Instance.GetExistingFiberRoutes(request_id, source, destination, fiber_cores, a_buffer, z_buffer);
 
             foreach (var route in routes)
