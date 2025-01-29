@@ -1024,7 +1024,10 @@
         window.location = appRoot + 'Audit/' + downloadEntity;
     }
     this.GetSLDDaigramFiberLink = function (_system_id) {
-        window.open(appRoot + 'FiberLink/GetSLDDiagram?link_system_id=' + _system_id);
+        var systemId = _system_id.toString();
+        ajaxReq('main/Encrypt', { systemId: systemId + '-' + 'FMS' }, false, function (resp) {
+            window.open(appRoot + 'FiberLink/GetSLDDiagram?key=' + resp, '_blank' );
+        }, false, false);
     }
     this.btnclearLinkId = function () {
 
