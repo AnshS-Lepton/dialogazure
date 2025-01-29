@@ -13288,7 +13288,7 @@ var Main = function () {
 
 
     this.intializeLandbaseInfoToolBar = function (eType, network_status, systemID, gType, networkId, is_center_line_enable, layer_id) {
-        $("#infoTB").css('background-image', 'url(' + baseUrl + appRoot + 'content/images/loading_new.gif)');
+        $("#infoTB").css('background-image', 'url(' + baseUrl + 'content/images/loading_new.gif)');
         $("#infoTB").html("");
         var NetworkStatus = $('#' + eType + '_' + systemID).children('#hdnNetwtyp').val();
         var postData = { systemId: systemID, layerName: 'LandBase', network_status: network_status }
@@ -13309,7 +13309,7 @@ var Main = function () {
 
     this.intializeInfoToolBar = function (eType, network_status, systemID, gType, networkId, displayname, geom, _isBackButtonRequired = true, siteIdSiteName = '') {
         //;,
-        $("#infoTB").css('background-image', 'url(' + baseUrl + appRoot + 'Content/images/loading_new.gif)');
+        $("#infoTB").css('background-image', 'url(' + baseUrl + 'Content/images/loading_new.gif)');
         $("#infoTB").html("");
         var NetworkStatus = $('#' + eType + '_' + systemID).children('#hdnNetwtyp').val();
         var postData = { systemId: systemID, layerName: eType, network_status: network_status, isBackButtonRequired: _isBackButtonRequired }
@@ -13699,9 +13699,9 @@ var Main = function () {
                                 $('#EntitySaveBulkClone').show();
                                 app.addPointEntityClone(evt.latLng, app.iconRoot + entityType + '.png', entityType, geomType, radius);
                             });
-                            //var imageUrl = baseUrl+appRoot + app.iconRoot + entityType + '.cur';
+                            //var imageUrl = baseUrl + app.iconRoot + entityType + '.cur';
                             //app.map.setOptions({ draggableCursor: 'url(' + imageUrl + '), auto' });                   
-                            var imageUrl = baseUrl + appRoot + 'Content/images/hand.cur';
+                            var imageUrl = baseUrl + 'Content/images/hand.cur';
                             app.map.setOptions({ draggableCursor: 'url(' + imageUrl + '), auto' });
 
                         }
@@ -14309,7 +14309,7 @@ var Main = function () {
                                 $('#EntityCancelPIT').show();
                             });
 
-                            var imageUrl = baseUrl + appRoot + 'Content/images/hand.cur';
+                            var imageUrl = baseUrl + 'Content/images/hand.cur';
                             app.map.setOptions({ draggableCursor: 'url(' + imageUrl + '), auto' });
                         }, true, true);
 
@@ -28782,7 +28782,7 @@ var Main = function () {
                 case "Point":
                     ////;
                     // ADB_L.png
-                    var imageUrl = appRoot + 'Content/images/icons/lib/UtilizationIcons/' + entity_name + '_' + utilization + '.png';
+                    var imageUrl = 'Content/images/icons/lib/UtilizationIcons/' + entity_name + '_' + utilization + '.png';
                     geomstyle = {
                         icon: imageUrl,
                         title: id
@@ -30140,7 +30140,7 @@ var Main = function () {
                 app.EntityAttributeDetails = app.GetEntityAttrDetails(libItem);
                 app.addGroupLibrary(evt.latLng, app.iconRoot + entitytype + '.png', entitytype, lyrDetail['geom_type'], groupLibId);
             });
-            var imageUrl = baseUrl + appRoot + 'Content/images/hand.cur';
+            var imageUrl = baseUrl + 'Content/images/hand.cur';
             app.map.setOptions({ draggableCursor: 'url(' + imageUrl + '), auto' });
         }
 
