@@ -41,10 +41,7 @@ namespace BusinessLogics
         {
             return objDAMisc.GetDropDownList(enType, ddType);
         }
-        public List<DropDownMaster> GetToplogyDropDownList( string ddType )
-        {
-            return objDAMisc.GetToplogyDropDownList( ddType);
-        }
+
         public List<DropDownMaster> GetAssociationDropDownList(string enType, string ddType = "")
         {
             return objDAMisc.GetAssociationDropDownList(enType, ddType);

@@ -124,12 +124,7 @@ $(document).ready(function () {
         var systemId = $(this).attr('data-value');
         si.ShowEntityOnMap(systemId, 'POD', 'Point'); $(popup.DE.MinimizeModel).trigger("click");
     });
-    $('.rowShowTopology').on("click", function () {
-        debugger;
-        var systemId = $(this).attr('data-value');
-        si.SiteReport.SiteTopology(null, systemId, null, this);
 
-    });
     if ($("#customedate_chosen").children('a').text().trim() != "Custom") {
 
         $('#imgFromDate').hide();

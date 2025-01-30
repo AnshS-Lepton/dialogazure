@@ -281,9 +281,7 @@ namespace Models
         Spliceclosure_type,
 		A_location,
         FMS_Type,
-        AllowedNetworkType,
-        Topology_Type,
-        Ring_Capacity
+        AllowedNetworkType
 
     }
     public enum VendorType

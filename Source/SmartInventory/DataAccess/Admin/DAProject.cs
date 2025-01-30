@@ -1,8 +1,6 @@
 ﻿using DataAccess.DBHelpers;
 using Models;
 using Models.Admin;
-using Models.API;
-using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -506,13 +504,6 @@ namespace DataAccess.Admin
 
     }
 
-    public class DAToplologyRegion : Repository<TopologyRegionMaster>
-    {
-        public List<TopologyRegionMaster> getTopologyRegionDetails()
-        {
-            return repo.GetAll().ToList();
-            // return new List<ProjectCodeMaster>();
-        }
 
 
     }

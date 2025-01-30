@@ -83,7 +83,8 @@
                                  htmlAttributes: new { id = "tblUserDetail" },
                                  mode: WebGridPagerModes.All,
                                  columns: grid.Columns(
-                                     grid.Column(header: "S.No.", format: @<text>@item.S_No</text>, canSort: false),grid.Column("", "Action", format:@<text>
+                                     grid.Column(header: "S.No.", format: @<text>@item.S_No</text>, canSort: false),
+grid.Column("", "Action", format:@<text>
 
                     <span>
                         <a title="@Resources.Resources.SI_OSP_GBL_GBL_RPT_002" style="font-size: 16px;" data-value=@item.user_id ,@item.vendorCost class="dropdown-toggle AwardSiteToSelectedVendor" href="#" target="_parent">
@@ -92,7 +93,8 @@
                     </span>
                     @*<input type="checkbox" id="@item.user_id" data-view-id="@item.user_id" onclick="ManageHeaderCheckBox()"><b><label for="@item.user_id" class="checkbox-custom-label"></label></b>*@
 
-                </text>, canSort: false),
+                </text>, canSort: false
+),
 grid.Column("Name", "Name", format: @<text>@item.name</text>, canSort: true),
 grid.Column("mobile_number", "Mobile No.", format: @<text>@item.mobile_number</text>, canSort: true),
 grid.Column("user_email", "Email", format: @<text>@item.user_email</text>, canSort: true),
