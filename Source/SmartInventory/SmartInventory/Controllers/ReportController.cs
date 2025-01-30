@@ -1,4 +1,5 @@
 ﻿using BusinessLogics;
+using BusinessLogics.Admin;
 using Ionic.Zip;
 using iTextSharp.text;
 using iTextSharp.text.html.simpleparser;
@@ -13496,7 +13497,7 @@ namespace SmartInventory.Controllers
         public ActionResult SaveSiteTopology(TopologyPlan objTopologyPlan)
         {
             ModelState.Clear();
-
+            objTopologyPlan.created_by = Convert.ToInt32(Session["user_id"]);
             var response = new { Success = false, Message = "Save failed" }; // Default failure response
 
             if (TryValidateModel(objTopologyPlan))

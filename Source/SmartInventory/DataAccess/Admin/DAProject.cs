@@ -503,11 +503,14 @@ namespace DataAccess.Admin
         }
 
     }
-
-
-
+    public class DAToplologyRegion : Repository<TopologyRegionMaster>
+    {
+    public List<TopologyRegionMaster> getTopologyRegionDetails()
+    {
+        return repo.GetAll().ToList();
+        // return new List<ProjectCodeMaster>();
     }
-
+  }
     public class DAToplologySegment : Repository<TopologySegmentMaster>
     {
         public List<TopologySegmentMaster> getSegmentDetailByIdList(int region_Id)

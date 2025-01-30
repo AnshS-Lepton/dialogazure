@@ -24435,6 +24435,7 @@ var Main = function () {
         },
 
         SiteTopology: function (geom, modeType, radius, obj) {
+            
             debugger;
             if (obj) {
                 $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');

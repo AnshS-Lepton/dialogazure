@@ -121,8 +121,14 @@ $(document).ready(function () {
     });
 
     $('.rowShowOnMap').on("click", function () {
+        
         var systemId = $(this).attr('data-value');
         si.ShowEntityOnMap(systemId, 'POD', 'Point'); $(popup.DE.MinimizeModel).trigger("click");
+    });
+    $('.rowShowTopology').on("click", function () {
+        var systemId = $(this).attr('data-value');
+        si.SiteReport.SiteTopology(null, systemId, null, this);
+
     });
 
     if ($("#customedate_chosen").children('a').text().trim() != "Custom") {

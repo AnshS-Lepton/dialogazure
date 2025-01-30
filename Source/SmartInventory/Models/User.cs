@@ -943,7 +943,7 @@ namespace Models
             public string agg1 { get; set; } 
             public string agg2 { get; set; }
             public int no_of_sites { get; set; } = 0;
-            public double max_distance_peer { get; set; } = 0.0;
+            public decimal max_distance_peer { get; set; }
             [NotMapped]
             public IList<DropDownMaster> lsttopologytype { get; set; }
            
@@ -961,8 +961,9 @@ namespace Models
             [NotMapped]
             public List<TopologyRingMaster> lstTopologyRingMaster { get; set; }
             public string network_id { get; set; }
-        
-            public TopologyPlan()
+           public int created_by { get; set; }
+
+        public TopologyPlan()
             {
                 lstTopologyRegionMaster = new List<TopologyRegionMaster>();
                 lstTopologySegmentMaster = new List<TopologySegmentMaster>();

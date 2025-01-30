@@ -114,8 +114,12 @@
             this.value = this.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
         });
         $("#txtmaxdistancepeer").on("input", function () {
-            this.value = this.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+            this.value = this.value.replace(/[^0-9.]/g, ''); // Remove invalid characters
+            if ((this.value.match(/\./g) || []).length > 1) {
+                this.value = this.value.slice(0, -1); // Prevent multiple dots
+            }
         });
+
        $("#txtSiteId").autocomplete({
         source: function (request, response) {
         $.ajax({
