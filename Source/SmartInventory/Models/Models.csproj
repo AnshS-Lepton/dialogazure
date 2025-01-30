@@ -107,6 +107,7 @@
     <Compile Include="Admin\SearchLandBaseLayerSetting.cs" />
     <Compile Include="ConduitMaster.cs" />
     <Compile Include="Redline.cs" />
+    <Compile Include="RingDetails.cs" />
     <Compile Include="RouteAssetDeatils.cs" />
     <Compile Include="SchedulerLog.cs" />
     <Compile Include="Serviceability.cs" />

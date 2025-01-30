@@ -19626,6 +19626,15 @@ var Main = function () {
         }
         popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
     }
+    this.showRingDetails =function () {
+        $(app.DE.InfoDiv).hide();
+        $(app.DE.SplicingDiv).hide();
+        si.resetShapeTools();
+        if (typeof networkdata != "undefined") {
+            networkdata.hideAllNetworkFile();
+        }
+        popup.LoadModalDialog('PARENT', 'RingDetails/ShowTopologyRingDetails', {}, "Ring Details", 'modal-xl');
+    }
 
     this.SaveRoster = function () {
         ;

@@ -203,6 +203,7 @@
     <Compile Include="DAProjectArea.cs" />
     <Compile Include="DAProvinceBoundary.cs" />
     <Compile Include="DARack.cs" />
+    <Compile Include="DARingDetails.cs" />
     <Compile Include="DASite.cs" />
     <Compile Include="DASlack.cs" />
     <Compile Include="DAPEP.cs" />

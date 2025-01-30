@@ -953,6 +953,15 @@
                     </li>
                     <li class="techSep"></li>
                 }
+                @if (Model.lstUserModule.Contains("RNG"))
+                {
+                    <li>
+                        <a href="#" class="iconBaricomoon" onclick="si.showRingDetails()" title="Ring Detials">
+                            <span class="icon-link"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
+                }
 
                 @if (Model.lstUserModule.Contains("ROW"))
                 {
