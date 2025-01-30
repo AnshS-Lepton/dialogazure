@@ -43,8 +43,7 @@ namespace DataAccess.DaFiFeasibilityAPI
             {
                 var resp =  repo.ExecuteProcedure<Route>("fn_sf_get_existing_fiber_route",
                                                               new { p_request_id = request_id, p_source = source, p_destination = destination, p_start_buffer = a_buffer, p_end_buffer = z_buffer, p_fiber_cores = fiber_cores }, true);
-                ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.WriteDebugLog("GetExistingFiberRoutes-1");
+                
                 return resp;
             }
             catch {
