@@ -10,7 +10,6 @@ $(document).ready(function () {
     });
 
     $('#chkCommonPath').on('click', function (event) {
-        debugger;
         if ($(this).is(':checked')) {
             $('#chkFiberLinks').prop('checked', false);
             $('#divLinkIdsSearchResult').show();
@@ -23,7 +22,6 @@ $(document).ready(function () {
         }
     });
     $('#chkFiberLinks').on('click', function (event) {
-        debugger;
         if ($(this).is(':checked')) {
             $('#chkCommonPath').prop('checked', false);
             $('#divLinkIdsSearchResult').hide();
@@ -41,7 +39,6 @@ $(document).ready(function () {
 });
 
 $(function () {
-    debugger;
     let isResizing = false;
     const modal = document.querySelector('.modal-content');
     // modal.classList.add('resizable');
@@ -93,7 +90,6 @@ function resetLinkdata() {
 
 
 function SearchLinkIds(event) {
-    debugger;
     event.preventDefault();
     let linkIds = $('#txtLinkIds').val();
 
@@ -112,14 +108,12 @@ function SearchLinkIds(event) {
             }
             else {
                 ajaxReq('CommonPathFinder/GetCableListByLinkIds', { linkIds: linkIds }, false, function (resp) {
-                    debugger;
                     if (resp.status == "OK") {
                         let tblbody = $('#tblbodyLinks');
                         let tblbodyfiber = $('#tblbodyFiberLinks');
                         tblbody.empty();
                         tblbodyfiber.empty();
                         let linkdata = JSON.parse(resp.data).features;
-                        debugger;
                         // Parse the JSON response
                         let parsedResponse = JSON.parse(resp.fiberData);
 
@@ -127,7 +121,6 @@ function SearchLinkIds(event) {
                         let fiberLinkData = JSON.parse(parsedResponse.result).FiberLinkDetails;
 
                         let maxLinkCount = Math.max(...linkdata.map(item => item.properties.link_count));
-                        debugger;
                         var strGeom = '';
                         if (linkdata != null) {
                             linkdata.forEach(function (value, index) {
@@ -215,10 +208,9 @@ function linkShowOnMapDefault(geom) {
 function linkShowOnMap() {
     clearLinksfromMap();
     if ($('.chklink:checked').length == 0) {
-        alert('Please select at least one record to show on map.');
+        alert(MultilingualKey.SI_OSP_GBL_NET_RPT_201);
         return;
     }
-    debugger;
     $('.chklink:checked').each(function (item) {
         let playroute = new google.maps.Polyline({
             path: getGoogleLineGeomfromLatLngString($(this).attr('geom')),
@@ -246,21 +238,29 @@ function linkShowOnMap() {
 function FiberLinkShowOnMap() {
     clearLinksfromMap();
     if ($('.chkFiberlink:checked').length == 0) {
-        alert('Please select at least one record to show on map.');
+        alert(MultilingualKey.SI_OSP_GBL_NET_RPT_201);
         return;
     }
-    debugger;
+    //Reset the value of linksOnMap array
+    linksOnMap = [];
+    
     $('.chkFiberlink:checked').each(function (item) {
-        let playroute = new google.maps.Polyline({
-            path: getGoogleLineGeomfromLatLngString($(this).attr('geom')),
-            geodesic: true,
-            strokeColor: $(this).attr('colorcode'), //'#FF0000',// getRandomColor(),//apisource == "GoogleAPI" ? '#000000' : '#FF0000',
-            strokeWeight: 2,
-            draggable: false
-        });
+        // Split the geometry string by '|' and iterate over each geometry
+        let geometries = $(this).attr('geom').split('|');
+        
+        let cblColorCode = $(this).attr('colorcode');
+        geometries.forEach(function (geometry) {
+            let playroute = new google.maps.Polyline({
+                path: getGoogleLineGeomfromLatLngString(geometry),
+                geodesic: true,
+                strokeColor: cblColorCode,
+                strokeWeight: 2,
+                draggable: false
+            });
 
-        playroute.setMap(si.map);
-        linksOnMap.push(playroute);
+            playroute.setMap(si.map);
+            linksOnMap.push(playroute);
+        });
     });
     let bounds = new google.maps.LatLngBounds();
     linksOnMap.forEach(function (polyline) {
@@ -296,7 +296,6 @@ function getGoogleLineGeomfromLatLngString(geomString) {
 
 
 function linkChange(curobj, dataContainer) {
-    debugger;
     let tblbody = $('#tblbodyLinks');
     let tblbodyfiber = $('#tblbodyFiberLinks');
     if (dataContainer.is(tblbody)) {
@@ -322,7 +321,6 @@ function linkChange(curobj, dataContainer) {
 }
 
 $('#closeModalPopup').on('click', function () {
-    debugger;
     const dargetedDiv = document.querySelector('.modal-content');
     dargetedDiv.classList.remove('resizable');
     dargetedDiv.removeAttribute('style');
@@ -333,7 +331,6 @@ $('#closeModalPopup').on('click', function () {
 });
 
 $('.close.minmizeModel.ml-auto.mr-05').on('click', function (event) {
-    debugger;
     const dargetedDiv = document.querySelector('.modal-content');
     if (dargetedDiv.className != 'modal-content resizable') {
         if (event.target.className == 'close minmizeModel ml-auto mr-05') {
