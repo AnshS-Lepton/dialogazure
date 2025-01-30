@@ -178,7 +178,7 @@ function isAuthenticate() {
     $.ajax({
         url: appRoot + "Login/checkSession", success: function (result) {
             if (result == false) {
-                location.href = baseUrl + appRoot;
+                location.href = baseUrl;
             }
         }
     });

@@ -145,6 +145,12 @@
                     </div>
                 }
             </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <span id="SourceFCableName" style="flex: 1; text-align: left; padding: 5px; font-weight: bold; ">@(Model.sourceCable != null ? Model.sourceCable.network_id : "")</span>
+                <span id="ConnectionDevice" style="flex: 1; text-align: center; padding: 5px; font-weight: bold; ">@(Model.connector != null ? Model.connector.network_id : "")</span>
+                <span id="DestinationLCableName" style="flex: 1; text-align: right; padding: 5px; font-weight: bold; ">@(Model.destinationCable != null ? Model.destinationCable.network_id : "")</span>
+            </div>
+
             <div class="MainSection" id="divSpliceWindow" style="display: table; height:0px; width:100%;overflow-x:hidden;">
                 <div id="dvLeftCable" class="cell">
                     @if (Model.sourceCable != null && Model.destinationCable != null && Model.connector.entity_type != Models.EntityType.ONT.ToString())
@@ -165,8 +171,8 @@
                         @if (Model.sourceCable != null)
                         {
                             @*<div class="cable">
-                                    <div class="innerCable"></div>
-                                </div>@((item.value.is_connected_to_other?item.value.core_port_status_color:(item.value.core_port_status!=Models.CorePortStatus.Connected.ToString()?item.value.core_port_status_color:"grey")));*@
+                            <div class="innerCable"></div>
+                        </div>@((item.value.is_connected_to_other?item.value.core_port_status_color:(item.value.core_port_status!=Models.CorePortStatus.Connected.ToString()?item.value.core_port_status_color:"grey")));*@
                             <div style="display:table-cell;">
                                 @for (int i = 1; i <= Model.sourceCable.no_of_tube; i++)
                                 {
@@ -360,8 +366,8 @@
                         string IsVirtualSC = (Model.is_virtual == true ? "VirtualSCDeviceView wrapper" : "DeviceView wrapper");
                         <div class=@IsVirtualSC style="background:@(Model.available_ports < 0 ? "#ff00001c" : "")">
                             @*<div style="margin: 0 auto;width: 100%;display:table-caption;">
-                                    <br/>
-                                </div>*@
+                            <br/>
+                        </div>*@
                             @if (!Model.is_virtual)
                             {
                                 <div class="ports--Box">
@@ -617,8 +623,8 @@
                                 }
                             </div>
                             @*<div class="cable">
-                                    <div class="innerCable"></div>
-                                </div>*@
+                            <div class="innerCable"></div>
+                        </div>*@
                         }
                     </div>
                 </div>
@@ -635,9 +641,16 @@
         $('#dvLeftCable .endPint').tooltip({ title: '', html: true, placement: "right" });
         $('#dvLeftCable .otherEndFiber').tooltip({ title: '', html: true, placement: "right" });
         $('.innerFiber').tooltip({ title: '', html: true, placement: "right" });
-        if ($(splicing.DE.SourceCable).val() != '0') { $('#SourceCableName').text($(splicing.DE.SourceCable + ' :selected').text()); }
-        if ($(splicing.DE.DestinationCable).val() != '0') { $('#DestinationCableName').text($(splicing.DE.DestinationCable + ' :selected').text()); }
+        if ($(splicing.DE.SourceCable).val() != '0') {
+            $('#SourceCableName').text($(splicing.DE.SourceCable + ' :selected').text());
+            $('#SourceFCableName').text($(splicing.DE.SourceCable + ' :selected').text());
+        }
+        if ($(splicing.DE.DestinationCable).val() != '0') {
+            $('#DestinationCableName').text($(splicing.DE.DestinationCable + ' :selected').text());
+            $('#DestinationLCableName').text($(splicing.DE.DestinationCable + ' :selected').text());
+        }
         $('#ConnectingDevice').text($(splicing.DE.ConnectingEntity + ' :selected').text());
+        $('#ConnectionDevice').text($(splicing.DE.ConnectingEntity + ' :selected').text());
         //$('#divParentSplicingWindow').tooltip({ title: '', html: true, placement: "center" });
     })
 </script>

@@ -29,9 +29,9 @@
 
     }
     this.Images = {
-        "loader": baseUrl + appRoot + "/Content/images/loader.gif",
-        "check": baseUrl + appRoot + "/Content/images/check.png",
-        "failed": baseUrl + appRoot + "/Content/images/failed.png"
+        "loader": baseUrl + "/Content/images/loader.gif",
+        "check": baseUrl + "/Content/images/check.png",
+        "failed": baseUrl + "/Content/images/failed.png"
 
     }
     this.StatusMessages = {

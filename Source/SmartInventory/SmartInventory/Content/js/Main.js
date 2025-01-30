@@ -13288,7 +13288,7 @@ var Main = function () {
 
 
     this.intializeLandbaseInfoToolBar = function (eType, network_status, systemID, gType, networkId, is_center_line_enable, layer_id) {
-        $("#infoTB").css('background-image', 'url(' + baseUrl + appRoot + 'content/images/loading_new.gif)');
+        $("#infoTB").css('background-image', 'url(' + baseUrl + 'content/images/loading_new.gif)');
         $("#infoTB").html("");
         var NetworkStatus = $('#' + eType + '_' + systemID).children('#hdnNetwtyp').val();
         var postData = { systemId: systemID, layerName: 'LandBase', network_status: network_status }
@@ -13309,7 +13309,7 @@ var Main = function () {
 
     this.intializeInfoToolBar = function (eType, network_status, systemID, gType, networkId, displayname, geom, _isBackButtonRequired = true, siteIdSiteName = '') {
         //;,
-        $("#infoTB").css('background-image', 'url(' + baseUrl + appRoot + 'Content/images/loading_new.gif)');
+        $("#infoTB").css('background-image', 'url(' + baseUrl + 'Content/images/loading_new.gif)');
         $("#infoTB").html("");
         var NetworkStatus = $('#' + eType + '_' + systemID).children('#hdnNetwtyp').val();
         var postData = { systemId: systemID, layerName: eType, network_status: network_status, isBackButtonRequired: _isBackButtonRequired }
@@ -13699,9 +13699,9 @@ var Main = function () {
                                 $('#EntitySaveBulkClone').show();
                                 app.addPointEntityClone(evt.latLng, app.iconRoot + entityType + '.png', entityType, geomType, radius);
                             });
-                            //var imageUrl = baseUrl+appRoot + app.iconRoot + entityType + '.cur';
+                            //var imageUrl = baseUrl + app.iconRoot + entityType + '.cur';
                             //app.map.setOptions({ draggableCursor: 'url(' + imageUrl + '), auto' });                   
-                            var imageUrl = baseUrl + appRoot + 'Content/images/hand.cur';
+                            var imageUrl = baseUrl + 'Content/images/hand.cur';
                             app.map.setOptions({ draggableCursor: 'url(' + imageUrl + '), auto' });
 
                         }
@@ -14309,7 +14309,7 @@ var Main = function () {
                                 $('#EntityCancelPIT').show();
                             });
 
-                            var imageUrl = baseUrl + appRoot + 'Content/images/hand.cur';
+                            var imageUrl = baseUrl + 'Content/images/hand.cur';
                             app.map.setOptions({ draggableCursor: 'url(' + imageUrl + '), auto' });
                         }, true, true);
 
@@ -19116,6 +19116,7 @@ var Main = function () {
         }
         else {
             ajaxReq('Library/getNearCableDetail', { split_entity_system_id: splitEntitySystem_id, split_entity_type: splitEntitytype, split_cable_system_id: splitcablesystemid, Split_entity_Core: splitEntityCore }, false, function (resp) {
+               debugger;
                 if (resp.status == 'OK') {
                     if ($('#cable_one_start_reading').length > 0 && $('#cable_one_end_reading').length > 0) {
                         $('#cable_one_start_reading,#cable_one_end_reading').keyup(function () {
@@ -19151,7 +19152,7 @@ var Main = function () {
 
                     $('#cable_one_network_id').val(firstCableNetworkId);
                     /* $('#cable_one_name').val(firstCableNetworkId);*/
-                    $('#cable_one_name').val(displayname);
+                    $('#cable_one_name').val(resp.result.cable1_name);
                     $('#cable_one_a_location').val(resp.result.cable1_a_location);
                     $('#cable_one_b_location').val(splitEnityNetworkId);
 
@@ -19159,7 +19160,7 @@ var Main = function () {
                     var secondCableNetworkId = '';
                     $('#cable_two_network_id').val(secondCableNetworkId);
                     /* $('#cable_two_name').val(secondCableNetworkId);*/
-                    $('#cable_two_name').val(displayname);
+                    $('#cable_two_name').val(resp.result.cable2_name);
                     $('#cable_two_a_location').val(splitEnityNetworkId);
                     $('#cable_two_b_location').val(resp.result.cable2_b_location);
 
@@ -28782,7 +28783,7 @@ var Main = function () {
                 case "Point":
                     ////;
                     // ADB_L.png
-                    var imageUrl = appRoot + 'Content/images/icons/lib/UtilizationIcons/' + entity_name + '_' + utilization + '.png';
+                    var imageUrl = 'Content/images/icons/lib/UtilizationIcons/' + entity_name + '_' + utilization + '.png';
                     geomstyle = {
                         icon: imageUrl,
                         title: id
@@ -30140,7 +30141,7 @@ var Main = function () {
                 app.EntityAttributeDetails = app.GetEntityAttrDetails(libItem);
                 app.addGroupLibrary(evt.latLng, app.iconRoot + entitytype + '.png', entitytype, lyrDetail['geom_type'], groupLibId);
             });
-            var imageUrl = baseUrl + appRoot + 'Content/images/hand.cur';
+            var imageUrl = baseUrl + 'Content/images/hand.cur';
             app.map.setOptions({ draggableCursor: 'url(' + imageUrl + '), auto' });
         }
 

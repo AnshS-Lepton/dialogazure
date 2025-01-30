@@ -1307,12 +1307,11 @@ namespace SmartInventory.Controllers
             Response.End();
         }
 
-        public ActionResult GetSLDDiagram(int link_system_id)
+        public ActionResult GetSLDDiagram(string key)
         {
-            //string[] value = key.Split(',');
-            //var pEntityId = MiscHelper.Decrypt(value[0]);
-            //var pEntityType = MiscHelper.Decrypt(value[1]);
-            //var pSLDType = MiscHelper.Decrypt(value[2]);
+            var value = MiscHelper.Decrypt(key);
+            var data = value.Split('-');
+            int link_system_id = Convert.ToInt32(data[0]);
             SLDModel obj = new SLDModel();
             //fn_get_fiberlink_schematicview_deepak(5507);
             obj = new BLOSPSplicing().GetSLDDiagrambyLinkSystemId(link_system_id);
