@@ -24435,11 +24435,13 @@ var Main = function () {
         },
 
         SiteTopology: function (geom, modeType, radius, obj) {
+            debugger;
             if (obj) {
                 $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
                 $(obj).addClass('activeToolBar');
             }
             if (geom != '' && geom != null) {
+                debugger;
                 ajaxReq('Report/ValidatePotentialArea', {
                     geom: geom, geomType: modeType, buff_Radius: radius
                 }, true, function (resp) {
@@ -24448,9 +24450,10 @@ var Main = function () {
                         return false;
                     }
                     else {
+                        debugger;
                         popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
                             'objReportFilters.geom': geom, 'objReportFilters.geomType': modeType, 'objReportFilters.radius': radius, 'objReportFilters.layerName': 'SITE'
-                        }, MultilingualKey.SI_OSP_GBL_NET_RPT_420, 'modal-xl');
+                        }, 'Topology Plan', 'modal-xl');
                     }
 
                 }, true, true, true);
@@ -24458,7 +24461,7 @@ var Main = function () {
             else {
                 popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
                     eType: '', refrenceData: modeType,
-                }, MultilingualKey.SI_OSP_GBL_NET_RPT_420, 'modal-xl');
+                }, 'Topology Plan', 'modal-xl');
             }
         },
        

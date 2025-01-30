@@ -30160,6 +30160,34 @@ namespace Resources {
                 return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_462", CultureInfo.CurrentUICulture.Name) as string;
             }
         }
+        public static string SI_OSP_GBL_NET_RPT_463
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_463", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+        public static string SI_OSP_GBL_NET_RPT_464
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_464", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+        public static string SI_OSP_GBL_NET_RPT_465
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_465", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+        public static string SI_OSP_GBL_NET_RPT_466
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_RPT_466", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
 
     }        
 }

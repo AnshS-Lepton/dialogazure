@@ -19,11 +19,7 @@
     @using (Ajax.BeginForm("SaveSiteTopology", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvProgress" },
                                                     new { id = "frmsittopology", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
     {
-
-        @*@Html.HiddenFor(m => m.objReportFilters.geom)
-            @Html.HiddenFor(m => m.objReportFilters.geomType)
-            @Html.HiddenFor(m => m.objReportFilters.radius)
-            @Html.HiddenFor(m => m.objReportFilters.layerName, new { id = "hdnLayerName" })*@
+        <input type="hidden" id="networkIdField" name="network_id" />
         <input type="hidden" id="hdnApproveCount" value="0">
         <div class="libTabContent">
             <!-- Tab panes -->
@@ -31,13 +27,13 @@
                 <div class="tab-pane active" id="GISInfo">
 
                     <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_357 :</label>
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_357 <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
                             @Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
 
                             @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
                         </div>
-                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 :</label>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
                             @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
                         </div>
@@ -45,55 +41,57 @@
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_457 :</label>
                         <div class="col-sm-4">
-                            @Html.DropDownListFor(m => m.topologytype, new SelectList(Model.lsttopologytype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
+                            @Html.DropDownListFor(m => m.topology_type, new SelectList(Model.lsttopologytype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), new { @class = "chosen-select col-sm-12 ", id = "ddltopologytype" })
                         </div>
                         <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_458 :</label>
                         <div class="col-sm-4">
-                            @Html.DropDownListFor(m => m.ringtype, new SelectList(Model.lstringtype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12" })
+                            @Html.DropDownListFor(m => m.ring_capacity, new SelectList(Model.lstringtype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringcapacity" })
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 :</label>
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.agg1, new { @id = "txtagg1", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+                            @Html.TextBoxFor(m => m.agg1, new { @id = "txtagg1", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
                         </div>
-                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 :</label>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.agg2, new { @id = "txtagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_461 :</label>
-                        <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.no_of_sites, new { @id = "txtnoOfsite", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
-                        </div>
-                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 :</label>
-                        <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+                            @Html.TextBoxFor(m => m.agg2, new { @id = "txtagg2", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">Region Type :</label>
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_461 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.no_of_sites, new { @id = "txtnoOfsite", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_463  <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
                             @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstTopologyRegionMaster.Select(x => new { Value = x.RegionId, Text = x.region_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlregionid" })
                         </div>
-                        <label class="control-label col-sm-2" for="txtSearchtext">Segment Type :</label>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_464 <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
-                            @*<select id="ddlsegment" class="form-control">
-                                    <option value="">--Select Segment Type--</option>
-                                </select>*@
-                            @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), "--Select Segment Type--", new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
+                            @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"),  new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
 
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">Ring Type :</label>
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_465 <i class="clsMandatory">*</i>:</label>
 
                         <div class="col-sm-4">
-                            @*<select id="ddlringtype" class="form-control">
-                                    <option value="">--Select Ring Type--</option>
-                                </select>*@
-                            @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologyRingMaster, "Value", "Text"), "--Select Segment Type--", new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
+                            @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"),  new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_466:</label>
+
+                        <div class="col-sm-4">
+                            <label id="lbdnetworkId"></label>
 
                         </div>
                     </div>
@@ -112,30 +110,42 @@
 
 <script>
     $(document).ready(function () {
-
+        $("#txtnoOfsite").on("input", function () {
+            this.value = this.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+        });
+        $("#txtmaxdistancepeer").on("input", function () {
+            this.value = this.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+        });
        $("#txtSiteId").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: '@Url.Action("GetSiteIds", "Report")', // Update with correct controller
-                    type: "GET",
-                    dataType: "json",
-                    data: { term: request.term }, // Sends user input
-                    success: function (data) {
-                        response($.map(data, function (item) {
-                            return {
-                                label: item.label, // Display site_id in dropdown
-                                value: item.value  // Store site_id in textbox
-                            };
-                        }));
-                    }
-                });
-            },
-            minLength: 3, // Minimum characters before search starts
-            select: function (event, ui) {
-                $("#txtSiteId").val(ui.item.value); // Set selected site_id
-                return false;
+        source: function (request, response) {
+        $.ajax({
+            url: '@Url.Action("GetSiteIds", "Report")', // Update with correct controller
+            type: "GET",
+            dataType: "json",
+            data: { term: request.term }, // Sends user input
+            success: function (data) {
+                if (data.length === 0) {
+                    response([{ label: "No results found", value: "" }]); // Show message
+                } else {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.label, // Display site_id in dropdown
+                            value: item.value  // Store site_id in textbox
+                        };
+                    }));
+                }
             }
         });
+    },
+    minLength: 3, // Minimum characters before search starts
+    select: function (event, ui) {
+        if (ui.item.value !== "") {
+            $("#txtSiteId").val(ui.item.value); // Set selected site_id
+        }
+        return false;
+    }
+});
+
         $("#txtSiteName").autocomplete({
         source: function (request, response) {
             $.ajax({
@@ -144,13 +154,16 @@
                 dataType: "json",
                 data: { term: request.term }, // Sends user input
                 success: function (data) {
-                    debugger;
-                    response($.map(data, function (item) {
-                        return {
-                            label: item.label, // Display site_id in dropdown
-                            value: item.value  // Store site_id in textbox
-                        };
-                    }));
+                    if (data.length === 0) {
+                        response([{ label: "No results found", value: "" }]); // Show message
+                    } else {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.label, // Display site_id in dropdown
+                                value: item.value  // Store site_id in textbox
+                            };
+                        }));
+                    }
                 }
             });
         },
@@ -172,14 +185,15 @@
             data: { regionId: regionId }, // Pass selected regionId to the server
             success: function (data) {
                 // Populate the Ring Type Dropdown
-                var ringtypeDropdown = $('#ddlsegment');
-                ringtypeDropdown.empty(); // Clear existing options
-                ringtypeDropdown.append('<option value="">--Select Ring Type--</option>');
+                var segmenttype = $('#ddlsegment');
+                segmenttype.empty(); // Clear existing options
+                segmenttype.append('<option value="">--Select Ring Type--</option>');
 
                 // Append options from the data
                 $.each(data, function (index, item) {
-                    ringtypeDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                    segmenttype.append('<option value="' + item.Value + '">' + item.Text + '</option>');
                 });
+                segmenttype.trigger("chosen:updated");
             },
             error: function () {
                 alert("Error fetching ring types. Please try again.");
@@ -187,44 +201,127 @@
         });
     } else {
         // Clear the ringtype dropdown if no region is selected
-        $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
+       // $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
             }
             $('#ddlsegment').change(function () {
                 debugger;
             var segmentId = $(this).val(); // Get the selected SegmentId
 
     if (segmentId) {
-        $.ajax({
-            url: '@Url.Action("GetRingTypesByRegion", "Report")', // Action to fetch ring types
-            type: 'GET',
-            data: { segmentId: segmentId }, // Pass the selected SegmentId
-            success: function (data) {
-                // Populate the Ring Type Dropdown
-                var ringTypeDropdown = $('#ddlringtype');
-                ringTypeDropdown.empty(); // Clear existing options
-                ringTypeDropdown.append('<option value="">--Select Ring Type--</option>');
+       $.ajax({
+    url: '@Url.Action("GetRingTypesByRegion", "Report")', // Fetch ring types
+    type: 'GET',
+    data: { segmentId: segmentId }, // Pass the selected segment ID
+    success: function (data) {
+        var ringTypeDropdown = $('#ddlringtype'); // Ensure correct variable name
+        ringTypeDropdown.empty(); // Clear existing options
+        ringTypeDropdown.append('<option value="">--Select Ring Type--</option>');
 
-                // Append options from the response
-                $.each(data, function (index, item) {
-                    ringTypeDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
-                });
-            },
-            error: function () {
-                alert("Error fetching ring types. Please try again.");
-            }
+        // Append new options from response
+        $.each(data, function (index, item) {
+            ringTypeDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
         });
+
+        // **Update Chosen Dropdown**
+        ringTypeDropdown.trigger("chosen:updated"); // Fix variable name
+
+
+    },
+    error: function () {
+        alert("Error fetching ring types. Please try again.");
+    }
+});
+
     } else {
         // Clear the ringtype dropdown if no segment is selected
         $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
                 }
 
-});
+            });
+
+            $("#ddlringtype").on("change", function () {
+                var region = $("#ddlregionid option:selected").text();
+                var segment = $("#ddlsegment option:selected").text();
+                var ringtype = $("#ddlringtype option:selected").text();
+                var networkIdValue = region + " - " + segment + " - " + ringtype;
+                $("#lbdnetworkId").text(networkIdValue);
+                $("#networkIdField").val(networkIdValue);
+            });
+
 
 });
         $('#btnSave').click(function (e) {
             e.preventDefault(); // Prevent default button action
-            $('#frmsittopology').submit(); // Manually submit the form
+            var isValid = true;
+            debugger;
+            //  Validate all fields
+            var SiteId = $('#txtSiteId');
+            var SiteName = $("#txtSiteName");
+            var agg1 = $("#txtagg1");
+            var agg2 = $("#txtagg2");
+            var noOfsite = $("#txtnoOfsite");
+            var maxdistancepeer = $("#txtmaxdistancepeer");
+
+            var regionid = $("#ddlregionid").val();
+            var segment = $("#ddlsegment").val();
+            var regionValue = $('#ddlregionid').val().trim();
+            if (regionValue == '') {
+                $('#ddlregionid').css("border-color", "red");
+                isValid = false; // Stop form submission
+            } else {
+                $('#ddlregionid').css("border-color", "");
+            }
+            validateField(SiteId);
+            validateField(SiteName);
+            validateField(agg1);
+            validateField(agg2);
+            validateField(noOfsite);
+            validateField(maxdistancepeer);
+            validateField(regionValue);
+            //validateField(segment);
+           
+          
+           
+            function validateField(field) {
+                debugger;
+               
+                
+                if (field.val().trim() === "") {
+                    field.css("border-color", "red");
+                    isValid = false;
+                } else {
+                    field.css("border-color", ""); // Reset border color
+                }
+            }
+           
+            // Perform AJAX request to submit the form
+            if (isValid) {
+                debugger;
+                $.ajax({
+                    url: '/Report/SaveSiteTopology', // Adjust URL as needed
+                    type: 'POST',
+                    data: $('#frmsittopology').serialize(), // Serialize form data
+                    success: function (response) {
+                        debugger;
+                        if (response.Success) {
+                            // Show success message
+                            alert(response.Message);
+                            $('#closeChildPopup').trigger("click");
+                        } else {
+                            // Show error message
+                            alert(response.Message);
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while saving the topology.');
+                    }
+                });
+            }
         });
+
+
+      
+
         $('.chosen-select').chosen({ width: '100%' });    });
 
 </script>

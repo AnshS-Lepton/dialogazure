@@ -933,10 +933,10 @@ namespace Models
             [Key]
             [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
             public int id { get; set; }
-            public string site_id { get; set; } = string.Empty;
-            public string site_name { get; set; } = string.Empty;
-            public int topology_type { get; set; } = 0;
-            public int ring_capacity { get; set; } = 0;
+            public string site_id { get; set; }
+            public string site_name { get; set; }
+            public string  topology_type { get; set; }
+            public string ring_capacity { get; set; }
             public int region_id { get; set; } = 0;
             public int segment_id { get; set; } = 0;
             public int ring_id { get; set; } = 0;        
@@ -946,10 +946,10 @@ namespace Models
             public double max_distance_peer { get; set; } = 0.0;
             [NotMapped]
             public IList<DropDownMaster> lsttopologytype { get; set; }
-            public int topologytype { get; set; }
+           
             [NotMapped]
             public IList<DropDownMaster> lstringtype { get; set; }
-            public int ringtype { get; set; }
+           
             [NotMapped]
             public List<TopologyRegionMaster> lstTopologyRegionMaster { get; set; }
             [NotMapped]
@@ -960,6 +960,8 @@ namespace Models
             public int SegmentId { get; set; }
             [NotMapped]
             public List<TopologyRingMaster> lstTopologyRingMaster { get; set; }
+            public string network_id { get; set; }
+        
             public TopologyPlan()
             {
                 lstTopologyRegionMaster = new List<TopologyRegionMaster>();

@@ -13497,25 +13497,40 @@ namespace SmartInventory.Controllers
         public ActionResult SaveSiteTopology(TopologyPlan objTopologyPlan)
         {
             ModelState.Clear();
+
+            var response = new { Success = false, Message = "Save failed" }; // Default failure response
+
             if (TryValidateModel(objTopologyPlan))
             {
                 objTopologyPlan = new BLProject().SaveToploogyPlan(objTopologyPlan);
+
+                // Check if the save operation was successful
+                if (objTopologyPlan != null)
+                {
+                    response = new { Success = true, Message = "Topology Plan saved successfully" };
+                }
             }
 
-            return Json(objTopologyPlan, JsonRequestBehavior.AllowGet);
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
+
 
         public JsonResult GetSiteIds(string term)
         {
-             var siteList = new BLProject().getSiteIdList(term); 
-             var filteredSites = siteList.Where(s => s.site_id.ToString().Contains(term)).Select(s => new { value = s.site_id.ToString(), label = s.site_id }).ToList();
-             return Json(filteredSites, JsonRequestBehavior.AllowGet);
+             var siteList = new BLProject().getSiteIdList(term);
+            var result = siteList.Select(s => new { label = s.site_id.ToString(), value = s.site_id.ToString() }).ToList();
+
+            //var filteredSites = siteList.Where(s => s.site_id.ToString().ToUpper().Contains(term)).Select(s => new { value = s.site_id.ToString(), label = s.site_id }).ToList();
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
         public JsonResult GetSiteName(string term)
         {
-            var siteList = new BLProject().getSiteNameList(term); 
-            var filteredSites = siteList.Where(s => s.site_name.ToString().Contains(term)).Select(s => new { value = s.site_name.ToString(), label = s.site_name }).ToList();
-            return Json(filteredSites, JsonRequestBehavior.AllowGet);
+            var sitenameList = new BLProject().getSiteNameList(term);
+            var result = sitenameList.Select(s => new { label = s.site_name.ToString(), value = s.site_name.ToString() }).ToList();
+
+            //var siteList = new BLProject().getSiteNameList(term); 
+            //var filteredSites = siteList.Where(s => s.site_name.ToString().Contains(term)).Select(s => new { value = s.site_name.ToString(), label = s.site_name }).ToList();
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
 

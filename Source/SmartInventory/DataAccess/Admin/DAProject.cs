@@ -545,7 +545,10 @@ namespace DataAccess.Admin
     {
         public List<PODMaster> getSiteIdList(string  siteId)
         {
-            return repo.GetAll(m => m.site_id.Contains(siteId)).ToList();
+            var sitname = repo.GetAll(m => m.site_id.ToUpper().Contains(siteId.ToUpper())).ToList();
+
+            return sitname;
+           
         }
         public List<PODMaster> getSiteNameList(string site_name)
         {
