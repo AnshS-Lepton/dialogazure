@@ -627,7 +627,7 @@
             $('.leftPanel').hide();
             if ($(this).hasClass('activeToolBar')) {
                 attachUnAttachEvt($(app.DE.EntityInfo), 'click', function () { app.EntityInfoDisplay(this); });
-                $(app.DE.EntityInfo).css({ 'cursor': 'url(' + baseUrl + appRoot + 'Content/images/hand.cur' + '), default' });
+                $(app.DE.EntityInfo).css({ 'cursor': 'url(' + baseUrl + 'Content/images/hand.cur' + '), default' });
             } else {
 
                 app.DisableInfoTool();
@@ -653,7 +653,7 @@
                         app.clearLineAnimation();
                         app.initiateSplicing(this);
                     });
-                    $(app.DE.EntityInfo + '[data-is-splicer="True"]:not(.network-status-D)').css({ 'cursor': 'url(' + baseUrl + appRoot + 'Content/images/hand.cur' + '), default' });
+                    $(app.DE.EntityInfo + '[data-is-splicer="True"]:not(.network-status-D)').css({ 'cursor': 'url(' + baseUrl + 'Content/images/hand.cur' + '), default' });
                     //$('.network-status-D').unbind('click').css("cursor", "not-allowed");
                 } else {
                     attachUnAttachEvt($(app.DE.EntityInfo + '[data-is-splicer="True"]:not(.network-status-D)'), 'click', function () { });
@@ -3503,7 +3503,7 @@
     this.enableInfoTool = function () {
 
         attachUnAttachEvt($(app.DE.EntityInfo), 'click', function () { app.EntityInfoDisplay(this); });
-        $(app.DE.EntityInfo).css({ 'cursor': 'url(' + baseUrl + appRoot + 'Content/images/hand.cur' + '), default' });
+        $(app.DE.EntityInfo).css({ 'cursor': 'url(' + baseUrl + 'Content/images/hand.cur' + '), default' });
     }
     this.getAllParentInFloor = function () {
         ajaxReq('ISP/getAllParentInFloor', { structureId: parseInt($(app.DE.StructureId).val()), floorId: parseInt($('#ddlFloorList').val()), parentType: 'UNIT' }, false, function (resp) {
