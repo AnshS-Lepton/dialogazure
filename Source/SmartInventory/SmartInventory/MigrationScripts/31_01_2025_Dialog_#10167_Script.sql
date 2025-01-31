@@ -6,7 +6,7 @@ CreatedOn:
 Description: 
 ModifiedOn: 31 Jan 2025
 ModifiedBy: Chandra Shekhar Sahni
-Purpose: Removed commented code also handled if p_user_id is coming as null or empty then return empty result set
+Purpose: Removed commented code also handled if p_user_id is coming as null or empty then return empty result set also implemented Exception handling
 ------------------------------------------*/
 -- DROP FUNCTION public.fn_get_report_users(varchar, bool);
 
@@ -58,7 +58,7 @@ regexp_split_to_table('''||p_user_id||''', '','') AS number) THEN ''1'' Else use
          INSERT INTO public.error_log (
             user_id, server_ip, controller_name, action_name, err_message, err_description, created_on
          ) VALUES (
-            0, 'GTECHOFNAPP01P.dialog.dialoggsm.com',
+            0, inet_server_addr(),
             'Report', 'fn_get_report_users()', SQLERRM, 
             'Exception Message: ' || SQLERRM || ' | Exception Type: ' || 'Export Report Functionality', now()
          );
