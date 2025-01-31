@@ -74,6 +74,12 @@ namespace BusinessLogics
         {
             return new DAOSPSplicing().GetVizButterflyNetwork(systemId, entityType);
         }
+
+        public VizButterFlyNetwork GetSplicingNetworkDiagram(int systemId, string entityType)
+        {
+            return new DAOSPSplicing().GetSplicingNetworkDiagram(systemId, entityType);
+        }
+        
         public SLDModel GetSLDDiagram(int entityId, string entityType, string sldType)
         {
             return new DAOSPSplicing().GetSLDDiagram(entityId, entityType, sldType);
