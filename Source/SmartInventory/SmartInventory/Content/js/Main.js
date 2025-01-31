@@ -19331,6 +19331,12 @@ var Main = function () {
         // Reset previous red borders before validating
         $("#txtODF1, #txtODF2, #txtRequiredCore").removeClass("error-border");
 
+        if ($("#txtRequiredCore").val() === '0') {
+            alert('Invalid Required Core');
+
+            $("#txtRequiredCore").addClass("error-border");
+            return false;
+        }
         // Check if any of the fields are empty
         if ($("#txtODF1").val() == '' || $("#txtODF2").val() == '' || $("#txtRequiredCore").val() == '' || $("#txtODF1").val() == 'Search ODF' || $("#txtODF2").val() == 'Search ODF') {
             alert('All fields (ODF1, ODF2 and RequiredCore) are mandatory for checking Availability Core.');
@@ -19341,7 +19347,7 @@ var Main = function () {
             }
             if ($("#txtODF2").val() == '' || $("#txtODF2").val() == 'Search ODF') {
                 $("#txtODF2").addClass("error-border");
-            }
+            }      
             if ($("#txtRequiredCore").val() == '') {
                 $("#txtRequiredCore").addClass("error-border");
             }
