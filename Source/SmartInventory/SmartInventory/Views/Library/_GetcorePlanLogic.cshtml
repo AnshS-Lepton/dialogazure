@@ -55,7 +55,7 @@
 
         </div>
         <div class="col-md-6 col-sm-6 d-flex">
-            <button type="button" class="ml-auto btn btn-default" onclick="si.checkAvailability();" id="btnCheckAvailability">Accessibility</button>
+            <button type="button" class="ml-auto btn btn-default" onclick="si.checkAvailability();" id="btnCheckAvailability">Check Feasibility</button>
 
             <button type="button" class="btn btn-success ml-10" onclick="si.showReport();" id="btnShowReport">Download Report</button>
         </div>
@@ -506,7 +506,9 @@
             alert("Invalid input: " + "The required core must be between 1 and 48.");
             return false;
         }
-        else { si.saveCorePlanLogic(); }
+        else {
+            si.saveCorePlanLogic();
+        }
     }
 
     $("#btncreatelinkCPL").on("click", function () {

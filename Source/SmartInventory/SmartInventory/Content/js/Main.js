@@ -19381,7 +19381,7 @@ var Main = function () {
     }
 
     this.saveCorePlanLogic = function () {
-        ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val(), fiber_link_network_id: $("#hdnFiberLinkNetworkId").val(), source_network_id: $("#txtODF1").val(), destination_network_id: $("#txtODF2").val(), buffer: 5 }, true, function (resp) {
+        ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val(), fiber_link_network_id: $("#txtfiberlink").val(), source_network_id: $("#txtODF1").val(), destination_network_id: $("#txtODF2").val(), buffer: 5 }, true, function (resp) {
             if (resp != null && resp != undefined) {
                 if (resp.status) {
                     alert(resp.message);
@@ -19395,6 +19395,7 @@ var Main = function () {
                     alert(resp.message);
 
                 }
+                $("#closeModalPopup").click();
             }
 
         }, true, true);
