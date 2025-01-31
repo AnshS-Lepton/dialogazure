@@ -1,6 +1,6 @@
 INSERT INTO public.layer_action_mapping
 (layer_id, action_name, is_active, action_sequence, action_title, is_visible, is_isp_action, is_osp_action, action_abbr, action_layer_id, action_module_id, is_mobile_action, is_web_action, action_mobile_module_id, res_field_key, is_enable_in_draft, parent_action_id)
-VALUES(20, 'butterfly', true, 26, 'butterfly', true, false, true, '', 0, 0, false, true, 0, '', false, 0);
+VALUES((select layer_id from layer_details where layer_name = 'SpliceClosure'), 'butterfly', true, 26, 'butterfly', true, false, true, '', 0, 0, false, true, 0, '', false, 0);
 
 
 CREATE OR REPLACE FUNCTION public.fn_get_splicing_network_diagram(p_system_id integer, p_entity_type character varying)
