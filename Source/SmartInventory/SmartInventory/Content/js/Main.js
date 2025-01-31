@@ -14426,7 +14426,7 @@ var Main = function () {
                         break;
                     case "BUTTERFLY":
                         ajaxReq('main/Encrypt', { systemId: systemId }, false, function (resp) {
-                            window.open(appRoot + 'Library/GetVizButterflyNetwork?key=' + resp + ','
+                            window.open(appRoot + 'Library/GetSplicingNetworkDiagram?key=' + resp + ','
                                 + entityType, '_blank');
                         }, false, false);
                         break;
