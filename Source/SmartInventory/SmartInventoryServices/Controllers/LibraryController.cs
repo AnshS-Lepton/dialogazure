@@ -3502,7 +3502,7 @@ namespace SmartInventoryServices.Controllers
 				objLib.a_long_lat = startObj.actualLatLng;
 				if (!string.IsNullOrEmpty(startObj.actualLatLng)) { objLib.geom = startObj.actualLatLng + "," + objLib.geom; }
 			}
-			if (endObj != null && startObj.system_id > 0)
+			if (endObj != null && endObj.system_id > 0)
 			{
                 var entityName = new BLMisc().GetEntityName(endObj.network_name, endObj.system_id);
                 objLib.b_entity_type = endObj.network_name;
