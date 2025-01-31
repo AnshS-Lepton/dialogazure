@@ -58,7 +58,7 @@ regexp_split_to_table('''||p_user_id||''', '','') AS number) THEN ''1'' Else use
          INSERT INTO public.error_log (
             user_id, server_ip, controller_name, action_name, err_message, err_description, created_on
          ) VALUES (
-            p_user_id, 'GTECHOFNAPP01P.dialog.dialoggsm.com',
+            0, 'GTECHOFNAPP01P.dialog.dialoggsm.com',
             'Report', 'fn_get_report_users()', SQLERRM, 
             'Exception Message: ' || SQLERRM || ' | Exception Type: ' || 'Export Report Functionality', now()
          );
