@@ -19396,12 +19396,12 @@ var Main = function () {
                     $('#txtODF2').val('');
                     $('#txtfiberlink').val('');
                     $('#btnSubmit').prop("disabled", true);
+                    $("#closeModalPopup").click();
                 }
                 else {
                     alert(resp.message);
 
                 }
-                $("#closeModalPopup").click();
             }
 
         }, true, true);
