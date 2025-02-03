@@ -540,7 +540,7 @@
     $('#txtRequiredCore').on('paste', function (event) {
         let clipboardData = event.originalEvent.clipboardData || window.clipboardData;
         let pastedData = clipboardData.getData('Text');
-        if (pastedData === '0' || !/^\d+$/.test(pastedData)) {
+        if (/^0\d*$/.test(pastedData) || !/^\d+$/.test(pastedData)) {
             event.preventDefault();
         }
     });
