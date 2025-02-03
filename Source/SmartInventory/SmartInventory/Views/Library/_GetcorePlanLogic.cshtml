@@ -516,7 +516,7 @@
         $('#hdnCheckforCLP').val('fined');
         si.createFiberlinkCPL();
     });
-    $('#txtRequiredCore').on('keypress', function (event) {
+  /*  $('#txtRequiredCore').on('keypress', function (event) {
         if (event.which >= 48 && event.which <= 57) {
             //event.preventDefault();  
             if ($(this).val().length === 0 && event.which === 48) {
@@ -525,7 +525,18 @@
         } else {
             event.preventDefault();       
         }
+    });*/
+    $('#txtRequiredCore').on('keypress', function (event) {
+        if (event.which >= 48 && event.which <= 57) {
+            var value = $(this).val() + String.fromCharCode(event.which);
+            if (/^0\d/.test(value) || value === '0' || value === '00') {
+                event.preventDefault();
+            }
+        } else {
+            event.preventDefault();
+        }
     });
+
     $('#txtRequiredCore').on('paste', function (event) {
         let clipboardData = event.originalEvent.clipboardData || window.clipboardData;
         let pastedData = clipboardData.getData('Text');
