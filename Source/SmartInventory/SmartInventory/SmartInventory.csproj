@@ -2429,6 +2429,7 @@
     <Content Include="Views\Library\_AddPEP.cshtml" />
     <Content Include="Views\Report\_AreaPotential.cshtml" />
     <Content Include="Views\Report\_ExportFiberAllocationReport.cshtml" />
+    <Content Include="Views\Report\_SiteTopologyPlan.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

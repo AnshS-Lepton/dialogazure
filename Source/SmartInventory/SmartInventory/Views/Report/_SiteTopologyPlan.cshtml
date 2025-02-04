@@ -247,7 +247,7 @@
                 var region = $("#ddlregionid option:selected").text();
                 var segment = $("#ddlsegment option:selected").text();
                 var ringtype = $("#ddlringtype option:selected").text();
-                var networkIdValue = region + " - " + segment + " - " + ringtype;
+                var networkIdValue = region + "-" + segment + "-" + ringtype;
                 $("#lbdnetworkId").text(networkIdValue);
                 $("#networkIdField").val(networkIdValue);
             });
