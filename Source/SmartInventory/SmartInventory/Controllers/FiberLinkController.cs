@@ -69,6 +69,8 @@ namespace SmartInventory.Controllers
             objFiberLinkFilter.lstFiberLinkColumnsMapping = objFiberLinkFilter.objFiberLink.lstFiberLinkColumnsMapping;
             Session["viewFiberLinkDashboard"] = objFiberLinkFilter;
             BindFiberLinkDropDown(objFiberLinkFilter.objFiberLink);
+            var prefixList = objFiberLinkFilter.objFiberLink.lstPrefixType.Select(prefix => prefix.dropdown_value).ToList();
+            objFiberLinkFilter.objFiberLink.Lst_Link_Prefix = string.Join(",", prefixList);
             return PartialView("_ViewFiberLink", objFiberLinkFilter);
         }
 
