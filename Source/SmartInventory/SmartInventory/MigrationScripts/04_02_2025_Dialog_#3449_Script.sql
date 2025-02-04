@@ -340,7 +340,7 @@ BEGIN
             link_ID ILIKE ' || quote_literal(p_link_prefix || '%') || '
     )
     SELECT 
-        ' || quote_literal(p_link_prefix) || ' || LPAD((COALESCE(max_id, 0) + 1)::TEXT, 15, ''0'') AS link_prefix
+        ' || quote_literal(p_link_prefix) || ' || LPAD((COALESCE(max_id, 0) + 1)::TEXT, 10, ''0'') AS link_prefix
     FROM 
         max_link';
 
