@@ -816,8 +816,12 @@
 
     this.createUpdateLink = function (IsNewLink) {
         $('#txtLinkId').val($('#txtLinkId').val().toUpperCase());
-        $('#txtFiberLinkId').val($('#txtLinkId').val().toUpperCase());
-        let prefix = $('#txtLinkId').val().substring(0, 2).toUpperCase();
+        $('#txtFiberLinkId').val($('#txtLinkId').val().trim().toUpperCase());
+        let prefix = ($('#txtLinkId').val().toUpperCase().match(/^[A-Z]+/) || [""])[0];
+        if (prefix.length >= 11) {
+            alert(MultilingualKey.SI_OSP_GBL_NET_RPT_417);
+            return false;
+        }
         let selectedLinkPrefix = $('#ddlLinkPrifixType option[value="' + prefix + '"]');
         if (prefix != '') {
             if (selectedLinkPrefix.length > 0) {
