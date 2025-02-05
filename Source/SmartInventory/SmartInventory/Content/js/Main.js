@@ -19316,7 +19316,7 @@ var Main = function () {
         $(app.DE.SplicingDiv).hide();
         si.resetShapeTools();
         app.mapReport.clearSelection();
-
+        app.clearCoreplannerLogs();
         var pageUrl = 'Library/GetcorePlanLogic';
         var modalClass = 'modal-lg';
         // popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
@@ -32393,6 +32393,11 @@ var Main = function () {
             app.HighlightEntityOnMap(gType, resp);
             app.fitElementOnMap(resp.source)
         }
+    }
+
+    this.clearCoreplannerLogs = function () {
+        ajaxReq('Library/clearCoreplannerLog', {}, false, function (resp) {
+        }, true, true);
     }
 
 }

@@ -13364,5 +13364,11 @@ namespace SmartInventory.Controllers
             return Json(new { data = fiberLinkPrefix.link_prefix }, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult clearCoreplannerLog()
+        {
+            new BLCable().ClearCorePlanLogsByUserId(Convert.ToInt32(Session["user_id"]));
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

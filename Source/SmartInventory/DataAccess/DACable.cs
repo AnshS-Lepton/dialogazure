@@ -732,7 +732,16 @@ namespace DataAccess
             catch { throw; }
         }
         #endregion
-        
+
+        public void ClearCorePlanLogsByUserId(int user_id)
+        {
+            try
+            {
+                repo.ExecuteProcedure<object>("fn_delete_core_planner_logs", new { p_user_id = user_id }, true);
+            }
+            catch { throw; }
+        }
+
     }
     public class DAIspLine : Repository<IspLineMaster>
     {
