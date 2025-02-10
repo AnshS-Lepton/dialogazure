@@ -2431,6 +2431,7 @@
     <Content Include="Views\Report\_ExportFiberAllocationReport.cshtml" />
     <Content Include="Views\FiberLink\_SLDdiagramFiberLink.cshtml" />
     <Content Include="Views\Library\_SplicingNetworkDiagram.cshtml" />
+    <Content Include="Views\FiberLink\_AssociateFiberStatus.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

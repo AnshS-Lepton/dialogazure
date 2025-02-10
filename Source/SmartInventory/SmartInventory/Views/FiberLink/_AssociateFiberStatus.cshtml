@@ -1,0 +1,62 @@
+﻿
+@model Models.fiberLinkAssociation
+
+<style>
+</style>
+<input type="hidden" value="0" id="hdnLinkSystemId" />
+@Html.HiddenFor(x => x.link_system_id, new { id = "hdnModelLinkSystemId" })
+@Html.HiddenFor(x => x.cable_id, new { id = "hdnCableId" })
+@Html.HiddenFor(x => x.fiber_number, new { id = "hdnFiberNumber" })
+
+
+<!DOCTYPE html>
+<div class="modal-header">
+    <span type="button" class="icon-close" data-original-title="" style="float:right;cursor: pointer;" title="Close" onclick="closepopup();"></span>
+    <h4 class="modal-title" style="float: left;font-size: 15px;">Fiber Status</h4>
+</div>
+<div class="space-pad">
+    <div class="form-group row">
+        <label class="control-label col-md-4">Fiber Status:</label>
+
+        <div class="col-md-8 col-sm-8 fb-width">
+            @Html.DropDownListFor(m => m.fiber_status, new SelectList(Model.fiberStatusLst.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "form-control" })
+
+        </div>
+    </div>
+</div>
+<div class="ModalFooter d-flex --gap05">
+    <button type="button" id="btnclear" class="btn btn-default ml-auto" onclick="btnclearFiberStatus();">
+        Reset
+    </button>
+    <button type="button" id="btnUpdate" class="btn btn-primary" onclick="UpdateFiberStatus();">Update</button>
+</div>
+
+<script type="text/javascript">
+    function btnclearFiberStatus() {
+        $('#fiber_status').val('');
+    }
+    function closepopup() {
+        $('#dvAssociateLink').hide();
+    }
+    function UpdateFiberStatus() {
+        let cable_id = $('#hdnCableId').val();
+        let fiber_number = $('#hdnFiberNumber').val();
+        let fiber_status = $('#fiber_status').val();  // Get selected dropdown value
+        let fiber_status_text = $("#fiber_status option:selected").text(); 
+        let lblGrdfiberStatus = `#lblGrdfiberStatus_${fiber_number}`;
+        if (fiber_status === "" || fiber_status === null) {
+            alert("Please select Fiber Status");
+            return;
+        }
+        ajaxReq('Library/GetUpdateFiberStatus', { cableId: cable_id, fiberNumber: fiber_number, fiberStatus: fiber_status }, true, function (resp) {
+            if (resp.status) {
+                $(lblGrdfiberStatus).text(fiber_status_text); 
+                alert(resp.message);
+                $('#dvAssociateLink').hide();
+            }
+            else {
+                alert(resp.message);
+            }
+        }, false, false);
+    }
+</script>
