@@ -333,7 +333,10 @@ namespace Models
         public string link_id { get; set; }
         public int link_system_id { get; set; }
         public int cable_id { get; set; }
-        public int fiber_number { get; set; }  
+        public int fiber_number { get; set; }
+        public string fiber_status { get; set; }
+        [NotMapped]
+        public List<DropDownMaster> fiberStatusLst { get; set; }
     }
     public class TempFiberLink
     {

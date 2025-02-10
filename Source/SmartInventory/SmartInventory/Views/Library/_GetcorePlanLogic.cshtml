@@ -34,7 +34,7 @@
         <div class="col-md-4 col-sm-4">
             @*@Html.DropDownListFor(x => x.network_id, new SelectList(Model.lstODFdetails.Select(x => new { Value = x.network_id, Text = x.network_id }), "Value", "Text"), " -Select ODF1-", new { @class = "chosen-select form-control", @id = "ddlNetworkid1", @required = "required" })*@
 
-            <input type="text" id="txtODF1" class="input-sm form-control" placeholder="Search ODF1" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF'}" autocomplete="off">
+            <input type="text" id="txtODF1" class="input-sm form-control" placeholder="Search ODF1" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/SpliceClosure'}" autocomplete="off">
 
         </div>
         <label class="control-label col-md-2 col-sm-2">
@@ -43,7 +43,7 @@
         <div class="col-md-4 col-sm-4">
             @*@Html.DropDownListFor(x => x.network_id, new SelectList(Model.lstODFdetails.Select(x => new { Value = x.network_id, Text = x.network_id }), "Value", "Text"), " -Select ODF2-", new { @class = "chosen-select form-control", @id = "ddlNetworkid2", @required = "required" })*@
 
-            <input type="text" id="txtODF2" class="input-sm form-control" placeholder="Search ODF2" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF'}" autocomplete="off">
+            <input type="text" id="txtODF2" class="input-sm form-control" placeholder="Search ODF2" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/SpliceClosure'}" autocomplete="off">
         </div>
     </div>
     <div class="row form-group">

@@ -193,6 +193,10 @@ namespace BusinessLogics
         {
              new DACable().ClearCorePlanLogsByUserId(user_id);
         }
+        public void GetUpdateFiberStatus(int cableId,int fiberNumber,string fiberStatus)
+        {
+             new DACable().GetUpdateFiberStatus(cableId, fiberNumber, fiberStatus);
+        }
         
     }
 }

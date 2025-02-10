@@ -13369,6 +13369,19 @@ namespace SmartInventory.Controllers
             new BLCable().ClearCorePlanLogsByUserId(Convert.ToInt32(Session["user_id"]));
             return Json(true, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetUpdateFiberStatus(int cableId,int fiberNumber,string fiberStatus)
+        {
+            try
+            {
+                new BLCable().GetUpdateFiberStatus(cableId, fiberNumber, fiberStatus);
 
+                return Json(new { message = "Fiber Status Updated successfully!", status = true }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { message = "Error: " + ex.Message, status = false }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        
     }
 }
