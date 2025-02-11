@@ -281,7 +281,8 @@ namespace Models
         Spliceclosure_type,
 		A_location,
         FMS_Type,
-        AllowedNetworkType
+        AllowedNetworkType,
+        FiberStatus
 
     }
     public enum VendorType
