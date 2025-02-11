@@ -6400,7 +6400,6 @@ namespace SmartInventoryServices.Controllers
             var response = new ApiResponse<List<NEDuctDetails>>();
             try
             {
-
                 NearByCables objCable = ReqHelper.GetRequestData<NearByCables>(data);
                 if (objCable.bufferInMtrs <= 0)
                 {
@@ -6430,10 +6429,7 @@ namespace SmartInventoryServices.Controllers
                 response.status = StatusCodes.UNKNOWN_ERROR.ToString();
                 response.error_message = "Error While Processing  Request.";
             }
-
             return response;
         }
-       
     }
-
 }

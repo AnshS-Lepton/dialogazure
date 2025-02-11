@@ -5428,6 +5428,32 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
             }
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
+        [HttpGet]
+        public JsonResult GetNearByEntitiesByLatLong(double latitude, double longitude, int bufferInMtrs)
+        {
+            try
+            {
+                NearByEntitiesIn nearByEntitiesIn = new NearByEntitiesIn();
+                var usrDetail = (User)Session["userDetail"];
+                nearByEntitiesIn.userId = usrDetail.user_id;
+                nearByEntitiesIn.source_ref_id = "";
+                nearByEntitiesIn.source_ref_type = "";
+                //nearByEntitiesIn.bufferInMtrs = ApplicationSettings.NEDefaultBuffer;
+                nearByEntitiesIn.bufferInMtrs = bufferInMtrs;
+                nearByEntitiesIn.latitude = latitude;
+                nearByEntitiesIn.longitude = longitude;
 
+                string url = "api/Main/GetNearByEntities ";
+                var response = WebAPIRequest.PostIntegrationAPIRequest<List<EntityDetail>>(url, nearByEntitiesIn, "", "").results;
+                var filteredResults = response.Where(r => r.entity_type == EntityType.POD.ToString() || r.entity_type == EntityType.SpliceClosure.ToString()).ToList();
+
+                return Json(filteredResults, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("GetNearByEntitiesByLatLong()", "Main", ex);
+                return Json(new List<EntityDetail>(), JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }
