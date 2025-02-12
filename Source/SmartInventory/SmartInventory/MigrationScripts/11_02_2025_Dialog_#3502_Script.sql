@@ -169,7 +169,7 @@ AS SELECT pod.system_id,
 	'' Fiber_Distance_to_Nearest_Site,
 	'' Nearest_Site,
 	'' Cost_Based_on_Rate_Card_LKR
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
    FROM att_details_pod pod
      JOIN province_boundary prov ON pod.province_id = prov.id
      JOIN region_boundary reg ON pod.region_id = reg.id
