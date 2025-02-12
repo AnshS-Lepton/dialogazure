@@ -12,6 +12,10 @@
         top: 0;
         z-index: 9;
     }
+    .map-con{
+        right:21px !important;
+        top:2px !important;
+    }
 
         .pose-plus button {
             min-height: 28px;
@@ -32,22 +36,29 @@
             ODF1 <i class="clsMandatory">*</i>
         </label>
         <div class="col-md-4 col-sm-4">
-            @*@Html.DropDownListFor(x => x.network_id, new SelectList(Model.lstODFdetails.Select(x => new { Value = x.network_id, Text = x.network_id }), "Value", "Text"), " -Select ODF1-", new { @class = "chosen-select form-control", @id = "ddlNetworkid1", @required = "required" })*@
-            <a href="#" class="iconBaricomoon" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
-                <span class="icon-info" id="pEntity" data-Entity="0" onclick="core_planner_info_tool(this)"></span>
-            </a>
-            <input type="text" id="txtODF1" class="input-sm form-control" placeholder="Search ODF/SpliceClosure" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/SpliceClosure'}" autocomplete="off">
-
+            <div class="d-flex --gap05">
+                @*@Html.DropDownListFor(x => x.network_id, new SelectList(Model.lstODFdetails.Select(x => new { Value = x.network_id, Text = x.network_id }), "Value", "Text"), " -Select ODF1-", new { @class = "chosen-select form-control", @id = "ddlNetworkid1", @required = "required" })*@
+                <input type="text" id="txtODF1" class="input-sm form-control" placeholder="Search ODF/SpliceClosure" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/SpliceClosure'}" autocomplete="off">
+                <div class="pose-plus map-con">
+                    <a href="#" class="iconBaricomoon" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
+                        <span class="cptr icon-map-view" id="pEntity" data-Entity="0" onclick="core_planner_info_tool(this)"></span>
+                    </a>
+                </div>
+            </div>
         </div>
         <label class="control-label col-md-2 col-sm-2">
             ODF2<i class="clsMandatory">*</i>
         </label>
         <div class="col-md-4 col-sm-4">
-            @*@Html.DropDownListFor(x => x.network_id, new SelectList(Model.lstODFdetails.Select(x => new { Value = x.network_id, Text = x.network_id }), "Value", "Text"), " -Select ODF2-", new { @class = "chosen-select form-control", @id = "ddlNetworkid2", @required = "required" })*@
-            <a href="#" class="iconBaricomoon" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
-                <span class="icon-info" id="sEntity" data-Entity="1" onclick="core_planner_info_tool(this)"></span>
-            </a>
-            <input type="text" id="txtODF2" class="input-sm form-control" placeholder="Search ODF/SpliceClosure" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/SpliceClosure'}" autocomplete="off">
+            <div class="d-flex --gap05">
+                @*@Html.DropDownListFor(x => x.network_id, new SelectList(Model.lstODFdetails.Select(x => new { Value = x.network_id, Text = x.network_id }), "Value", "Text"), " -Select ODF2-", new { @class = "chosen-select form-control", @id = "ddlNetworkid2", @required = "required" })*@
+                <input type="text" id="txtODF2" class="input-sm form-control" placeholder="Search ODF/SpliceClosure" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/SpliceClosure'}" autocomplete="off">
+                <div class="pose-plus map-con">
+                    <a href="#" class="iconBaricomoon" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
+                        <span class="cptr icon-map-view" id="sEntity" data-Entity="1" onclick="core_planner_info_tool(this)"></span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row form-group">
@@ -75,11 +86,12 @@
             <div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new fiberlink"><i class="fa fa-plus"></i></button> </div>
         </div>
 
-        <div class="col-md-6 col-sm-6 d-flex">
-            <button type="button" class="ml-auto btn btn-success ml-10" onclick="validate();" disabled="disabled" id="btnSubmit">Submit</button>
 
-        </div>
     </div>
+</div>
+<div class="ModalFooter d-flex">
+    <button type="button" class="ml-auto btn btn-success" onclick="validate();" disabled="disabled" id="btnSubmit">Submit</button>
+
 </div>
 
 <script src="~/Content/js/core_planner/core_plan_logic.js"></script>
