@@ -29,21 +29,21 @@
     </div>
     <div class="row form-group">
         <label class="control-label col-md-2 col-sm-2">
-            ODF1 <i class="clsMandatory">*</i>
+            ODF/Splice Closure <i class="clsMandatory">*</i>
         </label>
         <div class="col-md-4 col-sm-4">
             @*@Html.DropDownListFor(x => x.network_id, new SelectList(Model.lstODFdetails.Select(x => new { Value = x.network_id, Text = x.network_id }), "Value", "Text"), " -Select ODF1-", new { @class = "chosen-select form-control", @id = "ddlNetworkid1", @required = "required" })*@
 
-            <input type="text" id="txtODF1" class="input-sm form-control" placeholder="Search ODF/SpliceClosure" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/SpliceClosure'}" autocomplete="off">
+            <input type="text" id="txtODF1" class="input-sm form-control" placeholder="Search ODF/Splice Closure" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/Splice Closure'}" autocomplete="off">
 
         </div>
         <label class="control-label col-md-2 col-sm-2">
-            ODF2<i class="clsMandatory">*</i>
+            ODF/Splice Closure<i class="clsMandatory">*</i>
         </label>
         <div class="col-md-4 col-sm-4">
             @*@Html.DropDownListFor(x => x.network_id, new SelectList(Model.lstODFdetails.Select(x => new { Value = x.network_id, Text = x.network_id }), "Value", "Text"), " -Select ODF2-", new { @class = "chosen-select form-control", @id = "ddlNetworkid2", @required = "required" })*@
 
-            <input type="text" id="txtODF2" class="input-sm form-control" placeholder="Search ODF/SpliceClosure" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/SpliceClosure'}" autocomplete="off">
+            <input type="text" id="txtODF2" class="input-sm form-control" placeholder="Search ODF/Splice Closure" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/Splice Closure'}" autocomplete="off">
         </div>
     </div>
     <div class="row form-group">
@@ -488,7 +488,7 @@
         if ($("#txtODF1").val() == $("#txtODF2").val()) {
             $("#txtODF1").addClass("error-border");
             $("#txtODF2").addClass("error-border");
-            alert('The fields ODF1 and ODF2 can not be same');
+            alert('Both ODF/Splice Closure can not be same');
             return false;
         }
 
