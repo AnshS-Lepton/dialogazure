@@ -404,7 +404,7 @@ function validate() {
     if ($("#txtODF1").val() == $("#txtODF2").val()) {
         $("#txtODF1").addClass("error-border");
         $("#txtODF2").addClass("error-border");
-        alert('The fields ODF1 and ODF2 can not be same');
+        alert('Both ODF/Splice Closure can not be same');
         return false;
     }
 
