@@ -4,7 +4,7 @@ CreatedOn:
 Description: 
 ModifiedOn: 11 Feb 2025
 ModifiedBy: Chandra Shekhar
-Purpose: Added DTS related column to Site report in the Grid and in Export to Excel
+Purpose: Added DTS related column to Site report in the Grid and in Export to Excel and Empty column after discussion with Rahul and Deepak Sir
 ------------------------------------------*/
 DROP view public.vw_att_details_pod_report;
 
@@ -162,7 +162,14 @@ AS SELECT pod.system_id,
 	pod.destination_no_of_cores,
 	pod.project_id_dialog,
 	pod.vendorcost,
-	pod.contracktorid
+	pod.contracktorid,
+	'' Fiber_OH_Distance_to_Network,
+	'' Fiber_UG_Distance_to_Network,
+	'' Total_Fiber_Distance,
+	'' Fiber_Distance_to_Nearest_Site,
+	'' Nearest_Site,
+	'' Cost_Based_on_Rate_Card_LKR
+	-------------------------------------------------------------------
    FROM att_details_pod pod
      JOIN province_boundary prov ON pod.province_id = prov.id
      JOIN region_boundary reg ON pod.region_id = reg.id
