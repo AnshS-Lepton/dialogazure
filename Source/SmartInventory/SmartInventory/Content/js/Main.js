@@ -19398,14 +19398,14 @@ var Main = function () {
             return false;
         }
         // Check if any of the fields are empty
-        if ($("#txtODF1").val() == '' || $("#txtODF2").val() == '' || $("#txtRequiredCore").val() == '' || $("#txtODF1").val() == 'Search ODF' || $("#txtODF2").val() == 'Search ODF') {
-            alert('All fields (ODF1, ODF2 and RequiredCore) are mandatory for checking Availability Core.');
+        if ($("#txtODF1").val() == '' || $("#txtODF2").val() == '' || $("#txtRequiredCore").val() == '' || $("#txtODF1").val() == 'Search ODF/Splice Closure' || $("#txtODF2").val() == 'Search ODF/Splice Closure') {
+            alert('Both ODF/Splice Closure and Required Core field will be mandatory to check the feasibility.');
 
             // Highlight empty fields with red border
-            if ($("#txtODF1").val() == '' || $("#txtODF1").val() == 'Search ODF') {
+            if ($("#txtODF1").val() == '' || $("#txtODF1").val() == 'Search ODF/Splice Closure') {
                 $("#txtODF1").addClass("error-border");
             }
-            if ($("#txtODF2").val() == '' || $("#txtODF2").val() == 'Search ODF') {
+            if ($("#txtODF2").val() == '' || $("#txtODF2").val() == 'Search ODF/Splice Closure') {
                 $("#txtODF2").addClass("error-border");
             }
             if ($("#txtRequiredCore").val() == '') {
@@ -19415,7 +19415,7 @@ var Main = function () {
             return false;
         }
 
-        ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val(), ODF2: $("#txtODF2").val(), required_core: $("#txtRequiredCore").val() }, true, function (resp) {
+        ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val().trim(), ODF2: $("#txtODF2").val().trim(), required_core: $("#txtRequiredCore").val().trim() }, true, function (resp) {
             if (resp != null && resp != undefined) {
 
                 if (resp.status) {
@@ -19447,7 +19447,7 @@ var Main = function () {
     }
 
     this.saveCorePlanLogic = function () {
-        ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val(), fiber_link_network_id: $("#txtfiberlink").val(), source_network_id: $("#txtODF1").val(), destination_network_id: $("#txtODF2").val(), buffer: 5 }, true, function (resp) {
+        ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val().trim(), fiber_link_network_id: $("#txtfiberlink").val().trim(), source_network_id: $("#txtODF1").val().trim(), destination_network_id: $("#txtODF2").val().trim(), buffer: 5 }, true, function (resp) {
             if (resp != null && resp != undefined) {
                 if (resp.status) {
                     alert(resp.message);

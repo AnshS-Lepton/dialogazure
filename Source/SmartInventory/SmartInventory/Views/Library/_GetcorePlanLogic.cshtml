@@ -33,12 +33,12 @@
     </div>
     <div class="row form-group">
         <label class="control-label col-md-2 col-sm-2">
-            ODF1 <i class="clsMandatory">*</i>
+            ODF/Splice Closure <i class="clsMandatory">*</i>
         </label>
         <div class="col-md-4 col-sm-4">
             <div class="d-flex --gap05">
                 @*@Html.DropDownListFor(x => x.network_id, new SelectList(Model.lstODFdetails.Select(x => new { Value = x.network_id, Text = x.network_id }), "Value", "Text"), " -Select ODF1-", new { @class = "chosen-select form-control", @id = "ddlNetworkid1", @required = "required" })*@
-                <input type="text" id="txtODF1" class="input-sm form-control" placeholder="Search ODF/SpliceClosure" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/SpliceClosure'}" autocomplete="off">
+                <input type="text" id="txtODF1" class="input-sm form-control" placeholder="Search ODF/Splice Closure" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/Splice Closure'}" autocomplete="off">
                 <div class="pose-plus map-con">
                     <a href="#" class="iconBaricomoon" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
                         <span class="cptr icon-map-view" id="pEntity" data-Entity="0" onclick="core_planner_info_tool(this)"></span>
@@ -47,12 +47,12 @@
             </div>
         </div>
         <label class="control-label col-md-2 col-sm-2">
-            ODF2<i class="clsMandatory">*</i>
+            ODF/Splice Closure<i class="clsMandatory">*</i>
         </label>
         <div class="col-md-4 col-sm-4">
             <div class="d-flex --gap05">
                 @*@Html.DropDownListFor(x => x.network_id, new SelectList(Model.lstODFdetails.Select(x => new { Value = x.network_id, Text = x.network_id }), "Value", "Text"), " -Select ODF2-", new { @class = "chosen-select form-control", @id = "ddlNetworkid2", @required = "required" })*@
-                <input type="text" id="txtODF2" class="input-sm form-control" placeholder="Search ODF/SpliceClosure" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/SpliceClosure'}" autocomplete="off">
+                <input type="text" id="txtODF2" class="input-sm form-control" placeholder="Search ODF/Splice Closure" onclick="if (this.placeholder !== '') { this.placeholder = '' }" onblur="if(this.placeholder===''){this.placeholder='Search ODF/Splice Closure'}" autocomplete="off">
                 <div class="pose-plus map-con">
                     <a href="#" class="iconBaricomoon" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
                         <span class="cptr icon-map-view" id="sEntity" data-Entity="1" onclick="core_planner_info_tool(this)"></span>
