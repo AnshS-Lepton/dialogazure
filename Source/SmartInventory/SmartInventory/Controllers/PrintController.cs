@@ -97,7 +97,7 @@ namespace SmartInventory.Controllers
             return PartialView("_MapPrint", new PrintMap());
         }
         public ActionResult PrintExportLog(PrintExportLogVM ObjPrintExportLogVM, int page = 0, string sort = "", string sortdir = "")
-        {          
+        {
             var usrDetail = (User)Session["userDetail"];
             if (sort != "" || page != 0)
             {
@@ -279,7 +279,7 @@ namespace SmartInventory.Controllers
                 {
                     pMap = GetPrintMapBySelectedArea(pMap);
                 }
-               
+
 
                 // prepare the map layer url based or layer filters.
                 pMap.layerUrls = GetLayerURLs(pMap);
@@ -299,7 +299,7 @@ namespace SmartInventory.Controllers
         }
         public int ExportMap(PrintMap printMap, iTextSharp.text.Rectangle pageSize)
         {
-           
+
             var updateStatus = 0;
             PrintExportLog printLog = new PrintExportLog();
             printLog.user_id = printMap.userId;
@@ -340,12 +340,12 @@ namespace SmartInventory.Controllers
             printLog.page_count = 1;
             if (printMap.pageScale > 0)
             {
-               
+
                 reportSheets = printManager.CreateReportSheets(printMap.pageScale, mapReport);
-            
+
                 List<ReportSheet> newReportSheet = new List<ReportSheet>();
                 var id = 0;
-                
+
                 foreach (var pdfSheet in reportSheets)
                 {
                     var points = printManager.GetSheetClippingPoints(pdfSheet);
@@ -359,7 +359,7 @@ namespace SmartInventory.Controllers
                         newReportSheet.Add(pdfSheet);
                     }
                 }
-               
+
                 reportSheets = newReportSheet;
                 printManager.MapSheetWithTiles(tiles, reportSheets);
                 printLog.page_count = reportSheets.Count();
@@ -379,29 +379,29 @@ namespace SmartInventory.Controllers
             //printManager.StartBrowser(printMap.remarks,AttachmentLocalPath);
             if (reportSheets.Count() <= ApplicationSettings.MaxPDFWihoutThread)
             {
-               // reportSheets[0].Revised_Id = 1;
+                // reportSheets[0].Revised_Id = 1;
                 Session["PrintExportOut"] = printManager.MergeImageTiles(tiles, reportSheets, pageSize, mapReport, printMap, printLogObj, false);
                 updateStatus = 1;
             }
             else
             {
-                
+
                 new Thread(() =>
                 {
                     printManager.MergeImageTiles(tiles, reportSheets, pageSize, mapReport, printMap, printLogObj, true);
                 }).Start();
-               
+
                 updateStatus = -1;
             }
-            
+
             printMap.IsVisiblePrintLegendEntityCount = ApplicationSettings.IsVisiblePrintLegendEntityCount;
             return updateStatus;
         }
-     
+
         [HttpPost]
         public JsonResult PrintMapPDFCount(PrintMap printMap)
         {
-          
+
 
             var pdfCount = 0.0;
             var status = false;
@@ -411,11 +411,12 @@ namespace SmartInventory.Controllers
                 printMap.isFooterTemplateEnabled = ((List<string>)Session["ApplicableModuleList"]).Contains("PMA");
 
 
-            
 
-                if (printMap.printHistoryID > 0) {
 
-                    PrintMap pmap =(PrintMap)Session["RePrtMapsModel"];
+                if (printMap.printHistoryID > 0)
+                {
+
+                    PrintMap pmap = (PrintMap)Session["RePrtMapsModel"];
                     printMap.mapCanvasHeight = pmap.mapCanvasHeight;
                     printMap.mapCanvasWidth = pmap.mapCanvasWidth;
                     printMap.mapLeftLng = pmap.mapLeftLng;
@@ -425,9 +426,9 @@ namespace SmartInventory.Controllers
                 }
                 else
                 {
-                   
+
                     printMap = GetPrintMapBySelectedArea(printMap);
-                  
+
                 }
                 //if (printMap.printScale == 2)
                 //{
@@ -450,14 +451,14 @@ namespace SmartInventory.Controllers
                 }
                 if (printMap.pageScale > 0)
                 {
-                 
+
                     reportSheets = printManager.CreateReportSheets(printMap.pageScale, mapReport);
-                  
+
                 }
 
 
 
-              
+
                 foreach (var pdfSheet in reportSheets)
                 {
 
@@ -471,7 +472,7 @@ namespace SmartInventory.Controllers
                         pdfCount = pdfCount + 1;
                     }
                 }
-              
+
                 // pdfCount = printManager.PdfSheetCount(printMap.pageScale, mapReport);
                 status = true;
             }
@@ -481,9 +482,9 @@ namespace SmartInventory.Controllers
                 strMsg = "Error while calculating the total files count!<br><b>Error Message:</b>" + (ex.Message ?? "");
                 //Write error log
                 ErrorLogHelper.WriteErrorLog("PrintMapPDFCount()", "Print", ex, printMap);
-              
+
             }
-           
+
             return Json(new { success = status, message = strMsg, pdfCount = pdfCount }, JsonRequestBehavior.AllowGet);
         }
 
@@ -495,13 +496,13 @@ namespace SmartInventory.Controllers
             var usrDetail = (User)Session["userDetail"];
             try
             {
-                status =  BLPrint.CheckPrintTemplateName(template_name, usrDetail.user_id);
+                status = BLPrint.CheckPrintTemplateName(template_name, usrDetail.user_id);
             }
             catch (Exception ex)
             {
                 ErrorLogHelper.WriteErrorLog("CheckTemplateNameExist()", "Print", ex, template_name);
             }
-            return Json(new { success = status}, JsonRequestBehavior.AllowGet);
+            return Json(new { success = status }, JsonRequestBehavior.AllowGet);
         }
 
 
@@ -656,7 +657,7 @@ namespace SmartInventory.Controllers
         }
         public static PrintMap GetPrintMapBySelectedArea(PrintMap printMap)
         {
-           
+
             MapPrintManager printManager = new MapPrintManager(printMap.mapCanvasWidth, printMap.mapCanvasHeight, (double)printMap.mapLeftLng, (double)printMap.mapRightLng, (double)printMap.mapTopLat, (double)printMap.mapBottomLat, printMap.mapCanvasWidth, printMap.mapCanvasHeight, printMap.mapCurrentZoom);
             string[] geomSplit = printMap.mapSelectedGeom.Split(',');
             double maxLat = -360, minLat = 360, maxLong = -360, minLong = 360;
@@ -765,7 +766,7 @@ namespace SmartInventory.Controllers
                 }
                 else
                 {
-                    objResp.status = ResponseStatus.OK.ToString();           
+                    objResp.status = ResponseStatus.OK.ToString();
                 }
 
             }
@@ -835,7 +836,7 @@ namespace SmartInventory.Controllers
         public string GetNetworkIdForJobID(int systemId, string entityType)
         {
 
-            var NetworkId =new BLMisc().GetNetworkIdForJobID(systemId, entityType);
+            var NetworkId = new BLMisc().GetNetworkIdForJobID(systemId, entityType);
             return NetworkId;
         }
         public bool DeletePrintTemplateList(int templateId)
