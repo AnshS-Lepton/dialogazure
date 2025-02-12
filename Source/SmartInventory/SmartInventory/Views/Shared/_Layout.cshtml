@@ -119,6 +119,13 @@
         <ul class="autoSplice" id="ulTerminationPointLst" style="display:block;"></ul>
     </div>
 
+    <div class="nearByEntitiesMain" id="searchNBEntities" style="height:auto !important;">
+        <div class="modal-header d-flex">
+            <h4 id="lblNearByEntities" class="modal-title">Near By Entities</h4>
+            <span onclick="si.closeNBEntities();" class="icon-close ml-auto" id="closeModalPopup2"></span>
+        </div>
+        <ul class="entitiesUl" id="ulNearByEntitiesLst" style="display:block;"></ul>
+    </div>
     @*<div class="autoSplice" id="closeTpoint" style="display: block;width: 28px;height: 28px;text-align: center;" onclick="si.closeTpoint();">X</div>*@
 
     @*Div used for show pop-up for termination point*@
@@ -188,9 +195,9 @@
     @*<script src="~/Areas/Admin/Content/js/jquery.min.js"></script>*@
     @if (ApplicationSettings.IsSignalRIsEnable == 1)
     {
-    <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
-    <script src="~/SignalR/hubs"></script>
-    <script src="~/Content/js/NotifySignalR.js"></script>
+        <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
+        <script src="~/SignalR/hubs"></script>
+        <script src="~/Content/js/NotifySignalR.js"></script>
     }
     <script src="~/Content/js/datauploader.js"></script>
     <script src="~/Content/js/regionprovincedatauploader.js"></script>
@@ -212,7 +219,7 @@
         $(document).ready(function () {
             si.initApp();
             splicing.initApp();
-           // FiberLink.initApp();
+            // FiberLink.initApp();
             if (parseInt($('#hdnIsSignalRIsEnable').val()) == 1);
             {
                 notification.initApp();
@@ -278,7 +285,7 @@
                 $('.logout').slideUp(500); // slide up logout menu
                 $('#dvNELibrary').hide('slide', { direction: 'right' }, 500); // hide library menu while clicking on other link or button
                 getAddressRemoveActiveClass() // remove activeGoogIcon class from get address map icons
-                 //var dropdownList = $(".dropDownMenu li ul");
+                //var dropdownList = $(".dropDownMenu li ul");
                 //var dropdownOffset = $(this).offset();
                 //var offsetLeft = dropdownOffset.left + 120; // adjust dropdown position, when no space left from right side
                 //var dropdownWidth = dropdownList.width();
@@ -321,7 +328,7 @@
                 $('#' + modelId + ' [class*=_content]').toggleClass('minimize', function () {
                     $('#' + modelId + ' .collapseModel>i').toggleClass('fa-plus').toggleClass('fa-clone');
                     if ($('#' + modelId + ' [class*=_content]').hasClass('minimize')) {
-                      //  $('#' + modelId + ' [class*=_content]').css('height', '33px');
+                        //  $('#' + modelId + ' [class*=_content]').css('height', '33px');
                         //$('.modal-backdrop').hide();
                         //$apnData.removeClass('modal');
                         //$apnData.addClass('MinMax');
