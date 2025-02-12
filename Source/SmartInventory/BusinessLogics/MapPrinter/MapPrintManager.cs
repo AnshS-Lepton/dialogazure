@@ -387,7 +387,7 @@ namespace BusinessLogics.MapPrinter
             }
             catch (Exception ex)
             {
-                ErrorLogHelper.WriteErrorLog("ConvertUrlToBitmap()", "Utility/MapPrintManager" + ex.StackTrace + ex.InnerException, ex);
+                ErrorLogHelper.WriteErrorLog("ConvertUrlToBitmap()", "Utility/MapPrintManager", ex);
                 throw new InvalidOperationException(Resources.Resources.SI_GBL_GBL_JQ_FRM_037);
                 //Console.Write(ex.Message);
             }
