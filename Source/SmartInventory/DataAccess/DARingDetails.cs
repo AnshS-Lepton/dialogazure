@@ -15,20 +15,22 @@ namespace DataAccess
     public class DARingDetails:Repository<RingDetails>
     {
        
-        public List<RingDetails> getRingDetails(CommonGridAttributes objGridAttributes)
+        public List<RingDetails> getRingDetails(CommonGridAttributes objGridAttributes, string network_id)
         {
             try
             {
                 return repo.ExecuteProcedure<RingDetails>("fn_get_ring_details", new
                 {
                     p_searchby = objGridAttributes.searchBy,
-                    p_searchtext = ((objGridAttributes.searchBy == "region_name" || objGridAttributes.searchBy == "site_name") && (!string.IsNullOrEmpty(objGridAttributes.searchText))) ? MiscHelper.Encrypt(objGridAttributes.searchText) : objGridAttributes.searchText,
+                    p_searchtext = ((objGridAttributes.searchBy == "network_id" || objGridAttributes.searchBy == "region_name") && (!string.IsNullOrEmpty(objGridAttributes.searchText))) ? MiscHelper.Encrypt(objGridAttributes.searchText) : objGridAttributes.searchText,
                     P_PAGENO = objGridAttributes.currentPage,
                     P_PAGERECORD = objGridAttributes.pageSize,
                     P_SORTCOLNAME = objGridAttributes.sort,
                     P_SORTTYPE = objGridAttributes.orderBy,
+                    p_ring_network_id = network_id
                     
-                }, true);
+
+                }, true); ;
             }
             catch { throw; }
         }
