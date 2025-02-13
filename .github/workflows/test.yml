@@ -1,31 +1,29 @@
-name: Update Specific Project Status on Issue Change
+name: Issue Status Change in Project
 on:
   project_card:
-    types: [moved]
+    types: [moved]  # Trigger when a card (issue) moves to a new column
 
 jobs:
-  update-specific-project:
+  update-project-status:
     runs-on: ubuntu-latest
     steps:
-      - name: Check Project and Column
+      - name: Check Project and Status
         uses: actions/github-script@v7
         with:
           script: |
-            const { github, context } = require('@actions/github');
-
-            // Get project card details
             const card = context.payload.project_card;
-            const project_id = card.project_url.split('/').pop(); // Extract project ID from URL
+            const project_id = card.project_url.split('/').pop();  // Extract project ID from URL
             
-            const SPECIFIC_PROJECT_ID = "123456"; // Replace with your project ID
+            const SPECIFIC_PROJECT_ID = "122";  
 
-            if (project_id === SPECIFIC_PROJECT_ID) {
-              console.log(`Issue moved in Project ${SPECIFIC_PROJECT_ID} to ${card.column_name}`);
-              
-              if (card.column_name === "Done") {
-                console.log("Triggering post-processing actions for 'Done' status.");
-                // Add actions (notify team, close issues, update labels, etc.)
-              }
-            } else {
+            if (project_id !== SPECIFIC_PROJECT_ID) {
               console.log("Issue moved in a different project, ignoring.");
+              return;
+            }
+
+            console.log(`Issue moved in Project ${project_id} to Column: ${card.column_name}`);
+
+            if (card.column_name === "Done") {
+              console.log("Performing actions for 'Done' status...");
+              // API calls to update repo status, notify teams, close issue, etc.
             }
