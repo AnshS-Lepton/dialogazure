@@ -520,3 +520,113 @@ SELECT pm.system_id,pm.entity_type,pm.common_name,cable_id
 END;
 $function$
 ;
+
+--------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_trg_audit_line_master()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+
+declare
+
+v_served_by_ring text;
+
+v_dsa_system_id integer;
+
+v_layer_table text;
+v_subarea_system_id integer;
+
+begin
+
+                v_dsa_system_id:=0;
+
+IF (TG_OP = 'INSERT' ) THEN 
+
+ 
+
+				INSERT INTO public.audit_line_master(system_id,entity_type,approval_flag,sp_geometry,creator_remark,approver_remark,created_by,approver_id,common_name,db_flag,approval_date,modified_on,network_status,is_virtual,action,modified_by,gis_design_id)
+
+				values(new.system_id,new.entity_type,new.approval_flag,new.sp_geometry,new.creator_remark,new.approver_remark,new.created_by,new.approver_id,new.common_name,new.db_flag,new.approval_date,now(),new.network_status,new.is_virtual,'I',new.modified_by,new.gis_design_id);
+
+ 
+
+                select layer_table into v_layer_table from layer_details where upper(layer_name)=upper(new.entity_type);
+
+                select system_id into v_dsa_system_id  from polygon_master where entity_type='DSA' and (st_within(st_endpoint(new.sp_geometry),sp_geometry) or st_within(st_startpoint(new.sp_geometry),sp_geometry)) limit 1;                    
+                update att_details_subarea set is_association_completed=false where system_id in(select system_id from polygon_master where entity_type='SubArea' and (st_within(st_endpoint(new.sp_geometry),sp_geometry) or st_within(st_startpoint(new.sp_geometry),sp_geometry)) limit 1);
+
+				if(coalesce(v_dsa_system_id,0)>0)
+
+                then
+
+                                select served_by_ring into v_served_by_ring from att_details_dsa where system_id=v_dsa_system_id;
+
+                                execute 'update '||v_layer_table||' set served_by_ring='''||v_served_by_ring||''' where system_id='||new.system_id||' ';
+
+                end if;
+				-- IF (new.entity_type = ANY('{Cable,Trench}'::character varying[]))
+-- 				THEN
+-- 					PERFORM fn_update_entity_geojson('INSERT',new.entity_type,'Line',new.SYSTEM_ID, new.sp_geometry);
+-- 				END IF;
+    if(upper(new.entity_type) = 'CABLE') then
+       PERFORM fn_update_routing_topology(new.system_id,'INSERT');
+   end if;
+END IF;
+
+ 
+
+IF (TG_OP = 'UPDATE' ) THEN 
+
+IF((select st_astext(new.sp_geometry)) !=(select st_astext(old.sp_geometry))) then
+
+ 
+
+                INSERT INTO public.audit_line_master(system_id,entity_type,approval_flag,sp_geometry,creator_remark,approver_remark,created_by,approver_id,common_name,db_flag,approval_date,modified_on,network_status,is_virtual,action,modified_by,gis_design_id)
+
+                values(new.system_id,new.entity_type,new.approval_flag,new.sp_geometry,new.creator_remark,new.approver_remark,new.created_by,new.approver_id,new.common_name,new.db_flag,new.approval_date,now(),new.network_status,new.is_virtual,'U',new.modified_by,new.gis_design_id); 
+
+ 
+
+                select layer_table into v_layer_table from layer_details where upper(layer_name)=upper(new.entity_type);
+
+                select system_id into v_dsa_system_id  from polygon_master where entity_type='DSA' and (st_within(st_endpoint(new.sp_geometry),sp_geometry) or st_within(st_startpoint(new.sp_geometry),sp_geometry)) limit 1;                    
+                update att_details_subarea set is_association_completed=false where system_id in(select system_id from polygon_master where entity_type='SubArea' and (st_within(st_endpoint(new.sp_geometry),sp_geometry) or st_within(st_startpoint(new.sp_geometry),sp_geometry)) limit 1);
+
+                if(coalesce(v_dsa_system_id,0)>0)
+
+                then
+
+                                select served_by_ring into v_served_by_ring from att_details_dsa where system_id=v_dsa_system_id;
+
+                                execute 'update '||v_layer_table||' set served_by_ring='''||v_served_by_ring||''' where system_id='||new.system_id||' ';
+
+                end if;
+				
+				-- IF (new.entity_type = ANY('{Cable,Trench}'::character varying[]))
+-- 				THEN
+-- 					PERFORM fn_update_entity_geojson('UPDATE', new.entity_type, 'Line', new.SYSTEM_ID, new.sp_geometry);
+-- 				END IF;
+END IF;
+    if(upper(new.entity_type) = 'CABLE') then
+        perform fn_update_routing_topology(new.system_id,'UPDATE');
+    END IF;
+END IF;
+
+ 
+IF (TG_OP = 'DELETE' ) THEN 
+-- 		IF (old.entity_type = ANY('{Cable,Trench}'::character varying[]))
+-- 		THEN
+-- 			PERFORM fn_update_entity_geojson('DELETE', old.entity_type, 'Line', old.SYSTEM_ID, old.sp_geometry);
+-- 		END IF;
+  if(upper(old.entity_type) = 'CABLE') then
+    PERFORM fn_update_routing_topology(old.system_id,'DELETE');
+   END IF;
+	RETURN OLD;
+END IF;
+RETURN NEW;
+
+END;
+
+$function$
+;
