@@ -1,7 +1,7 @@
 name: Issue Status Change in Project
 on:
-  project_card:
-    types: [moved]  # Trigger when a card (issue) moves to a new column
+  projects_v2_item:
+    types: [edited]
 
 jobs:
   update-project-status:
@@ -11,19 +11,18 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const card = context.payload.project_card;
-            const project_id = card.project_url.split('/').pop();  // Extract project ID from URL
+            const item = context.payload.projects_v2_item;
+            const project_id = item.project_node_id;  // Get Project ID
             
-            const SPECIFIC_PROJECT_ID = "122";  
-
+            const SPECIFIC_PROJECT_ID = "PVT_kwDOBT5nd84Aq3l8"; 
+            
             if (project_id !== SPECIFIC_PROJECT_ID) {
-              console.log("Issue moved in a different project, ignoring.");
+              console.log("Not the project we're tracking. Skipping...");
               return;
             }
 
-            console.log(`Issue moved in Project ${project_id} to Column: ${card.column_name}`);
+            console.log(`Issue updated in Project ${project_id}`);
 
-            if (card.column_name === "Done") {
+            if (item.content_type === "Issue" && item.field_value === "Done") {
               console.log("Performing actions for 'Done' status...");
-              // API calls to update repo status, notify teams, close issue, etc.
             }
