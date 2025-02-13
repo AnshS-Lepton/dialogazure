@@ -27033,7 +27033,6 @@ var Main = function () {
             }
         },
         showExportReportDetail: function (latLongArr, modeType, obj) {
-            //;
             var longLatArr = '';
             if (latLongArr.length > 0) {
                 for (i = 0; i < latLongArr.length; i++) {
@@ -27382,7 +27381,6 @@ var Main = function () {
             }
         },
         showExportReportDetail: function (latLongArr, modeType, obj) {
-            //;
             var longLatArr = '';
             if (latLongArr.length > 0) {
                 for (i = 0; i < latLongArr.length; i++) {

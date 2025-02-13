@@ -21,8 +21,7 @@
     <IISExpressUseClassicPipelineMode />
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -2968,7 +2967,7 @@
     <Folder Include="shp2kml_convertor\" />
     <Folder Include="Uploads\ExternalData\KMZ\" />
     <Folder Include="Uploads\LayerStyleMaster\" />
-		<Folder Include="Uploads\Temp\Attachments\" />
+    <Folder Include="Uploads\Temp\Attachments\" />
     <Folder Include="Uploads\Temp\ExportReportLog\" />
     <Folder Include="Uploads\temp_LOS\" />
     <Folder Include="Views\OAIM\" />

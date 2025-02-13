@@ -1,7 +1,7 @@
-﻿using Models;
+﻿using Ionic.Zip;
+using Models;
 using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing;
@@ -10,12 +10,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using Ionic.Zip;
 //using System.Threading;
 //using System.Windows.Forms;
-using iTextSharp.text.pdf;
 //using NPOI.SS.Formula.Functions;
 using Utility;
 
@@ -598,7 +595,6 @@ namespace BusinessLogics.MapPrinter
                         var points = GetSheetClippingPoints(pdfSheet);
                         var clippingPoints = points.ToArray();
                         // var clippingPoints = GetSheetWiseClippingPoints(pdfSheet).ToArray();
-
                         if (findIsSheetContainsPolygon(points, pdfSheet))
                         {
 
@@ -683,25 +679,33 @@ namespace BusinessLogics.MapPrinter
 
         private int downImagePDF(int sheetIndex, int totalFileSize, Bitmap bitmap, PrintMap printMap, iTextSharp.text.Rectangle pageSize, List<ReportSheet> sheets, PrintExportLog printLog)
         {
-            string pdfFileName = string.Format("{0}.{1}", sheetIndex == 0 ? printMap.printFolderName : sheetIndex.ToString(), fileExtensions.pdf.ToString());
-            totalFileSize = totalFileSize + downloadImageToPDF(pdfFileName, bitmap, printMap, pageSize, sheets, sheetIndex);
+            try
+            {
+                string pdfFileName = string.Format("{0}.{1}", sheetIndex == 0 ? printMap.printFolderName : sheetIndex.ToString(), fileExtensions.pdf.ToString());
+                totalFileSize = totalFileSize + downloadImageToPDF(pdfFileName, bitmap, printMap, pageSize, sheets, sheetIndex);
 
-            var progressPercentage = printMap.pageScale > 0 ? ((sheetIndex * 100) / sheets.Count()) : 99;
-            ///// Call SignalR for the refresh of progress 
-            SmartInventoryHub smartInventoryhub = SmartInventoryHub.Instance;
-            string message = progressPercentage.ToString();
-            NotificationOutPut objNotification = new NotificationOutPut();
-            objNotification.info = message;
-            objNotification.notificationType = notificationType.PrintMap.ToString();
-            smartInventoryhub.BroadCastInfo(objNotification);
-            smartInventoryhub.BroadCastPrintMapStatus(message);
+                var progressPercentage = printMap.pageScale > 0 ? ((sheetIndex * 100) / sheets.Count()) : 99;
+                ///// Call SignalR for the refresh of progress 
+                SmartInventoryHub smartInventoryhub = SmartInventoryHub.Instance;
+                string message = progressPercentage.ToString();
+                NotificationOutPut objNotification = new NotificationOutPut();
+                objNotification.info = message;
+                objNotification.notificationType = notificationType.PrintMap.ToString();
+                smartInventoryhub.BroadCastInfo(objNotification);
+                smartInventoryhub.BroadCastPrintMapStatus(message);
 
 
-            var exportProgress = progressPercentage.ToString() + "%";
-            printLog.export_progress = exportProgress;
-            printLog.file_size = FileSizeFormatter.FormatSize(totalFileSize);
-            printLog = new BusinessLogics.BLPrintLog().SavePrintLog(printLog);
-            return totalFileSize;
+                var exportProgress = progressPercentage.ToString() + "%";
+                printLog.export_progress = exportProgress;
+                printLog.file_size = FileSizeFormatter.FormatSize(totalFileSize);
+                printLog = new BusinessLogics.BLPrintLog().SavePrintLog(printLog);
+                return totalFileSize;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("downImagePDF() ", "MapPrintManager", ex);
+                return 0;
+            }
         }
 
         private PrintMapOut UploadFilesToFTP(PrintMap printMap, iTextSharp.text.Rectangle pageSize, PrintExportLog printLog)
@@ -825,45 +829,51 @@ namespace BusinessLogics.MapPrinter
 
         private int downloadImageToPDF(string fileName, Bitmap bitmap, PrintMap printMap, iTextSharp.text.Rectangle pageSize, List<ReportSheet> sheets, int sheetIndex)
         {
-            iTextSharp.text.Image finalLayerImg = null;
-
-            finalLayerImg = iTextSharp.text.Image.GetInstance(bitmap, System.Drawing.Imaging.ImageFormat.Png);
-            List<LegendGroup> legendGroup = new List<LegendGroup>();
-            //printMap.printLegend =printMap.printLegend && printMap.pageScale == 0 ;
-            if (printMap.printLegend && printMap.pageScale == 0)
+            try
             {
-                var allLegends = new BusinessLogics.BLMisc().GetLegendByGeom(printMap.mapSelectedGeom, JsonConvert.SerializeObject(printMap.layerMapFilter), printMap.roleId);
+                iTextSharp.text.Image finalLayerImg = null;
 
-                if (printMap.IsVisiblePrintLegendEntityCount)
+                finalLayerImg = iTextSharp.text.Image.GetInstance(bitmap, System.Drawing.Imaging.ImageFormat.Png);
+                List<LegendGroup> legendGroup = new List<LegendGroup>();
+                if (printMap.printLegend && printMap.pageScale == 0)
                 {
-                    legendGroup = (from p in allLegends
-                                   group p by p.group_name into g
-                                   select new LegendGroup { Group = string.Format("{0} {1} ", g.Key, g.ToList().Sum(x => x.entity_count).ToString()), Legends = g.ToList().Select(x => new LegendCell { ImageUrl = x.icon_path, Text = string.Format("{0} ({1})", x.sub_Layer, x.entity_count) }).ToList() }).OrderBy(x => x.Group).ToList();
+                    var allLegends = new BusinessLogics.BLMisc().GetLegendByGeom(printMap.mapSelectedGeom, JsonConvert.SerializeObject(printMap.layerMapFilter), printMap.roleId);
+                    if (printMap.IsVisiblePrintLegendEntityCount)
+                    {
+                        legendGroup = (from p in allLegends
+                                       group p by p.group_name into g
+                                       select new LegendGroup { Group = string.Format("{0} {1} ", g.Key, g.ToList().Sum(x => x.entity_count).ToString()), Legends = g.ToList().Select(x => new LegendCell { ImageUrl = x.icon_path, Text = string.Format("{0} ({1})", x.sub_Layer, x.entity_count) }).ToList() }).OrderBy(x => x.Group).ToList();
 
+                    }
+                    else
+                    {
+                        legendGroup = (from p in allLegends
+                                       group p by p.group_name into g
+                                       select new LegendGroup { Group = string.Format("{0}", g.Key, g.ToList().Sum(x => x.entity_count).ToString()), Legends = g.ToList().Select(x => new LegendCell { ImageUrl = x.icon_path, Text = string.Format("{0}", x.sub_Layer, x.entity_count) }).ToList() }).OrderBy(x => x.Group).ToList();
+                    }
                 }
-                else
+
+                //// krishna 20210629
+                MapReport mapReport = MapReport.GetMapReportContent(printMap);
+                int LegendTblHeight = Convert.ToInt32(GetLegendTableHeight(legendGroup, mapReport));
+                if (printMap.pageScale == 0 && LegendTblHeight > mapReport.MapHeight)
                 {
-                    legendGroup = (from p in allLegends
-                                   group p by p.group_name into g
-                                   select new LegendGroup { Group = string.Format("{0}", g.Key, g.ToList().Sum(x => x.entity_count).ToString()), Legends = g.ToList().Select(x => new LegendCell { ImageUrl = x.icon_path, Text = string.Format("{0}", x.sub_Layer, x.entity_count) }).ToList() }).OrderBy(x => x.Group).ToList();
+                    printMap.PdfCellCnt = 1;
                 }
+
+
+                var pdf = MapReport.ExportPdf(pageSize, finalLayerImg, legendGroup, mapReport, printMap, sheets, sheetIndex, PrintZoomLevel, GetMapDistance(printMap));
+
+                var bytes = pdf.ToArray();
+                //save file into temp folder..
+                SaveFileTemp(printMap, fileName, bytes);
+                return bytes.Length;
             }
-
-            //// krishna 20210629
-            MapReport mapReport = MapReport.GetMapReportContent(printMap);
-            int LegendTblHeight = Convert.ToInt32(GetLegendTableHeight(legendGroup, mapReport));
-            if (printMap.pageScale == 0 && LegendTblHeight > mapReport.MapHeight)
+            catch (Exception ex)
             {
-                printMap.PdfCellCnt = 1;
+                ErrorLogHelper.WriteErrorLog("downloadImageToPDF()", "MapPrintManager", ex);
+                return 0;
             }
-
-
-            var pdf = MapReport.ExportPdf(pageSize, finalLayerImg, legendGroup, mapReport, printMap, sheets, sheetIndex, PrintZoomLevel, GetMapDistance(printMap));
-
-            var bytes = pdf.ToArray();
-            //save file into temp folder..
-            SaveFileTemp(printMap, fileName, bytes);
-            return bytes.Length;
         }
         public static double GetLegendTableHeight(List<LegendGroup> legendGroupData, MapReport mapReport)
         {
@@ -889,7 +899,11 @@ namespace BusinessLogics.MapPrinter
                 File.WriteAllBytes(savepath + @"\" + printMap.printFolderName + @"\" + newfilename, fileByte);
                 return true;
             }
-            catch { throw; }
+            catch (Exception ex2)
+            {
+                ErrorLogHelper.WriteErrorLog("SaveFileTemp()", "BL/MapPrintManager", ex2);
+                throw ex2;
+            }
         }
         public static class FileSizeFormatter
         {
@@ -921,22 +935,38 @@ namespace BusinessLogics.MapPrinter
                         strFTPFilePath += directory + "/";
                         try
                         {
+                            // Check if the directory already exists
                             reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(strFTPFilePath));
-                            reqFTP.Method = WebRequestMethods.Ftp.MakeDirectory;
-                            reqFTP.UseBinary = true;
+                            reqFTP.Method = WebRequestMethods.Ftp.ListDirectory;
                             reqFTP.Credentials = new NetworkCredential(strUserName, strPassWord);
                             FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
-                            Stream ftpStream = response.GetResponseStream();
-                            ftpStream.Close();
                             response.Close();
                         }
                         catch (WebException ex)
                         {
-                            FtpWebResponse response = (FtpWebResponse)ex.Response;
-                            //Directory already exists
-                            if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable) { response.Close(); }
-                            //Error in creating new directory on FTP..
-                            else { throw new Exception("Error in creating directory/sub-directory!", ex); }
+                            // Directory does not exist, create it
+                            if (((FtpWebResponse)ex.Response).StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+                            {
+                                try
+                                {
+                                    reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(strFTPFilePath));
+                                    reqFTP.Method = WebRequestMethods.Ftp.MakeDirectory;
+                                    reqFTP.UseBinary = true;
+                                    reqFTP.Credentials = new NetworkCredential(strUserName, strPassWord);
+                                    FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
+                                    response.Close();
+                                }
+                                catch (WebException ex2)
+                                {
+                                    ErrorLogHelper.WriteErrorLog("CreateNestedDirectoryOnFTP()", "BL/MapPrintManager", ex2);
+                                    throw new Exception("Error in creating directory/sub-directory!", ex2);
+                                }
+                            }
+                            else
+                            {
+                                ErrorLogHelper.WriteErrorLog("CreateNestedDirectoryOnFTP()", "BL/MapPrintManager", ex);
+                                throw new Exception("Error in creating directory/sub-directory!", ex);
+                            }
                         }
                     }
                 }
@@ -971,7 +1001,6 @@ namespace BusinessLogics.MapPrinter
             Image layerMapImage = null;
             foreach (var tile in tiles)
             {
-
                 mapTileImage = ConvertUrlToBitmap(tile.GoogleStaticImageUrl);
                 g.DrawImage(mapTileImage, (float)tile.PixelBoundRect.TopLeft.X, (float)tile.PixelBoundRect.TopLeft.Y);
                 if (LocalLayerUrls != null && LocalLayerUrls.Count > 0)
@@ -1063,9 +1092,6 @@ namespace BusinessLogics.MapPrinter
 
         private void ParallelProcessTilesLayers(List<MapTile> tiles, Graphics g, int sheetIndex, PrintMap printMap)
         {
-
-
-
             Image layerMapImage = null;
             var lastTile = tiles[tiles.Count - 1];
             var lastRow = lastTile.Index.Y;
@@ -1114,8 +1140,8 @@ namespace BusinessLogics.MapPrinter
                             }
                             catch (Exception ex)
                             {
-
-                                throw;
+                                ErrorLogHelper.WriteErrorLog("ParallelProcessTilesLayers()", "MapPrintManager", ex);
+                                throw ex;
                             }
                         }
                     }
@@ -1273,17 +1299,12 @@ namespace BusinessLogics.MapPrinter
                         return true;
                     }
                 }
-
-
                 return false;
-
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            return false;
-
         }
 
         public List<MapPoint> GetClippingPointsofPolygon()
