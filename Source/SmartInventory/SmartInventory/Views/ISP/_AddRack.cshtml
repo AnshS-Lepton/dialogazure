@@ -55,22 +55,22 @@
 
         <!-- Message Pop-up -->
         @*@pageMessage()*@
-    <div class="libTabs">
-        <div class="scrollmenu">
-            <ul class="nav nav-tabs tabs-left">
+        <div class="libTabs">
+            <div class="scrollmenu">
+                <ul class="nav nav-tabs tabs-left">
 
-                <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_005</a></li>
-                @* <li><a href="#ItemSpecf" data-toggle="tab">Item Specification</a></li>
-                           @if (Model.system_id > 0)
-                    {
-                        <li><a href="#LoopMangment" id="lnk_LoopMangment" onclick="si.GetLoopMangmentDetail('@Model.latitude', '@Model.longitude', '@Model.system_id');" data-toggle="tab">Loop Mangement</a></li>
-                    }
-                @if (layerDetail != null && layerDetail.is_reference_allowed)
-                {
-                    <li><a href="#dvRefrence" onclick="isp.getEntityReference('@Model.system_id','@EntityType.Rack.ToString()')"; data-toggle="tab">Reference</a></li>
-                }*@
+                    <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_005</a></li>
+                    @* <li><a href="#ItemSpecf" data-toggle="tab">Item Specification</a></li>
+                                   @if (Model.system_id > 0)
+                            {
+                                <li><a href="#LoopMangment" id="lnk_LoopMangment" onclick="si.GetLoopMangmentDetail('@Model.latitude', '@Model.longitude', '@Model.system_id');" data-toggle="tab">Loop Mangement</a></li>
+                            }
+                        @if (layerDetail != null && layerDetail.is_reference_allowed)
+                        {
+                            <li><a href="#dvRefrence" onclick="isp.getEntityReference('@Model.system_id','@EntityType.Rack.ToString()')"; data-toggle="tab">Reference</a></li>
+                        }*@
 
-            </ul>
+                </ul>
             </div>
         </div>
         <div class="libTabContent">
@@ -83,9 +83,9 @@
                             <label class="control-label col-sm-2" for="txtRackCode">
                                 @Resources.Resources.SI_ISP_GBL_GBL_GBL_008 <i class="clsMandatory">*</i>
                                 @*@if (Model.networkIdType == NetworkIdType.M.ToString())
-                                {
-                                    <i class="clsMandatory">*</i>
-                                }*@
+                                    {
+                                        <i class="clsMandatory">*</i>
+                                    }*@
                                 :
                             </label>
                             <div class="col-sm-10">
@@ -121,7 +121,12 @@
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtVendor">@Resources.Resources.SI_ISP_GBL_NET_FRM_017<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.parent_entity_type, new { @class = "form-control clsReadOnly", @readonly = true })
+                                @{
+                                    string displayValue = Model.parent_entity_type == EntityType.POD.ToString() ? EntityType.Site.ToString() : Model.parent_entity_type;
+                                }
+                                @Html.TextBox("parent_entity_type_display", displayValue, new { @class = "form-control clsReadOnly", @readonly = true })
+
+                                @*@Html.TextBoxFor(m => m.parent_entity_type, new { @class = "form-control clsReadOnly", @readonly = true })*@
                             </div>
                             <label class="control-label col-sm-2" for="txtRegionName">@Resources.Resources.SI_ISP_GBL_GBL_GBL_017<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
@@ -202,10 +207,10 @@
                     <div>@GeographicDetails()</div>
                 </div>
                 @* <div class="tab-pane" id="ItemSpecf">
-                @RackTemplateMaster()
-                            </div>
-                            <div class="tab-pane" id="LoopMangment" style="min-height: 260px"></div>
-                            <div id="dvRefrence" class="tab-pane" style="max-height: 420px; overflow:auto"></div>*@
+                    @RackTemplateMaster()
+                                </div>
+                                <div class="tab-pane" id="LoopMangment" style="min-height: 260px"></div>
+                                <div id="dvRefrence" class="tab-pane" style="max-height: 420px; overflow:auto"></div>*@
             </div>
         </div>
 
@@ -232,8 +237,8 @@
 
             </div>
         </div>
-        }
-    </div>
+    }
+</div>
 <script type="text/javascript">
     var inputs = [];
     $(document).ready(function () {
@@ -245,7 +250,7 @@
         $("#frmAddRack").on("submit", function () {
 
             //$("#network_id").val($("#txtMaskedNetworkId").dxTextBox("option", "text").toUpperCase());
-             
+
             upperCaseNetWorkId();
 
             if (!entityReferencevalidation())

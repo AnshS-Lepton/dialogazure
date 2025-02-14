@@ -12432,7 +12432,7 @@ var Main = function () {
         if (_zoom >= parseInt($('#hdnInfoToolZoom').val())) {
             app.showTempBufferforInfo(latLng);
             $.ajax({
-                url: '/Main/GetNearByEntitiesByLatLong',
+                url: appRoot + '/Main/GetNearByEntitiesByLatLong',
                 type: 'GET',
                 data: {
                     latitude: latLng.lat(),
