@@ -10,6 +10,20 @@
     .icon-kmldownload {
         font-size: 20px;
     }
+
+    .sitePlan_fieldset {
+        padding:0.5rem 1rem 1rem;
+        border: 1px solid #CCCCCC;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+    }
+
+        .sitePlan_fieldset legend {
+            width: auto;
+            border-bottom: none;
+            padding-block: 0.5rem;
+            margin-bottom: 0;
+        }
 </style>
 
 <!DOCTYPE html>
@@ -26,75 +40,85 @@
             <div class="tab-content">
                 <div class="tab-pane active" id="GISInfo">
 
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_357 <i class="clsMandatory">*</i>:</label>
-                        <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+                    <fieldset class="sitePlan_fieldset">
+                        <legend>Topology Plan</legend>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_357 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
 
-                            @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
+                                @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+                            </div>
                         </div>
-                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 <i class="clsMandatory">*</i>:</label>
-                        <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_457 :</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.topology_type, new SelectList(Model.lsttopologytype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), new { @class = "chosen-select col-sm-12 ", id = "ddltopologytype" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_458 :</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.ring_capacity, new SelectList(Model.lstringtype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringcapacity" })
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_457 :</label>
-                        <div class="col-sm-4">
-                            @Html.DropDownListFor(m => m.topology_type, new SelectList(Model.lsttopologytype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), new { @class = "chosen-select col-sm-12 ", id = "ddltopologytype" })
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.agg1, new { @id = "txtagg1", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.agg2, new { @id = "txtagg2", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                            </div>
                         </div>
-                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_458 :</label>
-                        <div class="col-sm-4">
-                            @Html.DropDownListFor(m => m.ring_capacity, new SelectList(Model.lstringtype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringcapacity" })
+                        <div class="row form-group">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_461 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.no_of_sites, new { @id = "txtnoOfsite", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
-                        <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.agg1, new { @id = "txtagg1", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                        <div class="row">
+                            <div class="col-sm-12 d-flex">
+                                <button class="ml-auto btn btn-primary">Search</button>
+                            </div>
                         </div>
-                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 <i class="clsMandatory">*</i>:</label>
-                        <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.agg2, new { @id = "txtagg2", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_461 <i class="clsMandatory">*</i>:</label>
-                        <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.no_of_sites, new { @id = "txtnoOfsite", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
-                        </div>
-                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 <i class="clsMandatory">*</i>:</label>
-                        <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_463  <i class="clsMandatory">*</i>:</label>
-                        <div class="col-sm-4">
-                            @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstTopologyRegionMaster.Select(x => new { Value = x.RegionId, Text = x.region_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlregionid" })
-                        </div>
-                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_464 <i class="clsMandatory">*</i>:</label>
-                        <div class="col-sm-4">
-                            @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"),  new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
+                    </fieldset>
+                    <fieldset class="sitePlan_fieldset">
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_463  <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstTopologyRegionMaster.Select(x => new { Value = x.RegionId, Text = x.region_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlregionid" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_464 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
 
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_465 <i class="clsMandatory">*</i>:</label>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_465 <i class="clsMandatory">*</i>:</label>
 
-                        <div class="col-sm-4">
-                            @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"),  new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
 
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_466:</label>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_466:</label>
 
-                        <div class="col-sm-4">
-                            <label id="lbdnetworkId"></label>
+                            <div class="col-sm-4">
+                                <label id="lbdnetworkId"></label>
 
+                            </div>
                         </div>
-                    </div>
+                    </fieldset>
                 </div>
             </div>
 
@@ -283,8 +307,8 @@
             validateField(maxdistancepeer);
             //validateField(segment);
             function validateField(field) {
-                debugger;              
-                
+                debugger;
+
                 if (field.val().trim() === "") {
                     field.css("border-color", "red");
                     isValid = false;
@@ -292,7 +316,7 @@
                     field.css("border-color", ""); // Reset border color
                 }
             }
-           
+
             // Perform AJAX request to submit the form
             if (isValid) {
                 debugger;
@@ -319,7 +343,7 @@
         });
 
 
-      
+
 
         $('.chosen-select').chosen({ width: '100%' });    });
 
