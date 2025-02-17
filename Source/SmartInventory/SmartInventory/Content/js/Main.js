@@ -12432,7 +12432,7 @@ var Main = function () {
         if (_zoom >= parseInt($('#hdnInfoToolZoom').val())) {
             app.showTempBufferforInfo(latLng);
             $.ajax({
-                url: '/Main/GetNearByEntitiesByLatLong',
+                url: baseUrl + '/Main/GetNearByEntitiesByLatLong',
                 type: 'GET',
                 data: {
                     latitude: latLng.lat(),
@@ -12447,7 +12447,7 @@ var Main = function () {
                     ulNE.html('');
                     if (resp.length >= 1) {
                         $.each(resp, function (indx, item) {
-                            ulNE.append('<li data-network-id="' + item["common_name"] + '"><a onclick="si.bindNetworkIdToCorePlanner(\'' + item["common_name"] + '\',\'' + objId + '\');" href="#">' + item["entity_title"] + '</a></li>');
+                            ulNE.append('<li data-network-id="' + item["common_name"] + '"><a onclick="si.bindNetworkIdToCorePlanner(\'' + item["common_name"] + '\',\'' + objId + '\');" href="#">' + item["common_name"] + '</a></li>');
                         });
                         $('#searchNBEntities').css('left', app.currentMousePos.x);
 
