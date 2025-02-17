@@ -529,11 +529,11 @@ else
 end if;
 perform(fn_splicing_delete_junk_connection(v_equipment_system_id,v_equipment_entity_type));
 
-perform(fn_splicing_snap_cable_end_points(v_source_entity_type,v_destination_entity_type,v_equipment_entity_type,v_source_system_id,v_destination_system_id,v_equipment_system_id,v_is_destination_cable_a_end , v_is_source_cable_a_end,v_created_by ));
 
 END LOOP;
 close curgeommapping;
-	
+perform(fn_splicing_snap_cable_end_points(v_source_entity_type,v_destination_entity_type,v_equipment_entity_type,v_source_system_id,v_destination_system_id,v_equipment_system_id,v_is_destination_cable_a_end , v_is_source_cable_a_end,v_created_by ));
+
 	
 return query
 select row_to_json(row) from (
