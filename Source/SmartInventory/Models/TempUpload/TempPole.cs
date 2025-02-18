@@ -43,5 +43,7 @@ namespace Models.TempUpload
         public string network_status { get; set; }
         public string gis_design_id { get; set; }
         public string subarea_id { get; set; }
+        public string ownership_type { get; set; }
+
     }
 }
