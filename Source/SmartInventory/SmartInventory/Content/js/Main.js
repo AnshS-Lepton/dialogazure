@@ -19425,12 +19425,43 @@ var Main = function () {
 
                 }
                 else {
-                    if (resp.source_network_id != null && resp.source_network_id != undefined && resp.source_network_id != '') {
+                    debugger;
+                    if (resp.source_network_id != null && resp.source_network_id !== '') {
                         app.ShowCableOnMapbyGeom('Polygon', resp);
                         $("#btnSubmit").prop("disabled", true);
-                        $("#ddlfiberlink").prop("required", false)
+                        $("#ddlfiberlink").prop("required", false);
+
                         alert(resp.message + resp.source_network_id);
-                    } else {
+
+                        // **Fetch additional availability data**
+                       
+                    }
+                    else {
+                        ajaxReq('Library/GetcheckAvailability', {}, true, function (resp) {
+                            if (resp.length > 0) {  // 
+                               
+                                let tbody = $("#gridTable tbody");
+                                tbody.empty(); // Clear previous data
+
+                                $.each(resp, function (index, item) {
+                                    let rowAction = '<a href="#" data-value="' + item.cable_id + '" class="icon-map-view" title="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
+
+
+                                    let row = `<tr>
+                     <td>${rowAction}</td>
+                <td>${item.cable_name || '-'}</td>
+                
+            </tr>`;
+                                    tbody.append(row);
+                                });
+                                $("#gridTable").show();
+                            } 
+                            else 
+                            {
+                                $("#gridTable tbody").html("<tr><td colspan='5'>No data available</td></tr>");
+                                $("#gridTable").show();
+                            }
+                        }, true, true);
                         $("#btnSubmit").prop("disabled", true);
                         $("#ddlfiberlink").prop("required", false)
                         alert(resp.message);
@@ -19442,6 +19473,13 @@ var Main = function () {
         }, true, true);
 
     }
+    $(document).on("click", ".icon-map-view", function () {
+        debugger;
+
+        var cableId = $(this).attr("data-value");
+        si.ShowEntityOnMap(cableId, "Cable", "Line");
+        $(popup.DE.MinimizeModel).trigger("click");
+    });
     this.showReport = function () {
         window.location = appRoot + 'Library/ExportPlanLogicReport';
     }
