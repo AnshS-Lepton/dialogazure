@@ -13269,6 +13269,15 @@ namespace SmartInventory.Controllers
             return Json(obj, JsonRequestBehavior.AllowGet);
 
         }
+        public JsonResult GetcheckAvailability()
+        {
+            JsonResponse<List<CorePlannerLogs>> jResp = new JsonResponse<List<CorePlannerLogs>>();
+            int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+           List<CorePlannerLogs> lstCorePlannerLogs = new BLCable().GetCorePlanLogsByUserId(user_id);
+
+            return Json(lstCorePlannerLogs, JsonRequestBehavior.AllowGet);
+        }
+
         public void ExportPlanLogicReport()
         {
 
