@@ -732,7 +732,23 @@ namespace DataAccess
             catch { throw; }
         }
         #endregion
-        
+
+        public void ClearCorePlanLogsByUserId(int user_id)
+        {
+            try
+            {
+                repo.ExecuteProcedure<object>("fn_delete_core_planner_logs", new { p_user_id = user_id }, true);
+            }
+            catch { throw; }
+        }
+        public void GetUpdateFiberStatus(int cableId,int fiberNumber,string fiberStatus)
+        {
+            try
+            {
+              repo.ExecuteProcedure<object>("fn_update_fiber_status", new { p_cable_id = cableId, p_fiber_number = fiberNumber, p_fiber_status = fiberStatus }, true).FirstOrDefault();              
+            }
+            catch { throw; }
+        }
     }
     public class DAIspLine : Repository<IspLineMaster>
     {

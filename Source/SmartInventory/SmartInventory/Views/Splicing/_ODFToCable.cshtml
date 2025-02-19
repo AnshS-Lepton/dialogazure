@@ -67,6 +67,12 @@
                 </div>
             </div>
         <div id="divParentSplicingWindow" style="max-height:calc(100% - 111px);overflow-y:auto;overflow-x:hidden; position:relative; padding-top:8px;height:100%;margin: 5px;cursor:@(!Model.isEditAllowed?"not-allowed":"")" title="@(!Model.isEditAllowed?Model.unauthorisedmessage:"")">
+           
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <span id="spnFMSName" style="padding: 5px; margin-left: 40px; font-weight: bold; "></span>
+                <span id="spnToCablename" style="padding: 5px; margin-right: 40px; font-weight: bold; "></span>
+            </div>
+
             <div class="MainSection" id="divSpliceWindow" style="display: table; height:0px; width:100%;padding-left:50px;">
                 @foreach (var item in Model.splicingConnections.Where(m => m.entity_type == Model.connector_entity_type).GroupBy(p => new { p.entity_type, p.system_id }).Select(g => g.First()).ToList())
                 {
@@ -243,6 +249,8 @@
         $('.otherEndFiber').tooltip({ title: '', html: true, placement: "left" });
         //$('#divPortName div').tooltip({ title: '', html: true, placement: "right" });
         //$('#divParentSplicingWindow').tooltip({ title: '', html: true, placement: "middle" });
+        $('#spnFMSName').text($(splicing.DE.ConnectingEntity + ' :selected').text());
+        $('#spnToCablename').text($(splicing.DE.DestinationCable + ' :selected').text());
     })
 </script>
 <script id="splicingInfowindow" type="text/html">

@@ -19,6 +19,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Utility;
+using Newtonsoft.Json;
 
 namespace SmartInventory.Controllers
 {
@@ -68,6 +69,8 @@ namespace SmartInventory.Controllers
             objFiberLinkFilter.lstFiberLinkColumnsMapping = objFiberLinkFilter.objFiberLink.lstFiberLinkColumnsMapping;
             Session["viewFiberLinkDashboard"] = objFiberLinkFilter;
             BindFiberLinkDropDown(objFiberLinkFilter.objFiberLink);
+            var prefixList = objFiberLinkFilter.objFiberLink.lstPrefixType.Select(prefix => prefix.dropdown_value).ToList();
+            objFiberLinkFilter.objFiberLink.Lst_Link_Prefix = string.Join(",", prefixList);
             return PartialView("_ViewFiberLink", objFiberLinkFilter);
         }
 
@@ -949,6 +952,13 @@ namespace SmartInventory.Controllers
 
             return PartialView("_AssociateLink", objfiberLinkAssociation);
         }
+        public ActionResult GetFiberStatus(int cable_id, int fiber_no)
+        {
+            fiberLinkAssociation objfiberLinkAssociation = new fiberLinkAssociation();
+            objfiberLinkAssociation = new BLFiberLink().getAssociatedLinkId(cable_id, fiber_no);
+            objfiberLinkAssociation.fiberStatusLst = new BLMisc().GetDropDownList("", DropDownType.FiberStatus.ToString());
+            return PartialView("_AssociateFiberStatus", objfiberLinkAssociation);
+        }
         public string getFirstErrorFromModelState()
         {
             foreach (ModelState modelState in ViewData.ModelState.Values)
@@ -1306,6 +1316,26 @@ namespace SmartInventory.Controllers
             Response.End();
         }
 
+        public ActionResult GetSLDDiagram(string key)
+        {
+            var value = MiscHelper.Decrypt(key);
+            var data = value.Split('-');
+            int link_system_id = Convert.ToInt32(data[0]);
+            SLDModel obj = new SLDModel();
+            //fn_get_fiberlink_schematicview_deepak(5507);
+            obj = new BLOSPSplicing().GetSLDDiagrambyLinkSystemId(link_system_id);
+            if (!string.IsNullOrEmpty(obj.legends))
+            {
+                obj.lstlegend = JsonConvert.DeserializeObject<List<legend>>(obj.legends);
+            }
+            if (!string.IsNullOrEmpty(obj.cables))
+            {
+                obj.lstCableLegend = JsonConvert.DeserializeObject<List<CableLegend>>(obj.cables);
+            }
+            // obj.title = pSLDType; primary done after discuss with Deepak yadav Sir
+            obj.title = "Primary";
+            return PartialView("_SLDdiagramFiberLink", obj);
+        }
 
     }
 }

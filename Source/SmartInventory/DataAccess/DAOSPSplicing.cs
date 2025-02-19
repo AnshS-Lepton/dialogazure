@@ -266,6 +266,23 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+        public VizButterFlyNetwork GetSplicingNetworkDiagram(int systemId, string entityType)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<VizButterFlyNetwork>("fn_get_splicing_network_diagram", new
+                {
+                    p_system_id = systemId,
+                    p_entityType = entityType
+                }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+
+
+
+        
         public SLDModel GetSLDDiagram(int entityId, string entityType, string sldType)
         {
             try
@@ -279,6 +296,19 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+        public SLDModel GetSLDDiagrambyLinkSystemId(int link_system_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<SLDModel>("fn_get_fiberlink_schematicview", new
+                {
+                    p_link_system_id = link_system_id
+                }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+
         public List<ConnectionInfo> GetConnectionInfo(ConnectionInfoFilter objFilterAttributes)
         {
             try

@@ -21,8 +21,7 @@
     <IISExpressUseClassicPipelineMode />
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -1587,6 +1586,7 @@
     <Content Include="Content\js\chartist-bar-labels.js" />
     <Content Include="Content\js\chartist-plugin-legend.js" />
     <Content Include="Content\js\CommonPathFinder\common_path_finder.js" />
+    <Content Include="Content\js\core_planner\core_plan_logic.js" />
     <Content Include="Content\js\Deckgl\unpkg.com_deck.gl%408.9.19_dist.min.js" />
     <Content Include="Content\js\Deckgl\unpkg.com_turf_turf6.5.0_turf.min.js" />
     <Content Include="Content\js\distanceWidget.js" />
@@ -2040,8 +2040,6 @@
     <Content Include="Scripts\jquery.signalR-2.4.1.min.js" />
     <Content Include="Uploads\SHAPE\RegionProvince\save\test.txt" />
     <Content Include="Uploads\SHAPE\RegionProvince\temp\test.txt" />
-    <Content Include="Uploads\Temp\Attachments\temp.txt" />
-    <Content Include="Uploads\Temp\test.txt" />
     <Content Include="Views\BOMBOQ\_BOMBOQView.cshtml" />
     <Content Include="Views\ISP\_AddADB.cshtml" />
     <Content Include="Views\ISP\_AddCDB.cshtml" />
@@ -2429,6 +2427,9 @@
     <Content Include="Views\Library\_AddPEP.cshtml" />
     <Content Include="Views\Report\_AreaPotential.cshtml" />
     <Content Include="Views\Report\_ExportFiberAllocationReport.cshtml" />
+    <Content Include="Views\FiberLink\_SLDdiagramFiberLink.cshtml" />
+    <Content Include="Views\Library\_SplicingNetworkDiagram.cshtml" />
+    <Content Include="Views\FiberLink\_AssociateFiberStatus.cshtml" />
     <Content Include="Views\Report\_SiteTopologyPlan.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -2967,6 +2968,7 @@
     <Folder Include="shp2kml_convertor\" />
     <Folder Include="Uploads\ExternalData\KMZ\" />
     <Folder Include="Uploads\LayerStyleMaster\" />
+    <Folder Include="Uploads\Temp\Attachments\" />
     <Folder Include="Uploads\Temp\ExportReportLog\" />
     <Folder Include="Uploads\temp_LOS\" />
     <Folder Include="Views\OAIM\" />

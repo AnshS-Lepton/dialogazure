@@ -3,7 +3,6 @@ using iTextSharp.text.pdf;
 using Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -608,163 +607,170 @@ namespace BusinessLogics.MapPrinter
 
         public static MemoryStream ExportPdf(Rectangle cordinates, iTextSharp.text.Image layerImage, List<LegendGroup> legendGroupData, MapReport mapReport, PrintMap printMap, List<ReportSheet> pdfSheetsList, int sheetCurrentIndex, int printZoom = 21, double mapDistance = 1)
         {
-
-            using (MemoryStream stream = new System.IO.MemoryStream())
+            try
             {
-
-                sheetCurrentIndex = sheetCurrentIndex == 0 ? 1 : sheetCurrentIndex;
-                Document pdfDoc = new Document(cordinates, 0f, 0f, mapReport.MainHeaderSize, mapReport.ReportBottomMargin);
-                PdfWriter pdfWriter = PdfWriter.GetInstance(pdfDoc, stream);
-
-                float mapWidth = 0;
-                float leftRightMargin = ((mapReport.ReportLeftMargin + mapReport.ReportRightMargin) * 100 / cordinates.Width);
-                //Header Footer operation
-
-                //Left side : Map column
-                if (printMap.pageScale == 0)
+                using (MemoryStream stream = new System.IO.MemoryStream())
                 {
-                    if (printZoom < ZOOMLIMIT)
-                        layerImage = ResizeImageKeepAspectRatio(layerImage, (int)(mapReport.MapWidth), (int)(mapReport.MapHeight));
 
-                    if (layerImage.ScaledWidth >= mapReport.MapWidth || layerImage.ScaledHeight >= mapReport.MapHeight)
+                    sheetCurrentIndex = sheetCurrentIndex == 0 ? 1 : sheetCurrentIndex;
+                    Document pdfDoc = new Document(cordinates, 0f, 0f, mapReport.MainHeaderSize, mapReport.ReportBottomMargin);
+                    PdfWriter pdfWriter = PdfWriter.GetInstance(pdfDoc, stream);
+
+                    float mapWidth = 0;
+                    float leftRightMargin = ((mapReport.ReportLeftMargin + mapReport.ReportRightMargin) * 100 / cordinates.Width);
+                    //Header Footer operation
+
+                    //Left side : Map column
+                    if (printMap.pageScale == 0)
                     {
-                        layerImage = ResizeImageKeepAspectRatio(layerImage, (int)(mapReport.MapWidth), (int)(mapReport.MapHeight));
-                    }
-                }
-                else
-                {
-                    if (layerImage.ScaledWidth >= mapReport.MapWidth || layerImage.ScaledHeight >= mapReport.MapHeight)
-                    {
-                        layerImage = ResizeImageKeepAspectRatio(layerImage, (int)(mapReport.MapWidth), (int)(mapReport.MapHeight));
-                    }
-                }
-                mapWidth = layerImage.ScaledWidth;
-                var reportPageEvent = new MapReportPageEvents()
-                {
-                    mapReport = mapReport,
-                    LeftRightMargin = leftRightMargin,
-                    ReportTitle = printMap.pageTitle,
-                    PrintZoom = printZoom,
-                    MapDistance = mapDistance,
-                    MapWidth = mapWidth,
-                    printMap = printMap,
-                    PageNumber = sheetCurrentIndex == 0 ? 1 : sheetCurrentIndex// print current page number on the page itself.
-                };
-                pdfWriter.PageEvent = reportPageEvent;
+                        if (printZoom < ZOOMLIMIT)
+                            layerImage = ResizeImageKeepAspectRatio(layerImage, (int)(mapReport.MapWidth), (int)(mapReport.MapHeight));
 
-
-                //pdfWriter.PageEvent = new ITextEvents();
-
-                //OPEN PDFDOC OBJECT TO WRITE CONTENT
-                pdfDoc.Open();
-
-                PdfPTable parentTable = new PdfPTable(1);
-                parentTable.PaddingTop = mapReport.MainHeaderSize;
-                parentTable.WidthPercentage = 100f - leftRightMargin;
-                parentTable.SplitLate = false;
-                //2. add content : left side image , right side legend view
-                // int PdfCellCnt = printMap.pageScale > 0 ? 3 : 1;////krish
-                PdfPTable contentTable = new PdfPTable(printMap.PdfCellCnt);
-                contentTable.SplitLate = false;
-                //contentTable.PaddingTop = mapReport.MainHeaderSize;
-
-                contentTable.WidthPercentage = 100f;
-                float mapCellWidth = mapReport.MapWidth + mapReport.MapLeftMargin + mapReport.MapRightMargin + mapReport.ReportLeftMargin;
-                if (printMap.PdfCellCnt > 1)////krish
-                    contentTable.SetWidths(new float[] { mapCellWidth, mapReport.ReportCellMargin, (cordinates.Width - mapCellWidth - mapReport.ReportCellMargin) });
-
-
-                PdfPCell mapCell = new PdfPCell(layerImage, false);
-               mapCell.PaddingRight = mapReport.MapRightMargin;
-
-                if (layerImage.ScaledWidth < mapReport.MapWidth)
-                {
-                    mapCell.PaddingLeft = printMap.pageScale == 0 || printMap.mapCurrentZoom >= printMap.pageScale ? Math.Abs(layerImage.ScaledWidth - mapReport.MapWidth) / 2 : 0;
-                    mapCell.PaddingRight = Math.Abs(layerImage.ScaledWidth - mapReport.MapWidth) / 2;
-                }
-                if (layerImage.ScaledHeight < mapReport.MapHeight)
-                {
-                    mapCell.PaddingTop = printMap.pageScale == 0 || printMap.mapCurrentZoom >= printMap.pageScale ? Math.Abs(layerImage.ScaledHeight - mapReport.MapHeight) / 2 : 0;
-
-                    if (printMap.pageScale == 0 || printMap.mapCurrentZoom >= printMap.pageScale)
-                    {
-                        mapCell.PaddingBottom = (Math.Abs(layerImage.ScaledHeight - mapReport.MapHeight) / 2);
+                        if (layerImage.ScaledWidth >= mapReport.MapWidth || layerImage.ScaledHeight >= mapReport.MapHeight)
+                        {
+                            layerImage = ResizeImageKeepAspectRatio(layerImage, (int)(mapReport.MapWidth), (int)(mapReport.MapHeight));
+                        }
                     }
                     else
                     {
-                        mapCell.PaddingBottom = (Math.Abs(layerImage.ScaledHeight - mapReport.MapHeight) / 2) + (Math.Abs(layerImage.ScaledHeight - mapReport.MapHeight) / 2);
-                    }
-                }
-                mapCell.HorizontalAlignment = Element.ALIGN_CENTER;
-                mapCell.VerticalAlignment = Element.ALIGN_MIDDLE;
-
-                if (pdfSheetsList.Count > 1)
-                {
-                    mapCell.HorizontalAlignment = Element.ALIGN_TOP;
-                    mapCell.VerticalAlignment = Element.ALIGN_LEFT;
-                }
-
-
-                //mapCell.BorderWidth = 0;
-                mapCell.BorderWidth = mapReport.ReportBorderWidth;
-                mapCell.BorderColor = new BaseColor(216, 216, 216);
-                mapCell.Colspan = (printMap.printLegend && printMap.pageScale == 0) ? 1 : 3;
-                contentTable.AddCell(mapCell);
-                int LegendColSize = printMap.PdfCellCnt > 1 ? mapReport.LegendColumnSize : 6;
-                PdfPTable legendTable = new PdfPTable(LegendColSize);////krishna
-
-                
-                if (printMap.printLegend && printMap.pageScale == 0)
-                {
-                    if (printMap.PdfCellCnt > 1)
-                        contentTable.AddCell(new PdfPCell() { BorderWidth = 0 }); // blank cell in middle of legend and map
-                                                                                  // get legend table.
-                    mapReport.LegendColumnSize = LegendColSize;
-                    legendTable = GetLegendTable(mapReport, printMap, legendGroupData);
-
-                    if (printMap.PdfCellCnt > 1)
-                    {
-                        contentTable.AddCell(new PdfPCell(legendTable)
+                        if (layerImage.ScaledWidth >= mapReport.MapWidth || layerImage.ScaledHeight >= mapReport.MapHeight)
                         {
-                            BorderWidth = mapReport.ReportBorderWidth,
-                            BorderColor = new BaseColor(216, 216, 216)
+                            layerImage = ResizeImageKeepAspectRatio(layerImage, (int)(mapReport.MapWidth), (int)(mapReport.MapHeight));
+                        }
+                    }
+                    mapWidth = layerImage.ScaledWidth;
+                    var reportPageEvent = new MapReportPageEvents()
+                    {
+                        mapReport = mapReport,
+                        LeftRightMargin = leftRightMargin,
+                        ReportTitle = printMap.pageTitle,
+                        PrintZoom = printZoom,
+                        MapDistance = mapDistance,
+                        MapWidth = mapWidth,
+                        printMap = printMap,
+                        PageNumber = sheetCurrentIndex == 0 ? 1 : sheetCurrentIndex// print current page number on the page itself.
+                    };
+                    pdfWriter.PageEvent = reportPageEvent;
+
+
+                    //pdfWriter.PageEvent = new ITextEvents();
+
+                    //OPEN PDFDOC OBJECT TO WRITE CONTENT
+                    pdfDoc.Open();
+
+                    PdfPTable parentTable = new PdfPTable(1);
+                    parentTable.PaddingTop = mapReport.MainHeaderSize;
+                    parentTable.WidthPercentage = 100f - leftRightMargin;
+                    parentTable.SplitLate = false;
+                    //2. add content : left side image , right side legend view
+                    // int PdfCellCnt = printMap.pageScale > 0 ? 3 : 1;////krish
+                    PdfPTable contentTable = new PdfPTable(printMap.PdfCellCnt);
+                    contentTable.SplitLate = false;
+                    //contentTable.PaddingTop = mapReport.MainHeaderSize;
+
+                    contentTable.WidthPercentage = 100f;
+                    float mapCellWidth = mapReport.MapWidth + mapReport.MapLeftMargin + mapReport.MapRightMargin + mapReport.ReportLeftMargin;
+                    if (printMap.PdfCellCnt > 1)////krish
+                        contentTable.SetWidths(new float[] { mapCellWidth, mapReport.ReportCellMargin, (cordinates.Width - mapCellWidth - mapReport.ReportCellMargin) });
+
+
+                    PdfPCell mapCell = new PdfPCell(layerImage, false);
+                    mapCell.PaddingRight = mapReport.MapRightMargin;
+
+                    if (layerImage.ScaledWidth < mapReport.MapWidth)
+                    {
+                        mapCell.PaddingLeft = printMap.pageScale == 0 || printMap.mapCurrentZoom >= printMap.pageScale ? Math.Abs(layerImage.ScaledWidth - mapReport.MapWidth) / 2 : 0;
+                        mapCell.PaddingRight = Math.Abs(layerImage.ScaledWidth - mapReport.MapWidth) / 2;
+                    }
+                    if (layerImage.ScaledHeight < mapReport.MapHeight)
+                    {
+                        mapCell.PaddingTop = printMap.pageScale == 0 || printMap.mapCurrentZoom >= printMap.pageScale ? Math.Abs(layerImage.ScaledHeight - mapReport.MapHeight) / 2 : 0;
+
+                        if (printMap.pageScale == 0 || printMap.mapCurrentZoom >= printMap.pageScale)
+                        {
+                            mapCell.PaddingBottom = (Math.Abs(layerImage.ScaledHeight - mapReport.MapHeight) / 2);
+                        }
+                        else
+                        {
+                            mapCell.PaddingBottom = (Math.Abs(layerImage.ScaledHeight - mapReport.MapHeight) / 2) + (Math.Abs(layerImage.ScaledHeight - mapReport.MapHeight) / 2);
+                        }
+                    }
+                    mapCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    mapCell.VerticalAlignment = Element.ALIGN_MIDDLE;
+
+                    if (pdfSheetsList.Count > 1)
+                    {
+                        mapCell.HorizontalAlignment = Element.ALIGN_TOP;
+                        mapCell.VerticalAlignment = Element.ALIGN_LEFT;
+                    }
+
+
+                    //mapCell.BorderWidth = 0;
+                    mapCell.BorderWidth = mapReport.ReportBorderWidth;
+                    mapCell.BorderColor = new BaseColor(216, 216, 216);
+                    mapCell.Colspan = (printMap.printLegend && printMap.pageScale == 0) ? 1 : 3;
+                    contentTable.AddCell(mapCell);
+                    int LegendColSize = printMap.PdfCellCnt > 1 ? mapReport.LegendColumnSize : 6;
+                    PdfPTable legendTable = new PdfPTable(LegendColSize);////krishna
+
+
+                    if (printMap.printLegend && printMap.pageScale == 0)
+                    {
+                        if (printMap.PdfCellCnt > 1)
+                            contentTable.AddCell(new PdfPCell() { BorderWidth = 0 }); // blank cell in middle of legend and map
+                                                                                      // get legend table.
+                        mapReport.LegendColumnSize = LegendColSize;
+                        legendTable = GetLegendTable(mapReport, printMap, legendGroupData);
+
+                        if (printMap.PdfCellCnt > 1)
+                        {
+                            contentTable.AddCell(new PdfPCell(legendTable)
+                            {
+                                BorderWidth = mapReport.ReportBorderWidth,
+                                BorderColor = new BaseColor(216, 216, 216)
+                            });
+                        }
+                    }
+                    if (printMap.isFooterTemplateEnabled && printMap.ApplicableModuleList.Contains("PMA"))
+                    {
+                        // blank row as a seperator..
+                        contentTable.AddCell(new PdfPCell() { Colspan = 3, MinimumHeight = mapReport.ReportCellMargin, BorderWidth = 0 });
+                        // PdfPTable footerTemplateTable = GetFooterTemplateTable(mapReport, printMap, reportPageEvent.PrintZoom, pdfSheetsList, sheetCurrentIndex);
+                        PdfPTable footerTemplateTable = GetFooterTemplateTable(mapReport, printMap, printZoom, pdfSheetsList, sheetCurrentIndex);
+                        contentTable.AddCell(new PdfPCell(footerTemplateTable)
+                        {
+                            Colspan = 3
                         });
                     }
-                }
-                if (printMap.isFooterTemplateEnabled && printMap.ApplicableModuleList.Contains("PMA"))
-                {
-                    // blank row as a seperator..
-                    contentTable.AddCell(new PdfPCell() { Colspan = 3, MinimumHeight = mapReport.ReportCellMargin, BorderWidth = 0 });
-                    // PdfPTable footerTemplateTable = GetFooterTemplateTable(mapReport, printMap, reportPageEvent.PrintZoom, pdfSheetsList, sheetCurrentIndex);
-                    PdfPTable footerTemplateTable = GetFooterTemplateTable(mapReport, printMap, printZoom, pdfSheetsList, sheetCurrentIndex);
-                    contentTable.AddCell(new PdfPCell(footerTemplateTable)
-                    {
-                        Colspan = 3
-                    });
-                }
 
-                parentTable.AddCell(new PdfPCell(contentTable)
-                {
-                    BorderWidth = mapReport.ReportBorderWidth,
-                    BorderColor = new BaseColor(112, 112, 112),
-                    Padding = mapReport.ReportCellMargin
-                });
-                ////krishna
-                if (printMap.PdfCellCnt == 1)
-                {
-                    parentTable.AddCell(new PdfPCell(legendTable)
+                    parentTable.AddCell(new PdfPCell(contentTable)
                     {
                         BorderWidth = mapReport.ReportBorderWidth,
                         BorderColor = new BaseColor(112, 112, 112),
                         Padding = mapReport.ReportCellMargin
                     });
+                    ////krishna
+                    if (printMap.PdfCellCnt == 1)
+                    {
+                        parentTable.AddCell(new PdfPCell(legendTable)
+                        {
+                            BorderWidth = mapReport.ReportBorderWidth,
+                            BorderColor = new BaseColor(112, 112, 112),
+                            Padding = mapReport.ReportCellMargin
+                        });
+                    }
+
+
+                    pdfDoc.Add(parentTable);
+                    pdfWriter.CloseStream = false;
+                    pdfDoc.Close();
+                    return stream;
                 }
-
-
-                pdfDoc.Add(parentTable);
-                pdfWriter.CloseStream = false;
-                pdfDoc.Close();
-                return stream;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("ExportPdf()", "MapReport", ex);
+                throw ex;
             }
         }
 
@@ -1456,7 +1462,7 @@ namespace BusinessLogics.MapPrinter
             headerTable.WidthPercentage = 100f - leftRightMargin;
             headerTable.DefaultCell.BorderColor = BaseColor.WHITE;
 
-           // PdfPCell logoCell = new PdfPCell();
+            // PdfPCell logoCell = new PdfPCell();
             string[] arr = printMap.ClientLogoImageBytesForWeb.Split(',');
             byte[] imageBytes = Convert.FromBase64String(arr[1]);
             Image logo = Image.GetInstance(imageBytes);

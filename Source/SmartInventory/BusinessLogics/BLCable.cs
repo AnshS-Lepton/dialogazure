@@ -189,6 +189,14 @@ namespace BusinessLogics
         {
             return DACable.Instance.GetlinkPrefixbyPrefixType(link_prefix);
         }
-
+        public void ClearCorePlanLogsByUserId(int user_id)
+        {
+             new DACable().ClearCorePlanLogsByUserId(user_id);
+        }
+        public void GetUpdateFiberStatus(int cableId,int fiberNumber,string fiberStatus)
+        {
+             new DACable().GetUpdateFiberStatus(cableId, fiberNumber, fiberStatus);
+        }
+        
     }
 }
