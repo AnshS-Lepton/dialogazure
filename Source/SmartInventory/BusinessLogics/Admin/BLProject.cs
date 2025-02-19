@@ -202,5 +202,13 @@ namespace BusinessLogics.Admin
         {
             return new DAPodMaster().getSiteNameList(site_name);
         }
+        public List<PODMaster> getAGG1List(string site_name)
+        {
+            return new DAPodMaster().getAGG1List(site_name);
+        }
+        public List<PODMaster> getAGG2List(string site_name)
+        {
+            return new DAPodMaster().getAGG2List(site_name);
+        }
     }
 }

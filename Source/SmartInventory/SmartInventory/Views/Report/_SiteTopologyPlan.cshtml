@@ -51,17 +51,17 @@
                             </div>
                             <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+                                @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_457 :</label>
                             <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.topology_type, new SelectList(Model.lsttopologytype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), new { @class = "chosen-select col-sm-12 ", id = "ddltopologytype" })
+                                @Html.DropDownListFor(m => m.topology_type, new SelectList(Model.lsttopologytype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"),"-- Select --", new { @class = "chosen-select col-sm-12 ", id = "ddltopologytype" })
                             </div>
                             <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_458 :</label>
                             <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.ring_capacity, new SelectList(Model.lstringtype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringcapacity" })
+                                @Html.DropDownListFor(m => m.ring_capacity, new SelectList(Model.lstringtype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12", id = "ddlringcapacity" })
                             </div>
                         </div>
                         <div class="form-group row">
@@ -77,7 +77,7 @@
                         <div class="row form-group">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_461 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.no_of_sites, new { @id = "txtnoOfsite", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                                @Html.DropDownListFor(m => m.no_of_sites, new SelectList(Model.lstnoofsites.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12", id = "ddlringcapacity" })
                             </div>
                             <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
@@ -86,15 +86,17 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-12 d-flex">
-                                <button class="ml-auto btn btn-primary">Search</button>
+                                <button class="ml-auto btn btn-primary" id="bdnsearch">Search</button>
                             </div>
                         </div>
                     </fieldset>
-                    <fieldset class="sitePlan_fieldset">
-                        <div class="form-group row">
+                    <fieldset class="sitePlan_fieldset" style="display:none;" id="fldtopology">
+                        <div class="form-group row" id="dvregionId" style="display: block;">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_463  <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstTopologyRegionMaster.Select(x => new { Value = x.RegionId, Text = x.region_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlregionid" })
+                                <div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new"><i class="fa fa-plus"></i></button> </div>
+
                             </div>
                             <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_464 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
@@ -102,7 +104,7 @@
 
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row" id="dvringId" style="display:block;">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_465 <i class="clsMandatory">*</i>:</label>
 
                             <div class="col-sm-4">
@@ -110,7 +112,7 @@
 
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row" id="dvnetworkid" style="display: block;">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_466:</label>
 
                             <div class="col-sm-4">
@@ -145,63 +147,106 @@
         });
 
        $("#txtSiteId").autocomplete({
-        source: function (request, response) {
+    source: function (request, response) {
         $.ajax({
-            url: '@Url.Action("GetSiteIds", "Report")', // Update with correct controller
+            url: '@Url.Action("GetSiteIds", "Report")',
             type: "GET",
             dataType: "json",
-            data: { term: request.term }, // Sends user input
+            data: { term: request.term },
             success: function (data) {
                 if (data.length === 0) {
-                    response([{ label: "No results found", value: "" }]); // Show message
+                    response([{ label: "No results found", value: "", siteName: "" }]); // Show message
                 } else {
                     response($.map(data, function (item) {
                         return {
-                            label: item.label, // Display site_id in dropdown
-                            value: item.value  // Store site_id in textbox
+                            label: item.label,  // Display site_id in dropdown
+                            value: item.value,  // Store site_id in textbox
+                            siteName: item.siteName // Pass site_name
                         };
                     }));
                 }
             }
         });
     },
-    minLength: 3, // Minimum characters before search starts
+    minLength: 3,
     select: function (event, ui) {
         if (ui.item.value !== "") {
-            $("#txtSiteId").val(ui.item.value); // Set selected site_id
+            $("#txtSiteId").val(ui.item.value);   // Set selected site_id
+            $("#txtSiteName").val(ui.item.siteName); // Set corresponding site_name
         }
         return false;
     }
 });
+        $("#ddltopologytype").change(function () {
+            debugger;
+            var selectedValue = $(this).val(); // Get selected value
 
-        $("#txtSiteName").autocomplete({
-        source: function (request, response) {
-            $.ajax({
-                url: '@Url.Action("GetSiteName", "Report")', // Update with correct controller
-                type: "GET",
-                dataType: "json",
-                data: { term: request.term }, // Sends user input
-                success: function (data) {
-                    if (data.length === 0) {
-                        response([{ label: "No results found", value: "" }]); // Show message
-                    } else {
-                        response($.map(data, function (item) {
-                            return {
-                                label: item.label, // Display site_id in dropdown
-                                value: item.value  // Store site_id in textbox
-                            };
-                        }));
-                    }
+            if (selectedValue === "Ring") {
+                $("#txtagg2").css("display", "block").prop("disabled", false);
+            }
+            else
+            {
+                $("#txtagg2").css("display", "block").prop("disabled", true); // Show and enable
+            }
+        });
+        $("#txtagg1").autocomplete({
+    source: function (request, response) {
+        $.ajax({
+            url: '@Url.Action("GetAGG1", "Report")',
+            type: "GET",
+            dataType: "json",
+            data: { term: request.term },
+            success: function (data) {
+                if (data.length === 0) {
+                    response([{ label: "No results found", value: "", siteName: "" }]); // Show message
+                } else {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.label,  // Display site_id in dropdown
+                            value: item.value,  // Store site_id in textbox
+                        };
+                    }));
                 }
-            });
-        },
-        minLength: 3, // Minimum characters before search starts
-        select: function (event, ui) {
-            $("#txtSiteName").val(ui.item.value); // Set selected site_id
-            return false;
+            }
+        });
+    },
+    minLength: 3,
+    select: function (event, ui) {
+        if (ui.item.value !== "") {
+            $("#txtagg1").val(ui.item.value);   // Set selected site_id
         }
-    });
-
+        return false;
+    }
+});
+        $("#txtagg2").autocomplete({
+    source: function (request, response) {
+        $.ajax({
+            url: '@Url.Action("GetAGG2", "Report")',
+            type: "GET",
+            dataType: "json",
+            data: { term: request.term },
+            success: function (data) {
+                if (data.length === 0) {
+                    response([{ label: "No results found", value: "", siteName: "" }]); // Show message
+                } else {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.label,  // Display site_id in dropdown
+                            value: item.value,  // Store site_id in textbox
+                        };
+                    }));
+                }
+            }
+        });
+    },
+    minLength: 3,
+    select: function (event, ui) {
+        if (ui.item.value !== "") {
+            $("#txtagg2").val(ui.item.value);   // Set selected site_id
+        }
+        return false;
+    }
+});
         $('#ddlregionid').change(function () {
             debugger;
         var regionId = $(this).val(); // Get the selected RegionId
@@ -277,7 +322,15 @@
             });
 
 
-});
+        });
+        $("#bdnsearch").click(function () {
+            debugger;
+            $("#dvregionId").css("visibility", "visible");
+            $("#dvringId").css("visibility", "visible");
+            $("#fldtopology").css("visibility", "visible");
+        });
+
+
         $('#btnSave').click(function (e) {
             e.preventDefault(); // Prevent default button action
             var isValid = true;

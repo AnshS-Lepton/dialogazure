@@ -550,6 +550,19 @@ namespace DataAccess.Admin
 
             return sitname;
         }
-        
+        public List<PODMaster> getAGG1List(string agg1)
+        {
+            var sitname = repo.GetAll(m => m.agg_01.ToUpper().Contains(agg1.ToUpper())).ToList();
+
+            return sitname;
+        }
+        public List<PODMaster> getAGG2List(string agg2)
+        {
+            var sitname = repo.GetAll(m => m.agg_02.ToUpper().Contains(agg2.ToUpper())).ToList();
+
+            return sitname;
+        }
+
+
     }
 }

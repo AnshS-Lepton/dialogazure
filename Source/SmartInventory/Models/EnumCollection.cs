@@ -283,7 +283,9 @@ namespace Models
         FMS_Type,
         AllowedNetworkType,
         Topology_Type,
-        Ring_Capacity
+        Ring_Capacity,
+        FiberStatus,
+        NoOf_Sites
 
     }
     public enum VendorType

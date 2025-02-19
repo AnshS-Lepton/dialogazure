@@ -13453,8 +13453,9 @@ namespace SmartInventory.Controllers
 
                 objToplogyPlan.lsttopologytype = new BLMisc().GetToplogyDropDownList(DropDownType.Topology_Type.ToString());
                 objToplogyPlan.lstringtype = new BLMisc().GetToplogyDropDownList(DropDownType.Ring_Capacity.ToString());
+                objToplogyPlan.lstnoofsites = new BLMisc().GetToplogyDropDownList(DropDownType.NoOf_Sites.ToString());
                 objToplogyPlan.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
-              
+                objToplogyPlan.max_distance_peer = ApplicationSettings.MaxSitePeerDisatence;
 
             }
             catch (Exception ex)
@@ -13517,23 +13518,35 @@ namespace SmartInventory.Controllers
 
         public JsonResult GetSiteIds(string term)
         {
-             var siteList = new BLProject().getSiteIdList(term);
-            var result = siteList.Select(s => new { label = s.site_id.ToString(), value = s.site_id.ToString() }).ToList();
+            var siteList = new BLProject().getSiteIdList(term);
+            var result = siteList.Select(s => new {
+                label = s.site_id.ToString(),
+                value = s.site_id.ToString(),
+                siteName = s.site_name // Include site name in response
+            }).ToList();
 
-            //var filteredSites = siteList.Where(s => s.site_id.ToString().ToUpper().Contains(term)).Select(s => new { value = s.site_id.ToString(), label = s.site_id }).ToList();
             return Json(result, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult GetSiteName(string term)
+
+        public JsonResult GetAGG1(string term)
         {
-            var sitenameList = new BLProject().getSiteNameList(term);
-            var result = sitenameList.Select(s => new { label = s.site_name.ToString(), value = s.site_name.ToString() }).ToList();
+            var sitenameList = new BLProject().getAGG1List(term);
+            var result = sitenameList.Select(s => new { label = s.agg_01.ToString(), value = s.agg_01.ToString() }).ToList();
 
             //var siteList = new BLProject().getSiteNameList(term); 
             //var filteredSites = siteList.Where(s => s.site_name.ToString().Contains(term)).Select(s => new { value = s.site_name.ToString(), label = s.site_name }).ToList();
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult GetAGG2(string term)
+        {
+            var sitenameList = new BLProject().getAGG2List(term);
+            var result = sitenameList.Select(s => new { label = s.agg_02.ToString(), value = s.agg_02.ToString() }).ToList();
 
+            //var siteList = new BLProject().getSiteNameList(term); 
+            //var filteredSites = siteList.Where(s => s.site_name.ToString().Contains(term)).Select(s => new { value = s.site_name.ToString(), label = s.site_name }).ToList();
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
 
         #endregion
     }

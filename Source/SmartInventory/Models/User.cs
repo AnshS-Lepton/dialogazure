@@ -962,6 +962,8 @@ namespace Models
             public List<TopologyRingMaster> lstTopologyRingMaster { get; set; }
             public string network_id { get; set; }
            public int created_by { get; set; }
+          [NotMapped]
+          public IList<DropDownMaster> lstnoofsites { get; set; }
 
         public TopologyPlan()
             {
