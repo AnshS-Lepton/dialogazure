@@ -19444,7 +19444,7 @@ var Main = function () {
                                 tbody.empty(); // Clear previous data
 
                                 $.each(resp, function (index, item) {
-                                    let rowAction = '<a href="#" data-value="' + item.cable_id + '" class="icon-map-view" title="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
+                                    let rowAction = '<a href="#" data-value="' + item.cable_id + '" class="icon-showon-map-view" title="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
 
 
                                     let row = `<tr>
@@ -19473,7 +19473,7 @@ var Main = function () {
         }, true, true);
 
     }
-    $(document).on("click", ".icon-map-view", function () {
+    $(document).on("click", ".icon-showon-map-view", function () {
         debugger;
 
         var cableId = $(this).attr("data-value");

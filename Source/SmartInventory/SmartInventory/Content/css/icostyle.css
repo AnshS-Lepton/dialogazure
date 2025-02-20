@@ -440,6 +440,9 @@
 .icon-map-view:before {
     content: "\e966";
 }
+.icon-showon-map-view:before {
+    content: "\e966";
+}
 
 .icon-Search:before {
     content: "\e967";
