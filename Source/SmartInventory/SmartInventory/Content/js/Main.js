@@ -19474,7 +19474,6 @@ var Main = function () {
 
     }
     $(document).on("click", ".icon-showon-map-view", function () {
-        debugger;
 
         var cableId = $(this).attr("data-value");
         si.ShowEntityOnMap(cableId, "Cable", "Line");
