@@ -126,13 +126,11 @@
             false, false);
 			
 			
-			update  data_uploader_template set default_value = null where layer_id=14 and default_value ='Own';
-			update data_uploader_template set template_column_name ='ownership_type' where layer_id=14 and template_column_name ='Ownership type'
+			update  data_uploader_template set default_value = null where layer_id=(select layer_id from layer_details where layer_name='Pole') and default_value ='Own';
+			update data_uploader_template set template_column_name ='ownership_type' where layer_id=(select layer_id from layer_details where layer_name='Pole') and template_column_name ='Ownership type'
 			
 			
-			-- FUNCTION: public.fn_uploader_insert_pole(integer, integer)
 
--- DROP FUNCTION IF EXISTS public.fn_uploader_insert_pole(integer, integer);
 
 
 CREATE OR REPLACE FUNCTION public.fn_uploader_insert_pole(
