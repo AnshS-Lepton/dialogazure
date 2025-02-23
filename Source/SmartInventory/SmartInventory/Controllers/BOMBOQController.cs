@@ -21,6 +21,8 @@ using System.Data.Entity.Infrastructure;
 using NPOI.SS.Formula;
 using Models.WFM;
 using System.Runtime.Remoting;
+using System.Dynamic;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace SmartInventory.Controllers
 {
@@ -75,53 +77,171 @@ namespace SmartInventory.Controllers
 			return PartialView("_BomBoqFilter", objBomBoq);
 		}
 
-		public ActionResult BomBoqSummary(BomBoqExportReport objBOMViewModel)
+		public ActionResult SiteBomBoqSummary(ViewItemVendorCost objViewItemVendorCost, int page = 0, string sort = "", string sortdir = "", string refrenceData = "")
 		{
 			var userdetails = (User)Session["userDetail"];
-           // var moduleAbbr = "BMQ";
-           // List<ConnectionMaster> con = new BLLayer().GetConnectionString(moduleAbbr);
-           // ConnectionMaster con = new BLLayer().GetConnectionString(moduleAbbr);
-           // foreach (var conn in con)
-           // {
-             //   objBOMViewModel.objReportFilters.connectionString = con.connection_string;
-          //  }
+            CommonGridAttr objGridAttributes = new CommonGridAttr();
+            BindSearchBy(objViewItemVendorCost);
+            if (sort != "" || page != 0)
+            {
+                objViewItemVendorCost.objGridAttributes = (CommonGridAttr)Session["ViewItemVendorCost"];
+            }
+            objViewItemVendorCost.objGridAttributes.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
+            objViewItemVendorCost.objGridAttributes.currentPage = page == 0 ? 1 : page;
+            objViewItemVendorCost.objGridAttributes.sort = sort;
+            objViewItemVendorCost.objGridAttributes.orderBy = sortdir;
+            var firstItem = refrenceData.Split(',')[0];
+            var siteplanid = new BomBoq().getSiteplanid(Convert.ToInt32(firstItem));
+            // objViewItemVendorCost.objGridAttributes.SelectedLayerIds =  string.Join(",", objBomBoq.objReportFilters.SelectedLayerId.ToArray());
+            objViewItemVendorCost.lstItem = new BomBoq().getSiteBOMBOQReport(objViewItemVendorCost.objGridAttributes, siteplanid);
+           
+            var users = objViewItemVendorCost.lstItem.Where(u=>u.user_id!=0)
+                .Select(x => new { x.user_id, x.user_name })
+                .Distinct()
+                .OrderBy(x => x.user_id) // Ensure ordering is based on user_name
+                .ToList();
+
+			foreach (var item in users)
+			{
+                parentuser newUser = new parentuser
+                {
+                    user_id = item.user_id,
+                    user_name = item.user_name
+                };
+				objViewItemVendorCost.lstUserDetails.Add(newUser);
+            }
+			//objViewItemVendorCost.lstUserDetails = users.Cast<parentuser>().ToList(); //new BLUser().GetPartnerUser().ToList();
+
+            Session["ViewItemVendorCost"] = objViewItemVendorCost.objGridAttributes;
+            // Transform data dynamically
+            var transformedData = objViewItemVendorCost.lstItem
+                    .GroupBy(x => new { x.code, x.specification, x.category_reference, x.unit_measurement, x.totalqty})
+                    .Select(g =>
+                    {
+                        dynamic row = new ExpandoObject();
+                        var dict = (IDictionary<string, object>)row;
+
+                        // Fixed properties
+                        dict["code"] = g.Key.code;
+                        dict["specification"] = g.Key.specification;
+                        dict["entity_type"] = g.Key.category_reference;
+                        dict["uom"] = g.Key.unit_measurement;
+                        dict["totalqty"] = g.Key.totalqty;
+
+
+                        // Dynamically add user columns
+                        foreach (var user in users)
+                        {
+                            var costValue = g.FirstOrDefault(x => x.user_id == user.user_id)?.cost_per_unit.ToString() ?? "";
+                            //dict[$"User_{user.user_name}"] = costValue+"/"+user.user_id;
+                            dict[$"User_{user.user_name + "/" + user.user_id}"] = costValue;
+                        }
+
+                        return row;
+                    })
+                .ToList();
+
+            ViewBag.transformedData = transformedData;
+
+
+            objViewItemVendorCost.objGridAttributes.totalRecord = objViewItemVendorCost.lstItem.Select(a => a.totalRecord).FirstOrDefault();
+
+            return PartialView("_ItemSiteAwarding", objViewItemVendorCost);
+		}
+        
+        [HttpPost]
+        public JsonResult AwardSitetoUser(List<SiteAwardDetails> objivcm)
+        {
+            
+                PageMessage objMsg = new PageMessage();
+
+            SiteAwardDetails objResp = new SiteAwardDetails();
+            DbMessage objDBMessage=  new DbMessage ();
+            // var status = new BLVendorSpecification().SaveSiteAwardDetails(objivcm, Convert.ToInt32(Session["user_id"]));
+            try
+            {
+               objDBMessage = new BLVendorSpecification().SaveSiteAwardDetails(objivcm, Convert.ToInt32(Session["user_id"]));
+				if (!objDBMessage.status)
+				{
+					objResp.pageMsg.status = ResponseStatus.OK.ToString();
+					objResp.pageMsg.message = objDBMessage.message;
+
+				}
+				else
+				{
+                    objResp.pageMsg.status = ResponseStatus.OK.ToString();
+                    objResp.pageMsg.message = objDBMessage.message;
+
+                }
+               
+            }
+            catch
+            {
+                objResp.pageMsg.status = ResponseStatus.ERROR.ToString();
+                objResp.pageMsg.message = "Some error occured  while site awarding";
+            }
+           
+            //objSA.pageMsg = objDBMessage;
+            return Json(objDBMessage, JsonRequestBehavior.AllowGet);
+            
+        }
+        public IList<KeyValueDropDown> BindSearchBy(ViewItemVendorCost objTemplateForDropDown)
+        {
+            List<KeyValueDropDown> items = new List<KeyValueDropDown>();
+            items.Add(new KeyValueDropDown { key = "Item Code", value = "code" });
+            items.Add(new KeyValueDropDown { key = "Specification", value = "specification" });
+            items.Add(new KeyValueDropDown { key = "Entity Type", value = "category_reference" });
+            items.Add(new KeyValueDropDown { key = "UOM", value = "unit_measurement" });
+            return objTemplateForDropDown.lstBindSearchBy = items.OrderBy(m => m.key).ToList();
+
+        }
+        public ActionResult BomBoqSummary(BomBoqExportReport objBOMViewModel)
+        {
+            var userdetails = (User)Session["userDetail"];
+            // var moduleAbbr = "BMQ";
+            // List<ConnectionMaster> con = new BLLayer().GetConnectionString(moduleAbbr);
+            // ConnectionMaster con = new BLLayer().GetConnectionString(moduleAbbr);
+            // foreach (var conn in con)
+            // {
+            //   objBOMViewModel.objReportFilters.connectionString = con.connection_string;
+            //  }
 
             objBOMViewModel.objReportFilters.durationbasedon = (objBOMViewModel.objReportFilters.durationbasedon == null || objBOMViewModel.objReportFilters.durationbasedon == "" ? "Created_On" : objBOMViewModel.objReportFilters.durationbasedon);
 
-			objBOMViewModel.objReportFilters.SelectedRegionIds = objBOMViewModel.objReportFilters.SelectedRegionId != null && objBOMViewModel.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedRegionId.ToArray()) : "";
-			objBOMViewModel.objReportFilters.SelectedProvinceIds = objBOMViewModel.objReportFilters.SelectedProvinceId != null && objBOMViewModel.objReportFilters.SelectedProvinceId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedProvinceId.ToArray()) : "";
-			objBOMViewModel.objReportFilters.SelectedNetworkStatues = objBOMViewModel.objReportFilters.SelectedNetworkStatus != null && objBOMViewModel.objReportFilters.SelectedNetworkStatus.Count > 0 ? "" + string.Join(",", objBOMViewModel.objReportFilters.SelectedNetworkStatus.ToArray()) + "" : "";
-			objBOMViewModel.objReportFilters.SelectedParentUsers = objBOMViewModel.objReportFilters.SelectedParentUser != null && objBOMViewModel.objReportFilters.SelectedParentUser.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedParentUser.ToArray()) : "";
-			objBOMViewModel.objReportFilters.SelectedUserIds = objBOMViewModel.objReportFilters.SelectedUserId != null && objBOMViewModel.objReportFilters.SelectedUserId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedUserId.ToArray()) : "";
-			objBOMViewModel.objReportFilters.SelectedLayerIds = objBOMViewModel.objReportFilters.SelectedLayerId != null && objBOMViewModel.objReportFilters.SelectedLayerId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedLayerId.ToArray()) : "";
-			objBOMViewModel.objReportFilters.SelectedProjectIds = objBOMViewModel.objReportFilters.SelectedProjectId != null && objBOMViewModel.objReportFilters.SelectedProjectId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedProjectId.ToArray()) : "";
-			objBOMViewModel.objReportFilters.SelectedPlanningIds = objBOMViewModel.objReportFilters.SelectedPlanningId != null && objBOMViewModel.objReportFilters.SelectedPlanningId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedPlanningId.ToArray()) : "";
-			objBOMViewModel.objReportFilters.SelectedWorkOrderIds = objBOMViewModel.objReportFilters.SelectedWorkOrderId != null && objBOMViewModel.objReportFilters.SelectedWorkOrderId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedWorkOrderId.ToArray()) : "";
-			objBOMViewModel.objReportFilters.SelectedPurposeIds = objBOMViewModel.objReportFilters.SelectedPurposeId != null && objBOMViewModel.objReportFilters.SelectedPurposeId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedPurposeId.ToArray()) : "";
-			objBOMViewModel.objReportFilters.userId = Convert.ToInt32(userdetails.user_id);
-			objBOMViewModel.objReportFilters.roleId = Convert.ToInt32(userdetails.role_id);
-			objBOMViewModel.objReportFilters.SelectedOwnerShipType = objBOMViewModel.objReportFilters.SelectedOwnerShipType != null ? objBOMViewModel.objReportFilters.SelectedOwnerShipType : "";
-			objBOMViewModel.objReportFilters.SelectedThirdPartyVendorIds = objBOMViewModel.objReportFilters.SelectedThirdPartyVendorId != null && objBOMViewModel.objReportFilters.SelectedThirdPartyVendorId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedThirdPartyVendorId.ToArray()) : "";
-			objBOMViewModel.objReportFilters.SelectedWavelength = objBOMViewModel.objReportFilters.SelectedWavelength;
-			objBOMViewModel.objReportFilters.txt_Miscdbloss = objBOMViewModel.objReportFilters.txt_Miscdbloss;
-			objBOMViewModel.objReportFilters.isdBLossAttrEnable = objBOMViewModel.objReportFilters.isdBLossAttrEnable;
-			objBOMViewModel.objReportFilters.radius = objBOMViewModel.objReportFilters.radius;
-			objBOMViewModel.objReportFilters.systemId = objBOMViewModel.objReportFilters.systemId;
-			objBOMViewModel.objReportFilters.entityType = objBOMViewModel.objReportFilters.entityType;
-			string gom = Convert.ToString(objBOMViewModel.objReportFilters.geom);
-			string enti = Convert.ToString(objBOMViewModel.objReportFilters.entityType);
+            objBOMViewModel.objReportFilters.SelectedRegionIds = objBOMViewModel.objReportFilters.SelectedRegionId != null && objBOMViewModel.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedRegionId.ToArray()) : "";
+            objBOMViewModel.objReportFilters.SelectedProvinceIds = objBOMViewModel.objReportFilters.SelectedProvinceId != null && objBOMViewModel.objReportFilters.SelectedProvinceId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedProvinceId.ToArray()) : "";
+            objBOMViewModel.objReportFilters.SelectedNetworkStatues = objBOMViewModel.objReportFilters.SelectedNetworkStatus != null && objBOMViewModel.objReportFilters.SelectedNetworkStatus.Count > 0 ? "" + string.Join(",", objBOMViewModel.objReportFilters.SelectedNetworkStatus.ToArray()) + "" : "";
+            objBOMViewModel.objReportFilters.SelectedParentUsers = objBOMViewModel.objReportFilters.SelectedParentUser != null && objBOMViewModel.objReportFilters.SelectedParentUser.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedParentUser.ToArray()) : "";
+            objBOMViewModel.objReportFilters.SelectedUserIds = objBOMViewModel.objReportFilters.SelectedUserId != null && objBOMViewModel.objReportFilters.SelectedUserId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedUserId.ToArray()) : "";
+            objBOMViewModel.objReportFilters.SelectedLayerIds = objBOMViewModel.objReportFilters.SelectedLayerId != null && objBOMViewModel.objReportFilters.SelectedLayerId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedLayerId.ToArray()) : "";
+            objBOMViewModel.objReportFilters.SelectedProjectIds = objBOMViewModel.objReportFilters.SelectedProjectId != null && objBOMViewModel.objReportFilters.SelectedProjectId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedProjectId.ToArray()) : "";
+            objBOMViewModel.objReportFilters.SelectedPlanningIds = objBOMViewModel.objReportFilters.SelectedPlanningId != null && objBOMViewModel.objReportFilters.SelectedPlanningId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedPlanningId.ToArray()) : "";
+            objBOMViewModel.objReportFilters.SelectedWorkOrderIds = objBOMViewModel.objReportFilters.SelectedWorkOrderId != null && objBOMViewModel.objReportFilters.SelectedWorkOrderId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedWorkOrderId.ToArray()) : "";
+            objBOMViewModel.objReportFilters.SelectedPurposeIds = objBOMViewModel.objReportFilters.SelectedPurposeId != null && objBOMViewModel.objReportFilters.SelectedPurposeId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedPurposeId.ToArray()) : "";
+            objBOMViewModel.objReportFilters.userId = Convert.ToInt32(userdetails.user_id);
+            objBOMViewModel.objReportFilters.roleId = Convert.ToInt32(userdetails.role_id);
+            objBOMViewModel.objReportFilters.SelectedOwnerShipType = objBOMViewModel.objReportFilters.SelectedOwnerShipType != null ? objBOMViewModel.objReportFilters.SelectedOwnerShipType : "";
+            objBOMViewModel.objReportFilters.SelectedThirdPartyVendorIds = objBOMViewModel.objReportFilters.SelectedThirdPartyVendorId != null && objBOMViewModel.objReportFilters.SelectedThirdPartyVendorId.Count > 0 ? string.Join(",", objBOMViewModel.objReportFilters.SelectedThirdPartyVendorId.ToArray()) : "";
+            objBOMViewModel.objReportFilters.SelectedWavelength = objBOMViewModel.objReportFilters.SelectedWavelength;
+            objBOMViewModel.objReportFilters.txt_Miscdbloss = objBOMViewModel.objReportFilters.txt_Miscdbloss;
+            objBOMViewModel.objReportFilters.isdBLossAttrEnable = objBOMViewModel.objReportFilters.isdBLossAttrEnable;
+            objBOMViewModel.objReportFilters.radius = objBOMViewModel.objReportFilters.radius;
+            objBOMViewModel.objReportFilters.systemId = objBOMViewModel.objReportFilters.systemId;
+            objBOMViewModel.objReportFilters.entityType = objBOMViewModel.objReportFilters.entityType;
+            string gom = Convert.ToString(objBOMViewModel.objReportFilters.geom);
+            string enti = Convert.ToString(objBOMViewModel.objReportFilters.entityType);
             objBOMViewModel.objReportFilters.selected_route_ids = objBOMViewModel.selected_route_ids != null && objBOMViewModel.selected_route_ids.Count > 0 ? string.Join(",", objBOMViewModel.selected_route_ids.ToArray()) : "";
 
             objBOMViewModel.objReportFilters.geom = (gom == null ? "" : (enti != null ? (enti.ToUpper() == "STRUCTURE" ? "" : gom) : gom));
-			Session["BomBoqReportFilters"] = objBOMViewModel.objReportFilters;
-			objBOMViewModel.BomBoqReportList = new BomBoq().getBOMBOQReport(objBOMViewModel.objReportFilters);
-			objBOMViewModel.objdBLoss = new BomBoq().getdBLossReport(objBOMViewModel.objReportFilters);
-			Session["BomBoqExportSummaryData"] = objBOMViewModel;
-			objBOMViewModel.lstNetworkStatus = new BLMisc().GetDropDownList("", DropDownType.ddlNetworkStatus.ToString());
-			return PartialView("_BomBoqSummary", objBOMViewModel);
-		}
+            Session["BomBoqReportFilters"] = objBOMViewModel.objReportFilters;
+            objBOMViewModel.BomBoqReportList = new BomBoq().getBOMBOQReport(objBOMViewModel.objReportFilters);
+            objBOMViewModel.objdBLoss = new BomBoq().getdBLossReport(objBOMViewModel.objReportFilters);
+            Session["BomBoqExportSummaryData"] = objBOMViewModel;
+            objBOMViewModel.lstNetworkStatus = new BLMisc().GetDropDownList("", DropDownType.ddlNetworkStatus.ToString());
+            return PartialView("_BomBoqSummary", objBOMViewModel);
+        }
 
-		public ActionResult BomBoqExport(BomBoqExportReport objBomBoq)
+        public ActionResult BomBoqExport(BomBoqExportReport objBomBoq)
 		{
 			return PartialView("_BomBoqSummary", objBomBoq);
 		}

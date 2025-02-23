@@ -1,4 +1,5 @@
 ﻿using BusinessLogics;
+using BusinessLogics.Admin;
 using Ionic.Zip;
 using iTextSharp.text;
 using iTextSharp.text.html.simpleparser;
@@ -6,6 +7,7 @@ using iTextSharp.text.pdf;
 using Lepton.GISConvertor;
 using Lepton.Utility;
 using Models;
+using Models.Admin;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
@@ -13229,6 +13231,73 @@ namespace SmartInventory.Controllers
             }
 
             return PartialView("_SiteAwarding", objViewUser);
+        }
+
+        public ActionResult ItemSiteAwarding(ViewItemVendorCost objViewItemVendorCost, int page = 0, string sort = "", string sortdir = "", string refrenceData = "")
+        {
+            try
+            {
+               // ViewItemVendorCost objViewItemVendorCost = new ViewItemVendorCost();
+                CommonGridAttr objGridAttributes = new CommonGridAttr();
+                
+                if (sort != "" || page != 0)
+                {
+                    objViewItemVendorCost.objGridAttributes = (CommonGridAttr)Session["ViewItemVendorCost"];
+                }
+                objViewItemVendorCost.objGridAttributes.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
+                objViewItemVendorCost.objGridAttributes.currentPage = page == 0 ? 1 : page;
+                objViewItemVendorCost.objGridAttributes.sort = sort;
+                objViewItemVendorCost.objGridAttributes.orderBy = sortdir;
+                objViewItemVendorCost.lstItem = new BLVendorSpecification().ItemVendorCost(objViewItemVendorCost.objGridAttributes).ToList();
+
+                var users = objViewItemVendorCost.lstItem
+                    .Select(x => new { x.user_id, x.user_name })
+                    .Distinct()
+                    .OrderBy(x => x.user_id) // Ensure ordering is based on user_name
+                    .ToList();
+
+
+                Session["ViewItemVendorCost"] = objViewItemVendorCost.objGridAttributes;
+                // Transform data dynamically
+                var transformedData = objViewItemVendorCost.lstItem
+                        .GroupBy(x => new { x.code, x.specification, x.category_reference, x.unit_measurement, x.layer_id })
+                        .Select(g =>
+                        {
+                            dynamic row = new ExpandoObject();
+                            var dict = (IDictionary<string, object>)row;
+
+                            // Fixed properties
+                            dict["code"] = g.Key.code;
+                            dict["specification"] = g.Key.specification;
+                            dict["entity_type"] = g.Key.category_reference;
+                            dict["uom"] = g.Key.unit_measurement;
+                            dict["layer_id"] = g.Key.layer_id;
+
+
+                            // Dynamically add user columns
+                            foreach (var user in users)
+                            {
+                                var costValue = g.FirstOrDefault(x => x.user_id == user.user_id)?.cost_per_unit.ToString() ?? "";
+                                //dict[$"User_{user.user_name}"] = costValue+"/"+user.user_id;
+                                dict[$"User_{user.user_name + "/" + user.user_id}"] = costValue;
+                            }
+
+                            return row;
+                        })
+                    .ToList();
+
+                ViewBag.transformedData = transformedData;
+
+
+                objViewItemVendorCost.objGridAttributes.totalRecord = objViewItemVendorCost.lstItem.Select(a => a.totalRecord).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("SiteAwarding()", "Report", ex);
+                throw ex;
+            }
+
+            return PartialView("_ItemSiteAwarding", objViewItemVendorCost);
         }
 
         private ViewUserModel GetVendorList(ViewUserModel objViewUser, int page = 0, string sort = "", string sortdir = "", string refrenceData = "")

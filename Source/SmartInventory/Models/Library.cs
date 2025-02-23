@@ -312,6 +312,7 @@ namespace Models
         public PageMessage objPM { get; set; }
 
         public string status { get; set; }
+        public int site_plan_id { get; set; }
         public string network_status { get; set; }
         [NotMapped]
         public string networkIdType { get; set; }

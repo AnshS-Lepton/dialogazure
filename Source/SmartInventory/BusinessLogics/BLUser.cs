@@ -269,6 +269,10 @@ namespace BusinessLogics
         {
             return new DAUser().GetUserDetailByID(id);
         }
+        public List<User> GetPartnerUser()
+        {
+            return new DAUser().GetPartnerUser();
+        }
 
         public int DeleteUserById(int id)
         {

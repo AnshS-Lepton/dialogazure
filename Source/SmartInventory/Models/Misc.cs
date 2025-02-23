@@ -246,7 +246,14 @@ namespace Models
 		public string type { get; set; }
 
 	}
-	public class EntityLstCount
+    public class IvcKeyValueDropDown
+    {
+        public int key { get; set; }
+        public string value { get; set; }
+    
+
+    }
+    public class EntityLstCount
 	{
 		public string entity_type { get; set; }
 		public string network_status { get; set; }

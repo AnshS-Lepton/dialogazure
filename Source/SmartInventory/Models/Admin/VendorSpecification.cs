@@ -8,6 +8,89 @@ using System.Threading.Tasks;
 
 namespace Models.Admin
 {
+    public class ItemVendorCostMaster 
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }       
+        public int layer_id { get; set; }         
+        public string specification { get; set; }       
+        public string item_code { get; set; }     
+        public int created_by { get; set; }
+        public DateTime created_on { get; set; }
+        public int? modified_by { get; set; }
+        public DateTime? modified_on { get; set; }
+        public string uom { get; set; }
+        public int user_id { get; set; }
+
+        [Range(0.01, double.MaxValue, ErrorMessage = "Item Cost must be a positive number.")]
+         // Or use decimal instead of double
+        public decimal item_cost { get; set; }
+        [NotMapped]
+        public PageMessage pageMsg { get; set; }
+    
+        public ItemVendorCostMaster()
+        {
+            pageMsg = new PageMessage();
+            
+        }
+
+    }
+    public class AuditItemVendorCostMaster
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
+        public int item_cost_id { get; set; }
+        public int layer_id { get; set; }
+        public string specification { get; set; }
+        public string item_code { get; set; }
+        public int created_by { get; set; }
+        public DateTime created_on { get; set; }
+        public int? modified_by { get; set; }
+        public DateTime? modified_on { get; set; }
+        public string uom { get; set; }
+        public int user_id { get; set; }
+
+        [Range(0.01, double.MaxValue, ErrorMessage = "Item Cost must be a positive number.")]
+        // Or use decimal instead of double
+        public decimal item_cost { get; set; }
+        [NotMapped]
+        public PageMessage pageMsg { get; set; }
+
+        public AuditItemVendorCostMaster()
+        {
+            pageMsg = new PageMessage();
+
+        }
+
+    }
+    public class SiteAwardDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
+        public string item_code { get; set; }
+        public string specification { get; set; }
+        public string uom { get; set; }
+        public int user_id { get; set; }
+        public int item_cost_audit_id { get; set; }
+        public int site_plan_id { get; set; }
+        public int created_by { get; set; }
+        public DateTime created_on { get; set; }
+        public int? modified_by { get; set; }
+        public DateTime? modified_on { get; set; }
+        [NotMapped]
+        public PageMessage pageMsg { get; set; }
+
+        public SiteAwardDetails()
+        {
+            pageMsg = new PageMessage();
+
+        }
+
+
+    }
     public class VendorSpecificationMaster : TemplateForDropDownVendorSpec
     {
         [Key]
@@ -32,6 +115,8 @@ namespace Models.Admin
         public DateTime? modified_on { get; set; }
         [NotMapped]
         public int user_id { get; set; }
+        [NotMapped]
+        public int key { get; set; }
         [NotMapped]
         public string unit_input_type { get; set; }
         public int no_of_port { get; set; }
@@ -88,6 +173,8 @@ namespace Models.Admin
         [NotMapped]
         public List<KeyValueDropDown> lstSpecifyType { get; set; }
         [NotMapped]
+        public List<KeyValueDropDown> lstItemSpec { get; set; }
+        [NotMapped]
         public string is_specification_allowed { get; set; }
         [NotMapped]
         public IList<DropDownMaster> lstNoOfWays { get; set; }
@@ -99,15 +186,30 @@ namespace Models.Admin
         public string item_master_code { get; set; }
         [NotMapped]
         public List<KeyValueDropDown> listItemMasterCode { get; set; }
-
+        [NotMapped]
+        public List<KeyValueDropDown> listItemCode { get; set; }
+        [NotMapped]
+        public List<IvcKeyValueDropDown> listItemCategory { get; set; }
         [Required]
         [Range(0, double.MaxValue)]
-        public decimal? extra_percentage { get; set; }
+        public decimal extra_percentage { get; set; }
         public int? no_of_tube { get; set; }
         public int? no_of_core_per_tube { get; set; }
         [NotMapped]
         public List<FormInputSettings> formInputSettings { get; set; }
         public bool is_default { get; set; }
+        [NotMapped]
+        public int totalRecord { get; set; }
+            [NotMapped]
+            public string user_name { get; set; }
+        [NotMapped]
+        public List<User> lstUserDetails { get; set; }
+        [NotMapped]
+        public string ItemSpec { get; set; }
+        [NotMapped]
+        public string ItemCode { get; set; }
+        [NotMapped]
+        public decimal totalqty { get; set; }
         public VendorSpecificationMaster()
         {
             pageMsg = new PageMessage();
@@ -122,11 +224,78 @@ namespace Models.Admin
             listItemMasterCode = new List<KeyValueDropDown>();
             formInputSettings = new List<FormInputSettings>();
             extra_percentage = 0;
+            lstItemSpec = new List<KeyValueDropDown>();
+            listItemCode = new List<KeyValueDropDown>();
+            lstUserDetails = new List<User>();
         }
 
     }
 
+    public class ViewItemVendorCost
+    {
+        public List<VendorSpecificationMaster> lstItem { get; set; }
+        public List<MergedItem> lstItem1 { get; set; }
+        public CommonGridAttr objGridAttributes { get; set; }
+        [NotMapped]
+        public List<parentuser> lstUserDetails { get; set; }
+        [NotMapped]
+        public string user_name { get; set; }
+        [NotMapped]
+        public string user_id { get; set; }
+        public ViewItemVendorCost()
+        {
+            objGridAttributes = new CommonGridAttr();
+            objGridAttributes.searchText = string.Empty;
+            objGridAttributes.is_active = true;
+            lstUserDetails = new List<parentuser>();
+        }
+        [NotMapped]
+        public List<KeyValueDropDown> lstBindSearchBy { get; set; }
+    }
 
+    public class parentuser
+    {
+        public string user_name { get; set; }
+        public int user_id { get; set; }
+    }
+        public class MergedItem
+    {
+        //[Range(0, double.MaxValue)]
+        //public decimal item_cost { get; set; }
+        public string code { get; set; }
+        public string uam { get; set; }
+        public string specification { get; set; }
+        public string entity_type { get; set; }
+        public int user { get; set; }
+        public int cost { get; set; }
+
+
+
+    }
+    public class CommonGridAttr
+    {
+        public int pageSize { get; set; }
+        public int totalRecord { get; set; }
+        public int currentPage { get; set; }
+        public string sort { get; set; }
+        public string orderBy { get; set; }
+        public string searchText { get; set; }
+        public string searchBy { get; set; }
+        public Boolean is_active { get; set; }
+        public string application_access { get; set; }
+        public string fileType { get; set; }
+        public int customDate { get; set; }
+        public DateTime? fromDate { get; set; }
+        public DateTime? toDate { get; set; }
+        public int history_id { get; set; }
+        public string log_type { get; set; }
+        public string SelectedRegionIds { get; set; }
+        public CommonGridAttr()
+        {
+            sort = "";
+            orderBy = "";
+        }
+    }
 
 
     public class ViewVendorSpecificationDetailsList : TemplateForDropDownVendorSpec
@@ -461,6 +630,8 @@ namespace Models.Admin
         [NotMapped]
         public string uploaded_by_name { get; set; }
         public string file_extension { get; set; }
+        [NotMapped]
+        public int item_cost { get; set; }
 
     }
     public class SpecicifationImgDocDownload

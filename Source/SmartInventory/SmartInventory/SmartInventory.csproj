@@ -2031,6 +2031,8 @@
     <Content Include="Areas\Admin\Views\VendorSepcification\SpecificationService.cshtml" />
     <Content Include="Areas\Admin\Views\FeTools\AddFEtools.cshtml" />
     <Content Include="Areas\Admin\Views\FeTools\Viewfetools.cshtml" />
+    <Content Include="Areas\Admin\Views\Vendor\ViewItemVendorCost.cshtml" />
+    <Content Include="Areas\Admin\Views\Vendor\AddItemVendorCost.cshtml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
@@ -2430,6 +2432,8 @@
     <Content Include="Views\FiberLink\_SLDdiagramFiberLink.cshtml" />
     <Content Include="Views\Library\_SplicingNetworkDiagram.cshtml" />
     <Content Include="Views\FiberLink\_AssociateFiberStatus.cshtml" />
+    <Content Include="Views\Report\_ItemSiteAwarding.cshtml" />
+    <Content Include="Views\BOMBOQ\_ItemSiteAwarding.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -24500,6 +24500,12 @@ var Main = function () {
                 }, MultilingualKey.SI_OSP_GBL_NET_RPT_420, 'modal-xl');
             }
         },
+        ItemSiteAwarding: function (geom, modeType, radius, obj) {
+                                           
+            popup.LoadModalDialog('CHILD', 'BOMBOQ/SiteBomBoqSummary', {
+                eType: '', refrenceData: modeType,
+            }, "Item cost vendor Report", 'modal-xl');  
+        },
 
         AwardSiteToSelectedVendor: function (user_id, vendorCost) {
 
@@ -24507,6 +24513,28 @@ var Main = function () {
                 vendorCost = 0;
 
             ajaxReq('Report/AwardSiteToSelectedVendor', {
+                eType: '', userId: user_id, vendorCost: vendorCost,
+            }, true, function (resp) {
+                if (resp.status == 'OK') {
+                    alert(resp.message);
+                    $(popup.DE.CloseChildPopup).trigger("click");
+                }
+                else {
+                    alert(resp.message);
+                    return false;
+                }
+
+            },
+
+                true, true, true);
+
+        },
+        ItemvendorcostReport: function (user_id, vendorCost) {
+
+            if (vendorCost == '' || vendorCost == null)
+                vendorCost = 0;
+
+            ajaxReq('BOMBOQ/SiteBomBoqSummary', {
                 eType: '', userId: user_id, vendorCost: vendorCost,
             }, true, function (resp) {
                 if (resp.status == 'OK') {

@@ -1,0 +1,222 @@
+﻿@model Models.Admin.ViewItemVendorCost
+@using Utility
+@using SmartInventory.Settings;
+@using System.Dynamic;
+@using System.Collections.Generic;
+<input type="hidden" id="hdnNumberFormatType" value="@ApplicationSettings.numberFormatType" />
+
+<div id="dvViewLayerGroups">
+    <div class="update_panel fullWidth">
+        <div class="title">
+            <h4>View Item Vendor Cost</h4>
+        </div>
+
+        @{
+            var gridData = ViewBag.transformedData as List<dynamic>;
+
+            //var gridData = ViewBag.transformedData as List<Dictionary<string, object>>;
+
+            var users = new List<string>();
+
+            if (gridData != null && gridData.Any())
+            {
+                // Extract user-specific columns dynamically
+                var firstRow = (IDictionary<string, object>)gridData.FirstOrDefault();
+
+                users = firstRow.Keys.Where(k => k.StartsWith("User_")).ToList();
+               
+
+            }
+
+
+
+        }
+        @{
+            WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewLayerGroups", ajaxUpdateCallback: "onGridHeaderClick('tblItemVendorCost')");
+            grid.Bind(gridData, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+            if (Model.objGridAttributes.totalRecord > 0)
+            {
+                grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+            }
+
+            // Define column list
+            var columns = new List<WebGridColumn>
+    {
+        grid.Column("code", "Item Code"),
+
+        grid.Column("specification", "Specification"),
+        grid.Column("entity_type", "Entity Type"),
+        //grid.Column("uam", "Unit Measurement")
+    };
+
+            // Add user-specific columns dynamically
+            foreach (var user in users)
+            {
+
+
+
+                //columns.Add(grid.Column(user, user.Replace("User_", ""), format: item =>
+                //    Html.Raw("<div style='display: flex; width: 100%;'>"
+                //    + "<div style='width: 50%; text-align: center; border-right: 1px solid #ddd; padding: 5px;'>"
+                //    + "<a href='#' class='auto' title='Edit'  data-user='" + user + "' data-value='" + item[user] +
+                //    "' onclick='editItemVendorCost(this);'><i class='fa fa-pencil action_icon fa-fw m-r-xs'></i></a></div>"
+                //    + "<div style='width: 50%; text-align: center; padding: 5px;'>" + item[user] + "</div>"
+                //    + "</div>")));
+
+                columns.Add(grid.Column(user, user.Replace("User_", "").Split('/')[0], format: item =>
+    Html.Raw("<div style='display: flex; width: 100%;'>"
+    + "<div style='width: 50%; text-align: center; border-right: 1px solid #ddd; padding: 5px;'>"
+    + "<a href='#' class='auto' title='Edit'  data-user='" + user + "' data-value='" + item[user] +
+    "' onclick='editItemVendorCost(this);'><i class='fa fa-pencil action_icon fa-fw m-r-xs'></i></a></div>"
+    + "<div style='width: 50%; text-align: center; padding: 5px;'>" + item[user] + "</div>"
+    + "</div>")));
+            }
+            columns.Add(grid.Column("uom", "UOM"));
+            columns.Add(grid.Column("layer_id", "layer_id", style: "display: none"));
+
+
+        }
+
+
+        @using (Html.BeginForm("ViewItemVendorCost", "Vendor", FormMethod.Post, new { autocomplete = "off", @id = "frmtblItemVendorCost" }))
+        {
+            <section class="--pad-15">
+                <div class="form-inline filter-sec ">
+                    <div class="form-group wtd_set">
+                        <label class="control-label col-sm-4">
+                            Search By :
+                        </label>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.objGridAttributes.searchBy, new SelectList(Model.lstBindSearchBy.Select(x => new { Value = x.value.ToString(), Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group wtd_set">
+                        <label class="control-label col-sm-4">
+                            Search Text:
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(m => m.objGridAttributes.searchText, new { @id = "txtSearchText", @title = "Search text", @tabindex = "4", @class = "input-sm form-control", @placeholder = "Search text", @maxlength = 100, @onkeypress = "fnOnKeyPress(event)" })
+                        </div>
+                    </div>
+                    <div class="form-group wtd_set" id="dvBtnAction">
+                        <div class="col-md-8">
+                            <button class="btn btn-primary mr-05" id="btnGetSearchResult" name="btnCommandName" value="GetSearchResult" tabindex="5" onclick="return fnGetSearchResult();" type="submit">Search</button>
+                            @if (@grid.TotalRowCount > 0)
+                            {
+                                <input type="button" id="btnViewGroupExport" value="Export" class="btn btn-primary  mr-05" onclick="ViewGroupsReport()" />
+                            }
+                            else
+                            {
+                                <input type="button" id="btnViewGroupExport" value="Export" disabled="disabled" class="btn btn-primary  mr-05" />
+                            }
+                            <a href="@Url.Action("ViewItemVendorCost")" class="btn btn-default  mr-05" title="Reset">Reset</a>
+                            <span>
+                                <input type="button" id="btnAddNew" onclick="editItemVendorCost(null);" value="Add New" class="btn btn-primary" />
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+                @if (gridData != null && gridData.Any())
+                {
+                    <div id="divLayerGroupDetail">
+                        <div class="recordCount mb-01"><b>Total Records:<span data="spanTotalRowCount">@grid.TotalRowCount</span></b></div>
+
+                        <div class="table-responsive tble_cls">
+                            @grid.GetHtml(tableStyle: "grid",
+            htmlAttributes: new { id = "tblItemVendorCost" },
+            mode: WebGridPagerModes.All,
+            columns: columns)
+
+
+                            @Html.Hidden("dir", grid.SortDirection)
+                            @Html.Hidden("col", grid.SortColumn)
+                            @Html.HiddenFor(m => m.objGridAttributes.searchBy)
+                            @Html.HiddenFor(m => m.objGridAttributes.searchText)
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center; margin-top: 30px;">
+                        No Records Found.
+                    </div>
+                }
+
+            </section>
+
+
+        }
+
+        <script>
+            $(document).ready(function () {
+                updateNumberstoFormatedNumber();
+                addDefaultSortingIcons("tblItemVendorCost");
+
+                $("th:contains('layer_id')").hide(); // Hides header
+                $("td:nth-child(8)").hide(); // Adjust column index
+            });
+
+            function ViewGroupsReport() {
+                window.location = appRoot + 'Vendor/DownloadItemVendorCostDetails';
+            }
+
+            function updateNumberstoFormatedNumber() {
+                $('span[data]').each(function (index) {
+                    // Get the value of the data-target attribute for each element
+                    var targetValue = $(this).data('data');
+
+                    // Do whatever you want with the element or its data
+                    $(this).text(getFormattedNumber($(this).text().trim()));
+                });
+            }
+
+            function editItemVendorCost(element) {
+                debugger;
+                if (element != null) {
+                    var user = element.getAttribute("data-user"); // Get user column key
+                    var value = element.getAttribute("data-value") || "";
+                    var usr = user.replace("User_", "");
+                    var item_cost = parseFloat(value);
+
+
+                     // Example value
+
+                    var arr_user = usr.split("/");
+
+                  
+                    var user_id = arr_user[1];
+                    var user_name = arr_user[0];
+
+
+
+                    var item_cost = isNaN(parseFloat(value)) ? 0.0 : parseFloat(parseFloat(value).toFixed(2)); // Ensure valid double
+
+                    // Find the closest table row
+                    var row = element.closest("tr");
+
+                    // Retrieve other column values from the row
+                    var item_code = row.querySelector("td:nth-child(1)")?.textContent.trim();
+                    var specification = row.querySelector("td:nth-child(2)")?.textContent.trim();
+                    var entity_type = row.querySelector("td:nth-child(3)")?.textContent.trim();
+                    var UOM = row.querySelector("td:nth-child(7)")?.textContent.trim();
+                    var layer_id = row.querySelector("td:nth-child(8)")?.textContent.trim();
+                }
+                else {
+                    var item_code = '';
+                    var specification = '';
+                    var entity_type = '';
+                    var UOM = '';
+                    var layer_id = null;
+                    var item_cost = 0;
+                    var user_id = null;
+                }
+
+                AddItemVendorCost(user_id, item_cost, item_code, specification, entity_type, UOM, layer_id,user_name)
+            }
+        </script>
+
+    </div>
+</div>
