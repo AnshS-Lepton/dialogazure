@@ -24543,30 +24543,33 @@ var Main = function () {
             
             debugger;
             if (obj) {
-                $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
-                $(obj).addClass('activeToolBar');
+                //$('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
+                //$(obj).addClass('activeToolBar');
+                popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
+                    eType: '', systemid: modeType,
+                }, 'Topology Plan', 'modal-xl');
             }
-            if (geom != '' && geom != null) {
-                debugger;
-                ajaxReq('Report/ValidatePotentialArea', {
-                    geom: geom, geomType: modeType, buff_Radius: radius
-                }, true, function (resp) {
-                    if (resp.status == 'FAILED' || resp.status == 'ERROR') {
-                        alert(resp.message);
-                        return false;
-                    }
-                    else {
-                        debugger;
-                        popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
-                            'objReportFilters.geom': geom, 'objReportFilters.geomType': modeType, 'objReportFilters.radius': radius, 'objReportFilters.layerName': 'SITE'
-                        }, 'Topology Plan', 'modal-xl');
-                    }
+            //if (geom != '' && geom != null) {
+            //    debugger;
+            //    ajaxReq('Report/ValidatePotentialArea', {
+            //        geom: geom, geomType: modeType, buff_Radius: radius
+            //    }, true, function (resp) {
+            //        if (resp.status == 'FAILED' || resp.status == 'ERROR') {
+            //            alert(resp.message);
+            //            return false;
+            //        }
+            //        else {
+            //            debugger;
+            //            popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
+            //                'objReportFilters.geom': geom, 'objReportFilters.geomType': modeType, 'objReportFilters.radius': radius, 'objReportFilters.layerName': 'SITE'
+            //            }, 'Topology Plan', 'modal-xl');
+            //        }
 
-                }, true, true, true);
-            }
+            //    }, true, true, true);
+            //}
             else {
                 popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
-                    eType: '', refrenceData: modeType,
+                    eType: '', systemid: modeType,
                 }, 'Topology Plan', 'modal-xl');
             }
         },

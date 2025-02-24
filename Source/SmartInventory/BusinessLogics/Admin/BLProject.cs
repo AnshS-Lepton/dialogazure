@@ -118,7 +118,18 @@ namespace BusinessLogics.Admin
             return new DAProject().BindPurpose(network_stage, ddlworkorder_id);
 
         }
-    
+        public List<TopologyGetSites> Bindtopologygetsites(int system_id, int ring_id, int user_id)
+        {
+
+            return new DAProject().Bindtopologygetsites( system_id,  ring_id,  user_id);
+
+        }
+        public List<TopologySegmentCables> Gettopologysegmentcables(int system_id, int ring_id, int user_id)
+        {
+
+            return new DAProject().Gettopologysegmentcables(system_id, ring_id, user_id);
+
+        }
 
         public ProjectCodeMaster getProjectCodeDetailById(int id)
         {
@@ -135,7 +146,11 @@ namespace BusinessLogics.Admin
             return new DAProjectCode().IsCodeExistsForProjSpeci(network_stage, type, code);
         }
 
+        public void Savetopsegmentcablemapping(int Agg1SystemId, int Agg2SystemId, int userId,int segment_id)
+        {
 
+            new DAProjectCode().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId, userId, segment_id);
+        }
 
         public PlanningCodeMaster getPlanningCodeDetailById(int id, int project_id=0)
         {
@@ -182,17 +197,37 @@ namespace BusinessLogics.Admin
         {
             return new DAToplologyRegion().getTopologyRegionDetails();
         }
-        public List<TopologySegmentMaster> getSegmentDetailByIdList(int region_Id=0)
+        public List<TopologySegment> getSegmentDetailByIdList(int  id)
         {
-            return new DAToplologySegment().getSegmentDetailByIdList(region_Id);
+            return new DAToplologySegment().getSegmentDetailByIdList(id);
+        }
+        public TopologySegment GetSegmentCode()
+        {
+            return new DAToplologySegment().GetSegmentCode();
+        }
+        public TopologyRingMaster GetRingCode()
+        {
+            return new DAToplologyRing().GetRingCode();
         }
         public List<TopologyRingMaster> getRingDetailByIdList(int segment_Id = 0)
         {
             return new DAToplologyRing().getRingDetailByIdList(segment_Id);
         }
-        public TopologyPlan SaveToploogyPlan(TopologyPlan objTopologyPlan)
+        public PODMaster updatetopology(PODMaster PODMaster)
         {
-            return new DAToplologyPlan().SaveToploogyPlan(objTopologyPlan);
+            return new DAPodMaster().updatetopology(PODMaster);
+        }
+        public List<TopologySegment> GetSegment(TopologySegment objTopologyPlan)
+        {
+            return new DASegment().GetSegment(objTopologyPlan);
+        }
+        public TopologySegment SaveSegment(TopologySegment objTopologyPlan)
+        {
+            return new DASegment().SaveSegment(objTopologyPlan);
+        }
+        public TopologyRingMaster SaveRing(TopologyRingMaster objTopologyPlan)
+        {
+            return new DAToplologyRing().SaveRing(objTopologyPlan);
         }
         public List<PODMaster> getSiteIdList(string site_id)
         {
