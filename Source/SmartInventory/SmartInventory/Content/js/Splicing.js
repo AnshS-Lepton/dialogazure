@@ -2272,7 +2272,7 @@
                         content: contentString
                     });
                     if (resp.result.lstCableInfo != null || resp.result.lstCableInfo != undefined) {
-
+                        var cableNetworkFiberMap = {};
                         for (var i = 0; i < resp.result.lstCableInfo.length; i++) {
 
                             if (resp.result.lstCableInfo[i].cable_geom != null) {
@@ -2303,10 +2303,17 @@
 
                                     var _cableNetworkId = resp.result.lstCableInfo[i].cable_network_id;
                                     var _cableFiberNumber = resp.result.lstCableInfo[i].fiber_number;
+
+                                    // Add the fiber number to the corresponding cable network ID in the map
+                                    if (!cableNetworkFiberMap[_cableNetworkId]) {
+                                        cableNetworkFiberMap[_cableNetworkId] = [];
+                                    }
+                                    cableNetworkFiberMap[_cableNetworkId].push(_cableFiberNumber);
+
                                     return function () {
 
-                                        var content = '<div><h4>' + 'Cable' + ' Detail </h3><p><span  class="Info-content">Network Id : </span>' + _cableNetworkId + '</p>';
-                                        content += '<p><span  class="Info-content">Port No :</span> ' + _cableFiberNumber + '</p>';
+                                        var content = '<div><h4>' + 'Cable Detail </h3><p><span  class="Info-content">Network Id : </span>' + _cableNetworkId + '</p>';
+                                        content += '<p><span  class="Info-content">Core / Port No :</span> ' + cableNetworkFiberMap[_cableNetworkId].join(', ') + '</p>';
                                         objInfoWindow.setContent(content);
                                         objInfoWindow.open(si.map, lineObj);
                                     }
