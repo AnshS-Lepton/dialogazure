@@ -4,6 +4,7 @@ using DataAccess.ISP;
 using Models;
 using Models.Admin;
 using Models.API;
+using Models.DaFiFeasibilityAPI;
 using Models.ISP;
 using System;
 using System.Collections.Generic;
@@ -62,6 +63,16 @@ namespace BusinessLogics
         public List<EntityDetail> getNearByEntities(double latitude, double longitude, int bufferInMtr, string source_ref_id, string source_ref_type, int user_id = 0)
         {
             return objDAMisc.getNearByEntities(latitude, longitude, bufferInMtr, source_ref_id, source_ref_type, user_id);
+
+        }
+        public List<EntityDetail> getNearByFeasibility(double latitude, double longitude, int bufferInMtr)
+        {
+            return objDAMisc.getNearByFeasibility(latitude, longitude, bufferInMtr);
+
+        }
+        public List<RouteBuffer> getRouteBufferFeasibility(string coordinates, int route_buffer)
+        {
+            return objDAMisc.getRouteBufferFeasibility(coordinates,route_buffer);
 
         }
         public List<EntityDetailWithAttribute> GetNearByEntitiesWithAttribute(double latitude, double longitude, int bufferInMtr, int ticket_id, int user_id = 0)

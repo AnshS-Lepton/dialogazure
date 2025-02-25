@@ -37,7 +37,7 @@ namespace BusinessLogics.DaFiFeasibilityAPI
             }
         }
 
-        public List<Route> GetNewFiberRoutes(string request_id, string a_lat_lng, string z_lat_lng, int fiber_cores, string apiKey, double a_buffer, double z_buffer)
+        public List<Route> GetNewFiberRoutes(string request_id, string a_lat_lng, string z_lat_lng, string apiKey, double a_buffer)
         {
             var dir = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(a_lat_lng, z_lat_lng, apiKey).Result;
 
@@ -54,7 +54,7 @@ namespace BusinessLogics.DaFiFeasibilityAPI
             return new List<Route> { route };
         }
 
-        public List<Route> GetExistingFiberRoutes(string request_id, string a_lat_lng, string z_lat_lng, int fiber_cores, string apiKey, double a_buffer, double z_buffer)
+        public List<Route> GetExistingFiberRoutes(string request_id, string a_lat_lng, string z_lat_lng, string apiKey, double a_buffer)
         {
             var a_coords = a_lat_lng.Split(',');
             var z_coords = z_lat_lng.Split(',');
@@ -62,7 +62,7 @@ namespace BusinessLogics.DaFiFeasibilityAPI
             var source = $"{a_coords[1].Trim()} {a_coords[0].Trim()}";
             var destination = $"{z_coords[1].Trim()} {z_coords[0].Trim()}";
 
-            var routes = DADarkFiberFeasibility.Instance.GetExistingFiberRoutes(request_id, source, destination, fiber_cores, a_buffer, z_buffer);
+            var routes = DADarkFiberFeasibility.Instance.GetExistingFiberRoutes(request_id, source, destination, a_buffer);
 
             foreach (var route in routes)
             {

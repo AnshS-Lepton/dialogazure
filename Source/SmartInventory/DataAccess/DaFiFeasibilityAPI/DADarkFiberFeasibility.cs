@@ -36,12 +36,13 @@ namespace DataAccess.DaFiFeasibilityAPI
             }
         }
 
-        public List<Route> GetExistingFiberRoutes(string request_id, string source, string destination, int fiber_cores, double a_buffer, double z_buffer)
+        public List<Route> GetExistingFiberRoutes(string request_id, string source, string destination, double a_buffer)
         {
             try
             {
                 var resp =  repo.ExecuteProcedure<Route>("fn_sf_get_existing_fiber_route",
-                                                              new { p_request_id = request_id, p_source = source, p_destination = destination, p_start_buffer = a_buffer, p_end_buffer = z_buffer, p_fiber_cores = fiber_cores }, true);
+                                                            //  new { p_request_id = request_id, p_source = source, p_destination = destination, p_start_buffer = a_buffer, p_fiber_cores = fiber_cores }, true);
+                new { p_request_id = request_id, p_source = source, p_destination = destination, p_start_buffer = a_buffer}, true);
 
                 return resp;
             }
