@@ -101,6 +101,7 @@
     <Compile Include="ExportReportLog.cs" />
     <Compile Include="FATDetail.cs" />
     <Compile Include="LongRunningQueries.cs" />
+    <Compile Include="NearByEntitiesIn.cs" />
     <Compile Include="PrintSavedTemplate.cs" />
     <Compile Include="Admin\Landbase_label_Settings.cs" />
     <Compile Include="Admin\ManageDropdownValues.cs" />

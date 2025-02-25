@@ -386,6 +386,7 @@ var Main = function () {
         "TabNavigateLeft": ".go-left",
         "txtNEBuffer": "#txtNEBuffer",
         "frtUserId": "#frtUserId",
+        "UlNearByEntities": "#ulNearByEntitiesLst"
     }
     this.layestList = ['Network_Ticket', 'Area', 'SubArea', 'DSA', 'CSA', 'Pole', 'Manhole', 'WallMount', 'FDB', 'BDB', 'Splitter', 'ADB', 'SpliceClosure', 'Cable', 'Trench', 'FMS', 'ONT', 'Tree', 'Building', 'POD', 'Duct', 'Customer', 'ROW', 'Handhole', 'Structure', 'SurveyArea', 'Cabinet', 'HTB', 'Equipment', 'Rack', 'PatchPanel', 'Tower', 'Slack', 'Sector', 'Loop', 'Antenna', 'Fault', 'Microduct', 'CDB'];
     this.layerListAbbr = ['NT', 'ARA', 'SBA', 'DSA', 'CSA', 'POL', 'MH', 'WMT', 'FDB', 'BDB', 'SPL', 'ADB', 'SC', 'CBL', 'TRH', 'FMS', 'ONT', 'TRE', 'BLDP,BLD,BLDC', 'POD', 'DCT', 'CUS', 'ROW,ROWL,PIT', 'HH', 'STRC', 'SVA', 'CBT', 'HTB', 'EQPMNT', 'RCK', 'PATCHP', 'TWR', 'SLK', 'SCT', 'LOP', 'ANT', 'FAU', 'CDB', 'Microduct'];
@@ -12265,7 +12266,6 @@ var Main = function () {
     }
 
     this.EnableInfoTool = function (enable) {
-        ;
         var enable = (enable != undefined ? enable : true);
         //console.log("after enable :" + enable);
 
@@ -12424,7 +12424,54 @@ var Main = function () {
             confirm(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_069, parseInt($('#hdnInfoToolZoom').val()), _zoom)), func);
         }
     }
+    this.GetNearByEntitiesByLatLong = function (latLng, objId) {
 
+
+        app.collapseRemove();
+        var _zoom = app.map.getZoom();
+        if (_zoom >= parseInt($('#hdnInfoToolZoom').val())) {
+            app.showTempBufferforInfo(latLng);
+            $.ajax({
+                url: '/Main/GetNearByEntitiesByLatLong',
+                type: 'GET',
+                data: {
+                    latitude: latLng.lat(),
+                    longitude: latLng.lng(),
+                    bufferInMtrs: getMeterDistanceFromZoom(_zoom)
+                },
+                success: function (resp) {
+                    // Log the response
+                    console.log(resp);
+                    var ulNE = $(app.DE.UlNearByEntities);
+                    $('#searchNBEntities').hide();
+                    ulNE.html('');
+                    if (resp.length >= 1) {
+                        $.each(resp, function (indx, item) {
+                            ulNE.append('<li data-network-id="' + item["common_name"] + '"><a onclick="si.bindNetworkIdToCorePlanner(\'' + item["common_name"] + '\',\'' + objId + '\');" href="#">' + item["entity_title"] + '</a></li>');
+                        });
+                        $('#searchNBEntities').css('left', app.currentMousePos.x);
+
+                        if (app.currentMousePos.y + ulNE.height() > $(window).height()) {
+                            $('#searchNBEntities').css('top', app.currentMousePos.y - (app.currentMousePos.y + ulNE.height() - $(window).height() + 25));
+
+                        }
+                        else {
+                            $('#searchNBEntities').css('top', (app.currentMousePos.y));
+                        }
+                        $('#searchNBEntities').show();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error: ' + error);
+                }
+            });
+        }
+        else {
+            var func = function () { app.map.setCenter(latLng); app.map.setZoom(parseInt($('#hdnInfoToolZoom').val())) };
+
+            confirm(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_069, parseInt($('#hdnInfoToolZoom').val()), _zoom)), func);
+        }
+    }
 
     this.showTempBufferforInfo = function (cnterPT) {
         var radius = getMeterDistanceFromZoom(app.map.getZoom());
@@ -13400,7 +13447,6 @@ var Main = function () {
 
             var $iconElement = $(this);
             if (!$iconElement.hasClass("dvdisabled") && !$iconElement.hasClass("roledisabled")) {
-                debugger;
                 var actionName = $iconElement.data("action")
                 //console.log("actionName::" + actionName.toUpperCase());
                 switch (actionName.toUpperCase()) {
@@ -13408,7 +13454,7 @@ var Main = function () {
                     case "DELETE":
                         app.dellandbaseEntityfromInfo(systemId, entityType, geomType);
                         break;
-                   
+
                     case "EXPORT":
                         app.ExportLandbaseEntity(systemId, entityType);
                         break;
@@ -14426,7 +14472,7 @@ var Main = function () {
                         break;
                     case "BUTTERFLY":
                         ajaxReq('main/Encrypt', { systemId: systemId }, false, function (resp) {
-                            window.open(appRoot + 'Library/GetVizButterflyNetwork?key=' + resp + ','
+                            window.open(appRoot + 'Library/GetSplicingNetworkDiagram?key=' + resp + ','
                                 + entityType, '_blank');
                         }, false, false);
                         break;
@@ -15030,7 +15076,6 @@ var Main = function () {
 
     }
     this.fiberAllocationReport = function (systemId, entityType, networkId) {
-        debugger;
         //popup.LoadModalDialog('PARENT', 'Report/ExportFiberAllocationReport', {
         //    'objReportFilters.geom': '', 'objReportFilters.geomType': '', 'objReportFilters.radius': 0, 'objReportFilters.layerName': 'FMS', 'objReportFilters.SearchbyColumnName': 'network_id', 'objReportFilters.SearchbyText': networkId
         //}, "Fiber Allocation Report", 'modal-xl');
@@ -16914,7 +16959,6 @@ var Main = function () {
     }
 
     this.clickLstTerminationPoint = function (system_id, network_id, network_name, latlng, enType, tpType, actionMode, display_name) {
-        ;
         var index = si.lstTerminationPoint.findIndex(function (m) { return m.system_id == system_id && m.network_name == network_name; });
 
         var chkflag = false; var chkReplace = false;
@@ -17013,7 +17057,24 @@ var Main = function () {
             }
         }
     }
+    this.closeNBEntities = function () {
+        $('#searchNBEntities').hide();
+    }
+    this.bindNetworkIdToCorePlanner = function (network_id, objId) {
 
+        si.ClearMapAddressTool();
+        var objEntity = $('#' + objId);
+        var flag = objEntity.data("entity");
+        $('#searchNBEntities').hide();
+        objEntity.toggleClass('activeToolBar');
+        $(popup.DE.Maxi).trigger("click");
+        if (flag == 0) {
+            $('#txtODF1').val(network_id);
+        }
+        else if (flag == 1) {
+            $('#txtODF2').val(network_id);
+        }
+    }
     this.addTerminationPoint = function (_data) {
         var parentStr = app.getParentStructure(_data.system_id, _data.network_name);
         if (parentStr != 0 && $(app.DE.tblTerminationPoint + ' tbody tr').length == 0) {
@@ -19151,7 +19212,7 @@ var Main = function () {
 
                     $('#cable_one_network_id').val(firstCableNetworkId);
                     /* $('#cable_one_name').val(firstCableNetworkId);*/
-                    $('#cable_one_name').val(displayname);
+                    $('#cable_one_name').val(resp.result.cable1_name);
                     $('#cable_one_a_location').val(resp.result.cable1_a_location);
                     $('#cable_one_b_location').val(splitEnityNetworkId);
 
@@ -19159,7 +19220,7 @@ var Main = function () {
                     var secondCableNetworkId = '';
                     $('#cable_two_network_id').val(secondCableNetworkId);
                     /* $('#cable_two_name').val(secondCableNetworkId);*/
-                    $('#cable_two_name').val(displayname);
+                    $('#cable_two_name').val(resp.result.cable2_name);
                     $('#cable_two_a_location').val(splitEnityNetworkId);
                     $('#cable_two_b_location').val(resp.result.cable2_b_location);
 
@@ -19315,7 +19376,7 @@ var Main = function () {
         $(app.DE.SplicingDiv).hide();
         si.resetShapeTools();
         app.mapReport.clearSelection();
-
+        app.clearCoreplannerLogs();
         var pageUrl = 'Library/GetcorePlanLogic';
         var modalClass = 'modal-lg';
         // popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
@@ -19330,6 +19391,12 @@ var Main = function () {
         // Reset previous red borders before validating
         $("#txtODF1, #txtODF2, #txtRequiredCore").removeClass("error-border");
 
+        if ($("#txtRequiredCore").val() === '0') {
+            alert('Invalid Required Core');
+
+            $("#txtRequiredCore").addClass("error-border");
+            return false;
+        }
         // Check if any of the fields are empty
         if ($("#txtODF1").val() == '' || $("#txtODF2").val() == '' || $("#txtRequiredCore").val() == '' || $("#txtODF1").val() == 'Search ODF' || $("#txtODF2").val() == 'Search ODF') {
             alert('All fields (ODF1, ODF2 and RequiredCore) are mandatory for checking Availability Core.');
@@ -19380,7 +19447,7 @@ var Main = function () {
     }
 
     this.saveCorePlanLogic = function () {
-        ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val(), fiber_link_network_id: $("#hdnFiberLinkNetworkId").val(), source_network_id: $("#txtODF1").val(), destination_network_id: $("#txtODF2").val(), buffer: 5 }, true, function (resp) {
+        ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val(), fiber_link_network_id: $("#txtfiberlink").val(), source_network_id: $("#txtODF1").val(), destination_network_id: $("#txtODF2").val(), buffer: 5 }, true, function (resp) {
             if (resp != null && resp != undefined) {
                 if (resp.status) {
                     alert(resp.message);
@@ -19389,6 +19456,7 @@ var Main = function () {
                     $('#txtODF2').val('');
                     $('#txtfiberlink').val('');
                     $('#btnSubmit').prop("disabled", true);
+                    $("#closeModalPopup").click();
                 }
                 else {
                     alert(resp.message);
@@ -19407,7 +19475,7 @@ var Main = function () {
             if (resp.data != null) {
                 $('#txtLinkId').val(resp.data);
             }
-            else{
+            else {
                 $('#txtLinkId').val('');
             }
 
@@ -22027,7 +22095,6 @@ var Main = function () {
 
     }
 
-
     this.closeTpoint = function () {
         $('#searchTpoint').hide();
     }
@@ -24442,28 +24509,28 @@ var Main = function () {
                 }, MultilingualKey.SI_OSP_GBL_NET_RPT_420, 'modal-xl');
             }
         },
-       
+
         AwardSiteToSelectedVendor: function (user_id, vendorCost) {
-            
+
             if (vendorCost == '' || vendorCost == null)
-                vendorCost =0;
+                vendorCost = 0;
 
             ajaxReq('Report/AwardSiteToSelectedVendor', {
                 eType: '', userId: user_id, vendorCost: vendorCost,
-                }, true, function (resp) {
-                    if (resp.status == 'OK') {
-                        alert(resp.message);
-                        $(popup.DE.CloseChildPopup).trigger("click");
-                    }
-                    else {
-                        alert(resp.message);
-                        return false;
-                    }
+            }, true, function (resp) {
+                if (resp.status == 'OK') {
+                    alert(resp.message);
+                    $(popup.DE.CloseChildPopup).trigger("click");
+                }
+                else {
+                    alert(resp.message);
+                    return false;
+                }
 
-                }, 
-                
-            true, true, true);
-           
+            },
+
+                true, true, true);
+
         }
     }
     this.showhideChildMenu = function (element, otherElements) {
@@ -26433,10 +26500,10 @@ var Main = function () {
                 }, MultilingualKey.SI_OSP_GBL_GBL_GBL_043, 'modal-md-new');
             }
         },
-        EntityExportReportLog: function (geom, modeType, radius, obj,log_type) {
+        EntityExportReportLog: function (geom, modeType, radius, obj, log_type) {
             si.resetShapeTools();
             popup.LoadModalDialog('PARENT', 'Report/EntityExportReportLog', {
-                eType: '',log_type: log_type
+                eType: '', log_type: log_type
             }, "Report Log", 'modal-lg');
         },
         initiateDrawingsExportReport: function (obj, shapeFlag) {
@@ -32394,6 +32461,11 @@ var Main = function () {
             app.HighlightEntityOnMap(gType, resp);
             app.fitElementOnMap(resp.source)
         }
+    }
+
+    this.clearCoreplannerLogs = function () {
+        ajaxReq('Library/clearCoreplannerLog', {}, false, function (resp) {
+        }, true, true);
     }
 
 }

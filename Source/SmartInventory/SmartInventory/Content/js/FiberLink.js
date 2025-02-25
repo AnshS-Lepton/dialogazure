@@ -815,9 +815,24 @@
 
 
     this.createUpdateLink = function (IsNewLink) {
-        $('#txtLinkId').val($('#txtLinkId').val().toUpperCase());
-        $('#txtFiberLinkId').val($('#txtLinkId').val().toUpperCase());
-        let prefix = $('#txtLinkId').val().substring(0, 2).toUpperCase();
+        const lstLinkPrefix = $('#hdnLstLinkPrefix').val().split(','); // Split the prefixes by comma
+        const linkId = $('#txtLinkId').val().toUpperCase(); // Convert linkId to uppercase
+        
+        // Check if linkId starts with any prefix using the some method
+        const isPrefixFound = lstLinkPrefix.some(prefix => linkId.startsWith(prefix));
+        // Find the matched prefix, if any
+        var prefix = "";
+
+        $('#txtLinkId').val(linkId);
+        $('#txtFiberLinkId').val(linkId.trim());
+
+        if (!isPrefixFound) {
+            alert(MultilingualKey.SI_OSP_GBL_NET_RPT_417);
+            return false;
+        }
+        else {
+            prefix = lstLinkPrefix.find(prefix => linkId.startsWith(prefix));
+        }
         let selectedLinkPrefix = $('#ddlLinkPrifixType option[value="' + prefix + '"]');
         if (prefix != '') {
             if (selectedLinkPrefix.length > 0) {
@@ -990,7 +1005,6 @@
     }
 
     this.SaveFiberLink = function (objFiberLink) {
-        debugger;
         if (objFiberLink.pageMsg.status != "OK" || ($('#hdnCheckforCLP').val() !== undefined && $('#hdnCheckforCLP').val() != '')) {
             $('#txtfiberlink').val(objFiberLink.link_id);
             $('#hdnCheckforCLP').val('');
@@ -1026,7 +1040,7 @@
     this.GetSLDDaigramFiberLink = function (_system_id) {
         var systemId = _system_id.toString();
         ajaxReq('main/Encrypt', { systemId: systemId + '-' + 'FMS' }, false, function (resp) {
-            window.open(appRoot + 'FiberLink/GetSLDDiagram?key=' + resp, '_blank' );
+            window.open(appRoot + 'FiberLink/GetSLDDiagram?key=' + resp, '_blank');
         }, false, false);
     }
     this.btnclearLinkId = function () {
@@ -1037,7 +1051,6 @@
         $(app.DE.tickIcon).css('display', 'none');
     }
     this.btncreatelink = function () {
-        debugger;
         app.CableFiberButton = true;
         var linkPrefixes = $(app.DE.hdnLinkPrefixes).val();
         // Ensure the linkPrefixes is a string and split it into an array 

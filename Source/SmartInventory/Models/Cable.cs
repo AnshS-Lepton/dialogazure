@@ -394,6 +394,7 @@ namespace Models
         public string comment { get; set; }
         [NotMapped]
         public string cable_network_status { get; set; }
+        public string fiber_status { get; set; }
         //public string tube_number { get; set; }
         //public string tube_color { get; set; }
         //public string core_number { get; set; }

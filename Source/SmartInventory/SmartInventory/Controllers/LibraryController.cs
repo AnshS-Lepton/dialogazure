@@ -8636,16 +8636,15 @@ namespace SmartInventory.Controllers
         //}
         #endregion
 
-        public ActionResult GetVizButterflyNetwork(string key)
+        public ActionResult GetSplicingNetworkDiagram(string key)
         {
             // Currently running for manhole only further modification reqired in encryption for other entities
             string[] _value = key.Split(',');
             var value = MiscHelper.Decrypt(_value[0]);
             VizButterFlyNetwork objVizNetwork = new VizButterFlyNetwork();
-            if (_value[1] == EntityType.Manhole.ToString())
-                objVizNetwork = new BLOSPSplicing().GetVizButterflyNetwork(Convert.ToInt32(value), EntityType.Manhole.ToString());
-            if (_value[1] == EntityType.Handhole.ToString())
-                objVizNetwork = new BLOSPSplicing().GetVizButterflyNetwork(Convert.ToInt32(value), EntityType.Handhole.ToString());
+            
+            if (_value[1] == EntityType.SpliceClosure.ToString())
+                objVizNetwork = new BLOSPSplicing().GetSplicingNetworkDiagram(Convert.ToInt32(value), EntityType.SpliceClosure.ToString());
             if (!string.IsNullOrEmpty(objVizNetwork.legends))
             {
                 objVizNetwork.lstlegend = JsonConvert.DeserializeObject<List<legend>>(objVizNetwork.legends);
@@ -8654,7 +8653,7 @@ namespace SmartInventory.Controllers
             {
                 objVizNetwork.lstChekbox = JsonConvert.DeserializeObject<List<checkbox>>(objVizNetwork.checkbox);
             }
-            return PartialView("_ButterFlyNetworkDiagram", objVizNetwork);
+            return PartialView("_SplicingNetworkDiagram", objVizNetwork);
         }
         public ActionResult GetSLDDiagram(string key)
         {
@@ -13365,5 +13364,24 @@ namespace SmartInventory.Controllers
             return Json(new { data = fiberLinkPrefix.link_prefix }, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult clearCoreplannerLog()
+        {
+            new BLCable().ClearCorePlanLogsByUserId(Convert.ToInt32(Session["user_id"]));
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetUpdateFiberStatus(int cableId,int fiberNumber,string fiberStatus)
+        {
+            try
+            {
+                new BLCable().GetUpdateFiberStatus(cableId, fiberNumber, fiberStatus);
+
+                return Json(new { message = "Fiber Status Updated successfully!", status = true }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { message = "Error: " + ex.Message, status = false }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        
     }
 }

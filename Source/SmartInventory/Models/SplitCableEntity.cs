@@ -44,5 +44,7 @@ namespace Models
         public int split_cable_system_id { get; set; }
         [NotMapped]
         public int Split_entity_Core { get; set; }
+        public string cable1_name { get; set; }
+        public string cable2_name { get; set; }
     }
 }

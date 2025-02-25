@@ -69,6 +69,8 @@ namespace SmartInventory.Controllers
             objFiberLinkFilter.lstFiberLinkColumnsMapping = objFiberLinkFilter.objFiberLink.lstFiberLinkColumnsMapping;
             Session["viewFiberLinkDashboard"] = objFiberLinkFilter;
             BindFiberLinkDropDown(objFiberLinkFilter.objFiberLink);
+            var prefixList = objFiberLinkFilter.objFiberLink.lstPrefixType.Select(prefix => prefix.dropdown_value).ToList();
+            objFiberLinkFilter.objFiberLink.Lst_Link_Prefix = string.Join(",", prefixList);
             return PartialView("_ViewFiberLink", objFiberLinkFilter);
         }
 
@@ -949,6 +951,13 @@ namespace SmartInventory.Controllers
             ViewBag.LinkPrefixes = string.Join(", ", prefixList);
 
             return PartialView("_AssociateLink", objfiberLinkAssociation);
+        }
+        public ActionResult GetFiberStatus(int cable_id, int fiber_no)
+        {
+            fiberLinkAssociation objfiberLinkAssociation = new fiberLinkAssociation();
+            objfiberLinkAssociation = new BLFiberLink().getAssociatedLinkId(cable_id, fiber_no);
+            objfiberLinkAssociation.fiberStatusLst = new BLMisc().GetDropDownList("", DropDownType.FiberStatus.ToString());
+            return PartialView("_AssociateFiberStatus", objfiberLinkAssociation);
         }
         public string getFirstErrorFromModelState()
         {
