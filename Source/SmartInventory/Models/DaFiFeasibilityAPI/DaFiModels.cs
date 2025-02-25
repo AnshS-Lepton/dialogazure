@@ -8,6 +8,75 @@ using System.Threading.Tasks;
 
 namespace Models.DaFiFeasibilityAPI
 {
+    #region Enterprise Feasibility response
+   
+    public class Location
+    {
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+    }
+
+    public class RouteSegment
+    {
+        public string geometry { get; set; }
+        public double length { get; set; }
+    }
+
+    public class Routes
+    {
+        public RouteSegment customer_to_road { get; set; }
+        public RouteSegment road_path { get; set; }
+        public RouteSegment structure_to_road { get; set; }
+    }
+
+    public class Structure
+    {
+        public string structure_type { get; set; }        
+        public string structure_id { get; set; }
+        public Location location { get; set; }
+        public Routes route { get; set; }
+        public List<RouteBuffer> cables_in_route_buffer { get; set; }
+    }
+    public class ProStructure
+    {
+        public Location location { get; set; }
+        public Routes route { get; set; }
+        public List<RouteBuffer> cables_in_route_buffer { get; set; }
+    }
+    public class Points
+    {
+        public string start_point { get; set; }
+        public string end_point { get; set; }
+
+    }
+    public class ResponseData
+    {        
+        public string request_id { get; set; }
+        public double customer_latitude { get; set; }
+        public double customer_longitude { get; set; }
+        public Structure nearest_structure { get; set; }
+        public ProStructure proposed_structure { get; set; }
+        
+
+    }
+
+    public class GeoData
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("coordinates")]
+        public List<List<double>> Coordinates { get; set; }
+    }
+    public class RouteBuffer
+    {
+        public string cable_network_id { get; set; }
+        public string cable_name { get; set; }
+        public string geometry { get; set; }
+    }
+
+
+    #endregion
     public class DaFiFeasibilityResponse
     {
         public string request_id { get; set; }

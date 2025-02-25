@@ -37,7 +37,7 @@ namespace BusinessLogics.DaFiFeasibilityAPI
             }
         }
 
-        public List<Route> GetNewFiberRoutes(string request_id, string a_lat_lng, string z_lat_lng, int fiber_cores, string apiKey, double a_buffer, double z_buffer)
+        public List<Route> GetNewFiberRoutes(string request_id, string a_lat_lng, string z_lat_lng, string apiKey, double a_buffer)
         {
             var dir = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(a_lat_lng, z_lat_lng, apiKey).Result;
 
