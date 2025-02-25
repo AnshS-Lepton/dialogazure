@@ -2430,6 +2430,7 @@
     <Content Include="Views\FiberLink\_SLDdiagramFiberLink.cshtml" />
     <Content Include="Views\Library\_SplicingNetworkDiagram.cshtml" />
     <Content Include="Views\FiberLink\_AssociateFiberStatus.cshtml" />
+    <Content Include="Views\RingDetails\_ShowTopologyRingDetails.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2500,6 +2501,7 @@
     <Compile Include="Controllers\RedlineController.cs" />
     <Compile Include="Controllers\RegionProvinceController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\RingDetailsController.cs" />
     <Compile Include="Controllers\RosterManagementController.cs" />
     <Compile Include="Controllers\SplicingController.cs" />
     <Compile Include="Controllers\SurveyAreaController.cs" />
