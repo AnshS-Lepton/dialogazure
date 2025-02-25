@@ -3,7 +3,9 @@ using Models;
 using Models.Admin;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using static Mono.Security.X509.X520;
@@ -162,6 +164,43 @@ namespace DataAccess.Admin
 
         }
 
+        public List<TopologyGetSites> Bindtopologygetsites(int system_id,int ring_id,int user_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<TopologyGetSites>("fn_topology_get_sites", new { p_system_id = system_id, p_ring_id= ring_id, p_user_id=user_id }, false);
+
+            }
+            catch { throw; }
+
+        }
+        public List<TopologySegmentCables> Gettopologysegmentcables(int agg1_system_id, int agg2_system_id, int user_id)
+        {
+            try
+            {
+                // Execute stored procedure and get list
+                var segmentCables = repo.ExecuteProcedure<TopologySegmentCables>(
+                    "fn_topology_get_segment_cables",
+                    new
+                    {
+                        p_agg1_site_id = agg1_system_id,
+                        p_agg2_site_id = agg2_system_id,
+                        p_user_id = user_id
+                    },
+                    false
+                ).ToList();
+
+                return segmentCables; // Return the retrieved list (optional)
+            }
+            catch (Exception ex)
+            {
+                // Log the error message (optional)
+                Console.WriteLine($"Error in Gettopologysegmentcables: {ex.Message}");
+                throw;
+            }
+        }
+
+
     }
 
 
@@ -251,7 +290,25 @@ namespace DataAccess.Admin
 
         }
 
+        public void Savetopsegmentcablemapping(int Agg1SystemId, int Agg2SystemId, int userId,int segment_id)
+        {
+            try
+            {
+                repo.ExecuteProcedure<bool>("fn_insert_top_segment_cable_mapping", new
+                    {
+                        p_agg1_system_id = Agg1SystemId,
+                        p_agg2_system_id = Agg2SystemId,
+                        p_user_id = userId,
+                       p_segment_id=segment_id
 
+                }, false);
+                
+
+            }
+
+            catch { throw; }
+
+        }
     }
 
 
@@ -503,7 +560,237 @@ namespace DataAccess.Admin
         }
 
     }
+    public class DAToplologyRegion : Repository<TopologyRegionMaster>
+    {
+    public List<TopologyRegionMaster> getTopologyRegionDetails()
+    {
+        return repo.GetAll().ToList();
+        // return new List<ProjectCodeMaster>();
+    }
+  }
+    public class DAToplologySegment : Repository<TopologySegment>
+    {
+        public List<TopologySegment> getSegmentDetailByIdList(int id)
+        {
+            return repo.GetAll(m => m.region_id == id).ToList();
+        }
+        public TopologySegment GetSegmentCode()
+        {
+            TopologySegment objTopologyPlan = new TopologySegment();
+            int maxSequence = repo.GetAll().Max(m => (int?)m.sequence) ?? 0;
+            int newSequence = maxSequence + 1;
+
+            // Get the latest segment_code and increment
+            string lastSegmentCode = repo.GetAll()
+                .OrderByDescending(m => m.sequence)
+                .Select(m => m.segment_code)
+                .FirstOrDefault();
+
+            string newSegmentCode = GenerateNextSegmentCode(lastSegmentCode);
+            objTopologyPlan.sequence = newSequence;
+            objTopologyPlan.segment_code = newSegmentCode;
+            return objTopologyPlan;
+        }
+        private string GenerateNextSegmentCode(string lastSegmentCode)
+        {
+            if (string.IsNullOrEmpty(lastSegmentCode) || !lastSegmentCode.StartsWith("ACC"))
+            {
+                return "ACC01"; // Default value if no valid segment code exists
+            }
+
+            // Extract the number part (e.g., "ACC08" -> "08")
+            string numberPart = lastSegmentCode.Substring(3);
+
+            // Convert to integer and increment
+            if (int.TryParse(numberPart, out int numericValue))
+            {
+                return $"ACC{(numericValue + 1):D2}"; // Ensures two-digit format (e.g., ACC09, ACC10)
+            }
+
+            return "ACC01"; // Fallback in case of parsing error
+        }
+
+    }
+    public class DAToplologyRing : Repository<TopologyRingMaster>
+    {
+        public List<TopologyRingMaster> getRingDetailByIdList(int segment_Id)
+        {
+            return repo.GetAll(m => m.segment_id == segment_Id).ToList();
+        }
+        public TopologyRingMaster GetRingCode()
+        {
+            TopologyRingMaster objTopologyPlan = new TopologyRingMaster();
+            int maxSequence = repo.GetAll().Max(m => (int?)m.sequence) ?? 0;
+            int newSequence = maxSequence + 1;
+            string ringCode = "R" + newSequence;
+
+            //string newRingCode = GenerateNextSegmentCode(lasringCode);
+            objTopologyPlan.ring_code = ringCode;
+            objTopologyPlan.sequence = newSequence;
+            return objTopologyPlan;
+        }
+        private string GenerateNextSegmentCode(string lastRingCode)
+        {
+            if (string.IsNullOrEmpty(lastRingCode) || !lastRingCode.StartsWith("R"))
+            {
+                return "R1"; // Default if no valid ring code exists
+            }
+
+            // Extract numeric part from the last ring code
+            string numberPart = lastRingCode.Substring(1); // Get everything after "R"
+
+            // Convert to integer and increment
+            if (int.TryParse(numberPart, out int numericValue))
+            {
+                return $"R{numericValue + 1}"; // No leading zeros (R1, R2, R10)
+            }
+
+            return "R1"; // Fallback if parsing fails
+        }
+
+        public TopologyRingMaster SaveRing(TopologyRingMaster topologyRingMaster)
+        {
+            
+            int maxSequence = repo.GetAll().Max(m => (int?)m.sequence) ?? 0;
+            int newSequence = maxSequence + 1;
+            topologyRingMaster.sequence = newSequence;
+            // Insert the new segment into the database
+            var topologyResp = repo.Insert(topologyRingMaster);
+            return topologyResp;
+        }
+
+    }
+
+    //public class DAToplologyPlan : Repository<TopologyPlan>
+    //{
+    //    //public TopologyPlan SaveToploogyPlan(TopologyPlan objTopologyPlan)
+    //    //{
+    //    //    var TopologyResp = repo.Insert(objTopologyPlan);
+    //    //    return TopologyResp;
+    //    //}
+    //}
+    public class DASegment : Repository<TopologySegment>
+    {
+        public List<TopologySegment> GetSegment(TopologySegment topologySegment)
+        {
+            if (topologySegment == null || string.IsNullOrEmpty(topologySegment.agg1_site_id) || string.IsNullOrEmpty(topologySegment.agg2_site_id))
+            {
+                return new List<TopologySegment>(); // Return empty list instead of null
+            }
+
+            //return repo.GetAll(m => m.agg1_site_id != null && m.agg2_site_id != null && m.agg1_site_id.ToUpper() == topologySegment.agg1_site_id.ToString().ToUpper() && m.agg2_site_id.ToUpper() == topologySegment.agg2_site_id.ToUpper()).ToList();
+            return repo.GetAll(m =>  m.agg1_site_id.ToUpper() == topologySegment.agg1_site_id.ToString().ToUpper() && m.agg2_site_id.ToUpper() == topologySegment.agg2_site_id.ToString().ToUpper()).ToList();
+
+        }
+
+        public TopologySegment SaveSegment(TopologySegment objTopologyPlan)
+        {
+            // Get the latest segment_code from the database
+            //var lastSegment = repo.GetAll()
+            //                      .Where(s => s.segment_code.StartsWith("ACC")) // Ensure it's an ACC code
+            //                      .OrderByDescending(s => s.segment_code)
+            //                      .FirstOrDefault();
+
+            //if (lastSegment != null && lastSegment.segment_code.Length >= 5)
+            //{
+            //    // Extract numeric part of segment_code (e.g., "04" from "ACC04")
+            //    string numberPart = lastSegment.segment_code.Substring(3); // Get last two digits
+
+            //    if (int.TryParse(numberPart, out int numericCode))
+            //    {
+            //        // Increment numeric part
+            //        numericCode++;
+
+            //        // Format back to "ACC05", "ACC06", etc.
+            //        objTopologyPlan.segment_code = "ACC" + numericCode.ToString("D2");
+            //    }
+            //}
+            //else
+            //{
+            //    // If no previous segment exists, start from ACC01
+            //    objTopologyPlan.segment_code = "ACC01";
+            //}
+            int maxSequence = repo.GetAll().Max(m => (int?)m.sequence) ?? 0;
+            int newSequence = maxSequence + 1;
+            objTopologyPlan.sequence = newSequence;
+            // Insert the new segment into the database
+            var topologyResp = repo.Insert(objTopologyPlan);
+            return topologyResp;
+        }
 
 
 
+    }
+
+    public class DAPodMaster : Repository<PODMaster>
+    {
+        public List<PODMaster> getSiteIdList(string  siteId)
+        {
+            var sitname = repo.GetAll(m => m.site_id.ToUpper().Contains(siteId.ToUpper())).ToList();
+
+            return sitname;
+           
+        }
+        public List<PODMaster> getSiteNameList(string site_name)
+        {
+            var sitname = repo.GetAll(m => m.site_name.ToUpper().Contains(site_name.ToUpper())).ToList();
+
+            return sitname;
+        }
+        public List<PODMaster> getAGG1List(string agg1)
+        {
+            var sitname = repo.GetAll(m => m.agg_01.ToUpper().Contains(agg1.ToUpper())).ToList();
+
+            return sitname;
+        }
+        public List<PODMaster> getAGG2List(string agg2)
+        {
+            var sitname = repo.GetAll(m => m.agg_02.ToUpper().Contains(agg2.ToUpper())).ToList();
+
+            return sitname;
+        }
+
+        public PODMaster updatetopology(PODMaster objPODMaster)
+        {
+            // Retrieve the existing record
+            var objPOD = repo.Get(x => x.system_id == objPODMaster.system_id);
+
+            if (objPOD == null)
+            {
+                throw new Exception("Record not found");
+            }
+
+            // Update properties with new values (only update if new values are provided)
+            objPOD.ring_site_id = objPODMaster.ring_site_id;
+            objPOD.ring_site_seq = objPODMaster.ring_site_seq;
+            objPOD.site_id = objPODMaster.site_id;
+            objPOD.site_name = objPODMaster.site_name;
+            objPOD.agg_01 = objPODMaster.agg_01;
+            objPOD.agg_02 = objPODMaster.agg_02;
+            objPOD.ring_a_site_id = objPODMaster.ring_a_site_id;
+            objPOD.ring_b_site_id = objPODMaster.ring_b_site_id;
+            objPOD.ring_a_site_distance = objPODMaster.ring_a_site_distance;
+            objPOD.ring_b_site_distance = objPODMaster.ring_b_site_distance;
+            objPOD.top_type = objPODMaster.top_type;
+            objPOD.ring_site_seq = objPODMaster.ring_site_seq;
+
+            // Save changes
+            var TopologyResp = repo.Update(objPOD);
+            return TopologyResp;
+        }
+
+    }
+
+    public class DASegmentCableMapping : Repository<TopSegmentCableMapping>
+    {
+        public TopSegmentCableMapping updateSegmentCableMappings(TopSegmentCableMapping topSegmentCableMapping)
+        {
+           
+            
+
+            var resultItem = repo.Update(topSegmentCableMapping);
+
+            return resultItem;
+        }
+    }
 }
