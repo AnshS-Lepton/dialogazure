@@ -209,6 +209,18 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<Points> getStartEndPointsFeasibility(string coordinates)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<Points>("fn_get_start_endpoints", new
+                {
+                    p_coordinates = coordinates
+
+                });
+            }
+            catch { throw; }
+        }
         public List<EntityDetailWithAttribute> GetNearByEntitiesWithAttribute(double latitude, double longitude, int bufferInMtr, int ticket_id, int user_id)
         {
             try

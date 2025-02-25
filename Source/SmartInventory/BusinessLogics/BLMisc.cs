@@ -75,6 +75,11 @@ namespace BusinessLogics
             return objDAMisc.getRouteBufferFeasibility(coordinates,route_buffer);
 
         }
+        public List<Points> getStartEndPointsFeasibility(string coordinates)
+        {
+            return objDAMisc.getStartEndPointsFeasibility(coordinates);
+
+        }
         public List<EntityDetailWithAttribute> GetNearByEntitiesWithAttribute(double latitude, double longitude, int bufferInMtr, int ticket_id, int user_id = 0)
         {
             return objDAMisc.GetNearByEntitiesWithAttribute(latitude, longitude, bufferInMtr,ticket_id, user_id);

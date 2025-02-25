@@ -43,7 +43,12 @@ namespace Models.DaFiFeasibilityAPI
         public Routes route { get; set; }
         public List<RouteBuffer> cables_in_route_buffer { get; set; }
     }
+    public class Points
+    {
+        public string start_point { get; set; }
+        public string end_point { get; set; }
 
+    }
     public class ResponseData
     {        
         public string request_id { get; set; }

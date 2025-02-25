@@ -51,10 +51,13 @@ namespace IntegrationServices.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "No structure found within the buffer range!" });
                 }
+
                 var proposedStructure= new ProStructure();
                 var nearestStructure = new Structure();
+
                 #region nearest_structure
                 #region get latitude and longitude from db
+
                 double strLlongitude = 0, strLatitude = 0, endLongitude = 0, endLatitude = 0;
                // Extract coordinates using regex
                 string pattern = @"POINT\s*\((.*?)\)";
@@ -81,15 +84,21 @@ namespace IntegrationServices.Controllers
                         StrRoadpathLongitude = coord[0]; StrRoadpathLatitude = coord[1];
                         nearestlatlngdata += StrRoadpathLongitude + " " + StrRoadpathLatitude + ",";
                     }
+                   
                     nearestlatlngdata = nearestlatlngdata.TrimEnd(',');
+                    string inputcoordinates = "LINESTRING("+ nearestlatlngdata+")";
+                    List<Points> points = new BLMisc().getStartEndPointsFeasibility(inputcoordinates);
+                    string geo_end_point = getLatLongDetails( points[0].end_point);
+                    string[] end_point = geo_end_point.Split(' ');
+
                     var customer_to_road_routeData = GetRouteList(latitude, longitude, StrRoadpathLatitude, StrRoadpathLongitude);
-                    var structureToRoadRouteData = GetRouteList(latitude, longitude, endLongitude, endLatitude);
+                    var structureToRoadRouteData = GetRouteList(Convert.ToDouble(end_point[1]), Convert.ToDouble(end_point[0]), endLongitude, endLatitude);
                     var nearestlocation = CreateLocation(latitude, longitude);
                     var customerToRoadRouteSegment = bindRouteData(customer_to_road_routeData[0].geojson_new_built, customer_to_road_routeData[0].total_new_length);
                     var roadPathRouteSegment = bindRouteData(roadPathRouteApiData[0].geojson_new_built, roadPathRouteApiData[0].total_new_length);
                     var structureToRoadRouteSegment = bindRouteData(structureToRoadRouteData[0].geojson_new_built, structureToRoadRouteData[0].total_new_length);
                     var route = getRoutesDetails(customerToRoadRouteSegment, roadPathRouteSegment, structureToRoadRouteSegment);
-                    nearestStructure = bindStructureData(lstentities[0].entity_type/*structure_type*/, lstentities[0].display_name/*structure_id*/, nearestlocation, route, nearestlatlngdata,route_buffer);
+                    nearestStructure = bindStructureData(lstentities[0].entity_title/*structure_type*/, lstentities[0].display_name/*structure_id*/, nearestlocation, route, nearestlatlngdata,route_buffer);
 
                 }
 
@@ -101,20 +110,15 @@ namespace IntegrationServices.Controllers
                int i=0;
                 if(lstentities.Count>1)
                     i = 1;
-                string proPattern = @"LINESTRING\s*\((.*?)\)";
+                string proPattern = @"POINT\s*\((.*?)\)";
                 Match matchPro = Regex.Match(lstentities[i].geom, proPattern);
                 if (matchPro.Success)
                 {
                     string proCoordinates = matchPro.Groups[1].Value;
-                    string[] proMainLine = proCoordinates.Split(',');
-                    int proLineCount = proMainLine.Length;
-                    string[] proLines = proMainLine[0].Split(' ');
-                    
+                    string[] proLines = proCoordinates.Split(' ');
+                    int proLineCount = proLines.Length;
                     strProLatitude = double.Parse(proLines[0]);
                     strProLongitude = double.Parse(proLines[1]);
-                    string[] proLastLines = proMainLine[proLineCount - 1].Split(' ');
-                    endProLongitude = double.Parse(proLastLines[0]);
-                    endProLatitude = double.Parse(proLastLines[1]);
                 }
 
 
@@ -134,6 +138,13 @@ namespace IntegrationServices.Controllers
                         latlngdata += proposedStrRoadpathLongitude + " " + proposedstrRoadpathLatitude + ",";
                     }
                     latlngdata = latlngdata.TrimEnd(',');
+                    string inputprocoordinates = "LINESTRING(" + latlngdata + ")";
+                    List<Points> propoints = new BLMisc().getStartEndPointsFeasibility(inputprocoordinates);
+                    string geo_proend_point = getLatLongDetails(propoints[0].end_point);
+                    string[] proend_point = geo_proend_point.Split(' ');
+                    endProLatitude = double.Parse(proend_point[1]);
+                    endProLongitude = double.Parse(proend_point[0]);
+
                     var proposedCustomerToRoadRouteData = GetRouteList(latitude, longitude, proposedstrRoadpathLatitude, proposedStrRoadpathLongitude);
                     var proposedStructureToRoad = GetRouteList(endProLatitude, endProLongitude, proposedstrRoadpathLatitude, proposedStrRoadpathLongitude);
                     var proposedNearestlocation = CreateLocation(latitude, longitude);
@@ -142,13 +153,10 @@ namespace IntegrationServices.Controllers
                     var proposedStructureToRoadRouteSegment = bindRouteData(proposedStructureToRoad[0].geojson_new_built, proposedStructureToRoad[0].total_new_length);
                     var proposedroute = getRoutesDetails(proposedCustomerToRoadRouteSegment, proposedRoadPathRouteSegment, proposedStructureToRoadRouteSegment);
 
-                     proposedStructure = bindProposedStructureData(lstentities[i].entity_type/*structure_type*/, lstentities[i].display_name/*structure_id*/, proposedNearestlocation, proposedroute, latlngdata, route_buffer);
+                     proposedStructure = bindProposedStructureData(lstentities[i].entity_title/*structure_type*/, lstentities[i].display_name/*structure_id*/, proposedNearestlocation, proposedroute, latlngdata, route_buffer);
                 }
                    
                 #endregion
-
-
-
 
                 var responseData = new ResponseData
                 {
@@ -159,7 +167,6 @@ namespace IntegrationServices.Controllers
                     proposed_structure = proposedStructure,
                     
                 };
-
                 return this.Request.CreateResponse(HttpStatusCode.OK, responseData);
             }
             catch (Exception ex)
@@ -341,6 +348,25 @@ namespace IntegrationServices.Controllers
             }
         }
 
+        public static string getLatLongDetails(string geom)
+        {
+            
+            string pointPattern = @"POINT\s*\((.*?)\)";
+
+            // Check if it is a POINT
+            Match pointMatch = Regex.Match(geom, pointPattern);
+            if (pointMatch.Success)
+            {
+                string proCoordinates = pointMatch.Groups[1].Value;
+                string[] proLines = proCoordinates.Split(' ');
+                int proLineCount = proLines.Length;
+                double longitude = double.Parse(proLines[1]);
+                double latitude = double.Parse(proLines[0]);
+                return $"{latitude} {longitude}"; // Return in "lat, lon" format
+            }
+
+            throw new ArgumentException("Invalid geometry format");
+        }
         public Location CreateLocation(double latitude, double longitude)
         {
             return new Location

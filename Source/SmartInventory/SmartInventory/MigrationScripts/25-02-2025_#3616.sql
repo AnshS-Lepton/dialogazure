@@ -29,14 +29,14 @@ Raise info 'MTRBUFFER ->%',MTRBUFFER;
 Raise info 'v_geometry_with_buffer ->%',v_geometry_with_buffer;
 
     -- Get Role ID
-   -- SELECT ROLE_ID INTO v_role_id FROM USER_MASTER WHERE USER_ID = P_USER_ID;
+    --SELECT ROLE_ID INTO v_role_id FROM USER_MASTER WHERE USER_ID = P_USER_ID;
 
     -- Return Pole (Point) Data
     RETURN QUERY 
     SELECT 
         'Point' AS geom_type, 
         PTM.ENTITY_TYPE, 
-        PTM.COMMON_NAME AS entity_title, 
+		ld.layer_title AS entity_title, 
         PTM.SYSTEM_ID, 
         PTM.COMMON_NAME, 
         ST_astext(PTM.SP_GEOMETRY) AS geom, 
@@ -45,30 +45,34 @@ Raise info 'v_geometry_with_buffer ->%',v_geometry_with_buffer;
         PTM.DISPLAY_NAME, 
         COALESCE(PTM.NO_OF_PORTS::text, 'N/A') AS total_core
     FROM POINT_MASTER PTM
+	inner join layer_details ld on ld.layer_name=PTM.entity_type
     WHERE 
 	UPPER(PTM.ENTITY_TYPE) IN ('MANHOLE', 'POLE') AND
      ST_WITHIN(PTM.SP_GEOMETRY, v_geometry_with_buffer)
+	 ORDER BY ST_Distance(PTM.SP_GEOMETRY, ST_GeomFromText('POINT('||LNG||' '||LAT||')', 4326)) asc
     LIMIT 1;
 
     -- Return Cable (Line) Data
     RETURN QUERY 
     SELECT 
         'Line' AS geom_type, 
-        L.ENTITY_TYPE, 
-        L.COMMON_NAME AS entity_title, 
+        L.ENTITY_TYPE,
+		ld.layer_title AS entity_title, 
         L.SYSTEM_ID, 
         L.COMMON_NAME, 
-        ST_astext(L.SP_GEOMETRY) AS geom, 
+        ST_AsText(ST_ClosestPoint(L.SP_GEOMETRY, ST_SetSRID(ST_MakePoint(lng, lat), 4326))) AS geom, 
         ST_astext(ST_Centroid(L.SP_GEOMETRY)) AS centroid_geom, 
         L.NETWORK_STATUS, 
         L.DISPLAY_NAME, 
         COALESCE(CBL.TOTAL_CORE::text, '0') || 'F' AS total_core
     FROM LINE_MASTER L
+	inner join layer_details ld on ld.layer_name=L.entity_type
     LEFT JOIN att_details_cable CBL 
         ON L.SYSTEM_ID = CBL.SYSTEM_ID
     WHERE 
 	UPPER(L.ENTITY_TYPE) = 'CABLE' AND 
     ST_INTERSECTS(ST_MAKEVALID(L.SP_GEOMETRY), v_geometry_with_buffer)
+	ORDER BY ST_Distance(ST_ClosestPoint(L.SP_GEOMETRY,ST_SetSRID(ST_MakePoint(lng, lat), 4326)), ST_SetSRID(ST_MakePoint(lng, lat), 4326)) asc
     LIMIT 1;
 END
 $BODY$;
@@ -120,4 +124,20 @@ $BODY$;
 
 ALTER FUNCTION public.fn_getroutebufferfeasibility(text, integer)
     OWNER TO postgres;
+
+    ------------------------------------------Get start and end point of cable--------------------------------------------
+    CREATE OR REPLACE FUNCTION public.fn_get_start_endpoints(
+	p_line_geom TEXT)
+    RETURNS TABLE(start_point TEXT, end_point TEXT) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+BEGIN
+    RETURN QUERY 
+    SELECT ST_astext(ST_StartPoint(p_line_geom)), ST_astext(ST_EndPoint(p_line_geom));
+END;
+$BODY$;
 
