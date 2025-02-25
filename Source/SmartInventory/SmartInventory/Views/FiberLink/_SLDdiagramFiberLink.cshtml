@@ -330,9 +330,7 @@
         }
         // Called when the Visualization API is loaded.
         function draw(direction) {
-
-             
-            if (edges != undefined && edges.length > 0) {
+            if ((edges != undefined && edges.length > 0 )|| direction != undefined) {
                 $("#btnExport").prop('disabled', false);
                 // create a network
                 var options;
@@ -450,12 +448,12 @@
                 $('.vis-network > canvas').attr('id', 'myCanavas');
             }
             else {
+                console.log("Inselse");
                 $("#btnExport").prop('disabled', true);
-                $('#mynetwork').innerHTML = '<div style="text-align: center; margin-top: 100px; font: 20px bold; color: #ff0000;">No network found!.</div>';
+                $('#mynetwork').html('<div style="text-align: center; margin-top: 100px; font: 20px bold; color: #ff0000;">Please check the splicing to properly view the fiber link schematic.</div>');
             }
         }
         function drawSpiderDiagram() {
-
             if (edges != undefined && edges.length > 0) {
 
                 $("#btnExport").prop('disabled', false);
