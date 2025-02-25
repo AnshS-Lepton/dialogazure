@@ -13459,7 +13459,7 @@ namespace SmartInventory.Controllers
                 objToplogyPlan.lstnoofsites = new BLMisc().GetToplogyDropDownList(DropDownType.NoOf_Sites.ToString());
                 objToplogyPlan.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
                 objToplogyPlan.max_distance_peer = ApplicationSettings.MaxSitePeerDisatence;
-               objToplogyPlan.lsttopologygetsites = new BLProject().Bindtopologygetsites(objToplogyPlan.system_id, 1,5).ToList();
+               //objToplogyPlan.lsttopologygetsites = new BLProject().Bindtopologygetsites(objToplogyPlan.system_id, 1, Convert.ToInt32(Session["user_id"])).ToList();
 
             }
             catch (Exception ex)
@@ -13498,7 +13498,7 @@ namespace SmartInventory.Controllers
         {
             PODMaster pODMaster = new PODMaster();
             // Fetch segments based on regionId
-            pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsites(systemId, ringId, 5).ToList();
+            pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsites(systemId, ringId, Convert.ToInt32(Session["user_id"])).ToList();
 
 
             // Return as JSON
@@ -13630,8 +13630,8 @@ namespace SmartInventory.Controllers
                 topologySegment.agg1_site_id = agg1_site_id;
                 topologySegment.agg2_site_id = agg2_site_id;
                 topologySegment.description = description;
-                var topology_get_segment_cables= new BLProject().Gettopologysegmentcables(Agg1SystemId, Agg2SystemId, 5).ToList();
-                new BLProject().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId,5, segment_id);
+                var topology_get_segment_cables= new BLProject().Gettopologysegmentcables(Agg1SystemId, Agg2SystemId, Convert.ToInt32(Session["user_id"])).ToList();
+                new BLProject().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId, Convert.ToInt32(Session["user_id"]), segment_id);
                 // Save to database
                 topologySegment = new BLProject().SaveSegment(topologySegment);
 

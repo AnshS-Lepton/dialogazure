@@ -622,16 +622,11 @@ namespace DataAccess.Admin
             TopologyRingMaster objTopologyPlan = new TopologyRingMaster();
             int maxSequence = repo.GetAll().Max(m => (int?)m.sequence) ?? 0;
             int newSequence = maxSequence + 1;
+            string ringCode = "R" + newSequence;
 
-            // Get the latest segment_code and increment
-            string lasringCode = repo.GetAll()
-                .OrderByDescending(m => m.sequence)
-                .Select(m => m.ring_code)
-                .FirstOrDefault();
-
-            string newRingCode = GenerateNextSegmentCode(lasringCode);
+            //string newRingCode = GenerateNextSegmentCode(lasringCode);
+            objTopologyPlan.ring_code = ringCode;
             objTopologyPlan.sequence = newSequence;
-            objTopologyPlan.ring_code = newRingCode;
             return objTopologyPlan;
         }
         private string GenerateNextSegmentCode(string lastRingCode)
@@ -777,6 +772,7 @@ namespace DataAccess.Admin
             objPOD.ring_a_site_distance = objPODMaster.ring_a_site_distance;
             objPOD.ring_b_site_distance = objPODMaster.ring_b_site_distance;
             objPOD.top_type = objPODMaster.top_type;
+            objPOD.ring_site_seq = objPODMaster.ring_site_seq;
 
             // Save changes
             var TopologyResp = repo.Update(objPOD);
