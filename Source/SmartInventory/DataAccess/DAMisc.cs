@@ -44,8 +44,8 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
        
+
         public List<DropDownMaster> GetAssociationDropDownList(string enType, string ddType = "")
         {
             try
@@ -1828,7 +1828,14 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
+        public List<DropDownMaster> GetToplogyDropDownList(string ddType)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DropDownMaster>("fn_get_dropdownlist", new { entitytype = "", dropdownType = ddType });
+            }
+            catch { throw; }
+        }
     }
 
     public class DAMisce : Repository<EmailSettingsModel>

@@ -998,6 +998,10 @@ namespace BusinessLogics
         {
             return new DAMisc().GetRegionProvinceBasedOnLocation(geom, userId);
         }
+        public List<DropDownMaster> GetToplogyDropDownList(string ddType)
+        {
+            return objDAMisc.GetToplogyDropDownList(ddType);
+        }
     }
 
     //public class BLUserModule
@@ -1442,7 +1446,7 @@ public class BLWorkAreaMarking
     {
         return DAobj.DeleteMarkings(workSpaceId);
     }
-
+    
 }
 
 

@@ -108,7 +108,10 @@ $(document).ready(function () {
         var province_id = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(32)').attr('data-value');
         var rowAction = '<a href="#" data-value="' + systemId + '"  class="dropdown-toggle rowShowOnMap" title= "' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
         rowAction = rowAction + '<i class="fa fa-globe fa-fw m-r-xs"></i></a>';
-        rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId+','+ region_id+','+province_id + '" class="dropdown-toggle rowShowSiteAwarding" title= "' + MultilingualKey.SI_OSP_GBL_GBL_RPT_002 + '"><i class="fa fa-user-plus"></i></a>';
+        rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + ',' + region_id + ',' + province_id + '" class="dropdown-toggle rowShowSiteAwarding" title= "' + MultilingualKey.SI_OSP_GBL_GBL_RPT_002 + '"><i class="fa fa-user-plus"></i></a>';
+        /* rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + ',' + region_id + ',' + province_id + '" class="dropdown-toggle rowShowTopology" title= "' + 'Topology Plan' + '"><i class="icon-topology"></i></a>';*/
+        rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="dropdown-toggle rowShowTopology" title= "' + 'Topology Plan' + '"><i class="fa fa-user-plus"></i></a>';
+
         $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(0)').html(rowAction);
     });
 
@@ -119,8 +122,14 @@ $(document).ready(function () {
     });
 
     $('.rowShowOnMap').on("click", function () {
+        
         var systemId = $(this).attr('data-value');
         si.ShowEntityOnMap(systemId, 'POD', 'Point'); $(popup.DE.MinimizeModel).trigger("click");
+    });
+    $('.rowShowTopology').on("click", function () {
+        var systemId = $(this).attr('data-value');
+        si.SiteReport.SiteTopology(null, systemId, null, this);
+
     });
 
     if ($("#customedate_chosen").children('a').text().trim() != "Custom") {

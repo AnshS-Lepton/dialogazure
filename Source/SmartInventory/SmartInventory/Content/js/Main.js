@@ -19731,6 +19731,15 @@ var Main = function () {
         }
         popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
     }
+    this.showRingDetails =function () {
+        $(app.DE.InfoDiv).hide();
+        $(app.DE.SplicingDiv).hide();
+        si.resetShapeTools();
+        if (typeof networkdata != "undefined") {
+            networkdata.hideAllNetworkFile();
+        }
+        popup.LoadModalDialog('PARENT', 'RingDetails/ShowTopologyRingDetails', {}, "Ring Details", 'modal-xl');
+    }
 
     this.SaveRoster = function () {
         ;
@@ -24538,6 +24547,41 @@ var Main = function () {
             }
         },
 
+        SiteTopology: function (geom, modeType, radius, obj) {
+            
+            debugger;
+            if (obj) {
+                //$('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
+                //$(obj).addClass('activeToolBar');
+                popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
+                    eType: '', systemid: modeType,
+                }, 'Topology Plan', 'modal-xl');
+            }
+            //if (geom != '' && geom != null) {
+            //    debugger;
+            //    ajaxReq('Report/ValidatePotentialArea', {
+            //        geom: geom, geomType: modeType, buff_Radius: radius
+            //    }, true, function (resp) {
+            //        if (resp.status == 'FAILED' || resp.status == 'ERROR') {
+            //            alert(resp.message);
+            //            return false;
+            //        }
+            //        else {
+            //            debugger;
+            //            popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
+            //                'objReportFilters.geom': geom, 'objReportFilters.geomType': modeType, 'objReportFilters.radius': radius, 'objReportFilters.layerName': 'SITE'
+            //            }, 'Topology Plan', 'modal-xl');
+            //        }
+
+            //    }, true, true, true);
+            //}
+            else {
+                popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
+                    eType: '', systemid: modeType,
+                }, 'Topology Plan', 'modal-xl');
+            }
+        },
+       
         AwardSiteToSelectedVendor: function (user_id, vendorCost) {
 
             if (vendorCost == '' || vendorCost == null)

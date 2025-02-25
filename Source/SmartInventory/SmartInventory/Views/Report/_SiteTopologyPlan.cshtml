@@ -1,0 +1,1039 @@
+﻿@using SmartInventory.Settings;
+@model Models.PODMaster
+<style>
+
+    .btn {
+        font-weight: bold !important;
+        line-height: 1.42857143 !important;
+    }
+
+    .icon-kmldownload {
+        font-size: 20px;
+    }
+
+    .sitePlan_fieldset {
+        padding:0.5rem 1rem 1rem;
+        border: 1px solid #CCCCCC;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+    }
+
+        .sitePlan_fieldset legend {
+            width: auto;
+            border-bottom: none;
+            padding-block: 0.5rem;
+            margin-bottom: 0;
+        }
+    .pose-plus {
+        position: absolute;
+        right: -28px;
+        top: 0;
+        z-index: 9;
+    }
+</style>
+
+<!DOCTYPE html>
+<div class="libDetail" id="topologyid">
+
+
+    @using (Ajax.BeginForm("SaveSiteTopology", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvProgress" },
+                                                    new { id = "frmsittopology", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        <input type="hidden" id="networkIdField" name="network_id" />
+        @Html.HiddenFor(m => m.system_id, new { id = "hdnSystemId" })
+        <input type="hidden" id="hdnAgg1SystemId" name="hdnAgg1SystemId" />
+        <input type="hidden" id="hdnAgg2SystemId" name="hdnAgg2SystemId" />
+        <input type="hidden" id="hdnSequenceId" name="hdnSequenceId" />
+        <input type="hidden" id="hdnsegmentid" name="hdnsegmentid" />
+        @Html.HiddenFor(m => m.ring_site_seq, new { id = "hdnringsiteseq" })
+        @Html.HiddenFor(m => m.ring_a_site_id, new { id = "hdnRingASiteId" })
+        @Html.HiddenFor(m => m.ring_b_site_id, new { id = "hdnRingBSiteId" })
+
+        @*<input type="hidden" id="hdnRingASiteId" name="hdnRingASiteId" />*@
+        @*<input type="hidden" id="hdnRingASiteDistance" name="hdnRingASiteDistance" />*@
+        @Html.HiddenFor(m => m.ring_a_site_distance, new { id = "hdnRingASiteDistance" })
+        @Html.HiddenFor(m => m.ring_b_site_distance, new { id = "hdnRingBSiteDistance" })
+        @*<input type="hidden" id="hdnRingBSiteId" name="hdnRingBSiteId" />*@
+        @*<input type="hidden" id="hdnRingBSiteDistance" name="hdnRingBSiteDistance" />*@
+
+
+        @*@Html.HiddenFor(m => m.system_id)*@
+        <input type="hidden" id="hdnApproveCount" value="0">
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+
+                    <fieldset class="sitePlan_fieldset">
+                        <legend>Topology Plan</legend>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_357 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+
+                                @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_457 :</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.top_type, new SelectList(Model.lsttopologytype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12 ", id = "ddltopologytype" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_458 :</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.ring_capacity, new SelectList(Model.lstringtype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12", id = "ddlringcapacity" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.agg_01, new { @id = "txtagg1", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.agg_02, new { @id = "txtagg2", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_461 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.no_of_sites, new SelectList(Model.lstnoofsites.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12", id = "ddlringcapacity" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 d-flex">
+                                <button class="ml-auto btn btn-primary" id="bdnsearch">Search</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="sitePlan_fieldset" id="fldtopology">
+                        <legend>Dummy text</legend>
+                        <div class="form-group row" id="dvregionId" style="display: block;">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_463  <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstTopologyRegionMaster.Select(x => new { Value = x.id, Text = x.region_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlregionid" })
+                                @*<div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new"><i class="fa fa-plus"></i></button> </div>*@
+
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_464 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
+                                <div class="pose-plus"><button class="btn btn-primary" id="btncreatesegment" title="Create segment"><i class="fa fa-plus"></i></button> </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group row" id="dvringId" style="display:block;">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_465 <i class="clsMandatory">*</i>:</label>
+
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
+                                <div class="pose-plus"><button class="btn btn-primary" id="btncreatering" title="Create Ring"><i class="fa fa-plus"></i></button> </div>
+                            </div>
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_466:</label>
+
+                            <div class="col-sm-4">
+                                @Html.LabelFor(model => model.ring_site_id, new { id = "lbdringsiteId", style = "display: none;" })
+                            </div>
+                            @Html.HiddenFor(model => model.ring_site_id, new { id = "ring_site_id" })
+
+                        </div>
+
+                        <div class="form-group row" id="dvregionId" style="display: block;">
+                            <label class="control-label col-sm-2" for="searchby">Distance from Planned to Existing : <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.ring_a_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.sitedistance, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingASite" })
+                                @*<div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new"><i class="fa fa-plus"></i></button> </div>*@
+
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">Distance from Planned to Existing : <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.ring_b_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.sitedistance, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingBSite" })
+
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+        </div>
+        <div class="ModalFooter d-flex --gap05">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancel" onclick="si.clearTPRelatedObjects();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            <input type="button" formmethod="post" class="btn btn-primary" name="actionTab" id="btnSave" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+        </div>
+
+    }
+
+</div>
+
+<div class="modal fade" id="segmentModal" tabindex="-1" aria-labelledby="segmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header d-flex">
+                <h4 class="modal-title" id="segmentModalLabel">Create Segment</h4>
+                <span class="icon-close ml-auto" id="closedChildPopup" data-bs-dismiss="modal" aria-label="Close"></span>
+            </div>
+            <div class="space-pad">
+                <form id="segmentForm">
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">Region <i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.agg_02, new { @id = "txtregion", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
+
+                            @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.agg_02, new { @id = "txtsegagg1", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">Segment Code:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_460:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="ModalFooter d-flex --gap05">
+                <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnsegCancel">
+                    @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006
+                </a>
+                <input type="button" class="btn btn-primary" name="actionTab" id="btnSaveSegment" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ringModal" tabindex="-1" aria-labelledby="segmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header d-flex">
+                <h4 class="modal-titles" id="segmentModalLabel">Create Segment</h4>
+                <span class="icon-close ml-auto" id="closedChildPopup" data-bs-dismiss="modal" aria-label="Close"></span>
+            </div>
+            <div class="space-pad">
+                <form id="segmentForm">
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">Segment Code <i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegmentcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+
+                            @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">Ring Code <i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.agg_02, new { @id = "txtRingCode", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                           <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtringdesc", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="ModalFooter d-flex --gap05">
+                <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancel" onclick="si.clearTPRelatedObjects();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+                <input type="button" class="btn btn-primary" name="actionTab" id="btnSaveRing" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#GISInfo .input-validation-error").removeClass("input-validation-error");
+        $("#segmentModal .input-validation-error").removeClass("input-validation-error");
+        $("#ringModal .input-validation-error").removeClass("input-validation-error");
+
+        $('.chosen-select').chosen({ width: '100%' });
+        $("#txtnoOfsite").on("input", function () {
+            this.value = this.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+        });
+        $("#txtmaxdistancepeer").on("input", function () {
+            this.value = this.value.replace(/[^0-9.]/g, ''); // Remove invalid characters
+            if ((this.value.match(/\./g) || []).length > 1) {
+                this.value = this.value.slice(0, -1); // Prevent multiple dots
+            }
+        });
+               $("#txtSiteId").autocomplete({
+    source: function (request, response) {
+        $.ajax({
+            url: '@Url.Action("GetSiteIds", "Report")',
+            type: "GET",
+            dataType: "json",
+            data: { term: request.term },
+            success: function (data) {
+                if (data.length === 0) {
+                    response([{ label: "No results found", value: "", siteName: "", systemId: "" }]);
+                } else {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.label,   // Display site_id in dropdown
+                            value: item.value,   // Set site_id in input
+                            siteName: item.siteName, // Set site_name
+                            systemId: item.systemId  // Store system_id
+                        };
+                    }));
+                }
+            }
+        });
+    },
+    minLength: 3,
+    select: function (event, ui) {
+        if (ui.item.value !== "") {
+            $("#txtSiteId").val(ui.item.value);   // Set selected site_id
+            $("#txtSiteName").val(ui.item.siteName); // Set corresponding site_name
+            $("#hdnSystemId").val(ui.item.systemId); // Set system_id in hidden field
+        }
+        return false;
+    }
+});
+
+       @*$("#txtSiteId").autocomplete({
+    source: function (request, response) {
+        $.ajax({
+            url: '@Url.Action("GetSiteIds", "Report")',
+            type: "GET",
+            dataType: "json",
+            data: { term: request.term },
+            success: function (data) {
+                debugger;
+                if (data.length === 0) {
+                    response([{ label: "No results found", value: "", siteName: "" }]); // Show message
+                } else {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.label,  // Display site_id in dropdown
+                            value: item.value,  // Store site_id in textbox
+                            siteName: item.siteName // Pass site_name
+                        };
+                    }));
+                }
+            }
+        });
+    },
+    minLength: 3,
+    select: function (event, ui) {
+        if (ui.item.value !== "") {
+            $("#txtSiteId").val(ui.item.value);   // Set selected site_id
+            $("#txtSiteName").val(ui.item.siteName); // Set corresponding site_name
+        }
+        return false;
+    }
+});*@
+        $("#ddltopologytype").change(function () {
+            debugger;
+            var selectedValue = $(this).val(); // Get selected value
+
+            if (selectedValue === "Ring") {
+                $("#txtagg2").css("display", "block").prop("disabled", false);
+            }
+            else
+            {
+                $("#txtagg2").css("display", "block").prop("disabled", true); // Show and enable
+            }
+        });
+        $("#txtagg1").autocomplete({
+    source: function (request, response) {
+        $.ajax({
+            url: '@Url.Action("GetAGG1", "Report")',
+            type: "GET",
+            dataType: "json",
+            data: { term: request.term },
+            success: function (data) {
+                if (data.length === 0) {
+                    response([{ label: "No results found", value: "", systemId: "" }]);
+                } else {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.label,   // Display agg_01 in dropdown
+                            value: item.value,   // Set agg_01 in input
+                            systemId: item.systemId  // Store system_id
+                        };
+                    }));
+                }
+            }
+        });
+    },
+    minLength: 3,
+    select: function (event, ui) {
+        if (ui.item.value !== "") {
+            $("#txtagg1").val(ui.item.value);   // Set selected agg_01
+            $("#hdnAgg1SystemId").val(ui.item.systemId); // Set system_id in hidden field
+        }
+        return false;
+    }
+});
+
+        @*$("#txtagg1").autocomplete({
+    source: function (request, response) {
+        $.ajax({
+            url: '@Url.Action("GetAGG1", "Report")',
+            type: "GET",
+            dataType: "json",
+            data: { term: request.term },
+            success: function (data) {
+                if (data.length === 0) {
+                    response([{ label: "No results found", value: "", siteName: "" }]); // Show message
+                } else {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.label,  // Display site_id in dropdown
+                            value: item.value,  // Store site_id in textbox
+                        };
+                    }));
+                }
+            }
+        });
+    },
+    minLength: 3,
+    select: function (event, ui) {
+        if (ui.item.value !== "") {
+            $("#txtagg1").val(ui.item.value);   // Set selected site_id
+        }
+        return false;
+    }
+});*@
+        @*$("#txtagg2").autocomplete({
+    source: function (request, response) {
+        $.ajax({
+            url: '@Url.Action("GetAGG2", "Report")',
+            type: "GET",
+            dataType: "json",
+            data: { term: request.term },
+            success: function (data) {
+                if (data.length === 0) {
+                    response([{ label: "No results found", value: "", siteName: "" }]); // Show message
+                } else {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.label,  // Display site_id in dropdown
+                            value: item.value,  // Store site_id in textbox
+                        };
+                    }));
+                }
+            }
+        });
+    },
+    minLength: 3,
+    select: function (event, ui) {
+        if (ui.item.value !== "") {
+            $("#txtagg2").val(ui.item.value);   // Set selected site_id
+        }
+        return false;
+    }
+});*@
+        $("#txtagg2").autocomplete({
+    source: function (request, response) {
+        $.ajax({
+            url: '@Url.Action("GetAGG2", "Report")',
+            type: "GET",
+            dataType: "json",
+            data: { term: request.term },
+            success: function (data) {
+                if (data.length === 0) {
+                    response([{ label: "No results found", value: "", systemId: "" }]);
+                } else {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.label,   // Display agg_02 in dropdown
+                            value: item.value,   // Set agg_02 in input
+                            systemId: item.systemId  // Store system_id
+                        };
+                    }));
+                }
+            }
+        });
+    },
+    minLength: 3,
+    select: function (event, ui) {
+        if (ui.item.value !== "") {
+            $("#txtagg2").val(ui.item.value);   // Set selected agg_02
+            $("#hdnAgg2SystemId").val(ui.item.systemId); // Store system_id in hidden field
+        }
+        return false;
+    }
+});
+
+        $('#ddlregionid').change(function () {
+            debugger;
+        var regionId = $(this).val(); // Get the selected RegionId
+
+        if (regionId) {
+        $.ajax({
+            url: '@Url.Action("GetSegmentsByRegion", "Report")', // Action to fetch ring types
+            type: 'GET',
+            data: { id: regionId }, // Pass selected regionId to the server
+            success: function (data) {
+                // Populate the Ring Type Dropdown
+                var segmenttype = $('#ddlsegment');
+                segmenttype.empty(); // Clear existing options
+                segmenttype.append('<option value="">--Select Ring Type--</option>');
+
+                // Append options from the data
+                $.each(data, function (index, item) {
+                    segmenttype.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                });
+                segmenttype.trigger("chosen:updated");
+            },
+            error: function () {
+                alert("Error fetching ring types. Please try again.");
+            }
+        });
+    } else {
+        // Clear the ringtype dropdown if no region is selected
+       // $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
+            }
+            $('#ddlsegment').change(function () {
+                debugger;
+            var segmentId = $(this).val(); // Get the selected SegmentId
+
+    if (segmentId) {
+       $.ajax({
+    url: '@Url.Action("GetRingTypesByRegion", "Report")', // Fetch ring types
+    type: 'GET',
+    data: { segmentId: segmentId }, // Pass the selected segment ID
+    success: function (data) {
+        var ringTypeDropdown = $('#ddlringtype'); // Ensure correct variable name
+        ringTypeDropdown.empty(); // Clear existing options
+        ringTypeDropdown.append('<option value="">--Select Ring Type--</option>');
+
+        // Append new options from response
+        $.each(data, function (index, item) {
+            ringTypeDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+        });
+
+        // **Update Chosen Dropdown**
+        ringTypeDropdown.trigger("chosen:updated"); // Fix variable name
+
+
+    },
+    error: function () {
+        alert("Error fetching ring types. Please try again.");
+    }
+});
+
+    } else {
+        // Clear the ringtype dropdown if no segment is selected
+        $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
+                }
+
+            });
+
+            $("#ddlringtype").on("change", function () {
+                debugger;
+                var region = $("#ddlregionid option:selected").text();
+                var segment = $("#ddlsegment option:selected").text();
+                var ringtype = $("#ddlringtype option:selected").text();
+                var networkIdValue = region + "-" + segment + "-" + ringtype;
+                $("#lbdringsiteId").text(networkIdValue).css("display", "block");
+                $("#ring_site_id").val(networkIdValue);
+                //$("#networkIdField").val(networkIdValue);
+                var ringid = $("#ddlringtype").val();
+                var systemId = $("#hdnSystemId").val();
+                $.ajax({
+                    url: '@Url.Action("Gettopologygetsites", "Report")',
+                   type: "GET",
+                  dataType: "json",
+                    data: { systemId: systemId, ringId: ringid },
+        success: function (response) {
+            if (response.lsttopologygetsites.length > 0) {
+               
+                var dropdownA = $("#ddlRingASite");
+                var dropdownB = $("#ddlRingBSite");
+
+                // Clear existing options
+                dropdownA.empty();
+                dropdownB.empty();
+
+                // Append default option
+                dropdownA.append('<option value="">--Select--</option>');
+                dropdownB.append('<option value="">--Select--</option>');
+
+                // Append new options from response
+                $.each(response.lsttopologygetsites, function (index, item) {
+                    var optionHtml = '<option value="' + item.siteid + '" data-distance="' + item.sitedistance + '">' + item.sitename + '</option>';
+                    dropdownA.append(optionHtml);
+                    dropdownB.append(optionHtml);
+                });
+
+                // Refresh dropdowns
+                dropdownA.trigger("chosen:updated");
+                dropdownB.trigger("chosen:updated");
+            } else {
+                //alert("No sites found for the selected system.");
+            }
+        },
+        error: function () {
+            alert("Error fetching topology sites. Please try again.");
+        }
+    });
+
+            });
+
+
+        });
+        $('#btnSave').click(function (e) {
+            e.preventDefault(); // Prevent default button action
+            var isValid = true;
+            debugger;
+            //  Validate all fields
+            var SiteId = $('#txtSiteId').val();
+            var SiteName = $("#txtSiteName").val();
+            var agg1 = $("#txtagg1").val();
+            var agg2 = $("#txtagg2").val();
+            var noOfsite = $("#txtnoOfsite").val();
+            var maxdistancepeer = $("#txtmaxdistancepeer").val();
+            var systemId = $("#hdnSystemId").val();
+
+            var regionid = $("#ddlregionid").val();
+            var segment = $("#ddlsegment").val();
+            var regionValue = $('#ddlregionid').val().trim();
+            if (regionValue == '') {
+                $('#ddlregionid').css("border-color", "red");
+                isValid = false; // Stop form submission
+            } else {
+                $('#ddlregionid').css("border-color", "");
+            }
+            validateField("#txtSiteId");
+            validateField("#txtSiteName");
+            validateField("#txtagg1");
+            validateField("#txtagg2");
+            validateField("#txtnoOfsite");
+            validateField("#txtmaxdistancepeer");
+           // validateField(segment);
+            function validateField(selector) {
+                var field = $(selector); // Ensure it's a jQuery object
+
+                if (field.length === 0) {
+                    console.error("Field not found:", selector);
+                    return false; // Exit and return false
+                }
+
+                var fieldValue = field.val(); // Get value safely
+                if (!fieldValue || fieldValue.trim() === "") {
+                    field.css("border-color", "red");
+                    isValid = false;
+                } else {
+                    field.css("border-color", ""); // Reset border color
+                }
+
+                return isValid; // Return validation result
+            }
+
+
+            // Perform AJAX request to submit the form
+            if (isValid) {
+                debugger;
+                $.ajax({
+                    url: '/Report/SaveSiteTopology', // Adjust URL as needed
+                    type: 'POST',
+                    data: $('#frmsittopology').serialize(), // Serialize form data
+                    success: function (response) {
+                        debugger;
+                        if (response.Success) {
+                            // Show success message
+                            alert(response.Message);
+                            $('#closeChildPopup').trigger("click");
+                        } else {
+                            // Show error message
+                            alert(response.Message);
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while saving the topology.');
+                    }
+                });
+            }
+        });
+        $("#bdnsearch").click(function (event) {
+            debugger;
+            //$("#ddlregionid").css("display", "block").prop("disabled", true);
+            //$("#ddlsegment").css("display", "block").prop("disabled", true);
+            //$("#ddlringtype").css("display", "block").prop("disabled", true);
+            event.preventDefault(); // Prevent form submission (if inside a form)
+            event.stopPropagation();
+            var agg1SiteId = $("#txtagg1").val();
+            var agg2SiteId = $("#txtagg2").val();
+            var regionId = $("#ddlRegion").val();
+
+            var segmentName = $("#txtSegmentName").val();
+            if (agg1SiteId === "" || agg2SiteId === "" || segmentName === "") {
+                alert("Please fill all fields.");
+                return;
+            }
+            $.ajax({
+                url: '/Report/GetSegmentdata', // Adjust URL as needed
+                type: 'POST',
+                data: {
+                //region_id: regionId,
+                agg1_site_id: agg1SiteId,
+                agg2_site_id: agg2SiteId,
+               // segment_name: segmentName
+            },
+                success: function (response) {
+                    debugger;
+                    if (response) {
+                        var dropdown = $('#ddlsegment');
+                        dropdown.empty(); // Clear existing options
+                        dropdown.append($('<option></option>').val('').text('Select Segment'));
+
+                        $.each(response, function (index, item) {
+                            dropdown.append($('<option></option>').val(item.id).text(item.segment_code));
+                        });
+                        dropdown.trigger("chosen:updated");
+
+                    } else {
+                        // Show error message
+                        alert(response.Message);
+                    }
+                },
+                error: function () {
+                    alert('An error occurred while saving the topology.');
+                }
+            });
+
+
+
+        });
+        $('.chosen-select').chosen({ width: '100%' });
+        $("#btncreatesegment").click(function (event) {
+            debugger;
+            event.preventDefault(); // Prevent form submission (if inside a form)
+            event.stopPropagation();
+            var agg1 = $("#txtagg1").val();
+            var agg2 = $("#txtagg2").val();
+            var regionid = $("#ddlregionid").val();
+            // Set the value of #txtsegagg1
+            var selectedregion = $("#ddlregionid option:selected").text();
+
+            var segmentid = $("#ddlsegment").val();
+
+            if (regionid == "")
+            {
+                alert("Please select Region!");
+                return false;
+            }
+            if (agg1 == "") {
+                alert("Please select agg1!");
+                return false;
+            }
+            if (agg2 == "") {
+                alert("Please select agg2!");
+                return false;
+            }
+            if (segmentid != "") {
+                alert("Segment already added!");
+                return false;
+            }
+            $("#segmentModal").modal("show");
+            $("#txtregion").val(selectedregion);
+            $("#txtsegagg1").val(agg1); // Example: Combining both values
+            $("#txtsegagg2").val(agg2);
+
+            $.ajax({
+                url: '/Report/GetSegmentsCode',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response && response.segment_code) {
+                        $("#txtsegcode").val(response.segment_code);
+                        if (response.sequence) {  // Assuming "sequence_id" is the key in the response
+                            $("#hdnSequenceId").val(response.sequence);
+                        }
+                    } else {
+                        alert("Failed to fetch segment code.");
+                    }
+                },
+                error: function () {
+                    alert("An error occurred while fetching segment code.");
+                }
+            });
+        });
+            //$('#closedChildPopup').trigger("click");
+
+        $("#closedChildPopup").click(function () {
+            event.preventDefault(); // Prevent form submission (if inside a form)
+            event.stopPropagation();
+            //$("#segmentModal").modal("hide");
+            $("#segmentModal").hide();
+        });
+
+        $("#btncreatering").click(function (event) {
+            debugger;
+            event.preventDefault(); // Prevent form submission (if inside a form)
+            event.stopPropagation();
+            var selectedsegment = $("#ddlsegment option:selected").text();
+            var segmentid = $("#ddlsegment").val();
+            var region = $("#ddlregionid option:selected").text();
+            var segment = $("#ddlsegment option:selected").text();
+            // Validate required fields
+            if (!segmentid) {
+                alert("Please select segment.");
+                return;
+            }
+            $("#ringModal").modal("show");
+
+            $.ajax({
+                url: '/Report/GetRingCode',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.ring_code) {
+                        $("#hdnringsiteseq").val(response.sequence);
+                        var ringcode = region + "-" + segment + "-" + response.ring_code;
+                        $("#txtRingCode").val(ringcode);
+                    } else {
+                        alert("Failed to fetch segment code.");
+                    }
+                },
+                error: function () {
+                    alert("An error occurred while fetching segment code.");
+                }
+            });
+
+            $("#txtsegmentcode").val(selectedsegment);
+        });
+
+        // Handle Save Button Click
+        $("#saveSegment").click(function (event) {
+            event.preventDefault(); // Prevent form submission (if inside a form)
+            event.stopPropagation();
+            let segmentName = $("#segmentName").val();
+            let segmentCode = $("#segmentCode").val();
+            let description = $("#description").val();
+
+            if (!segmentName || !segmentCode || !description) {
+                alert("Please fill all fields!");
+                return;
+            }
+
+            alert("Segment Saved Successfully!\nName: " + segmentName + "\nCode: " + segmentCode + "\nDescription: " + description);
+
+            // Close Modal After Save
+            $("#segmentModal").modal("hide");
+
+            // Clear Inputs After Save
+            $("#segmentForm")[0].reset();
+        });
+        $("#btnSaveSegment").click(function () {
+            // debugger;
+            debugger;
+            // Get input values
+            var region = $("#txtregion").val();
+            var regionid = $("#ddlregionid").val();
+            var agg1 = $("#txtsegagg1").val();
+            var agg2 = $("#txtsegagg2").val();
+            var description = $("#txtdesc").val();
+            var segmentcode = $("#txtsegcode").val();
+            var Agg1SystemId = $("#hdnAgg1SystemId").val();
+            var segment_id=$("#hdnSequenceId").val();
+            var Agg2SystemId = $("#hdnAgg2SystemId").val();
+            // Validate required fields
+            //if (!region || !agg1 || !agg2 || !description) {
+            //    alert("Please fill all required fields.");
+            //    return;
+            //}
+
+            // Prepare JSON object to send
+            //var data = {
+            //    region_code: region,
+            //    agg1_site_id: agg1,
+            //    agg2_site_id: agg2,
+            //    description: description
+            //};
+
+            // AJAX call to save data
+$.ajax({
+    url: '/Report/SaveSegment', // Adjust URL as needed
+    type: 'POST',
+    data: {
+        segmentcode: segmentcode,
+        region_code: regionid,
+        agg1_site_id: agg1,
+        agg2_site_id: agg2,
+        description: description,
+        Agg1SystemId: Agg1SystemId,
+        Agg2SystemId: Agg2SystemId,
+        segment_id: segment_id
+    },
+    success: function (response) {
+        if (response) {
+            alert("Segment saved!");
+
+            // Hide modal
+            $("#segmentModal").hide();
+
+            // Now call the second AJAX request
+            $.ajax({
+                url: '/Report/GetSegmentsByRegion', // Action to fetch segments
+                type: 'GET',
+                data: { id: regionid }, // Pass selected regionId to the server
+                success: function (data) {
+                    var segmentDropdown = $('#ddlsegment');
+                    segmentDropdown.empty(); // Clear existing options
+                    segmentDropdown.append('<option value="">--Select Ring Type--</option>');
+
+                    // Append options from the data
+                    $.each(data, function (index, item) {
+                        segmentDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                    });
+
+                    // Refresh the dropdown if using Chosen.js
+                    segmentDropdown.trigger("chosen:updated");
+                },
+                error: function () {
+                    alert("Error fetching ring types. Please try again.");
+                }
+            });
+
+        } else {
+            alert(response.Message);
+        }
+    },
+    error: function () {
+        alert('An error occurred while saving the topology.');
+    }
+});
+
+        });
+        $("#btnSaveRing").click(function () {
+            // debugger;
+            //debugger;
+            // Get input values
+            var ringcode = $("#txtRingCode").val();
+            var segmentid = $("#ddlsegment").val();
+            var segmentcode = $("#txtsegmentcode").val();
+            var ringdesc = $("#txtringdesc").val();
+
+            // Validate required fields
+            if (!segmentid ) {
+                alert("Please select segment.");
+                return;
+            }
+
+            // AJAX call to save data
+            $.ajax({
+                url: '/Report/SaveRing', // Save the ring data
+                type: 'POST',
+                data: {
+                    segmentcode: segmentid,
+                    ringcode: ringcode,
+                    description: ringdesc
+                },
+                success: function (response) {
+                    if (response) {
+                        alert("Ring saved!");
+                        $("#ringModal").hide(); // Hide modal after saving
+
+                        // Now fetch updated ring types
+                        $.ajax({
+                            url: '/Report/GetRingTypesByRegion', // Fetch ring types
+                            type: 'GET',
+                            data: { segmentId: segmentid }, // Pass the selected segment ID
+                            success: function (data) {
+                                var ringTypeDropdown = $('#ddlringtype');
+                                ringTypeDropdown.empty(); // Clear previous options
+                                ringTypeDropdown.append('<option value="">--Select Ring Type--</option>');
+
+                                // Append new options
+                                $.each(data, function (index, item) {
+                                    ringTypeDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                                });
+
+                                // Update Chosen.js Dropdown (if used)
+                                ringTypeDropdown.trigger("chosen:updated");
+                            },
+                            error: function () {
+                                alert("Error fetching ring types. Please try again.");
+                            }
+                        });
+
+                    } else {
+                        alert(response.Message);
+                    }
+                },
+                error: function () {
+                    alert('An error occurred while saving the topology.');
+                }
+            });
+
+        });
+        $("#btnsegCancel").click(function (event) {
+            debugger;
+            event.preventDefault(); // Prevent form submission (if inside a form)
+            event.stopPropagation();
+            $("#segmentModal").hide();
+        });
+        function disableSelectedOptions() {
+            var selectedA = $("#ddlRingASite").val();
+            var selectedB = $("#ddlRingBSite").val();
+
+            $("#ddlRingBSite option, #ddlRingASite option").prop("disabled", false); // Reset all options
+
+            if (selectedA) {
+                $("#ddlRingBSite option[value='" + selectedA + "']").prop("disabled", true);
+            }
+            if (selectedB) {
+                $("#ddlRingASite option[value='" + selectedB + "']").prop("disabled", true);
+            }
+
+            // Refresh chosen plugin if used
+            $("#ddlRingASite, #ddlRingBSite").trigger("chosen:updated");
+        }
+        $('#ddlRingBSite').change(function () {
+            debugger;
+            var selectedSiteId = $(this).val();
+            var selectedDistance = $(this).find(":selected").data("distance");
+            $("#hdnRingBSiteId").val(selectedSiteId);
+            $("#hdnRingBSiteDistance").val(selectedDistance);
+            var siteA = $("#ddlRingASite").val();
+            var siteB = $("#ddlRingBSite").val();
+
+            if (siteA === siteB && siteA !== "" && siteB !== "") {
+                alert("Both sites cannot be the same. Please select different sites.");
+                $("#ddlRingBSite").val(""); // Reset second dropdown
+            }
+        });
+
+        $('#ddlRingASite').change(function () {
+            debugger;
+            var selectedSiteId = $(this).val(); // Get selected siteid
+            var selectedDistance = $(this).find(":selected").data("distance"); // Get distance
+            $("#hdnRingASiteId").val(selectedSiteId); // Store in hidden field
+            $("#hdnRingASiteDistance").val(selectedDistance); // Store distance
+            var siteA = $("#ddlRingASite").val();
+            var siteB = $("#ddlRingBSite").val();
+
+            if (siteA === siteB && siteA !== "" && siteB !== "") {
+                alert("Both sites cannot be the same. Please select different sites.");
+                $("#ddlRingASite").val(""); // Reset first dropdown
+            }
+        });
+        // Attach change event handlers
+        $("#ddlRingASite, #ddlRingBSite").change(disableSelectedOptions);
+        $('.chosen-select').chosen({ width: '100%' });
+
+        });
+
+</script>
