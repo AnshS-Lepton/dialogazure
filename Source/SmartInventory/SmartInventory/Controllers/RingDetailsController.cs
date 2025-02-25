@@ -32,12 +32,14 @@ namespace SmartInventory.Controllers
         public ActionResult ShowTopologyRingDetails(RingDetailsFiltter objRingFilter, int page = 0, string sort = "", string sortdir = "")
         {
             string SearchVar = "";
-            string network_id = "";
+            string region_id = "";
+            string segment_code = "";
+            string ring_code = "";
             objRingFilter.objGridAttributes.pageSize = 10;
             objRingFilter.objGridAttributes.currentPage = page == 0 ? 1 : page;
             objRingFilter.objGridAttributes.sort = sort;
             objRingFilter.objGridAttributes.orderBy = sortdir;
-            if ((objRingFilter.objGridAttributes.searchBy == "network_id" || objRingFilter.objGridAttributes.searchBy == "region_name")
+            if ((objRingFilter.objGridAttributes.searchBy == "region_name" || objRingFilter.objGridAttributes.searchBy == "ring_code")
                 && !string.IsNullOrEmpty(objRingFilter.objGridAttributes.searchText))
             {
                 SearchVar = objRingFilter.objGridAttributes.searchText;
@@ -46,43 +48,13 @@ namespace SmartInventory.Controllers
             }
             if (objRingFilter.objRingDetails != null)
             {
-                if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.region_name) && !string.IsNullOrEmpty(objRingFilter.objRingDetails.segment_name) && !string.IsNullOrEmpty(objRingFilter.objRingDetails.ring_name))
-                {
-                    network_id = objRingFilter.objRingDetails.region_name + "-" + objRingFilter.objRingDetails.segment_name + "-" + objRingFilter.objRingDetails.ring_name;
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.region_name))
-                    {
-                        network_id = "%"+objRingFilter.objRingDetails.region_name+"%";
+                region_id = objRingFilter.objRingDetails.region_name;
+                segment_code = objRingFilter.objRingDetails.segment_code;
+                ring_code = objRingFilter.objRingDetails.ring_capacity;
 
-                    }
-                    if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.segment_name))
-                    {
-                        if (!string.IsNullOrEmpty(network_id))
-                        {
-                            network_id = network_id + "-%" + objRingFilter.objRingDetails.segment_name+"%";
-                        }
-                        else
-                        {
-                            network_id = "%"+objRingFilter.objRingDetails.segment_name+"%";
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.ring_name))
-                    {
-                        if (!string.IsNullOrEmpty(network_id))
-                        {
-                            network_id = network_id + "-%" + objRingFilter.objRingDetails.ring_name+"%";
-                        }
-                        else
-                        {
-                            network_id = "%"+objRingFilter.objRingDetails.ring_name+"%";
-                        }
-                    }
-                }
 
             }
-            var ringdetails = new BLRingDetails().getRingDetails(objRingFilter.objGridAttributes, network_id);
+            var ringdetails = new BLRingDetails().getRingDetails(objRingFilter.objGridAttributes, region_id, segment_code, ring_code);
 
             objRingFilter.lstRingDetails = ringdetails;
             objRingFilter.objGridAttributes.totalRecord = objRingFilter.lstRingDetails != null && objRingFilter.lstRingDetails.Count > 0 ? SearchVar != "" ? objRingFilter.lstRingDetails.Count : objRingFilter.lstRingDetails[0].totalRecords : 0;

@@ -10,9 +10,9 @@ namespace BusinessLogics
 {
     public class BLRingDetails
     {
-        public List<RingDetails> getRingDetails(CommonGridAttributes objGridAttributes,string network_id)
+        public List<RingDetails> getRingDetails(CommonGridAttributes objGridAttributes,string region_name,string segment_code,string ring_code)
         {
-            return new DARingDetails().getRingDetails(objGridAttributes, network_id);
+            return new DARingDetails().getRingDetails(objGridAttributes, region_name, segment_code, ring_code);
         }
         public List<KeyValueDropDown> GetRegionDetails()
         {

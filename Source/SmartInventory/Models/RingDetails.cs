@@ -13,30 +13,25 @@ namespace Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
-        public string site_id { get; set; }
+        public string ring_code { get; set; }
+
         public string site_name { get; set; }
-        public string agg1 { get; set; }
-        public string agg2 { get; set; }
-        public int no_of_sites { get; set; }
+        public string agg2_site_id { get; set; }
+        public string agg1_site_id { get; set; }
 
-        public double max_distance_peer { get; set; }
-        public int region_id { get; set; }
-        public int segment_id { get; set; }
-        public int ring_id { get; set; }
         public string network_id { get; set; }
+        public string pod_name { get; set; }
+        public string ring_site_id { get; set; }
 
-        public string topology_type { get; set; }
         public string ring_capacity { get; set; }
         public string region_name { get; set; }
-        public string segment_name { get; set; }
-        public string ring_name { get; set; }
-        public string region { get; set; }
+        public string segment_code { get; set; }
        
         public int totalRecords { get; set; }
         public string SearchbyRegionName { get; set; } 
         public string SearchbySegmentName { get; set; } 
-        public string SearchbyRingType { get; set; } 
-
+        public string SearchbyRingType { get; set; }
+        
     }
    
    

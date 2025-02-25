@@ -124,8 +124,8 @@
             }, new { id = "frmViewRingDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
             {
             @Html.HiddenFor(m => m.objRingDetails.region_name, new { id = "hdnregionname" })
-            @Html.HiddenFor(m => m.objRingDetails.segment_name, new { id = "hdnsegmentname" })
-            @Html.HiddenFor(m => m.objRingDetails.ring_name, new { id = "hdnringname" })
+            @Html.HiddenFor(m => m.objRingDetails.segment_code, new { id = "hdnsegmentname" })
+            @Html.HiddenFor(m => m.objRingDetails.ring_capacity, new { id = "hdnringname" })
             <!-- Filters Section -->
             <div class="filter-container">
                 <label>Region:</label>
@@ -144,7 +144,7 @@
 
 
 
-                <label class="white-space">Ring Type:</label>
+                <label class="white-space">Ring ID:</label>
                 @Html.DropDownListFor(m => m.objRingDetails.SearchbyRingType,
                     new SelectList(Model.lstRingType.Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"),
                     "--Select Ring--",
@@ -172,13 +172,10 @@
 ),
 grid.Column(header: "S.No.", format: @<text>@item.id</text>, canSort: false),
 grid.Column("region_name", "Region", format: @<text>@item.region_name</text> , canSort: true),
-grid.Column("segment_name", "Segment", format: @<text>@item.segment_name</text> , canSort: true),
-grid.Column("ring_name", "Ring Name", format: @<text>@item.ring_name</text>, canSort: true),
-grid.Column("network_id", "Ring Network ID", format: @<text>@item.network_id</text>, canSort: true),
-grid.Column("site_id", "Site ID", format: @<text>@item.site_id</text>, canSort: true),
-grid.Column("site_name", "Site Name", format: @<text>@item.site_name</text>, canSort: true),
-grid.Column("agg1", "Distance from AGG_A(KM)", format: @<text>@item.agg1</text>, canSort: true),
-grid.Column("agg2", "Distance from AGG_B(KM)", format: @<text>@item.agg2</text>, canSort: true),
+grid.Column("segment_code", "Segment", format: @<text>@item.segment_code</text> , canSort: true),
+grid.Column("ring_code", "Ring Code", format: @<text>@item.ring_code</text>, canSort: true),
+grid.Column("agg1_site_id", "AGG_A", format: @<text>@item.agg1_site_id</text>, canSort: true),
+grid.Column("agg2_site_id", "Agg_B", format: @<text>@item.agg2_site_id</text>, canSort: true),
 grid.Column("ring_capacity", "Capacity", format: @<text>@item.ring_capacity</text>, canSort: true)
 
 ))
