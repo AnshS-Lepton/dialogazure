@@ -1,0 +1,201 @@
+﻿@model Models.RingDetailsFiltter
+@using Models;
+@using Utility;
+
+<!DOCTYPE html>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('.chosen-select').chosen({ width: '100%' });
+        $('th a, tfoot a').on("click", function () {
+            // onGridHeaderClick('tblFiberLinkGrid');
+            $('#frmViewRingDetails').attr('action', $(this).attr('href')).submit();
+            return false;
+        });
+    });
+   
+    function fngetRingDetails() {
+
+        var segment_name = $('#ddllstSegmentName option:selected').text();
+         var region_name = $('#ddllstRegionName option:selected').text();
+        var ring_name = $('#ddllstRingName option:selected').text();
+
+        if (segment_name === "--Select Segment--") {
+            segment_name = '';
+        }
+        if (region_name === "--Select Region--") {
+            region_name = '';
+        }
+        if (ring_name === "--Select Ring--") {
+            ring_name = '';
+        }
+        $('#hdnregionname').val(region_name);
+        $('#hdnsegmentname').val(segment_name);
+        $('#hdnringname').val(ring_name);
+
+       // $('#frmViewRingDetails').submit();
+       
+        //$("#ddllstRegionName").val(region_name.trigger("chosen:updated"));
+        //$("#ddllstSegmentName").val(segment_name.trigger("chosen:updated"));
+        //$("#ddllstRingName").val(ring_name.trigger("chosen:updated"));
+    }
+</script>
+
+<style>
+    /* Main Container */
+    .container {
+        padding: 20px;
+    }
+
+    /* Filter Section */
+    .filter-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+    }
+
+        .filter-container label {
+            font-weight: bold;
+        }
+
+        .filter-container select {
+            width: 180px;
+            padding: 5px;
+        }
+
+        .filter-container strong {
+            font-size: 18px;
+        }
+
+    .search-btn {
+        padding: 6px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+        .search-btn:hover {
+            background-color: #0056b3;
+        }
+
+    /* Table Styling */
+    .table-responsive {
+        overflow-x: auto; /* Enables horizontal scroll */
+    }
+
+
+    .action-icon {
+        color: #007bff;
+        cursor: pointer;
+    }
+
+        .action-icon:hover {
+            color: #0056b3;
+        }
+</style>
+
+<div id="dvViewRingDetails">
+    <div class="update_panel fullWidth">
+
+        @{
+
+
+            WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewRingDeatils",
+    ajaxUpdateCallback: "onGridHeaderClick('tblRingDetail');");
+            grid.Bind(Model.lstRingDetails, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+            if (Model.objGridAttributes.totalRecord > 0)
+            {
+                grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+            }
+
+
+        }
+
+        <div class="tablePad--tn">
+            @using (Ajax.BeginForm("ShowTopologyRingDetails", "RingDetails", new AjaxOptions
+            {
+                HttpMethod = "POST",
+                UpdateTargetId = "dvViewRingDetails",
+                //LoadingElementId = "dvViewLinkProgress",
+                InsertionMode = InsertionMode.Replace
+            }, new { id = "frmViewRingDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+            {
+            @Html.HiddenFor(m => m.objRingDetails.region_name, new { id = "hdnregionname" })
+            @Html.HiddenFor(m => m.objRingDetails.segment_code, new { id = "hdnsegmentname" })
+            @Html.HiddenFor(m => m.objRingDetails.ring_capacity, new { id = "hdnringname" })
+            <!-- Filters Section -->
+            <div class="filter-container">
+                <label>Region:</label>
+                @Html.DropDownListFor(m => m.objRingDetails.SearchbyRegionName,
+                    new SelectList(Model.lstRegionName.Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"),
+                    "--Select Region--",
+                    new { @class = "chosen-select", @id = "ddllstRegionName" })
+
+
+
+                <label>Segment:</label>
+                @Html.DropDownListFor(m => m.objRingDetails.SearchbySegmentName,
+                    new SelectList(Model.lstSegmentName.Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"),
+                    "--Select Segment--",
+                    new { @class = "chosen-select col-sm-12", @id = "ddllstSegmentName" })
+
+
+
+                <label class="white-space">Ring ID:</label>
+                @Html.DropDownListFor(m => m.objRingDetails.SearchbyRingType,
+                    new SelectList(Model.lstRingType.Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"),
+                    "--Select Ring--",
+                    new { @class = "chosen-select col-sm-12", @id = "ddllstRingName" })
+
+                <button type="submit" class="btn btn-success ml-auto" onclick="fngetRingDetails()"> Serach </button>
+            </div>
+
+
+            if (Model.lstRingDetails.Count > 0)
+            {
+            <div class="table-responsive">
+                <div class="d-flex mb-15">
+                    <div class="div_totalRecord">
+                        <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@Model.objGridAttributes.totalRecord</span></b>
+                    </div>
+                </div>
+                @grid.GetHtml(tableStyle: "grid",
+                        htmlAttributes: new { id = "tblRingDetail" },
+                        mode: WebGridPagerModes.All,
+                        columns: grid.Columns(
+                                   grid.Column("", "Action", format:@<text>
+                                            <a @*href="@Url.Action("", "", new { id = @item.id })"*@ class="auto" title=""> <i class="fa fa-globe action_icon fa-fw m-r-xs disable"></i></a>
+                                </text>, canSort: false
+),
+grid.Column(header: "S.No.", format: @<text>@item.id</text>, canSort: false),
+grid.Column("region_name", "Region", format: @<text>@item.region_name</text> , canSort: true),
+grid.Column("segment_code", "Segment", format: @<text>@item.segment_code</text> , canSort: true),
+grid.Column("ring_code", "Ring Code", format: @<text>@item.ring_code</text>, canSort: true),
+grid.Column("agg1_site_id", "AGG_A", format: @<text>@item.agg1_site_id</text>, canSort: true),
+grid.Column("agg2_site_id", "Agg_B", format: @<text>@item.agg2_site_id</text>, canSort: true),
+grid.Column("ring_capacity", "Capacity", format: @<text>@item.ring_capacity</text>, canSort: true)
+
+))
+
+                @Html.Hidden("dir", grid.SortDirection)
+                @Html.Hidden("col", grid.SortColumn)
+                @Html.HiddenFor(m => m.objGridAttributes.searchBy)
+                @Html.HiddenFor(m => m.objGridAttributes.searchText)
+            </div>
+
+            }
+            else
+            {
+            <div class="nr-found">
+                <strong>No Records Found.</strong>
+            </div>
+            }
+            }
+        </div>
+
+    </div>
+</div>
+

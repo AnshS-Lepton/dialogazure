@@ -1316,7 +1316,7 @@ namespace SmartInventory.Controllers
             Response.End();
         }
 
-        public ActionResult GetSLDDiagram(string key)
+        public ActionResult GetSchematicView(string key)
         {
             var value = MiscHelper.Decrypt(key);
             var data = value.Split('-');

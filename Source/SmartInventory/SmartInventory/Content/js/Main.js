@@ -19444,7 +19444,7 @@ var Main = function () {
                                 tbody.empty(); // Clear previous data
 
                                 $.each(resp, function (index, item) {
-                                    let rowAction = '<a href="#" data-value="' + item.cable_id + '" class="icon-map-view" title="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
+                                    let rowAction = '<a href="#" data-value="' + item.cable_id + '" class="icon-showon-map-view" title="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
 
 
                                     let row = `<tr>
@@ -19473,8 +19473,7 @@ var Main = function () {
         }, true, true);
 
     }
-    $(document).on("click", ".icon-map-view", function () {
-        debugger;
+    $(document).on("click", ".icon-showon-map-view", function () {
 
         var cableId = $(this).attr("data-value");
         si.ShowEntityOnMap(cableId, "Cable", "Line");
@@ -19731,6 +19730,15 @@ var Main = function () {
             networkdata.hideAllNetworkFile();
         }
         popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
+    }
+    this.showRingDetails =function () {
+        $(app.DE.InfoDiv).hide();
+        $(app.DE.SplicingDiv).hide();
+        si.resetShapeTools();
+        if (typeof networkdata != "undefined") {
+            networkdata.hideAllNetworkFile();
+        }
+        popup.LoadModalDialog('PARENT', 'RingDetails/ShowTopologyRingDetails', {}, "Ring Details", 'modal-xl');
     }
 
     this.SaveRoster = function () {
