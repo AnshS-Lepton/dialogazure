@@ -586,10 +586,12 @@
         if (validateFields() && $("#frmAddPOD").valid() && si.isValidAssociation()) {
             $("#frmAddPOD").submit();
         } else {
-            alert(MultilingualKey.Required_Fields);
-        }
+            alert(MultilingualKey.Required_Fields || "Please fill in all required fields.");
+
+        } 
     }
     function validateFields() {
+        debugger;
         var siteId = $('#txtSiteId').val();
         var siteName = $('#txtSiteName').val();
 
