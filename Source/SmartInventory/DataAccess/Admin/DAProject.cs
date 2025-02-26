@@ -3,6 +3,7 @@ using Models;
 using Models.Admin;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Security.Policy;
@@ -737,16 +738,22 @@ namespace DataAccess.Admin
 
             return sitname;
         }
-        public List<PODMaster> getAGG1List(string agg1)
+        public List<PODMaster> getAGG1List(string site)
         {
-            var sitname = repo.GetAll(m => m.agg_01.ToUpper().Contains(agg1.ToUpper())).ToList();
+            var sitname = repo.GetAll(m =>
+                m.site_id.ToUpper().Contains(site.ToUpper()) ||
+                m.site_name.ToUpper().Contains(site.ToUpper())
+            ).ToList();
 
             return sitname;
         }
-        public List<PODMaster> getAGG2List(string agg2)
+        public List<PODMaster> getAGG2List(string site)
         {
-            var sitname = repo.GetAll(m => m.agg_02.ToUpper().Contains(agg2.ToUpper())).ToList();
-
+            // var sitname = repo.GetAll(m => m.agg_02.ToUpper().Contains(agg2.ToUpper())).ToList();
+            var sitname = repo.GetAll(m =>
+              m.site_id.ToUpper().Contains(site.ToUpper()) ||
+              m.site_name.ToUpper().Contains(site.ToUpper())
+          ).ToList();
             return sitname;
         }
 

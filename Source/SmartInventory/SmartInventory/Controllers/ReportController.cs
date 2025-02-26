@@ -13574,27 +13574,35 @@ namespace SmartInventory.Controllers
         public JsonResult GetAGG1(string term)
         {
             var sitenameList = new BLProject().getAGG1List(term);
+
             var result = sitenameList.Select(s => new
             {
-                label = s.agg_01.ToString(),  // Display in dropdown
-                value = s.agg_01.ToString(),  // Store agg_01 in textbox
-                systemId = s.system_id        // Include system_id in response
+                label = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Correct formatting
+                value = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Ensuring consistency with label
+                systemId = s.system_id // Handle null system_id
             }).ToList();
+
 
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
 
+
         public JsonResult GetAGG2(string term)
         {
             var sitenameList = new BLProject().getAGG2List(term);
+            //var result = sitenameList.Select(s => new
+            //{
+            //    label = s.agg_02.ToString(),  // Display in dropdown
+            //    value = s.agg_02.ToString(),  // Store agg_02 in textbox
+            //    systemId = s.system_id        // Include system_id in response
+            //}).ToList();
             var result = sitenameList.Select(s => new
             {
-                label = s.agg_02.ToString(),  // Display in dropdown
-                value = s.agg_02.ToString(),  // Store agg_02 in textbox
-                systemId = s.system_id        // Include system_id in response
+                label = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Correct formatting
+                value = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Ensuring consistency with label
+                systemId = s.system_id // Handle null system_id
             }).ToList();
-
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
