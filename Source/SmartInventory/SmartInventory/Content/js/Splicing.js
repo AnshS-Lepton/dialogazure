@@ -727,7 +727,7 @@
                                             var vacantColor = $('#hdnVacantColor').val();
                                             $('#' + item.sourceId).attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
                                             $('#' + item.targetId).attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
-                                            // app.connectionObjects.splice(index, 1);
+                                             app.connectionObjects.splice(index, 1);
                                         })
                                     }
                                 })
