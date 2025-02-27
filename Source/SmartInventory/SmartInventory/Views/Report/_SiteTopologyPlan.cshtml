@@ -102,7 +102,7 @@
                         <div class="row form-group">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_461 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.no_of_sites, new SelectList(Model.lstnoofsites.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12", id = "ddlringcapacity" })
+                                @Html.DropDownListFor(m => m.no_of_sites, new SelectList(Model.lstnoofsites.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12", id = "ddlnofsites" })
                             </div>
                             <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
@@ -545,8 +545,9 @@
             debugger;
             var region = $("#ddlregionid option:selected").text();
             var segment = $("#ddlsegment option:selected").text();
-            var ringtype = $("#ddlringtype option:selected").text();
-            var networkIdValue = region + "-" + segment + "-" + ringtype;
+                var ringtype = $("#ddlringtype option:selected").text();
+                var noofsites = $("#ddlnofsites").val();
+                var networkIdValue = (ringtype ?? "N/A") + " (" + (noofsites ?? "0") + ")";
             $("#lbdringsiteId").text(networkIdValue).css("display", "block");
             $("#ring_site_id").val(networkIdValue);
             //$("#networkIdField").val(networkIdValue);
@@ -729,13 +730,19 @@
             // Set the value of #txtsegagg1
             var selectedregion = $("#ddlregionid option:selected").text();
 
-            var segmentid = $("#ddlsegment").val();
-
+                var segmentid = $("#ddlsegment").val();
+                var nofsites = $("#ddlnofsites").val();
+                
             if (regionid == "")
             {
             alert("Please select Region!");
             return false;
-            }
+                }
+
+                if (nofsites == "") {
+                    alert("Please select NoOf Sites!");
+                    return false;
+                }
             if (agg1 == "") {
             alert("Please select agg1!");
             return false;
