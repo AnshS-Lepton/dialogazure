@@ -86,10 +86,10 @@ namespace IntegrationServices.Controllers
                     }
                    
                     nearestlatlngdata = nearestlatlngdata.TrimEnd(',');
-                    string startinpu = "POINT";
-                    if (nearestlatlngdata.Contains(","))
-                        startinpu = "LINESTRING";
-                    string inputcoordinates = startinpu + "("+ nearestlatlngdata+")";
+
+                    if (!nearestlatlngdata.Contains(","))
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Road path not found!" });
+                    string inputcoordinates ="LINESTRING(" + nearestlatlngdata+")";
                     List<Points> points = new BLMisc().getStartEndPointsFeasibility(inputcoordinates);
                     string geo_end_point = getLatLongDetails(string.IsNullOrEmpty(points[0].end_point) ? " " : points[0].end_point);
                     string[] end_point = geo_end_point.Split(' ');
@@ -141,11 +141,11 @@ namespace IntegrationServices.Controllers
                         latlngdata += proposedStrRoadpathLongitude + " " + proposedstrRoadpathLatitude + ",";
                     }
                     latlngdata = latlngdata.TrimEnd(',');
-                    string startinpu = "POINT";
-                    if (latlngdata.Contains(","))
-                        startinpu = "LINESTRING";
-                   
-                    string inputprocoordinates = startinpu + "(" + latlngdata + ")";
+
+                    if (!latlngdata.Contains(","))
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Proposed structure road path not found!" });
+
+                    string inputprocoordinates = "LINESTRING(" + latlngdata + ")";
                     List<Points> propoints = new BLMisc().getStartEndPointsFeasibility(inputprocoordinates);
                     string geo_proend_point = getLatLongDetails(propoints[0].end_point);
                     string[] proend_point = geo_proend_point.Split(' ');
