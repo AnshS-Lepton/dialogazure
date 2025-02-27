@@ -86,9 +86,12 @@ namespace IntegrationServices.Controllers
                     }
                    
                     nearestlatlngdata = nearestlatlngdata.TrimEnd(',');
-                    string inputcoordinates = "LINESTRING("+ nearestlatlngdata+")";
+                    string startinpu = "POINT";
+                    if (nearestlatlngdata.Contains(","))
+                        startinpu = "LINESTRING";
+                    string inputcoordinates = startinpu + "("+ nearestlatlngdata+")";
                     List<Points> points = new BLMisc().getStartEndPointsFeasibility(inputcoordinates);
-                    string geo_end_point = getLatLongDetails( points[0].end_point);
+                    string geo_end_point = getLatLongDetails(string.IsNullOrEmpty(points[0].end_point) ? " " : points[0].end_point);
                     string[] end_point = geo_end_point.Split(' ');
 
                     var customer_to_road_routeData = GetRouteList(latitude, longitude, StrRoadpathLatitude, StrRoadpathLongitude);
@@ -98,7 +101,7 @@ namespace IntegrationServices.Controllers
                     var roadPathRouteSegment = bindRouteData(roadPathRouteApiData[0].geojson_new_built, roadPathRouteApiData[0].total_new_length);
                     var structureToRoadRouteSegment = bindRouteData(structureToRoadRouteData[0].geojson_new_built, structureToRoadRouteData[0].total_new_length);
                     var route = getRoutesDetails(customerToRoadRouteSegment, roadPathRouteSegment, structureToRoadRouteSegment);
-                    nearestStructure = bindStructureData(lstentities[0].entity_title/*structure_type*/, lstentities[0].display_name/*structure_id*/, nearestlocation, route, nearestlatlngdata,route_buffer);
+                    nearestStructure = bindStructureData(lstentities[0].entity_title/*structure_type*/, lstentities[0].display_name/*structure_id*/, nearestlocation, route, inputcoordinates, route_buffer);
 
                 }
 
@@ -138,7 +141,11 @@ namespace IntegrationServices.Controllers
                         latlngdata += proposedStrRoadpathLongitude + " " + proposedstrRoadpathLatitude + ",";
                     }
                     latlngdata = latlngdata.TrimEnd(',');
-                    string inputprocoordinates = "LINESTRING(" + latlngdata + ")";
+                    string startinpu = "POINT";
+                    if (latlngdata.Contains(","))
+                        startinpu = "LINESTRING";
+                   
+                    string inputprocoordinates = startinpu + "(" + latlngdata + ")";
                     List<Points> propoints = new BLMisc().getStartEndPointsFeasibility(inputprocoordinates);
                     string geo_proend_point = getLatLongDetails(propoints[0].end_point);
                     string[] proend_point = geo_proend_point.Split(' ');
@@ -153,7 +160,7 @@ namespace IntegrationServices.Controllers
                     var proposedStructureToRoadRouteSegment = bindRouteData(proposedStructureToRoad[0].geojson_new_built, proposedStructureToRoad[0].total_new_length);
                     var proposedroute = getRoutesDetails(proposedCustomerToRoadRouteSegment, proposedRoadPathRouteSegment, proposedStructureToRoadRouteSegment);
 
-                     proposedStructure = bindProposedStructureData(lstentities[i].entity_title/*structure_type*/, lstentities[i].display_name/*structure_id*/, proposedNearestlocation, proposedroute, latlngdata, route_buffer);
+                     proposedStructure = bindProposedStructureData(lstentities[i].entity_title/*structure_type*/, lstentities[i].display_name/*structure_id*/, proposedNearestlocation, proposedroute, inputprocoordinates, route_buffer);
                 }
                    
                 #endregion
@@ -472,8 +479,8 @@ private Structure bindStructureData(string structure_type, string structure_id, 
         {
             var lstRoute = new List<Route>();
 
-            if (latitude != strpathLatitude && longitude != strpathLongitude)
-            {
+            //if (latitude != strpathLatitude && longitude != strpathLongitude)
+            //{
                 var coordinates = new List<List<double>>
                 {
                      new List<double> { longitude, latitude },
@@ -481,7 +488,7 @@ private Structure bindStructureData(string structure_type, string structure_id, 
                 };
 
                 lstRoute = GetNewRoutes(coordinates);
-            }
+           // }
 
             return lstRoute;
         }
