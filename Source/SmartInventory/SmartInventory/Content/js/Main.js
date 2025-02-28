@@ -19386,17 +19386,22 @@ var Main = function () {
         popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: '' }, "Create Link", 'modal-xl');
 
     }
-    this.checkAvailability = function () {
 
+    this.validateCoreAndODFFields = function () {      
+        let isValid = true;
         // Reset previous red borders before validating
         $("#txtODF1, #txtODF2, #txtRequiredCore").removeClass("error-border");
 
-        if ($("#txtRequiredCore").val() === '0') {
-            alert('Invalid Required Core');
+        let requiredCoreValue = $("#txtRequiredCore").val().trim();
 
+        // Check for invalid values (only zeros or leading zeros)
+        if (/^0+$/.test(requiredCoreValue) || /^0\d+/.test(requiredCoreValue)) {
+            alert('Invalid Required Core');
             $("#txtRequiredCore").addClass("error-border");
-            return false;
+            isValid = false;
+            return isValid;
         }
+
         // Check if any of the fields are empty
         if ($("#txtODF1").val() == '' || $("#txtODF2").val() == '' || $("#txtRequiredCore").val() == '' || $("#txtODF1").val() == 'Search ODF/Splice Closure' || $("#txtODF2").val() == 'Search ODF/Splice Closure') {
             alert('Both ODF/Splice Closure and Required Core field will be mandatory to check the feasibility.');
@@ -19412,9 +19417,24 @@ var Main = function () {
                 $("#txtRequiredCore").addClass("error-border");
             }
 
-            return false;
+            isValid = false;
+            return isValid;
+        }
+        if ($("#txtODF1").val().trim() === $("#txtODF2").val().trim()) {
+            $("#txtODF1").addClass("error-border");
+            $("#txtODF2").addClass("error-border");
+            alert('Please provide the valid ODFs. Both ODFs cannot be the same.');
+            isValid = false;
+            return isValid;
         }
 
+        return isValid;
+    }
+
+    this.checkAvailability = function () {
+       
+       let result = app.validateCoreAndODFFields();
+       if(result) {
         ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val().trim(), ODF2: $("#txtODF2").val().trim(), required_core: $("#txtRequiredCore").val().trim() }, true, function (resp) {
             if (resp != null && resp != undefined) {
 
@@ -19471,7 +19491,7 @@ var Main = function () {
             }
 
         }, true, true);
-
+        }
     }
     $(document).on("click", ".icon-showon-map-view", function () {
 
@@ -19483,7 +19503,9 @@ var Main = function () {
         window.location = appRoot + 'Library/ExportPlanLogicReport';
     }
 
-    this.saveCorePlanLogic = function () {
+    this.saveCorePlanLogic = function () {     
+        let result = app.validateCoreAndODFFields();
+        if (result){
         ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val().trim(), fiber_link_network_id: $("#txtfiberlink").val().trim(), source_network_id: $("#txtODF1").val().trim(), destination_network_id: $("#txtODF2").val().trim(), buffer: 5 }, true, function (resp) {
             if (resp != null && resp != undefined) {
                 if (resp.status) {
@@ -19502,7 +19524,7 @@ var Main = function () {
             }
 
         }, true, true);
-
+      }
     }
 
     this.GetlinkPrefixbyLinkType = function (obj) {
