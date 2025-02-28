@@ -9086,7 +9086,6 @@ var Main = function () {
         app.filtercablevalue = "";
         app.cable_type = $('#ddlFilterCableType').val();
         app.cable_category = $('#ddlFilterCableCategory').val();
-
         if (app.cable_type != '0' && app.cable_type != undefined) {
             app.filtercablevalue += " ([cable_type] ='" + app.cable_type + "')";
         }
