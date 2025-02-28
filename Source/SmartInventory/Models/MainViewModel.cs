@@ -20,7 +20,9 @@ namespace Models
         public IEnumerable<BusinessLayer> lstBusinessLayer { get; set; } = new List<BusinessLayer>();
         public RoleViewModel roleViewModel { get; set; }
         public List<RoleViewModel> lstTemplateTicketTypePermission { get; set; }
-       public RoleMaster objRoleMaster { get; set; }
+        public List<DropDownMaster> listcableCategory { get; set; }
+
+        public RoleMaster objRoleMaster { get; set; }
         public MainViewModel()
         {
            objRoleMaster = new RoleMaster();
@@ -33,7 +35,7 @@ namespace Models
             NELayers = new List<NEntityLayers>();
             lstOrthoImageLayers = new List<Admin.OrthoImageMasterModel>();
             lstTemplateTicketTypePermission = new List<RoleViewModel>();
-         
+            listcableCategory = new List<DropDownMaster>();
         }
 
         public Boolean IsBroadcastMessageEnabled { get; set; }//ankit

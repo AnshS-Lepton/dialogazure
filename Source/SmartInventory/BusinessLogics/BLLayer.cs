@@ -58,6 +58,10 @@ namespace BusinessLogics
         {
             return objDALayer.GetNetworkLayers(userId, groupId, roleId, connectionString);
         }
+        public List<DropDownMaster> GetCablecategoryList()
+        {
+            return objDALayer.GetCablecategoryList();
+        }
         public List<landBaseLayres> GetLandBaseLayres(int userId, int roleId = 0)
         {
             return objDALayer.GetLandBaseLayres(userId, roleId);
