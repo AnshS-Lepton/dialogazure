@@ -260,7 +260,7 @@ namespace Models
         public string network_id { get; set; }
 
     }
-    public class EntityLstCount
+    
     public class IvcKeyValueDropDown
     {
         public int key { get; set; }
