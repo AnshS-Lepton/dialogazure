@@ -32,7 +32,7 @@
 
         }
         @{
-            WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewLayerGroups", ajaxUpdateCallback: "onGridHeaderClick('tblItemVendorCost')");
+            WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: false, ajaxUpdateContainerId: "dvViewLayerGroups", ajaxUpdateCallback: "onGridHeaderClick('tblItemVendorCost')");
             grid.Bind(gridData, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
             if (Model.objGridAttributes.totalRecord > 0)
             {
@@ -73,7 +73,7 @@
             }
             columns.Add(grid.Column("uom", "UOM"));
             columns.Add(grid.Column("layer_id", "layer_id", style: "display: none"));
-
+           
 
         }
 
@@ -151,14 +151,21 @@
         }
 
         <script>
+           
             $(document).ready(function () {
+                debugger;
                 updateNumberstoFormatedNumber();
-                addDefaultSortingIcons("tblItemVendorCost");
+               // addDefaultSortingIcons("tblItemVendorCost");
 
-                $("th:contains('layer_id')").hide(); // Hides header
-                $("td:nth-child(8)").hide(); // Adjust column index
+                //$("th:contains('layer_id')").hide();
+                //$("td:nth-child(8)").hide();
+                //$('table thead th:last-child, table tbody td:last-child').hide();
+             
+                    $('table thead th:last-child, table tbody td:last-child').hide();
             });
+            
 
+           
             function ViewGroupsReport() {
                 window.location = appRoot + 'Vendor/DownloadItemVendorCostDetails';
             }
@@ -175,6 +182,7 @@
 
             function editItemVendorCost(element) {
                 debugger;
+                
                 if (element != null) {
                     var user = element.getAttribute("data-user"); // Get user column key
                     var value = element.getAttribute("data-value") || "";
@@ -202,7 +210,8 @@
                     var specification = row.querySelector("td:nth-child(2)")?.textContent.trim();
                     var entity_type = row.querySelector("td:nth-child(3)")?.textContent.trim();
                     var UOM = row.querySelector("td:nth-child(7)")?.textContent.trim();
-                    var layer_id = row.querySelector("td:nth-child(8)")?.textContent.trim();
+                    //var layer_id = row.querySelector("td:nth-child(8)")?.textContent.trim();
+                    var layer_id = row.lastElementChild?.textContent.trim();
                 }
                 else {
                     var item_code = '';

@@ -24444,6 +24444,7 @@ var Main = function () {
             }
         },
         SiteReport: function (geom, modeType, radius, obj) {
+            debugger;
             if (obj) {
                 $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
                 $(obj).addClass('activeToolBar');
@@ -24500,10 +24501,11 @@ var Main = function () {
                 }, MultilingualKey.SI_OSP_GBL_NET_RPT_420, 'modal-xl');
             }
         },
-        ItemSiteAwarding: function (geom, modeType, radius, obj) {
+        ItemSiteAwarding: function (geom, modeType, radius, obj, searchBy, searchText) {
+            debugger;
                                            
-            popup.LoadModalDialog('CHILD', 'BOMBOQ/SiteBomBoqSummary', {
-                eType: '', refrenceData: modeType,
+            popup.LoadModalDialog('CHILD', 'Report/SiteBomBoqSummary', {
+                eType: '', refrenceData: modeType, searchBy: searchBy, searchText: searchText
             }, "Item cost vendor Report", 'modal-xl');  
         },
 

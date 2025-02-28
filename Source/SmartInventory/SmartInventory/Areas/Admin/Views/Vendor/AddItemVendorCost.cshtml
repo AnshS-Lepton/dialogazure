@@ -20,8 +20,13 @@
     @Html.HiddenFor(m => m.created_on);
     @Html.HiddenFor(m => m.layer_name);
     @Html.HiddenFor(m => m.layer_id);
+
+    <input type="hidden" name="key" id="hiddenKey">
+    <input type="hidden" name="specification" id="hiddenspecification">
+    <input type="hidden" name="code" id="hiddencode">
+    <input type="hidden" name="user_id" id="hiddenuser_id">
     <div id="dvInfoVendorSpecification" class="--pad-15">
-       
+
         <div class="form-group">
             <div class="row">
                 <div class="col-md-4">
@@ -32,34 +37,34 @@
 
                 <div class="col-md-8">
                     @*<select name="@Html.NameFor(x=> x.layer_id )"
-                id="selectCategory"
-                class="chosen-select form-control"
-                onchange="OnCategoryChange();">
-            <option value="0">-Select-</option>
-            <optgroup value="" label="Entity">
-                @foreach (var category in Model.entity_categories)
-                {
-                    <option value="@category.category_key"
-                            @if (category.category_key == Model.category_key) { <text> selected </text> }
-                            data-layer-id="@category.layer_id"
-                            data-accessories-id="@category.accessories_id">
-                        @category.display_name
-                    </option>
-                }
-            </optgroup>
-            <optgroup value="" label="Other">
-                @foreach (var category in Model.other_categories)
-                {
-                    <option value="@category.category_key"
-                            @if (category.category_key == Model.category_key) { <text> selected </text> }
-                            data-layer-id="@category.layer_id"
-                            data-accessories-id="@category.accessories_id">
-                        @category.display_name
-                    </option>
-                }
-            </optgroup>
-        </select>*@
-                   
+                                id="selectCategory"
+                                class="chosen-select form-control"
+                                onchange="OnCategoryChange();">
+                            <option value="0">-Select-</option>
+                            <optgroup value="" label="Entity">
+                                @foreach (var category in Model.entity_categories)
+                                {
+                                    <option value="@category.category_key"
+                                            @if (category.category_key == Model.category_key) { <text> selected </text> }
+                                            data-layer-id="@category.layer_id"
+                                            data-accessories-id="@category.accessories_id">
+                                        @category.display_name
+                                    </option>
+                                }
+                            </optgroup>
+                            <optgroup value="" label="Other">
+                                @foreach (var category in Model.other_categories)
+                                {
+                                    <option value="@category.category_key"
+                                            @if (category.category_key == Model.category_key) { <text> selected </text> }
+                                            data-layer-id="@category.layer_id"
+                                            data-accessories-id="@category.accessories_id">
+                                        @category.display_name
+                                    </option>
+                                }
+                            </optgroup>
+                        </select>*@
+
                     @Html.DropDownListFor(m => m.key, new SelectList(Model.listItemCategory.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "selectCategory", @onchange = "OnCategoryChange();" })
 
                 </div>
@@ -156,8 +161,30 @@
 }
 <script type="text/javascript">
     $(document).ready(function () {
+        debugger;
         $('.chosen-select').chosen({ width: '100%' });
+        $('#hiddenKey').val($('#selectCategory').val());
+        $('#hiddenspecification').val($('#ddlSpec').val()) ;
+        $('#hiddencode').val($('#ddlIcode').val()); 
+        $('#hiddenuser_id').val($('#ddlUser').val()); 
 
+        if ($('#ddlUser').val() != '') {
+            $('#selectCategory').prop("disabled", true).trigger("chosen:updated");;
+            $('#ddlSpec').prop("disabled", true).trigger("chosen:updated");;
+            $('#ddlIcode').prop("disabled", true).trigger("chosen:updated");;
+            $('#ddlUser').prop("disabled", true).trigger("chosen:updated");;
+        }
+        else
+        {
+            $('#selectCategory').prop("disabled", false).trigger("chosen:updated");
+            $('#ddlSpec').prop("disabled", false).trigger("chosen:updated");
+            $('#ddlIcode').prop("disabled", false).trigger("chosen:updated");
+            $('#ddlUser').prop("disabled", false).trigger("chosen:updated");
+
+
+
+        }
+        
     });
 
     function OnSuccess(data) {
@@ -209,11 +236,11 @@
     function validateNumericInput(input) {
         let value = input.value;
 
-        // Allow only numbers with up to two decimal places
+
         let regex = /^\d*\.?\d{0,2}$/;
 
         if (!regex.test(value)) {
-            input.value = value.slice(0, -1); // Remove last invalid character
+            input.value = value.slice(0, -1);
         }
     }
     function isNumber(evt) {
@@ -245,8 +272,8 @@
         debugger;
         //let categoryData = $('#selectCategory option:selected').data();
         //let _layerId = categoryData.layerId;
-        let _layerId=$('#selectCategory').val();
-      
+        let _layerId = $('#selectCategory').val();
+
         let specification = $('#ddlSpec').val();
         let item_code = $('#ddlIcode').val();
         let accessoriesId = '';//categoryData.accessoriesId;

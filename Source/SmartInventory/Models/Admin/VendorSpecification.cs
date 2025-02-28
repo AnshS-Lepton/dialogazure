@@ -258,7 +258,17 @@ namespace Models.Admin
         public string user_name { get; set; }
         public int user_id { get; set; }
     }
-        public class MergedItem
+    public class CombineCableGeom
+    {
+        public bool status { get; set; }
+        public string combine_geom { get; set; }
+        public string network_id { get; set; }
+        public int system_id { get; set; }
+        public int region_id { get; set; }
+        public int province_id { get; set; }
+    }
+    
+    public class MergedItem
     {
         //[Range(0, double.MaxValue)]
         //public decimal item_cost { get; set; }

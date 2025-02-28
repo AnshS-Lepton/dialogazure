@@ -33,9 +33,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
 using Utility;
+using static Mono.Security.X509.X520;
+using BorderStyle = NPOI.SS.UserModel.BorderStyle;
 
 
 namespace SmartInventory.Controllers
@@ -13512,5 +13515,356 @@ namespace SmartInventory.Controllers
             }
         }
         #endregion
+       
+        public ActionResult SiteBomBoqSummary(ViewItemVendorCost objViewItemVendorCost, int page = 0, string sort = "", string sortdir = "", string refrenceData = "", string searchBy = "", string searchText="")
+        {
+
+            var userdetails = (User)Session["userDetail"];
+            CommonGridAttr objGridAttributes = new CommonGridAttr();
+            BindSearchBy(objViewItemVendorCost);
+            if (sort != "" || page != 0)
+            {
+                objViewItemVendorCost.objGridAttributes = (CommonGridAttr)Session["ViewItemVendorCost"];
+            }
+            objViewItemVendorCost.objGridAttributes.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
+            objViewItemVendorCost.objGridAttributes.currentPage = page == 0 ? 1 : page;
+            objViewItemVendorCost.objGridAttributes.sort = sort;
+            objViewItemVendorCost.objGridAttributes.orderBy = sortdir;
+            objViewItemVendorCost.objGridAttributes.searchText = searchText;
+            objViewItemVendorCost.objGridAttributes.searchBy = searchBy;
+            var firstItem = Session["systemid"]!=null? Session["systemid"].ToString():refrenceData.Split(',')[0];
+            var siteplanid = new BomBoq().getSiteplanid(Convert.ToInt32(firstItem));
+            Session["SitePlanId"] = siteplanid;
+            Session["systemid"] = firstItem;
+            // objViewItemVendorCost.objGridAttributes.SelectedLayerIds =  string.Join(",", objBomBoq.objReportFilters.SelectedLayerId.ToArray());
+            objViewItemVendorCost.lstItem = new BomBoq().getSiteBOMBOQReport(objViewItemVendorCost.objGridAttributes, siteplanid);
+
+            var users = objViewItemVendorCost.lstItem.Where(u => u.user_id != 0)
+                .Select(x => new { x.user_id, x.user_name })
+                .Distinct()
+                .OrderBy(x => x.user_id) // Ensure ordering is based on user_name
+                .ToList();
+
+            foreach (var item in users)
+            {
+                parentuser newUser = new parentuser
+                {
+                    user_id = item.user_id,
+                    user_name = item.user_name
+                };
+                objViewItemVendorCost.lstUserDetails.Add(newUser);
+            }
+            //objViewItemVendorCost.lstUserDetails = users.Cast<parentuser>().ToList(); //new BLUser().GetPartnerUser().ToList();
+
+            Session["ViewItemVendorCost"] = objViewItemVendorCost.objGridAttributes;
+            // Transform data dynamically
+            var transformedData = objViewItemVendorCost.lstItem.Where(u => u.user_id != 0)
+                    .GroupBy(x => new { x.code, x.specification, x.category_reference, x.unit_measurement, x.totalqty,x.user_id })
+                    .Select(g =>
+                    {
+                        dynamic row = new ExpandoObject();
+                        var dict = (IDictionary<string, object>)row;
+
+                        // Fixed properties
+                        dict["code"] = g.Key.code;
+                        dict["specification"] = g.Key.specification;
+                        dict["entity_type"] = g.Key.category_reference;
+                        dict["uom"] = g.Key.unit_measurement;
+                        dict["totalqty"] = g.Key.totalqty;
+
+
+                        // Dynamically add user columns
+                        foreach (var user in users)
+                        {
+                            var costValue = g.FirstOrDefault(x => x.user_id == user.user_id)?.cost_per_unit.ToString() ?? "";
+                            //dict[$"User_{user.user_name}"] = costValue+"/"+user.user_id;
+                            dict[$"User_{user.user_name + "/" + user.user_id}"] = costValue;
+                        }
+
+                        return row;
+                    })
+                .ToList();
+
+            ViewBag.transformedData = transformedData;
+
+
+            objViewItemVendorCost.objGridAttributes.totalRecord = transformedData.Count;// objViewItemVendorCost.lstItem.Select(a => a.totalRecord).FirstOrDefault();
+
+            return PartialView("_ItemSiteAwarding", objViewItemVendorCost);
+        }
+
+        [HttpPost]
+        public JsonResult AwardSitetoUser(List<SiteAwardDetails> objivcm)
+        {
+
+            PageMessage objMsg = new PageMessage();
+
+            SiteAwardDetails objResp = new SiteAwardDetails();
+            DbMessage objDBMessage = new DbMessage();
+            // var status = new BLVendorSpecification().SaveSiteAwardDetails(objivcm, Convert.ToInt32(Session["user_id"]));
+            try
+            {
+                objDBMessage = new BLVendorSpecification().SaveSiteAwardDetails(objivcm, Convert.ToInt32(Session["user_id"]));
+                var sitePlanId = Convert.ToInt32(Session["SitePlanId"]);
+                CombineCableGeom objCombineCableGeom = new CombineCableGeom();
+                objCombineCableGeom = new BLVendorSpecification().GetCombileCableGeom(sitePlanId);
+                //----------------------------------------------network tickect assignment--------------------------------------
+                if (objDBMessage.status)
+                {
+                  
+                    int refrenceId = objCombineCableGeom.system_id;
+                    int region_id = objCombineCableGeom.region_id;
+                    int province_id = objCombineCableGeom.province_id;
+                    //var user = new BLUser().AwardSiteToSelectedVendor(refrenceId, userId, vendorCost);        
+                    #region Network ticket
+                    NetworkTicket objTicketMaster = new NetworkTicket();
+                    objTicketMaster.assigned_to = objivcm.Select(u => u.user_id).FirstOrDefault();
+                    objTicketMaster.reference_type = "GIS";
+                    objTicketMaster.region_id = region_id;
+                    objTicketMaster.province_id = province_id;
+                    objTicketMaster.target_date = System.DateTime.Now.AddDays(30);
+                    objTicketMaster.ticket_status_id = 5;// InProgress
+                    objTicketMaster.for_network_type = "P";
+                    objTicketMaster.ticket_type_id = 7;//Construction
+                    ;
+                    objTicketMaster.name = "Award Site";// default name
+                    objTicketMaster.network_id = objCombineCableGeom.network_id;
+                    objTicketMaster.geom = objCombineCableGeom.combine_geom;
+                    objTicketMaster.pageMsg.message = new BLNetworkTicket().SaveNetworkTicketfromItemVCost(objTicketMaster, Convert.ToInt32(Session["user_id"]));
+                    // always retunrs "Save" ;
+                    #endregion
+
+                    Session["refrenceData"] = null;
+                    Session["SitePlanId"] = null;
+                }
+                    //-------------------------------------------------end-------------------------------------------------------
+
+                if (objDBMessage.status)
+                {
+
+                    objResp.pageMsg.status = ResponseStatus.OK.ToString();
+                    objResp.pageMsg.message = objDBMessage.message;
+
+                }
+                else
+                {
+                    objResp.pageMsg.status = ResponseStatus.OK.ToString();
+                    objResp.pageMsg.message = objDBMessage.message;
+
+                }
+
+            }
+            catch
+            {
+                objResp.pageMsg.status = ResponseStatus.ERROR.ToString();
+                objResp.pageMsg.message = "Some error occured  while site awarding";
+            }
+
+            //objSA.pageMsg = objDBMessage;
+            return Json(objDBMessage, JsonRequestBehavior.AllowGet);
+
+        }
+        public IList<KeyValueDropDown> BindSearchBy(ViewItemVendorCost objTemplateForDropDown)
+        {
+            List<KeyValueDropDown> items = new List<KeyValueDropDown>();
+            items.Add(new KeyValueDropDown { key = "Item Code", value = "code" });
+            items.Add(new KeyValueDropDown { key = "Specification", value = "specification" });
+            //items.Add(new KeyValueDropDown { key = "Entity Type", value = "category_reference" });
+            //items.Add(new KeyValueDropDown { key = "UOM", value = "unit_measurement" });
+            return objTemplateForDropDown.lstBindSearchBy = items.OrderBy(m => m.key).ToList();
+
+        }
+        //public void DownloadReport()
+        //{
+        //    try
+        //    {
+               
+        //            try
+        //            {
+        //                ViewItemVendorCost objViewItemVendorCost = new ViewItemVendorCost();
+        //                CommonGridAttr objGridAttributes = new CommonGridAttr();
+        //            int page = 0;
+        //            objViewItemVendorCost.objGridAttributes.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
+        //            objViewItemVendorCost.objGridAttributes.currentPage = page == 0 ? 1 : page;
+        //            objViewItemVendorCost.lstItem = new BomBoq().getSiteBOMBOQReport(objViewItemVendorCost.objGridAttributes, Convert.ToInt32(Session["SitePlanId"]));
+        //                DataTable dtReport = new DataTable();
+                        
+        //                dtReport = MiscHelper.ListToDataTable<VendorSpecificationMaster>(objViewItemVendorCost.lstItem.Where(a=>a.user_id!=0).ToList());
+        //                dtReport.TableName = "Site export Report";
+        //            if (dtReport != null && dtReport.Rows.Count > 0)
+        //            {
+        //                List<string> columnsToKeep = new List<string> { "code", "specification", "unit_measurement", "totalqty", "user_name" };
+        //                //dtReport.Columns["code"].ColumnName = "Item Code";
+        //                //dtReport.Columns["specification"].ColumnName = "Specification";
+        //                //dtReport.Columns["unit_measurement"].ColumnName = "UOM";
+        //                //dtReport.Columns["totalqty"].ColumnName = "Quanty/Length";
+        //                //dtReport.Columns["user_name"].ColumnName = "User Name";
+                       
+                       
+        //                for (int i = dtReport.Columns.Count - 1; i >= 0; i--)
+        //                {
+        //                    if (!columnsToKeep.Contains(dtReport.Columns[i].ColumnName.ToLower()))
+        //                    {
+        //                        dtReport.Columns.RemoveAt(i);
+        //                    }
+        //                }
+        //            }
+
+        //                if (dtReport.Rows.Count > 0)
+        //                {
+        //                    ExportData(dtReport, "Site" + "_Report_" + MiscHelper.getTimeStamp());
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                ErrorLogHelper.WriteErrorLog("DownloadSiteReport()", "Report", ex);
+        //                throw ex;
+        //            }
+        //        }
+            
+        //    catch (Exception ex)
+        //    {
+        //        ErrorLogHelper.WriteErrorLog("DownloadSiteReport()", "Report", ex);
+        //        throw ex;
+        //    }
+        //}
+        public void DownloadReport()
+        {
+            try
+            {
+
+                try
+                {
+                    ViewItemVendorCost objViewItemVendorCost = new ViewItemVendorCost();
+                    CommonGridAttr objGridAttributes = new CommonGridAttr();
+                    int page = 0;
+                    objViewItemVendorCost.objGridAttributes.pageSize = 0;// ApplicationSettings.ViewAdminDashboardGridPageSize;
+                    objViewItemVendorCost.objGridAttributes.currentPage = 0;// page == 0 ? 1 : page;
+                    objViewItemVendorCost.objGridAttributes.totalRecord = 0;
+                    objViewItemVendorCost.lstItem = new BomBoq().getSiteBOMBOQReport(objViewItemVendorCost.objGridAttributes, Convert.ToInt32(Session["SitePlanId"]));
+
+                    var users = objViewItemVendorCost.lstItem.Where(a=>a.user_id!=0)
+                   .Select(x => new { x.user_id, x.user_name })
+                   .Distinct()
+                   //.OrderByDescending(x => x.user_id) // Ensure ordering is based on user_name
+                   .ToList();
+                    IWorkbook workbook = new XSSFWorkbook();
+                    ISheet sheet = workbook.CreateSheet("Sheet-1");
+
+                    var currR = 0;
+                    IRow currRow = null;
+
+                    currRow = sheet.CreateRow(0);
+                    var finalData = new List<string> { "Item Code", "Specification", "UOM","Quantity/Length"};
+                    finalData.AddRange(users.Select(u => Convert.ToString(u.user_name)).Distinct());
+
+                    currR = currRow.RowNum;
+                    AddHeader(workbook, sheet, finalData);
+
+                    workbook = DataTableToExcelVendorCostDetails(objViewItemVendorCost.lstItem, workbook, "xlsx", sheet, currRow, users.Count);
+                    using (var exportData = new MemoryStream())
+                    {
+                        Response.Clear();
+
+
+                        workbook.Write(exportData);
+                        Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", "ItemVendorCost" + ".xlsx"));
+                        Response.BinaryWrite(exportData.ToArray());
+                        Response.End();
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogHelper.WriteErrorLog("DownloadSiteReport()", "Report", ex);
+                    throw ex;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("DownloadSiteReport()", "Report", ex);
+                throw ex;
+            }
+        }
+        public static void AddHeader(IWorkbook workbook, ISheet sheet, List<string> users)
+        {
+
+            ICellStyle headerStyle = workbook.CreateCellStyle();
+            headerStyle.Alignment = HorizontalAlignment.Center;
+            headerStyle.VerticalAlignment = VerticalAlignment.Center;
+            IFont headerFont = workbook.CreateFont();
+            headerFont.Boldweight = (short)FontBoldWeight.Bold;
+            headerFont.FontName = "Arial";
+            headerFont.FontHeightInPoints = 10;
+            headerStyle.SetFont(headerFont);
+            headerStyle.BorderBottom = BorderStyle.Thin;
+            headerStyle.BorderTop = BorderStyle.Thin;
+            headerStyle.BorderLeft = BorderStyle.Thin;
+            headerStyle.BorderRight = BorderStyle.Thin;
+            headerStyle.BottomBorderColor = IndexedColors.Black.Index;
+            headerStyle.TopBorderColor = IndexedColors.Black.Index;
+            headerStyle.LeftBorderColor = IndexedColors.Black.Index;
+            headerStyle.RightBorderColor = IndexedColors.Black.Index;
+
+            IRow row = sheet.CreateRow(0);
+            NPOIExcelHelper.CreateCustomCellFiberAllocation(row, 0, "", headerStyle, true, false);
+            var rn3 = row.RowNum;
+            row.HeightInPoints = 20;
+            var ct = users.Count;
+            for (int i = 0; i <= users.Count - 1; i++)
+            {
+                int columnIndex = i;
+                var cell = row.CreateCell(columnIndex);
+                cell.SetCellValue(users[i % ct]);
+                cell.CellStyle = headerStyle;
+            }
+
+
+
+
+
+        }
+
+        public static IWorkbook DataTableToExcelVendorCostDetails(List<VendorSpecificationMaster> filteredData, IWorkbook workbook, string extension, ISheet sheet, IRow currRow, int usercount)//arvind
+        {
+
+            var currR = 0;
+
+            currR = currRow.RowNum;
+            currRow = sheet.CreateRow(currR + 1);
+            currR = currRow.RowNum;
+            //-----------------------------------loops through data--------------------------------------------------------------------------------        
+            var cellstyle = NPOIExcelHelper.getCellStyle(workbook);
+            int col = 0; int colctn = 0;
+            foreach (var (item1, index) in filteredData.GroupBy(m => m.user_id).Select(group => group.Key).Select((item, index) => (item, index)).ToList())
+            {
+                if (colctn == 1) { col = col + 1; colctn = 0; }
+                foreach (var item in filteredData.Where(m => m.user_id == item1 && m.user_id!=0))
+                {
+                    NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 0, item.code, cellstyle, true, false);
+                    NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 1, item.specification, cellstyle, true, false);
+                    NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 2, item.unit_measurement, cellstyle, true, false);
+                    NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 3, item.totalqty.ToString(), cellstyle, true, false);
+                    NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, col + 4, string.IsNullOrEmpty(Convert.ToString(item.cost_per_unit)) ? "0" : Convert.ToString(item.cost_per_unit), cellstyle, true, false);
+                  
+                    currRow = sheet.CreateRow(currR + 1);
+                    currR = currRow.RowNum;
+
+                    colctn = 1;
+                }
+
+            }
+            for (int sheetIndex = 0; sheetIndex < workbook.NumberOfSheets; sheetIndex++)
+            {
+                for (int i = 0; i <= filteredData.Count(); i++)
+                {
+                    sheet.AutoSizeColumn(i);
+                }
+            }
+            return workbook;
+
+        }
     }
 }

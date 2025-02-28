@@ -340,6 +340,11 @@ namespace BusinessLogics.Admin
 
             return new DASiteAwardDetails().SaveSiteAwardDetails(objSiteAwardDetails, userid);
         }
+        public CombineCableGeom GetCombileCableGeom(int sitePlanId)
+        {
+
+            return new DAComGeom().GetCombileCableGeom(sitePlanId);
+        }
 
     }
 }

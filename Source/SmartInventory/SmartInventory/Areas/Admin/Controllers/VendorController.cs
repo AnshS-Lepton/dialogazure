@@ -18,6 +18,11 @@ using static iTextSharp.text.pdf.AcroFields;
 using BusinessLogics;
 using Models.WFM;
 using DataUploader;
+using System.Windows.Input;
+using NPOI.XSSF.UserModel;
+using NPOI.SS.Util;
+using NPOI.SS.Formula.Functions;
+using iTextSharp.text.pdf.parser;
 
 namespace SmartInventory.Areas.Admin.Controllers
 {
@@ -384,6 +389,143 @@ namespace SmartInventory.Areas.Admin.Controllers
             }
             objivcm.pageMsg = objMsg;
             return Json(objMsg, JsonRequestBehavior.AllowGet);
+        }
+        public void DownloadItemVendorCostDetails()
+        {
+            try
+            {
+
+                try
+                {
+                    ViewItemVendorCost objViewItemVendorCost = new ViewItemVendorCost();
+                    CommonGridAttr objGridAttributes = new CommonGridAttr();
+                    int page = 0;
+                    objViewItemVendorCost.objGridAttributes.pageSize = 0;// ApplicationSettings.ViewAdminDashboardGridPageSize;
+                    objViewItemVendorCost.objGridAttributes.currentPage = 0;// page == 0 ? 1 : page;
+                    objViewItemVendorCost.objGridAttributes.totalRecord = 0;
+                    objViewItemVendorCost.lstItem=new BLVendorSpecification().ItemVendorCost(objViewItemVendorCost.objGridAttributes).ToList();
+
+                     var users = objViewItemVendorCost.lstItem
+                    .Select(x => new { x.user_id, x.user_name })
+                    .Distinct()
+                   // .OrderBy(x => x.user_id) // Ensure ordering is based on user_name
+                    .ToList();
+                    IWorkbook workbook = new XSSFWorkbook();
+                    ISheet sheet = workbook.CreateSheet("Sheet-1");
+                
+                    var currR = 0;
+                    IRow currRow = null;
+                   
+                    currRow = sheet.CreateRow(0);
+                    var finalData = new List<string> { "Item Code", "Specification", "Entity Type" };
+                    finalData.AddRange(users.Select(u => Convert.ToString(u.user_name)).Distinct());
+                    finalData.Add("UOM");
+                    currR = currRow.RowNum;
+                    AddHeader(workbook, sheet, finalData);
+                    
+                    workbook = DataTableToExcelVendorCostDetails(objViewItemVendorCost.lstItem, workbook, "xlsx", sheet, currRow, users.Count);
+                    using (var exportData = new MemoryStream())
+                    {
+                        Response.Clear();
+                       
+                            
+                            workbook.Write(exportData);
+                            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                            Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", "ItemVendorCost" + ".xlsx"));
+                            Response.BinaryWrite(exportData.ToArray());
+                            Response.End();
+                        
+                    }  
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogHelper.WriteErrorLog("DownloadSiteReport()", "Report", ex);
+                    throw ex;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("DownloadSiteReport()", "Report", ex);
+                throw ex;
+            }
+        }
+        public static void AddHeader(IWorkbook workbook, ISheet sheet, List<string> users)
+        {
+            
+            ICellStyle headerStyle = workbook.CreateCellStyle();
+            headerStyle.Alignment = HorizontalAlignment.Center;
+            headerStyle.VerticalAlignment = VerticalAlignment.Center;
+            IFont headerFont = workbook.CreateFont();
+            headerFont.Boldweight = (short)FontBoldWeight.Bold;
+            headerFont.FontName = "Arial";
+            headerFont.FontHeightInPoints = 10;
+            headerStyle.SetFont(headerFont);
+            headerStyle.BorderBottom = BorderStyle.Thin;
+            headerStyle.BorderTop = BorderStyle.Thin;
+            headerStyle.BorderLeft = BorderStyle.Thin;
+            headerStyle.BorderRight = BorderStyle.Thin;
+            headerStyle.BottomBorderColor = IndexedColors.Black.Index;
+            headerStyle.TopBorderColor = IndexedColors.Black.Index;
+            headerStyle.LeftBorderColor = IndexedColors.Black.Index;
+            headerStyle.RightBorderColor = IndexedColors.Black.Index;
+
+            IRow row = sheet.CreateRow(0);
+            NPOIExcelHelper.CreateCustomCellFiberAllocation(row, 0, "", headerStyle, true, false);
+            var rn3 = row.RowNum;
+            row.HeightInPoints = 20;
+            var ct = users.Count;
+            for (int i = 0; i <= users.Count-1; i++)
+            {
+                int columnIndex = i;
+                var cell = row.CreateCell(columnIndex);
+                cell.SetCellValue(users[i % ct]);
+                cell.CellStyle = headerStyle;
+            }
+            
+
+
+
+
+        }
+       
+        public static IWorkbook DataTableToExcelVendorCostDetails(List<VendorSpecificationMaster> filteredData, IWorkbook workbook, string extension, ISheet sheet, IRow currRow,int usercount)//arvind
+        {
+
+            var currR = 0;
+         
+            currR = currRow.RowNum;
+            currRow = sheet.CreateRow(currR+1);
+            currR = currRow.RowNum;
+            //-----------------------------------loops through data--------------------------------------------------------------------------------        
+            var cellstyle = NPOIExcelHelper.getCellStyle(workbook);
+            int col = 0;int colctn = 0;
+            foreach (var (item1, index) in filteredData.GroupBy(m => m.user_id).Select(group => group.Key).Select((item, index) => (item, index)).ToList())
+            {
+                if (colctn == 1) { col = col + 1; colctn = 0; }
+                foreach (var item in filteredData.Where(m => m.user_id == item1 && m.user_id!=0))
+                {
+                    NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 0, item.code, cellstyle, true, false);
+                    NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 1, item.specification, cellstyle, true, false);
+                    NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 2, item.category_reference, cellstyle, true, false);
+                    NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, col +3, string.IsNullOrEmpty(Convert.ToString(item.cost_per_unit)) ? "0" : Convert.ToString(item.cost_per_unit), cellstyle, true, false);
+                    NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, usercount + 3, item.unit_measurement, cellstyle, true, false);
+                    currRow = sheet.CreateRow(currR + 1);
+                    currR = currRow.RowNum;
+                    
+                    colctn = 1;
+                }
+
+            }
+            for (int sheetIndex = 0; sheetIndex < workbook.NumberOfSheets; sheetIndex++)
+            {
+                for (int i = 0; i <= filteredData.Count(); i++)
+                {
+                    sheet.AutoSizeColumn(i);
+                }
+            }
+            return workbook;
+
         }
     }
 }

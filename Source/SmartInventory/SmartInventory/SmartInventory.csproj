@@ -1680,6 +1680,7 @@
     <Content Include="MigrationScripts\26-11-2024_Dialog.sql" />
     <Content Include="MigrationScripts\27-06-2024.sql" />
     <Content Include="MigrationScripts\27-06-2024_2.sql" />
+    <Content Include="MigrationScripts\28-02-2025_dailog.sql" />
     <Content Include="MigrationScripts\28-11-2024_dialog.sql" />
     <Content Include="MigrationScripts\29-11-2024-dialog.sql" />
     <Content Include="MigrationScripts\29-11-2024-dialog_issues.sql" />
@@ -2432,8 +2433,9 @@
     <Content Include="Views\FiberLink\_SLDdiagramFiberLink.cshtml" />
     <Content Include="Views\Library\_SplicingNetworkDiagram.cshtml" />
     <Content Include="Views\FiberLink\_AssociateFiberStatus.cshtml" />
-    <Content Include="Views\Report\_ItemSiteAwarding.cshtml" />
+    <Content Include="Views\Report\_ItemSiteAwardingOld.cshtml" />
     <Content Include="Views\BOMBOQ\_ItemSiteAwarding.cshtml" />
+    <Content Include="Views\Report\_ItemSiteAwarding.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

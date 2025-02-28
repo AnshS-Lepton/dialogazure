@@ -3845,10 +3845,11 @@ function AddItemVendorCost(user_id, item_cost, item_code, specification, entity_
     $('#ddlIcode').val(item_code);
     $('#ddlUser').val(user_id);
     $('#txtunit_measurement').val(specification);
-    $('#txtItemCost').val(item_cost);
+    $('#txtItemCost').val(parseFloat(item_cost));
+    
     pageTitleText = 'Add Item Vendor Cost';
     modalClass = 'modal-sm';
-    popup.LoadModalDialog('Vendor/AddItemVendorCost', { user_id: user_id, item_cost: item_cost, code: item_code, specification: specification, entity_type: entity_type, unit_measurement: UOM, layer_id: layer_id }, pageTitleText, 'modal-md');
+    popup.LoadModalDialog('Vendor/AddItemVendorCost', { user_id: user_id, item_cost: item_cost, code: item_code, specification: specification, entity_type: entity_type, unit_measurement: UOM, layer_id: layer_id, cost_per_unit: item_cost }, pageTitleText, 'modal-md');
 }
 
 

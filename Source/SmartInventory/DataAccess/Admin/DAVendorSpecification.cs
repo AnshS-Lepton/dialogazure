@@ -1010,6 +1010,27 @@ namespace DataAccess.Admin
         }
     }
 
+    public class DAComGeom : Repository<CombineCableGeom>
+    {
+        public CombineCableGeom GetCombileCableGeom(int sitePlanId)
+        {
+
+            try
+            { 
+                var geom = repo.ExecuteProcedure<CombineCableGeom>("fn_get_combine_geom",
+                    new
+                    {
+                        p_siteplanid = sitePlanId,
+                        
+                    }, false).FirstOrDefault();
+                return geom;
+
+
+            }
+            catch { throw; }
+        }
+    }
+
 }
 
 

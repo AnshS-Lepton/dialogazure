@@ -115,7 +115,7 @@ $(document).ready(function () {
     $('.rowShowSiteAwarding').on("click", function () {
         var systemId = $(this).attr('data-value');
         //si.SiteReport.SiteAwarding(null, systemId, null, this);
-        si.SiteReport.ItemSiteAwarding(null, systemId, null, this);
+        si.SiteReport.ItemSiteAwarding(null, systemId, null, this,'','');
        
     });
 

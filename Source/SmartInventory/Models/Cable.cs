@@ -240,7 +240,9 @@ namespace Models
 		public string a_location_code { get; set; }
 		//[Required]
 		public string b_location_code { get; set; }
-		public CableMaster()
+        [NotMapped]
+        public string combineGeom { get; set; }
+        public CableMaster()
         {
             objPM = new PageMessage();
             lstTP = new List<NetworkDtl>();

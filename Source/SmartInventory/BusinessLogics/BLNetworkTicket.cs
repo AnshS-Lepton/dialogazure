@@ -15,10 +15,14 @@ namespace BusinessLogics
         {
             return new DANetworkTicket().GetAPINetworkTicket(objNetworkTicketFilter);
         }
-
+        
         public string SaveNetworkTicket(NetworkTicket objTicketMaster, int userId)
         {
             return new DANetworkTicket().SaveNetworkTicket(objTicketMaster, userId);
+        }
+        public string SaveNetworkTicketfromItemVCost(NetworkTicket objTicketMaster, int userId)
+        {
+            return new DANetworkTicket().SaveNetworkTicketfromItemVCost(objTicketMaster, userId);
         }
         public List<TicketTypeMaster> GetTicketTypeByModule(string module, int uid=0,int role_id=0,int ticked_id=0)
         {
