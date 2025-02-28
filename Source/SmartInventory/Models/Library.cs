@@ -486,6 +486,51 @@ namespace Models
         public string destination_port_type { get; set; }
         public decimal? destination_no_of_cores { get; set; }
         public string project_id_dialog { get; set; }
+
+        [NotMapped]
+        public IList<DropDownMaster> lsttopologytype { get; set; }
+
+        [NotMapped]
+        public IList<DropDownMaster> lstringtype { get; set; }
+
+        [NotMapped]
+        public List<TopologyRegionMaster> lstTopologyRegionMaster { get; set; }
+        [NotMapped]
+        public int RegionId { get; set; }
+        [NotMapped]
+        public List<TopologySegmentMaster> lstTopologySegmentMaster { get; set; }
+        [NotMapped]
+        public int SegmentId { get; set; }
+        [NotMapped]
+        public List<TopologyRingMaster> lstTopologyRingMaster { get; set; }
+       // public string network_id { get; set; }
+       // public int created_by { get; set; }
+        [NotMapped]
+        public IList<DropDownMaster> lstnoofsites { get; set; }
+        [NotMapped]
+        public decimal max_distance_peer { get; set; }
+        [NotMapped]
+        public string topology_type { get; set; }
+        [NotMapped]
+        public string ring_capacity { get; set; }
+        [NotMapped]
+        public int no_of_sites { get; set; } = 0;
+        //public int region_id { get; set; } = 0;
+        [NotMapped]
+        public int segment_id { get; set; } = 0;
+        //[NotMapped]
+        public int? ring_id { get; set; }  // Nullable int
+
+        public string ring_site_id { get; set; }
+        public int? ring_site_seq { get; set; }
+        public int? ring_a_site_id { get; set; }
+        public int? ring_b_site_id { get; set; }
+        public decimal ring_a_site_distance { get; set; }
+        public decimal ring_b_site_distance { get; set; }
+        public string  top_type { get; set; }
+        [NotMapped]
+        public List<TopologyGetSites> lsttopologygetsites { get; set; }
+
         /// Site Details Properties end
         public PODMaster()
         {
@@ -511,6 +556,10 @@ namespace Models
             project_id = 0;
             bom_sub_category = Convert.ToString(Bom_boq_category.Proposed);
             lstUserModule = new List<string>();
+            //lstTopologyRegionMaster = new List<TopologyRegionMaster>();
+            lstTopologySegmentMaster = new List<TopologySegmentMaster>();
+            lstTopologyRingMaster = new List<TopologyRingMaster>();
+            lsttopologygetsites = new List<TopologyGetSites>();
         }
 
 

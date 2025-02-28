@@ -727,7 +727,7 @@
                                             var vacantColor = $('#hdnVacantColor').val();
                                             $('#' + item.sourceId).attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
                                             $('#' + item.targetId).attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
-                                            // app.connectionObjects.splice(index, 1);
+                                             app.connectionObjects.splice(index, 1);
                                         })
                                     }
                                 })
@@ -1431,68 +1431,110 @@
     this.deleteConnection = function (connections, source, target) {
         var source = source;
         var target = target;
-        ajaxReq('Splicing/deleteConnection', { objConnectionInfo: connections }, true, function (resp) {
-            app.isMoved = false;
-            if (resp.status == "OK") {
-                $('#SlideMessage').text(resp.message);
-                var vacantColor = $('#hdnVacantColor').val();
-                source.attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
-                target.attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
-                source.parent().parent().children('.customer').css('background-color', vacantColor);
-                target.parent().parent().children('.customer').css('background-color', vacantColor);
-                var sourceAttributes = source.data();
-                var targetAttributes = target.data();
-                var currentIndex = app.currentConnections.findIndex(function (m) {
-                    return (parseInt(m.source_system_id) == parseInt(sourceAttributes.systemId) && m.source_entity_type.toUpperCase() == sourceAttributes.entityType.toUpperCase() && parseInt(m.source_port_no) == parseInt(sourceAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId) && m.destination_entity_type.toUpperCase() == targetAttributes.entityType.toUpperCase() && parseInt(m.destination_port_no) == parseInt(targetAttributes.portNo))
-                        || (parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId) && m.destination_entity_type.toUpperCase() == targetAttributes.entityType.toUpperCase() && parseInt(m.source_port_no) == parseInt(targetAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(sourceAttributes.systemId) && m.destination_entity_type.toUpperCase() == sourceAttributes.entityType.toUpperCase() && parseInt(m.destination_port_no) == parseInt(sourceAttributes.portNo))
-                });
-                app.currentConnections.splice(currentIndex, 1);
-                //$.each(connections, function (index, item) {
-                //    var sourceId = item.source_system_id + '_' + item.source_entity_type.toUpperCase() + '_' + item.source_port_no;
-                //    var targetId = item.destination_system_id + '_' + item.destination_entity_type.toUpperCase() + '_' + item.destination_port_no;
-                //    if (app.isODFTOCableWindow) {
-                //        if (sourceId.indexOf('CABLE') > 0) {
-                //            sourceId = 'Right_' + sourceId;
-                //        }
-                //        if (targetId.indexOf('CABLE') > 0) {
-                //            targetId = 'Right_' + targetId;
-                //        }
-                //    } else {
-                //        if (item.source_entity_type == 'Cable' && parseInt(item.source_system_id) == parseInt($(app.DE.SourceCable).val())) {
-                //            sourceId = 'Left_' + sourceId;
-                //        } else if (item.source_entity_type == 'Cable' && parseInt(item.source_system_id) == parseInt($(app.DE.DestinationCable).val())) {
-                //            sourceId = 'Right_' + sourceId;
-                //        }
-                //        if (item.destination_entity_type == 'Cable' && parseInt(item.destination_system_id) == parseInt($(app.DE.DestinationCable).val())) {
-                //            targetId = 'Right_' + targetId;
-                //        } else if (item.destination_entity_type == 'Cable' && parseInt(item.destination_system_id) == parseInt($(app.DE.SourceCable).val())) {
-                //            targetId = 'Left_' + targetId;
-                //        }
-                //    }
+        var datalinkid = source.attr('data-link-id');
+
+        if (datalinkid != 0 && datalinkid != '') {
+            confirm("Fiber link also will be disconnected when un spliced do you want to continue?", function () {
+                ajaxReq('Splicing/deleteConnection', { objConnectionInfo: connections }, true, function (resp) {
+                    app.isMoved = false;
+                    if (resp.status == "OK") {
+                        $('#SlideMessage').text(resp.message);
+                        var vacantColor = $('#hdnVacantColor').val();
+                        source.attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
+                        target.attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
+                        source.parent().parent().children('.customer').css('background-color', vacantColor);
+                        target.parent().parent().children('.customer').css('background-color', vacantColor);
+                        var sourceAttributes = source.data();
+                        var targetAttributes = target.data();
+                        var currentIndex = app.currentConnections.findIndex(function (m) {
+                            return (parseInt(m.source_system_id) == parseInt(sourceAttributes.systemId) && m.source_entity_type.toUpperCase() == sourceAttributes.entityType.toUpperCase() && parseInt(m.source_port_no) == parseInt(sourceAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId) && m.destination_entity_type.toUpperCase() == targetAttributes.entityType.toUpperCase() && parseInt(m.destination_port_no) == parseInt(targetAttributes.portNo))
+                                || (parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId) && m.destination_entity_type.toUpperCase() == targetAttributes.entityType.toUpperCase() && parseInt(m.source_port_no) == parseInt(targetAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(sourceAttributes.systemId) && m.destination_entity_type.toUpperCase() == sourceAttributes.entityType.toUpperCase() && parseInt(m.destination_port_no) == parseInt(sourceAttributes.portNo))
+                        });
+                        app.currentConnections.splice(currentIndex, 1);
+                        
+                        if ($(app.DE.ConnectingEntity).val() != '0' && $(app.DE.ConnectingEntity + ' :selected').attr('data-entity-type') != 'FMS') {
+                            app.getAvailablePorts();
+                        }
+                        $(".alert-info").slideDown(300);
+                        setTimeout(function () {
+                            $(".alert-info").slideUp(300);
+                        }, 3000)
+                        app.updateTrayPort(false);
+                        if (isp != null && app.isCPEWindow) {
+                            isp.getCPEConnections();
+                        }
+                    }
+                }, true, true);
+            }, function () {
+                app.createConnection(source[0]?.id, target[0].id);
+            });
+        } else {
+            ajaxReq('Splicing/deleteConnection', { objConnectionInfo: connections }, true, function (resp) {
+                app.isMoved = false;
+                if (resp.status == "OK") {
+                    $('#SlideMessage').text(resp.message);
+                    var vacantColor = $('#hdnVacantColor').val();
+                    source.attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
+                    target.attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
+                    source.parent().parent().children('.customer').css('background-color', vacantColor);
+                    target.parent().parent().children('.customer').css('background-color', vacantColor);
+                    var sourceAttributes = source.data();
+                    var targetAttributes = target.data();
+                    var currentIndex = app.currentConnections.findIndex(function (m) {
+                        return (parseInt(m.source_system_id) == parseInt(sourceAttributes.systemId) && m.source_entity_type.toUpperCase() == sourceAttributes.entityType.toUpperCase() && parseInt(m.source_port_no) == parseInt(sourceAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId) && m.destination_entity_type.toUpperCase() == targetAttributes.entityType.toUpperCase() && parseInt(m.destination_port_no) == parseInt(targetAttributes.portNo))
+                            || (parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId) && m.destination_entity_type.toUpperCase() == targetAttributes.entityType.toUpperCase() && parseInt(m.source_port_no) == parseInt(targetAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(sourceAttributes.systemId) && m.destination_entity_type.toUpperCase() == sourceAttributes.entityType.toUpperCase() && parseInt(m.destination_port_no) == parseInt(sourceAttributes.portNo))
+                    });
+                    app.currentConnections.splice(currentIndex, 1);
+                    //$.each(connections, function (index, item) {
+                    //    var sourceId = item.source_system_id + '_' + item.source_entity_type.toUpperCase() + '_' + item.source_port_no;
+                    //    var targetId = item.destination_system_id + '_' + item.destination_entity_type.toUpperCase() + '_' + item.destination_port_no;
+                    //    if (app.isODFTOCableWindow) {
+                    //        if (sourceId.indexOf('CABLE') > 0) {
+                    //            sourceId = 'Right_' + sourceId;
+                    //        }
+                    //        if (targetId.indexOf('CABLE') > 0) {
+                    //            targetId = 'Right_' + targetId;
+                    //        }
+                    //    } else {
+                    //        if (item.source_entity_type == 'Cable' && parseInt(item.source_system_id) == parseInt($(app.DE.SourceCable).val())) {
+                    //            sourceId = 'Left_' + sourceId;
+                    //        } else if (item.source_entity_type == 'Cable' && parseInt(item.source_system_id) == parseInt($(app.DE.DestinationCable).val())) {
+                    //            sourceId = 'Right_' + sourceId;
+                    //        }
+                    //        if (item.destination_entity_type == 'Cable' && parseInt(item.destination_system_id) == parseInt($(app.DE.DestinationCable).val())) {
+                    //            targetId = 'Right_' + targetId;
+                    //        } else if (item.destination_entity_type == 'Cable' && parseInt(item.destination_system_id) == parseInt($(app.DE.SourceCable).val())) {
+                    //            targetId = 'Left_' + targetId;
+                    //        }
+                    //    }
 
 
-                //    $('#' + sourceId).attr('data-is-connected', '0');
-                //    $('#' + targetId).attr('data-is-connected', '0');
-                //    var currentIndex = app.currentConnections.findIndex(function (m) {
-                //        return (parseInt(m.source_system_id) == parseInt(item.source_system_id) && m.source_entity_type.toUpperCase() == item.source_entity_type.toUpperCase() && m.source_port_no == item.source_port_no && parseInt(m.destination_system_id) == parseInt(item.destination_system_id) && m.destination_entity_type.toUpperCase() == item.destination_entity_type.toUpperCase() && m.destination_port_no == item.destination_port_no)
-                //        || (parseInt(m.destination_system_id) == parseInt(item.source_system_id) && m.destination_entity_type.toUpperCase() == item.source_entity_type.toUpperCase() && m.source_port_no == item.destination_port_no && parseInt(m.destination_system_id) == parseInt(item.source_system_id) && m.destination_entity_type.toUpperCase() == item.source_entity_type.toUpperCase() && m.destination_port_no == item.source_port_no)
-                //    });
-                //    app.currentConnections.splice(currentIndex, 1);
-                //})
+                    //    $('#' + sourceId).attr('data-is-connected', '0');
+                    //    $('#' + targetId).attr('data-is-connected', '0');
+                    //    var currentIndex = app.currentConnections.findIndex(function (m) {
+                    //        return (parseInt(m.source_system_id) == parseInt(item.source_system_id) && m.source_entity_type.toUpperCase() == item.source_entity_type.toUpperCase() && m.source_port_no == item.source_port_no && parseInt(m.destination_system_id) == parseInt(item.destination_system_id) && m.destination_entity_type.toUpperCase() == item.destination_entity_type.toUpperCase() && m.destination_port_no == item.destination_port_no)
+                    //        || (parseInt(m.destination_system_id) == parseInt(item.source_system_id) && m.destination_entity_type.toUpperCase() == item.source_entity_type.toUpperCase() && m.source_port_no == item.destination_port_no && parseInt(m.destination_system_id) == parseInt(item.source_system_id) && m.destination_entity_type.toUpperCase() == item.source_entity_type.toUpperCase() && m.destination_port_no == item.source_port_no)
+                    //    });
+                    //    app.currentConnections.splice(currentIndex, 1);
+                    //})
 
-                if ($(app.DE.ConnectingEntity).val() != '0' && $(app.DE.ConnectingEntity + ' :selected').attr('data-entity-type') != 'FMS') {
-                    app.getAvailablePorts();
+                    if ($(app.DE.ConnectingEntity).val() != '0' && $(app.DE.ConnectingEntity + ' :selected').attr('data-entity-type') != 'FMS') {
+                        app.getAvailablePorts();
+                    }
+                    $(".alert-info").slideDown(300);
+                    setTimeout(function () {
+                        $(".alert-info").slideUp(300);
+                    }, 3000)
+                    app.updateTrayPort(false);
+                    if (isp != null && app.isCPEWindow) {
+                        isp.getCPEConnections();
+                    }
                 }
-                $(".alert-info").slideDown(300);
-                setTimeout(function () {
-                    $(".alert-info").slideUp(300);
-                }, 3000)
-                app.updateTrayPort(false);
-                if (isp != null && app.isCPEWindow) {
-                    isp.getCPEConnections();
-                }
-            }
-        }, true, true);
+            }, true, true);
+        }
+
+
+        
     }
     this.getAvailablePorts = function () {
         $('#divConnectionAlert').removeClass('alert-danger');
@@ -2230,7 +2272,7 @@
                         content: contentString
                     });
                     if (resp.result.lstCableInfo != null || resp.result.lstCableInfo != undefined) {
-
+                        var cableNetworkFiberMap = {};
                         for (var i = 0; i < resp.result.lstCableInfo.length; i++) {
 
                             if (resp.result.lstCableInfo[i].cable_geom != null) {
@@ -2261,10 +2303,17 @@
 
                                     var _cableNetworkId = resp.result.lstCableInfo[i].cable_network_id;
                                     var _cableFiberNumber = resp.result.lstCableInfo[i].fiber_number;
+
+                                    // Add the fiber number to the corresponding cable network ID in the map
+                                    if (!cableNetworkFiberMap[_cableNetworkId]) {
+                                        cableNetworkFiberMap[_cableNetworkId] = [];
+                                    }
+                                    cableNetworkFiberMap[_cableNetworkId].push(_cableFiberNumber);
+
                                     return function () {
 
-                                        var content = '<div><h4>' + 'Cable' + ' Detail </h3><p><span  class="Info-content">Network Id : </span>' + _cableNetworkId + '</p>';
-                                        content += '<p><span  class="Info-content">Port No :</span> ' + _cableFiberNumber + '</p>';
+                                        var content = '<div><h4>' + 'Cable Detail </h3><p><span  class="Info-content">Network Id : </span>' + _cableNetworkId + '</p>';
+                                        content += '<p><span  class="Info-content">Core / Port No :</span> ' + cableNetworkFiberMap[_cableNetworkId].join(', ') + '</p>';
                                         objInfoWindow.setContent(content);
                                         objInfoWindow.open(si.map, lineObj);
                                     }

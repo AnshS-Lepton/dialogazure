@@ -12432,7 +12432,7 @@ var Main = function () {
         if (_zoom >= parseInt($('#hdnInfoToolZoom').val())) {
             app.showTempBufferforInfo(latLng);
             $.ajax({
-                url: '/Main/GetNearByEntitiesByLatLong',
+                url: baseUrl + '/Main/GetNearByEntitiesByLatLong',
                 type: 'GET',
                 data: {
                     latitude: latLng.lat(),
@@ -12447,7 +12447,7 @@ var Main = function () {
                     ulNE.html('');
                     if (resp.length >= 1) {
                         $.each(resp, function (indx, item) {
-                            ulNE.append('<li data-network-id="' + item["common_name"] + '"><a onclick="si.bindNetworkIdToCorePlanner(\'' + item["common_name"] + '\',\'' + objId + '\');" href="#">' + item["entity_title"] + '</a></li>');
+                            ulNE.append('<li data-network-id="' + item["common_name"] + '"><a onclick="si.bindNetworkIdToCorePlanner(\'' + item["common_name"] + '\',\'' + objId + '\');" href="#">' + item["common_name"] + '</a></li>');
                         });
                         $('#searchNBEntities').css('left', app.currentMousePos.x);
 
@@ -19425,12 +19425,43 @@ var Main = function () {
 
                 }
                 else {
-                    if (resp.source_network_id != null && resp.source_network_id != undefined && resp.source_network_id != '') {
+                    debugger;
+                    if (resp.source_network_id != null && resp.source_network_id !== '') {
                         app.ShowCableOnMapbyGeom('Polygon', resp);
                         $("#btnSubmit").prop("disabled", true);
-                        $("#ddlfiberlink").prop("required", false)
+                        $("#ddlfiberlink").prop("required", false);
+
                         alert(resp.message + resp.source_network_id);
-                    } else {
+
+                        // **Fetch additional availability data**
+                       
+                    }
+                    else {
+                        ajaxReq('Library/GetcheckAvailability', {}, true, function (resp) {
+                            if (resp.length > 0) {  // 
+                               
+                                let tbody = $("#gridTable tbody");
+                                tbody.empty(); // Clear previous data
+
+                                $.each(resp, function (index, item) {
+                                    let rowAction = '<a href="#" data-value="' + item.cable_id + '" class="icon-showon-map-view" title="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
+
+
+                                    let row = `<tr>
+                     <td>${rowAction}</td>
+                <td>${item.cable_name || '-'}</td>
+                
+            </tr>`;
+                                    tbody.append(row);
+                                });
+                                $("#gridTable").show();
+                            } 
+                            else 
+                            {
+                                $("#gridTable tbody").html("<tr><td colspan='5'>No data available</td></tr>");
+                                $("#gridTable").show();
+                            }
+                        }, true, true);
                         $("#btnSubmit").prop("disabled", true);
                         $("#ddlfiberlink").prop("required", false)
                         alert(resp.message);
@@ -19442,6 +19473,12 @@ var Main = function () {
         }, true, true);
 
     }
+    $(document).on("click", ".icon-showon-map-view", function () {
+
+        var cableId = $(this).attr("data-value");
+        si.ShowEntityOnMap(cableId, "Cable", "Line");
+        $(popup.DE.MinimizeModel).trigger("click");
+    });
     this.showReport = function () {
         window.location = appRoot + 'Library/ExportPlanLogicReport';
     }
@@ -19693,6 +19730,15 @@ var Main = function () {
             networkdata.hideAllNetworkFile();
         }
         popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
+    }
+    this.showRingDetails =function () {
+        $(app.DE.InfoDiv).hide();
+        $(app.DE.SplicingDiv).hide();
+        si.resetShapeTools();
+        if (typeof networkdata != "undefined") {
+            networkdata.hideAllNetworkFile();
+        }
+        popup.LoadModalDialog('PARENT', 'RingDetails/ShowTopologyRingDetails', {}, "Ring Details", 'modal-xl');
     }
 
     this.SaveRoster = function () {
@@ -24509,6 +24555,41 @@ var Main = function () {
             }, "Item cost vendor Report", 'modal-xl');  
         },
 
+        SiteTopology: function (geom, modeType, radius, obj) {
+            
+            debugger;
+            if (obj) {
+                //$('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
+                //$(obj).addClass('activeToolBar');
+                popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
+                    eType: '', systemid: modeType,
+                }, 'Topology Plan', 'modal-xl');
+            }
+            //if (geom != '' && geom != null) {
+            //    debugger;
+            //    ajaxReq('Report/ValidatePotentialArea', {
+            //        geom: geom, geomType: modeType, buff_Radius: radius
+            //    }, true, function (resp) {
+            //        if (resp.status == 'FAILED' || resp.status == 'ERROR') {
+            //            alert(resp.message);
+            //            return false;
+            //        }
+            //        else {
+            //            debugger;
+            //            popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
+            //                'objReportFilters.geom': geom, 'objReportFilters.geomType': modeType, 'objReportFilters.radius': radius, 'objReportFilters.layerName': 'SITE'
+            //            }, 'Topology Plan', 'modal-xl');
+            //        }
+
+            //    }, true, true, true);
+            //}
+            else {
+                popup.LoadModalDialog('CHILD', 'Report/SiteTopology', {
+                    eType: '', systemid: modeType,
+                }, 'Topology Plan', 'modal-xl');
+            }
+        },
+       
         AwardSiteToSelectedVendor: function (user_id, vendorCost) {
 
             if (vendorCost == '' || vendorCost == null)

@@ -1040,7 +1040,7 @@
     this.GetSLDDaigramFiberLink = function (_system_id) {
         var systemId = _system_id.toString();
         ajaxReq('main/Encrypt', { systemId: systemId + '-' + 'FMS' }, false, function (resp) {
-            window.open(appRoot + 'FiberLink/GetSLDDiagram?key=' + resp, '_blank');
+            window.open(appRoot + 'FiberLink/GetSchematicView?key=' + resp, '_blank');
         }, false, false);
     }
     this.btnclearLinkId = function () {

@@ -2433,6 +2433,8 @@
     <Content Include="Views\FiberLink\_SLDdiagramFiberLink.cshtml" />
     <Content Include="Views\Library\_SplicingNetworkDiagram.cshtml" />
     <Content Include="Views\FiberLink\_AssociateFiberStatus.cshtml" />
+    <Content Include="Views\Report\_SiteTopologyPlan.cshtml" />
+    <Content Include="Views\RingDetails\_ShowTopologyRingDetails.cshtml" />
     <Content Include="Views\Report\_ItemSiteAwardingOld.cshtml" />
     <Content Include="Views\BOMBOQ\_ItemSiteAwarding.cshtml" />
     <Content Include="Views\Report\_ItemSiteAwarding.cshtml" />
@@ -2506,6 +2508,7 @@
     <Compile Include="Controllers\RedlineController.cs" />
     <Compile Include="Controllers\RegionProvinceController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\RingDetailsController.cs" />
     <Compile Include="Controllers\RosterManagementController.cs" />
     <Compile Include="Controllers\SplicingController.cs" />
     <Compile Include="Controllers\SurveyAreaController.cs" />

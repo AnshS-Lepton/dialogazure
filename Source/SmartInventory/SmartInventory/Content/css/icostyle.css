@@ -440,6 +440,9 @@
 .icon-map-view:before {
     content: "\e966";
 }
+.icon-showon-map-view:before {
+    content: "\e966";
+}
 
 .icon-Search:before {
     content: "\e967";
@@ -841,4 +844,7 @@
 }
 .icon-FMS-Splicing:before {
     content: "\e9ca";
+}
+.icon-topology:before {
+    content: "\e9cb";
 }

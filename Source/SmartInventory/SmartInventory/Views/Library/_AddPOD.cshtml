@@ -348,14 +348,14 @@
                                 <div id="txtMaskedNetworkId"></div>
 
                             </div>
-                            <label class="control-label col-sm-2" for="txtPODName">
+                            <label class="control-label col-sm-2" for="txtPODName" style="display:none;">
                                 @Resources.Resources.SI_OSP_GBL_NET_FRM_059
                                 @if (Model.networkIdType == NetworkIdType.M.ToString())
                                 {
                                     <i class="clsMandatory">*</i>
                                 }:
                             </label>
-                            <div class="col-sm-4">
+                            <div class="col-sm-4" style="display:none;">
                                 @Html.TextBoxFor(m => m.pod_name,
                                  SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(
                                    new
@@ -586,10 +586,12 @@
         if (validateFields() && $("#frmAddPOD").valid() && si.isValidAssociation()) {
             $("#frmAddPOD").submit();
         } else {
-            alert(MultilingualKey.Required_Fields);
-        }
+            alert(MultilingualKey.Required_Fields || "Please fill in all required fields.");
+
+        } 
     }
     function validateFields() {
+        debugger;
         var siteId = $('#txtSiteId').val();
         var siteName = $('#txtSiteName').val();
 

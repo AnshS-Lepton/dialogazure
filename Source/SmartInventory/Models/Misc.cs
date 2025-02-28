@@ -246,6 +246,21 @@ namespace Models
 		public string type { get; set; }
 
 	}
+    public class TopologyGetSites
+    {
+        public int siteid { get; set; }
+        public string sitename { get; set; }
+        public decimal sitedistance { get; set; }
+
+    }
+    public class TopologySegmentCables
+    {
+       
+        public string cable_name { get; set; }
+        public string network_id { get; set; }
+
+    }
+    public class EntityLstCount
     public class IvcKeyValueDropDown
     {
         public int key { get; set; }
