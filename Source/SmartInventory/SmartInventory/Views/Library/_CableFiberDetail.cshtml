@@ -168,28 +168,26 @@
                         }</text>),
         @*grid.Column(null, "All", format: @<text><input type="checkbox" name="chkRow" class="grdCoreChk" onclick="ManageHeaderCheckBox()" value="@item.system_id" /></text>),*@
 grid.Column("fiber_number", Resources.Resources.SI_OSP_CAB_NET_FRM_032, format: @<text>@item.fiber_number</text>),
-grid.Column("tube_number", Resources.Resources.SI_OSP_CAB_NET_FRM_027, format: @<text>@item.tube_number</text>),
-grid.Column("tube_color", Resources.Resources.SI_OSP_CAB_NET_FRM_033, format: @<text>@item.tube_color</text>),
-grid.Column("tube_color_code", Resources.Resources.SI_OSP_CAB_NET_FRM_034, format: @<text><div style="width:20px; height:20px;border: 1px solid #ddd; background-color:@item.tube_color_code"></div> </text>),
-grid.Column("core_number", Resources.Resources.SI_OSP_CAB_NET_FRM_031, format: @<text>@item.core_number</text>),
-
-grid.Column("core_color", Resources.Resources.SI_OSP_CAB_NET_FRM_035, format: @<text>@item.core_color</text>),
-grid.Column("core_color_code", Resources.Resources.SI_OSP_CAB_NET_FRM_036, format: @<text><div style="width:20px; height:20px;border: 1px solid #ddd; background-color:@item.core_color_code"></div> </text>),
-grid.Column("core_status", Resources.Resources.SI_OSP_CAB_NET_FRM_070, format: @<text><span id="@("PortStatus_"+item.fiber_number)">@item.core_status</span></text>),
-grid.Column("", Resources.Resources.SI_OSP_GBL_NET_FRM_312, format: @<text> <p id="@("PortComments_"+item.fiber_number)" data-toggle="tooltip" title="@item.comment" class="WrapText">@item.comment</p> </text>),
-
+grid.Column("core_status", "Splicing Status", format: @<text><span id="@("PortStatus_"+item.fiber_number)">@item.core_status</span></text>),
+grid.Column("fiber_status", "Fiber Status", format: @<text>
+            <div id="dvfiber">
+                <label class="control-label" id="lblGrdfiberStatus_@item.fiber_number"
+                       onclick="GetFiberStatus('@item.cable_id', '@item.fiber_number');">
+                    @(string.IsNullOrEmpty(item.fiber_status) ? "Select Fiber Status" : item.fiber_status)
+                </label>
+            </div></text>),
 grid.Column("link_id", Resources.Resources.SI_OSP_GBL_NET_FRM_421, format: @<text>
             <div id="dvLink">
                 <label class="control-label @(editPermission==true?"":"dvdisabled")" id="lblGrdLinkId_@item.fiber_number" onclick="GetLinkId('@item.cable_id','@item.fiber_number');">@(item.link_system_id == 0 ? "Enter Link Id" : item.link_id)</label>
             </div></text>),
-           grid.Column("fiber_status", "Fiber Status", format: @<text>
-                       <div id="dvfiber">
-                           <label class="control-label" id="lblGrdfiberStatus_@item.fiber_number"
-                                  onclick="GetFiberStatus('@item.cable_id', '@item.fiber_number');">
-                               @(string.IsNullOrEmpty(item.fiber_status) ? "Select Fiber Status" : item.fiber_status)
-                           </label>
-                       </div></text>),
-       grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format:@<text>
+grid.Column("core_number", Resources.Resources.SI_OSP_CAB_NET_FRM_031, format: @<text>@item.core_number</text>),
+grid.Column("tube_number", Resources.Resources.SI_OSP_CAB_NET_FRM_027, format: @<text>@item.tube_number</text>),
+grid.Column("tube_color", Resources.Resources.SI_OSP_CAB_NET_FRM_033, format: @<text>@item.tube_color</text>),
+grid.Column("tube_color_code", Resources.Resources.SI_OSP_CAB_NET_FRM_034, format: @<text><div style="width:20px; height:20px;border: 1px solid #ddd; background-color:@item.tube_color_code"></div> </text>),
+grid.Column("core_color", Resources.Resources.SI_OSP_CAB_NET_FRM_035, format: @<text>@item.core_color</text>),
+grid.Column("core_color_code", Resources.Resources.SI_OSP_CAB_NET_FRM_036, format: @<text><div style="width:20px; height:20px;border: 1px solid #ddd; background-color:@item.core_color_code"></div> </text>),
+grid.Column("", Resources.Resources.SI_OSP_GBL_NET_FRM_312, format: @<text> <p id="@("PortComments_"+item.fiber_number)" data-toggle="tooltip" title="@item.comment" class="WrapText">@item.comment</p> </text>),
+grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format:@<text>
             @if (item.a_end_status == "Connected" || item.b_end_status == "Connected")
             {
                 <a href="#" onclick="splicing.redirectToCustomerDetails(null,'@Model.cable_network_id','Cable',@Model.cable_id,'@item.core_number',false);" id="btnConnectedCustomerDetails"><i class="icon-CUSTOMER" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_015" style="margin-left: 15px;color:red;"></i></a>
