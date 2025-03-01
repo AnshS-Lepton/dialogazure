@@ -50,6 +50,7 @@
         'crossIcon': '.crossIcon',
         'tickIcon': '.tickIcon',
         'txtLinkId': '#txtLinkId',
+        'txtLinkName': '#txtLinkName',
         'crossStartIconId': '#crossStartIcon',
         'IconCross': '#IconCross',
         'crossEndIconId': '#crossEndIcon',
@@ -824,6 +825,7 @@
         var prefix = "";
 
         $('#txtLinkId').val(linkId);
+        $('#txtLinkName').val(linkId);
         $('#txtFiberLinkId').val(linkId.trim());
 
         if (!isPrefixFound) {

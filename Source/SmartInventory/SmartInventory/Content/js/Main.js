@@ -19511,9 +19511,11 @@ var Main = function () {
         ajaxReq('Library/GetlinkPrefixbyPrefixType', { link_prefix: _link_prefix }, false, function (resp) {
             if (resp.data != null) {
                 $('#txtLinkId').val(resp.data);
+                $('#txtLinkName').val(resp.data);
             }
             else {
                 $('#txtLinkId').val('');
+                $('#txtLinkName').val('');
             }
 
         });
