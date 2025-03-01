@@ -44,6 +44,7 @@ namespace Models.TempUpload
         public string gis_design_id { get; set; }
         public string subarea_id { get; set; }
         public string ownership_type { get; set; }
+        public string ownership_type_vendor_name { get; set; }
 
     }
 }

@@ -261,6 +261,7 @@ namespace SmartInventory.Settings
         public static string ApplicationVersion = "";
         public static bool IsLicenseExpAlrtAllowed = false;
         public static bool IsAADEnabled = false;
+        public static int MaxSitePeerDisatence = 0;
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -910,6 +911,10 @@ namespace SmartInventory.Settings
                 if (objSetting.key == "ApplicationVersion")
                 {
                     ApplicationVersion = objSetting.value;
+                }
+                if (objSetting.key == "MaxSitePeerDisatence")
+                {
+                    MaxSitePeerDisatence = Convert.ToInt32(objSetting.value);
                 }
             }
             IsLicenseExpAlrtAllowed = globalSettings

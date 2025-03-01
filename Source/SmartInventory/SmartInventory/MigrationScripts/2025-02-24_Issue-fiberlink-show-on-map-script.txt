@@ -1,0 +1,6 @@
+update att_details_fiber_link set fiber_link_status ='Free' 
+where system_id not in (
+select distinct link_system_id from att_details_cable_info where link_system_id > 0)
+and fiber_link_status ='Associated' ;
+
+

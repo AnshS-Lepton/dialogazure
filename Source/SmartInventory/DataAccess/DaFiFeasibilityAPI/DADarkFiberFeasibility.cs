@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
+using Utility;
 
 namespace DataAccess.DaFiFeasibilityAPI
 {
@@ -45,7 +46,9 @@ namespace DataAccess.DaFiFeasibilityAPI
 
                 return resp;
             }
-            catch { throw; }
+            catch {
+                throw; 
+            }
         }
 
         public DbMessage SaveDarkFiber(string request_id, string route_type, string route_id, string geojson_new_built, double total_new_length)

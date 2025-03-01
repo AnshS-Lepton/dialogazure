@@ -13,6 +13,7 @@ using Models.Admin;
 using System.Web.UI;
 using GeometryType = Models.GeometryType;
 using NPOI.SS.Formula.Functions;
+using Models.DaFiFeasibilityAPI;
 //using System.Data.Entity.Core.Metadata.Edm;
 //using EntityType = Models.EntityType;
 
@@ -43,8 +44,8 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
        
+
         public List<DropDownMaster> GetAssociationDropDownList(string enType, string ddType = "")
         {
             try
@@ -175,6 +176,46 @@ namespace DataAccess
                     p_user_id = user_id,
                     p_source_ref_id = source_ref_id,
                     p_source_ref_type = source_ref_type
+
+                });
+            }
+            catch { throw; }
+        }
+        public List<EntityDetail> getNearByFeasibility(double latitude, double longitude, int bufferInMtr)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<EntityDetail>("fn_getnearestfeasibility", new
+                {
+                    lat = latitude,
+                    lng = longitude,
+                    mtrBuffer = bufferInMtr
+
+                });
+            }
+            catch { throw; }
+        }
+
+        public List<RouteBuffer> getRouteBufferFeasibility(string coordinates, int route_buffer)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<RouteBuffer>("fn_getroutebufferfeasibility", new
+                {
+                    p_coordinates = coordinates,
+                    mtrbuffer = route_buffer
+
+                });
+            }
+            catch { throw; }
+        }
+        public List<Points> getStartEndPointsFeasibility(string coordinates)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<Points>("fn_get_start_endpoints", new
+                {
+                    p_coordinates = coordinates
 
                 });
             }
@@ -1787,7 +1828,14 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
+        public List<DropDownMaster> GetToplogyDropDownList(string ddType)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DropDownMaster>("fn_get_dropdownlist", new { entitytype = "", dropdownType = ddType });
+            }
+            catch { throw; }
+        }
     }
 
     public class DAMisce : Repository<EmailSettingsModel>

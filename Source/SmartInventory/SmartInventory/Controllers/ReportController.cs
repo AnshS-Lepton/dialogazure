@@ -1,4 +1,5 @@
 ﻿using BusinessLogics;
+using BusinessLogics.Admin;
 using Ionic.Zip;
 using iTextSharp.text;
 using iTextSharp.text.html.simpleparser;
@@ -9,6 +10,7 @@ using Models;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
+using NetTopologySuite.Noding;
 using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
@@ -13442,6 +13444,213 @@ namespace SmartInventory.Controllers
                 }
             }
         }
+        #endregion
+
+        #region Site Topology process 
+        public ActionResult SiteTopology(string systemid,PODMaster objToplogyPlan, int page = 0, string sort = "", string sortdir = "")
+        {
+            try
+            {
+                objToplogyPlan.system_id = Convert.ToInt32(systemid); // Store in ViewBag to access in View
+
+
+                objToplogyPlan.lsttopologytype = new BLMisc().GetToplogyDropDownList(DropDownType.Topology_Type.ToString());
+                objToplogyPlan.lstringtype = new BLMisc().GetToplogyDropDownList(DropDownType.Ring_Capacity.ToString());
+                objToplogyPlan.lstnoofsites = new BLMisc().GetToplogyDropDownList(DropDownType.NoOf_Sites.ToString());
+                objToplogyPlan.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
+                objToplogyPlan.max_distance_peer = ApplicationSettings.MaxSitePeerDisatence;
+               //objToplogyPlan.lsttopologygetsites = new BLProject().Bindtopologygetsites(objToplogyPlan.system_id, 1, Convert.ToInt32(Session["user_id"])).ToList();
+
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("SiteTopology()", "Report", ex);
+                throw ex;
+            }
+
+            return PartialView("_SiteTopologyPlan", objToplogyPlan);
+        }
+        public JsonResult GetSegmentsByRegion(int id)
+        {
+            // Fetch segments based on regionId
+            var segments = new BLProject().getSegmentDetailByIdList(id);
+            //var segmentcode = new BLProject().GetSegmentCode();
+            // Transform into key-value pairs for dropdown
+            var segmentDropdownData = segments.Select(s => new
+            {
+                Value = s.id,      // Segment ID as value
+                Text = s.segment_code      // Segment name as text getRingDetailByIdList
+            }).ToList();
+
+            // Return as JSON
+            return Json(segmentDropdownData, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetSegmentsCode()
+        {
+            // Fetch segments based on regionId
+            var segmentcode = new BLProject().GetSegmentCode();
+
+            // Return as JSON
+            return Json(segmentcode, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Gettopologygetsites(int systemId, int ringId)
+        {
+            PODMaster pODMaster = new PODMaster();
+            // Fetch segments based on regionId
+            pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsites(systemId, ringId, Convert.ToInt32(Session["user_id"])).ToList();
+
+
+            // Return as JSON
+            return Json(pODMaster, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetRingCode()
+        {
+            // Fetch segments based on regionId
+            var ringCode = new BLProject().GetRingCode();
+
+            // Return as JSON
+            return Json(ringCode, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetRingTypesByRegion(int segmentId)
+        {
+            var ringsdata = new BLProject().getRingDetailByIdList(segmentId);
+            // Transform into key-value pairs for dropdown
+            var ringsDropdownData = ringsdata.Select(s => new
+            {
+                Value = s.id,     
+                Text = s.ring_code
+            }).ToList();
+
+            // Return as JSON
+            return Json(ringsDropdownData, JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult SaveSiteTopology(PODMaster pODMaster)
+        {
+            ModelState.Clear();
+            var response = new { Success = false, Message = "Save failed" }; // Default failure response
+
+                pODMaster = new BLProject().updatetopology(pODMaster);
+
+                // Check if the save operation was successful
+                if (pODMaster != null)
+                {
+                    response = new { Success = true, Message = "Topology Plan saved successfully" };
+                }
+            
+
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetSegmentdata(string agg1_site_id, string agg2_site_id)
+        {
+            TopologySegment topologySegment = new TopologySegment();
+            topologySegment.agg1_site_id = agg1_site_id;
+            topologySegment.agg2_site_id = agg2_site_id;
+
+            var siteList = new BLProject().GetSegment(topologySegment);
+            //var result = siteList.Select(s => new {
+            //    label = s.site_id.ToString(),
+            //    value = s.site_id.ToString(),
+            //    siteName = s.site_name // Include site name in response
+            //}).ToList();
+
+            return Json(siteList, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetSiteIds(string term)
+        {
+            var siteList = new BLProject().getSiteIdList(term);
+            var result = siteList.Select(s => new {
+                label = s.site_id.ToString(),  // Displayed in dropdown
+                value = s.site_id.ToString(),  // Stored in textbox
+                siteName = s.site_name,        // Site name
+                systemId = s.system_id         // Include system_id in response
+            }).ToList();
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetAGG1(string term)
+        {
+            var sitenameList = new BLProject().getAGG1List(term);
+
+            var result = sitenameList.Select(s => new
+            {
+                label = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Correct formatting
+                value = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Ensuring consistency with label
+                systemId = s.system_id // Handle null system_id
+            }).ToList();
+
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+        public JsonResult GetAGG2(string term)
+        {
+            var sitenameList = new BLProject().getAGG2List(term);
+            //var result = sitenameList.Select(s => new
+            //{
+            //    label = s.agg_02.ToString(),  // Display in dropdown
+            //    value = s.agg_02.ToString(),  // Store agg_02 in textbox
+            //    systemId = s.system_id        // Include system_id in response
+            //}).ToList();
+            var result = sitenameList.Select(s => new
+            {
+                label = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Correct formatting
+                value = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Ensuring consistency with label
+                systemId = s.system_id // Handle null system_id
+            }).ToList();
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpPost]
+        public ActionResult SaveRing(int segmentcode, string ringcode, string description)
+        {
+            ModelState.Clear();
+            var response = new { Success = false, Message = "Save failed" }; // Default failure response
+            TopologyRingMaster topologySegment = new TopologyRingMaster();
+            topologySegment.segment_id = segmentcode;
+            topologySegment.ring_code = ringcode;
+            topologySegment.description = description;
+            // Save to database
+            topologySegment = new BLProject().SaveRing(topologySegment);
+
+            if (topologySegment != null)
+            {
+                response = new { Success = true, Message = "Segment saved successfully" };
+            }
+
+            return Json(response);
+        }
+
+        [HttpPost]
+        public JsonResult SaveSegment(string segmentcode,int region_code, string agg1_site_id, string agg2_site_id, string description,int Agg1SystemId,int Agg2SystemId,int segment_id)
+        {
+            try
+            {
+                TopologySegment topologySegment = new TopologySegment();
+                topologySegment.segment_code = segmentcode;
+                topologySegment.region_id = region_code;
+                topologySegment.agg1_site_id = agg1_site_id;
+                topologySegment.agg2_site_id = agg2_site_id;
+                topologySegment.description = description;
+                var topology_get_segment_cables= new BLProject().Gettopologysegmentcables(Agg1SystemId, Agg2SystemId, Convert.ToInt32(Session["user_id"])).ToList();
+                new BLProject().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId, Convert.ToInt32(Session["user_id"]), segment_id);
+                // Save to database
+                topologySegment = new BLProject().SaveSegment(topologySegment);
+
+                return Json(new { success = true, message = "Segment saved successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
         #endregion
     }
 }
