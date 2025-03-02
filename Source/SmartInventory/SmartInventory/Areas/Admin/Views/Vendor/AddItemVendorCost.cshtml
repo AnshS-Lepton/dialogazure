@@ -1,0 +1,360 @@
+﻿@model Models.Admin.VendorSpecificationMaster
+
+<!DOCTYPE html>
+<div id="dvPageMessage">
+    @{
+        Html.RenderPartial("_PageMessage", Model.pageMsg);
+    }
+</div>
+@{
+    Layout = null;
+}
+
+
+@using (Ajax.BeginForm("SaveItemVendorCostDetails", "Vendor",
+                                                new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divItemVendorCostDetails", OnSuccess = "OnSuccess", },
+                                                new { id = "frmItemVendorCostDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.id);
+    @Html.HiddenFor(m => m.created_by);
+    @Html.HiddenFor(m => m.created_on);
+    @Html.HiddenFor(m => m.layer_name);
+    @Html.HiddenFor(m => m.layer_id);
+
+    <input type="hidden" name="key" id="hiddenKey">
+    <input type="hidden" name="specification" id="hiddenspecification">
+    <input type="hidden" name="code" id="hiddencode">
+    <input type="hidden" name="user_id" id="hiddenuser_id">
+    <div id="dvInfoVendorSpecification" class="--pad-15">
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Entity Type<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+
+                <div class="col-md-8">
+                    @*<select name="@Html.NameFor(x=> x.layer_id )"
+                                id="selectCategory"
+                                class="chosen-select form-control"
+                                onchange="OnCategoryChange();">
+                            <option value="0">-Select-</option>
+                            <optgroup value="" label="Entity">
+                                @foreach (var category in Model.entity_categories)
+                                {
+                                    <option value="@category.category_key"
+                                            @if (category.category_key == Model.category_key) { <text> selected </text> }
+                                            data-layer-id="@category.layer_id"
+                                            data-accessories-id="@category.accessories_id">
+                                        @category.display_name
+                                    </option>
+                                }
+                            </optgroup>
+                            <optgroup value="" label="Other">
+                                @foreach (var category in Model.other_categories)
+                                {
+                                    <option value="@category.category_key"
+                                            @if (category.category_key == Model.category_key) { <text> selected </text> }
+                                            data-layer-id="@category.layer_id"
+                                            data-accessories-id="@category.accessories_id">
+                                        @category.display_name
+                                    </option>
+                                }
+                            </optgroup>
+                        </select>*@
+
+                    @Html.DropDownListFor(m => m.key, new SelectList(Model.listItemCategory.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "selectCategory", @onchange = "OnCategoryChange();" })
+
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Specification<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.DropDownListFor(m => m.specification, new SelectList(Model.lstItemSpec.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlSpec", @onchange = "OnSpecificationChange();" })
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Item Code<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.DropDownListFor(m => m.code, new SelectList(Model.listItemCode.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlIcode", @onchange = "OnItemcodeChange();" })
+
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        User<i class="clsMandatory">*</i>:
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.DropDownListFor(m => m.user_id, new SelectList(Model.lstUserDetails.Select(x => new { Value = x.user_id, Text = x.user_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlUser" })
+
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        UOM
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @*@Html.DropDownListFor(m => m.unit_measurement, new SelectList(Model.listUnitMeasurement.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "txtunit_measurement" })*@
+                    @Html.TextBoxFor(m => m.unit_measurement, new { @class = "chk", @id = "txtunit_measurement", @readonly = "readonly" })
+
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">
+                        Item Cost
+                    </label>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.cost_per_unit, new
+               {
+                   @id = "txtItemCost",
+                   @class = "form-control",
+                   @oninput = "validateNumericInput(this)",
+                   @placeholder = "Enter Item Cost",
+                   @type = "number",
+                   @step = "0.01", // Allows decimal values
+                   @min = "0"
+               })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ModalFooter" id="dvBtnAction">
+        <button type="button" class="btn btn-default ml-auto mr-05" id="btnCancel">Cancel</button>
+        @if (Model.id > 0)
+        {
+            <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveItmVdrCost" value="Update" />
+        }
+        else
+        {
+            <input type="submit" class="btn btn-primary" onclick="return IsValid();" id="btnSaveItmVdrCost" value="Save" />
+        }
+    </div>
+
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+        $('.chosen-select').chosen({ width: '100%' });
+        $('#hiddenKey').val($('#selectCategory').val());
+        $('#hiddenspecification').val($('#ddlSpec').val()) ;
+        $('#hiddencode').val($('#ddlIcode').val()); 
+        $('#hiddenuser_id').val($('#ddlUser').val()); 
+
+        if ($('#ddlUser').val() != '') {
+            $('#selectCategory').prop("disabled", true).trigger("chosen:updated");;
+            $('#ddlSpec').prop("disabled", true).trigger("chosen:updated");;
+            $('#ddlIcode').prop("disabled", true).trigger("chosen:updated");;
+            $('#ddlUser').prop("disabled", true).trigger("chosen:updated");;
+        }
+        else
+        {
+            $('#selectCategory').prop("disabled", false).trigger("chosen:updated");
+            $('#ddlSpec').prop("disabled", false).trigger("chosen:updated");
+            $('#ddlIcode').prop("disabled", false).trigger("chosen:updated");
+            $('#ddlUser').prop("disabled", false).trigger("chosen:updated");
+
+
+
+        }
+        
+    });
+
+    function OnSuccess(data) {
+        debugger;
+        if (data.status == "OK") {
+            $("#closeModalPopup").trigger("click");
+            setTimeout(function () {
+                window.location = appRoot + 'Vendor/ViewItemVendorCost';
+            }, 3000);
+            alert(data.message, 'Success', 'success');
+        }
+        else {
+            alert(data.message, 'Failed', 'Failed');
+        }
+    }
+    function IsValid() {
+        debugger;
+        if ($('#selectCategory').val() == "0") {
+            $('#selectCategory').addClass('errorClass');
+            alert("Category is required");
+            return false;
+        }
+        else {
+            $('#selectCategory').removeClass("errorClass");
+        }
+        if ($('#ddlSpec').val() == "0") { $('#ddlSpec').addClass('errorClass'); alert("Specification is required"); return false; } else { $('#ddlSpec').removeClass("errorClass"); }
+        if ($('#ddlIcode').val() == "0") { $('#ddlUser').addClass('errorClass'); alert("Item Code is required"); return false; } else { $('#ddlIcode').removeClass("errorClass"); }
+
+
+        if ($('#txtunit_measurement').val() == "") {
+            $('#txtunit_measurement').addClass('errorClass');
+            alert("UOM  is mandatory");
+            return false;
+        }
+        else {
+            $('#txtunit_measurement').removeClass("errorClass");
+        }
+        if ($('#txtItemCost ').val() == "0") {
+            $('#txtItemCost').addClass('errorClass');
+            alert("Item Cost is mandatory");
+            return false;
+        }
+        else {
+            $('#txtItemCost').removeClass("errorClass");
+        }
+
+    };
+    //$(".onchang").keyup(function () { $('.onchang').removeClass("errorClass"); })
+    function validateNumericInput(input) {
+        let value = input.value;
+
+
+        let regex = /^\d*\.?\d{0,2}$/;
+
+        if (!regex.test(value)) {
+            input.value = value.slice(0, -1);
+        }
+    }
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+    function isDecimalDigit(evt) {
+        var ex = /^\d{1,2}\.?\d{0,2}$/;
+        if (ex.test(evt.value)) {
+            if (evt.value.indexOf('.') == -1 && evt.value.length > 2)
+                evt.value = evt.value.substr(0, evt.value.length - 1);
+            return true;
+        }
+        evt.value = evt.value.substr(0, evt.value.length - 1);
+        return false;
+    }
+
+    $("#btnCancel").on("click", function () {
+        $("#closeModalPopup").trigger("click");
+    });
+
+
+    function OnCategoryChange() {
+        debugger;
+        //let categoryData = $('#selectCategory option:selected').data();
+        //let _layerId = categoryData.layerId;
+        let _layerId = $('#selectCategory').val();
+
+        let specification = $('#ddlSpec').val();
+        let item_code = $('#ddlIcode').val();
+        let accessoriesId = '';//categoryData.accessoriesId;
+
+        ajaxReq('Vendor/BindSpecificationBylayerId', { user_id: 0, item_cost: 0, code: item_code, specification: specification, entity_type: '', uom: '', layer_id: _layerId }, false, function (resp) {
+
+            if (resp.Data) {
+                $('#ddlSpec').empty();
+                $('#ddlIcode').empty();
+                $('#ddlSpec').append($("<option></option>").val('0').html('-Select-'));
+                $('#ddlIcode').append($("<option></option>").val('0').html('-Select-'));
+                $.each(resp.Data.lstItemSpec, function (data, item) {
+                    $('#ddlSpec').append($("<option></option>").val(item.value).html(item.value));
+                });
+                $('#ddlSpec').trigger("chosen:updated");
+            }
+            else {
+                $('#ddlSpec').empty();
+                $('#ddlIcode').empty();
+                $('#ddlSpec').append($("<option></option>").val('0').html('-Select-'));
+                $('#ddlIcode').append($("<option></option>").val('0').html('-Select-'));
+                $('#ddlSpec').trigger("chosen:updated");
+                $('#ddlIcode').trigger("chosen:updated");
+
+            }
+        }, true, true, false, 'POST');
+    }
+    function OnSpecificationChange() {
+        //let categoryData = $('#selectCategory option:selected').data();
+        //let _layerId = categoryData.layerId;
+        let _layerId = $('#selectCategory').val();
+        let specification = $('#ddlSpec').val();
+        let item_code = $('#ddlIcode').val();
+        let accessoriesId = ''; //categoryData.accessoriesId;
+        ajaxReq('Vendor/BindItemCodeBySpecification_layerId', { user_id: 0, item_cost: 0, code: item_code, specification: specification, entity_type: '', uom: '', layer_id: _layerId }, false, function (resp) {
+
+            if (resp.Data) {
+
+                $('#ddlIcode').empty();
+
+                $('#ddlIcode').append($("<option></option>").val('0').html('-Select-'));
+                $.each(resp.Data.listItemCode, function (data, item) {
+                    $('#ddlIcode').append($("<option></option>").val(item.value).html(item.value));
+                });
+                $('#ddlIcode').trigger("chosen:updated");
+
+            }
+            else {
+
+                $('#ddlIcode').empty();
+
+                $('#ddlIcode').append($("<option></option>").val('0').html('-Select-'));
+
+                $('#ddlIcode').trigger("chosen:updated");
+
+            }
+        }, true, true, false, 'POST');
+    }
+    function OnItemcodeChange() {
+        debugger;
+        //let categoryData = $('#selectCategory option:selected').data();
+        //let _layerId = categoryData.layerId;
+        let _layerId = $('#selectCategory').val();
+        let specification = $('#ddlSpec').val();
+        let item_code = $('#ddlIcode').val();
+        let accessoriesId = '';//categoryData.accessoriesId;
+        ajaxReq('Vendor/getUOMByItemCode', { user_id: 0, item_cost: 0, code: item_code, specification: specification, entity_type: '', uom: '', layer_id: _layerId }, false, function (resp) {
+
+            if (resp.Data) {
+
+                $('#txtunit_measurement').val('');
+                $('#txtunit_measurement').val(resp.Data.unit_measurement)
+
+            }
+            else {
+                $('#txtunit_measurement').val('');
+
+            }
+        }, true, true, false, 'POST');
+    }
+
+
+</script>
+

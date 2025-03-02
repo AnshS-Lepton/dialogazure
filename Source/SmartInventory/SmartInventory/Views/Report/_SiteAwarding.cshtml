@@ -133,8 +133,8 @@ grid.Column("vendorCost", "Vendor Cost", format: @<text> @item.vendorCost</text>
     $('.AwardSiteToSelectedVendor').on("click", function () {
         var systemId = $(this).attr('data-value');
         var resultArray = systemId.split(',');
-        si.SiteReport.AwardSiteToSelectedVendor(resultArray[0], resultArray[1]);
-
+        //si.SiteReport.AwardSiteToSelectedVendor(resultArray[0], resultArray[1]);
+        si.SiteReport.ItemvendorcostReport(resultArray[0], resultArray[1]);
     });
     $("#btnExport").on("click", function () {
 

@@ -100,6 +100,10 @@ if (window.location.href.indexOf("AddUser") > -1 || window.location.href.indexOf
                 return status;
             }
         }
+        
+
+
+
         var multi_manager_ids = $("#multi_manager_ids").val();
         if (multi_manager_ids != "") {
             if ($("#ddl_UserReportingManager").length) {
@@ -3829,6 +3833,25 @@ function AddLayerGroups(_group_id) {
      
     popup.LoadModalDialog('LayerSettings/AddLayerGroups', { group_id: _group_id }, 'Add Layer Group', 'modal-md');
 }
+//function AddItemVendorCost(user_id, item_cost, item_code, specification, entity_type, UOM,layer_id) {
+//    debugger;
+//    popup.LoadModalDialog('Vendor/AddItemVendorCost', { user_id: user_id, item_cost: item_cost, item_code: item_code, specification: specification, entity_type: entity_type, uom: UOM, layer_id: layer_id }, 'Add Item Vendor Cost', 'modal-lg');
+//}
+
+function AddItemVendorCost(user_id, item_cost, item_code, specification, entity_type, UOM, layer_id) {
+    debugger;
+    $('#selectCategory').val(layer_id);
+    $('#ddlSpec').val(specification);
+    $('#ddlIcode').val(item_code);
+    $('#ddlUser').val(user_id);
+    $('#txtunit_measurement').val(specification);
+    $('#txtItemCost').val(parseFloat(item_cost));
+    
+    pageTitleText = 'Add Item Vendor Cost';
+    modalClass = 'modal-sm';
+    popup.LoadModalDialog('Vendor/AddItemVendorCost', { user_id: user_id, item_cost: item_cost, code: item_code, specification: specification, entity_type: entity_type, unit_measurement: UOM, layer_id: layer_id, cost_per_unit: item_cost }, pageTitleText, 'modal-md');
+}
+
 
 function Addfeetool(_group_id) {
     

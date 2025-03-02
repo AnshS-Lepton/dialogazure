@@ -169,6 +169,24 @@ namespace DataAccess.Admin
         {
             return Vendorid != 0 ? repo.Get(m => m.vendor_id == Vendorid) : repo.Get(m => m.id == id);
         }
+        public List<VendorSpecificationMaster> ItemVendorCost(CommonGridAttr objGridAttributes)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<VendorSpecificationMaster>("fn_get_item_vendor_cost", new
+                {
+                    p_searchby = objGridAttributes.searchBy,
+                    p_searchtext = objGridAttributes.searchText,
+                    P_PAGENO = objGridAttributes.currentPage,
+                    P_PAGERECORD = objGridAttributes.pageSize,
+                    P_SORTCOLNAME = objGridAttributes.sort,
+                    P_SORTTYPE = objGridAttributes.orderBy,
+                    P_TOTALRECORDS = objGridAttributes.totalRecord,
+                }, true);
+            }
+            catch { throw; }
+        }
+        
 
         public VendorSpecificationMaster GetItemMasterDetailById(int wcr_id)
         {
@@ -361,6 +379,30 @@ namespace DataAccess.Admin
             }
             catch (Exception ex) { throw ex; }
         }
+        public List<KeyValueDropDown> GetItemVendorCode(int layerId, string specification)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_item_vendor_spec_item_code", new { p_layer_id = layerId, p_specification = specification }).ToList();
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public List<IvcKeyValueDropDown> GetVendorItemCategory()
+        {
+            try
+            {
+                return repo.ExecuteProcedure<IvcKeyValueDropDown>("fn_item_vendor_spec_item_category", new { }).ToList();
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public List<KeyValueDropDown> GetItemSpec(int layerId)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<KeyValueDropDown>("fn_vendor_spec_item_specification", new { p_layer_id = layerId }).ToList();
+            }
+            catch (Exception ex) { throw ex; }
+        }
         public List<KeyValueDropDown> GetAllItemTypeList()
         {
             try
@@ -377,6 +419,15 @@ namespace DataAccess.Admin
             {
                 var listUnit_measument_type = repo.ExecuteProcedure<KeyValueDropDown>("fn_get_allUnit_measurement_list", new { }, true);
                 return listUnit_measument_type != null ? listUnit_measument_type.OrderBy(m => m.key).ToList() : new List<KeyValueDropDown>();
+            }
+            catch { throw; }
+        }
+        public string GetUOM(int layer_id, string specification, string ItemCode)
+        {
+            try
+            {
+                return repo.GetAll(m => m.layer_id == layer_id && m.specification== specification && m.code== ItemCode).Select(a=>a.unit_measurement).FirstOrDefault();
+              
             }
             catch { throw; }
         }
@@ -876,6 +927,105 @@ namespace DataAccess.Admin
             }
             catch { throw; }
 
+        }
+    }
+    public class DAItemVendorCostMaster : Repository<Models.Admin.ItemVendorCostMaster>
+    {
+        public string SaveItemVendorCostDetails(ItemVendorCostMaster objItemVendorCostMaster,int userid)
+        {
+            try
+            {
+                var objExisiting = repo.GetById(m => m.item_code == objItemVendorCostMaster.item_code && m.user_id== objItemVendorCostMaster.user_id);
+                var result = "Failed";
+                if (objExisiting != null)
+                {
+                    objExisiting.modified_by = userid ;
+                    objExisiting.modified_on = DateTimeHelper.Now;
+                    objExisiting.item_cost = objItemVendorCostMaster.item_cost;
+                    repo.Update(objExisiting);
+                    result = "Update";
+                }
+                else
+                {
+                    objItemVendorCostMaster.created_by = userid;
+                    objItemVendorCostMaster.created_on = DateTimeHelper.Now;
+                    repo.Insert(objItemVendorCostMaster);
+                    result = "Save";
+                }
+                return result;
+            }
+            catch { throw; }
+        }
+    }
+
+    public class DASiteAwardDetails : Repository<DbMessage>
+    {
+        public DbMessage SaveSiteAwardDetails(List<SiteAwardDetails> obSiteAwardDetails, int userid)
+        {
+            var itemcod = string.Join(",", obSiteAwardDetails.Select(a => a.item_code).ToArray());
+            var specification = string.Join(",", obSiteAwardDetails.Select(a => a.specification).ToArray());
+            var userId = string.Join(",", obSiteAwardDetails.Select(a => a.user_id).ToArray());
+
+           // List<SiteAwardDetails> newRecords = new List<SiteAwardDetails>();
+           // var result = "Failed";
+          //  bool flagduplicateRec = true;
+            // var objExisiting = repo.GetById(m => m.item_code == obSiteAwardDetails.item_code && m.user_id == obSiteAwardDetails.user_id);
+            try
+            {
+
+                //foreach (var siteAward in obSiteAwardDetails)
+                //{                  
+                //    var existingRecord = repo.GetById(m => m.item_code == siteAward.item_code && m.user_id == siteAward.user_id);
+
+                //    if (existingRecord == null) // Only add new records
+                //    {
+                //        flagduplicateRec = false;
+                //        siteAward.created_by = userid;
+                //        siteAward.created_on = DateTimeHelper.Now;
+                //        newRecords.Add(siteAward);
+                //    }
+
+                //}
+
+                //if (flagduplicateRec == false) { repo.Insert(obSiteAwardDetails); result = "Save"; }
+                //else 
+                //{
+                //    result = "Failed";
+                //}                                           
+                //return result;
+                var lst = repo.ExecuteProcedure<DbMessage>("fn_insert_site_award_details",
+                    new
+                    {
+                        p_itemcode= itemcod,
+                        p_specification = specification,
+                        p_userid = userId                      
+                    }, false).FirstOrDefault();
+                return lst;
+
+
+            }
+            catch { throw; }
+        }
+    }
+
+    public class DAComGeom : Repository<CombineCableGeom>
+    {
+        public CombineCableGeom GetCombileCableGeom(int sitePlanId)
+        {
+
+            try
+            { 
+                var geom = repo.ExecuteProcedure<CombineCableGeom>("fn_get_combine_geom",
+                    new
+                    {
+                        p_siteplanid = sitePlanId,
+                        
+                    }, false).FirstOrDefault();
+                return geom;
+
+
+            }
+            catch { throw; }
         }
     }
 

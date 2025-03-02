@@ -54,7 +54,11 @@ namespace BusinessLogics.Admin
         {
             return new DAVendorSpecification().GetVendorSpeicificationDetailsByID(id, Vendorid);
         }
-
+        public List<VendorSpecificationMaster> ItemVendorCost(CommonGridAttr objGridAttributes)
+        {
+            return new DAVendorSpecification().ItemVendorCost(objGridAttributes);
+        }
+        
         public ViewSpecificationServiceList GetSpeicificationServiceDetailsByID(int id)
         {
             return new DAVendorSpecification().GetSpeicificationServiceDetailsByID(id);
@@ -244,6 +248,18 @@ namespace BusinessLogics.Admin
         {
             return new DAVendorSpecification().GetItemMasterCode(layerId);
         }
+        public List<IvcKeyValueDropDown> GetVendorItemCategory()
+        {
+            return new DAVendorSpecification().GetVendorItemCategory();
+        }
+        public List<KeyValueDropDown> GetItemVendorCode(int layerId, string specification)
+        {
+            return new DAVendorSpecification().GetItemVendorCode(layerId, specification);
+        }
+        public List<KeyValueDropDown> GetItemSpec(int layerId)
+        {
+            return new DAVendorSpecification().GetItemSpec(layerId);
+        }
         public List<KeyValueDropDown> GetAllItemTypeList()
         {
             return new DAVendorSpecification().GetAllItemTypeList();
@@ -252,6 +268,10 @@ namespace BusinessLogics.Admin
         public List<KeyValueDropDown> GetAllUnitMeasurement()
         {
             return new DAVendorSpecification().GetAllUnitMeasurement();
+        }
+        public string GetUOM(int layer_id,string specification,string ItemCode)
+        {
+            return new DAVendorSpecification().GetUOM(layer_id,specification, ItemCode);
         }
         public void BulkUploadVendorSpecification(List<TempVendorSpecificationMaster> BulkUploadVendorSpecification)
         {
@@ -309,6 +329,21 @@ namespace BusinessLogics.Admin
         {
             return new DAVendorSpecification().GetAllSpecificationList(layerId);
 
+        }
+        public string SaveItemVendorCostDetails(ItemVendorCostMaster objItemVendorCostMaster,int userid)
+        {
+
+            return new DAItemVendorCostMaster().SaveItemVendorCostDetails(objItemVendorCostMaster, userid);
+        }
+        public DbMessage SaveSiteAwardDetails(List<SiteAwardDetails> objSiteAwardDetails, int userid)
+        {
+
+            return new DASiteAwardDetails().SaveSiteAwardDetails(objSiteAwardDetails, userid);
+        }
+        public CombineCableGeom GetCombileCableGeom(int sitePlanId)
+        {
+
+            return new DAComGeom().GetCombileCableGeom(sitePlanId);
         }
 
     }
