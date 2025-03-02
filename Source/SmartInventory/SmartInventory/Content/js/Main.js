@@ -22,6 +22,8 @@ var Main = function () {
     this.ActiveDormantlayers = [];
     this.ActiveRegionlayers = [];
     this.ActiveProvincelayers = [];
+    this.filtercablecategory = '';
+    this.filtercablecategoryvalue = [];
     this.allActiveLayers = [];
     this.allActiveLayersWithLabel = [];
     this.RegionFilter = '';
@@ -8204,6 +8206,82 @@ var Main = function () {
             app.TriggerEntityChangeEvent.call(this);
 
         });
+
+        $('.mainLyr .checkbox-custom-SubChild').change(function () {
+            debugger;
+            var layersid = document.getElementById(this.id).parentNode.parentNode.parentNode.querySelector('input[type="checkbox"]').id;
+            if (this.checked) {
+                var chkSubChildid = this.id;
+                var SubChildid = $('#' + chkSubChildid).attr("data-SubChild-layerid");
+                $('input:checkbox#chkSubChild_netP_' + SubChildid).not(":disabled").prop('checked', this.checked);
+                $('input:checkbox#chkSubChild_netA_' + SubChildid).not(":disabled").prop('checked', this.checked);
+                $('input:checkbox#chkSubChild_netD_' + SubChildid).not(":disabled").prop('checked', this.checked);
+
+                if ($('.layers .network li input[type=checkbox]:checked').filter('.checkbox-custom-SubChild').length
+                    < $('.layers .network li input[type=checkbox]').filter('.checkbox-custom-SubChild').length) {
+                    $(app.DE.chkPlannedAll).not(":disabled").prop('checked', false);
+                    $(app.DE.chkAsBuiltAll).not(":disabled").prop('checked', false);
+                    $(app.DE.chkDormentAll).not(":disabled").prop('checked', false);
+                    $(app.DE.chklabelAll).not(":disabled").prop('checked', false);
+                    $('#' + layersid).prop('checked', false);
+                }
+                else {
+                    $('#' + layersid).prop('checked', true);
+                }
+                if ($('.SubChild').is(":checked")) {
+                    $("input[name='Cable']").prop('checked', true);
+                }
+            }
+            else {
+                var chkSubChildid = this.id;
+                var SubChildid = $('#' + chkSubChildid).attr("data-SubChild-layerid");
+                $('input:checkbox#chkSubChild_netP_' + SubChildid).not(":disabled").prop('checked', false);
+                $('input:checkbox#chkSubChild_netA_' + SubChildid).not(":disabled").prop('checked', false);
+                $('input:checkbox#chkSubChild_netD_' + SubChildid).not(":disabled").prop('checked', false);
+                $('input:checkbox#chkSubChild_netL_' + SubChildid).not(":disabled").prop('checked', false);
+
+                if ($('.layers .network li input[type=checkbox]:checked').filter('.checkbox-custom-SubChild').length
+                    < $('.layers .network li input[type=checkbox]').filter('.checkbox-custom-SubChild').length) {
+                    $(app.DE.chkPlannedAll).not(":disabled").prop('checked', false);
+                    $(app.DE.chkAsBuiltAll).not(":disabled").prop('checked', false);
+                    $(app.DE.chkDormentAll).not(":disabled").prop('checked', false);
+                    $(app.DE.chklabelAll).not(":disabled").prop('checked', false);
+                    $('#' + layersid).prop('checked', false);
+                }
+                else {
+                    $('#' + layersid).prop('checked', true);
+                }
+                if (!($('.SubChild').is(":checked"))) {
+                    $("input[name='Cable']").prop('checked', false);
+                }
+            }
+
+            if ($('.checkbox-customgrp:checkbox:checked').length
+                == $('.checkbox-customgrp:checkbox').length) {
+                $('#checkAll').not(":disabled").prop('checked', true);
+            }
+            else {
+                $('#checkAll').not(":disabled").prop('checked', false);
+            }
+
+            if ($('.checkbox-custom2:checked').filter('[data-networktype=P]').length
+                == $('.checkbox-custom2').filter('[data-networktype=P]').length) {
+                $('#chkPlannedAll').not(":disabled").prop('checked', true);
+            }
+            if ($('.checkbox-custom2:checked').filter('[data-networktype=A]').length
+                == $('.checkbox-custom2').filter('[data-networktype=A]').length) {
+                $('#chkAsBuiltAll').not(":disabled").prop('checked', true);
+            }
+            if ($('.checkbox-custom2:checked').filter('[data-networktype=D]').length
+                == $('.checkbox-custom2').filter('[data-networktype=D]').length) {
+                $('#chkDormentAll').not(":disabled").prop('checked', true);
+            }
+            if ($('.checkbox-custom2:checked').filter('[data-networktype=L]').length
+                == $('.checkbox-custom2').filter('[data-networktype=L]').length) {
+                $('#chklabelAll').not(":disabled").prop('checked', true);
+            }
+        });
+
         // for grop checkbox checked/unchecked
         $('.mainlyr .checkbox-customgrp').change(function () {
 
@@ -9008,7 +9086,6 @@ var Main = function () {
         app.filtercablevalue = "";
         app.cable_type = $('#ddlFilterCableType').val();
         app.cable_category = $('#ddlFilterCableCategory').val();
-
         if (app.cable_type != '0' && app.cable_type != undefined) {
             app.filtercablevalue += " ([cable_type] ='" + app.cable_type + "')";
         }
@@ -9018,8 +9095,6 @@ var Main = function () {
         if (app.filtercablevalue == "") {
             app.filtercablevalue = "1 = 1";
         }
-
-
     }
 
 
@@ -9046,6 +9121,49 @@ var Main = function () {
         if (app.autoplanid != '0' && app.autoplanid != undefined) {
             app.filterAutoNetworkValue = " ([source_ref_id] ='" + app.autoplanid + "') and [source_ref_type]='planning'";
         }
+
+    }
+
+    this.getcablecategoryfilters = function () {
+        debugger;
+        var lyrsh = [];
+        $('input[name="chkcategory-Cable"]:checked').each(function () {
+            //{
+            debugger;
+            //// if ($('#' + this.id).is(":checked"))
+            //  { 
+            var chkid = this.id;
+            // var id = $('#' + chkid).attr("data-layerid");
+            var cablecategoryname = $('#' + chkid).attr("data-layername");
+            var s = '' + cablecategoryname + '';
+            lyrsh.push("'" + cablecategoryname + "'");
+
+            // }
+
+        });
+        return lyrsh;
+    }
+    this.SetCableCategoryFilters = function () {
+        debugger;
+        app.filtercablecategory = "";
+        app.filtercablecategoryvalue = app.getcablecategoryfilters();
+        //app.cable_type = $('#ddlFilterCableType').val();
+        //app.cable_category = $('#ddlFilterCableCategory').val();
+
+        //if (app.cable_type != '0' && app.cable_type != undefined) {
+        //    app.filtercablevalue += " ([cable_type] ='" + app.cable_type + "')";
+        //}
+        //if (app.cable_category != '0' && app.cable_category != undefined) {
+        //    app.filtercablevalue += ((app.cable_type != '0' && app.cable_type != undefined) ? " and " : "") + " ([cable_category] ='" + app.cable_category + "')";
+        //}
+        var cablecategoryname = app.filtercablecategoryvalue;
+        if (app.filtercablecategoryvalue.length > 0) {
+            app.filtercablecategory = "[cable_category] in (" + cablecategoryname.join(",") + ")";
+        }
+        if (app.filtercablecategoryvalue == "") {
+            app.filtercablecategory = "1 = 1";
+        }
+
 
     }
 
@@ -9190,6 +9308,7 @@ var Main = function () {
         app.SetRegionProvinceFilters();
         app.SetProjectSpecFilters();
         app.SetCableFilters();
+        app.SetCableCategoryFilters();
         app.SetFaultFilters();
         app.SetOwnershipFilters();
         app.SetBuildingRFSFilters();
@@ -9306,12 +9425,12 @@ var Main = function () {
         app.ActiveDormantlayers = app.getActiveNetworkLayers('D', false);
         //if (app.ActiveDormentlayers.length > 0) {
         if (hdnIsWMSLayerLoadingEnabled == "True") {
-            var DormentLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('D')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+            var DormentLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('D')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }, { Field: 'CableCategoryFilter', value: app.filtercablecategory }];
             var layerParam = { Name: app.ActiveDormantlayers.length > 0 ? app.ActiveDormantlayers.join(",") : '', DisplayName: "Dorment_Layers", Filters: DormentLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'D', isWithLabel: false };
             var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
             app.addNewOverlay(overlayLayer);
         } else {
-            var DormentLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('D')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+            var DormentLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('D')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }, { Field: 'CableCategoryFilter', value: app.filtercablecategory }];
             var layerParam = { Name: app.ActiveDormantlayers.length > 0 ? app.ActiveDormantlayers.join(",") : '', DisplayName: "Dorment_Layers", Filters: DormentLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'D', isWithLabel: false };
             LayerFilters.push(layerParam);
         }
@@ -9325,13 +9444,13 @@ var Main = function () {
 
         //if (app.ActivePlannedlayers.length > 0) {
         if (hdnIsWMSLayerLoadingEnabled == "True") {
-            var plannedLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+            var plannedLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }, { Field: 'CableCategoryFilter', value: app.filtercablecategory }];
             var layerParam = { Name: app.ActivePlannedlayers.length > 0 ? app.ActivePlannedlayers.join(",") : '', DisplayName: "Planned_Layers", Filters: plannedLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'P', isWithLabel: false };
             var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
             app.addNewOverlay(overlayLayer);
         }
         else {
-            var plannedLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+            var plannedLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }, { Field: 'CableCategoryFilter', value: app.filtercablecategory }];
             var layerParam = { Name: app.ActivePlannedlayers.length > 0 ? app.ActivePlannedlayers.join(",") : '', DisplayName: "Planned_Layers", Filters: plannedLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'P', isWithLabel: false };
             LayerFilters.push(layerParam);
         }
@@ -9345,13 +9464,13 @@ var Main = function () {
         //if (app.ActiveAsBuiltlayers.length > 0) {
 
         if (hdnIsWMSLayerLoadingEnabled == "True") {
-            var AsBuiltLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+            var AsBuiltLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }, { Field: 'CableCategoryFilter', value: app.filtercablecategory }];
             var layerParam = { Name: app.ActiveAsBuiltlayers.length > 0 ? app.ActiveAsBuiltlayers.join(",") : '', DisplayName: "AsBuilt_Layers", Filters: AsBuiltLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'A', isWithLabel: false };
             var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
             app.addNewOverlay(overlayLayer);
         }
         else {
-            var AsBuiltLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+            var AsBuiltLayerFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }, { Field: 'CableCategoryFilter', value: app.filtercablecategory }];
             var layerParam = { Name: app.ActiveAsBuiltlayers.length > 0 ? app.ActiveAsBuiltlayers.join(",") : '', DisplayName: "AsBuilt_Layers", Filters: AsBuiltLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'A', isWithLabel: false };
             LayerFilters.push(layerParam);
         }
@@ -9403,7 +9522,7 @@ var Main = function () {
         app.ActiveDormantlayersWithlabels = app.getActiveNetworkLayers('D', true);
         //if (app.ActiveDormantlayersWithlabels.length > 0) {
 
-        var dormantLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('D')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+        var dormantLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('D')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }, { Field: 'CableCategoryFilter', value: app.filtercablecategory }];
         var layerParam = { Name: app.ActiveDormantlayersWithlabels.length > 0 ? app.ActiveDormantlayersWithlabels.join(",") : '', DisplayName: "Dorment_LayersLabels", Filters: dormantLayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: 'D', isWithLabel: true };
         var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
         app.addNewOverlay(overlayLayer);
@@ -9414,13 +9533,13 @@ var Main = function () {
         //if (app.ActivePlannedlayersWithlabels.length > 0) {
 
         if (hdnIsWMSLayerLoadingEnabled == "True") {
-            var plannedLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+            var plannedLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }, { Field: 'CableCategoryFilter', value: app.filtercablecategory }];
             var layerParam = { Name: app.ActivePlannedlayersWithlabels.length > 0 ? app.ActivePlannedlayersWithlabels.join(",") : '', DisplayName: "Planned_LayersLabels", Filters: plannedLayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: 'P', isWithLabel: true };
             var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
             app.addNewOverlay(overlayLayer);
         }
         else {
-            var plannedLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+            var plannedLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('P')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }, { Field: 'CableCategoryFilter', value: app.filtercablecategory }];
             var layerParam = { Name: app.ActivePlannedlayersWithlabels.length > 0 ? app.ActivePlannedlayersWithlabels.join(",") : '', DisplayName: "Planned_LayersLabels", Filters: plannedLayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: 'P', isWithLabel: true };
             LayerFilters.push(layerParam);
         }
@@ -9432,13 +9551,13 @@ var Main = function () {
         //if (app.ActiveAsBuiltlayersWithlabels.length > 0) {
 
         if (hdnIsWMSLayerLoadingEnabled == "True") {
-            var AsBuiltLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+            var AsBuiltLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }, { Field: 'CableCategoryFilter', value: app.filtercablecategory }];
             var layerParam = { Name: app.ActiveAsBuiltlayersWithlabels.length > 0 ? app.ActiveAsBuiltlayersWithlabels.join(",") : '', DisplayName: "AsBuilt_LayersLabels", Filters: AsBuiltLayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: 'A', isWithLabel: true };
             var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
             app.addNewOverlay(overlayLayer);
         }
         else {
-            var AsBuiltLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }];
+            var AsBuiltLayerFilterWithLabel = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'layerFilter', value: "[network_status] in ('A')" }, { Field: 'prjectspecificationFilter', value: app.filterprojectvalue }, { Field: 'bldRFSFilter', value: app.buildingRFSFilter }, { Field: 'faultFilter', value: app.filterFaultvalue }, { Field: 'cableFilter', value: app.filtercablevalue }, { Field: 'ownershipFilter', value: app.filterOwnershipvalue }, { Field: 'splitterFilter', value: app.filterSplitterType }, { Field: 'sectorFilter', value: app.filterSectorValue }, { Field: 'PODFilter', value: app.filterPODvalue }, { Field: 'NetworkFilter', value: app.filterNetworkTicketValue }, { Field: 'AutoPlanningNetworkFilter', value: app.filterAutoNetworkValue }, { Field: 'CableCategoryFilter', value: app.filtercablecategory }];
             var layerParam = { Name: app.ActiveAsBuiltlayersWithlabels.length > 0 ? app.ActiveAsBuiltlayersWithlabels.join(",") : '', DisplayName: "AsBuilt_LayersLabels", Filters: AsBuiltLayerFilterWithLabel, MapFilePath: app.mapDirPath + "NetworkEntitiesLabel.map", isNetworkLayer: true, network_status: 'A', isWithLabel: true };
             LayerFilters.push(layerParam);
         }
@@ -24948,6 +25067,7 @@ var Main = function () {
             app.SetRegionProvinceFilters();
             app.SetProjectSpecFilters();
             app.SetCableFilters();
+            app.SetCableCategoryFilters();
             app.SetFaultFilters();
             app.SetOwnershipFilters();
             app.SetBuildingRFSFilters();
