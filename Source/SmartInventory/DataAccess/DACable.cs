@@ -380,6 +380,15 @@ namespace DataAccess
                 return res;
             }
             catch { throw; }
+        } 
+        public List<CorePlannerLogs> getCorePlanInvalidCable(int user_id)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<CorePlannerLogs>("fn_core_planner_invalid_cable", new { p_user_id = user_id }, true);
+                return res;
+            }
+            catch { throw; }
         }
         public DbMessageConePlanLogic SaveCorePlanLogic(string required_core, int user_id, string fiber_link_network_id, string source_network_id, string destination_network_id, int buffer)
         {
