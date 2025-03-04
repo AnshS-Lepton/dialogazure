@@ -965,34 +965,10 @@ namespace DataAccess.Admin
             var itemcod = string.Join(",", obSiteAwardDetails.Select(a => a.item_code).ToArray());
             var specification = string.Join(",", obSiteAwardDetails.Select(a => a.specification).ToArray());
             var userId = string.Join(",", obSiteAwardDetails.Select(a => a.user_id).ToArray());
-
-           // List<SiteAwardDetails> newRecords = new List<SiteAwardDetails>();
-           // var result = "Failed";
-          //  bool flagduplicateRec = true;
-            // var objExisiting = repo.GetById(m => m.item_code == obSiteAwardDetails.item_code && m.user_id == obSiteAwardDetails.user_id);
             try
             {
 
-                //foreach (var siteAward in obSiteAwardDetails)
-                //{                  
-                //    var existingRecord = repo.GetById(m => m.item_code == siteAward.item_code && m.user_id == siteAward.user_id);
-
-                //    if (existingRecord == null) // Only add new records
-                //    {
-                //        flagduplicateRec = false;
-                //        siteAward.created_by = userid;
-                //        siteAward.created_on = DateTimeHelper.Now;
-                //        newRecords.Add(siteAward);
-                //    }
-
-                //}
-
-                //if (flagduplicateRec == false) { repo.Insert(obSiteAwardDetails); result = "Save"; }
-                //else 
-                //{
-                //    result = "Failed";
-                //}                                           
-                //return result;
+           
                 var lst = repo.ExecuteProcedure<DbMessage>("fn_insert_site_award_details",
                     new
                     {

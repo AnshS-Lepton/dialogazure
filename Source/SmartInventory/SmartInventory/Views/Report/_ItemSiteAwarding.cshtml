@@ -143,6 +143,8 @@
         debugger;
         var searchBy = $('#searchBy').val();
         var searchText = $('#searchText').val();
+        if (searchBy == '') { alert('Please select search by'); return false; }
+        if (searchText == '') { alert('Please enter search text'); return false; }
         var systemId = '';
         si.SiteReport.ItemSiteAwarding(null, systemId, null, this, searchBy, searchText);
     }
@@ -150,18 +152,26 @@
         debugger;
         let tableData = [];
         let headers = [];
+        var Awarduser = $('#AwardUser').val();
+        var Awardusername = $('#AwardUser option:selected').text();
         $("#tblItemVendorCost1 thead th").each(function () {
             headers.push($(this).text().trim());
         });
-        var Awarduser = $('#AwardUser').val();
-        var Awardusername = $('#AwardUser option:selected').text();
         let userNameIndex = headers.indexOf(Awardusername);
+        var sitePlanId = @Session["SitePlanId"] ?? 0;
+        if (Awarduser == '') { alert('Please select a valid user'); return false; }
+        if (parseInt(sitePlanId) == 0) {
+            alert('Site plan not available'); return false;
+        }
+
+
         if (userNameIndex === -1) {
-            alert("User Name column not found.");
+            alert("User Name found.");
             return;
         }
 
         $("#tblItemVendorCost1 tbody tr").each(function () {
+
             let row = $(this).find("td");
             let user_name = headers[userNameIndex];
             if (user_name == Awardusername) {
@@ -170,23 +180,33 @@
                     item_code: row.eq(0).text().trim(),
                     specification: row.eq(1).text().trim(),
                     uom: row.eq(2).text().trim(),
-                    user_id: Awarduser
+                    user_id: Awarduser,
+                    site_plan_id: @Session["SitePlanId"]
                 };
                 tableData.push(item);
             }
         });
-        $.ajax({
-            url: '/Report/AwardSitetoUser',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(tableData),
-            success: function (response) {
-                alert(response.message);
-            },
-            error: function () {
-                alert("Error saving data.");
+        ajaxReq('Report/AwardSitetoUser', tableData, true, function (resp) {
+            if (resp.status == true) {
+                alert(resp.message);
             }
-        });
+            else {
+                alert("Error in saving data.");
+            }
+
+        }, true, true);
+        //$.ajax({
+        //    url: '/Report/AwardSitetoUser',
+        //    type: 'POST',
+        //    contentType: 'application/json',
+        //    data: JSON.stringify(tableData),
+        //    success: function (response) {
+        //        alert(response.message);
+        //    },
+        //    error: function () {
+        //        alert("Error saving data.");
+        //    }
+        //});
 
     }
 
