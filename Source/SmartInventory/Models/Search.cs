@@ -67,5 +67,13 @@ namespace Models
         public int province_id { get; set; }
 
     }
+    public class GeomRingDetailIn
+    {
+        public double longitude { get; set; }
+        public double latitude { get; set; }
+        public string site_id { get; set; }
+        public string site_name { get; set; }
+    }
+
 }
 

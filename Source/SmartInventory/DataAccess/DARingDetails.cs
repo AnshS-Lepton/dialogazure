@@ -76,5 +76,20 @@ namespace DataAccess
             catch { throw; }
 
         }
+
+        public List<GeomRingDetailIn> getSiteDetails(int ringId)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<GeomRingDetailIn>("fn_get_site_details", new
+                {
+                    p_ringId = ringId
+
+                }, false); ;
+            }
+            catch { throw; }
+        }
+
+        
     }
 }

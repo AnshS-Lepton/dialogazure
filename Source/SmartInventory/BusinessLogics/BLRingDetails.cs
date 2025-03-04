@@ -26,5 +26,9 @@ namespace BusinessLogics
         {
             return new DARingDetails().GetRingTypeDetails();
         }
+        public List<GeomRingDetailIn> getSiteDetails(int site_id)
+        {
+            return new DARingDetails().getSiteDetails(site_id);
+        }
     }
 }

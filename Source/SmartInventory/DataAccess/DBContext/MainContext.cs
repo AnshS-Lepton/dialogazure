@@ -669,7 +669,7 @@ namespace DataAccess.DBContext
             //modelBuilder.Entity<TopologyPlan>().ToTable("topology_plan_details", dbschema);
             modelBuilder.Entity<TopologyRegionMaster>().ToTable("top_region", dbschema);
             modelBuilder.Entity<TopologySegment>().ToTable("top_segment", dbschema);
-            modelBuilder.Entity<TopologySegmentMaster>().ToTable("topology_segment_master", dbschema);
+            //modelBuilder.Entity<TopologySegmentMaster>().ToTable("topology_segment_master", dbschema);
             modelBuilder.Entity<TopologyRingMaster>().ToTable("top_ring", dbschema);
             modelBuilder.Entity<TopSegmentCableMapping>().ToTable("top_segment_cable_mapping", dbschema);
 
