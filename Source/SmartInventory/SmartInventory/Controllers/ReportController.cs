@@ -13728,6 +13728,18 @@ namespace SmartInventory.Controllers
         {
 
             var userdetails = (User)Session["userDetail"];
+            var firstItem = string.Empty;
+            if (!string.IsNullOrEmpty(searchBy) || !string.IsNullOrEmpty(searchText))
+            {
+                firstItem = Session["systemid"].ToString();//
+            }
+            else 
+            {
+                Session["systemid"] = null;
+                firstItem = refrenceData.Split(',')[0];
+            }
+            
+            
             CommonGridAttr objGridAttributes = new CommonGridAttr();
             BindSearchBy(objViewItemVendorCost);
             if (sort != "" || page != 0)
@@ -13740,7 +13752,7 @@ namespace SmartInventory.Controllers
             objViewItemVendorCost.objGridAttributes.orderBy = sortdir;
             objViewItemVendorCost.objGridAttributes.searchText = searchText;
             objViewItemVendorCost.objGridAttributes.searchBy = searchBy;
-            var firstItem = Session["systemid"]!=null? Session["systemid"].ToString():refrenceData.Split(',')[0];
+            //var firstItem = Session["systemid"]!=null? Session["systemid"].ToString():refrenceData.Split(',')[0];
             var siteplanid = new BomBoq().getSiteplanid(Convert.ToInt32(firstItem));
             Session["SitePlanId"] = siteplanid;
             Session["systemid"] = firstItem;
@@ -13813,7 +13825,7 @@ namespace SmartInventory.Controllers
             try
             {
                 objDBMessage = new BLVendorSpecification().SaveSiteAwardDetails(objivcm, Convert.ToInt32(Session["user_id"]));
-                var sitePlanId = Convert.ToInt32(Session["SitePlanId"]);
+                var sitePlanId = objivcm.Select(a => a.site_plan_id).FirstOrDefault();
                 CombineCableGeom objCombineCableGeom = new CombineCableGeom();
                 objCombineCableGeom = new BLVendorSpecification().GetCombileCableGeom(sitePlanId);
                 //----------------------------------------------network tickect assignment--------------------------------------
@@ -13843,7 +13855,7 @@ namespace SmartInventory.Controllers
                     #endregion
 
                     Session["refrenceData"] = null;
-                    Session["SitePlanId"] = null;
+                    Session["SitePlanId"] = sitePlanId; 
                 }
                     //-------------------------------------------------end-------------------------------------------------------
 
