@@ -24,10 +24,10 @@ namespace DataAccess
                     objFiberDetail.link_name = objFiberLink.link_name;
                     objFiberDetail.Link_Prefix = objFiberLink.Link_Prefix;
                     objFiberDetail.link_type = objFiberLink.link_type;
-                    objFiberDetail.start_point_type = objFiberLink.start_point_type;
+                    objFiberDetail.start_point_type = "Splice Closure";//objFiberLink.start_point_type;
                     objFiberDetail.start_point_location = objFiberLink.start_point_location;
                     objFiberDetail.start_point_network_id = objFiberLink.start_point_network_id;
-                    objFiberDetail.end_point_type = objFiberLink.end_point_type;
+                    objFiberDetail.end_point_type = "Splice Closure";//objFiberLink.end_point_type;
                     objFiberDetail.end_point_location = objFiberLink.end_point_location;
                     objFiberDetail.end_point_network_id = objFiberLink.end_point_network_id;
                     objFiberDetail.no_of_lmc = objFiberLink.no_of_lmc;
@@ -52,10 +52,10 @@ namespace DataAccess
                     objFiberDetail.hoto_signoff_date = objFiberLink.hoto_signoff_date;
                     objFiberDetail.remarks = objFiberLink.remarks;
                     objFiberDetail.service_id = objFiberLink.service_id;
-                    objFiberDetail.main_link_type = objFiberLink.main_link_type;
+                    objFiberDetail.main_link_type = "Optical";//objFiberLink.main_link_type;
                     objFiberDetail.main_link_id = objFiberLink.main_link_id;
-                    objFiberDetail.redundant_link_type = objFiberLink.redundant_link_type;
-                    objFiberDetail.redundant_link_id = objFiberLink.redundant_link_id;
+                    objFiberDetail.redundant_link_type = "Optical";//objFiberLink.redundant_link_type;
+                    objFiberDetail.redundant_link_id = "Text";//objFiberLink.redundant_link_id;
                     objFiberDetail.modified_on = DateTimeHelper.Now;
                     objFiberDetail.modified_by = userId;
                     objFiberDetail.pageMsg.isNewEntity = false;

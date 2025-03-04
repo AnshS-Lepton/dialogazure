@@ -1255,7 +1255,7 @@ LAYER
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"		
 		DATA 'sp_geometry FROM vw_att_details_cable_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%cableFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%))		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%cableFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%) AND (%CableCategoryFilter%))		
 		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
 		VALIDATION		
 			'provinceFilter'   '.*'		
@@ -1266,6 +1266,7 @@ LAYER
 			'PODFilter'   '.*'
 			'NetworkFilter' '.*'
 			'AutoPlanningNetworkFilter' '.*'
+			'CableCategoryFilter' '.*'
 		END 
 		METADATA
 			'ows_title' 'CABLE'

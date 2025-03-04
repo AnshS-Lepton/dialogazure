@@ -96,6 +96,23 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+        public List<DropDownMaster> GetCablecategoryList()
+        {
+            DataTable dt = new DataTable();
+            List<DropDownMaster> lst = new List<DropDownMaster>();
+            dt = repo.GetDataTable("select dropdown_value,dropdown_type from dropdown_master where dropdown_type in ('Cable_Category')  and is_active=true");
+            foreach (DataRow row in dt.Rows)
+            {
+                DropDownMaster obj = new DropDownMaster();
+                obj.dropdown_value = row["dropdown_value"].ToString();
+                obj.dropdown_type = row["dropdown_type"].ToString();
+                // obj.file_type = row["filetype"].ToString();
+                lst.Add(obj);
+            }
+            return lst;
+            // return  repo.ExecuteSQLCommand(string.Format("select dropdown_value from dropdown_master where dropdown_type='Cable_Category' and is_active=true"));
+        }
         public List<landBaseLayres> GetLandBaseLayres(int userId, int roleId)
         {
             try

@@ -50,6 +50,7 @@
         'crossIcon': '.crossIcon',
         'tickIcon': '.tickIcon',
         'txtLinkId': '#txtLinkId',
+        'txtLinkName': '#txtLinkName',
         'crossStartIconId': '#crossStartIcon',
         'IconCross': '#IconCross',
         'crossEndIconId': '#crossEndIcon',
@@ -824,6 +825,7 @@
         var prefix = "";
 
         $('#txtLinkId').val(linkId);
+        $('#txtLinkName').val(linkId);
         $('#txtFiberLinkId').val(linkId.trim());
 
         if (!isPrefixFound) {
@@ -882,21 +884,21 @@
         }
 
 
-        if (($('#ddlLinkType').val() == "Main Link") && ($('#ddlredundantlinktype').val() == "")) {
-            $('#ddlredundantlinktype').css('border-color', 'red');
-            $('#ddlredundantlinktype_chosen a').css('border-color', 'red');
-            return false;
-        } else {
+        //if (($('#ddlLinkType').val() == "Main Link") && ($('#ddlredundantlinktype').val() == "")) {
+        //    $('#ddlredundantlinktype').css('border-color', 'red');
+        //    $('#ddlredundantlinktype_chosen a').css('border-color', 'red');
+        //    return false;
+        //} else {
 
-            $('#ddlredundantlinktype').css('border-color', '');
-            $('#ddlredundantlinktype_chosen a').css('border-color', '');
-        }
-        if (($('#ddlLinkType').val() == "Main Link") && ($('#txtredundantlinkid').val() == "")) {
-            $('#txtredundantlinkid').css('border-color', 'red');
-            return false;
-        } else {
-            $('#txtredundantlinkid').css('border-color', '');
-        }
+        //    $('#ddlredundantlinktype').css('border-color', '');
+        //    $('#ddlredundantlinktype_chosen a').css('border-color', '');
+        //}
+        //if (($('#ddlLinkType').val() == "Main Link") && ($('#txtredundantlinkid').val() == "")) {
+        //    $('#txtredundantlinkid').css('border-color', 'red');
+        //    return false;
+        //} else {
+        //    $('#txtredundantlinkid').css('border-color', '');
+        //}
 
         if ($(app.DE.crossStartIconId).is(":visible")) {
             $(app.DE.txtStartPointNwkID).css('border-color', 'red');

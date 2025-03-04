@@ -9689,6 +9689,11 @@ tfoot tr td a:hover {
     position: absolute;
 }
 
+.checkbox-custom-SubChild {
+    opacity: 0;
+    position: absolute;
+}
+
 .dd-wid .chosen-container {
     width: 95% !important;
 }

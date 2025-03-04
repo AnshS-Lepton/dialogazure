@@ -91,6 +91,7 @@ namespace SmartInventory.Controllers
                 //  }
 
                 objMain.lstNetworkLayers = objBLLayer.GetNetworkLayers(usrId, 0, role_Id, connectionString);
+                objMain.listcableCategory = objBLLayer.GetCablecategoryList();
                 Session["NerworkLayerDetails"] = objBLLayer.GetAllNetworkLayersPermissions(usrId);
                 objMain.lstRegionProvinceLayers = objBLLayer.GetRegionProvinceLayers(usrId);
                 objMain.lstLandBaseLayers = objBLLayer.GetLandBaseLayres(usrId, role_Id);
