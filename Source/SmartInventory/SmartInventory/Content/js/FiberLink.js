@@ -583,6 +583,7 @@
         showConfirm(app.StatusMessages.CONFIRM_EDIT_LINK, function () {
             ajaxReq('FiberLink/AddFiberLink', { system_id: system_id }, true, function (resp) {
                 $(app.DE.CreateFiberLink).html(resp);
+               $("#liAddFiberLink a").html('Update Link');
                 $("#liAddFiberLink a").trigger("click");
                 //Create Link Page
                 app.GetStartPointNetworkId();
@@ -816,6 +817,8 @@
 
 
     this.createUpdateLink = function (IsNewLink) {
+        if ($('#txtLinkId').val() == '') { alert('RouteId is required'); return false; }
+        if ($('#txtLinkId').val() == '0') { alert('RouteId is not equals to 0'); $('#txtLinkId').css('border-color', 'red'); return false; } else { $('#txtLinkId').css('border-color', ''); }
         const lstLinkPrefix = $('#hdnLstLinkPrefix').val().split(','); // Split the prefixes by comma
         const linkId = $('#txtLinkId').val().toUpperCase(); // Convert linkId to uppercase
         
@@ -828,6 +831,7 @@
         $('#txtLinkName').val(linkId);
         $('#txtFiberLinkId').val(linkId.trim());
 
+        $('#link_id').val(linkId);
         if (!isPrefixFound) {
             alert(MultilingualKey.SI_OSP_GBL_NET_RPT_417);
             return false;
@@ -839,6 +843,7 @@
         if (prefix != '') {
             if (selectedLinkPrefix.length > 0) {
                 $('#ddlLinkPrifixType').val(prefix).trigger('chosen:updated');
+                $('#link_prefix').val(prefix);
             }
         }
         if (selectedLinkPrefix.length <= 0) {
