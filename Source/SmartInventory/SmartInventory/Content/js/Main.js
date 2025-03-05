@@ -19866,6 +19866,7 @@ var Main = function () {
     }
 
     this.showFiberLinkDetails = function () {
+        $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated");
         $(app.DE.InfoDiv).hide();
         $(app.DE.SplicingDiv).hide();
         si.resetShapeTools();

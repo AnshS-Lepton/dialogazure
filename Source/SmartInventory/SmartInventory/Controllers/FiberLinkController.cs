@@ -20,6 +20,7 @@ using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Utility;
 using Newtonsoft.Json;
+using NPOI.XSSF.UserModel;
 
 namespace SmartInventory.Controllers
 {
@@ -62,7 +63,12 @@ namespace SmartInventory.Controllers
             objFiberLinkFilter.lstFiberLinkStatus = new BLFiberLink().getfiberLinkStatusCounts(objFiberLinkFilter, objUser.user_id);
 
             var lstColumnMapping = new BLFiberLinkColumns().getFiberLinkColumns();
-            objFiberLinkFilter.lstSearchByColumns = lstColumnMapping;
+            // Define allowed column names using an array
+            string[] searchColumns = { "network_id", "link_id" };
+            objFiberLinkFilter.lstSearchByColumns = lstColumnMapping
+                .Where(a => a != null && searchColumns.Contains(a.column_name))
+                .ToList();
+            //objFiberLinkFilter.lstSearchByColumns = lstColumnMapping;
             objFiberLinkFilter.objFiberLink.lstFiberLinkColumnsMapping = lstColumnMapping.Select(x => x.column_name).ToList();
 
             objFiberLinkFilter.totalRecord = lstFiberLinkDetails.Count > 0 ? Convert.ToInt32(lstFiberLinkDetails[0].FirstOrDefault().Value) : 0;
@@ -158,8 +164,35 @@ namespace SmartInventory.Controllers
         //Mayank 
         public FileResult DownloadUploadFiberTemplate(string FileName)
         {
-            var file = "~//Content//Templates//Bulk//FiberData.xlsx";
+            //var file = "~//Content//Templates//Bulk//FiberData.xlsx";
             string contentType = "";
+            string filePath = Server.MapPath("~/Content/Templates/Bulk/FiberData.xlsx");
+
+            using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                IWorkbook workbook = new XSSFWorkbook(fs);
+                ISheet sheet = workbook.GetSheetAt(0); // Get the first sheet
+                string[] allowedColumns = {
+                "link_type", "link_id", "link_name", "main_link_id",
+                "main_link_type", "redundant_link_id", "redundant_link_type", "link_prefix"
+            };              
+                IRow headerRow = sheet.GetRow(0);
+                int totalCols = headerRow.LastCellNum;
+
+                for (int col = 0; col < totalCols; col++)
+                {
+                    string header = headerRow.GetCell(col)?.ToString().Trim();
+                    if (!Array.Exists(allowedColumns, element => element.Equals(header, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        sheet.SetColumnHidden(col, true); // Hide columns that are not in the allowed list
+                    }
+                }
+                using (FileStream outFs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                {
+                    workbook.Write(outFs);
+                }
+            }
+            var file = "~//Content//Templates//Bulk//FiberData.xlsx";
             try
             {
                 contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
