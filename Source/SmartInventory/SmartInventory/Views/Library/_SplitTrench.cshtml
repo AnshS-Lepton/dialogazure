@@ -189,6 +189,7 @@
 <script>
     $(document).ready(function () {
         callFormValidator("frmShowSplitTrench");
+        $('#btnSplittrench').prop('disabled', 'disabled');
     });
     function isFormValid() {
         if ($('#trench_one_network_id').val() == "" && $('#trench_one_network_id').val() == "") {

@@ -401,13 +401,13 @@ function validate() {
         alert('The field Fiber Link is required.'); return false;
     }
 
-    if ($("#txtODF1").val() == $("#txtODF2").val()) {
+  /* if ($("#txtODF1").val() == $("#txtODF2").val()) {
         $("#txtODF1").addClass("error-border");
         $("#txtODF2").addClass("error-border");
         alert('Both ODF/Splice Closure can not be same');
         return false;
     }
-
+    */
     var number = Number($("#txtRequiredCore").val());
 
     if (isNaN(number)) {
@@ -415,13 +415,12 @@ function validate() {
         $("#txtRequiredCore").addClass("error-border");
         alert("Invalid input: " + "Please enter a valid number.");
         return false;
-
-    } else if (number < 1 || number > 48) {
+    }/* else if (number < 1 || number > 48) {
         $("#btnSubmit").prop("disabled", false);
         $("#txtRequiredCore").addClass("error-border");
         alert("Invalid input: " + "The required core must be between 1 and 48.");
         return false;
-    }
+    }*/
     else {
         si.saveCorePlanLogic();
     }
@@ -433,24 +432,26 @@ $("#btncreatelinkCPL").on("click", function () {
     si.createFiberlinkCPL();
 });
 
-$('#txtRequiredCore').on('keypress', function (event) {
-    if (event.which >= 48 && event.which <= 57) {
-        var value = $(this).val() + String.fromCharCode(event.which);
-        if (/^0\d/.test(value) || value === '0' || value === '00') {
+$('#txtRequiredCore').on('keypress paste', function (event) {
+    debugger;
+    if (event.type === 'keypress') {
+        if (event.which >= 48 && event.which <= 57) {
+            var value = $(this).val() + String.fromCharCode(event.which);
+            if (/^0+$/.test(value) || /^0\d+/.test(value)) {
+                event.preventDefault();
+            }
+        } else {
             event.preventDefault();
         }
-    } else {
-        event.preventDefault();
+    } else if (event.type === 'paste') {
+        let clipboardData = event.originalEvent.clipboardData || window.clipboardData;
+        let pastedData = clipboardData.getData('Text');
+        if (/^0+$/.test(pastedData) || /^0\d+/.test(pastedData)) {
+            event.preventDefault();
+        }
     }
 });
 
-$('#txtRequiredCore').on('paste', function (event) {
-    let clipboardData = event.originalEvent.clipboardData || window.clipboardData;
-    let pastedData = clipboardData.getData('Text');
-    if (/^0\d*$/.test(pastedData) || !/^\d+$/.test(pastedData)) {
-        event.preventDefault();
-    }
-});
 
 function core_planner_info_tool(obj) {
     si.mapReport.clearSelection();
