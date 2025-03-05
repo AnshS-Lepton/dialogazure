@@ -670,6 +670,13 @@ namespace DataAccess
             return obj;
 
         }
+        public List<User> GetPartnerUser()
+        {
+            var obj = repo.GetAll(m => m.is_active==true && m.user_type== "partner").ToList();
+
+            return obj;
+
+        }
         public User GetUserDetailByName(string name)
         {
             try

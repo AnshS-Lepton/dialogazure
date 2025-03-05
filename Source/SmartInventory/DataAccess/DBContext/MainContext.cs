@@ -192,6 +192,9 @@ namespace DataAccess.DBContext
             modelBuilder.Entity<CreateVendor>().ToTable("vendor_master", dbschema);
 
             modelBuilder.Entity<VendorSpecificationMaster>().ToTable("item_template_master", dbschema);
+            modelBuilder.Entity<ItemVendorCostMaster>().ToTable("item_vendor_cost_master", dbschema);
+            modelBuilder.Entity<AuditItemVendorCostMaster>().ToTable("audit_item_vendor_cost_master", dbschema);
+            modelBuilder.Entity<SiteAwardDetails>().ToTable("site_award_details", dbschema);
             modelBuilder.Entity<LayerGroupMaster>().ToTable("layer_group_master", dbschema);
             modelBuilder.Entity<LayerGroupMapping>().ToTable("layer_group_mapping", dbschema);
             modelBuilder.Entity<RestrictedArea>().ToTable("att_details_restricted_area", dbschema);
@@ -227,6 +230,9 @@ namespace DataAccess.DBContext
             modelBuilder.Entity<ProjectMaster>().ToTable("att_details_projectspecificnation", dbschema);
             modelBuilder.Entity<CreateVendor>().ToTable("vendor_master", dbschema);
             modelBuilder.Entity<VendorSpecificationMaster>().ToTable("item_template_master", dbschema);
+            modelBuilder.Entity<ItemVendorCostMaster>().ToTable("item_vendor_cost_master", dbschema);
+            modelBuilder.Entity<AuditItemVendorCostMaster>().ToTable("audit_item_vendor_cost_master", dbschema);
+            modelBuilder.Entity<SiteAwardDetails>().ToTable("site_award_details", dbschema);
             // modelBuilder.Entity<RoleMaster>().ToTable("role_master", dbschema);
             modelBuilder.Entity<ProjectCodeMaster>().ToTable("att_details_project_master", dbschema);
             modelBuilder.Entity<PlanningCodeMaster>().ToTable("att_details_planning_master", dbschema);

@@ -63,6 +63,7 @@ namespace DataAccess
         {
             try
             {
+                var dt = DateTimeHelper.DateTimeFormate(objNetworkTicket.target_date.ToString());
                 var result = repo.ExecuteProcedure<string>("fn_nwt_insert_update_ticket", new
                 {
                     p_ticket_id = objNetworkTicket.ticket_id,
@@ -85,6 +86,41 @@ namespace DataAccess
 
                 });
 				return result.Last(); ;
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public string SaveNetworkTicketfromItemVCost(NetworkTicket objNetworkTicket, int userId)
+        {
+            try
+            {
+                var dt = DateTimeHelper.DateTimeFormate(objNetworkTicket.target_date.ToString());
+                var result = repo.ExecuteProcedure<string>("fn_nwt_insert_update_ticket_IVCM", new
+                {
+                    p_ticket_id = objNetworkTicket.ticket_id,
+                    p_ticket_type_id = objNetworkTicket.ticket_type_id,
+                    p_reference_type = objNetworkTicket.reference_type,
+                    p_reference_description = objNetworkTicket.reference_description,
+                    p_regionId = objNetworkTicket.region_id ?? 0,
+                    P_provinceId = objNetworkTicket.province_id ?? 0,
+                    p_network_id = objNetworkTicket.network_id,
+                    p_name = objNetworkTicket.name,
+                    p_assigned_to = objNetworkTicket.assigned_to,
+                    p_target_date = DateTimeHelper.DateTimeFormate(objNetworkTicket.target_date.ToString()),
+                    p_network_status = objNetworkTicket.for_network_type,
+                    p_remarks = objNetworkTicket.remarks,
+                    p_created_by = userId,
+                    p_geom = objNetworkTicket.geom,
+                    p_reference_ticket_id = objNetworkTicket.reference_ticket_id,
+                    p_project_code = objNetworkTicket.project_code,
+                    p_account_code = objNetworkTicket.account_code
+
+                });
+                return result.Last(); ;
 
             }
             catch (Exception ex)

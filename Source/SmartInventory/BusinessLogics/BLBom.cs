@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataAccess;
 using Models;
+using Models.Admin;
 
 namespace BusinessLogics
 {
@@ -59,6 +60,14 @@ namespace BusinessLogics
         public List<BOMBOQReport> getBOMBOQReport(BomBoqExportFilter objFilter)
         {
             return new DABomBoq().getBOMBOQReport(objFilter);
+        }
+        public List<VendorSpecificationMaster> getSiteBOMBOQReport(CommonGridAttr objFilter,int site_plan_id)
+        {
+            return new DABomBoqSite().getSiteBOMBOQReport(objFilter, site_plan_id);
+        }
+        public int  getSiteplanid(int system_id)
+        {
+            return new DABomBoqSite1().getSiteplanid(system_id);
         }
         public List<BomBoqAdAttribute> getBOMBOQExportAttribute(int userid)
         {

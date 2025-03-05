@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using System.Data;
 using Newtonsoft.Json;
 using iTextSharp.text;
+using Models.Admin;
+
+
 
 namespace DataAccess
 {
@@ -196,6 +199,38 @@ namespace DataAccess
 
     }
 
+    public class DABomBoqSite : Repository<Models.Admin.VendorSpecificationMaster>
+    {
+        public List<VendorSpecificationMaster> getSiteBOMBOQReport(CommonGridAttr objGridAttributes,int sitePlanid)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<VendorSpecificationMaster>("fn_get_site_bom_boq_report_new",
+                new
+                {
+                    p_entitytype = "POD",
+                    p_site_plan_id = sitePlanid,
+                    p_searchby = objGridAttributes.searchBy,
+                    p_searchtext = objGridAttributes.searchText,
+                    P_PAGENO = objGridAttributes.currentPage,
+                    P_PAGERECORD = objGridAttributes.pageSize,
+                    P_SORTCOLNAME = objGridAttributes.sort,
+                    P_SORTTYPE = objGridAttributes.orderBy,
+                    P_TOTALRECORDS = objGridAttributes.totalRecord,
+                }, true);
+                return lst;
+            }
+            catch (Exception ex) { throw ex; }
+        }
+    }
+    public class DABomBoqSite1 : Repository<PODMaster>
+    {
+        public int getSiteplanid(int iBomBoqId)
+        {
+            //var userDetails = repo.GetAll(x => x.bom_boq_id == iBomBoqId).FirstOrDefault();
+            return repo.GetAll(x => x.system_id == iBomBoqId).Select(a=>a.site_plan_id).FirstOrDefault();
+        }
+    }
     public class DABomBoqInfoSummary : Repository<BomBoqInfoSummary>
     {
 

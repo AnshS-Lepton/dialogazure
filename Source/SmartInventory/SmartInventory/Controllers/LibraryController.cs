@@ -13273,7 +13273,7 @@ namespace SmartInventory.Controllers
         {
             JsonResponse<List<CorePlannerLogs>> jResp = new JsonResponse<List<CorePlannerLogs>>();
             int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-           List<CorePlannerLogs> lstCorePlannerLogs = new BLCable().GetCorePlanLogsByUserId(user_id);
+           List<CorePlannerLogs> lstCorePlannerLogs = new BLCable().getCorePlanInvalidCable(user_id);
 
             return Json(lstCorePlannerLogs, JsonRequestBehavior.AllowGet);
         }
