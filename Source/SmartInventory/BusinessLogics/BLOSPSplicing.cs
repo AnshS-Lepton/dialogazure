@@ -118,9 +118,9 @@ namespace BusinessLogics
         {
             return new DAConnectionInfo().SaveUtilizationNotification(objConection);
         }
-        public DbMessage deleteConnection(string listConnection)
+        public DbMessage deleteConnection(string listConnection, int user_id)
         {
-            return new DAConnectionInfo().deleteConnection(listConnection);
+            return new DAConnectionInfo().deleteConnection(listConnection,  user_id);
         }
         public DbMessage deleteModelConnection(int connectionId)
         {
