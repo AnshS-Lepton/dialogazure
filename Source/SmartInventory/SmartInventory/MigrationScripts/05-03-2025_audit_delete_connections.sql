@@ -1,7 +1,5 @@
 alter table audit_connection_info  add column action_by integer;
 
-
-
 CREATE OR REPLACE FUNCTION public.fn_splicing_delete_connection(
 	p_listconnection text,
     p_userid integer)
