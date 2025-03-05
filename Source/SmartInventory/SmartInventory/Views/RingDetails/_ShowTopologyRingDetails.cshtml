@@ -39,6 +39,20 @@
         //$("#ddllstSegmentName").val(segment_name.trigger("chosen:updated"));
         //$("#ddllstRingName").val(ring_name.trigger("chosen:updated"));
     }
+
+    this.ShowEntityOnMap = function (ringId) {
+        ajaxReq('RingDetails/getSitGeometryDetail', { ring_id: ringId }, false, function (resp) {
+            //// 
+            if (resp.status = 'OK') {
+                // 
+                if (resp.result != null && resp.result != undefined) {
+                    app.HighlightEntityOnMap(gType, resp.result);
+                    //app.printPolygonEntityArea(resp.result);
+                    app.fitElementOnMap(resp.result)
+                }
+            }
+        }, true, false);
+    }
 </script>
 
 <style>
@@ -156,19 +170,24 @@
 
             if (Model.lstRingDetails.Count > 0)
             {
-            <div class="table-responsive">
-                <div class="d-flex mb-15">
-                    <div class="div_totalRecord">
-                        <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@Model.objGridAttributes.totalRecord</span></b>
-                    </div>
+        <div class="table-responsive">
+            <div class="d-flex mb-15">
+                <div class="div_totalRecord">
+                    <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@Model.objGridAttributes.totalRecord</span></b>
                 </div>
-                @grid.GetHtml(tableStyle: "grid",
-                        htmlAttributes: new { id = "tblRingDetail" },
-                        mode: WebGridPagerModes.All,
-                        columns: grid.Columns(
-                                   grid.Column("", "Action", format:@<text>
-                                            <a @*href="@Url.Action("", "", new { id = @item.id })"*@ class="auto" title=""> <i class="fa fa-globe action_icon fa-fw m-r-xs disable"></i></a>
-                                </text>, canSort: false
+            </div>
+            @grid.GetHtml(tableStyle: "grid",
+                    htmlAttributes: new { id = "tblRingDetail" },
+                    mode: WebGridPagerModes.All,
+                    columns: grid.Columns(
+                               grid.Column("", "Action", format:@<text>
+                                           <a href="javascript:void(0);"
+                                              class="ShowEntityOnMap"
+                                              title="Show on Map"
+                                              onclick="ShowEntityOnMap(@item.id);">
+                                               <i class="fa fa-globe action_icon fa-fw m-r-xs"></i>
+                                           </a>
+                            </text>, canSort: false
 ),
 grid.Column(header: "S.No.", format: @<text>@item.id</text>, canSort: false),
 grid.Column("region_name", "Region", format: @<text>@item.region_name</text> , canSort: true),
@@ -180,11 +199,11 @@ grid.Column("ring_capacity", "Capacity", format: @<text>@item.ring_capacity</tex
 
 ))
 
-                @Html.Hidden("dir", grid.SortDirection)
-                @Html.Hidden("col", grid.SortColumn)
-                @Html.HiddenFor(m => m.objGridAttributes.searchBy)
-                @Html.HiddenFor(m => m.objGridAttributes.searchText)
-            </div>
+            @Html.Hidden("dir", grid.SortDirection)
+            @Html.Hidden("col", grid.SortColumn)
+            @Html.HiddenFor(m => m.objGridAttributes.searchBy)
+            @Html.HiddenFor(m => m.objGridAttributes.searchText)
+        </div>
 
             }
             else

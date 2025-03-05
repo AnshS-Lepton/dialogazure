@@ -614,6 +614,7 @@ namespace DataAccess.Admin
     }
     public class DAToplologyRing : Repository<TopologyRingMaster>
     {
+       
         public List<TopologyRingMaster> getRingDetailByIdList(int segment_Id)
         {
             return repo.GetAll(m => m.segment_id == segment_Id).ToList();
@@ -621,13 +622,53 @@ namespace DataAccess.Admin
         public TopologyRingMaster GetRingCode()
         {
             TopologyRingMaster objTopologyPlan = new TopologyRingMaster();
-            int maxSequence = repo.GetAll().Max(m => (int?)m.sequence) ?? 0;
-            int newSequence = maxSequence + 1;
-            string ringCode = "R" + newSequence;
 
-            //string newRingCode = GenerateNextSegmentCode(lasringCode);
+            // Step 1: Get the max segment_id
+            int maxSegmentId = repo.GetAll().Max(m => (int?)m.segment_id) ?? 0;
+
+            // Step 2: Find the latest ring_code for that segment
+            string lastRingCode = repo.GetAll()
+                                      .Where(r => r.segment_id == maxSegmentId)
+                                      .OrderByDescending(r => r.sequence)
+                                      .Select(r => r.ring_code)
+                                      .FirstOrDefault();
+
+            // Step 3: Extract the last sequence number from the ring_code (e.g., "CMBN-ACC34-R3" → 3)
+            int lastSequence = 0;
+            if (!string.IsNullOrEmpty(lastRingCode))
+            {
+                var match = System.Text.RegularExpressions.Regex.Match(lastRingCode, @"R(\d+)$");
+                if (match.Success)
+                {
+                    lastSequence = int.Parse(match.Groups[1].Value);
+                }
+            }
+
+            // Step 4: Increment the sequence number
+            int newSequence = lastSequence + 1;
+
+            // Step 5: Generate the new ring code
+            string ringCode = $"CMBN-ACC{maxSegmentId}-R{newSequence}";
+
+            // Step 6: Assign values and return the object
             objTopologyPlan.ring_code = ringCode;
             objTopologyPlan.sequence = newSequence;
+            objTopologyPlan.segment_id = maxSegmentId;
+
+            return objTopologyPlan;
+        }
+
+
+        public TopologyRingMaster GetRingCode1()
+        {
+            TopologyRingMaster objTopologyPlan = new TopologyRingMaster();
+            int ringCounter = 0;
+            ringCounter++; // Increment the counter
+            string ringCode = "R" + ringCounter; // Generate new ring code
+
+            objTopologyPlan.ring_code = ringCode;
+            objTopologyPlan.sequence = ringCounter; // Assign sequence
+
             return objTopologyPlan;
         }
         private string GenerateNextSegmentCode(string lastRingCode)
@@ -779,6 +820,8 @@ namespace DataAccess.Admin
             objPOD.ring_a_site_distance = objPODMaster.ring_a_site_distance;
             objPOD.ring_b_site_distance = objPODMaster.ring_b_site_distance;
             objPOD.top_type = objPODMaster.top_type;
+            objPOD.ring_id = objPODMaster.ring_id;
+
             objPOD.ring_site_seq = objPODMaster.ring_site_seq;
 
             // Save changes
