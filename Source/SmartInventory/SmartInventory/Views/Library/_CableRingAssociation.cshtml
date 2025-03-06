@@ -1,0 +1,158 @@
+﻿
+
+@model Models.RingAssociationDetails
+@using Models;
+
+@{
+    WebGrid grid = new WebGrid(source: Model.ringAssociations, canSort: false, canPage: false);
+}
+
+
+<input type="hidden" id="selectedRegion" value="@Model.region_id" />
+<input type="hidden" id="selectedSegment" value="@Model.segment_id" />
+<input type="hidden" id="selectedRing" value="@Model.ring_id" />
+<input type="hidden" id="CableId" value="@Model.cable_id" />
+
+<!DOCTYPE html>
+<div class="form-group">
+    <div class="tab-content">
+        <fieldset class="the-fieldset">
+
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_463 Code  <i class="clsMandatory">*</i>:</label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstTopologyRegionMaster.Select(x => new { Value = x.id, Text = x.region_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlregionid" })
+                </div>
+                <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_464 Code <i class="clsMandatory">*</i>:</label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
+
+                </div>
+            </div>
+            <div class="form-group row">
+
+                <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_465 Code <i class="clsMandatory">*</i>:</label>
+
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
+                </div>
+            </div>
+            <div class="form-group row d-flex --gap05">
+                <a href="javascript:void(0);" class="btn btn-default ml-auto"  onclick="si.GetCableRingAssociation(false, null, null, null,'@Model.cable_id')">Reset</a>
+                <input type="button" formmethod="post" class="btn btn-primary" name="actionTab" id="btnFilterRingAssociation" onclick="si.getFilterRingAssociation(true,'@Model.cable_id')" value="Filter" />
+            </div>
+        </fieldset>
+        <fieldset class="the-fieldset">
+            @if (Model.ringAssociations.Count > 0)
+            {
+                <div class="form-group row">
+                    <div class="table-responsive cableOverflow">
+                        @grid.GetHtml(
+          htmlAttributes: new { id = "WebGrid", @class = "stickyTh" },
+          columns: grid.Columns(
+              grid.Column("", "Action", format: @<text><i class="cptr icon-Delete ml-05" id="removeRingAssociation" onclick="si.removeRingAssociation(@item.ring_id,'@Model.cable_id')"></i>
+                        <input type="hidden" class="ring-id" value="@item.ring_id" />
+                    </text>),
+             grid.Column("ring_capacity", "Ring Capacity", format: @<text>@item.ring_capacity</text>),
+grid.Column("ring_code", "Ring Code", format: @<text>@item.ring_code</text>),
+grid.Column("region_code", "Region Code", format: @<text>@item.region_code</text>),
+grid.Column("segment_code", "Segment Code", format: @<text>@item.segment_code</text>)
+)
+)
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div style=" text-align: center; margin-top: 30px;">
+                    No Records Found.
+                </div>
+            }
+        </fieldset>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+        $('.chosen-select').chosen({ width: '100%' });
+
+        let selectedRegion = $("#selectedRegion").val();
+        if (selectedRegion) {
+            bindSegments(selectedRegion);
+        }
+
+        $('#ddlregionid').change(function () {
+            bindSegments($(this).val());
+        });
+
+        $('#ddlsegment').change(function () {
+            bindRingTypes($(this).val());
+        });
+    });
+
+
+        function bindSegments(regionId) {
+            if (regionId) {
+                $.ajax({
+                    url: '@Url.Action("GetSegmentsByRegion", "Report")', // Fetch Segments
+                    type: 'GET',
+                    data: { id: regionId },
+                    success: function (data) {
+                        var segmentDropdown = $('#ddlsegment');
+                        segmentDropdown.empty(); // Clear existing options
+                        segmentDropdown.append('<option value="">--Select--</option>');
+
+                        $.each(data, function (index, item) {
+                            segmentDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                        });
+                        segmentDropdown.trigger("chosen:updated");
+                        // Set selected value after dropdown is updated
+                        let selectedSegment = $("#selectedSegment").val();
+                        if (selectedSegment) {
+                            segmentDropdown.val(selectedSegment).trigger("chosen:updated");
+                            bindRingTypes(selectedSegment); // Ensure ring types update as well
+                        }
+                    },
+                    error: function () {
+                        alert("Error fetching segments. Please try again.");
+                    }
+                });
+            } else {
+                $('#ddlsegment').empty().append('<option value="">--Select--</option>').trigger("chosen:updated");
+                $('#ddlringtype').empty().append('<option value="">--Select--</option>').trigger("chosen:updated");
+            }
+        }
+
+        function bindRingTypes(segmentId) {
+            if (segmentId) {
+                $.ajax({
+                    url: '@Url.Action("GetRingTypesByRegion", "Report")', // Fetch Ring Types
+                    type: 'GET',
+                    data: { segmentId: segmentId },
+                    success: function (data) {
+                       var ringTypeDropdown = $('#ddlringtype');
+                        ringTypeDropdown.empty(); // Clear existing options
+                        ringTypeDropdown.append('<option value="">--Select--</option>');
+
+                        $.each(data, function (index, item) {
+                            ringTypeDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                        });
+                        ringTypeDropdown.trigger("chosen:updated"); // Refresh Chosen dropdown
+                        // Set selected value after dropdown is updated
+                        let selectedRing = $("#selectedRing").val();
+                        if (selectedRing) {
+                            ringTypeDropdown.val(selectedRing).trigger("chosen:updated");
+                        }
+                    },
+                    error: function () {
+                        alert("Error fetching ring types. Please try again.");
+                    }
+                });
+            } else {
+                $('#ddlringtype').empty().append('<option value="">--Select--</option>').trigger("chosen:updated");
+            }
+    }
+
+</script>
+

@@ -201,6 +201,14 @@ namespace BusinessLogics
         {
              new DACable().GetUpdateFiberStatus(cableId, fiberNumber, fiberStatus);
         }
+        public List<RingAssociation> GetRingAssociationDetails(Boolean filterSelected, string regionCode, string segementCode, string ringId, int userId,string cableId)
+        {
+            return new DACable().GetRingAssociationDetails(filterSelected, regionCode, segementCode, ringId, userId, cableId);
+        }
+        public DbMessage GetRemoveRingAssociation( int ringId, int userId,string cableId)
+        {
+            return new DACable().GetRemoveRingAssociation( ringId, userId, cableId);
+        }
         
     }
 }
