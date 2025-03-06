@@ -1329,7 +1329,7 @@
     this.fnShowEntityonMap = function (id) {
         //if ($(event).hasClass("glyphicon-eye-open")) {
 
-
+        debugger;
         var bounds = new google.maps.LatLngBounds();
         ajaxReq('DataUploader/ShowOnMap', { id: id }, false, function (resp) {
             var eCheck = resp.features == null ? false : true;

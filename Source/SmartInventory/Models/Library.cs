@@ -530,7 +530,11 @@ namespace Models
         public string  top_type { get; set; }
         [NotMapped]
         public List<TopologyGetSites> lsttopologygetsites { get; set; }
-
+        [NotMapped]
+        public int agg1SystemId { get; set; }
+        [NotMapped]
+        public int agg2SystemId { get; set; }
+        
         /// Site Details Properties end
         public PODMaster()
         {
@@ -5631,7 +5635,13 @@ namespace Models
     {
         public string splicingtype { get; set; }
     }
-    
+
+    public class PODUpdateResponse
+    {
+        public int? Agg1SystemId { get; set; }
+        public int? Agg2SystemId { get; set; }
+        public bool IsUpdated { get; set; }
+    }
 
 }
 

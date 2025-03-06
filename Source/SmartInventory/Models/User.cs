@@ -1037,6 +1037,15 @@ namespace Models
         public int cable_id { get; set; }
         public int segment_id { get; set; }
     }
+
+    public class TopringCableMapping
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
+        public int cable_id { get; set; }
+        public int ring_id { get; set; }
+    }
 }
 
 
