@@ -249,5 +249,9 @@ namespace BusinessLogics.Admin
         {
             return new DAPodMaster().getAGG2List(site_name);
         }
+        public List<PODMaster> getSiteIdName(int systemId)
+        {
+            return new DAPodMaster().getSiteIdName(systemId);
+        }
     }
 }

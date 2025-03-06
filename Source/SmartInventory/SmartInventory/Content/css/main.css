@@ -10347,3 +10347,9 @@ tfoot tr td a:hover {
 .error-border {
     border: 1px solid red;
 }
+.tool_bar .TopologyPlan {
+    background-position: -12px -476px;
+    width: 26px;
+    /* border: 1px solid gray; */
+    border-radius: 3px;
+}

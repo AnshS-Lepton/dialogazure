@@ -13644,11 +13644,14 @@ var Main = function () {
 
         $(document).off("click", ".tool_bar  [id^=Entity]");
         $(document).on('click', ".tool_bar  [id^=Entity]", function (e) {
-
+            debugger;
             var $iconElement = $(this);
             if (!$iconElement.hasClass("dvdisabled") && !$iconElement.hasClass("roledisabled") && !$iconElement.hasClass("buffer-disabled")) {
                 var actionName = $iconElement.data("action")
                 switch (actionName.toUpperCase()) {
+                    case "TOPOLOGYPLAN":
+                        app.TopologyPlan(systemId, entityType, geomType);
+                        break;
                     case "ADDENTITY":
                         app.toggleEntityDropdown(e)
                         break;
@@ -13734,6 +13737,7 @@ var Main = function () {
                     case "HISTORY":
                         app.showHistory(systemId, entityType, geomType);
                         break;
+                   
                     case "FIBERALLOCATIONREPORT":
                         //;
                         app.fiberAllocationReport(systemId, entityType, networkId);
@@ -21867,6 +21871,7 @@ var Main = function () {
 
 
     this.showHistory = function (_systemId, _entityType) {
+        debugger;
         var formURL = "Audit/GetHistory";
         var layerTitle = getLayerTltle(_entityType);
         var titleText = layerTitle.toUpperCase() + " History";
@@ -21874,7 +21879,15 @@ var Main = function () {
             systemId: _systemId, eType: _entityType
         }, titleText, 'modal-lg');
     }
-
+    this.TopologyPlan = function (_systemId, _entityType) {
+        debugger;
+        var formURL = "Report/SiteTopology";
+        var layerTitle = getLayerTltle(_entityType);
+        var titleText = "Topology Plan";
+        popup.LoadModalDialog('PARENT', formURL, {
+            systemId: _systemId, eType: _entityType
+        }, titleText, 'modal-lg');
+    }
     this.ViewLossDetail = function () {
         var value = $('#ddl_waveLength').val();
         var formURL = "Splicing/viewlossdetails";

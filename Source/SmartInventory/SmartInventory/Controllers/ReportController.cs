@@ -13530,7 +13530,10 @@ namespace SmartInventory.Controllers
                 objToplogyPlan.lstnoofsites = new BLMisc().GetToplogyDropDownList(DropDownType.NoOf_Sites.ToString());
                 objToplogyPlan.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
                 objToplogyPlan.max_distance_peer = ApplicationSettings.MaxSitePeerDisatence;
-               //objToplogyPlan.lsttopologygetsites = new BLProject().Bindtopologygetsites(objToplogyPlan.system_id, 1, Convert.ToInt32(Session["user_id"])).ToList();
+                //objToplogyPlan.lsttopologygetsites = new BLProject().Bindtopologygetsites(objToplogyPlan.system_id, 1, Convert.ToInt32(Session["user_id"])).ToList();
+                var siteInfo = new BLProject().getSiteIdName(objToplogyPlan.system_id);
+                objToplogyPlan.site_id = siteInfo.FirstOrDefault().site_id;
+                objToplogyPlan.site_name = siteInfo.FirstOrDefault().site_name;
 
             }
             catch (Exception ex)
