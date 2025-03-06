@@ -82,10 +82,10 @@ namespace Models
 		public string node_type { get; set; } // used for ISP/ Vertical cables only..
 		public string actualLatLng { get; set; }
 		public string mode { get; set; }
-        public string entity_name { get; set; }
-        //public string mode { get; set; }
+		public string entity_name { get; set; }
+		//public string mode { get; set; }
 
-    }
+	}
 	public class NetworkCodeDetail
 	{
 		[Key]
@@ -161,17 +161,17 @@ namespace Models
 		public string province_name { get; set; }
 		public string province_abbreviation { get; set; }
 	}
-    public class startendpoint
-    {
-        public string a_latitude { get; set; }
-        public string b_longitude { get; set; }
-        public string tstart_region { get; set; }
-        public string tEnd_region { get; set; }
-        public string tstrat_province { get; set; }
-        public string tEnd_province { get; set; }
-        public string province_abbr { get; set; }
-    }
-    public class TerminationPointDtl
+	public class startendpoint
+	{
+		public string a_latitude { get; set; }
+		public string b_longitude { get; set; }
+		public string tstart_region { get; set; }
+		public string tEnd_region { get; set; }
+		public string tstrat_province { get; set; }
+		public string tEnd_province { get; set; }
+		public string province_abbr { get; set; }
+	}
+	public class TerminationPointDtl
 	{
 		public int system_id { get; set; }
 		public string network_id { get; set; }
@@ -246,29 +246,29 @@ namespace Models
 		public string type { get; set; }
 
 	}
-    public class TopologyGetSites
-    {
-        public int siteid { get; set; }
-        public string sitename { get; set; }
-        public decimal sitedistance { get; set; }
+	public class TopologyGetSites
+	{
+		public int siteid { get; set; }
+		public string sitename { get; set; }
+		public decimal sitedistance { get; set; }
 
-    }
-    public class TopologySegmentCables
-    {
-       
-        public string cable_name { get; set; }
-        public string network_id { get; set; }
+	}
+	public class TopologySegmentCables
+	{
 
-    }
-    
-    public class IvcKeyValueDropDown
-    {
-        public int key { get; set; }
-        public string value { get; set; }
-    
+		public string cable_name { get; set; }
+		public string network_id { get; set; }
 
-    }
-    public class EntityLstCount
+	}
+
+	public class IvcKeyValueDropDown
+	{
+		public int key { get; set; }
+		public string value { get; set; }
+
+
+	}
+	public class EntityLstCount
 	{
 		public string entity_type { get; set; }
 		public string network_status { get; set; }
@@ -310,9 +310,9 @@ namespace Models
 		public string ntk_type { get; set; }
 		public string entity_select { get; set; }
 		public string entity_sub_type { get; set; }
-        public int system_id { get; set; }
-        public int rootid { get; set; }
-    }
+		public int system_id { get; set; }
+		public int rootid { get; set; }
+	}
 	public class ProjectSpecificView : IProjectSpecification, IOwnershipInfo
 	{
 		public string network_status { get; set; }
@@ -379,23 +379,23 @@ namespace Models
 		[NotMapped]
 		public List<KeyValueDropDown> listOwnVendorId { get; set; }
 		[NotMapped]
-        public List<string> lstUserModule { get; set; }
-        [NotMapped]
-        public List<int> selected_route_ids { get; set; }
-        [NotMapped]
-        public List<RouteInfo> lstRouteInfo { get; set; }
-        [NotMapped]
-        public string gis_design_id { get; set; }
-        public ProjectSpecificView()
+		public List<string> lstUserModule { get; set; }
+		[NotMapped]
+		public List<int> selected_route_ids { get; set; }
+		[NotMapped]
+		public List<RouteInfo> lstRouteInfo { get; set; }
+		[NotMapped]
+		public string gis_design_id { get; set; }
+		public ProjectSpecificView()
 		{
 			network_status = "";
 			lstBindProjectCode = new List<ProjectCodeMaster>();
 			lstBindPlanningCode = new List<PlanningCodeMaster>();
 			lstBindWorkorderCode = new List<WorkorderCodeMaster>();
 			lstBindPurposeCode = new List<PurposeCodeMaster>();
-            lstUserModule = new List<string>();
-            lstRouteInfo = new List<RouteInfo>();
-        }
+			lstUserModule = new List<string>();
+			lstRouteInfo = new List<RouteInfo>();
+		}
 
 		public string entity_sub_type { get; set; }
 	}
@@ -415,8 +415,8 @@ namespace Models
 		public DateTime? fromDate { get; set; }
 		public DateTime? toDate { get; set; }
 		public int history_id { get; set; }
-        public string log_type { get; set; }
-        public CommonGridAttributes()
+		public string log_type { get; set; }
+		public CommonGridAttributes()
 		{
 			sort = "";
 			orderBy = "";
@@ -659,9 +659,9 @@ namespace Models
 		public string parent_geom { get; set; }
 		[NotMapped]
 		public string parent_geom_type { get; set; }
-        [NotMapped]
-        public int manhole_count { get; set; }
-        public AssociateLineEntity()
+		[NotMapped]
+		public int manhole_count { get; set; }
+		public AssociateLineEntity()
 		{
 			listLineEntityInfo = new List<LineEntityInfo>();
 			pageMsg = new PageMessage();
@@ -669,47 +669,47 @@ namespace Models
 
 	}
 
-    public class AssociateRoute
-    {
-        public int parent_system_id { get; set; }
-        public string parent_entity_type { get; set; }
-        public bool parent_multi_association { get; set; }
-        public PageMessage pageMsg { get; set; }
-        public List<RouteInfo> listrouteInfo { get; set; }
-        public int userId { get; set; }
-        public string parent_network_id { get; set; }
-        public bool parent_is_buried { get; set; }
-        public AssociateRoute()
-        {
-            listrouteInfo = new List<RouteInfo>();
-            pageMsg = new PageMessage();
-        }
+	public class AssociateRoute
+	{
+		public int parent_system_id { get; set; }
+		public string parent_entity_type { get; set; }
+		public bool parent_multi_association { get; set; }
+		public PageMessage pageMsg { get; set; }
+		public List<RouteInfo> listrouteInfo { get; set; }
+		public int userId { get; set; }
+		public string parent_network_id { get; set; }
+		public bool parent_is_buried { get; set; }
+		public AssociateRoute()
+		{
+			listrouteInfo = new List<RouteInfo>();
+			pageMsg = new PageMessage();
+		}
 
-    }
-    public class RouteInfo
-    {
-        public int id { get; set; }
-        public int cable_id { get; set; }
-        public int entity_id { get; set; }
-        public string entity_type { get; set; }
-        public string entity_network_id { get; set; }
-        public string route_id { get; set; }
-        public string route_name { get; set; }
-        public bool is_associated { get; set; }
-        public bool is_multi_association { get; set; }
-        public bool is_disabled { get; set; }
-        public bool is_termination_point { get; set; }
-        public string entity_title { get; set; }
+	}
+	public class RouteInfo
+	{
+		public int id { get; set; }
+		public int cable_id { get; set; }
+		public int entity_id { get; set; }
+		public string entity_type { get; set; }
+		public string entity_network_id { get; set; }
+		public string route_id { get; set; }
+		public string route_name { get; set; }
+		public bool is_associated { get; set; }
+		public bool is_multi_association { get; set; }
+		public bool is_disabled { get; set; }
+		public bool is_termination_point { get; set; }
+		public string entity_title { get; set; }
 		public string created_by { get; set; }
-        public string created_on { get; set; }
+		public string created_on { get; set; }
 
 
-        public RouteInfo()
-        {
-            is_associated = false;
-        }
-    }
-    public class LineEntityInfo
+		public RouteInfo()
+		{
+			is_associated = false;
+		}
+	}
+	public class LineEntityInfo
 	{
 		public int system_id { get; set; }
 		public string entity_type { get; set; }
@@ -748,10 +748,10 @@ namespace Models
 		//public List<KeyValueDropDown> lstNetworkStates { get; set; }
 		[NotMapped]
 		public IList<DropDownMaster> lstNetworkStatus { get; set; }
-	public List<KeyValueDropDown> lstBindProjectCode { get; set; }
-        public List<KeyValueDropDown> lstBindRootId { get; set; }
+		public List<KeyValueDropDown> lstBindProjectCode { get; set; }
+		public List<KeyValueDropDown> lstBindRootId { get; set; }
 
-    }
+	}
 	public class BulkAsBuiltFilterAttribute : CommonGridAttributes
 	{
 		public int userid { get; set; }
@@ -760,9 +760,9 @@ namespace Models
 		public string selection_type { get; set; }
 		public double buff_Radius { get; set; }
 		public string entityType { get; set; }
-        public string lstBindProjectCode { get; set; }
-        public string lstBindRootId { get; set; }
-        public List<int> SelectedParentUser { get; set; }
+		public string lstBindProjectCode { get; set; }
+		public string lstBindRootId { get; set; }
+		public List<int> SelectedParentUser { get; set; }
 		public List<int> SelectedUserId { get; set; }
 		public int roleid { get; set; }
 		public string SelectedParentUsers { get; set; }
@@ -798,7 +798,7 @@ namespace Models
 		public DateTime modified_on { get; set; }
 		public bool enablessl { get; set; }
 		public bool usedefaultcredentials { get; set; }
-        [NotMapped]
+		[NotMapped]
 		public PageMessage pageMsg { get; set; }
 		public EmailSettingsModel()
 		{
@@ -1040,47 +1040,47 @@ namespace Models
 			listAtAttachments = new List<LibraryAttachment>();
 		}
 	}
-    public class TrenchExecution
-    {
-        [Key]
-        public int id { get; set; }
-        public int system_id { get; set; }
-        public string entity_type { get; set; }
-        public string execution_method { get; set; }
-        public string execution_length { get; set; }
-        public int created_by { get; set; }
-        public DateTime created_on { get; set; }
-        public int? modified_by { get; set; }
-        public DateTime? modified_on { get; set; }
-        [NotMapped]
-        public IList<DropDownMaster> ExecutionMethodsIn { get; set; }
+	public class TrenchExecution
+	{
+		[Key]
+		public int id { get; set; }
+		public int system_id { get; set; }
+		public string entity_type { get; set; }
+		public string execution_method { get; set; }
+		public string execution_length { get; set; }
+		public int created_by { get; set; }
+		public DateTime created_on { get; set; }
+		public int? modified_by { get; set; }
+		public DateTime? modified_on { get; set; }
+		[NotMapped]
+		public IList<DropDownMaster> ExecutionMethodsIn { get; set; }
 
-    }
-    public class trenchExecutionList
-    {
-        public int systemId { get; set; }
-        public string entityType { get; set; }
-        public int createdBy { get; set; }
-        public string execution_method { get; set; }
-        public string execution_length { get; set; }
-        public IList<DropDownMaster> listExecutionmethod { get; set; }
-        public List<TrenchExecution> listExecutionRecords { get; set; }
-        //public List<LibraryAttachment> listAtAttachments { get; set; }
-        public trenchExecutionList()
-        {
-            listExecutionRecords = new List<TrenchExecution>();
-            //listAtAttachments = new List<ATAcceptanceAttachments>();
-            //listAtAttachments = new List<LibraryAttachment>();
-        }
-    }
+	}
+	public class trenchExecutionList
+	{
+		public int systemId { get; set; }
+		public string entityType { get; set; }
+		public int createdBy { get; set; }
+		public string execution_method { get; set; }
+		public string execution_length { get; set; }
+		public IList<DropDownMaster> listExecutionmethod { get; set; }
+		public List<TrenchExecution> listExecutionRecords { get; set; }
+		//public List<LibraryAttachment> listAtAttachments { get; set; }
+		public trenchExecutionList()
+		{
+			listExecutionRecords = new List<TrenchExecution>();
+			//listAtAttachments = new List<ATAcceptanceAttachments>();
+			//listAtAttachments = new List<LibraryAttachment>();
+		}
+	}
 
-    #endregion
+	#endregion
 
 
 
-    #region Maintainence Charges
+	#region Maintainence Charges
 
-    public class EMCExport
+	public class EMCExport
 	{
 		public string entity_network_id { get; set; }
 		public string type_of_activity_charge { get; set; }
@@ -1395,7 +1395,7 @@ namespace Models
 		public string module_abbr { get; set; }
 
 		public int parent_module_id { get; set; }
-			
+
 
 		public int module_sequence { get; set; }
 		[NotMapped]
@@ -1436,7 +1436,7 @@ namespace Models
 
 		public int parent_module_id { get; set; }
 
-		
+
 
 		public int module_sequence { get; set; }
 
@@ -2049,8 +2049,8 @@ namespace Models
 		public string network_code { get; set; }
 		public bool is_deleted { get; set; }
 		public string deleted_status { get; set; }
-		public string message { get; set; }      
-    }
+		public string message { get; set; }
+	}
 
 	public class entityPortInfo
 	{
@@ -2103,17 +2103,17 @@ namespace Models
 		public string parentGeomType { get; set; }
 		public int userId { get; set; }
 	}
-    public class AssociateRouteRequest
-    {
-        public int systemId { get; set; }
-        public string entityType { get; set; }
-        public string networkId { get; set; }
-        public string parentGeom { get; set; }
-        public string parentGeomType { get; set; }
-        public int userId { get; set; }
-    }
+	public class AssociateRouteRequest
+	{
+		public int systemId { get; set; }
+		public string entityType { get; set; }
+		public string networkId { get; set; }
+		public string parentGeom { get; set; }
+		public string parentGeomType { get; set; }
+		public int userId { get; set; }
+	}
 
-    public class TerminationEntityRequest
+	public class TerminationEntityRequest
 	{
 		public string txtGeom { get; set; }
 		public string entityType { get; set; }
@@ -2441,9 +2441,9 @@ namespace Models
 		public string type { get; set; }
 		public string geom { get; set; }
 		public string feature_type { get; set; }
-        public string source_ref_type { get; set; }
-        public string source_ref_id { get; set; }
-    }
+		public string source_ref_type { get; set; }
+		public string source_ref_id { get; set; }
+	}
 
 	public class Root
 	{
@@ -2929,12 +2929,12 @@ namespace Models
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int id { get; set; }
 		public int system_id { get; set; }
-        public string entity_type { get; set; }
+		public string entity_type { get; set; }
 		public string action_by { get; set; }
 		public DateTime? action_on { get; set; }
 		public string action_type { get; set; }
 		public string err_message { get; set; }
-        [NotMapped]
+		[NotMapped]
 		public string description { get; set; }
 		[NotMapped]
 		public int totalRecords { get; set; }
@@ -2950,9 +2950,9 @@ namespace Models
 	}
 	public class EntityDeleteLog
 	{
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int id { get; set; }
+		[Key]
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int id { get; set; }
 		public int system_id { get; set; }
 		public string entity_type { get; set; }
 		public string network_id { get; set; }
@@ -2975,122 +2975,150 @@ namespace Models
 
 	#region Trench customer details
 	public class TrenchCustomerDetails
-    {
-        [Key]
-        public int system_id { get; set; }
-        public int trench_id { get; set; }
-        public string state { get; set; }
-        public string customer_name { get; set; }
-        public string service_type { get; set; }
-        public string section_name { get; set; }
-        public string pair_requirement { get; set; }
-        public double length_in_kms { get; set; }
-        public string status { get; set; }
-        public string po_no { get; set; }
-        public double po_length_km { get; set; }
-        public string po_release_date { get; set; }
-        public string period { get; set; }
-        public string from_date { get; set; }
-        public string to_date { get; set; }
-        public string hoto_no { get; set; }
-        public string urid { get; set; }
-        public string hoto_status { get; set; }
-        public string hoto_date { get; set; }
-        public string route_name { get; set; }
-        public double hoto_length { get; set; }
-        public int total_core { get; set; }
-        public int live_core { get; set; }
-        public int reserved_core { get; set; }
-        public int created_by { get; set; }
-        public DateTime? created_on { get; set; }
-        public int modified_by { get; set; }
-        public DateTime? modified_on { get; set; }
+	{
+		[Key]
+		public int system_id { get; set; }
+		public int trench_id { get; set; }
+		public string state { get; set; }
+		public string customer_name { get; set; }
+		public string service_type { get; set; }
+		public string section_name { get; set; }
+		public string pair_requirement { get; set; }
+		public double length_in_kms { get; set; }
+		public string status { get; set; }
+		public string po_no { get; set; }
+		public double po_length_km { get; set; }
+		public string po_release_date { get; set; }
+		public string period { get; set; }
+		public string from_date { get; set; }
+		public string to_date { get; set; }
+		public string hoto_no { get; set; }
+		public string urid { get; set; }
+		public string hoto_status { get; set; }
+		public string hoto_date { get; set; }
+		public string route_name { get; set; }
+		public double hoto_length { get; set; }
+		public int total_core { get; set; }
+		public int live_core { get; set; }
+		public int reserved_core { get; set; }
+		public int created_by { get; set; }
+		public DateTime? created_on { get; set; }
+		public int modified_by { get; set; }
+		public DateTime? modified_on { get; set; }
 
-        [NotMapped]
-        public PageMessage objPM { get; set; }
-        public TrenchCustomerDetails()
-        {
-            objPM = new PageMessage();
-        }
+		[NotMapped]
+		public PageMessage objPM { get; set; }
+		public TrenchCustomerDetails()
+		{
+			objPM = new PageMessage();
+		}
 
-    }
+	}
 
-    public class TrenchCustomerDetailsList
-    {
-        public int customer_id { get; set; }
-        public int trench_id { get; set; }
-        public List<TrenchCustomerDetails> listTrenchCustomerDetailsRecords { get; set; }
-        public List<TrenchCustomerDetailsAttachment> lstDocuments { get; set; }
-        public TrenchCustomerDetailsList()
-        {
+	public class TrenchCustomerDetailsList
+	{
+		public int customer_id { get; set; }
+		public int trench_id { get; set; }
+		public List<TrenchCustomerDetails> listTrenchCustomerDetailsRecords { get; set; }
+		public List<TrenchCustomerDetailsAttachment> lstDocuments { get; set; }
+		public TrenchCustomerDetailsList()
+		{
 
-            listTrenchCustomerDetailsRecords = new List<TrenchCustomerDetails>();
-            lstDocuments = new List<TrenchCustomerDetailsAttachment>();
-        }
+			listTrenchCustomerDetailsRecords = new List<TrenchCustomerDetails>();
+			lstDocuments = new List<TrenchCustomerDetailsAttachment>();
+		}
 
 
-    }
-    #endregion
+	}
+	#endregion
 	public class BulkAssociationRequestLog
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int id { get; set; }
-        public int user_id { get; set; }
-        public DateTime? created_on { get; set; }
-        public int subarea_system_id { get; set; }
-        public bool is_association_done { get; set; }
-    }
-    public class WorkAreaMarking
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int marking_id { get; set; }
-        public string marking_type { get; set; }
-        public int workspace_id { get; set; }
-        public int zoom { get; set; }
-        public string geom { get; set; }
-        public int created_by { get; set; }
-        public DateTime? created_on { get; set; }
-        public int? modified_by { get; set; }
-        public DateTime? modified_on { get; set; }
+	{
+		[Key]
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int id { get; set; }
+		public int user_id { get; set; }
+		public DateTime? created_on { get; set; }
+		public int subarea_system_id { get; set; }
+		public bool is_association_done { get; set; }
+	}
+	public class WorkAreaMarking
+	{
+		[Key]
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int marking_id { get; set; }
+		public string marking_type { get; set; }
+		public int workspace_id { get; set; }
+		public int zoom { get; set; }
+		public string geom { get; set; }
+		public int created_by { get; set; }
+		public DateTime? created_on { get; set; }
+		public int? modified_by { get; set; }
+		public DateTime? modified_on { get; set; }
 		[NotMapped]
 		public List<WorkAreaMarking> lstMarkings { get; set; }
 		public WorkAreaMarking()
 		{
-            lstMarkings = new List<WorkAreaMarking>();
+			lstMarkings = new List<WorkAreaMarking>();
 
-        }
+		}
 
-    }
-    public class EventEmailTemplateDetail
+	}
+	public class EventEmailTemplateDetail
+	{
+		public int template_id { get; set; }
+		public string project_phase { get; set; }
+		public string trigger_event { get; set; }
+		public string recipient_role { get; set; }
+		public string recipient_list { get; set; }
+		public string subject { get; set; }
+		public string template { get; set; }
+	}
+
+	public class EmailSetting
+	{
+		public static EmailSettingsModel GetEmailSetting()
+		{
+
+			EmailSettingsModel objEmailSettingsModel = new EmailSettingsModel()
+			{
+				id = 1,
+				port = 25,
+				email_address = "no_reply_smartinventory@safaricom.co.ke",
+				smtp_host = "webmail.safaricom.co.ke",
+				email_password = "",
+				enablessl = false,
+				usedefaultcredentials = false
+			};
+			return objEmailSettingsModel;
+		}
+	}
+
+	public class RingAssociation
     {
-        public int template_id { get; set; }
-        public string project_phase { get; set; }
-        public string trigger_event { get; set; }
-        public string recipient_role { get; set; }
-        public string recipient_list { get; set; }
-        public string subject { get; set; }
-        public string template { get; set; }
-    }
+		public int ring_id { get; set; }
+		public string ring_code { get; set; }
+		public string region_code { get; set; }
+		public string segment_code { get; set; }
+		public string ring_capacity { get; set; }
+       
+     }
+	public class RingAssociationDetails
+	{
+        public int region_id { get; set; }
+        public int segment_id { get; set; }
+        public int ring_id { get; set; }
+        public string cable_id { get; set; }
+		public List<TopologyRegionMaster> lstTopologyRegionMaster { get; set; }
+		public List<TopologySegmentMaster> lstTopologySegmentMaster { get; set; }
+		public List<TopologyRingMaster> lstTopologyRingMaster { get; set; }
+		public List<RingAssociation> ringAssociations { get; set; }
 
-    public class EmailSetting
-    {
-        public static EmailSettingsModel GetEmailSetting()
-        {
-
-            EmailSettingsModel objEmailSettingsModel = new EmailSettingsModel()
-            {
-                id = 1,
-                port = 25,
-                email_address = "no_reply_smartinventory@safaricom.co.ke",
-                smtp_host = "webmail.safaricom.co.ke",
-                email_password = "",
-                enablessl = false,
-                usedefaultcredentials = false
-            };
-            return objEmailSettingsModel;
-        }
+		public RingAssociationDetails() {
+            lstTopologySegmentMaster = new List<TopologySegmentMaster>();
+            lstTopologyRingMaster = new List<TopologyRingMaster>();
+            lstTopologyRegionMaster = new List<TopologyRegionMaster>();
+            ringAssociations = new List<RingAssociation>();
+	    }
     }
 
 }

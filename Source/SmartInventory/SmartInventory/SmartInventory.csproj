@@ -2438,6 +2438,7 @@
     <Content Include="Views\Report\_ItemSiteAwardingOld.cshtml" />
     <Content Include="Views\BOMBOQ\_ItemSiteAwarding.cshtml" />
     <Content Include="Views\Report\_ItemSiteAwarding.cshtml" />
+    <Content Include="Views\Library\_CableRingAssociation.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -17584,6 +17584,14 @@ var Main = function () {
             }, false, false);
         }
     }
+    this.GetCableRingAssociation = function (filterSelected, regionCode, segementCode, ringId,cableId) {
+
+        ajaxReq('Library/GetCableRingAssociation', { filterSelected: filterSelected, regionCode: regionCode, segementCode: segementCode, ringId: ringId, cableId: cableId }, true, function (resp) {
+                $("#RingAssociation").html(resp);
+                $("#RingAssociation").css('background-image', 'none');
+
+            }, false, false);
+    }
     this.GetSliptCableFiberDetail = function (_cableid, _type) {
         var formURL = 'Library/getFiberDetail';
         popup.LoadModalDialog(app.ChildModel, formURL, { cableId: _cableid, type: _type }, 'Fiber Details', 'modal-lg');
@@ -19588,7 +19596,7 @@ var Main = function () {
 
                                     let row = `<tr>
                      <td>${rowAction}</td>
-                <td>${item.cable_name || '-'}</td>
+                <td>${item.cable_network_id || '-'}</td>
                 
             </tr>`;
                                     tbody.append(row);
@@ -32711,6 +32719,43 @@ var Main = function () {
         ajaxReq('Library/clearCoreplannerLog', {}, false, function (resp) {
         }, true, true);
     }
+
+    this.removeRingAssociation = function (ringId, cableId){
+        showConfirm("Are you sure you want to delete Ring Association?", function () {
+            ajaxReq('Library/RemoveRingAssociation', { ringId: ringId, cableId: cableId }
+                , true, function (resp) {
+                    if (resp.status === true) {
+                        alert(resp.message);
+                        $("#RingAssociation").trigger("click");
+                    }                    
+                }, true, true);
+        });
+    }
+
+    this.getFilterRingAssociation = function (filterSelected,cableId) {
+       
+        let ddlregionid = $("#ddlregionid option:selected").text();
+        let ddlsegment = $("#ddlsegment option:selected").text();
+        let ddlringtype = $("#ddlringtype option:selected").text();
+
+        if ((ddlregionid === '' || ddlregionid === '--Select--') &&
+            (ddlsegment === '' || ddlsegment === '--Select--') &&
+            (ddlringtype === '' || ddlringtype === '--Select--')) {
+
+            $("#ddlregionid_chosen, #ddlsegment_chosen, #ddlringtype_chosen").css("border", "1px solid red");
+            return;
+        } else {
+            // Remove 'let' to avoid redeclaring the same variables
+            ddlregionid = ddlregionid === '--Select--' ? '' : ddlregionid;
+            ddlsegment = ddlsegment === '--Select--' ? '' : ddlsegment;
+            ddlringtype = ddlringtype === '--Select--' ? '' : ddlringtype;
+            app.GetCableRingAssociation(filterSelected, ddlregionid, ddlsegment, ddlringtype, cableId);
+
+        }
+    };
+ 
+
+
 
 }
 if (($("#ticketWork_id").text()).trim() != '') {
