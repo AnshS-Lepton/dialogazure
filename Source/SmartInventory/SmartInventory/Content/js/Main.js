@@ -32726,7 +32726,7 @@ var Main = function () {
                 , true, function (resp) {
                     if (resp.status === true) {
                         alert(resp.message);
-                        $("#RingAssociation").trigger("click");
+                        app.GetCableRingAssociation(false, null, null, null, cableId);
                     }                    
                 }, true, true);
         });

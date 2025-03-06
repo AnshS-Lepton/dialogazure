@@ -774,8 +774,8 @@ namespace DataAccess
         {
             try
             {
-                var lstRingAssociation = repo.ExecuteProcedure<DbMessage>("fn_get_remove_ring_assocication_details", new { p_ring_id = ringId, p_user_id = userId, cable_id= cableId }, true);
-                return lstRingAssociation[0];
+                var lstRingAssociation = repo.ExecuteProcedure<DbMessage>("fn_get_remove_ring_assocication_details", new { p_ring_id = ringId, p_user_id = userId, cable_id= cableId }).FirstOrDefault();
+                return lstRingAssociation;
             }
             catch { throw; }
         }
