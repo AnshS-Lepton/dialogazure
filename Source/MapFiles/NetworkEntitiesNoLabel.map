@@ -1660,16 +1660,26 @@ LAYER
 		END
 		STATUS OFF
 		GROUP 'Network'		
-		CLASS
-			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'P')  			
-			STYLE
-				SYMBOL "icons/Planned/POD.png" 
-				SIZE 25
-				OFFSET 0 -5
-			END
-            			
-		END
+	 CLASS
+        NAME "POD - Agg02"
+        EXPRESSION ([network_status] = 'P' AND [agg_02] != '')
+        STYLE
+            SYMBOL "icons/Planned/POD.png"
+            SIZE 25
+            OFFSET 0 -5
+        END
+    END
+
+    CLASS
+        NAME "POD - Agg01"
+        EXPRESSION ([network_status] = 'P' AND [agg_01] != '')
+        STYLE
+            SYMBOL "icons/Planned/POD.png"
+            SIZE 25
+            OFFSET 0 -5
+        END
+    END
+END
 		CLASS
 			NAME 'POD'
             EXPRESSION ('[network_status]'  eq 'A')  			

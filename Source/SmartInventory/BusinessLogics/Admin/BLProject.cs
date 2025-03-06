@@ -213,7 +213,7 @@ namespace BusinessLogics.Admin
         {
             return new DAToplologyRing().GetRingCode();
         }
-        public List<TopologyRingMaster> getRingDetailByIdList(int segment_Id = 0)
+        public List<ringinfo> getRingDetailByIdList(int segment_Id = 0)
         {
             return new DAToplologyRing().getRingDetailByIdList(segment_Id);
         }

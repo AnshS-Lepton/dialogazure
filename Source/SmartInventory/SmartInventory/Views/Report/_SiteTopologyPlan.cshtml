@@ -161,13 +161,13 @@
                         </div>
 
                         <div class="form-group row" id="dvregionId" style="display: block;">
-                            <label class="control-label col-sm-2" for="searchby">Distance from Planned to Existing: <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="searchby">Dist from Planned to Existing: <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.DropDownListFor(m => m.ring_a_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.sitedistance, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingASite" })
                                 @*<div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new"><i class="fa fa-plus"></i></button> </div>*@
 
                             </div>
-                            <label class="control-label col-sm-2" for="txtSearchtext">Distance from Planned to Existing : <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="txtSearchtext">Dist from Planned to Existing : <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.DropDownListFor(m => m.ring_b_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.sitedistance, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingBSite" })
 
@@ -203,25 +203,27 @@
 
                             @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
                         </div>
+                        <label class="control-label col-sm-2" for="searchby">Segment Code:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+                        </div>
+                       
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_460:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+                        </div>
+                        
                         <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
                             @Html.TextBoxFor(m => m.agg_02, new { @id = "txtsegagg1", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">Segment Code:</label>
-                        <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
-                        </div>
                         <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
                         <div class="col-sm-4">
-                            @Html.TextAreaFor(m => m.site_id, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 500, @rows = 2, @cols = 50 })
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_460:</label>
-                        <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+                            @Html.TextAreaFor(m => m.Seg_desc, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Search text", @maxlength = 500, @rows = 2, @cols = 50 })
                         </div>
                     </div>
                 </form>
@@ -260,7 +262,7 @@
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
                         <div class="col-sm-4">
-                            @Html.TextAreaFor(m => m.site_id, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Search text", @maxlength = 500, @rows = 4, @cols = 50 })
+                            @Html.TextAreaFor(m => m.Ring_desc, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Search text", @maxlength = 500, @rows = 4, @cols = 50 })
                         </div>
                     </div>
                 </form>
@@ -450,7 +452,7 @@
 
             // Append new options from response
             $.each(data, function (index, item) {
-            ringTypeDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
             });
 
             // **Update Chosen Dropdown**
@@ -503,7 +505,7 @@
 
             // Append new options from response
             $.each(response.lsttopologygetsites, function (index, item) {
-            var optionHtml = '<option value="' + item.siteid + '" data-distance="' + item.sitedistance + '">' + item.sitename + '</option>';
+                var optionHtml = '<option value="' + item.siteid + '" data-distance="' + item.sitedistance + '">' + item.sitename + '( '+ item.sitedistance+')'  + '</option>';
             dropdownA.append(optionHtml);
             dropdownB.append(optionHtml);
             });
@@ -879,7 +881,7 @@
             var segmentid = $("#ddlsegment").val();
             var segmentcode = $("#txtsegmentcode").val();
             var ringdesc = $("#txtringdesc").val();
-
+            var ringcapacity = $("#ddlringcapacity").val();
             // Validate required fields
             if (!segmentid ) {
             alert("Please select segment.");
@@ -894,7 +896,8 @@
             data: {
             segmentcode: segmentid,
             ringcode: ringcode,
-            description: ringdesc
+                description: ringdesc,
+                ringcapacity: ringcapacity
             },
             success: function (response) {
             if (response) {

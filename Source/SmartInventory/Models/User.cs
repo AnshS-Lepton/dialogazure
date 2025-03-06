@@ -1013,7 +1013,13 @@ namespace Models
 
         
     }
-
+    public class ringinfo
+    {
+        
+         public int ring_id { get; set; }
+        public string ring_info { get; set; }
+    
+    }
          public class TopologySegment
          {
         [Key]

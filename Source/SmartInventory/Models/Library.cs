@@ -534,7 +534,10 @@ namespace Models
         public int agg1SystemId { get; set; }
         [NotMapped]
         public int agg2SystemId { get; set; }
-        
+        [NotMapped]
+        public string Seg_desc { get; set; }
+        [NotMapped]
+        public string Ring_desc { get; set; }
         /// Site Details Properties end
         public PODMaster()
         {
