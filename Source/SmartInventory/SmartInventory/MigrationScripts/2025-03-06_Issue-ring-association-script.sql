@@ -68,12 +68,12 @@ DECLARE
 p_network_id character varying;
 BEGIN
 	
-select network_id into p_network_id from att_details_cable where system_id = cable_id;
+select network_id into p_network_id from att_details_cable where system_id = cable_id:: int;
 
 delete from top_ring_cable_mapping trc where ring_id = p_ring_id and cable_id = p_network_id;
 
 return query
-select true as v_status, 'Ring Association has been deleted Successfully!.' as v_message;
+select true as status, 'Ring Association has been deleted Successfully!.'::varchar as message;
 END
 $function$
 ;
