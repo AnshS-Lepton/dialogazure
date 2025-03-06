@@ -69,10 +69,21 @@ namespace Models
     }
     public class GeomRingDetailIn
     {
-        public double longitude { get; set; }
-        public double latitude { get; set; }
+        
+        public string geom { get; set; }
+        public int system_id { get; set; }
+        public string network_id { get; set; }
         public string site_id { get; set; }
         public string site_name { get; set; }
+    }
+
+    public class vmGeomRingDetailIn
+    {
+        public List<GeomRingDetailIn> lstSitedetails { get; set; }
+        public vmGeomRingDetailIn()
+        {
+            lstSitedetails = new List<GeomRingDetailIn>();
+        }
     }
 
 }

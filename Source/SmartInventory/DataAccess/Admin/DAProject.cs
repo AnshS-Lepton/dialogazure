@@ -310,6 +310,27 @@ namespace DataAccess.Admin
             catch { throw; }
 
         }
+        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId)
+        {
+            try
+            {
+                repo.ExecuteProcedure<bool>("fn_insert_top_segment_ring_cable_mapping", new
+                {
+                    p_agg1_system_id = Agg1SystemId,
+                    p_agg2_system_id = Agg2SystemId,
+                    p_user_id = userId,
+                    p_ring_id = ringId
+
+                }, false);
+
+
+            }
+
+            catch { throw; }
+
+        }
+
+        
     }
 
 
@@ -646,12 +667,17 @@ namespace DataAccess.Admin
 
             // Step 4: Increment the sequence number
             int newSequence = lastSequence + 1;
-
+            string ringCode = "";
             // Step 5: Generate the new ring code
-            string ringCode = $"CMBN-ACC{maxSegmentId}-R{newSequence}";
-
-            // Step 6: Assign values and return the object
-            objTopologyPlan.ring_code = ringCode;
+            if (maxSegmentId == 0)
+            {
+                 ringCode = $"R{newSequence}";
+            }
+            else { 
+                ringCode = $"R{newSequence}"; 
+            }
+                // Step 6: Assign values and return the object
+                objTopologyPlan.ring_code = ringCode;
             objTopologyPlan.sequence = newSequence;
             objTopologyPlan.segment_id = maxSegmentId;
 
@@ -801,6 +827,10 @@ namespace DataAccess.Admin
         public PODMaster updatetopology(PODMaster objPODMaster)
         {
             // Retrieve the existing record
+
+            var agg1SystemId = repo.Get(x => x.agg_01 == objPODMaster.agg_01)?.system_id;
+            var agg2SystemId = repo.Get(x => x.agg_02 == objPODMaster.agg_02)?.system_id;
+
             var objPOD = repo.Get(x => x.system_id == objPODMaster.system_id);
 
             if (objPOD == null)
@@ -826,6 +856,7 @@ namespace DataAccess.Admin
 
             // Save changes
             var TopologyResp = repo.Update(objPOD);
+
             return TopologyResp;
         }
 

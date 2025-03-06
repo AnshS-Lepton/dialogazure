@@ -104,6 +104,13 @@ namespace DataAccess
             var json = repo.ExecuteProcedure<string>("fn_uploader_getuploadlogs", new { uploadid = id, status = "SHOW_ON_MAP" }, false)[0];
             return json.ToString();
         }
+        public string getSiteShowOnMap(int id)
+        {
+            var json = repo.ExecuteProcedure<string>("fn_get_site_details11", new { p_ringId = id }, false)[0];
+            return json.ToString();
+        }
+
+        
         public List<Dictionary<string, string>> getUploadTemplateSampleRecords(string entityType)
         {
             try
@@ -144,5 +151,7 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+      
     }
 }

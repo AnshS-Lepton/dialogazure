@@ -27,9 +27,19 @@
 
     .pose-plus {
         position: absolute;
-        right: -28px;
-        top: 0;
+        right: 9px;
+        top: 1px;
         z-index: 9;
+    }
+    .txtdesc {
+        width: 469px;
+    }
+    #dvregionId .chosen-container, #dvringId .chosen-container {
+        width: 84% !important;
+        margin-left:20px;
+    }
+    #dvregionId .btn, #dvringId .btn{
+        padding:4px 6px;
     }
 </style>
 
@@ -42,13 +52,16 @@
     {
         <input type="hidden" id="networkIdField" name="network_id" />
         @Html.HiddenFor(m => m.system_id, new { id = "hdnSystemId" })
-        <input type="hidden" id="hdnAgg1SystemId" name="hdnAgg1SystemId" />
-        <input type="hidden" id="hdnAgg2SystemId" name="hdnAgg2SystemId" />
+        @*<input type="hidden" id="hdnAgg1SystemId" name="hdnAgg1SystemId" />
+        <input type="hidden" id="hdnAgg2SystemId" name="hdnAgg2SystemId" />*@
         <input type="hidden" id="hdnSequenceId" name="hdnSequenceId" />
         <input type="hidden" id="hdnsegmentid" name="hdnsegmentid" />
         @Html.HiddenFor(m => m.ring_site_seq, new { id = "hdnringsiteseq" })
         @Html.HiddenFor(m => m.ring_a_site_id, new { id = "hdnRingASiteId" })
         @Html.HiddenFor(m => m.ring_b_site_id, new { id = "hdnRingBSiteId" })
+
+        @Html.HiddenFor(m => m.agg1SystemId, new { id = "hdnAgg1SystemId" })
+        @Html.HiddenFor(m => m.agg2SystemId, new { id = "hdnAgg2SystemId" })
 
         @*<input type="hidden" id="hdnRingASiteId" name="hdnRingASiteId" />*@
         @*<input type="hidden" id="hdnRingASiteDistance" name="hdnRingASiteDistance" />*@
@@ -116,7 +129,7 @@
                         </div>
                     </fieldset>
                     <fieldset class="sitePlan_fieldset" id="fldtopology">
-                        <legend>Dummy text</legend>
+                        <legend> </legend>
                         <div class="form-group row" id="dvregionId" style="display: block;">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_463  <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
@@ -148,7 +161,7 @@
                         </div>
 
                         <div class="form-group row" id="dvregionId" style="display: block;">
-                            <label class="control-label col-sm-2" for="searchby">Distance from Planned to Existing : <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="searchby">Distance from Planned to Existing: <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.DropDownListFor(m => m.ring_a_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.sitedistance, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingASite" })
                                 @*<div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new"><i class="fa fa-plus"></i></button> </div>*@
@@ -202,7 +215,7 @@
                         </div>
                         <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
                         <div class="col-sm-4">
-                            @Html.TextAreaFor(m => m.site_id, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 500, @rows = 4, @cols = 50 })
+                            @Html.TextAreaFor(m => m.site_id, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 500, @rows = 2, @cols = 50 })
                         </div>
                     </div>
                     <div class="form-group row">
@@ -247,7 +260,7 @@
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
                         <div class="col-sm-4">
-                            @Html.TextAreaFor(m => m.site_id, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 500, @rows = 4, @cols = 50 })
+                            @Html.TextAreaFor(m => m.site_id, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Search text", @maxlength = 500, @rows = 4, @cols = 50 })
                         </div>
                     </div>
                 </form>
@@ -729,8 +742,8 @@
             success: function (response) {
             if (response.ring_code) {
             $("#hdnringsiteseq").val(response.sequence);
-                //var ringcode = region + "-" + segment + "-" + response.ring_code;
-                var ringcode =  response.ring_code;
+                var ringcode = region + "-" + segment + "-" + response.ring_code;
+                //var ringcode =  response.ring_code;
 
                 $("#txtRingCode").val(ringcode);
                 $("#ringModal").show(); 

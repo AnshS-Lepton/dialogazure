@@ -151,7 +151,11 @@ namespace BusinessLogics.Admin
 
             new DAProjectCode().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId, userId, segment_id);
         }
+        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId)
+        {
 
+            new DAProjectCode().Savetopsegmentringcablemapping(Agg1SystemId, Agg2SystemId, userId, ringId);
+        }
         public PlanningCodeMaster getPlanningCodeDetailById(int id, int project_id=0)
         {
             return new DAPlanningCode().getPlanningCodeDetailById(id, project_id);

@@ -69,9 +69,9 @@ namespace SmartInventory.Controllers
         [HttpPost]
         public ActionResult getSitGeometryDetail(int ring_id)
         {
-            JsonResponse<GeometryDetail> objResp = new JsonResponse<GeometryDetail>();
+            JsonResponse<vmGeomRingDetailIn> objResp = new JsonResponse<vmGeomRingDetailIn>();
             // var objGeometryDetail = new BLSearch().GetGeometryDetails(objGeomDetailIn);
-            var ringdetails = new BLRingDetails().getSiteDetails(ring_id);
+            objResp.result = new BLRingDetails().getSiteDetails(ring_id);
 
 
             //if (objGeometryDetail.geometry_extent != null)
@@ -89,7 +89,15 @@ namespace SmartInventory.Controllers
             //{
             //    objResp.status = ResponseStatus.ZERO_RESULTS.ToString();
             //}
-            return Json(objResp, JsonRequestBehavior.AllowGet);
+            return Json(objResp.result, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public string getSitGeometryDetail11(int ring_id)
+        {
+            string objresp = string.Empty;
+            objresp = new BLDataUploader().getsiteShowOnMap(ring_id);
+            return objresp;
         }
     }
 }

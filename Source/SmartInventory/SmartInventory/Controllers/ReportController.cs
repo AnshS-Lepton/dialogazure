@@ -13601,7 +13601,10 @@ namespace SmartInventory.Controllers
             ModelState.Clear();
             var response = new { Success = false, Message = "Save failed" }; // Default failure response
 
-                pODMaster = new BLProject().updatetopology(pODMaster);
+            new BLProject().Savetopsegmentringcablemapping(pODMaster.agg1SystemId,pODMaster.agg2SystemId,Convert.ToInt32(Session["user_id"]),pODMaster.ring_id ?? 0);
+
+
+            pODMaster = new BLProject().updatetopology(pODMaster);
 
                 // Check if the save operation was successful
                 if (pODMaster != null)
