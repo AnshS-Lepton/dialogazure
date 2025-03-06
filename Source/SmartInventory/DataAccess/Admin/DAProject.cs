@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI;
 using static Mono.Security.X509.X520;
 
 namespace DataAccess.Admin
@@ -636,10 +637,17 @@ namespace DataAccess.Admin
     }
     public class DAToplologyRing : Repository<TopologyRingMaster>
     {
+
        
-        public List<TopologyRingMaster> getRingDetailByIdList(int segment_Id)
+        public List<ringinfo> getRingDetailByIdList(int segment_Id)
         {
-            return repo.GetAll(m => m.segment_id == segment_Id).ToList();
+            var res = repo.ExecuteProcedure<ringinfo>("fn_get_ring_details", new
+            {
+                p_segment_id = segment_Id
+            }, false);
+            return res;
+
+            //return repo.GetAll(m => m.segment_id == segment_Id).ToList();
         }
         public TopologyRingMaster GetRingCode()
         {
@@ -698,24 +706,7 @@ namespace DataAccess.Admin
 
             return objTopologyPlan;
         }
-        private string GenerateNextSegmentCode(string lastRingCode)
-        {
-            if (string.IsNullOrEmpty(lastRingCode) || !lastRingCode.StartsWith("R"))
-            {
-                return "R1"; // Default if no valid ring code exists
-            }
-
-            // Extract numeric part from the last ring code
-            string numberPart = lastRingCode.Substring(1); // Get everything after "R"
-
-            // Convert to integer and increment
-            if (int.TryParse(numberPart, out int numericValue))
-            {
-                return $"R{numericValue + 1}"; // No leading zeros (R1, R2, R10)
-            }
-
-            return "R1"; // Fallback if parsing fails
-        }
+        
 
         public TopologyRingMaster SaveRing(TopologyRingMaster topologyRingMaster)
         {

@@ -13590,14 +13590,17 @@ namespace SmartInventory.Controllers
         {
             var ringsdata = new BLProject().getRingDetailByIdList(segmentId);
             // Transform into key-value pairs for dropdown
-            var ringsDropdownData = ringsdata.Select(s => new
-            {
-                Value = s.id,     
-                Text = s.ring_code
-            }).ToList();
+            //var ringsDropdownData = ringsdata
+            // .OrderBy(s => s.ring_code) // Sorts by ring_code in ascending order
+            // .Select(s => new
+            // {
+            //     Value = s.id,
+            //     Text = s.ring_code
+            // })
+            // .ToList();
 
             // Return as JSON
-            return Json(ringsDropdownData, JsonRequestBehavior.AllowGet);
+            return Json(ringsdata, JsonRequestBehavior.AllowGet);
         }
         public ActionResult SaveSiteTopology(PODMaster pODMaster)
         {
@@ -13685,7 +13688,7 @@ namespace SmartInventory.Controllers
 
 
         [HttpPost]
-        public ActionResult SaveRing(int segmentcode, string ringcode, string description)
+        public ActionResult SaveRing(int segmentcode, string ringcode, string description,string ringcapacity)
         {
             ModelState.Clear();
             var response = new { Success = false, Message = "Save failed" }; // Default failure response
@@ -13693,6 +13696,7 @@ namespace SmartInventory.Controllers
             topologySegment.segment_id = segmentcode;
             topologySegment.ring_code = ringcode;
             topologySegment.description = description;
+            topologySegment.ring_capacity = ringcapacity;
             // Save to database
             topologySegment = new BLProject().SaveRing(topologySegment);
 
