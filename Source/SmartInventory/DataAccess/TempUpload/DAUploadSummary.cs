@@ -106,7 +106,7 @@ namespace DataAccess
         }
         public string getSiteShowOnMap(int id)
         {
-            var json = repo.ExecuteProcedure<string>("fn_get_site_details11", new { p_ringId = id }, false)[0];
+            var json = repo.ExecuteProcedure<string>("fn_get_site_details", new { p_ringId = id }, false)[0];
             return json.ToString();
         }
 

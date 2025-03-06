@@ -95,7 +95,7 @@ namespace DataAccess
             try
             {
 
-                return repo.ExecuteProcedure<vmGeomRingDetailIn>("fn_get_site_details11", new
+                return repo.ExecuteProcedure<vmGeomRingDetailIn>("fn_get_site_details", new
                 {
                     p_ringId = ringId
                 }, true).FirstOrDefault();
